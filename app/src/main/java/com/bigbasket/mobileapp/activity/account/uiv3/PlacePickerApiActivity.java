@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.content.Intent;
+import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,7 +15,9 @@ import android.widget.AutoCompleteTextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.interfaces.location.OnAddressFetchedListener;
 import com.bigbasket.mobileapp.model.location.AutoCompletePlace;
+import com.bigbasket.mobileapp.task.uiv3.ReverseGeocoderTask;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -37,9 +40,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlacePickerApiActivity extends BackButtonActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener {
+        GoogleMap.OnMyLocationButtonClickListener, OnAddressFetchedListener {
 
     private GoogleApiClient mGoogleApiClient;
     private LatLng mSelectedLatLng;
@@ -112,8 +116,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         layoutChooseLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mSelectedLatLng == null) return;
-
+                new ReverseGeocoderTask<>(getCurrentActivity()).execute(mSelectedLatLng);
             }
         });
     }
@@ -255,5 +258,13 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
                 }
             }
         });
+    }
+
+    @Override
+    public void onAddressFetched(@Nullable List<Address> addresses) {
+        if (addresses != null && addresses.size() > 0) {
+            showToast(addresses.get(0).getPostalCode() + ":" +
+            addresses.get(0).getLocality());
+        }
     }
 }
