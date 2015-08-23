@@ -391,6 +391,7 @@ public interface BigBasketApiService {
     @GET("/fund-wallet")
     void getFundWalletPayments(@Query(Constants.SUPPORT_CC) String supportsPayu,
                                @Query(Constants.SUPPORT_POWER_PAY) String supportPowerPay,
+                               @Query(Constants.SUPPORT_MOBIKWIK) String mobikwik,
                                Callback<ApiResponse<GetPaymentTypes>> getFundWalletPaymentApiResponseCallback);
 
     @FormUrlEncoded

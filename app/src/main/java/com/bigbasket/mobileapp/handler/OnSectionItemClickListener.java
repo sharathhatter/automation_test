@@ -392,12 +392,28 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private String getSectionItemName() {
-        if (sectionItem == null || TextUtils.isEmpty(section.getSectionType()))
+        if (sectionItem == null)
             return "";
-        return sectionItem.getTitle() != null ? sectionItem.getTitle().getText() :
-                sectionItem.getDescription() != null ?
-                        !TextUtils.isEmpty(sectionItem.getDescription().getText()) ?
-                                sectionItem.getDescription().getText() : "" : "";
+        if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+           return sectionItem.getTitle().getText();
+        } else if (sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
+            return sectionItem.getImageName().replaceAll("[.]\\w+", "");
+        } else if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
+            return sectionItem.getDescription().getText();
+        } else if(sectionItem.getDestinationInfo() != null &&
+                !TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationSlug()) &&
+                sectionItem.getDestinationInfo().getDestinationSlug().contains(Constants.SLUG_PARAM)) {
+            String typeAndSlug = sectionItem.getDestinationInfo().getDestinationSlug();
+            int indexOfSlug = typeAndSlug.indexOf(Constants.SLUG_PARAM);
+            String slug = typeAndSlug.substring(indexOfSlug + Constants.SLUG_PARAM.length());
+            if (slug.contains("&")) {
+                int indexOfNextParam = slug.indexOf("&");
+                slug = slug.substring(0, indexOfNextParam);
+            }
+            if (!TextUtils.isEmpty(slug))
+                return slug;
+        }
+        return "";
     }
 
     private void logItemClickEvent() {

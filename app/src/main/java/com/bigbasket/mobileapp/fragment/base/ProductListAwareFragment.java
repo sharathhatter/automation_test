@@ -183,7 +183,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     .build();
             mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, mBaseImgUrl,
                     productViewDisplayDataHolder, this, mProductInfo.getProductCount(),
-                    getNextScreenNavigationContext(), cartInfo);
+                    getNextScreenNavigationContext(), cartInfo, mTabType);
 
             productRecyclerView.setAdapter(mProductListRecyclerAdapter);
             contentView.addView(productRecyclerView);

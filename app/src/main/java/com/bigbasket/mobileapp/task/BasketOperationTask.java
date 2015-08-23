@@ -50,15 +50,18 @@ public class BasketOperationTask<T> {
     private HashMap<String, Integer> cartInfo;
     @Nullable
     private EditText editTextQty;
+    private String tabName;
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, View viewAddToBasket, String eventName,
                                String navigationCtx, @Nullable View productView,
                                @Nullable HashMap<String, Integer> cartInfo,
-                               @Nullable EditText editTextQty) {
+                               @Nullable EditText editTextQty,
+                               String tabName) {
         this(context, basketOperation, product, basketCountTextView, viewDecQty, viewIncQty,
-                viewAddToBasket, "1", eventName, navigationCtx, productView, cartInfo, editTextQty);
+                viewAddToBasket, "1", eventName, navigationCtx, productView, cartInfo, editTextQty,
+                tabName);
     }
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
@@ -67,7 +70,8 @@ public class BasketOperationTask<T> {
                                String qty, String eventName,
                                String navigationCtx, @Nullable View productView,
                                @Nullable HashMap<String, Integer> cartInfo,
-                               @Nullable EditText editTextQty) {
+                               @Nullable EditText editTextQty,
+                               String tabName) {
         this.context = context;
         this.product = product;
         this.basketOperation = basketOperation;
@@ -81,6 +85,7 @@ public class BasketOperationTask<T> {
         this.navigationCtx = navigationCtx;
         this.cartInfo = cartInfo;
         this.editTextQty = editTextQty;
+        this.tabName = tabName;
     }
 
     public void startTask() {
@@ -123,6 +128,7 @@ public class BasketOperationTask<T> {
         if (navigationCtx != null) {
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         }
+        eventAttribs.put(TrackEventkeys.TAB_NAME, tabName);
         ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false, true);
     }
 

@@ -2,11 +2,17 @@ package com.bigbasket.mobileapp.apiservice;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
@@ -73,4 +79,22 @@ public class BigBasketApiAdapter {
         bigBasketApiService = restAdapter.create(BigBasketApiService.class);
     }
 
+    private static Fragment getCurrentFragment(Context context){
+        FragmentManager fragmentManager = ((BaseActivity)context).getSupportFragmentManager();
+        if(fragmentManager.getFragments().size()==0){
+            return null;
+        }
+        String fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
+        return  ((BaseActivity)context).getSupportFragmentManager()
+                .findFragmentByTag(fragmentTag);
+    }
+
+    private static String getNavigationCxt(Context context){
+        Fragment currentFragment = getCurrentFragment(context);
+        if(currentFragment==null){
+            return ((BaseActivity)context).getCurrentNavigationContext();
+        }else {
+            return ((BaseFragment)currentFragment).getCurrentNavigationContext();
+        }
+    }
 }

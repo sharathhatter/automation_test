@@ -58,10 +58,11 @@ public final class ProductView {
                                           ProductDetailOnClickListener productDetailOnClickListener,
                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                           final boolean skipChildDropDownRendering,
-                                          final T productDataAware, String navigationCtx) {
+                                          final T productDataAware, String navigationCtx,
+                                          String tabName) {
         setProductView(productViewHolder, product, baseImgUrl, productDetailOnClickListener,
                 productViewDisplayDataHolder, skipChildDropDownRendering, productDataAware, navigationCtx,
-                null);
+                tabName);
     }
 
     public static <T> void setProductView(final ProductViewHolder productViewHolder, final Product product, String baseImgUrl,
@@ -69,7 +70,8 @@ public final class ProductView {
                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                           final boolean skipChildDropDownRendering,
                                           final T productDataAware, String navigationCtx,
-                                          @Nullable HashMap<String, Integer> cartInfo) {
+                                          @Nullable HashMap<String, Integer> cartInfo,
+                                          String tabName) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
                 productDetailOnClickListener, productDataAware);
@@ -77,10 +79,10 @@ public final class ProductView {
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
-                productDataAware, navigationCtx, cartInfo);
+                productDataAware, navigationCtx, cartInfo, tabName);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
-                    productDataAware, navigationCtx, cartInfo);
+                    productDataAware, navigationCtx, cartInfo, tabName);
         }
     }
 
@@ -100,7 +102,8 @@ public final class ProductView {
                                              final String baseImgUrl,
                                              final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                              final T productDataAware, final String navigationCtx,
-                                             @Nullable HashMap<String, Integer> cartInfo) {
+                                             @Nullable HashMap<String, Integer> cartInfo,
+                                             String tabName) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         final Button btnMorePackSizes = productViewHolder.getBtnMorePackSizes();
@@ -121,7 +124,7 @@ public final class ProductView {
                         if (isThisChildProductInBasket) {
                             childProductInBasket = childProduct;
                             listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
-                                    product, productViewHolder, baseImgUrl, navigationCtx, cartInfo);
+                                    product, productViewHolder, baseImgUrl, navigationCtx, cartInfo, tabName);
                             listener.setCurrentProduct(childProductInBasket);
                             break;
                         }
@@ -130,11 +133,11 @@ public final class ProductView {
             }
             if (listener == null) {
                 listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
-                        product, productViewHolder, baseImgUrl, navigationCtx, cartInfo);
+                        product, productViewHolder, baseImgUrl, navigationCtx, cartInfo, tabName);
             } else {
                 // There is a child product that is in basket
                 // Manually trigger click to change to that product
-                listener.swapWithChildProduct(childProductInBasket, btnMorePackSizes);
+                listener.swapWithChildProduct(childProductInBasket, btnMorePackSizes, tabName);
             }
             btnMorePackSizes.setOnClickListener(listener);
         } else {
@@ -181,7 +184,7 @@ public final class ProductView {
         txtMrp.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
 
         if (hasSavings && !TextUtils.isEmpty(product.getMrp())) {
-            String prefix = "` ";
+            String prefix = "`";
             String mrpStr = UIUtil.formatAsMoney(Double.parseDouble(product.getMrp()));
             int prefixLen = prefix.length();
             SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
@@ -329,7 +332,8 @@ public final class ProductView {
     private static <T> void setBasketAndAvailabilityViews(final ProductViewHolder productViewHolder, final Product product,
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                           final T basketOperationAware, final String navigationCtx,
-                                                          @Nullable final HashMap<String, Integer> cartInfo) {
+                                                          @Nullable final HashMap<String, Integer> cartInfo,
+                                                          final String tabName) {
         final ImageView imgAddToBasket = productViewHolder.getImgAddToBasket();
         final View viewDecBasketQty = productViewHolder.getViewDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
@@ -376,7 +380,7 @@ public final class ProductView {
                                     BasketOperation.INC, product,
                                     txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
                                     TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView, cartInfo,
-                                    editTextQty);
+                                    editTextQty,tabName);
                             basketOperationTask.startTask();
 
                         } else {
@@ -393,7 +397,8 @@ public final class ProductView {
                                     BasketOperation.DEC,
                                     product, txtInBasket, viewDecBasketQty, viewIncBasketQty,
                                     imgAddToBasket, TrackingAware.BASKET_DECREMENT,
-                                    navigationCtx, productViewHolder.itemView, cartInfo, editTextQty);
+                                    navigationCtx, productViewHolder.itemView, cartInfo, editTextQty,
+                                    tabName);
                             myTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -421,7 +426,7 @@ public final class ProductView {
                                     BasketOperation.INC, product,
                                     txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
                                     qty, TrackingAware.BASKET_ADD, navigationCtx, productViewHolder.itemView,
-                                    cartInfo, editTextQty);
+                                    cartInfo, editTextQty, tabName);
                             basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -466,11 +471,13 @@ public final class ProductView {
         private String navigationCtx;
         private Product currentProduct;
         private HashMap<String, Integer> cartInfo;
+        private String tabName;
 
         public OnShowChildProductDropdownClickListener(T productDataAware, ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                        Product product, ProductViewHolder productViewHolder,
                                                        String baseImgUrl, String navigationCtx,
-                                                       @Nullable HashMap<String, Integer> cartInfo) {
+                                                       @Nullable HashMap<String, Integer> cartInfo,
+                                                       String tabName) {
             this.productDataAware = productDataAware;
             this.productViewDisplayDataHolder = productViewDisplayDataHolder;
             this.product = product;
@@ -480,6 +487,7 @@ public final class ProductView {
             this.navigationCtx = navigationCtx;
             this.childProducts = product.getAllProducts();
             this.cartInfo = cartInfo;
+            this.tabName = tabName;
         }
 
         @Override
@@ -505,7 +513,7 @@ public final class ProductView {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Product childProduct = childProducts.get(position);
-                    swapWithChildProduct(childProduct, btnMorePackSizes);
+                    swapWithChildProduct(childProduct, btnMorePackSizes, tabName);
                     if (dialog.isShowing()) {
                         dialog.dismiss();
                     }
@@ -518,7 +526,7 @@ public final class ProductView {
             dialog.show();
         }
 
-        public void swapWithChildProduct(Product childProduct, Button btnMorePackSizes) {
+        public void swapWithChildProduct(Product childProduct, Button btnMorePackSizes, String tabName) {
             if (childProduct.getSku().equals(product.getSku())) {
                 childProduct = product;
             }
@@ -526,7 +534,8 @@ public final class ProductView {
             currentProduct = childProduct;
             setProductView(productViewHolder, childProduct, baseImgUrl,
                     new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
-                    productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo);
+                    productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo,
+                        tabName);
         }
 
         public void setCurrentProduct(Product currentProduct) {

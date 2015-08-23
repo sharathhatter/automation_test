@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -17,7 +18,6 @@ public class MobiKwikResponseHandlerActivity extends BackButtonActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mobikwik_response);
         Intent intent = getIntent();
@@ -30,11 +30,6 @@ public class MobiKwikResponseHandlerActivity extends BackButtonActivity {
         editor.putString(Constants.MOBIKWIK_STATUS, statusCode);
         editor.putString(Constants.MOBIKWIK_STATUS_MSG, statusMessage);
         editor.commit();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        onDestroy();
+        finish();
     }
 }

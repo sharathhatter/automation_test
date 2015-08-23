@@ -356,7 +356,25 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (mTabType == null) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(Constants.TAB_NAME, mTabType);
+        map = getProductListEventParams(mNameValuePairs, map);
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
+    }
+
+
+    private HashMap<String, String> getProductListEventParams(ArrayList<NameValuePair> nameValuePairs,
+                                             HashMap<String, String> map) {
+        if (nameValuePairs == null || nameValuePairs.size() == 0) return map;
+        boolean is_express= false;
+        for (NameValuePair nameValuePair : nameValuePairs) {
+            if (nameValuePair.getName() != null && nameValuePair.getValue() != null) {
+                if(nameValuePair.getName().equalsIgnoreCase("is_express"))
+                    is_express = true;
+                else
+                    map.put(nameValuePair.getName(), nameValuePair.getValue());
+            }
+        }
+        map.put("is_express", is_express ? "yes" : "no");
+        return map;
     }
 
     private Bundle getBundleForProductListFragment(ProductTabInfo productTabInfo,

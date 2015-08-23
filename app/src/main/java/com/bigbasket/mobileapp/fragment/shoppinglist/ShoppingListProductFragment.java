@@ -43,7 +43,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     private void loadShoppingListProducts() {
         ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
         String baseImgUrl = getArguments().getString(Constants.BASE_IMG_URL);
-        renderProducts(shoppingListSummary, baseImgUrl);
+        String tabName = getArguments().getString(Constants.TAB_NAME);
+        renderProducts(shoppingListSummary, baseImgUrl, tabName);
     }
 
     private ProductViewDisplayDataHolder getProductViewHolder(ShoppingListSummary shoppingListSummary) {
@@ -61,7 +62,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .build();
     }
 
-    private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl) {
+    private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl,
+                                                                            String tabName) {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
@@ -74,21 +76,22 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                     baseImgUrl,
                     getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(),
                     getNextScreenNavigationContext(),
-                    cartInfo);
+                    cartInfo, tabName);
         } else {
             productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
                     baseImgUrl,
                     getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(),
-                    getNextScreenNavigationContext());
+                    getNextScreenNavigationContext(), tabName);
         }
         productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(productRecyclerView);
     }
 
     public void notifyDataChanged(HashMap<String, Integer> cartInfo,
-                                  ShoppingListSummary shoppingListSummary, String baseImgUrl) {
+                                  ShoppingListSummary shoppingListSummary, String baseImgUrl,
+                                  String tabName) {
         this.cartInfo = cartInfo;
-        renderProducts(shoppingListSummary, baseImgUrl);
+        renderProducts(shoppingListSummary, baseImgUrl, tabName);
     }
 
     @Override

@@ -363,6 +363,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
         shoppingListSummary.setShoppingListName(shoppingListName);
         bundle.putParcelable(Constants.SHOPPING_LIST_SUMMARY, shoppingListSummary);
         bundle.putString(Constants.BASE_IMG_URL, baseImgUrl);
+        bundle.putString(Constants.TAB_NAME, shoppingListSummary.getFacetSlug());
         return bundle;
     }
 
@@ -393,7 +394,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
             Fragment fragment = getCurrentFragment();
             if (fragment != null) {
                 ((ShoppingListProductFragment) fragment).notifyDataChanged(cartInfo,
-                        shoppingListSummary, baseImgUrl);
+                        shoppingListSummary, baseImgUrl, shoppingListSummary.getFacetName());
             }
         }
     }

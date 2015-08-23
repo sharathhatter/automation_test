@@ -21,7 +21,7 @@ public class MobikwikInitializer {
         //String amount = UIUtil.round(Double.parseDouble(paymentParams.get(Constants.MOBIKWIK_AMOUNT)));
         Intent walletIntent = new Intent(Constants.MOBIKWIKSDK);
         walletIntent.setPackage(ctx.getPackageName());
-        walletIntent.setType(HTTP.PLAIN_TEXT_TYPE);
+        walletIntent.setType("text/plain");
         int orderID = Integer.parseInt(paymentParams.get(Constants.MOBIKWIK_ORDER_ID));
         orderID = orderID * 1000; //todo remove this
         walletIntent.putExtra(Constants.MOBIKWIK_ORDER_ID, String.valueOf(orderID));

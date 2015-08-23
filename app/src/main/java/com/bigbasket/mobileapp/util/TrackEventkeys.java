@@ -147,6 +147,7 @@ public final class TrackEventkeys {
     public static final String SELECTED_SLOT = "selected_slot";
     public static final String PROMO_NAME = "promo_name";
     public static final String ITEM_TAB = "order_item";
+    public static final String TAB_NAME = "tab_name";
 
     private TrackEventkeys() {
     }

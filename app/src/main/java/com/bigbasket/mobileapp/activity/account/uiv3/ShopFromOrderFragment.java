@@ -157,7 +157,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
 
         productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
                 productViewDisplayDataHolder, this, mProducts.size(),
-                getNextScreenNavigationContext());
+                getNextScreenNavigationContext(), "none");
 
         productRecyclerView.setAdapter(productListRecyclerAdapter);
         contentView.addView(shopFromOrderLayout);
