@@ -302,7 +302,9 @@ public class ShowCartActivity extends BackButtonActivity {
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
-        bigBasketApiService.cartGet(fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
+        bigBasketApiService.cartGet(isCurrentPageRequest ?
+                        getNextScreenNavigationContext() :getCurrentNavigationContext(),
+                fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
             @Override
             public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
                 if (isSuspended()) return;

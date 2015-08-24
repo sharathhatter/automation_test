@@ -13,7 +13,6 @@ import android.provider.BaseColumns;
 import android.speech.RecognizerIntent;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FilterQueryProvider;
@@ -114,12 +113,22 @@ public class SearchableActivity extends BackButtonActivity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null && cursor.getString(1) != null) {
-                    if (!TextUtils.isEmpty(cursor.getString(3)) &&cursor.getString(3).contains("/"))
+                    String termType = cursor.getString(6);
+                    if (!TextUtils.isEmpty(cursor.getString(3)) && cursor.getString(3).contains("/")) {
                         doSearchByCategory(cursor.getString(1), cursor.getString(3),
-                                getCategorySlug(cursor.getString(3)));
-                    else
-                        triggerSearch(cursor.getString(1).trim(),
-                                TrackEventkeys.PS_PL);
+                                getCategorySlug(cursor.getString(3)), !TextUtils.isEmpty(termType)
+                                        && termType.equals(SearchUtil.HISTORY_TERM) ? TrackEventkeys.PS_H_PL
+                                        : TrackEventkeys.PS_C_PL);
+                    } else {
+                        if (!TextUtils.isEmpty(termType)) {
+                            triggerSearch(cursor.getString(1).trim(),
+                                    termType.equals(SearchUtil.HISTORY_TERM) ?
+                                            TrackEventkeys.PS_H_PL : termType.equals(SearchUtil.TOP_SEARCH_TERM) ?
+                                            TrackEventkeys.PS_T_PL : TrackEventkeys.PS_PL);
+                        } else {
+                            triggerSearch(cursor.getString(1).trim(), TrackEventkeys.PS_PL);
+                        }
+                    }
                 }
             }
         });
@@ -129,7 +138,7 @@ public class SearchableActivity extends BackButtonActivity
     }
 
     private void doSearchByCategory(String categoryName, String categoryUrl,
-                                    String categorySlug) {
+                                    String categorySlug, String navigationCtx) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(categoryName, categoryUrl);
 
@@ -137,7 +146,7 @@ public class SearchableActivity extends BackButtonActivity
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        setNextScreenNavigationContext(TrackEventkeys.PS_C_PL);
+        setNextScreenNavigationContext(navigationCtx);
         intent.putExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         finish();
@@ -219,7 +228,7 @@ public class SearchableActivity extends BackButtonActivity
                 for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
                     matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
                             mostSearchedItem.getUrl(), null, mostSearchedItem.getQuery(),
-                            null, SearchUtil.CROSS_ICON});
+                            null, SearchUtil.HISTORY_TERM});
                 if (mostSearchTermsCount > 20)
                     mostSearchesAdapter.deleteFirstRow();
             } else {
@@ -228,7 +237,7 @@ public class SearchableActivity extends BackButtonActivity
                 for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
                     matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
                             null, mostSearchedItem.getUrl(), null,
-                            null, SearchUtil.CROSS_ICON});
+                            null, SearchUtil.HISTORY_TERM});
             }
         }
         populateTopSearch(matrixCursor);
@@ -243,7 +252,7 @@ public class SearchableActivity extends BackButtonActivity
             for (String term : topSearchArrayString)
                 matrixCursor.addRow(new String[]{String.valueOf(i++), term,
                         null, null, term,
-                        null, null});
+                        null, SearchUtil.TOP_SEARCH_TERM});
         }
     }
 
@@ -267,7 +276,6 @@ public class SearchableActivity extends BackButtonActivity
             theTextArea.requestFocusFromTouch();
             theTextArea.setTextColor(Color.WHITE);
             theTextArea.setCursorVisible(true);
-            //
             theTextArea.setHintTextColor(getResources().getColor(R.color.secondary_text_default_material_dark));
         }
     }

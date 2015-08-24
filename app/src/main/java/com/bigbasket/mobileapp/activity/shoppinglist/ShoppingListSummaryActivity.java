@@ -120,7 +120,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
         setTitle(null);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getShoppingListSummary(mShoppingListName.getSlug(), new Callback<ApiResponse<GetShoppingListSummaryResponse>>() {
+        bigBasketApiService.getShoppingListSummary(getCurrentNavigationContext(),
+                mShoppingListName.getSlug(), new Callback<ApiResponse<GetShoppingListSummaryResponse>>() {
             @Override
             public void success(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse, Response response) {
                 if (isSuspended()) return;

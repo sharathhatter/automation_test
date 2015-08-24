@@ -14,11 +14,13 @@ import java.util.HashMap;
 public class ProductListTask<T> {
 
     protected T ctx;
+    private String navigationCtx;
     private HashMap<String, String> paramMap;
 
-    public ProductListTask(T ctx, HashMap<String, String> paramMap) {
+    public ProductListTask(T ctx, HashMap<String, String> paramMap, String navigationCtx) {
         this.ctx = ctx;
         this.paramMap = paramMap;
+        this.navigationCtx = navigationCtx;
     }
 
 
@@ -32,6 +34,6 @@ public class ProductListTask<T> {
 
         if (((CancelableAware) ctx).isSuspended()) return;
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        bigBasketApiService.productList(paramMap, new ProductListApiResponseCallback<>(ctx, false));
+        bigBasketApiService.productList(navigationCtx, paramMap, new ProductListApiResponseCallback<>(ctx, false));
     }
 }

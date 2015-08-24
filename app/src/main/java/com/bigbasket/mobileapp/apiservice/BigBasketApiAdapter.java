@@ -29,13 +29,6 @@ public class BigBasketApiAdapter {
         return bigBasketApiService;
     }
 
-    public static BigBasketApiService getApiService(Context context, String navigationCtx) {
-        if (bigBasketApiService == null) {
-            refreshBigBasketApiService(context);
-        }
-        return bigBasketApiService;
-    }
-
     public static void refreshBigBasketApiService(final Context context) {
         final AuthParameters authParameters = AuthParameters.getInstance(context);
 
@@ -79,32 +72,4 @@ public class BigBasketApiAdapter {
 
         bigBasketApiService = restAdapter.create(BigBasketApiService.class);
     }
-
-
-    /*
-    private static void setNavigationCtx(Context context){
-        if(context instanceof BaseActivity)
-            request.addPathParam(TrackEventkeys.NAVIGATION_CTX, getNavigationCxt(context));
-    }
-
-    private static Fragment getCurrentFragment(Context context) {
-        FragmentManager fragmentManager = ((BaseActivity) context).getSupportFragmentManager();
-        if (fragmentManager.getFragments().size() == 0) {
-            return null;
-        }
-        String fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
-        return ((BaseActivity) context).getSupportFragmentManager()
-                .findFragmentByTag(fragmentTag);
-    }
-
-    private static String getNavigationCxt(Context context) {
-        Fragment currentFragment = getCurrentFragment(context);
-        if (currentFragment == null) {
-            return ((BaseActivity) context).getCurrentNavigationContext();
-        } else {
-            return ((BaseFragment) currentFragment).getCurrentNavigationContext();
-        }
-    }
-
-    */
 }

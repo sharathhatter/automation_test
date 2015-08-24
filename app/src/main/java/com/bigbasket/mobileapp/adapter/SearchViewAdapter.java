@@ -43,7 +43,7 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
 
 
             ImageView imgRemoveTerm = rowViewHolder.getImgRemoveTerm();
-            if (getItemRightIcon(cursor) != null && getItemRightIcon(cursor).equals(SearchUtil.CROSS_ICON)) {
+            if (getItemRightIcon(cursor) != null && getItemRightIcon(cursor).equals(SearchUtil.HISTORY_TERM)) {
                 imgRemoveTerm.setVisibility(View.VISIBLE);
                 imgRemoveTerm.setTag(termString);
                 imgRemoveTerm.setOnClickListener(new View.OnClickListener() {

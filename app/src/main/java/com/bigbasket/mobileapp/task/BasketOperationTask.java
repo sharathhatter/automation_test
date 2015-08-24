@@ -101,16 +101,16 @@ public class BasketOperationTask<T> {
         String reqProdId = product.getSku();
         switch (basketOperation) {
             case INC:
-                bigBasketApiService.incrementCartItem(reqProdId, qty, new CartOperationApiResponseCallback());
+                bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
             case DEC:
-                bigBasketApiService.decrementCartItem(reqProdId, qty, new CartOperationApiResponseCallback());
+                bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
             case SET:
-                bigBasketApiService.setCartItem(reqProdId, qty, new CartOperationApiResponseCallback());
+                bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
             case EMPTY:
-                bigBasketApiService.setCartItem(reqProdId, "0", new CartOperationApiResponseCallback());
+                bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", new CartOperationApiResponseCallback());
                 break;
         }
     }

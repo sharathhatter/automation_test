@@ -19,8 +19,8 @@ import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
 public class SearchUtil {
 
     //public static final String SEARCH_LEFT_ICON = "s";
-    public static final String CROSS_ICON = "c";
-    public static final String HISTORY_LEFT_ICON = "h";
+    public static final String TOP_SEARCH_TERM = "t";
+    public static final String HISTORY_TERM = "h";
 
     public static Cursor searchQueryCall(String query, Context context) {
         if (TextUtils.isEmpty(query.trim()) || (query.trim().length() < 3)) return null;
