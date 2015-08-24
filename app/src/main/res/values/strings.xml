@@ -33,7 +33,6 @@
     <string name="add">Add</string>
     <string name="regular_price">Regular Price</string>
     <string name="totalMrp">Total: </string>
-    <string name="current_pin">Your current Pin</string>
     <string name="update">Update</string>
     <string name="updateDialogTitle">Update BigBasket App</string>
     <string name="UPDATE">UPDATE</string>
@@ -176,11 +175,6 @@
     <string name="past_label">past</string>
     <string name="deleteShoppingList">Delete Shopping List</string>
 
-    <string name="min4digit">Pin should be a 4 digit number!</string>
-    <string name="not0000">Pin should be other than 0000!</string>
-    <string name="enterPin">Please enter a pin to update!</string>
-    <string name="pinUpdatedSuccessfully">Your pin was updated successfully!</string>
-
     <!-- wallet activity -->
     <string name="noActivityErrorMsg">No Wallet Activity for</string>
     <string name="endingBal">Ending balance:</string>
@@ -308,8 +302,6 @@
     <string name="addAnAddress"> \u0020 Add an Address</string>
     <string name="save">SAVE</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
-    <string name="deliveryPin">Delivery Pin</string>
-
 
     <!-- order invoice -->
     <string name="multi_order_place_txt">Your orders have been placed!</string>
