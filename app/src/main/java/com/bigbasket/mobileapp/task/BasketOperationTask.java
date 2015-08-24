@@ -37,7 +37,9 @@ public class BasketOperationTask<T> {
 
     private T context;
     private Product product;
-    private BasketOperation basketOperation;
+    private
+    @BasketOperation.Mode
+    int basketOperation;
     private String qty;
     private TextView basketCountTextView;
     private View viewIncQty;
@@ -52,7 +54,7 @@ public class BasketOperationTask<T> {
     private EditText editTextQty;
     private String tabName;
 
-    public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
+    public BasketOperationTask(T context, @BasketOperation.Mode int basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, View viewAddToBasket, String eventName,
                                String navigationCtx, @Nullable View productView,
@@ -64,7 +66,7 @@ public class BasketOperationTask<T> {
                 tabName);
     }
 
-    public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
+    public BasketOperationTask(T context, @BasketOperation.Mode int basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, View viewAddToBasket,
                                String qty, String eventName,
@@ -100,16 +102,16 @@ public class BasketOperationTask<T> {
                 .getString(R.string.please_wait));
         String reqProdId = product.getSku();
         switch (basketOperation) {
-            case INC:
+            case BasketOperation.INC:
                 bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
-            case DEC:
+            case BasketOperation.DEC:
                 bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
-            case SET:
+            case BasketOperation.SET:
                 bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
-            case EMPTY:
+            case BasketOperation.EMPTY:
                 bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", new CartOperationApiResponseCallback());
                 break;
         }

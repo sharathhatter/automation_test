@@ -55,7 +55,7 @@ android {
     }
 
 //    Uncomment at the time of deployment, but don't commit the uncommented version to VCS.
-//    This is because build time increases significantly, due to which development is becomes slow
+//    This is because build time increases significantly, due to which development time becomes slow
 //    (1.5 minutes on avg)
 
 //    splits {

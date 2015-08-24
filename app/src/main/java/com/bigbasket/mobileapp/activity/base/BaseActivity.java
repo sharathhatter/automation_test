@@ -317,30 +317,30 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showAlertDialog(String title,
-                                String msg, DialogButton dialogButton,
-                                DialogButton nxtDialogButton, final String sourceName) {
+                                String msg, @DialogButton.ButtonType int dialogButton,
+                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, sourceName, null, null);
     }
 
     public void showAlertDialog(String title,
-                                String msg, DialogButton dialogButton,
-                                DialogButton nxtDialogButton, final String sourceName,
+                                String msg, @DialogButton.ButtonType int dialogButton,
+                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName,
                                 final String passedValue) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, sourceName, passedValue, null);
     }
 
     public void showAlertDialog(String title,
-                                String msg, DialogButton dialogButton,
-                                DialogButton nxtDialogButton, final String sourceName,
+                                String msg, @DialogButton.ButtonType int dialogButton,
+                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName,
                                 final Object passedValue, String positiveBtnText) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
         builder.setTitle(title);
         builder.setMessage(msg);
         builder.setCancelable(false);
-        if (dialogButton != null && nxtDialogButton != null) {
-            if (dialogButton.equals(DialogButton.YES) || dialogButton.equals(DialogButton.OK)) {
+        if (dialogButton != DialogButton.NONE && nxtDialogButton != DialogButton.NONE) {
+            if (dialogButton == DialogButton.YES || dialogButton == DialogButton.OK) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
-                    int textId = dialogButton.equals(DialogButton.YES) ? R.string.yesTxt : R.string.ok;
+                    int textId = dialogButton == DialogButton.YES ? R.string.yesTxt : R.string.ok;
                     positiveBtnText = getString(textId);
                 }
                 builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
@@ -350,8 +350,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
                     }
                 });
             }
-            if (nxtDialogButton.equals(DialogButton.NO) || nxtDialogButton.equals(DialogButton.CANCEL)) {
-                int textId = nxtDialogButton.equals(DialogButton.NO) ? R.string.noTxt : R.string.cancel;
+            if (nxtDialogButton == DialogButton.NO || nxtDialogButton == DialogButton.CANCEL) {
+                int textId = nxtDialogButton == DialogButton.NO ? R.string.noTxt : R.string.cancel;
                 builder.setNegativeButton(textId, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
@@ -368,8 +368,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showAlertDialog(String title,
-                                String msg, DialogButton dialogButton,
-                                DialogButton nxtDialogButton) {
+                                String msg, @DialogButton.ButtonType int dialogButton,
+                                @DialogButton.ButtonType int nxtDialogButton) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, null);
     }
 

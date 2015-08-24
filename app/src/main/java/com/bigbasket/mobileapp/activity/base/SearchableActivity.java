@@ -143,7 +143,7 @@ public class SearchableActivity extends BackButtonActivity
         mostSearchesAdapter.update(categoryName, categoryUrl);
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
         setNextScreenNavigationContext(navigationCtx);

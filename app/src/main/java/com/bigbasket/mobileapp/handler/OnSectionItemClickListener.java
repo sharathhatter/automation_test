@@ -184,7 +184,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             case DestinationInfo.SEARCH:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                     ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-                    nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+                    nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
                     nameValuePairs.add(new NameValuePair(Constants.SLUG, destinationInfo.getDestinationSlug().trim()));
                     launchProductList(nameValuePairs);
                 }
@@ -192,7 +192,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             case DestinationInfo.PRODUCT_CATEGORY:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                     ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-                    nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+                    nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
                     nameValuePairs.add(new NameValuePair(Constants.SLUG, destinationInfo.getDestinationSlug()));
                     launchProductList(nameValuePairs);
                 }

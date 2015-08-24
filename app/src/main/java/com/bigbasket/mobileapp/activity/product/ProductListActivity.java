@@ -414,7 +414,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (!TextUtils.isEmpty(searchQuery)) {
             mTitlePassedViaIntent = searchQuery;
             mNameValuePairs = new ArrayList<>();
-            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
             mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
             if (getSupportFragmentManager().getFragments() != null &&
                     getSupportFragmentManager().getFragments().size() > 0) {
@@ -727,7 +727,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket, Product product,
                                                     String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
                                                     @Nullable EditText editTextQty) {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -109,7 +110,7 @@ public class ShowCartActivity extends BackButtonActivity {
             case R.id.action_empty_basket:
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
                 String numItems = preferences.getString(Constants.GET_CART, "0");
-                if (numItems != null && !numItems.equals("0")) {
+                if (!TextUtils.isEmpty(numItems) && !numItems.equals("0")) {
                     showAlertDialog(null, getString(R.string.removeAllProducts), DialogButton.YES,
                             DialogButton.NO, Constants.EMPTY_BASKET, null, getString(R.string.emptyBasket));
                 }
@@ -374,7 +375,7 @@ public class ShowCartActivity extends BackButtonActivity {
 
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
                                                     @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo,
