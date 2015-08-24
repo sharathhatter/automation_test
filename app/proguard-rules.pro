@@ -139,5 +139,3 @@
 }
 
 -keep class com.paymentsdk.android.model.** { *; }
--keep class * extends android.app.Activity { *; }
--keep class android.support.v4.** { *; }
