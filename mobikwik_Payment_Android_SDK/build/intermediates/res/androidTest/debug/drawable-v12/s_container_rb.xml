@@ -1,7 +1,0 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <corners android:bottomRightRadius="4dp" />
-
-    <solid android:color="#ffffff" />
-
-</shape><!-- From: file:/home/jugal/mobile-app/mobile-app/mobikwik_Payment_Android_SDK/src/main/res/drawable-v12/s_container_rb.xml --><!-- From: file:/home/jugal/mobile-app/mobile-app/mobikwik_Payment_Android_SDK/build/intermediates/bundles/debug/res/drawable-v12/s_container_rb.xml -->

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:state_pressed="true" android:drawable="@drawable/textbox_red"/>
-    <item android:state_focused="true"  android:drawable="@drawable/textbox_red"/>
-    <item  android:drawable="@drawable/textbox"/>
-
-</selector><!-- From: file:/home/jugal/mobile-app/mobile-app/mobikwik_Payment_Android_SDK/src/main/res/drawable/cvv_text_bg.xml --><!-- From: file:/home/jugal/mobile-app/mobile-app/mobikwik_Payment_Android_SDK/build/intermediates/bundles/debug/res/drawable/cvv_text_bg.xml -->
