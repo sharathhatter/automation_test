@@ -12,7 +12,8 @@
         android:id="@+id/img"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:contentDescription="@string/basketEmpty" />
 
     <TextView
         android:id="@+id/txt"

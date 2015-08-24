@@ -39,10 +39,6 @@
     <string name="UPDATE">UPDATE</string>
     <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
-    <string name="pin_text_para1">Delivery PIN is a 4-digit number. You can change the PIN to something that can be remembered easily.</string>
-    <string name="pin_text_para2">The PIN is required to acknowledge order delivery.</string>
-    <string name="pin_text_para3">We request you not to share with the delivery person.</string>
-    <string name="pin_text_para4">The PIN will also be sent to you as part of the order ready SMS or notification for each order.</string>
     <string name="placeorder">Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
@@ -177,7 +173,6 @@
     <string name="wallet_activity">My Wallet</string>
     <string name="delivery_time">Delivery Time:</string>
     <string name="delivery_charges">Delivery Charges:</string>
-    <string name="view_edit_pin_label">Delivery Pin</string>
     <string name="past_label">past</string>
     <string name="deleteShoppingList">Delete Shopping List</string>
 

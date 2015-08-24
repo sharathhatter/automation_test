@@ -59,17 +59,6 @@ public final class ProductView {
                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                           final boolean skipChildDropDownRendering,
                                           final T productDataAware, String navigationCtx,
-                                          String tabName) {
-        setProductView(productViewHolder, product, baseImgUrl, productDetailOnClickListener,
-                productViewDisplayDataHolder, skipChildDropDownRendering, productDataAware, navigationCtx,
-                tabName);
-    }
-
-    public static <T> void setProductView(final ProductViewHolder productViewHolder, final Product product, String baseImgUrl,
-                                          ProductDetailOnClickListener productDetailOnClickListener,
-                                          ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                          final boolean skipChildDropDownRendering,
-                                          final T productDataAware, String navigationCtx,
                                           @Nullable HashMap<String, Integer> cartInfo,
                                           String tabName) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);

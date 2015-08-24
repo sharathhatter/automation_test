@@ -398,15 +398,9 @@ public class Constants {
 
     public static final String CITY = "city";
     public static final String PIN_CODE_MAP = "pincode_map";
-    public static final String CITY_MAP = "city_map";
     public static final String VALUE = "value";
     public static final String VAL = "val";
     public static final String VAL_TYPE = "val_type";
-
-    //update pin
-    public static final String FOUR_ZERO = "0000";
-    public static final String NEW_PIN = "new_pin";
-    public static final String CURRENT_PIN = "current_pin";
 
     // wallet
     public static final String CURRENT_BALANCE = "current_balance";
@@ -436,7 +430,6 @@ public class Constants {
     public static final String NEWS_PREF = "news";
     public static final String DATE_PICKER = "datePicker";
     public static final String OTP_DIALOG_FLAG = "otp_dialog_flag";
-    public static final String IS_UPDATE_PROFILE = "isUpdateFrom";
 
     public static final String PAYMENT_TYPES = "payment_types";
     public static final String PAYMENT_TYPE = "payment_type";

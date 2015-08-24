@@ -379,7 +379,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
         if (otpValidationDialogFragment == null) {
-            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance(false);
+            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance();
         }
         if (otpValidationDialogFragment.isVisible()) {
             if (txtErrorValidateNumberVisibility) {

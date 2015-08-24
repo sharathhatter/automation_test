@@ -431,11 +431,6 @@
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.account.uiv3.UpdatePinActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
             android:name=".activity.account.uiv3.DoWalletActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"

@@ -43,7 +43,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiRespon
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
-import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
@@ -112,26 +111,21 @@ public interface BigBasketApiService {
     void browsePromoCategory(Callback<ApiResponse<BrowsePromoCategoryApiResponseContent>> browsePromoCategoryApiResponseCallback);
 
     @GET("/get-promo-detail")
-    void getPromoDetail(@Query(Constants.PROMO_ID) String promoId, Callback<ApiResponse<PromoDetailApiResponseContent>> promoDetailApiResponseCallback);
+    void getPromoDetail(@Query(Constants.PROMO_ID) String promoId,
+                        Callback<ApiResponse<PromoDetailApiResponseContent>> promoDetailApiResponseCallback);
 
     @GET("/get-promo-set-products")
     void getPromoSetProducts(@Query(Constants.PROMO_ID) String promoId, @Query(Constants.SET_ID) String setId,
                              Callback<ApiResponse<PromoSetProductsApiResponseContent>> promoSetProductsApiResponseCallback);
 
     @GET("/get-promo-summary/")
-    void getPromoSummary(@Query(Constants.PROMO_ID) String promoId, Callback<ApiResponse<PromoSummaryApiResponseContent>> promoSummaryApiResponseCallback);
+    void getPromoSummary(@Query(Constants.PROMO_ID) String promoId,
+                         Callback<ApiResponse<PromoSummaryApiResponseContent>> promoSummaryApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/add-promo-bundle/")
     void addPromoBundle(@Field(Constants.PROMO_ID) String promoId, Callback<ApiResponse<CartInfo>>
             addPromoBundleApiResponseCallback);
-
-    @GET("/get-pin/")
-    void getCurrentMemberPin(Callback<ApiResponse<UpdatePin>> updatePinCallback);
-
-    @FormUrlEncoded
-    @POST("/change-pin/")
-    void updateCurrentMemberPin(@Field(Constants.NEW_PIN) String newPin, Callback<BaseApiResponse> updatePinCallback);
 
     @GET("/get-current-wallet-balance/")
     void getCurrentWalletBalance(Callback<ApiResponse<CurrentWalletBalance>> currentWalletBalCallback);
@@ -218,7 +212,8 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/social-login/")
-    void socialLogin(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType, @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
+    void socialLogin(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
+                     @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
                      Callback<LoginApiResponse> loginApiResponseContent);
 
     @FormUrlEncoded

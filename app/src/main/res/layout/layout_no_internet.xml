@@ -4,68 +4,70 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/txtHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:id="@+id/txtHeader"
+        android:layout_alignParentTop="true"
+        android:background="@color/uiv3_action_bar_background"
+        android:gravity="center"
         android:minHeight="?attr/actionBarSize"
         android:padding="@dimen/margin_small"
-        android:textSize="@dimen/heading_2_text_size"
-        android:layout_alignParentTop="true"
-        android:gravity="center"
+        android:text="@string/app_name"
         android:textColor="@color/white"
-        android:background="@color/uiv3_action_bar_background" />
+        android:textSize="@dimen/heading_2_text_size" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/margin_large"
+        android:layout_height="match_parent"
         android:layout_below="@id/txtHeader"
-        android:layout_height="match_parent">
+        android:layout_marginTop="@dimen/margin_large">
 
 
         <ImageView
-            android:layout_width="wrap_content"
             android:id="@+id/imgEmptyPage"
-            android:src="@drawable/empty_no_internet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_height="wrap_content" />
+            android:contentDescription="@string/edit"
+            android:src="@drawable/empty_no_internet" />
 
 
         <TextView
+            android:id="@+id/txtEmptyMsg1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/imgEmptyPage"
-            android:id="@+id/txtEmptyMsg1"
             android:layout_marginTop="@dimen/margin_small"
             android:gravity="center"
             android:textColor="@color/uiv3_secondary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_below="@id/txtEmptyMsg1"
             android:id="@+id/layoutRetry"
-            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtEmptyMsg1"
             android:layout_centerHorizontal="true"
-            android:gravity="center_horizontal"
-            android:layout_height="wrap_content">
+            android:layout_marginTop="@dimen/margin_normal"
+            android:gravity="center_horizontal">
 
             <ImageView
                 android:id="@+id/imgViewRetry"
-                android:layout_height="@dimen/retry_Btn_dimen"
                 android:layout_width="@dimen/retry_Btn_dimen"
+                android:layout_height="@dimen/retry_Btn_dimen"
                 android:layout_centerVertical="true"
-                android:src="@drawable/empty_retry"
-                android:padding="@dimen/padding_normal" />
+                android:contentDescription="@string/retry"
+                android:padding="@dimen/padding_normal"
+                android:src="@drawable/empty_retry" />
 
             <TextView
                 android:layout_width="wrap_content"
-                android:textColor="@color/uiv3_secondary_text_color"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/imgViewRetry"
                 android:text="@string/tapRetry"
-                android:textSize="@dimen/primary_text_size"
-                android:layout_centerVertical="true"
-                android:layout_height="wrap_content" />
+                android:textColor="@color/uiv3_secondary_text_color"
+                android:textSize="@dimen/primary_text_size" />
 
         </RelativeLayout>
     </RelativeLayout>
