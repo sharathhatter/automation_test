@@ -120,44 +120,45 @@ public class ShoppingListSummaryActivity extends BBActivity {
         setTitle(null);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getShoppingListSummary(mShoppingListName.getSlug(), new Callback<ApiResponse<GetShoppingListSummaryResponse>>() {
-            @Override
-            public void success(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                switch (getShoppingListSummaryApiResponse.status) {
-                    case 0:
-                        if (mShoppingListName != null) {
-                            mShoppingListName.setAsSystem(getShoppingListSummaryApiResponse.apiResponseContent.isSystem);
+        bigBasketApiService.getShoppingListSummary(getCurrentNavigationContext(),
+                mShoppingListName.getSlug(), new Callback<ApiResponse<GetShoppingListSummaryResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
                         }
-                        renderShoppingListSummary(mShoppingListName,
-                                getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
-                                getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl,
-                                getShoppingListSummaryApiResponse.apiResponseContent.headerSection,
-                                getShoppingListSummaryApiResponse.apiResponseContent.headerSelectedOn);
-                        break;
-                    default:
-                        handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
-                                getShoppingListSummaryApiResponse.message, true);
-                        break;
-                }
-            }
+                        switch (getShoppingListSummaryApiResponse.status) {
+                            case 0:
+                                if (mShoppingListName != null) {
+                                    mShoppingListName.setAsSystem(getShoppingListSummaryApiResponse.apiResponseContent.isSystem);
+                                }
+                                renderShoppingListSummary(mShoppingListName,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.headerSection,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.headerSelectedOn);
+                                break;
+                            default:
+                                handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
+                                        getShoppingListSummaryApiResponse.message, true);
+                                break;
+                        }
+                    }
 
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error, true);
-            }
-        });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error, true);
+                    }
+                });
     }
 
     private void showNoShoppingListView(ViewGroup contentView) {
@@ -363,6 +364,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
         shoppingListSummary.setShoppingListName(shoppingListName);
         bundle.putParcelable(Constants.SHOPPING_LIST_SUMMARY, shoppingListSummary);
         bundle.putString(Constants.BASE_IMG_URL, baseImgUrl);
+        bundle.putString(Constants.TAB_NAME, shoppingListSummary.getFacetSlug());
         return bundle;
     }
 
@@ -393,7 +395,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
             Fragment fragment = getCurrentFragment();
             if (fragment != null) {
                 ((ShoppingListProductFragment) fragment).notifyDataChanged(cartInfo,
-                        shoppingListSummary, baseImgUrl);
+                        shoppingListSummary, baseImgUrl, shoppingListSummary.getFacetName());
             }
         }
     }

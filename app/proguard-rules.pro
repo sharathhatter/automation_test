@@ -133,6 +133,7 @@
     public static int e(...);
 }
 
+# PayU
 -keep class com.payu.sdk.** {
  *;
 }
@@ -155,3 +156,10 @@
 -keepclassmembers class com.payu.sdk.ProcessPaymentActivity$PayUJavaScriptInterface {
     <methods>;
 }
+
+# Mobikwik
+-keepclassmembers class com.paymentsdk.android.PGWebView$MyJavaScriptInterface{
+   public *;
+}
+
+-keep class com.paymentsdk.android.model.** { *; }

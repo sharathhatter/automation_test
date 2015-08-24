@@ -84,5 +84,4 @@ public class BigBasketApiAdapter {
 
         return restAdapter.create(BigBasketApiService.class);
     }
-
 }

@@ -294,11 +294,12 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
         if (cartInfo == null) {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                    getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext());
+                    getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
+                    TrackEventkeys.SINGLE_TAB_NAME);
         } else {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
                     getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
-                    cartInfo);
+                    cartInfo, TrackEventkeys.SINGLE_TAB_NAME);
         }
 
         productRecyclerView.setAdapter(productListAdapter);

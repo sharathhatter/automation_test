@@ -25,7 +25,7 @@ public class PayNowDetail implements Parcelable {
         dest.writeString(value);
 
         boolean isValTypeNull = valueType == null;
-        dest.writeByte(isValTypeNull ? (byte) 1: (byte) 0);
+        dest.writeByte(isValTypeNull ? (byte) 1 : (byte) 0);
         if (!isValTypeNull) {
             dest.writeString(valueType);
         }

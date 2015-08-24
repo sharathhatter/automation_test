@@ -1,7 +1,9 @@
 package com.bigbasket.mobileapp.activity.payment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
+import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
@@ -54,6 +57,33 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         getPaymentTypes();
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        processMobikWikResponse();
+    }
+
+    private void processMobikWikResponse() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
+        if (!TextUtils.isEmpty(txnId)) {
+            String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
+            String txnMsg = preferences.getString(Constants.MOBIKWIK_STATUS_MSG, null);
+            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
+                onFundWalletSuccess();
+            } else {
+                showAlertDialog(txnMsg,
+                        getString(R.string.txnFailureMsg));
+            }
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.remove(Constants.MOBIKWIK_ORDER_ID);
+            editor.remove(Constants.MOBIKWIK_STATUS);
+            editor.remove(Constants.MOBIKWIK_STATUS_MSG);
+            editor.commit();
+        }
+    }
+
     private void getPaymentTypes() {
         if (!checkInternetConnection()) {
             handler.sendOfflineError(true);
@@ -61,7 +91,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getFundWalletPayments("yes", "yes", new Callback<ApiResponse<GetPaymentTypes>>() {
+        bigBasketApiService.getFundWalletPayments("yes", "yes", "yes", new Callback<ApiResponse<GetPaymentTypes>>() {
             @Override
             public void success(ApiResponse<GetPaymentTypes> getPaymentTypesApiResponse, Response response) {
                 if (isSuspended()) return;
@@ -169,6 +199,39 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                         switch (getPrepaidPaymentApiResponse.status) {
                             case 0:
                                 PayuInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
+                                        getCurrentActivity());
+                                break;
+                            default:
+                                handler.sendEmptyMessage(getPrepaidPaymentApiResponse.status,
+                                        getPrepaidPaymentApiResponse.message);
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error);
+                    }
+                });
+                break;
+            case Constants.MOBIKWIK_PAYMENT:
+                bigBasketApiService.postFundWallet(mSelectedPaymentMethod, amount, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (getPrepaidPaymentApiResponse.status) {
+                            case 0:
+                                MobikwikInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
                                         getCurrentActivity());
                                 break;
                             default:

@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.payment.MobikwikAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayzappPaymentAware;
 import com.bigbasket.mobileapp.util.Constants;
@@ -83,6 +84,39 @@ public class PaymentInitiator<T> {
                         switch (getPrepaidPaymentApiResponse.status) {
                             case 0:
                                 ((PayzappPaymentAware) ctx).initializeHDFCPayzapp(getPrepaidPaymentApiResponse.apiResponseContent.payzappPostParams);
+                                break;
+                            default:
+                                ((HandlerAware) ctx).getHandler()
+                                        .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        try {
+                            ((ProgressIndicationAware) ctx).hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                    }
+                });
+                break;
+            case Constants.MOBIKWIK_PAYMENT:
+                bigBasketApiService.getOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        try {
+                            ((ProgressIndicationAware) ctx).hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (getPrepaidPaymentApiResponse.status) {
+                            case 0:
+                                ((MobikwikAware) ctx).initializeMobikwik(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
                                 break;
                             default:
                                 ((HandlerAware) ctx).getHandler()

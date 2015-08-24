@@ -46,7 +46,7 @@ public class AppCapability implements Parcelable {
         dest.writeByte(isMoEngageEnabled ? (byte) 1 : (byte) 0);
         dest.writeByte(isAnalyticsEnabled ? (byte) 1 : (byte) 0);
         dest.writeByte(isFBLoggerEnabled ? (byte) 1 : (byte) 0);
-        dest.writeByte(isMultiCityEnabled ? (byte) 1: (byte) 0);
+        dest.writeByte(isMultiCityEnabled ? (byte) 1 : (byte) 0);
     }
 
     public boolean isMoEngageEnabled() {

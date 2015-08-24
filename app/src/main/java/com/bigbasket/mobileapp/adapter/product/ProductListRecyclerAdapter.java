@@ -40,24 +40,27 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private String navigationCtx;
     private HashMap<String, Integer> cartInfo;
     private boolean mLoadingFailed;
+    private String mTabType;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                      ActivityAware activityAware, int productCount, String navigationCtx) {
+                                      ActivityAware activityAware, int productCount, String navigationCtx,
+                                      String mTabType) {
         this.baseImgUrl = baseImgUrl;
         this.productViewDisplayDataHolder = productViewDisplayDataHolder;
         this.activityAware = activityAware;
         this.products = products;
         this.serverListSize = productCount;
         this.navigationCtx = navigationCtx;
+        this.mTabType = mTabType;
     }
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                       ActivityAware activityAware, int productCount, String navigationCtx,
-                                      HashMap<String, Integer> cartInfo) {
+                                      HashMap<String, Integer> cartInfo, String mTabType) {
         this(products, baseImgUrl, productViewDisplayDataHolder, activityAware, productCount,
-                navigationCtx);
+                navigationCtx, mTabType);
         this.cartInfo = cartInfo;
     }
 
@@ -114,7 +117,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             ProductView.setProductView((ProductViewHolder) viewHolder, product, baseImgUrl,
                     new ProductDetailOnClickListener(product.getSku(), activityAware),
                     productViewDisplayDataHolder,
-                    false, activityAware, navigationCtx, cartInfo);
+                    false, activityAware, navigationCtx, cartInfo, mTabType);
 
             int endPosition = position + DELTA_FOR_PRELOADING_IMG;
             if (endPosition < products.size()) {
