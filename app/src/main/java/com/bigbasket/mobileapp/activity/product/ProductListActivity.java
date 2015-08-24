@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.activity.product;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -60,7 +61,6 @@ import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
-import com.moe.imageLib.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,7 +124,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
         setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
-        new ProductListTask<>(this, paramMap).startTask();
+        new ProductListTask<>(this, paramMap, getCurrentNavigationContext()).startTask();
     }
 
     @Override
@@ -218,7 +218,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
                 ProductInfo productInfo = productTabInfo.getProductInfo();
                 Bundle bundle = getBundleForProductListFragment(productTabInfo, productInfo,
-                        productTabData.getBaseImgUrl());
+                        productTabData.getBaseImgUrl(), true);
                 GenericProductListFragment genericProductListFragment = new GenericProductListFragment();
                 genericProductListFragment.setArguments(bundle);
                 // Not using onChangeFragment/addToMainLayout since their implementation has been changed in this class
@@ -266,7 +266,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             ProductInfo productInfo = productTabInfo.getProductInfo();
             if (productInfo != null) {
                 Bundle bundle = getBundleForProductListFragment(productTabInfo,
-                        productInfo, productTabData.getBaseImgUrl());
+                        productInfo, productTabData.getBaseImgUrl(), false);
                 bbTabs.add(new BBTab<>(productTabInfo.getTabName(),
                         GenericProductListFragment.class, bundle));
                 if (productInfo.getCurrentPage() == -1) {
@@ -356,17 +356,39 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (mTabType == null) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(Constants.TAB_NAME, mTabType);
+        map = getProductListEventParams(mNameValuePairs, map);
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
+    }
+
+
+    private HashMap<String, String> getProductListEventParams(ArrayList<NameValuePair> nameValuePairs,
+                                                              HashMap<String, String> map) {
+        if (nameValuePairs == null || nameValuePairs.size() == 0) return map;
+        boolean is_express = false, filterApplied = false;
+        for (NameValuePair nameValuePair : nameValuePairs) {
+            if (nameValuePair.getName() != null && nameValuePair.getValue() != null) {
+                if (nameValuePair.getName().equalsIgnoreCase("is_express"))
+                    is_express = true;
+                else if (nameValuePair.getName().equalsIgnoreCase("filter_on"))
+                    filterApplied = true;
+                else
+                    map.put(nameValuePair.getName(), nameValuePair.getValue());
+            }
+        }
+        map.put(TrackEventkeys.IS_EXPRESS, is_express ? "yes" : "no");
+        map.put(TrackEventkeys.FILTER_APPLIED, filterApplied ? "yes" : "no");
+        return map;
     }
 
     private Bundle getBundleForProductListFragment(ProductTabInfo productTabInfo,
                                                    ProductInfo productInfo,
-                                                   String baseImgUrl) {
+                                                   String baseImgUrl, boolean singleTab) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.PRODUCT_INFO, productInfo);
         bundle.putString(Constants.BASE_IMG_URL, baseImgUrl);
         bundle.putParcelableArrayList(Constants.PRODUCT_QUERY, mNameValuePairs);
         bundle.putString(Constants.TAB_TYPE, productTabInfo.getTabType());
+        bundle.putBoolean(Constants.SINGLE_TAB, singleTab);
         return bundle;
     }
 

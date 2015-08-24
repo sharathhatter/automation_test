@@ -52,15 +52,18 @@ public class BasketOperationTask<T> {
     private HashMap<String, Integer> cartInfo;
     @Nullable
     private EditText editTextQty;
+    private String tabName;
 
     public BasketOperationTask(T context, @BasketOperation.Mode int basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, View viewAddToBasket, String eventName,
                                String navigationCtx, @Nullable View productView,
                                @Nullable HashMap<String, Integer> cartInfo,
-                               @Nullable EditText editTextQty) {
+                               @Nullable EditText editTextQty,
+                               String tabName) {
         this(context, basketOperation, product, basketCountTextView, viewDecQty, viewIncQty,
-                viewAddToBasket, "1", eventName, navigationCtx, productView, cartInfo, editTextQty);
+                viewAddToBasket, "1", eventName, navigationCtx, productView, cartInfo, editTextQty,
+                tabName);
     }
 
     public BasketOperationTask(T context, @BasketOperation.Mode int basketOperation, @NonNull Product product,
@@ -69,7 +72,8 @@ public class BasketOperationTask<T> {
                                String qty, String eventName,
                                String navigationCtx, @Nullable View productView,
                                @Nullable HashMap<String, Integer> cartInfo,
-                               @Nullable EditText editTextQty) {
+                               @Nullable EditText editTextQty,
+                               String tabName) {
         this.context = context;
         this.product = product;
         this.basketOperation = basketOperation;
@@ -83,6 +87,7 @@ public class BasketOperationTask<T> {
         this.navigationCtx = navigationCtx;
         this.cartInfo = cartInfo;
         this.editTextQty = editTextQty;
+        this.tabName = tabName;
     }
 
     public void startTask() {
@@ -98,16 +103,16 @@ public class BasketOperationTask<T> {
         String reqProdId = product.getSku();
         switch (basketOperation) {
             case BasketOperation.INC:
-                bigBasketApiService.incrementCartItem(reqProdId, qty, new CartOperationApiResponseCallback());
+                bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
             case BasketOperation.DEC:
-                bigBasketApiService.decrementCartItem(reqProdId, qty, new CartOperationApiResponseCallback());
+                bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
             case BasketOperation.SET:
-                bigBasketApiService.setCartItem(reqProdId, qty, new CartOperationApiResponseCallback());
+                bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
             case BasketOperation.EMPTY:
-                bigBasketApiService.setCartItem(reqProdId, "0", new CartOperationApiResponseCallback());
+                bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", new CartOperationApiResponseCallback());
                 break;
         }
     }
@@ -125,6 +130,7 @@ public class BasketOperationTask<T> {
         if (navigationCtx != null) {
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         }
+        eventAttribs.put(TrackEventkeys.TAB_NAME, tabName);
         ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false, true);
     }
 

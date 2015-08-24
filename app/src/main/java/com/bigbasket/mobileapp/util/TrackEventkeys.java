@@ -27,7 +27,6 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX_WALLET_ACTIVITIES = "wallet_activity";
     public static final String NAVIGATION_CTX_DEEP_LINK = "deep_link";
     public static final String SECTION_ITEM = "section item";
-    public static final String SECTION_TYPE = "section type";
     public static final String BANNER_ID = "banner id";
     public static final String BANNER_SLUG = "banner slug";
     public static final String PRODUCT_ID = "skuId";
@@ -142,12 +141,18 @@ public final class TrackEventkeys {
     public static final String PS_SCAN = "ps.scan";
     public static final String PS = "ps";
     public static final String PS_C_PL = "ps.c.pl";
+    public static final String PS_T_PL = "ps.t.pl";
+    public static final String PS_H_PL = "ps.h.pl";
     public static final String URL = "url";
     public static final String FILTER_ON = "filter_on";
     public static final String SORT_ON = "sort_on";
     public static final String SELECTED_SLOT = "selected_slot";
     public static final String PROMO_NAME = "promo_name";
     public static final String ITEM_TAB = "order_item";
+    public static final String TAB_NAME = "tab_name";
+    public static final String SINGLE_TAB_NAME = "none";
+    public static final String FILTER_APPLIED = "filter_applied";
+    public static final String IS_EXPRESS = "is_express";
 
     private TrackEventkeys() {
     }

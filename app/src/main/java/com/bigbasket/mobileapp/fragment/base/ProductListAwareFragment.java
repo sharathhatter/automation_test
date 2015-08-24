@@ -57,6 +57,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     private String mBaseImgUrl;
     private String mTabType;
     private boolean mHasProductLoadingFailed;
+    private boolean mHasSingleTab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,6 +81,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             ArrayList<NameValuePair> nameValuePairs = getArguments().getParcelableArrayList(Constants.PRODUCT_QUERY);
             mNameValuePairs = NameValuePair.toMap(nameValuePairs);
             mTabType = getArguments().getString(Constants.TAB_TYPE);
+            mHasSingleTab = getArguments().getBoolean(Constants.SINGLE_TAB, false);
             setProductListView();
         }
     }
@@ -183,7 +185,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     .build();
             mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, mBaseImgUrl,
                     productViewDisplayDataHolder, this, mProductInfo.getProductCount(),
-                    getNextScreenNavigationContext(), cartInfo);
+                    getNextScreenNavigationContext(), cartInfo,
+                    mHasSingleTab ? TrackEventkeys.SINGLE_TAB_NAME : mTabType);
 
             productRecyclerView.setAdapter(mProductListRecyclerAdapter);
             contentView.addView(productRecyclerView);

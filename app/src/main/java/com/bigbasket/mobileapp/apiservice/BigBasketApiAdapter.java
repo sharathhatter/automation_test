@@ -72,5 +72,4 @@ public class BigBasketApiAdapter {
 
         bigBasketApiService = restAdapter.create(BigBasketApiService.class);
     }
-
 }
