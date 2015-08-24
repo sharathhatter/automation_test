@@ -167,7 +167,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
                 editTextLastName.getText().toString());
         editor.putString(Constants.NEWS_PREF, String.valueOf(chkReceivePromos.isChecked()));
         editor.commit();
-        AuthParameters.updateInstance(getActivity());
+        AuthParameters.reset();
         setResultCodeOnProfileUpdate();
     }
 

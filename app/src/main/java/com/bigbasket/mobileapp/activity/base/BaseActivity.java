@@ -484,14 +484,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 editTextArea.setText("");
                 String pinCode = editTextPincode.getText().toString();
                 ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaName(pinCode, cityName);
-                if (areaNameArrayList != null && areaNameArrayList.size() > 1) {
+                if (areaNameArrayList.size() > 1) {
                     areaAdapter.clear();
                     for (String areaName : areaNameArrayList)
                         areaAdapter.add(areaName);
                     areaAdapter.notifyDataSetChanged();
                     editTextArea.requestFocus();
                     editTextArea.showDropDown();
-                } else if (areaNameArrayList != null && areaNameArrayList.size() == 1) {
+                } else if (areaNameArrayList.size() == 1) {
                     editTextArea.setText(areaNameArrayList.get(0));
                 }
             }

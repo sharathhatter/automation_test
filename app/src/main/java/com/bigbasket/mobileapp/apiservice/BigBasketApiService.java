@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.apiservice;
 
-import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.AddAllShoppingListItemResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
@@ -13,6 +12,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiRespon
 import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.GetAreaInfoResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
@@ -64,6 +64,12 @@ import retrofit.http.Query;
 import retrofit.http.QueryMap;
 
 public interface BigBasketApiService {
+
+    @GET("/cities/")
+    void listCities(Callback<ArrayList<City>> cities);
+
+    @GET("/cities/")
+    ArrayList<City> listCitySynchronously();
 
     @FormUrlEncoded
     @POST("/register-device/")
@@ -269,7 +275,7 @@ public interface BigBasketApiService {
     void changeCity(@Query("new_city_id") String newCityId, Callback<OldBaseApiResponse> oldBaseApiResponseCallback);
 
     @GET("/get-area-info/")
-    void getAreaInfo(CallbackGetAreaInfo callbackGetAreaInfo);
+    ApiResponse<GetAreaInfoResponse> getAreaInfo(@Query(Constants.CITY_ID) String cityId);
 
     @FormUrlEncoded
     @POST("/post-case-feedback/")

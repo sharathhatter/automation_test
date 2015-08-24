@@ -17,7 +17,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
-        AuthParameters.updateInstance(this);
+        AuthParameters.reset();
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
         LocalyticsWrapper.integrate(this);

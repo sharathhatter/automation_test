@@ -220,7 +220,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
                         editor.putString(Constants.MEMBER_EMAIL_KEY, null);
                         editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
                         editor.commit();
-                        AuthParameters.updateInstance(getCurrentActivity());
+                        AuthParameters.reset();
 
                         startLandingPage();
                     }

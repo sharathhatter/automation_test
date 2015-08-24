@@ -562,7 +562,6 @@ public class Constants {
     public static final String ON_TOGGLE_ACTIONS = "on_action_trigger";
 
     public static final String NOT_ALPHANUMERIC_TXT_SHOPPING_LIST = "aplhaNumericTxt";
-    public static final int CALL_AREA_INFO = 75;
 
     public static final String FORGOT_PASSWORD_DIALOG = "FPassDialog";
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";

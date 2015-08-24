@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bigbasket.mobileapp"
-    android:installLocation="auto">
+    android:installLocation="auto" >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -22,8 +22,9 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
 
-    <!-- MOEngage UBox-->
+    <!-- MOEngage UBox -->
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
@@ -37,7 +38,6 @@
         android:xlargeScreens="true" />
 
     <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
-
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <application
@@ -46,7 +46,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/BBAppTheme"
-        tools:replace="android:theme">
+        tools:replace="android:theme" >
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".activity.product.ProductListActivity" />
@@ -56,19 +56,22 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Please make sure that appFlyer receiver must be at the top of all other receivers
-         The AppsFlyer Install Receiver is first and will broadcast to all receivers placed below it-->
+        <!--
+         Please make sure that appFlyer receiver must be at the top of all other receivers
+         The AppsFlyer Install Receiver is first and will broadcast to all receivers placed below it
+        -->
 
         <receiver
             android:name="com.appsflyer.MultipleInstallBroadcastReceiver"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
@@ -79,14 +82,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
-
         <activity
             android:name=".activity.DeepLinkDispatcherActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan">
-
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -281,10 +281,11 @@
         <activity
             android:name=".activity.base.uiv3.BBActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -293,7 +294,7 @@
             android:name=".activity.product.ProductListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -307,19 +308,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/FilterTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.LandingPageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.order.uiv3.ShowCartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.product.DiscountActivity"
             android:screenOrientation="portrait"
@@ -343,7 +341,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.order.MemberAddressFormActivity"
             android:screenOrientation="portrait"
@@ -433,25 +430,21 @@
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.account.uiv3.UpdatePinActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.account.uiv3.DoWalletActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.payment.PayNowActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.payment.PayNowThankyouActivity"
             android:screenOrientation="portrait"
@@ -481,11 +474,10 @@
             android:theme="@style/BaseAppTheme.SearchViewTheme"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
-
         <!-- MOEngage -->
         <receiver
             android:name="com.moe.pushlibrary.PushGcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
@@ -495,13 +487,12 @@
         </receiver>
 
         <!-- MOENGAGE RECEIVER FOR RECEIVING INSTALLATION INTENT -->
-        <receiver android:name="com.moe.pushlibrary.InstallReceiver">
+        <receiver android:name="com.moe.pushlibrary.InstallReceiver" >
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver">
+        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
@@ -511,9 +502,11 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.payu.sdk.PaymentOptionsActivity"
+        <activity
+            android:name="com.payu.sdk.PaymentOptionsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.payu.sdk.ProcessPaymentActivity"
+        <activity
+            android:name="com.payu.sdk.ProcessPaymentActivity"
             android:screenOrientation="portrait" />
 
         <provider
@@ -521,11 +514,11 @@
             android:authorities="com.bigbasket.mobileapp.moengage.provider"
             android:exported="false" />
 
-        <!-- push notification landing page Need to change parent Activity-->
+        <!-- push notification landing page Need to change parent Activity -->
         <activity
             android:name="com.moe.pushlibrary.activities.MoEActivity"
             android:parentActivityName=".activity.SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.SplashActivity" />
@@ -557,23 +550,27 @@
             android:name="com.moengage.addon.ubox.UBoxMessenger"
             android:exported="false" />
 
-
         <meta-data
             android:name="LOCALYTICS_APP_KEY"
             android:value="@string/localytics_api_key" />
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${crashlytics_id}" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="payu_merchant_id"
+            android:value="@string/payu_merchant_id" />
+        <meta-data
+            android:name="payu_merchant_salt"
+            android:value="@string/payu_merchant_salt" />
+        <!-- <meta-data android:name="payu_disable_back" android:value="true"/> -->
 
-        <meta-data android:name="payu_merchant_id" android:value="@string/payu_merchant_id"/>
-        <meta-data android:name="payu_merchant_salt" android:value="@string/payu_merchant_salt"/>
-        <!--<meta-data android:name="payu_disable_back" android:value="true"/>-->
-
+        <service
+            android:name=".service.AreaPinInfoIntentService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

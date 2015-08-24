@@ -10,7 +10,9 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.util.Constants;
 
 public class AuthParameters {
-    private static AuthParameters authParameters;
+    private static volatile AuthParameters authParameters;
+    private static final Object lock = new Object();
+
     private String visitorId;
     private String bbAuthToken;
     private String osVersion;
@@ -48,17 +50,23 @@ public class AuthParameters {
         }
     }
 
-    public static void updateInstance(Context context) {
-        if (context == null) return;
-        authParameters = new AuthParameters(context);
-        BigBasketApiAdapter.refreshBigBasketApiService(context);
+    public static void reset() {
+        authParameters = null;
+        BigBasketApiAdapter.reset();
     }
 
     public static AuthParameters getInstance(Context context) {
-        if (authParameters == null) {
-            authParameters = new AuthParameters(context);
+        AuthParameters localInstance = authParameters;
+        if (localInstance == null) {
+            synchronized (lock) {
+                localInstance = authParameters;
+                if (localInstance == null) {
+                    localInstance = new AuthParameters(context);
+                    authParameters = localInstance;
+                }
+            }
         }
-        return authParameters;
+        return localInstance;
     }
 
     public String getVisitorId() {

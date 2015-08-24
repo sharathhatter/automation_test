@@ -4,9 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.support.annotation.NonNull;
 
 import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
-import com.bigbasket.mobileapp.model.account.City;
 
 import java.util.ArrayList;
 
@@ -69,7 +69,7 @@ public class AreaPinInfoAdapter {
         return pinCode;
     }
 
-
+    @NonNull
     public ArrayList<String> getAreaNameList(String cityName) {
         Cursor areaNameCursor = null;
         String areaNameStr;
@@ -93,7 +93,7 @@ public class AreaPinInfoAdapter {
         return result;
     }
 
-
+    @NonNull
     public ArrayList<String> getPinList(String cityName) {
         Cursor areaPinCursor = null;
         String areaNameStr;
@@ -117,27 +117,7 @@ public class AreaPinInfoAdapter {
         return result;
     }
 
-    public ArrayList<City> getCities() {
-        Cursor cursor = null;
-        ArrayList<City> cityNames = new ArrayList<>();
-        try {
-            cursor = DatabaseHelper.db.query(true, tableName, new String[]{COLUMN_CITY, COLUMN_CITY_ID}
-                    , null, null, null, null, COLUMN_CITY + " ASC", null);
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    cityNames.add(new City(cursor));
-                } while (cursor.moveToNext());
-            }
-        } catch (SQLiteException ex) {
-            ex.getStackTrace();
-        } finally {
-            if (cursor != null && !cursor.isClosed()) {
-                cursor.close();
-            }
-        }
-        return cityNames;
-    }
-
+    @NonNull
     public ArrayList<String> getAreaName(String pinCode, String cityName) {
         Cursor areaNameCursor = null;
         ArrayList<String> areaNameArrayList = new ArrayList<>();

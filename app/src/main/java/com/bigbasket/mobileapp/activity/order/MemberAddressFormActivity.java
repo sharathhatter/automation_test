@@ -22,19 +22,16 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
-import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.City;
-import com.bigbasket.mobileapp.task.uiv3.GetAreaPinInfoTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -52,7 +49,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MemberAddressFormActivity extends BackButtonActivity implements PinCodeAware, OtpDialogAware {
+public class MemberAddressFormActivity extends BackButtonActivity implements OtpDialogAware {
 
     private Address mAddress;
     private View base;
@@ -76,16 +73,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         int cityId = Integer.parseInt(preferences.getString(Constants.CITY_ID, "1"));
         mChoosenCity = new City(cityName, cityId);
 
-        if (CityManager.isAreaPinInfoDataValidStale(this)) {
-            handleMessage(Constants.CALL_AREA_INFO);
-        } else {
-            showForm();
-        }
+        showForm();
     }
 
     private ArrayList<City> getCities() {
-        AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(this);
-        return areaPinInfoAdapter.getCities();
+        return CityManager.getStoredCity(this);
     }
 
     private void showForm() {
@@ -353,12 +345,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     }
 
     @Override
-    public void onPinCodeFetchSuccess() {
-        showForm();
-        setAdapterArea(editTextArea, editTextPincode, mChoosenCity.getName());
-    }
-
-    @Override
     public void validateOtp(String otpCode) {
         uploadAddress(otpCode);
     }
@@ -425,9 +411,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
 
     public void handleMessage(int what) {
         switch (what) {
-            case Constants.CALL_AREA_INFO:
-                new GetAreaPinInfoTask<>(this).startTask();
-                break;
             case Constants.VALIDATE_MOBILE_NUMBER_POPUP:
                 validateMobileNumber(false, mErrorMsg);
                 break;

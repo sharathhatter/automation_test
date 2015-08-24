@@ -331,7 +331,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 appCapability.isAnalyticsEnabled(),
                 appCapability.isFBLoggerEnabled(),
                 appCapability.isMultiCityEnabled(), getCurrentActivity());
-        AuthParameters.updateInstance(getCurrentActivity());
+        AuthParameters.reset();
     }
 
     private void callGetAppData(String client, String versionName) {

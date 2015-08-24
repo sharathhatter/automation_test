@@ -63,6 +63,7 @@ import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -79,6 +80,7 @@ import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
+import com.bigbasket.mobileapp.service.AreaPinInfoIntentService;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -159,6 +161,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         });
         setNavDrawer(toolbar, savedInstanceState);
         setViewBasketFloatingButton();
+        if (CityManager.isAreaPinInfoDataStale(getCurrentActivity())) {
+            startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
+        }
     }
 
     public void onNoFragmentsInLayout() {
