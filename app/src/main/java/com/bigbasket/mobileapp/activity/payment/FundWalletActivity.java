@@ -25,7 +25,6 @@ import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
-import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.model.order.PaymentType;
@@ -60,20 +59,20 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
 
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         processMobikWikResponse();
     }
 
-    private void processMobikWikResponse(){
+    private void processMobikWikResponse() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
-        if(!TextUtils.isEmpty(txnId)){
+        if (!TextUtils.isEmpty(txnId)) {
             String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
             String txnMsg = preferences.getString(Constants.MOBIKWIK_STATUS_MSG, null);
-            if(!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0){
+            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
                 onFundWalletSuccess();
-            }else {
+            } else {
                 showAlertDialog(txnMsg,
                         getString(R.string.txnFailureMsg));
             }

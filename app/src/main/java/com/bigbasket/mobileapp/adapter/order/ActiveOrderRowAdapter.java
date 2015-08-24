@@ -51,7 +51,9 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     private static final int VIEW_TYPE_FULFILLMENT_INFO = 3;
     private List<Object> orderList;
     private LayoutInflater inflater;
-    private @OrderItemDisplaySource.Type int orderItemDisplaySource;
+    private
+    @OrderItemDisplaySource.Type
+    int orderItemDisplaySource;
     private boolean isReadOnlyBasket;
     private HashMap<String, String> fulfillmentInfoIdAndIconHashMap;
     private HashMap<String, AnnotationInfo> annotationHashMap;

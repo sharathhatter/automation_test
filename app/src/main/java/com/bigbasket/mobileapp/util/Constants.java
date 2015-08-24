@@ -575,7 +575,7 @@ public class Constants {
 
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
-    public static final String  MOBIKWIKSDK = "MobikwikSDK";
+    public static final String MOBIKWIKSDK = "MobikwikSDK";
     public static final String MOBIKWIK_ORDER_ID = "orderid";
     public static final String MOBIKWIK_STATUS_CODE = "statuscode";
     public static final String MOBIKWIK_RESPONSE_STATUS_MSG = "statusmessage";
@@ -592,15 +592,15 @@ public class Constants {
     public static final String MOBIKWIK_CALL_BACK_URL = "pgResponseUrl";
     public static final String MOBIKWIK_RESPONSE_HANDLER_CLASS = "com.bigbasket.mobileapp.activity.payment.MobiKwikResponseHandlerActivity";
     public static final String MOBIKWIK_MODE_VALUE = BuildConfig.DEBUG ? "0" : "1";
-    public static final String MOBIKWIK_SDK_SIGN_VALUE  = "a_lvjRAEvSbC0ENdEVuGC0B2Uo9";
+    public static final String MOBIKWIK_SDK_SIGN_VALUE = "a_lvjRAEvSbC0ENdEVuGC0B2Uo9";
 
-    public static final String  MOBIKWIK_PAYMENT_OPTION = "paymentOption";
-    public static final String  MOBIKWIK_PAYMENT_MW = "mw";
+    public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
+    public static final String MOBIKWIK_PAYMENT_MW = "mw";
 
 
-    public static final String  MOBIKWIK_ADD_MORE_LINK = "mAddMoreLink";
-    public static final String  MOBIKWIK_ADD_MORE_MSG = "mAddMoreMsg";
-    public static final String  MOBIKWIK_ORDER_CREATED = "mOrdersCreated";
+    public static final String MOBIKWIK_ADD_MORE_LINK = "mAddMoreLink";
+    public static final String MOBIKWIK_ADD_MORE_MSG = "mAddMoreMsg";
+    public static final String MOBIKWIK_ORDER_CREATED = "mOrdersCreated";
 
     public static final String MOBIKWIK_STATUS = "status";
     public static final String MOBIKWIK_STATUS_MSG = "statusMsg";

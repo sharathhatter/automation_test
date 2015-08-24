@@ -63,7 +63,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     }
 
     private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl,
-                                                                            String tabName) {
+                                String tabName) {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;

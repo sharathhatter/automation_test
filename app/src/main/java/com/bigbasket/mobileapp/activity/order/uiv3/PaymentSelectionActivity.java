@@ -55,10 +55,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
-import com.google.gson.Gson;
 import com.payu.sdk.PayU;
-
-import org.apache.http.protocol.HTTP;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,23 +101,23 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         processMobikWikResponse();
     }
 
-    private void processMobikWikResponse(){
+    private void processMobikWikResponse() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
-        if(!TextUtils.isEmpty(txnId)){
+        if (!TextUtils.isEmpty(txnId)) {
             String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
             String txnMsg = preferences.getString(Constants.MOBIKWIK_STATUS_MSG, null);
-            if(!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0){
+            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
                 String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
                 int mobiKwikTxnId = Integer.parseInt(txnId);
                 String mMobiKwikTxnId = String.valueOf(mobiKwikTxnId / 1000); //todo remove this
                 new ValidatePaymentHandler<>(this, mPotentialOrderId, mMobiKwikTxnId, fullOrderId).start();
-            }else {
+            } else {
                 showAlertDialog(txnMsg, getString(R.string.txnFailureMsg), Constants.SOURCE_PLACE_ORDER);
             }
 
@@ -478,7 +475,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             } else {
                 new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
             }
-        }else if (requestCode == Constants.MOBIKWIK_REQUEST_CODE) {
+        } else if (requestCode == Constants.MOBIKWIK_REQUEST_CODE) {
             String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
             new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
         } else {

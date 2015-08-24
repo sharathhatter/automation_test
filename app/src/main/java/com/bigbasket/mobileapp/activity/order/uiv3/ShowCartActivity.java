@@ -304,46 +304,46 @@ public class ShowCartActivity extends BackButtonActivity {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
         bigBasketApiService.cartGet(isCurrentPageRequest ?
-                        getNextScreenNavigationContext() :getCurrentNavigationContext(),
+                        getNextScreenNavigationContext() : getCurrentNavigationContext(),
                 fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
-            @Override
-            public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
-                if (isSuspended()) return;
-                hideProgressView();
-                if (cartGetApiResponseContentApiResponse.status == 0) {
-                    CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
-                    setCartSummary(cartSummary);
-                    setBasketNumItemsDisplay();
-                    editor.putString(Constants.GET_CART,
-                            String.valueOf(cartSummary.getNoOfItems()));
-                    fulfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
-                    annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
-                    if (cartGetApiResponseContentApiResponse.apiResponseContent.
-                            cartGetApiCartItemsContent != null
-                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
-                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
-                        cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
-                                cartGetApiCartItemsContent.cartItemLists;
-                        renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
-                                .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl, isCurrentPageRequest);
-                    } else {
-                        showBasketEmptyMessage();
-                        editor.putString(Constants.GET_CART, "0");
+                    @Override
+                    public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        hideProgressView();
+                        if (cartGetApiResponseContentApiResponse.status == 0) {
+                            CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
+                            setCartSummary(cartSummary);
+                            setBasketNumItemsDisplay();
+                            editor.putString(Constants.GET_CART,
+                                    String.valueOf(cartSummary.getNoOfItems()));
+                            fulfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
+                            annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
+                            if (cartGetApiResponseContentApiResponse.apiResponseContent.
+                                    cartGetApiCartItemsContent != null
+                                    && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
+                                    && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
+                                cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
+                                        cartGetApiCartItemsContent.cartItemLists;
+                                renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
+                                        .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl, isCurrentPageRequest);
+                            } else {
+                                showBasketEmptyMessage();
+                                editor.putString(Constants.GET_CART, "0");
+                            }
+                        } else {
+                            handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
+                                    cartGetApiResponseContentApiResponse.message);
+                        }
+                        editor.commit();
                     }
-                } else {
-                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
-                            cartGetApiResponseContentApiResponse.message);
-                }
-                editor.commit();
-            }
 
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                hideProgressView();
-                handler.handleRetrofitError(error, true);
-            }
-        });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        hideProgressView();
+                        handler.handleRetrofitError(error, true);
+                    }
+                });
     }
 
     private void showBasketEmptyMessage() {

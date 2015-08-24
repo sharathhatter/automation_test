@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.activity.product;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -60,7 +61,6 @@ import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
-import android.os.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -362,14 +362,14 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
 
     private HashMap<String, String> getProductListEventParams(ArrayList<NameValuePair> nameValuePairs,
-                                             HashMap<String, String> map) {
+                                                              HashMap<String, String> map) {
         if (nameValuePairs == null || nameValuePairs.size() == 0) return map;
-        boolean is_express= false, filterApplied = false;
+        boolean is_express = false, filterApplied = false;
         for (NameValuePair nameValuePair : nameValuePairs) {
             if (nameValuePair.getName() != null && nameValuePair.getValue() != null) {
-                if(nameValuePair.getName().equalsIgnoreCase("is_express"))
+                if (nameValuePair.getName().equalsIgnoreCase("is_express"))
                     is_express = true;
-                else if(nameValuePair.getName().equalsIgnoreCase("filter_on"))
+                else if (nameValuePair.getName().equalsIgnoreCase("filter_on"))
                     filterApplied = true;
                 else
                     map.put(nameValuePair.getName(), nameValuePair.getValue());

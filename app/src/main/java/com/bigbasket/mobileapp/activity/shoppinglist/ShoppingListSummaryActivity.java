@@ -122,43 +122,43 @@ public class ShoppingListSummaryActivity extends BBActivity {
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getShoppingListSummary(getCurrentNavigationContext(),
                 mShoppingListName.getSlug(), new Callback<ApiResponse<GetShoppingListSummaryResponse>>() {
-            @Override
-            public void success(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                switch (getShoppingListSummaryApiResponse.status) {
-                    case 0:
-                        if (mShoppingListName != null) {
-                            mShoppingListName.setAsSystem(getShoppingListSummaryApiResponse.apiResponseContent.isSystem);
+                    @Override
+                    public void success(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
                         }
-                        renderShoppingListSummary(mShoppingListName,
-                                getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
-                                getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl,
-                                getShoppingListSummaryApiResponse.apiResponseContent.headerSection,
-                                getShoppingListSummaryApiResponse.apiResponseContent.headerSelectedOn);
-                        break;
-                    default:
-                        handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
-                                getShoppingListSummaryApiResponse.message, true);
-                        break;
-                }
-            }
+                        switch (getShoppingListSummaryApiResponse.status) {
+                            case 0:
+                                if (mShoppingListName != null) {
+                                    mShoppingListName.setAsSystem(getShoppingListSummaryApiResponse.apiResponseContent.isSystem);
+                                }
+                                renderShoppingListSummary(mShoppingListName,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.headerSection,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.headerSelectedOn);
+                                break;
+                            default:
+                                handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
+                                        getShoppingListSummaryApiResponse.message, true);
+                                break;
+                        }
+                    }
 
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error, true);
-            }
-        });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error, true);
+                    }
+                });
     }
 
     private void showNoShoppingListView(ViewGroup contentView) {

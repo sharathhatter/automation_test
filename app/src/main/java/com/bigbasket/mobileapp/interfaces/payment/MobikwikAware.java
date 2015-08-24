@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.interfaces.payment;
 
-import android.content.Intent;
-
 import java.util.HashMap;
 
 /**

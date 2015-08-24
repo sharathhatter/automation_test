@@ -7,11 +7,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public final class ShoppingListOption {
-    private ShoppingListOption() {}
+    private ShoppingListOption() {
+    }
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ADD_TO_LIST, DELETE_ITEM, ADD_ALL_ITEM, CREATE})
-    public @interface Method{}
+    public @interface Method {
+    }
 
     public static final int ADD_TO_LIST = 0;
     public static final int DELETE_ITEM = 1;

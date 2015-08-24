@@ -28,7 +28,9 @@ public class ShoppingListDoAddDeleteTask<T> {
     private static final String TAG = ShoppingListDoAddDeleteTask.class.getName();
     private List<ShoppingListName> selectedShoppingListNames;
     private T ctx;
-    private @ShoppingListOption.Method int shoppingListOption;
+    private
+    @ShoppingListOption.Method
+    int shoppingListOption;
 
     public ShoppingListDoAddDeleteTask(T ctx, List<ShoppingListName> selectedShoppingListNames,
                                        @ShoppingListOption.Method int shoppingListOption) {

@@ -380,7 +380,7 @@ public final class ProductView {
                                     BasketOperation.INC, product,
                                     txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
                                     TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView, cartInfo,
-                                    editTextQty,tabName);
+                                    editTextQty, tabName);
                             basketOperationTask.startTask();
 
                         } else {
@@ -535,7 +535,7 @@ public final class ProductView {
             setProductView(productViewHolder, childProduct, baseImgUrl,
                     new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
                     productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo,
-                        tabName);
+                    tabName);
         }
 
         public void setCurrentProduct(Product currentProduct) {
