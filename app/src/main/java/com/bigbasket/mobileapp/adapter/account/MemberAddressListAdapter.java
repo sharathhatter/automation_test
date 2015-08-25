@@ -65,28 +65,6 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         return null;
     }
 
-    private String getCompleteAddress(Address address) {
-        String addressStr = "";
-        if (!TextUtils.isEmpty(address.getHouseNumber())) {
-            addressStr += address.getHouseNumber() + " ";
-        }
-        if (!TextUtils.isEmpty(address.getLandmark())) {
-            addressStr += address.getLandmark() + " ";
-        }
-        if (!TextUtils.isEmpty(address.getResidentialComplex())) {
-            addressStr += address.getResidentialComplex() + " ";
-        }
-
-        if (!TextUtils.isEmpty(address.getStreet())) {
-            addressStr += address.getStreet() + " ";
-        }
-
-        if (!TextUtils.isEmpty(address.getArea())) {
-            addressStr += address.getArea() + " ";
-        }
-        return addressStr;
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
@@ -132,8 +110,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 params.leftMargin = (int) ((ActivityAware) context).getCurrentActivity().getResources().getDimension(R.dimen.margin_normal);
                 txtAddress.setLayoutParams(params);
             }
-            String completeAdd = getCompleteAddress(address);
-            txtAddress.setText(completeAdd);
+            txtAddress.setText(address.toString());
 
 
             ImageView imgEditIcon = memberAddressViewHolder.getImgEditIcon();
