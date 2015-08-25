@@ -98,8 +98,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         int color = getResources().getColor(R.color.uiv3_primary_text_color);
         mCities = getCities();
         BBArrayAdapter<City> arrayAdapter = new BBArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, mCities, faceRobotoRegular,
+                android.R.layout.simple_spinner_item, mCities, faceRobotoRegular,
                 color, color);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         citySpinner.setAdapter(arrayAdapter);
         citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
