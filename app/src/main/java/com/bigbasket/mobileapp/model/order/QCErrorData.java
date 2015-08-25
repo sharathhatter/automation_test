@@ -27,11 +27,16 @@ public class QCErrorData implements Parcelable {
     private String originalQuantity;
     @SerializedName(Constants.QC_RESERVED_PRODUCT)
     private Product product;
+    private String reason;
 
     public QCErrorData(Parcel source) {
         reservedQuantity = source.readString();
         originalQuantity = source.readString();
         product = source.readParcelable(QCErrorData.class.getClassLoader());
+        boolean isReasonNull = source.readByte() == (byte) 1;
+        if (!isReasonNull) {
+            reason = source.readString();
+        }
     }
 
     @Override
@@ -44,6 +49,11 @@ public class QCErrorData implements Parcelable {
         dest.writeString(reservedQuantity);
         dest.writeString(originalQuantity);
         dest.writeParcelable(product, flags);
+        boolean isReasonNull = reason == null;
+        dest.writeByte(isReasonNull ? (byte) 1: (byte) 0);
+        if (!isReasonNull) {
+            dest.writeString(reason);
+        }
     }
 
     public String getReservedQuantity() {
@@ -60,5 +70,9 @@ public class QCErrorData implements Parcelable {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public String getReason() {
+        return reason;
     }
 }

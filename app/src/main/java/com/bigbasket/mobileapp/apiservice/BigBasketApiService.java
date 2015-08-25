@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
@@ -265,6 +266,15 @@ public interface BigBasketApiService {
 
     @GET("/co-get-delivery-addresses/")
     void getDeliveryAddresses(Callback<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddressApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/co-post-delivery-addresses/")
+    void postDeliveryAddresses(@Field(Constants.ADDRESS_ID) String addressId,
+                               Callback<ApiResponse<PostDeliveryAddressApiResponseContent>> postDeliveryAddressApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/co-update-basket/")
+    void updateBasket(@Field(Constants.ADDRESS_ID) String addressId, Callback<BaseApiResponse> updateBasketApiResponseCallback);
 
     @GET("/search-tc/")
     ApiResponse<AutoSearchApiResponseContent> autoSearch(@Query("t") String term);

@@ -63,6 +63,7 @@ public class ShowCartActivity extends BackButtonActivity {
     private ArrayList<CartItemList> cartItemLists;
     private ArrayList<FulfillmentInfo> fulfillmentInfos;
     private ArrayList<AnnotationInfo> annotationInfoArrayList;
+    @Nullable
     private MenuItem basketMenuItem;
     private TextView txtBasketSubTitle;
 
@@ -88,7 +89,7 @@ public class ShowCartActivity extends BackButtonActivity {
         basketMenuItem.setVisible(false);
     }
 
-    private void renderHearView(int totalItemCount) {
+    private void renderHeaderView(int totalItemCount) {
         Toolbar toolbar = getToolbar();
         if (txtBasketSubTitle != null) toolbar.removeView(txtBasketSubTitle);
         txtBasketSubTitle = (TextView) getLayoutInflater().inflate(R.layout.basket_header_layout, toolbar, false);
@@ -97,10 +98,14 @@ public class ShowCartActivity extends BackButtonActivity {
         if (totalItemCount > 0) {
             String itemString = totalItemCount > 1 ? " Items" : " Item";
             txtBasketSubTitle.setText(totalItemCount + itemString);
-            basketMenuItem.setVisible(true);
+            if (basketMenuItem != null) {
+                basketMenuItem.setVisible(true);
+            }
         } else {
             txtBasketSubTitle.setVisibility(View.GONE);
-            basketMenuItem.setVisible(false);
+            if (basketMenuItem != null) {
+                basketMenuItem.setVisible(false);
+            }
         }
     }
 
@@ -169,7 +174,7 @@ public class ShowCartActivity extends BackButtonActivity {
                 }
             }
         }
-        renderHearView(numItems);
+        renderHeaderView(numItems);
         HashMap<String, String> fulfillmentInfoIdAndIconHashMap = new HashMap<>();
         if (fulfillmentInfos != null) {
             for (FulfillmentInfo fullfillmentInfo : fulfillmentInfos) {
@@ -281,7 +286,6 @@ public class ShowCartActivity extends BackButtonActivity {
                             cartEmptyApiResponseCallback.message, true);
                 }
                 editor.commit();
-
             }
 
             @Override

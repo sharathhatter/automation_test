@@ -320,11 +320,10 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             {
                 put(Constants.IS_DEFAULT, chkIsAddrDefault.isChecked() ? "1" : "0");
             }
-
-            {
-                put(Constants.CITY_ID, String.valueOf(mChoosenCity.getId()));
-            }
         };
+        if (mAddress == null) {
+            payload.put(Constants.CITY_ID, String.valueOf(mChoosenCity.getId()));
+        }
 
         if (otpCode != null) {
             payload.put(Constants.OTP_CODE, otpCode);

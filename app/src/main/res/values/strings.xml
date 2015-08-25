@@ -334,4 +334,6 @@
     <string name="invalidAmount">Please enter a valid amount</string>
     <string name="missingPaymentMethod">Please choose at least one payment method</string>
     <string name="fundWalletSuccess">You have successfully funded the wallet</string>
+
+    <string name="reviewBasket">Review Basket</string>
 </resources>
