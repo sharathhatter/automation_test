@@ -33,16 +33,11 @@
     <string name="add">Add</string>
     <string name="regular_price">Regular Price</string>
     <string name="totalMrp">Total: </string>
-    <string name="current_pin">Your current Pin</string>
     <string name="update">Update</string>
     <string name="updateDialogTitle">Update BigBasket App</string>
     <string name="UPDATE">UPDATE</string>
     <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
-    <string name="pin_text_para1">Delivery PIN is a 4-digit number. You can change the PIN to something that can be remembered easily.</string>
-    <string name="pin_text_para2">The PIN is required to acknowledge order delivery.</string>
-    <string name="pin_text_para3">We request you not to share with the delivery person.</string>
-    <string name="pin_text_para4">The PIN will also be sent to you as part of the order ready SMS or notification for each order.</string>
     <string name="placeorder">Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
@@ -177,14 +172,8 @@
     <string name="wallet_activity">My Wallet</string>
     <string name="delivery_time">Delivery Time:</string>
     <string name="delivery_charges">Delivery Charges:</string>
-    <string name="view_edit_pin_label">Delivery Pin</string>
     <string name="past_label">past</string>
     <string name="deleteShoppingList">Delete Shopping List</string>
-
-    <string name="min4digit">Pin should be a 4 digit number!</string>
-    <string name="not0000">Pin should be other than 0000!</string>
-    <string name="enterPin">Please enter a pin to update!</string>
-    <string name="pinUpdatedSuccessfully">Your pin was updated successfully!</string>
 
     <!-- wallet activity -->
     <string name="noActivityErrorMsg">No Wallet Activity for</string>
@@ -253,7 +242,8 @@
     <string name="updateGooglePlayServicesDesc">You are using an outdated version of Google Play Services.\nPlease update it, in order to login with Google.</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
-    <string name="failedToProcess">Failed to process your transaction</string> <!-- remove this -->
+    <string name="failedToProcess">Failed to process your transaction</string>
+    <!-- remove this -->
     <string name="youAborted">You aborted the transaction</string>
     <string name="smartBasket">Smart Basket</string>
     <string name="rateTheApp">Rate our App</string>
@@ -312,8 +302,6 @@
     <string name="addAnAddress"> \u0020 Add an Address</string>
     <string name="save">SAVE</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
-    <string name="deliveryPin">Delivery Pin</string>
-
 
     <!-- order invoice -->
     <string name="multi_order_place_txt">Your orders have been placed!</string>

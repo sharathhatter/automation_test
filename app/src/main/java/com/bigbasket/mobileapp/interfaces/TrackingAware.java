@@ -74,11 +74,6 @@ public interface TrackingAware {
     String NEW_ADDRESS_FAILED = "New Address Add.Failed";
     String UPDATE_ADDRESS_FAILED = "Update Address.Failed";
 
-    //delivery pin
-    String CHANGE_PIN_CLICKED = "MyAccount.Change Pin Clicked";
-    String CHANGE_PIN_SHOWN = "MyAccount.Change Pin Page Shown";
-    String UPDATE_PIN_CLICKED = "MyAccount.Change Pin Update Clicked";
-
     //topnav and home page
     String SHOPPING_LIST_ICON_CLICKED = "Shopping Lists.Clicked";
     String SMART_BASKET_ICON_CLICKED = "Smart Basket.Clicked";
@@ -159,13 +154,8 @@ public interface TrackingAware {
     String CHECKOUT_SLOT_SHOWN = "Checkout.Slot Shown";
     String CHECKOUT_SLOT_SELECTED = "Checkout.Slot Selected";
     String CHECKOUT_PAYMENT_SHOWN = "Checkout.Payment Shown";
-    String CHECKOUT_VOUCHER_APPLIED = "Checkout.Voucher Applied";
     String CHECKOUT_VOUCHER_FAILED = "Checkout.Voucher Failed";
-    String CHECKOUT_PAYMENT_GATEWAY_SUCCESS = "Checkout.Payment Success";
-    String CHECKOUT_PAYMENT_GATEWAY_FAILURE = "Checkout.Payment Failure";
-    String CHECKOUT_PAYMENT_GATEWAY_ABORTED = "Checkout.Payment Aborted";
     String CHECKOUT_PLACE_ORDER_CLICKED = "Checkout.Place Order Clicked";
-    String CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH = "Checkout.Place Order Amount Mismatch";
     String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Completed";
     String PLACE_ORDER = "placeorder";
 

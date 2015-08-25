@@ -15,14 +15,13 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
-import com.bigbasket.mobileapp.interfaces.PinCodeAware;
+import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.City;
-import com.bigbasket.mobileapp.task.uiv3.GetAreaPinInfoTask;
+import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -30,7 +29,7 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
-public class SignupActivity extends BackButtonActivity implements PinCodeAware {
+public class SignupActivity extends BackButtonActivity implements CityListDisplayAware {
 
     // UI References
     private ArrayList<City> mCities;
@@ -48,7 +47,7 @@ public class SignupActivity extends BackButtonActivity implements PinCodeAware {
         setNextScreenNavigationContext(TrackEventkeys.NC_SINGUP_SCREEN);
         setTitle(getString(R.string.signUpCapsVerb));
 
-        new GetAreaPinInfoTask<>(this).startTask();
+        new GetCitiesTask<>(this).startTask();
     }
 
     @Override
@@ -239,11 +238,5 @@ public class SignupActivity extends BackButtonActivity implements PinCodeAware {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.REGISTER_MEMBER_SCREEN;
-    }
-
-    @Override
-    public void onPinCodeFetchSuccess() {
-        AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(this);
-        onReadyToDisplayCity(areaPinInfoAdapter.getCities());
     }
 }

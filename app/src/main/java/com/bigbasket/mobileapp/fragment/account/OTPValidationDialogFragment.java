@@ -17,7 +17,6 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
@@ -25,7 +24,6 @@ import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
 public class OTPValidationDialogFragment extends AbstractDialogFragment {
 
     private TextView txtErrorValidateNumber, txtResendNumber;
-    private boolean isUpdateProfile;
     private EditText editTextMobileCode;
 
     public OTPValidationDialogFragment() {
@@ -36,18 +34,13 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
     }
 
 
-    public static OTPValidationDialogFragment newInstance(boolean isUpdateProfile) {
-        OTPValidationDialogFragment otpValidationDialogFragment = new OTPValidationDialogFragment();
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(Constants.IS_UPDATE_PROFILE, isUpdateProfile);
-        otpValidationDialogFragment.setArguments(bundle);
-        return otpValidationDialogFragment;
+    public static OTPValidationDialogFragment newInstance() {
+        return new OTPValidationDialogFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.isUpdateProfile = getArguments().getBoolean(Constants.IS_UPDATE_PROFILE);
     }
 
     @Nullable

@@ -19,6 +19,7 @@
 -keepattributes *Annotation*,EnclosingMethod
 -keepattributes Exceptions, Signature, InnerClasses
 -keepattributes SourceFile,LineNumberTable
+-keepattributes JavascriptInterface
 
 #Project
 -keep class com.bigbasket.mobileapp.BuildConfig { *; }
@@ -131,3 +132,34 @@
     public static int d(...);
     public static int e(...);
 }
+
+# PayU
+-keep class com.payu.sdk.** {
+ *;
+}
+
+# PayU
+-keepclassmembers class * {
+ @android.webkit.JavascriptInterface <methods>;
+}
+
+-keepclassmembers class com.payu.custombrowser.** {
+ *;
+}
+
+-keep class com.payu.sdk.ProcessPaymentFragment {
+  protected void startPaymentProcessActivity(com.payu.sdk.PayU.PaymentMode, com.payu.sdk.Params);
+}
+
+-keep public class com.payu.sdk.ProcessPaymentActivity$PayUJavaScriptInterface
+-keep public class * implements com.payu.sdk.ProcessPaymentActivity$PayUJavaScriptInterface
+-keepclassmembers class com.payu.sdk.ProcessPaymentActivity$PayUJavaScriptInterface {
+    <methods>;
+}
+
+# Mobikwik
+-keepclassmembers class com.paymentsdk.android.PGWebView$MyJavaScriptInterface{
+   public *;
+}
+
+-keep class com.paymentsdk.android.model.** { *; }

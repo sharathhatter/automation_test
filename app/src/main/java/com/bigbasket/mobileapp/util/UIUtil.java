@@ -274,7 +274,7 @@ public class UIUtil {
             }
         }
         editor.commit();
-        AuthParameters.updateInstance(ctx);
+        AuthParameters.reset();
     }
 
     public static void reportFormInputFieldError(TextInputLayout textInputLayout, String errMsg) {

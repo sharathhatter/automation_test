@@ -310,7 +310,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         editor.remove(Constants.UPDATE_PROFILE_IMG_URL);
         editor.remove(Constants.IS_KIRANA);
         editor.commit();
-        AuthParameters.updateInstance(getCurrentActivity());
+        AuthParameters.reset();
 
         MoEngageWrapper.setUserAttribute(moEHelper, Constants.IS_LOGGED_IN, false);
 

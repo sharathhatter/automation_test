@@ -106,8 +106,7 @@
             android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginRight="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_small"
-            android:layout_toRightOf="@id/imgProduct"
-            >
+            android:layout_toRightOf="@id/imgProduct">
 
             <include
                 android:id="@+id/layoutInBasket"

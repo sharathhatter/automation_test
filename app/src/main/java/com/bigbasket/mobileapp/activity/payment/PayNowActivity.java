@@ -1,7 +1,9 @@
 package com.bigbasket.mobileapp.activity.payment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
+import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
@@ -68,7 +71,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes",
+        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes",
                 new Callback<ApiResponse<GetPayNowParamsResponse>>() {
                     @Override
                     public void success(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse, Response response) {
@@ -185,6 +188,10 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                                         PayuInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
                                                 getCurrentActivity());
                                         break;
+                                    case Constants.MOBIKWIK_PAYMENT:
+                                        MobikwikInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
+                                                getCurrentActivity());
+                                        break;
                                     default:
                                         onPayNowSuccess();
                                         break;
@@ -211,6 +218,34 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                 break;
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        processMobikWikResponse();
+    }
+
+    private void processMobikWikResponse() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
+        if (!TextUtils.isEmpty(txnId)) {
+            String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
+            String txnMsg = preferences.getString(Constants.MOBIKWIK_STATUS_MSG, null);
+            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
+                onPayNowSuccess();
+            } else {
+                showAlertDialog(txnMsg,
+                        getString(R.string.txnFailureMsg));
+            }
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.remove(Constants.MOBIKWIK_ORDER_ID);
+            editor.remove(Constants.MOBIKWIK_STATUS);
+            editor.remove(Constants.MOBIKWIK_STATUS_MSG);
+            editor.commit();
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

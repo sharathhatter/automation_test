@@ -160,7 +160,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                false, this, getNextScreenNavigationContext());
+                false, this, getNextScreenNavigationContext(), null, "none");
 
         if (mProduct.getProductPromoInfo() == null ||
                 !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {

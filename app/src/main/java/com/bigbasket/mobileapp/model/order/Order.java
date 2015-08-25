@@ -94,7 +94,7 @@ public class Order implements Parcelable {
         if (!_wasAddressNull) {
             dest.writeParcelable(address, flags);
         }
-        dest.writeByte(canPay ? (byte) 1: (byte) 0);
+        dest.writeByte(canPay ? (byte) 1 : (byte) 0);
     }
 
     @Override

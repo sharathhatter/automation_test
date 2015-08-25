@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -57,7 +58,7 @@ public class MessageFormatUtil<T> {
                 }
 
                 @Override
-                public void updateDrawState(TextPaint textPaint) {
+                public void updateDrawState(@NonNull TextPaint textPaint) {
                     textPaint.setColor(textPaint.linkColor);
                     textPaint.setUnderlineText(false); // set to false to remove underline
                 }
@@ -96,7 +97,7 @@ public class MessageFormatUtil<T> {
                 }
 
                 @Override
-                public void updateDrawState(TextPaint textPaint) {
+                public void updateDrawState(@NonNull TextPaint textPaint) {
                     textPaint.setColor(textPaint.linkColor);
                     textPaint.setUnderlineText(false); // set to false to remove underline
                 }

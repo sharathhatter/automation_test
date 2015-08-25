@@ -17,7 +17,6 @@ import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.MyAccountActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.UpdatePinActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
@@ -62,7 +61,6 @@ public class AccountView<T> {
                     ctx.getResources().getString(R.string.myAccount),
                     ctx.getResources().getString(R.string.my_orders),
                     ctx.getResources().getString(R.string.change_password),
-                    ctx.getResources().getString(R.string.view_edit_pin_label),
                     ctx.getResources().getString(R.string.bbCommHub),
                     ctx.getResources().getString(R.string.wallet_activity),
                     ctx.getResources().getString(R.string.shoppingList),
@@ -103,26 +101,21 @@ public class AccountView<T> {
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 3:
-                    ctx.trackEvent(TrackingAware.CHANGE_PIN_CLICKED, map);
-                    intent = new Intent(ctx, UpdatePinActivity.class);
-                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    break;
-                case 4:
                     ctx.launchMoEngageCommunicationHub();
                     break;
-                case 5:
+                case 4:
                     ctx.trackEvent(TrackingAware.MY_ACCOUNT_WALLET_CLICKED, map);
                     intent = new Intent(ctx, DoWalletActivity.class);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
-                case 6:
+                case 5:
                     ctx.trackEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, map);
                     intent = new Intent(ctx, ShoppingListActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
-                case 7:
+                case 6:
                     ctx.trackEvent(TrackingAware.SMART_BASKET_ICON_CLICKED, map);
                     ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
                             Constants.SMART_BASKET_SLUG, true);
@@ -131,7 +124,7 @@ public class AccountView<T> {
                     intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
-                case 8:
+                case 7:
                     ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, map);
                     try {
                         ctx.startActivity(new Intent(Intent.ACTION_VIEW,
@@ -141,7 +134,7 @@ public class AccountView<T> {
                                 Uri.parse("https://play.google.com/store/apps/details?id=" + Constants.BASE_PKG_NAME)));
                     }
                     break;
-                case 9:
+                case 8:
                     ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, map);
                     if (ctx instanceof SocialLoginActivity) {
                         ((SocialLoginActivity) ctx).onLogoutRequested();

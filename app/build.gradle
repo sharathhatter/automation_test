@@ -120,4 +120,5 @@ dependencies {
     compile project(':moe-addon-ubox')
     compile 'com.moengage:moe-android-sdk:5.1.9'
     compile project(':payuSdk')
+    compile project(':mobikwik_Payment_Android_SDK')
 }

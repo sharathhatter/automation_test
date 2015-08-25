@@ -379,7 +379,7 @@ public class DoWalletActivity extends BackButtonActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (requestCode == NavigationCodes.FUND_WALLET &&  resultCode == RESULT_OK) {
+        if (requestCode == NavigationCodes.FUND_WALLET && resultCode == RESULT_OK) {
             onWalletFunded();
         } else {
             super.onActivityResult(requestCode, resultCode, data);

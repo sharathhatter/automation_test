@@ -1,5 +1,7 @@
 package com.bigbasket.mobileapp.util;
 
+import com.bigbasket.mobileapp.BuildConfig;
+
 public class Constants {
 
     // connection parameters
@@ -396,15 +398,9 @@ public class Constants {
 
     public static final String CITY = "city";
     public static final String PIN_CODE_MAP = "pincode_map";
-    public static final String CITY_MAP = "city_map";
     public static final String VALUE = "value";
     public static final String VAL = "val";
     public static final String VAL_TYPE = "val_type";
-
-    //update pin
-    public static final String FOUR_ZERO = "0000";
-    public static final String NEW_PIN = "new_pin";
-    public static final String CURRENT_PIN = "current_pin";
 
     // wallet
     public static final String CURRENT_BALANCE = "current_balance";
@@ -434,7 +430,6 @@ public class Constants {
     public static final String NEWS_PREF = "news";
     public static final String DATE_PICKER = "datePicker";
     public static final String OTP_DIALOG_FLAG = "otp_dialog_flag";
-    public static final String IS_UPDATE_PROFILE = "isUpdateFrom";
 
     public static final String PAYMENT_TYPES = "payment_types";
     public static final String PAYMENT_TYPE = "payment_type";
@@ -516,6 +511,7 @@ public class Constants {
     public static final String PG_TXN_ID = "pg_txn_id";
     public static final String DATA_PICKUP_CODE = "data_pickup_code";
     public static final String SUPPORT_POWER_PAY = "support_pp";
+    public static final String SUPPORT_MOBIKWIK = "support_mk";
     public static final String ERR_RES_CODE = "err_res_code";
     public static final String ERR_RES_DESC = "err_res_desc";
     public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";
@@ -523,6 +519,7 @@ public class Constants {
     public static final String MODE_HDFC_PAY = "restrict_payment_to_wibmo_iap";
     public static final String HDFC_POWER_PAY_EXPIRY = "hdfc_power_pay_expiry";
     public static final String TAB_TYPE = "tab_type";
+    public static final String SINGLE_TAB = "single_tab";
     public static final String HEADER_SECTION = "header_section";
     public static final String HEADER_SEL = "header_sel";
     public static final String TAB_INFO = "tab_info";
@@ -562,9 +559,29 @@ public class Constants {
     public static final String ON_TOGGLE_ACTIONS = "on_action_trigger";
 
     public static final String NOT_ALPHANUMERIC_TXT_SHOPPING_LIST = "aplhaNumericTxt";
-    public static final int CALL_AREA_INFO = 75;
 
     public static final String FORGOT_PASSWORD_DIALOG = "FPassDialog";
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
+
+
+    //mobikwik
+    public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
+    public static final String MOBIKWIKSDK = "MobikwikSDK";
+    public static final String MOBIKWIK_ORDER_ID = "orderid";
+    public static final String MOBIKWIK_STATUS_CODE = "statuscode";
+    public static final String MOBIKWIK_RESPONSE_STATUS_MSG = "statusmessage";
+    public static final String MOBIKWIK_MODE = "mode";
+    public static final String MOBIKWIK_SDK_SIGN = "sdksign";
+    public static final String MOBIKWIK_REDIRECT_ANDROID_CLASS_NAME = "redirecturl";
+    public static final String MOBIKWIK_RESPONSE_HANDLER_CLASS = "com.bigbasket.mobileapp.activity.payment.MobiKwikResponseHandlerActivity";
+    public static final String MOBIKWIK_MODE_VALUE = BuildConfig.DEBUG ? "0" : "1";
+    public static final String MOBIKWIK_SDK_SIGN_VALUE = "a_lvjRAEvSbC0ENdEVuGC0B2Uo9";
+    public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
+    public static final String MOBIKWIK_PAYMENT_MW = "mw";
+    public static final String MOBIKWIK_STATUS = "status";
+    public static final String MOBIKWIK_STATUS_MSG = "statusMsg";
+    public static final int MOBIKWIK_REQUEST_CODE = 9999;
+    public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
+
 }

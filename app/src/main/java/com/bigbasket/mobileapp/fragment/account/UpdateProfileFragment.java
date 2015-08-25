@@ -140,7 +140,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
         if (otpValidationDialogFragment == null) {
-            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance(true);
+            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance();
         }
         if (otpValidationDialogFragment.isVisible()) {
             if (txtErrorValidateNumberVisibility) {
@@ -167,7 +167,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
                 editTextLastName.getText().toString());
         editor.putString(Constants.NEWS_PREF, String.valueOf(chkReceivePromos.isChecked()));
         editor.commit();
-        AuthParameters.updateInstance(getActivity());
+        AuthParameters.reset();
         setResultCodeOnProfileUpdate();
     }
 

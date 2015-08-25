@@ -20,8 +20,8 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.AppCapability;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.AppCapability;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
@@ -331,7 +331,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 appCapability.isAnalyticsEnabled(),
                 appCapability.isFBLoggerEnabled(),
                 appCapability.isMultiCityEnabled(), getCurrentActivity());
-        AuthParameters.updateInstance(getCurrentActivity());
+        AuthParameters.reset();
     }
 
     private void callGetAppData(String client, String versionName) {

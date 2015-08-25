@@ -14,15 +14,14 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.BBCheckedListAdapter;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
-import com.bigbasket.mobileapp.interfaces.PinCodeAware;
+import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
-import com.bigbasket.mobileapp.task.uiv3.GetAreaPinInfoTask;
+import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -34,7 +33,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ChangeCityActivity extends BackButtonActivity implements PinCodeAware {
+public class ChangeCityActivity extends BackButtonActivity implements CityListDisplayAware {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +45,7 @@ public class ChangeCityActivity extends BackButtonActivity implements PinCodeAwa
     }
 
     private void loadCities() {
-        new GetAreaPinInfoTask<>(this).startTask();
+        new GetCitiesTask<>(this).startTask();
     }
 
     private void renderCityList(final ArrayList<City> cities) {
@@ -143,8 +142,7 @@ public class ChangeCityActivity extends BackButtonActivity implements PinCodeAwa
     }
 
     @Override
-    public void onPinCodeFetchSuccess() {
-        AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(this);
-        renderCityList(areaPinInfoAdapter.getCities());
+    public void onReadyToDisplayCity(ArrayList<City> cities) {
+        renderCityList(cities);
     }
 }
