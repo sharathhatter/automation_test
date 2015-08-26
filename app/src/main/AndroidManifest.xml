@@ -473,7 +473,7 @@
         <activity
             android:name=".activity.base.SearchableActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BackButtonTheme"
+            android:theme="@style/BaseAppTheme.SearchViewTheme"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
         <!-- MOEngage -->
