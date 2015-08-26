@@ -37,7 +37,6 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         caseId = getIntent().getStringExtra(Constants.CASE_ID);
-        caseId = "1111";
         if (TextUtils.isEmpty(caseId)) {
             showAlertDialog(null, "No case-id provided");
             return;
