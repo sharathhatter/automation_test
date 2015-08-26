@@ -110,16 +110,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
         if (!TextUtils.isEmpty(txnId)) {
-            String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
-            String txnMsg = preferences.getString(Constants.MOBIKWIK_STATUS_MSG, null);
-            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
-                String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-                int mobiKwikTxnId = Integer.parseInt(txnId);
-                String mMobiKwikTxnId = String.valueOf(mobiKwikTxnId / 1000); //todo remove this
-                new ValidatePaymentHandler<>(this, mPotentialOrderId, mMobiKwikTxnId, fullOrderId).start();
-            } else {
-                showAlertDialog(txnMsg, getString(R.string.txnFailureMsg), Constants.SOURCE_PLACE_ORDER);
-            }
+            String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
+            new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.MOBIKWIK_ORDER_ID);
@@ -623,7 +615,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void onPaymentValidated(boolean status, @Nullable String msg) {
+    public void onPaymentValidated(boolean status, @Nullable String msg, ArrayList<Order> orders) {
+        mOrdersCreated = orders;
         if (status || msg == null) {
             showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
         } else {

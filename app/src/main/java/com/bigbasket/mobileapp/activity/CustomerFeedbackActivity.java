@@ -62,7 +62,7 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Math.round(ratingBar.getRating())==0) {
+                if (Math.round(ratingBar.getRating()) == 0) {
                     showToast(getResources().getString(R.string.rating_toast_msg));
                     return;
                 }
