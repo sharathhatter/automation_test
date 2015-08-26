@@ -85,7 +85,8 @@
     <string name="isSystemShoppingListMsg">Lists created by BigBasket cannot be edited!They are system generated lists.</string>
     <string name="my_orders">My Orders</string>
     <string name="bbCommHub">Communication Hub</string>
-    <string name="rating">Rating:</string>
+    <string name="rating">Please rate our service:</string>
+    <string name="rating_toast_msg">Please rate our service</string>
     <string name="yourComments">Your comments (optional)</string>
     <string name="submit">Submit</string>
     <string name="applyAllCaps">APPLY</string>

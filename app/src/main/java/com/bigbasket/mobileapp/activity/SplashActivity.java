@@ -35,6 +35,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.daimajia.slider.library.BuildConfig;
 import com.newrelic.agent.android.NewRelic;
 
@@ -197,7 +198,8 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             Log.e("StartActivity", "Error while creating device-properties json");
         }
 
-        bigBasketApiService.registerDevice(deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
+        String imei = UIUtil.getIMEI(this);
+        bigBasketApiService.registerDevice(imei ,deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
                 new Callback<RegisterDeviceResponse>() {
                     @Override
                     public void success(RegisterDeviceResponse registerDeviceResponse, Response response) {

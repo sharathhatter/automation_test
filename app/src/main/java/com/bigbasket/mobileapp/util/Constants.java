@@ -375,6 +375,7 @@ public class Constants {
     public static final String BB_TOKEN = "bb_token";
     public static final String OK = "OK";
     public static final String DEVICE_ID = "device_id";
+    public static final String DEVICE_IMEI = "imei";
     public static final String PROPERTIES = "properties";
     public static final String PLATFORM = "platform";
     public static final String DEVICE_MODEL = "device_model";
