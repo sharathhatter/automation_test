@@ -396,7 +396,7 @@
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.order.uiv3.OrderInvoiceActivity"
+            android:name=".activity.order.uiv3.OrderThankyouActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />

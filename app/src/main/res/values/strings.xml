@@ -212,6 +212,7 @@
 
     <!-- Invoice -->
     <string name="thankYouHeader">Thank You!</string>
+    <string name="thankYouOrderPlacedHeader">Thank You! Your order has been placed.</string>
 
     <!-- cart page -->
     <string name="empty">Empty</string>
@@ -304,9 +305,9 @@
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
 
     <!-- order invoice -->
-    <string name="multi_order_place_txt">Your orders have been placed!</string>
-    <string name="order_place_txt">Your order has been placed!</string>
+    <string name="multi_order_place_txt">You will receive the order(s) in multiple deliveries</string>
     <string name="continue_shopping">CONTINUE SHOPPING!</string>
+    <string name="know_more">Know More</string>
 
     <string name="expressDelAvailable">\u0020 Express Delivery may be available</string>
     <string name="my_basket_header">My Basket</string>

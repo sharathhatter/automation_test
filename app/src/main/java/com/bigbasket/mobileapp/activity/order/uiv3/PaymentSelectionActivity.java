@@ -566,7 +566,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
         setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
 
-        Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
+        Intent invoiceIntent = new Intent(this, OrderThankyouActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);
         invoiceIntent.putExtra(Constants.ADD_MORE_LINK, addMoreLink);
