@@ -32,6 +32,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -65,14 +66,15 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         super.onCreate(savedInstanceState);
         setTitle(getActivityTitle());
         mFromAccountPage = getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false);
-        if (mAddress == null) {
-            mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
+        mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
+        if (mAddress != null) {
+            mChoosenCity = new City(mAddress.getCityName(), mAddress.getCityId());
+        } else {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String cityName = preferences.getString(Constants.CITY, null);
+            int cityId = Integer.parseInt(preferences.getString(Constants.CITY_ID, "1"));
+            mChoosenCity = new City(cityName, cityId);
         }
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String cityName = preferences.getString(Constants.CITY, null);
-        int cityId = Integer.parseInt(preferences.getString(Constants.CITY_ID, "1"));
-        mChoosenCity = new City(cityName, cityId);
-
         showForm();
     }
 
@@ -123,6 +125,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             }
         }
         citySpinner.setSelection(selectedPosition);
+        citySpinner.setEnabled(AuthParameters.getInstance(this).isMultiCityEnabled());
 
         TextView txtSaveAddress = (TextView) base.findViewById(R.id.txtSaveAddress);
         txtSaveAddress.setTypeface(faceRobotoMedium);
@@ -163,6 +166,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             }
             spinnerCity.setSelection(selectedPosition);
         }
+        spinnerCity.setEnabled(false); // Disallow user to change city for an existing address
 
         editTextAddressNick.setText(getValueOrBlank(mAddress.getAddressNickName()));
         editTextFirstName.setText(getValueOrBlank(mAddress.getFirstName()));
@@ -323,7 +327,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                 put(Constants.IS_DEFAULT, chkIsAddrDefault.isChecked() ? "1" : "0");
             }
         };
-        if (mAddress == null) {
+        if (AuthParameters.getInstance(this).isMultiCityEnabled()) {
             payload.put(Constants.CITY_ID, String.valueOf(mChoosenCity.getId()));
         }
 
