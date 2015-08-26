@@ -211,7 +211,7 @@
 
                     <ImageView
                         android:id="@+id/btnFBLogin"
-                        style="@style/BBAppTheme.FacebookButton"
+                        style="@style/BBNavDrawerTheme.FacebookButton"
                         android:layout_marginRight="@dimen/margin_normal"
                         android:contentDescription="@string/facebookSignup" />
                 </LinearLayout>
@@ -224,7 +224,7 @@
 
                     <ImageView
                         android:id="@+id/plus_sign_in_button"
-                        style="@style/BBAppTheme.GoogleButton"
+                        style="@style/BBNavDrawerTheme.GoogleButton"
                         android:contentDescription="@string/googleSignup" />
                 </LinearLayout>
 
