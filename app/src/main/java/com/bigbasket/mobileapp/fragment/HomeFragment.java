@@ -138,7 +138,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.updateVersionNumber(preferences.getString(Constants.DEVICE_ID, null),
+        String imei = UIUtil.getIMEI(getActivity());
+        bigBasketApiService.updateVersionNumber(imei, preferences.getString(Constants.DEVICE_ID, null),
                 getAppVersion(), new Callback<ApiResponse<UpdateVersionInfoApiResponseContent>>() {
                     @Override
                     public void success(ApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse, Response response) {

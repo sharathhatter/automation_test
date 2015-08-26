@@ -73,7 +73,8 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/register-device/")
-    void registerDevice(@Field(Constants.DEVICE_ID) String deviceId,
+    void registerDevice(@Field(Constants.DEVICE_IMEI) String imei,
+                        @Field(Constants.DEVICE_ID) String deviceId,
                         @Field(Constants.CITY_ID) String cityId,
                         @Field(Constants.PROPERTIES) String properties,
                         Callback<RegisterDeviceResponse> registerDeviceResponseCallback);
@@ -288,7 +289,8 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/update-version-number/")
-    void updateVersionNumber(@Field(Constants.DEVICE_ID) String deviceId,
+    void updateVersionNumber(@Field(Constants.DEVICE_IMEI) String imei,
+                             @Field(Constants.DEVICE_ID) String deviceId,
                              @Field(Constants.APP_VERSION) String appVersion,
                              Callback<ApiResponse<UpdateVersionInfoApiResponseContent>> updateVersionInfoApiResponseCallback);
 
