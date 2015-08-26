@@ -6,14 +6,17 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
@@ -29,7 +32,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 
-public class OrderInvoiceActivity extends BaseActivity implements InvoiceDataAware {
+public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAware {
 
     @Override
     public void onCreate(Bundle saveInstanceState) {
@@ -37,18 +40,28 @@ public class OrderInvoiceActivity extends BaseActivity implements InvoiceDataAwa
         setNextScreenNavigationContext(TrackEventkeys.CO_INVOICE);
         setContentView(R.layout.uiv3_multiple_order_invoice_layout);
         ArrayList<Order> orderArrayList = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
-        final String addMoreLink = getIntent().getStringExtra(Constants.ADD_MORE_LINK);
-        final String addMoreMsg = getIntent().getStringExtra(Constants.ADD_MORE_MSG);
+        String addMoreLink = getIntent().getStringExtra(Constants.ADD_MORE_LINK);
+        String addMoreMsg = getIntent().getStringExtra(Constants.ADD_MORE_MSG);
         showOrderList(orderArrayList);
+        showAddMoreText(addMoreLink, addMoreMsg);
 
-        TextView lblAddMoreProducts = (TextView) findViewById(R.id.lblAddMoreProducts);
+        trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
+    }
+
+    private void showAddMoreText(final String addMoreLink, final String addMoreMsg) {
+        ViewGroup layoutKnowMore = (ViewGroup) findViewById(R.id.layoutKnowMore);
         if (!TextUtils.isEmpty(addMoreMsg) && !TextUtils.isEmpty(addMoreLink)) {
-            SpannableString spannableString = new SpannableString(addMoreMsg);
+            TextView txtAddMoreProducts = (TextView) findViewById(R.id.txtAddMoreProducts);
+            txtAddMoreProducts.setText(addMoreMsg);
+            txtAddMoreProducts.setTypeface(faceRobotoRegular);
+
+            TextView lblKnowMore = (TextView) findViewById(R.id.lblKnowMore);
+            SpannableString spannableString = new SpannableString(lblKnowMore.getText());
             spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
                     Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            lblAddMoreProducts.setText(spannableString);
-            lblAddMoreProducts.setTypeface(faceRobotoMedium);
-            lblAddMoreProducts.setOnClickListener(new View.OnClickListener() {
+            lblKnowMore.setText(spannableString);
+            lblKnowMore.setTypeface(faceRobotoBold);
+            lblKnowMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
@@ -59,11 +72,9 @@ public class OrderInvoiceActivity extends BaseActivity implements InvoiceDataAwa
                 }
             });
         } else {
-            lblAddMoreProducts.setVisibility(View.GONE);
+            layoutKnowMore.setVisibility(View.GONE);
         }
-        trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
     }
-
 
     private void showOrderList(ArrayList<Order> orders) {
         if (orders == null || orders.size() == 0) return;
@@ -72,33 +83,62 @@ public class OrderInvoiceActivity extends BaseActivity implements InvoiceDataAwa
         txtThankYou.setTypeface(faceRobotoBold);
 
         TextView txtOrderPlaced = (TextView) findViewById(R.id.txtOrderPlaced);
-        txtOrderPlaced.setTypeface(faceRobotoMedium, 0);
-        txtOrderPlaced.setText(orders.size() > 1 ? getString(R.string.multi_order_place_txt) :
-                getString(R.string.order_place_txt));
+        if (orders.size() > 1) {
+            txtOrderPlaced.setTypeface(faceRobotoRegular, 0);
+            txtOrderPlaced.setText(R.string.multi_order_place_txt);
+        } else {
+            txtOrderPlaced.setVisibility(View.GONE);
+        }
 
         LinearLayout layoutOrderNumber = (LinearLayout) findViewById(R.id.layoutOrderNumber);
+        LayoutInflater inflater = getLayoutInflater();
         //order list
-        for (Order order : orders) {
-            TextView orderNumberTxtView = new TextView(getCurrentActivity());
-            orderNumberTxtView.setTag(order);
-            orderNumberTxtView.setTextSize(14);
-            orderNumberTxtView.setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
-            orderNumberTxtView.setPadding(8, 8, 8, 8);
+        for (final Order order : orders) {
+            View base = inflater.inflate(R.layout.uiv3_order_thankyou_row, layoutOrderNumber, false);
+            TextView txtOrderNum = (TextView) base.findViewById(R.id.txtOrderNum);
             SpannableString orderNumSpannable = new SpannableString(getString(R.string.ordernumber) + " " + order.getOrderNumber());
             orderNumSpannable.setSpan(new UnderlineSpan(), 0, orderNumSpannable.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            orderNumberTxtView.setText(orderNumSpannable);
-            orderNumberTxtView.setTypeface(faceRobotoMedium);
-            orderNumberTxtView.setGravity(Gravity.CENTER_HORIZONTAL);
-            orderNumberTxtView.setOnClickListener(new View.OnClickListener() {
+            txtOrderNum.setText(orderNumSpannable);
+            txtOrderNum.setTypeface(faceRobotoRegular);
+            txtOrderNum.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Order orderTagObj = (Order) view.getTag();
-                    if (orderTagObj != null) {
-                        showInvoice(orderTagObj);
-                    }
+                    showInvoice(order);
                 }
             });
-            layoutOrderNumber.addView(orderNumberTxtView);
+
+            TextView txtSlotTime = (TextView) base.findViewById(R.id.txtSlotTime);
+            if (order.getSlotDisplay() != null) {
+                String date = order.getSlotDisplay().getDate();
+                String time = order.getSlotDisplay().getTime();
+                String display = "";
+                if (!TextUtils.isEmpty(date)) {
+                    display += date;
+                }
+                if (!TextUtils.isEmpty(time)) {
+                    display += time;
+                }
+                txtSlotTime.setText(getString(R.string.delivery_time) + " " + display);
+                txtSlotTime.setTypeface(faceRobotoRegular);
+            } else {
+                txtSlotTime.setVisibility(View.GONE);
+            }
+
+            Button btnPayNow = (Button) base.findViewById(R.id.btnPayNow);
+            if (order.canPay()) {
+                btnPayNow.setTypeface(faceRobotoBold);
+                btnPayNow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getCurrentActivity(), PayNowActivity.class);
+                        intent.putExtra(Constants.ORDER_ID, order.getOrderId());
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    }
+                });
+            } else {
+                btnPayNow.setVisibility(View.GONE);
+            }
+            layoutOrderNumber.addView(base);
         }
     }
 

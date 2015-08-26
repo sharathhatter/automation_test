@@ -732,6 +732,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
             });
+            txtCityName.setCompoundDrawablesWithIntrinsicBounds(
+                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.address_white), null,
+                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.ic_edit_white_24dp), null);
+        } else {
+            txtCityName.setCompoundDrawablesWithIntrinsicBounds(
+                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.address_white),
+                    null, null, null);
         }
 
         imgSwitchNav.setOnClickListener(new View.OnClickListener() {

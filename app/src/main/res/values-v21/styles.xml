@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="BBAppTheme" parent="BaseAppTheme">
+    <style name="BBNavDrawerTheme" parent="BaseAppTheme">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="BBAppTheme.SpinnerDatePickerTheme" parent="BaseAppTheme">
-        <item name="android:dialogTheme">@style/BBAppTheme.SpinnerDatePicker.DialogTheme</item>
-        <item name="android:datePickerStyle">@style/BBAppTheme.SpinnerDatePicker.DatePickerTheme
+    <style name="BBNavDrawerTheme.SpinnerDatePickerTheme" parent="BaseAppTheme">
+        <item name="android:dialogTheme">@style/BBNavDrawerTheme.SpinnerDatePicker.DialogTheme</item>
+        <item name="android:datePickerStyle">@style/BBNavDrawerTheme.SpinnerDatePicker.DatePickerTheme
         </item>
     </style>
 
-    <style name="BBAppTheme.SpinnerDatePicker.DialogTheme" parent="android:Theme.Material.Light.Dialog">
-        <item name="android:datePickerStyle">@style/BBAppTheme.SpinnerDatePicker.DatePickerTheme
+    <style name="BBNavDrawerTheme.SpinnerDatePicker.DialogTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:datePickerStyle">@style/BBNavDrawerTheme.SpinnerDatePicker.DatePickerTheme
         </item>
     </style>
 
-    <style name="BBAppTheme.SpinnerDatePicker.DatePickerTheme" parent="android:Widget.Material.Light.DatePicker">
+    <style name="BBNavDrawerTheme.SpinnerDatePicker.DatePickerTheme" parent="android:Widget.Material.Light.DatePicker">
         <item name="android:datePickerMode">spinner</item>
     </style>
 

@@ -45,6 +45,8 @@ public class Address implements Parcelable {
     private String area;
     @SerializedName(Constants.CITY_NAME)
     private String cityName;
+    @SerializedName(Constants.CITY_ID)
+    private int cityId;
     @SerializedName(Constants.PIN)
     private String pincode;
     @SerializedName(Constants.IS_MAPPED)
@@ -66,6 +68,7 @@ public class Address implements Parcelable {
         this.landmark = source.readString();
         this.area = source.readString();
         this.cityName = source.readString();
+        this.cityId = source.readInt();
         this.pincode = source.readString();
         this.isMapped = source.readByte() == (byte) 1;
         this.isExpress = source.readByte() == (byte) 1;
@@ -85,6 +88,7 @@ public class Address implements Parcelable {
         dest.writeString(landmark);
         dest.writeString(area);
         dest.writeString(cityName);
+        dest.writeInt(cityId);
         dest.writeString(pincode);
         dest.writeByte(isMapped ? (byte) 1 : (byte) 0);
         dest.writeByte(isExpress ? (byte) 1 : (byte) 0);
@@ -165,6 +169,10 @@ public class Address implements Parcelable {
 
     public boolean isExpress() {
         return isExpress;
+    }
+
+    public int getCityId() {
+        return cityId;
     }
 
     @Override

@@ -45,7 +45,7 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/BBAppTheme"
+        android:theme="@style/BBNavDrawerTheme"
         tools:replace="android:theme,android:allowBackup">
         <meta-data
             android:name="android.app.default_searchable"
@@ -80,12 +80,12 @@
         <activity
             android:name=".activity.CustomerFeedbackActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.DeepLinkDispatcherActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -316,7 +316,7 @@
         <activity
             android:name=".activity.order.uiv3.ShowCartActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.product.DiscountActivity"
@@ -329,27 +329,27 @@
         <activity
             android:name=".activity.SectionHelpActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.OrderDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.AvailableVoucherListActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.MemberAddressFormActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.shoppinglist.ShoppingListActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.shoppinglist.ShoppingListSummaryActivity"
@@ -363,7 +363,7 @@
         <activity
             android:name=".activity.account.uiv3.ChangeCityActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.SignInActivity"
@@ -383,22 +383,22 @@
         <activity
             android:name=".activity.account.uiv3.SocialLoginConfirmActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.ShipmentSelectionActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.PaymentSelectionActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.order.uiv3.OrderInvoiceActivity"
+            android:name=".activity.order.uiv3.OrderThankyouActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <meta-data
@@ -408,59 +408,59 @@
         <activity
             android:name=".activity.account.uiv3.OrderListActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.base.uiv3.BackButtonActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.base.uiv3.BackButtonWithBasketButtonActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.base.uiv3.BackButtonSpinnerDateActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BBAppTheme.SpinnerDatePickerTheme"
+            android:theme="@style/BBNavDrawerTheme.SpinnerDatePickerTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.MyAccountActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.DoWalletActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.payment.MobiKwikResponseHandlerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
             android:name=".activity.payment.PayNowActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.payment.PayNowThankyouActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.payment.FundWalletActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
             android:name=".activity.account.uiv3.WalletActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <provider
@@ -545,7 +545,7 @@
         <activity
             android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
             android:label="Communication Hub"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="adjustResize" />
 
         <service

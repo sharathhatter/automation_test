@@ -23,13 +23,17 @@ import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
+import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
+import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
@@ -37,6 +41,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.uiv3.BasketDeltaDialog;
 import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
 import com.google.gson.Gson;
 
@@ -49,7 +54,7 @@ import retrofit.client.Response;
 
 
 public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware,
-        CreatePotentialOrderAware {
+        CreatePotentialOrderAware, BasketDeltaUserActionListener {
 
     protected ArrayList<Address> mAddressArrayList;
     private MemberAddressListAdapter memberAddressListAdapter;
@@ -200,10 +205,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
                 if (addressId != null) {
-                    createPotentialOrder(addressId);
+                    postDeliveryAddress(addressId);
                 } else if (memberAddressListAdapter.getSelectedAddress() != null) {
                     addressId = memberAddressListAdapter.getSelectedAddress().getId();
-                    createPotentialOrder(addressId);
+                    postDeliveryAddress(addressId);
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
                             Toast.LENGTH_SHORT).show();
@@ -261,8 +266,101 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         return this.addressId;
     }
 
-    private void createPotentialOrder(String addressId) {
-        new CreatePotentialOrderTask<>(this, addressId).startTask();
+    private void postDeliveryAddress(final String addressId) {
+        // First check the basket for changes, as product's
+        // availability may change when address changes
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError();
+            return;
+        }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.postDeliveryAddresses(addressId, new Callback<ApiResponse<PostDeliveryAddressApiResponseContent>>() {
+            @Override
+            public void success(ApiResponse<PostDeliveryAddressApiResponseContent> postDeliveryAddressApiResponse, Response response) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                switch (postDeliveryAddressApiResponse.status) {
+                    case 0:
+                        showBasketDeltaOnAddressChange(addressId,
+                                postDeliveryAddressApiResponse.apiResponseContent.title,
+                                postDeliveryAddressApiResponse.apiResponseContent.msg,
+                                postDeliveryAddressApiResponse.apiResponseContent.hasQcErrors,
+                                postDeliveryAddressApiResponse.apiResponseContent.qcErrorDatas);
+                        break;
+                    default:
+                        handler.sendEmptyMessage(postDeliveryAddressApiResponse.status,
+                                postDeliveryAddressApiResponse.message);
+                        break;
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
+            }
+        });
+    }
+
+    private void showBasketDeltaOnAddressChange(String addressId, String title, String msg,
+                                                boolean hasQcError, ArrayList<QCErrorData> qcErrorDatas) {
+        if (TextUtils.isEmpty(title) && TextUtils.isEmpty(msg) && !hasQcError
+                && (qcErrorDatas == null || qcErrorDatas.size() == 0)) {
+            new CreatePotentialOrderTask<>(this, addressId).startTask();
+        } else {
+            new BasketDeltaDialog<>().show(this, title, msg, hasQcError, qcErrorDatas, addressId);
+        }
+    }
+
+    @Override
+    public void onUpdateBasket(String addressId) {
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError();
+            return;
+        }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.updateBasket(addressId, new Callback<BaseApiResponse>() {
+            @Override
+            public void success(BaseApiResponse updateBasketApiResponse, Response response) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                switch (updateBasketApiResponse.status) {
+                    case 0:
+                        finish(); // Go back to basket
+                        break;
+                    default:
+                        handler.sendEmptyMessage(updateBasketApiResponse.status,
+                                updateBasketApiResponse.message);
+                        break;
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
+            }
+        });
     }
 
     public ViewGroup getContentView() {
@@ -311,7 +409,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 loadAddresses();
             }
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
-            createPotentialOrder(addressId);
+            postDeliveryAddress(addressId);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
