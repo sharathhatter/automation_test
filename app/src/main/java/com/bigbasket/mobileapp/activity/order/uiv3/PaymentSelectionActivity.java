@@ -95,7 +95,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (TextUtils.isEmpty(mPotentialOrderId)) return;
         setTitle(getString(R.string.placeorder));
 
-        renderFooter();
+        mOrderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
+        if (mOrderDetails == null) return;
+        renderFooter(false);
         renderPaymentDetails();
         trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
     }
@@ -121,22 +123,22 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
-    private void renderFooter() {
-        mOrderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
-        if (mOrderDetails == null) return;
+    private void renderFooter(boolean refresh) {
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, mOrderDetails.getFormattedFinalTotal(),
                 getString(R.string.placeOrderCaps), false);
-        layoutCheckoutFooter.setOnClickListener(new DuplicateClickAware(mElapsedTime) {
-            @Override
-            public void onActualClick(View view) {
-                onPlaceOrderAction();
-                HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
-                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
-                trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
-            }
-        });
+        if (!refresh) {
+            layoutCheckoutFooter.setOnClickListener(new DuplicateClickAware(mElapsedTime) {
+                @Override
+                public void onActualClick(View view) {
+                    onPlaceOrderAction();
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
+                    map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
+                }
+            });
+        }
     }
 
     private void renderPaymentDetails() {
@@ -303,6 +305,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             showVoucherAppliedText(voucher);
             mOrderDetails = orderDetails;
             renderPaymentMethodsAndSummary(creditDetails);
+            renderFooter(true);
         }
     }
 
@@ -429,6 +432,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         onVoucherRemoved();
         mOrderDetails = orderDetails;
         renderPaymentMethodsAndSummary(creditDetails);
+        renderFooter(true);
     }
 
     private void onPlaceOrderAction() {
