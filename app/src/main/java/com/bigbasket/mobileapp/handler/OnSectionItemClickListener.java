@@ -273,7 +273,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void launchProductList(ArrayList<NameValuePair> nameValuePairs) {
-        ((LaunchProductListAware) context).launchProductList(nameValuePairs, getSectionName(), getSectionItemName());
+        ((LaunchProductListAware) context).launchProductList(nameValuePairs, getSectionName(), getSectionItemName(false));
     }
 
     private void logClickEvent() {
@@ -391,7 +391,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         }
     }
 
-    private String getSectionItemName() {
+    private String getSectionItemName(boolean forAnalytics) {
         if (sectionItem == null)
             return "";
         if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
@@ -400,7 +400,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             return sectionItem.getImageName().replaceAll("[.]\\w+", "");
         } else if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
             return sectionItem.getDescription().getText();
-        } else if (sectionItem.getDestinationInfo() != null &&
+        } else if (!forAnalytics && sectionItem.getDestinationInfo() != null &&
                 !TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationSlug()) &&
                 sectionItem.getDestinationInfo().getDestinationSlug().contains(Constants.SLUG_PARAM)) {
             String typeAndSlug = sectionItem.getDestinationInfo().getDestinationSlug();
@@ -418,9 +418,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void logItemClickEvent() {
         HashMap<String, String> eventAttribs = new HashMap<>();
-        String itemName = getSectionItemName();
+        String itemName = getSectionItemName(true);
         if (!TextUtils.isEmpty(itemName))
-            eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
+            eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName(true));
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
                 ((ActivityAware) context).getCurrentActivity().getNextScreenNavigationContext());
         String eventName = getAnalyticsFormattedScreeName();
