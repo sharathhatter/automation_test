@@ -132,6 +132,8 @@ public class BasketOperationTask<T> {
         }
         eventAttribs.put(TrackEventkeys.TAB_NAME, tabName);
         ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false, true);
+        if(eventName.equals(TrackingAware.BASKET_ADD))
+            ((TrackingAware) context).trackEventAppsFlyer(eventName);
     }
 
     private class CartOperationApiResponseCallback implements Callback<CartOperationApiResponse> {

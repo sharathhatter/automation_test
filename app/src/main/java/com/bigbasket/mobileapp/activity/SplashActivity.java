@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
@@ -76,8 +77,11 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             } catch (ClassCastException e) {
 
             }
-            if (checkInternetConnection() && !BuildConfig.DEBUG) {
-                NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
+            if(!BuildConfig.DEBUG) {
+                trackEventAppsFlyer(TrackingAware.APP_OPEN);
+                if (checkInternetConnection()) {
+                    NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
+                }
             }
         }
     }
