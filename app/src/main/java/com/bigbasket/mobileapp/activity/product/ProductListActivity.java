@@ -358,6 +358,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         map.put(Constants.TAB_NAME, mTabType);
         map = getProductListEventParams(mNameValuePairs, map);
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
+        trackEventAppsFlyer(TrackingAware.PRODUCT_LIST_SHOWN);
     }
 
 
