@@ -50,7 +50,7 @@ public class QCErrorData implements Parcelable {
         dest.writeString(originalQuantity);
         dest.writeParcelable(product, flags);
         boolean isReasonNull = reason == null;
-        dest.writeByte(isReasonNull ? (byte) 1: (byte) 0);
+        dest.writeByte(isReasonNull ? (byte) 1 : (byte) 0);
         if (!isReasonNull) {
             dest.writeString(reason);
         }

@@ -42,6 +42,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.ValidateOrderPaymentApiResponse;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
@@ -363,7 +364,7 @@ public interface BigBasketApiService {
     @GET("/validate-order-payment/")
     void validateOrderPayment(@Query(Constants.TXN_ID) String txnId, @Query(Constants.P_ORDER_ID) String potentialOrderId,
                               @Query(Constants.ORDER_ID) String fullOrderId,
-                              Callback<BaseApiResponse> validateOrderPaymentResponseCallback);
+                              Callback<ApiResponse<ValidateOrderPaymentApiResponse>> validateOrderPaymentResponseCallback);
 
     @GET("/register-utm-params/")
     BaseApiResponse postUtmParams(@QueryMap Map<String, String> utmQueryMap);
@@ -409,7 +410,7 @@ public interface BigBasketApiService {
                                   @Field(Constants.PAYMENT_METHOD) String paymentMethod,
                                   Callback<ApiResponse<GetPayzappPaymentParamsResponse>> getPrepaidPaymentApiResponseCallback);
 
-    @GET("/fund-wallet")
+    @GET("/fund-wallet/")
     void getFundWalletPayments(@Query(Constants.SUPPORT_CC) String supportsPayu,
                                @Query(Constants.SUPPORT_POWER_PAY) String supportPowerPay,
                                @Query(Constants.SUPPORT_MOBIKWIK) String mobikwik,

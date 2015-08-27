@@ -37,7 +37,6 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         caseId = getIntent().getStringExtra(Constants.CASE_ID);
-        caseId = "1111";
         if (TextUtils.isEmpty(caseId)) {
             showAlertDialog(null, "No case-id provided");
             return;
@@ -63,7 +62,7 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Math.round(ratingBar.getRating())==0) {
+                if (Math.round(ratingBar.getRating()) == 0) {
                     showToast(getResources().getString(R.string.rating_toast_msg));
                     return;
                 }

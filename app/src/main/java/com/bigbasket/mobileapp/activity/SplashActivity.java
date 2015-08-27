@@ -199,7 +199,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         }
 
         String imei = UIUtil.getIMEI(this);
-        bigBasketApiService.registerDevice(imei ,deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
+        bigBasketApiService.registerDevice(imei, deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
                 new Callback<RegisterDeviceResponse>() {
                     @Override
                     public void success(RegisterDeviceResponse registerDeviceResponse, Response response) {
