@@ -86,6 +86,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             desc = " " + mProduct.getWeightAndPackDesc();
         map.put(TrackEventkeys.PRODUCT_DESC, desc);
         trackEvent(TrackingAware.PRODUCT_DETAIL_SHOWN, map);
+        trackEventAppsFlyer(TrackingAware.PRODUCT_DETAIL_SHOWN);
     }
 
     private void loadProductDetail() {

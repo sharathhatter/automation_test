@@ -541,6 +541,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public abstract void onChangeTitle(String title);
 
+    public void trackEventAppsFlyer(String eventName){
+        try {
+            AppsFlyerLib.trackEvent(getApplicationContext(), eventName, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
         try {
             AppsFlyerLib.sendTrackingWithEvent(getApplicationContext(), eventName, valueToSum);

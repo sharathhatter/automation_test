@@ -195,4 +195,6 @@ public interface TrackingAware {
                     String source, String sourceValue);
 
     void trackEvent(String eventName, Map<String, String> eventAttribs);
+
+    void trackEventAppsFlyer(String eventName);
 }
