@@ -724,7 +724,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         } else {
             txtNavSalutation.setText(getString(R.string.bigbasketeer));
         }
-        if (authParameters.isAuthTokenEmpty() || authParameters.isMultiCityEnabled()) {
+        if (authParameters.isAuthTokenEmpty()) {
             txtCityName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
