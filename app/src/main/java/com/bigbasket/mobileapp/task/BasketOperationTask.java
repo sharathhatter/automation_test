@@ -95,7 +95,7 @@ public class BasketOperationTask<T> {
             ((HandlerAware) context).getHandler().sendOfflineError();
             return;
         }
-        logBasketEvent(eventName, product, navigationCtx, basketOperation);
+        logBasketEvent(eventName, product, navigationCtx);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(((ActivityAware) context).getCurrentActivity());
         ((ProgressIndicationAware) context).showProgressDialog(((ActivityAware) context).getCurrentActivity()
@@ -117,7 +117,7 @@ public class BasketOperationTask<T> {
         }
     }
 
-    private void logBasketEvent(String eventName, Product product, String navigationCtx, int basketOperation) {
+    private void logBasketEvent(String eventName, Product product, String navigationCtx) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.PRODUCT_ID, product.getSku());
         eventAttribs.put(TrackEventkeys.PRODUCT_BRAND, product.getBrand());
@@ -132,7 +132,7 @@ public class BasketOperationTask<T> {
         }
         eventAttribs.put(TrackEventkeys.TAB_NAME, tabName);
         ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false, true);
-        if(basketOperation == BasketOperation.SET)
+        if(eventName.equals(TrackingAware.BASKET_ADD))
             ((TrackingAware) context).trackEventAppsFlyer(eventName);
     }
 

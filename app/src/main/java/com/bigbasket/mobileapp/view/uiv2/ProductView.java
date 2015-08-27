@@ -179,7 +179,7 @@ public final class ProductView {
             SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
             spannableMrp.setSpan(new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            spannableMrp.setSpan(new StrikethroughSpan(), 1,
+            spannableMrp.setSpan(new StrikethroughSpan(), 0,
                     spannableMrp.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtMrp.setText(spannableMrp);
             txtMrp.setVisibility(View.VISIBLE);

@@ -6,6 +6,7 @@ public interface TrackingAware {
 
 
     //Start Activity
+    String APP_OPEN = "App.Open";
     String ENTRY_PAGE_SHOWN = "EntryPage.Shown";
     String ENTRY_PAGE_SKIP_BUTTON_CLICKED = "EntryPage.Skip Clicked";
     String ENTRY_PAGE_LOGIN_CLICKED = "EntryPage.Login Clicked";
