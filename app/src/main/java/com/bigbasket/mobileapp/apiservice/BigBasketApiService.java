@@ -40,6 +40,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiRes
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateBasketResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.ValidateOrderPaymentApiResponse;
@@ -276,7 +277,7 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/co-update-basket/")
-    void updateBasket(@Field(Constants.ADDRESS_ID) String addressId, Callback<BaseApiResponse> updateBasketApiResponseCallback);
+    void updateBasket(@Field(Constants.ADDRESS_ID) String addressId, Callback<ApiResponse<UpdateBasketResponseContent>> updateBasketApiResponseCallback);
 
     @GET("/search-tc/")
     ApiResponse<AutoSearchApiResponseContent> autoSearch(@Query("t") String term);

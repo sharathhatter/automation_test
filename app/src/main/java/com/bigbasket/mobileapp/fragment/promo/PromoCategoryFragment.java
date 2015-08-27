@@ -61,6 +61,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
         bigBasketApiService.browsePromoCategory(new Callback<ApiResponse<BrowsePromoCategoryApiResponseContent>>() {
             @Override
             public void success(ApiResponse<BrowsePromoCategoryApiResponseContent> browsePromoCategoryApiResponse, Response response) {
+                if (isSuspended()) return;
                 hideProgressView();
                 switch (browsePromoCategoryApiResponse.status) {
                     case 0:
@@ -85,6 +86,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
 
             @Override
             public void failure(RetrofitError error) {
+                if (isSuspended()) return;
                 hideProgressView();
             }
         });

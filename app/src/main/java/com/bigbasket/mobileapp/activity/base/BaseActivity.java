@@ -59,6 +59,8 @@ import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.SectionManager;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
@@ -779,6 +781,18 @@ public abstract class BaseActivity extends AppCompatActivity implements
             }
         }
         startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
+    }
+
+    public void changeCity(City city) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constants.CITY, city.getName());
+        editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
+        editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
+        editor.apply();
+
+        SectionManager.clearAllSectionData(this);
+        goToHome(true);
     }
 
     public void launchRegistrationPage() {

@@ -396,7 +396,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             return "";
         if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
             return sectionItem.getTitle().getText();
-        } else if (sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
+        } else if (forAnalytics && sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
             return sectionItem.getImageName().replaceAll("[.]\\w+", "");
         } else if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
             return sectionItem.getDescription().getText();
