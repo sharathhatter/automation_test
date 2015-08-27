@@ -337,11 +337,20 @@ public class UIUtil {
 
     public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
                                          @DrawableRes int placeHolderDrawableId) {
+        displayAsyncImage(imageView, url, animate, placeHolderDrawableId, null);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
+                                         @DrawableRes int placeHolderDrawableId,
+                                         @Nullable Object downloadTag) {
         Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
         Picasso picasso = Picasso.with(imageView.getContext());
         RequestCreator requestCreator = picasso.load(url)
                 .error(R.drawable.noimage)
                 .placeholder(placeHolderDrawableId);
+        if (downloadTag != null) {
+            requestCreator.tag(downloadTag);
+        }
         if (!animate) {
             requestCreator.noFade();
         }
