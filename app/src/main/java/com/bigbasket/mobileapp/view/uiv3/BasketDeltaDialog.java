@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -25,19 +26,27 @@ public class BasketDeltaDialog<T> {
         final BaseActivity activity = ((ActivityAware) ctx).getCurrentActivity();
 
         View baseView = null;
-        if (hasQcErrors && qcErrorDatas != null && qcErrorDatas.size() > 0) {
+        boolean hasItems = hasQcErrors && qcErrorDatas != null && qcErrorDatas.size() > 0;
+        if (hasItems) {
             baseView = activity.getLayoutInflater().inflate(R.layout.uiv3_qc_dialog, null);
             ListView listView = (ListView) baseView.findViewById(R.id.lstQc);
 
             QcListAdapter qcListAdapter = new QcListAdapter(activity, qcErrorDatas,
                     FontHolder.getInstance(activity).getFaceRobotoRegular());
+            if (!TextUtils.isEmpty(msg)) {
+                TextView txt = new TextView(((ActivityAware) ctx).getCurrentActivity());
+                txt.setTextSize(14);
+                txt.setTextColor(activity.getResources().getColor(R.color.uiv3_primary_text_color));
+                txt.setText(msg);
+                listView.addHeaderView(txt);
+            }
             listView.setAdapter(qcListAdapter);
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         if (!TextUtils.isEmpty(title)) {
             builder.setTitle(title);
         }
-        if (!TextUtils.isEmpty(msg)) {
+        if (!TextUtils.isEmpty(msg) && !hasItems) {
             builder.setMessage(msg);
         }
         if (baseView != null) {

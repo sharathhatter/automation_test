@@ -27,12 +27,13 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
+import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -50,7 +51,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MemberAddressFormActivity extends BackButtonActivity implements OtpDialogAware {
+public class MemberAddressFormActivity extends BackButtonActivity implements OtpDialogAware,
+        CityListDisplayAware {
 
     private Address mAddress;
     private View base;
@@ -75,14 +77,16 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             int cityId = Integer.parseInt(preferences.getString(Constants.CITY_ID, "1"));
             mChoosenCity = new City(cityName, cityId);
         }
-        showForm();
+        new GetCitiesTask<>(this).startTask();  // Sync the cities
     }
 
-    private ArrayList<City> getCities() {
-        return CityManager.getStoredCity(this);
+    @Override
+    public void onReadyToDisplayCity(ArrayList<City> cities) {
+        // Callback once the cities get synced
+        showForm(cities);
     }
 
-    private void showForm() {
+    private void showForm(ArrayList<City> cities) {
         FrameLayout contentLayout = getContentView();
         if (contentLayout == null) return;
         contentLayout.removeAllViews();
@@ -98,7 +102,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         Spinner citySpinner = (Spinner) base.findViewById(R.id.spinnerCity);
 
         int color = getResources().getColor(R.color.uiv3_primary_text_color);
-        mCities = getCities();
+        mCities = cities;
         BBArrayAdapter<City> arrayAdapter = new BBArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, mCities, faceRobotoRegular,
                 color, color);
