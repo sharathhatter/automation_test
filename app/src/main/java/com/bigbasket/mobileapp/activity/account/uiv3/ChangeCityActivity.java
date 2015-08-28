@@ -19,7 +19,6 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -71,7 +70,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
                 int position = listView.getCheckedItemPosition();
                 if (position > -1) {
                     City city = cities.get(position);
-                    changeCity(city);
+                    requestCityChange(city);
                 }
             }
         });
@@ -90,7 +89,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         return 0;
     }
 
-    protected void changeCity(final City city) {
+    protected void requestCityChange(final City city) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.changeCity(String.valueOf(city.getId()), new Callback<OldBaseApiResponse>() {
@@ -126,19 +125,10 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
     }
 
     private void onCityChanged(City city) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(Constants.CITY, city.getName());
-        editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
-        editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
-        editor.apply();
-
-        SectionManager.clearAllSectionData(this);
-
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.CITY, city.getName());
         trackEvent(TrackingAware.CHANGE_CITY_CLICKED, eventAttribs);
-        goToHome(true);
+        changeCity(city);
     }
 
     @Override

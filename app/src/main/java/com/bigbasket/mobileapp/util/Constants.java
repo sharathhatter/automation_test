@@ -584,4 +584,6 @@ public class Constants {
     public static final int MOBIKWIK_REQUEST_CODE = 9999;
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
 
+    public static final String PRODUCT_LIST_IMG_TAG = "plit";
+
 }

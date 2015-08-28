@@ -80,7 +80,7 @@ public final class ProductView {
         ImageView imgProduct = productViewHolder.getImgProduct();
         if (product.getImageUrl() != null) {
             UIUtil.displayAsyncImage(imgProduct, baseImgUrl != null ? baseImgUrl + product.getImageUrl() :
-                    product.getImageUrl());
+                    product.getImageUrl(), false, R.drawable.loading_small, Constants.PRODUCT_LIST_IMG_TAG);
         } else {
             imgProduct.setImageResource(R.drawable.noimage);
         }

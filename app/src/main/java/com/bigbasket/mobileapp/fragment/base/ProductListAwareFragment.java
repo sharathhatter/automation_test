@@ -36,6 +36,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -188,6 +189,18 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     getNextScreenNavigationContext(), cartInfo,
                     mHasSingleTab ? TrackEventkeys.SINGLE_TAB_NAME : mTabType);
 
+            productRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    if (getActivity() == null) return;
+                    final Picasso picasso = Picasso.with(getActivity());
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE || newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                        picasso.resumeTag(Constants.PRODUCT_LIST_IMG_TAG);
+                    } else {
+                        picasso.cancelTag(Constants.PRODUCT_LIST_IMG_TAG);
+                    }
+                }
+            });
             productRecyclerView.setAdapter(mProductListRecyclerAdapter);
             contentView.addView(productRecyclerView);
         } else {

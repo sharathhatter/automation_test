@@ -2,7 +2,9 @@ package com.bigbasket.mobileapp.fragment.order;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -23,16 +25,17 @@ import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateBasketResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
@@ -329,10 +332,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.updateBasket(addressId, new Callback<BaseApiResponse>() {
+        showProgressDialog(getString(R.string.changing_city));
+        bigBasketApiService.updateBasket(addressId, new Callback<ApiResponse<UpdateBasketResponseContent>>() {
             @Override
-            public void success(BaseApiResponse updateBasketApiResponse, Response response) {
+            public void success(ApiResponse<UpdateBasketResponseContent> updateBasketApiResponse, Response response) {
                 if (isSuspended()) return;
                 try {
                     hideProgressDialog();
@@ -341,7 +344,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 }
                 switch (updateBasketApiResponse.status) {
                     case 0:
-                        finish(); // Go back to basket
+                        refreshAppOnCityChange(updateBasketApiResponse.apiResponseContent.city);
                         break;
                     default:
                         handler.sendEmptyMessage(updateBasketApiResponse.status,
@@ -361,6 +364,14 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 handler.handleRetrofitError(error);
             }
         });
+    }
+
+    private void refreshAppOnCityChange(City newCity) {
+        if (getCurrentActivity() == null) return;
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        editor.putString(Constants.FRAGMENT_CODE, String.valueOf(NavigationCodes.GO_TO_BASKET));
+        editor.commit();
+        getCurrentActivity().changeCity(newCity);
     }
 
     public ViewGroup getContentView() {
