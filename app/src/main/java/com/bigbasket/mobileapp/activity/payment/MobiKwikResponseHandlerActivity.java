@@ -26,7 +26,6 @@ public class MobiKwikResponseHandlerActivity extends BackButtonActivity {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.MOBIKWIK_ORDER_ID, txnId);
         editor.putString(Constants.MOBIKWIK_STATUS, statusCode);
-        editor.putString(Constants.MOBIKWIK_STATUS_MSG, statusMessage);
         editor.commit();
         finish();
     }
