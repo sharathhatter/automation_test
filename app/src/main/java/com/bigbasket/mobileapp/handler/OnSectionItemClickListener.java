@@ -13,6 +13,7 @@ import android.view.View;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.SectionHelpActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
@@ -434,6 +435,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private boolean hasMainMenu() {
-        return context instanceof BBActivity && !(context instanceof BackButtonActivity);
+        return context instanceof BBActivity && !(context instanceof BackButtonActivity)
+                && (((BaseActivity) context).findViewById(R.id.slidingTabs) == null)
+                && ((BaseActivity) context).findViewById(R.id.content_frame) != null;
     }
 }
