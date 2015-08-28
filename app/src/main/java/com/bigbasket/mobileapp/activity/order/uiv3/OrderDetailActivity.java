@@ -57,8 +57,6 @@ public class OrderDetailActivity extends TabActivity {
         viewPager.setAdapter(fragmentStatePagerAdapter);
 
         final TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
-        pagerSlidingTabStrip.setTabGravity(TabLayout.GRAVITY_FILL);
-        pagerSlidingTabStrip.setTabMode(TabLayout.MODE_FIXED);
         pagerSlidingTabStrip.setupWithViewPager(viewPager);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

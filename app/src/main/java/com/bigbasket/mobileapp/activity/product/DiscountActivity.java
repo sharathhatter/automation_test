@@ -120,8 +120,6 @@ public class DiscountActivity extends BBActivity {
 
 
             TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
-            pageTitleStrip.setTabMode(TabLayout.MODE_FIXED);
-            pageTitleStrip.setTabGravity(TabLayout.GRAVITY_FILL);
             pageTitleStrip.setupWithViewPager(viewPager);
 
         }
