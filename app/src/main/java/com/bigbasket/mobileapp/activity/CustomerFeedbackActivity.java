@@ -58,6 +58,8 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
         ratingBar.setProgress(0);
         LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
         stars.getDrawable(2).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(1).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(0).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
