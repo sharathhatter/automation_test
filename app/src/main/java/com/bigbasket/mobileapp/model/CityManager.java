@@ -27,6 +27,7 @@ public class CityManager {
     public static boolean isAreaPinInfoDataStale(Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         String areaInfoCalledLast = prefer.getString(Constants.AREA_INFO_CALL_LAST, null);
+        int cityCacheExpiryDays = prefer.getInt(preferenceKey + "_expiry", 7);
         try {
             DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
             Date d1 = format.getCalendar().getTime();
@@ -36,7 +37,7 @@ public class CityManager {
                 long diff = d1.getTime() - d2.getTime();
                 days = (int) diff / (24 * 60 * 60 * 1000);
             }
-            return areaInfoCalledLast == null || days > 30;
+            return areaInfoCalledLast == null || days > cityCacheExpiryDays;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,6 +68,13 @@ public class CityManager {
                 Locale.getDefault());
         editor.putString(preferenceKey + "_time", dateFormat.format(new Date()));
         editor.commit();
+    }
+
+    public static void setCityCacheExpiry(Context context, int numDays) {
+        SharedPreferences.Editor editor = PreferenceManager
+                .getDefaultSharedPreferences(context).edit();
+        editor.putInt(preferenceKey + "_expiry", numDays);
+        editor.apply();
     }
 
     private static boolean isStale(String createdOn, SimpleDateFormat simpleDateFormat) {

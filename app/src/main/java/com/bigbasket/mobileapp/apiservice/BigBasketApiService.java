@@ -389,7 +389,7 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/co-place-order/")
-    void placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.TXN_ID) String txnId,
+    void placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId,
                     @Field(Constants.PAYMENT_METHOD) String paymentMethod,
                     Callback<OldApiResponse<PlaceOrderApiResponseContent>> placeOrderApiResponseCallback);
 

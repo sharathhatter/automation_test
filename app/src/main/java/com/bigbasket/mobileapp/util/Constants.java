@@ -519,6 +519,7 @@ public class Constants {
     public static final String FREE_PRODUCTS = "free_products";
     public static final String MODE_HDFC_PAY = "restrict_payment_to_wibmo_iap";
     public static final String HDFC_POWER_PAY_EXPIRY = "hdfc_power_pay_expiry";
+    public static final String CITY_CACHE_EXPIRY = "city_cache_expiry";
     public static final String TAB_TYPE = "tab_type";
     public static final String SINGLE_TAB = "single_tab";
     public static final String HEADER_SECTION = "header_section";

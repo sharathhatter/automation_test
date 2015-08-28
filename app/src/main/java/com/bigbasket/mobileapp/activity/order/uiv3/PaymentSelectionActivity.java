@@ -130,7 +130,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             layoutCheckoutFooter.setOnClickListener(new DuplicateClickAware(mElapsedTime) {
                 @Override
                 public void onActualClick(View view) {
-                    onPlaceOrderAction();
+                    placeOrder();
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
                     map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
@@ -434,10 +434,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
         renderFooter(true);
     }
 
-    private void onPlaceOrderAction() {
-        placeOrder(null);
-    }
-
     private boolean isCreditCardPayment() {
         return mSelectedPaymentMethod != null &&
                 (mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY) ||
@@ -494,11 +490,11 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
-    private void placeOrder(String txnId) {
+    private void placeOrder() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
                 false);
-        bigBasketApiService.placeOrder(mPotentialOrderId, txnId, mSelectedPaymentMethod,
+        bigBasketApiService.placeOrder(mPotentialOrderId, mSelectedPaymentMethod,
                 new Callback<OldApiResponse<PlaceOrderApiResponseContent>>() {
                     @Override
                     public void success(OldApiResponse<PlaceOrderApiResponseContent> placeOrderApiResponse, Response response) {

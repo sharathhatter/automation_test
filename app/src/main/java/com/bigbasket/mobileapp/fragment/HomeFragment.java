@@ -32,6 +32,7 @@ import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -365,6 +366,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                     callbackAppDataResponse.apiResponseContent.hdfcPayzappExpiry);
                             savePopulateSearcher(callbackAppDataResponse.apiResponseContent.topSearches);
                             AppDataSyncHandler.updateLastAppDataCall(getCurrentActivity());
+                            CityManager.setCityCacheExpiry(getCurrentActivity(),
+                                    callbackAppDataResponse.apiResponseContent.cityCacheExpiry);
                         }
                         // Fail silently
                     }
