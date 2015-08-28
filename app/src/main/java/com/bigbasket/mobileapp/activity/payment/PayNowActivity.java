@@ -230,18 +230,16 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
         if (!TextUtils.isEmpty(txnId)) {
             String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
-            String txnMsg = preferences.getString(Constants.MOBIKWIK_STATUS_MSG, null);
             if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
                 onPayNowSuccess();
             } else {
-                showAlertDialog(txnMsg,
+                showAlertDialog(getString(R.string.transactionFailed),
                         getString(R.string.txnFailureMsg));
             }
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.MOBIKWIK_ORDER_ID);
             editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.remove(Constants.MOBIKWIK_STATUS_MSG);
             editor.commit();
         }
     }

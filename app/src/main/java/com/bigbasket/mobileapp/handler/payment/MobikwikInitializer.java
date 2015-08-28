@@ -20,6 +20,7 @@ public class MobikwikInitializer {
         for (Map.Entry<String, String> entry : paymentParams.entrySet()) {
             walletIntent.putExtra(entry.getKey(), entry.getValue());
         }
+        walletIntent.putExtra("debitwallet", "False");
         walletIntent.putExtra(Constants.MOBIKWIK_MODE, Constants.MOBIKWIK_MODE_VALUE);
         walletIntent.putExtra(Constants.MOBIKWIK_SDK_SIGN, Constants.MOBIKWIK_SDK_SIGN_VALUE);
         walletIntent.putExtra(Constants.MOBIKWIK_PAYMENT_OPTION, Constants.MOBIKWIK_PAYMENT_MW);

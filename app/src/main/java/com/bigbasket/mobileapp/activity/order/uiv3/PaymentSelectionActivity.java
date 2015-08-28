@@ -116,7 +116,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.MOBIKWIK_ORDER_ID);
             editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.remove(Constants.MOBIKWIK_STATUS_MSG);
             editor.commit();
         }
     }
