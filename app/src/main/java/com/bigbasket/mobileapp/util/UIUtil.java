@@ -335,6 +335,10 @@ public class UIUtil {
         displayAsyncImage(imageView, url, false, R.drawable.loading_small);
     }
 
+    public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId) {
+        Picasso.with(imageView.getContext()).load(drawableId).into(imageView);
+    }
+
     public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
                                          @DrawableRes int placeHolderDrawableId) {
         displayAsyncImage(imageView, url, animate, placeHolderDrawableId, null);

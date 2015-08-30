@@ -147,6 +147,7 @@ public class BigBasketMessageHandler<T> {
     }
 
     public void handleRetrofitError(RetrofitError error, String sourceName, boolean finish) {
+        if (((ActivityAware) ctx).getCurrentActivity() == null) return;
         switch (error.getKind()) {
             case NETWORK:
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingNetworkError),

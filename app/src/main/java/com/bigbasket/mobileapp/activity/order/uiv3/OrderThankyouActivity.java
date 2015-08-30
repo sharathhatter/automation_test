@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
@@ -39,6 +41,10 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         super.onCreate(saveInstanceState);
         setNextScreenNavigationContext(TrackEventkeys.CO_INVOICE);
         setContentView(R.layout.uiv3_multiple_order_invoice_layout);
+
+        ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
+        UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_logo_transparent_bkg);
+
         ArrayList<Order> orderArrayList = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
         String addMoreLink = getIntent().getStringExtra(Constants.ADD_MORE_LINK);
         String addMoreMsg = getIntent().getStringExtra(Constants.ADD_MORE_MSG);
@@ -116,6 +122,9 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     display += date;
                 }
                 if (!TextUtils.isEmpty(time)) {
+                    if (!TextUtils.isEmpty(display)) {
+                        display += " ";
+                    }
                     display += time;
                 }
                 txtSlotTime.setText(getString(R.string.delivery_time) + " " + display);

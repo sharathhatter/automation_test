@@ -59,6 +59,9 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         boolean reloadApp = getIntent().getBooleanExtra(Constants.RELOAD_APP, false);
         if (reloadApp) {
             setContentView(R.layout.loading_layout);
+            ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
+            UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo);
+
             mIsFromActivityResult = true;
             handleResults(true);
         } else {
@@ -88,6 +91,9 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
     private void startSplashScreen() {
         setContentView(R.layout.loading_layout);
+        ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
+        UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo);
+
         if (AuthParameters.getInstance(this).isAuthTokenEmpty() && !CityManager.hasUserChosenCity(this)) {
             if (TextUtils.isEmpty(AuthParameters.getInstance(this).getVisitorId())) {
                 doRegisterDevice(new City("Bangalore", 1));

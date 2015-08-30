@@ -38,6 +38,7 @@ import retrofit.client.Response;
 public class CategoryLandingFragment extends BaseSectionFragment {
 
     private String topCatSlug;
+    @Nullable
     private String topCatName;
 
     @Override
@@ -132,7 +133,8 @@ public class CategoryLandingFragment extends BaseSectionFragment {
 
         final List<Category> categoryArrayList = new ArrayList<>();
 
-        Category allCategories = new Category("All " + topCatName.trim(), topCatSlug);
+        Category allCategories = new Category(TextUtils.isEmpty(topCatName) ? "All" :
+                "All " + topCatName.trim(), topCatSlug);
         categoryArrayList.add(allCategories);
 
         if (subCategoryModel != null && subCategoryModel.getCategory() != null) {

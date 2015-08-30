@@ -159,7 +159,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public void hideProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
+        if (progressDialog != null && progressDialog.isShowing()
+                && !isSuspended()) {
             progressDialog.dismiss();
             progressDialog = null;
         }
