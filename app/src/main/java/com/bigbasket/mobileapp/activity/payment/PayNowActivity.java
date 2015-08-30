@@ -240,7 +240,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.MOBIKWIK_ORDER_ID);
             editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.commit();
+            editor.apply();
         }
     }
 

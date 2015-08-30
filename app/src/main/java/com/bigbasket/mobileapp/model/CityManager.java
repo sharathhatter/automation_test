@@ -67,7 +67,7 @@ public class CityManager {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                 Locale.getDefault());
         editor.putString(preferenceKey + "_time", dateFormat.format(new Date()));
-        editor.commit();
+        editor.apply();
     }
 
     public static void setCityCacheExpiry(Context context, int numDays) {

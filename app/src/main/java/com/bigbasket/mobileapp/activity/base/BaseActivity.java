@@ -448,7 +448,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
             editor.putBoolean(Constants.IS_PENDING_GO_TO_HOME, true);
             editor.putBoolean(Constants.RELOAD_APP, reloadApp);
-            editor.commit();
+            editor.apply();
 
             Intent data = new Intent();
             data.putExtra(Constants.RELOAD_APP, reloadApp);
@@ -722,14 +722,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.remove(Constants.IS_PENDING_GO_TO_HOME);
         editor.remove(Constants.RELOAD_APP);
-        editor.commit();
+        editor.apply();
     }
 
     public void removePendingCodes() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.remove(Constants.FRAGMENT_CODE);
         editor.remove(Constants.DEEP_LINK);
-        editor.commit();
+        editor.apply();
         removePendingGoToHome();
     }
 

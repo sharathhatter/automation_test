@@ -591,7 +591,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (cartSummary == null) return;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(cartSummary.getNoOfItems()));
-        editor.commit();
+        editor.apply();
         updateCartCountHeaderTextView();
     }
 
@@ -599,7 +599,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void markBasketDirty() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putBoolean(Constants.IS_BASKET_COUNT_DIRTY, true);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isBasketDirty() {
@@ -611,7 +611,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void syncBasket() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.remove(Constants.IS_BASKET_COUNT_DIRTY);
-        editor.commit();
+        editor.apply();
         new GetCartCountTask<>(this).startTask();
     }
 

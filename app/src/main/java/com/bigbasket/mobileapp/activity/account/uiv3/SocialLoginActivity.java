@@ -362,7 +362,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             editor.remove(Constants.REMEMBER_ME_PREF);
             editor.remove(Constants.PASSWD_PREF);
         }
-        editor.commit();
+        editor.apply();
 
         UIUtil.updateStoredUserDetails(getCurrentActivity(),
                 loginApiResponse.userDetails, email, loginApiResponse.mId);
@@ -374,13 +374,13 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         if (!TextUtils.isEmpty(deepLink)) {
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
             editor.putString(Constants.DEEP_LINK, deepLink);
-            editor.commit();
+            editor.apply();
         } else {
             String fragmentCode = getIntent().getStringExtra(Constants.FRAGMENT_CODE);
             if (!TextUtils.isEmpty(fragmentCode)) {
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
                 editor.putString(Constants.FRAGMENT_CODE, fragmentCode);
-                editor.commit();
+                editor.apply();
             }
         }
         goToHome(true);

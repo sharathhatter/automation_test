@@ -370,7 +370,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         if (getCurrentActivity() == null) return;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.FRAGMENT_CODE, String.valueOf(NavigationCodes.GO_TO_BASKET));
-        editor.commit();
+        editor.apply();
         getCurrentActivity().changeCity(newCity);
     }
 

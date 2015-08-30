@@ -20,7 +20,7 @@ public class HDFCPayzappHandler {
     public static void setTimeOut(Context context, int timeOutInMinutes) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putInt(Constants.HDFC_POWER_PAY_EXPIRY, timeOutInMinutes);
-        editor.commit();
+        editor.apply();
     }
 
     public static int getTimeoutInMinutes(Context context) {
@@ -33,7 +33,7 @@ public class HDFCPayzappHandler {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT,
                 Locale.getDefault());
         editor.putString("HDFC_PAY_START", dateFormat.format(new Date()));
-        editor.commit();
+        editor.apply();
     }
 
     public static boolean isInHDFCPayMode(Context context) {
@@ -45,12 +45,6 @@ public class HDFCPayzappHandler {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT,
                 Locale.getDefault());
         return !isStale(context, timeStr, dateFormat);
-    }
-
-    public static void clear(Context context) {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        editor.remove("HDFC_PAY_START");
-        editor.commit();
     }
 
     private static boolean isStale(Context context,

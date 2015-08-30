@@ -273,7 +273,7 @@ public class MyAccountActivity extends BackButtonActivity {
             String profilePicUrl = person.getImage().getUrl();
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
             editor.putString(Constants.UPDATE_PROFILE_IMG_URL, profilePicUrl);
-            editor.commit();
+            editor.apply();
             renderProfileImage(profilePicUrl);
         } else {
             loadDefaultPic();
@@ -290,7 +290,7 @@ public class MyAccountActivity extends BackButtonActivity {
                 accessToken.getUserId() + "/picture?type=normal";
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.UPDATE_PROFILE_IMG_URL, profilePicUrl);
-        editor.commit();
+        editor.apply();
         renderProfileImage(profilePicUrl);
     }
 

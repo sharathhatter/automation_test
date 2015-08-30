@@ -285,7 +285,7 @@ public class ShowCartActivity extends BackButtonActivity {
                     handler.sendEmptyMessage(cartEmptyApiResponseCallback.status,
                             cartEmptyApiResponseCallback.message, true);
                 }
-                editor.commit();
+                editor.apply();
             }
 
             @Override
@@ -338,7 +338,7 @@ public class ShowCartActivity extends BackButtonActivity {
                             handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
                                     cartGetApiResponseContentApiResponse.message);
                         }
-                        editor.commit();
+                        editor.apply();
                     }
 
                     @Override
