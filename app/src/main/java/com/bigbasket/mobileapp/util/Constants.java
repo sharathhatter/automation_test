@@ -576,7 +576,6 @@ public class Constants {
     public static final String MOBIKWIK_SDK_SIGN = "sdksign";
     public static final String MOBIKWIK_REDIRECT_ANDROID_CLASS_NAME = "redirecturl";
     public static final String MOBIKWIK_RESPONSE_HANDLER_CLASS = "com.bigbasket.mobileapp.activity.payment.MobiKwikResponseHandlerActivity";
-    public static final String MOBIKWIK_SDK_SIGN_VALUE = "aead83c772d44fb48eace92beab20c8a";
     public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
     public static final String MOBIKWIK_PAYMENT_MW = "mw";
     public static final String MOBIKWIK_STATUS = "status";
