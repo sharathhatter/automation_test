@@ -70,6 +70,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
             lblKnowMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    trackEvent(TrackingAware.CHECKOUT_KNOW_MORE_LINK_CLICKED, null);
                     Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                     intent.putExtra(Constants.WEBVIEW_URL, addMoreLink);

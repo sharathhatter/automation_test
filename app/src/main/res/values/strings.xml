@@ -307,7 +307,7 @@
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
 
     <!-- order invoice -->
-    <string name="multi_order_place_txt">You will receive the order(s) in multiple deliveries</string>
+    <string name="multi_order_place_txt">You will receive the orders in multiple deliveries</string>
     <string name="continue_shopping">CONTINUE SHOPPING!</string>
     <string name="know_more">Know More</string>
 
