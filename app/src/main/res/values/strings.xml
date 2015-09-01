@@ -337,8 +337,10 @@
     <string name="invalidAmount">Please enter a valid amount</string>
     <string name="missingPaymentMethod">Please choose at least one payment method</string>
     <string name="fundWalletSuccess">You have successfully funded the wallet</string>
+    <string name="reviewBasket">Review Basket</string>
 
     <string name="areaInputHint">Choose Area</string>
     <string name="chooseLocation">Choose Location</string>
-    <string name="reviewBasket">Review Basket</string>
+    <string name="locationOrArea">Location/Area</string>
+    <string name="useMyLocation">Use My Location</string>
 </resources>
