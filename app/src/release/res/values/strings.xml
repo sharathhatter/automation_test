@@ -11,4 +11,6 @@
     </string>
     <string name="payu_merchant_id" templateMergeStrategy="preserve">fcGIvG</string>
     <string name="payu_merchant_salt" templateMergeStrategy="preserve">XLw5BpAT</string>
+    <string name="mobikwik_sdk_sign">aead83c772d44fb48eace92beab20c8a</string>
+    <string name="mobikwik_mode">1</string>
 </resources>

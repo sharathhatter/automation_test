@@ -320,7 +320,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (sectionItem != null) {
             if (sectionItem.getTitle() != null &&
                     !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
-                ncBuilder.append(".").append(sectionItem.getTitle().getText());
+                ncBuilder.append(".").append(sectionItem.getTitle().getText().replaceAll("\\(\\d+\\)", "").trim());
             } else if (sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
                 ncBuilder.append(".").append(sectionItem.getImageName().replaceAll("[.]\\w+", ""));
             } else if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
