@@ -311,7 +311,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             ncBuilder.append(TrackEventkeys.SCREEN);
         }
         if(isBannerClicked)
-            ncBuilder.append("."+Section.BANNER);
+            ncBuilder.append(".").append(Section.BANNER);
 
         if (section != null) {
             if (section.getTitle() != null &&
