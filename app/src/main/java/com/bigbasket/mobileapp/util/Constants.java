@@ -294,6 +294,7 @@ public class Constants {
     public static final String ANNOTATION_INFO = "annotation_info";
     public static final String FLAT_PAGE = "flat_page";
     public static final String EVOUCHER_CODE = "evoucher_code";
+    public static final String NEW_FLOW_URL = "new_flow_url";
     public static final String REMOVE_VOUCHER = "remove_voucher";
 
     public static final String ORDER = "order";

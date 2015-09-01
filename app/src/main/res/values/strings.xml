@@ -339,4 +339,8 @@
     <string name="fundWalletSuccess">You have successfully funded the wallet</string>
 
     <string name="reviewBasket">Review Basket</string>
+    <string name="newCheckoutFlowMsg">When you click on Place Order &amp; Pay - Your order will be placed first, &amp; then you will be taken to payment page.
+        In case of payment failure, order will be converted to "COD", and you can "PAY LATER".
+        To cancel orders please reach out to our customer service.</string>
+    <string name="newStr">New -</string>
 </resources>

@@ -47,6 +47,7 @@ import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
+import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
@@ -214,6 +215,7 @@ public class UIUtil {
 
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
         SectionManager.clearAllSectionData(ctx);
+        AppDataSyncHandler.reset(ctx);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = preferences.edit();
@@ -275,6 +277,7 @@ public class UIUtil {
             }
         }
         editor.commit();
+
         AuthParameters.reset();
     }
 

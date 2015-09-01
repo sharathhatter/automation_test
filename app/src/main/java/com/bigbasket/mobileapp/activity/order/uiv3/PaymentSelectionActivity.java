@@ -6,7 +6,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,7 +103,49 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (mOrderDetails == null) return;
         renderFooter(false);
         renderPaymentDetails();
+        setUpNewCheckoutFlowMsg();
         trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
+    }
+
+    private void setUpNewCheckoutFlowMsg() {
+        final String newFlowUrl = getIntent().getStringExtra(Constants.NEW_FLOW_URL);
+        TextView txtNewCheckoutFlowMsg = (TextView) findViewById(R.id.txtNewCheckoutFlow);
+        txtNewCheckoutFlowMsg.setTypeface(faceRobotoRegular);
+
+        TextView lblKnowMore = (TextView) findViewById(R.id.lblKnowMore);
+        if (TextUtils.isEmpty(newFlowUrl)) {
+            lblKnowMore.setVisibility(View.GONE);
+        } else {
+            SpannableString spannableString = new SpannableString(lblKnowMore.getText());
+            spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            lblKnowMore.setText(spannableString);
+            lblKnowMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    trackEvent(TrackingAware.PLACE_ORDER_KNOW_MORE_LINK_CLICKED, null);
+                    Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
+                    intent.putExtra(Constants.WEBVIEW_URL, newFlowUrl);
+                    intent.putExtra(Constants.WEBVIEW_TITLE, "");
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                }
+            });
+        }
+
+        String prefix = getString(R.string.newStr) + " ";
+        String msg = getString(R.string.newCheckoutFlowMsg);
+
+        SpannableString spannableString = new SpannableString(prefix + msg);
+        spannableString.setSpan(new ForegroundColorSpan(getResources()
+                        .getColor(R.color.uiv3_dialog_header_text_bkg)),
+                0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        txtNewCheckoutFlowMsg.setText(spannableString);
+    }
+
+    private void toggleNewCheckoutFlowMsg(boolean show) {
+        View layoutKnowMore = findViewById(R.id.layoutKnowMore);
+        layoutKnowMore.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -265,6 +311,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             mSelectedPaymentMethod = paymentType.getValue();
+                            toggleNewCheckoutFlowMsg(isCreditCardPayment());
                         }
                     }
                 });
