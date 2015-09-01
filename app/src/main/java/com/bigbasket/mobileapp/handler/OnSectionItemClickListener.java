@@ -279,15 +279,16 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void logClickEvent() {
         if (section == null) return;
-        setNc();
-        if (section.getSectionType().equals(Section.BANNER)) {
+        boolean isBannerClicked = section.getSectionType().equals(Section.BANNER);
+        setNc(isBannerClicked);
+        if (isBannerClicked) {
             logBannerEvent();
         } else if (screenName != null) {
             logItemClickEvent();
         }
     }
 
-    private void setNc() {
+    private void setNc(boolean isBannerClicked ) {
         StringBuilder ncBuilder = new StringBuilder();
         if (screenName != null) {
             switch (screenName) {
@@ -309,6 +310,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         } else {
             ncBuilder.append(TrackEventkeys.SCREEN);
         }
+        if(isBannerClicked)
+            ncBuilder.append(".").append(Section.BANNER);
+
         if (section != null) {
             if (section.getTitle() != null &&
                     !TextUtils.isEmpty(section.getTitle().getText())) {
