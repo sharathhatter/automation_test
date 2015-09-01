@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.util;
 
-import com.bigbasket.mobileapp.BuildConfig;
-
 public class Constants {
 
     // connection parameters

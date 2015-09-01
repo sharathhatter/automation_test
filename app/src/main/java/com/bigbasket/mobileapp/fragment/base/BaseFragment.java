@@ -413,7 +413,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void trackEventAppsFlyer(String eventName) {
         if (getCurrentActivity() == null) return;
-            getCurrentActivity().trackEventAppsFlyer(eventName);
+        getCurrentActivity().trackEventAppsFlyer(eventName);
     }
 
     @Override
