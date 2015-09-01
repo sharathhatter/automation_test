@@ -72,7 +72,7 @@ public class FlatPageFragment extends BaseFragment {
                 }
             }
         }));
-        bbWebView.setWebViewClient(new WebViewClient() {
+        bbWebView.setWebViewClient(new BBWebView.BBWebViewClient(getActivity()) {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
