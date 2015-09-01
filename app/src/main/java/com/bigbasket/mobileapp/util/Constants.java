@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.util;
 
-import com.bigbasket.mobileapp.BuildConfig;
-
 public class Constants {
 
     // connection parameters
@@ -572,13 +570,10 @@ public class Constants {
     public static final String MOBIKWIKSDK = "MobikwikSDK";
     public static final String MOBIKWIK_ORDER_ID = "orderid";
     public static final String MOBIKWIK_STATUS_CODE = "statuscode";
-    public static final String MOBIKWIK_RESPONSE_STATUS_MSG = "statusmessage";
     public static final String MOBIKWIK_MODE = "mode";
     public static final String MOBIKWIK_SDK_SIGN = "sdksign";
     public static final String MOBIKWIK_REDIRECT_ANDROID_CLASS_NAME = "redirecturl";
     public static final String MOBIKWIK_RESPONSE_HANDLER_CLASS = "com.bigbasket.mobileapp.activity.payment.MobiKwikResponseHandlerActivity";
-    public static final String MOBIKWIK_MODE_VALUE = BuildConfig.DEBUG ? "0" : "1";
-    public static final String MOBIKWIK_SDK_SIGN_VALUE = "a_lvjRAEvSbC0ENdEVuGC0B2Uo9";
     public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
     public static final String MOBIKWIK_PAYMENT_MW = "mw";
     public static final String MOBIKWIK_STATUS = "status";

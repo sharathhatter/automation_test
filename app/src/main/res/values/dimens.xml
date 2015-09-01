@@ -42,8 +42,8 @@
     <dimen name="margin_22">22dp</dimen>
     <dimen name="padding_12">12dp</dimen>
     <dimen name="margin_12">12dp</dimen>
-    <dimen name="thank_you_page_top_margin">71dp</dimen>
-    <dimen name="thank_you_page_txt_margin">85dp</dimen>
+    <dimen name="thank_you_page_top_margin">32dp</dimen>
+    <dimen name="thank_you_page_txt_margin">48dp</dimen>
     <dimen name="thank_you_page_heading_text_size">51sp</dimen>
     <dimen name="thank_you_order_placed">30dp</dimen>
 

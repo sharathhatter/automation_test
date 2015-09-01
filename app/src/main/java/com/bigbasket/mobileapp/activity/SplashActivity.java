@@ -80,7 +80,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             } catch (ClassCastException e) {
 
             }
-            if(!BuildConfig.DEBUG) {
+            if (!BuildConfig.DEBUG) {
                 trackEventAppsFlyer(TrackingAware.APP_OPEN);
                 if (checkInternetConnection()) {
                     NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());

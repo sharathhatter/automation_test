@@ -314,7 +314,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             layoutAddBundle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    trackEvent(TrackingAware.BASKET_ADD_PROMO_BUNDLE, null);
+                    trackEvent(TrackingAware.CHECKOUT_KNOW_MORE_LINK_CLICKED, null);
                     addBundle(products, baseImgUrl);
                 }
             });

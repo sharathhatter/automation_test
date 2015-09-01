@@ -20,13 +20,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/thank_you_page_top_margin"
+            android:layout_marginBottom="@dimen/thank_you_page_top_margin"
             android:contentDescription="@string/app_name" />
 
         <TextView
             android:id="@+id/txtThankYou"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/margin_normal"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"
