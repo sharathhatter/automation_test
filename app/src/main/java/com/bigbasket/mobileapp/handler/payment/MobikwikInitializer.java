@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.util.Constants;
 
 import java.util.HashMap;
@@ -22,10 +22,10 @@ public class MobikwikInitializer {
         for (Map.Entry<String, String> entry : paymentParams.entrySet()) {
             walletIntent.putExtra(entry.getKey(), entry.getValue());
         }
-        String sdkMode = ((BaseActivity) ctx).getCurrentActivity().getResources().getString(R.string.mobikwik_mode);
-        walletIntent.putExtra(Constants.MOBIKWIK_MODE, "1");
-        String sdkSign = ((BaseActivity) ctx).getCurrentActivity().getResources().getString(R.string.mobikwik_sdk_sign);
-        walletIntent.putExtra(Constants.MOBIKWIK_SDK_SIGN, Constants.MOBIKWIK_SDK_SIGN_VALUE);
+        String sdkMode = ((ActivityAware) ctx).getCurrentActivity().getResources().getString(R.string.mobikwik_mode);
+        walletIntent.putExtra(Constants.MOBIKWIK_MODE, sdkMode);
+        String sdkSign = ((ActivityAware) ctx).getCurrentActivity().getResources().getString(R.string.mobikwik_sdk_sign);
+        walletIntent.putExtra(Constants.MOBIKWIK_SDK_SIGN, sdkSign);
 
         walletIntent.putExtra(Constants.MOBIKWIK_PAYMENT_OPTION, Constants.MOBIKWIK_PAYMENT_MW);
         walletIntent.putExtra(Constants.MOBIKWIK_REDIRECT_ANDROID_CLASS_NAME,
