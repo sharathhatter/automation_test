@@ -5,7 +5,6 @@ public interface ApiErrorCodes {
     int POTENTIAL_ORDER_SLOT_EXPIRED = 100;
     int INTERNAL_SERVER_ERROR = 101;
     int INVALID_FIELD = 103;
-    String INVALID_FIELD_STR = "103";
     int INVALID_USER = 104;
     int EMAIL_ALREADY_EXISTS = 105;
     int CART_NOT_EXISTS = 106;
@@ -21,7 +20,6 @@ public interface ApiErrorCodes {
     int LIST_WITH_NAME_ALREADY_EXISTS = 117;
     int INVALID_INPUT = 119;
     int MEMBER_SHOPPING_LIST_DOESNT_EXISTS = 122;
-    String AMOUNT_MISMATCH_STR = "123";
     int PROMO_NOT_EXIST = 123;
     int PROMO_CATEGORY_NOT_EXIST = 124;
     int PROMO_CRITERIA_SET_NOT_EXISTS = 125;

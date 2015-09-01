@@ -59,6 +59,8 @@ import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.SectionManager;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
@@ -446,7 +448,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
             editor.putBoolean(Constants.IS_PENDING_GO_TO_HOME, true);
             editor.putBoolean(Constants.RELOAD_APP, reloadApp);
-            editor.commit();
+            editor.apply();
 
             Intent data = new Intent();
             data.putExtra(Constants.RELOAD_APP, reloadApp);
@@ -540,6 +542,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public abstract void onChangeTitle(String title);
+
+    public void trackEventAppsFlyer(String eventName){
+        try {
+            AppsFlyerLib.trackEvent(getApplicationContext(), eventName, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
         try {
@@ -712,14 +722,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.remove(Constants.IS_PENDING_GO_TO_HOME);
         editor.remove(Constants.RELOAD_APP);
-        editor.commit();
+        editor.apply();
     }
 
     public void removePendingCodes() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.remove(Constants.FRAGMENT_CODE);
         editor.remove(Constants.DEEP_LINK);
-        editor.commit();
+        editor.apply();
         removePendingGoToHome();
     }
 
@@ -771,6 +781,18 @@ public abstract class BaseActivity extends AppCompatActivity implements
             }
         }
         startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
+    }
+
+    public void changeCity(City city) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constants.CITY, city.getName());
+        editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
+        editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
+        editor.apply();
+
+        SectionManager.clearAllSectionData(this);
+        goToHome(true);
     }
 
     public void launchRegistrationPage() {

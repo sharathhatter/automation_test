@@ -159,7 +159,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public void hideProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
+        if (progressDialog != null && progressDialog.isShowing()
+                && !isSuspended()) {
             progressDialog.dismiss();
             progressDialog = null;
         }
@@ -407,6 +408,12 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         if (getCurrentActivity() == null) return;
         trackEvent(eventName, eventAttribs, null, null);
+    }
+
+    @Override
+    public void trackEventAppsFlyer(String eventName) {
+        if (getCurrentActivity() == null) return;
+            getCurrentActivity().trackEventAppsFlyer(eventName);
     }
 
     @Override

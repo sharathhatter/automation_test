@@ -95,7 +95,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (TextUtils.isEmpty(mPotentialOrderId)) return;
         setTitle(getString(R.string.placeorder));
 
-        renderFooter();
+        mOrderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
+        if (mOrderDetails == null) return;
+        renderFooter(false);
         renderPaymentDetails();
         trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
     }
@@ -110,41 +112,32 @@ public class PaymentSelectionActivity extends BackButtonActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
         if (!TextUtils.isEmpty(txnId)) {
-            String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
-            String txnMsg = preferences.getString(Constants.MOBIKWIK_STATUS_MSG, null);
-            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
-                String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-                int mobiKwikTxnId = Integer.parseInt(txnId);
-                String mMobiKwikTxnId = String.valueOf(mobiKwikTxnId / 1000); //todo remove this
-                new ValidatePaymentHandler<>(this, mPotentialOrderId, mMobiKwikTxnId, fullOrderId).start();
-            } else {
-                showAlertDialog(txnMsg, getString(R.string.txnFailureMsg), Constants.SOURCE_PLACE_ORDER);
-            }
+            String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
+            new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.MOBIKWIK_ORDER_ID);
             editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.remove(Constants.MOBIKWIK_STATUS_MSG);
-            editor.commit();
+            editor.apply();
         }
     }
 
-    private void renderFooter() {
-        mOrderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
-        if (mOrderDetails == null) return;
+    private void renderFooter(boolean refresh) {
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, mOrderDetails.getFormattedFinalTotal(),
                 getString(R.string.placeOrderCaps), false);
-        layoutCheckoutFooter.setOnClickListener(new DuplicateClickAware(mElapsedTime) {
-            @Override
-            public void onActualClick(View view) {
-                onPlaceOrderAction();
-                HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
-                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
-                trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
-            }
-        });
+        if (!refresh) {
+            layoutCheckoutFooter.setOnClickListener(new DuplicateClickAware(mElapsedTime) {
+                @Override
+                public void onActualClick(View view) {
+                    placeOrder();
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
+                    map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
+                }
+            });
+        }
     }
 
     private void renderPaymentDetails() {
@@ -283,16 +276,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     @Override
     public void initializeMobikwik(HashMap<String, String> paymentParams) {
-        /*
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.putString(Constants.P_ORDER_ID, mPotentialOrderId);
-        editor.putString(Constants.MOBIKWIK_ADD_MORE_LINK, mAddMoreLink);
-        editor.putString(Constants.MOBIKWIK_ADD_MORE_MSG, mAddMoreMsg);
-        editor.putString(Constants.MOBIKWIK_ORDER_CREATED, new Gson().toJson(mOrdersCreated));
-        String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-        editor.putString(Constants.ORDER_ID, fullOrderId);
-        editor.commit();
-        */
         MobikwikInitializer.initiate(paymentParams, this);
     }
 
@@ -311,6 +294,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             showVoucherAppliedText(voucher);
             mOrderDetails = orderDetails;
             renderPaymentMethodsAndSummary(creditDetails);
+            renderFooter(true);
         }
     }
 
@@ -437,10 +421,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         onVoucherRemoved();
         mOrderDetails = orderDetails;
         renderPaymentMethodsAndSummary(creditDetails);
-    }
-
-    private void onPlaceOrderAction() {
-        placeOrder(null);
+        renderFooter(true);
     }
 
     private boolean isCreditCardPayment() {
@@ -499,11 +480,11 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
-    private void placeOrder(String txnId) {
+    private void placeOrder() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
                 false);
-        bigBasketApiService.placeOrder(mPotentialOrderId, txnId, mSelectedPaymentMethod,
+        bigBasketApiService.placeOrder(mPotentialOrderId, mSelectedPaymentMethod,
                 new Callback<OldApiResponse<PlaceOrderApiResponseContent>>() {
                     @Override
                     public void success(OldApiResponse<PlaceOrderApiResponseContent> placeOrderApiResponse, Response response) {
@@ -566,11 +547,29 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
         setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
 
-        Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
+        Intent invoiceIntent = new Intent(this, OrderThankyouActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);
         invoiceIntent.putExtra(Constants.ADD_MORE_LINK, addMoreLink);
         invoiceIntent.putExtra(Constants.ADD_MORE_MSG, addMoreMsg);
+
+        // Empty all the parameters to free up some memory
+        mActiveVouchersList = null;
+        mPaymentTypeList = null;
+        mPotentialOrderId = null;
+        mTxtApplyVoucher = null;
+        mTxtRemoveVoucher = null;
+        mTxtApplicableVoucherCount = null;
+        mAppliedVoucherCode = null;
+        mSelectedPaymentMethod = null;
+        mOrderDetails = null;
+        mHDFCPayzappTxnId = null;
+        mPayuTxnId = null;
+        mOrdersCreated = null;
+        mAddMoreLink = null;
+        mAddMoreMsg = null;
+        mElapsedTime = null;
+
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -623,7 +622,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void onPaymentValidated(boolean status, @Nullable String msg) {
+    public void onPaymentValidated(boolean status, @Nullable String msg, ArrayList<Order> orders) {
+        mOrdersCreated = orders;
         if (status || msg == null) {
             showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
         } else {

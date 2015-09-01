@@ -32,6 +32,7 @@ import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -138,7 +139,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.updateVersionNumber(preferences.getString(Constants.DEVICE_ID, null),
+        String imei = UIUtil.getIMEI(getActivity());
+        bigBasketApiService.updateVersionNumber(imei, preferences.getString(Constants.DEVICE_ID, null),
                 getAppVersion(), new Callback<ApiResponse<UpdateVersionInfoApiResponseContent>>() {
                     @Override
                     public void success(ApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse, Response response) {
@@ -154,7 +156,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                 SharedPreferences.Editor editor =
                                         PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
                                 editor.putString(Constants.VERSION_NAME, getAppVersion());
-                                editor.commit();
+                                editor.apply();
                                 if (updateVersionInfoApiResponse.apiResponseContent.userDetails != null) {
                                     UIUtil.updateStoredUserDetails(getActivity(),
                                             updateVersionInfoApiResponse.apiResponseContent.userDetails,
@@ -255,14 +257,14 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         if (!TextUtils.isEmpty(pendingDeepLink)) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.DEEP_LINK);
-            editor.commit();
+            editor.apply();
             getCurrentActivity().launchAppDeepLink(pendingDeepLink);
         } else {
             String pendingFragmentCode = preferences.getString(Constants.FRAGMENT_CODE, null);
             if (!TextUtils.isEmpty(pendingFragmentCode)) {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.remove(Constants.FRAGMENT_CODE);
-                editor.commit();
+                editor.apply();
                 if (TextUtils.isDigitsOnly(pendingFragmentCode)) {
                     int fragmentCode = Integer.parseInt(pendingFragmentCode);
                     if (fragmentCode == NavigationCodes.GO_TO_BASKET) {
@@ -364,6 +366,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                     callbackAppDataResponse.apiResponseContent.hdfcPayzappExpiry);
                             savePopulateSearcher(callbackAppDataResponse.apiResponseContent.topSearches);
                             AppDataSyncHandler.updateLastAppDataCall(getCurrentActivity());
+                            CityManager.setCityCacheExpiry(getCurrentActivity(),
+                                    callbackAppDataResponse.apiResponseContent.cityCacheExpiry);
                         }
                         // Fail silently
                     }
@@ -382,7 +386,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.TOP_SEARCHES, topSearchCommaSeparatedString);
-        editor.commit();
+        editor.apply();
     }
 
 

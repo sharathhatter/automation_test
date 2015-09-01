@@ -13,6 +13,7 @@ import android.view.View;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.SectionHelpActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
@@ -273,7 +274,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void launchProductList(ArrayList<NameValuePair> nameValuePairs) {
-        ((LaunchProductListAware) context).launchProductList(nameValuePairs, getSectionName(), getSectionItemName());
+        ((LaunchProductListAware) context).launchProductList(nameValuePairs, getSectionName(), getSectionItemName(false));
     }
 
     private void logClickEvent() {
@@ -391,16 +392,16 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         }
     }
 
-    private String getSectionItemName() {
+    private String getSectionItemName(boolean forAnalytics) {
         if (sectionItem == null)
             return "";
         if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
             return sectionItem.getTitle().getText();
-        } else if (sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
+        } else if (forAnalytics && sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
             return sectionItem.getImageName().replaceAll("[.]\\w+", "");
         } else if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
             return sectionItem.getDescription().getText();
-        } else if (sectionItem.getDestinationInfo() != null &&
+        } else if (forAnalytics && sectionItem.getDestinationInfo() != null &&
                 !TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationSlug()) &&
                 sectionItem.getDestinationInfo().getDestinationSlug().contains(Constants.SLUG_PARAM)) {
             String typeAndSlug = sectionItem.getDestinationInfo().getDestinationSlug();
@@ -418,9 +419,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void logItemClickEvent() {
         HashMap<String, String> eventAttribs = new HashMap<>();
-        String itemName = getSectionItemName();
+        String itemName = getSectionItemName(true);
         if (!TextUtils.isEmpty(itemName))
-            eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
+            eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName(true));
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
                 ((ActivityAware) context).getCurrentActivity().getNextScreenNavigationContext());
         String eventName = getAnalyticsFormattedScreeName();
@@ -434,6 +435,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private boolean hasMainMenu() {
-        return context instanceof BBActivity && !(context instanceof BackButtonActivity);
+        return context instanceof BBActivity && !(context instanceof BackButtonActivity)
+                && (((BaseActivity) context).findViewById(R.id.slidingTabs) == null)
+                && ((BaseActivity) context).findViewById(R.id.content_frame) != null;
     }
 }

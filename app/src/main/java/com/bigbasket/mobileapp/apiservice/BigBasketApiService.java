@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
@@ -39,8 +40,10 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiRes
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateBasketResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.ValidateOrderPaymentApiResponse;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
@@ -73,7 +76,8 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/register-device/")
-    void registerDevice(@Field(Constants.DEVICE_ID) String deviceId,
+    void registerDevice(@Field(Constants.DEVICE_IMEI) String imei,
+                        @Field(Constants.DEVICE_ID) String deviceId,
                         @Field(Constants.CITY_ID) String cityId,
                         @Field(Constants.PROPERTIES) String properties,
                         Callback<RegisterDeviceResponse> registerDeviceResponseCallback);
@@ -266,6 +270,15 @@ public interface BigBasketApiService {
     @GET("/co-get-delivery-addresses/")
     void getDeliveryAddresses(Callback<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddressApiResponseCallback);
 
+    @FormUrlEncoded
+    @POST("/co-post-delivery-addresses/")
+    void postDeliveryAddresses(@Field(Constants.ADDRESS_ID) String addressId,
+                               Callback<ApiResponse<PostDeliveryAddressApiResponseContent>> postDeliveryAddressApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/co-update-basket/")
+    void updateBasket(@Field(Constants.ADDRESS_ID) String addressId, Callback<ApiResponse<UpdateBasketResponseContent>> updateBasketApiResponseCallback);
+
     @GET("/search-tc/")
     ApiResponse<AutoSearchApiResponseContent> autoSearch(@Query("t") String term);
 
@@ -288,7 +301,8 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/update-version-number/")
-    void updateVersionNumber(@Field(Constants.DEVICE_ID) String deviceId,
+    void updateVersionNumber(@Field(Constants.DEVICE_IMEI) String imei,
+                             @Field(Constants.DEVICE_ID) String deviceId,
                              @Field(Constants.APP_VERSION) String appVersion,
                              Callback<ApiResponse<UpdateVersionInfoApiResponseContent>> updateVersionInfoApiResponseCallback);
 
@@ -351,7 +365,7 @@ public interface BigBasketApiService {
     @GET("/validate-order-payment/")
     void validateOrderPayment(@Query(Constants.TXN_ID) String txnId, @Query(Constants.P_ORDER_ID) String potentialOrderId,
                               @Query(Constants.ORDER_ID) String fullOrderId,
-                              Callback<BaseApiResponse> validateOrderPaymentResponseCallback);
+                              Callback<ApiResponse<ValidateOrderPaymentApiResponse>> validateOrderPaymentResponseCallback);
 
     @GET("/register-utm-params/")
     BaseApiResponse postUtmParams(@QueryMap Map<String, String> utmQueryMap);
@@ -375,7 +389,7 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/co-place-order/")
-    void placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.TXN_ID) String txnId,
+    void placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId,
                     @Field(Constants.PAYMENT_METHOD) String paymentMethod,
                     Callback<OldApiResponse<PlaceOrderApiResponseContent>> placeOrderApiResponseCallback);
 
@@ -397,7 +411,7 @@ public interface BigBasketApiService {
                                   @Field(Constants.PAYMENT_METHOD) String paymentMethod,
                                   Callback<ApiResponse<GetPayzappPaymentParamsResponse>> getPrepaidPaymentApiResponseCallback);
 
-    @GET("/fund-wallet")
+    @GET("/fund-wallet/")
     void getFundWalletPayments(@Query(Constants.SUPPORT_CC) String supportsPayu,
                                @Query(Constants.SUPPORT_POWER_PAY) String supportPowerPay,
                                @Query(Constants.SUPPORT_MOBIKWIK) String mobikwik,

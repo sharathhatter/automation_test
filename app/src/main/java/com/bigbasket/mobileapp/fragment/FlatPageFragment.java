@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
@@ -71,6 +72,13 @@ public class FlatPageFragment extends BaseFragment {
                 }
             }
         }));
+        bbWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                setTitle(view.getTitle());
+            }
+        });
 
         HashMap<String, String> map = new HashMap<>();
         if (!TextUtils.isEmpty(webViewUrl))

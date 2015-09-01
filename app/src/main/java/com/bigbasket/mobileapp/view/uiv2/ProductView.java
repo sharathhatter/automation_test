@@ -80,7 +80,7 @@ public final class ProductView {
         ImageView imgProduct = productViewHolder.getImgProduct();
         if (product.getImageUrl() != null) {
             UIUtil.displayAsyncImage(imgProduct, baseImgUrl != null ? baseImgUrl + product.getImageUrl() :
-                    product.getImageUrl());
+                    product.getImageUrl(), false, R.drawable.loading_small, Constants.PRODUCT_LIST_IMG_TAG);
         } else {
             imgProduct.setImageResource(R.drawable.noimage);
         }
@@ -179,7 +179,7 @@ public final class ProductView {
             SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
             spannableMrp.setSpan(new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            spannableMrp.setSpan(new StrikethroughSpan(), 1,
+            spannableMrp.setSpan(new StrikethroughSpan(), 0,
                     spannableMrp.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtMrp.setText(spannableMrp);
             txtMrp.setVisibility(View.VISIBLE);

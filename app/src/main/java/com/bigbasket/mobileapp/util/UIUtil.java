@@ -21,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.telephony.TelephonyManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -334,13 +335,26 @@ public class UIUtil {
         displayAsyncImage(imageView, url, false, R.drawable.loading_small);
     }
 
+    public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId) {
+        Picasso.with(imageView.getContext()).load(drawableId).into(imageView);
+    }
+
     public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
                                          @DrawableRes int placeHolderDrawableId) {
+        displayAsyncImage(imageView, url, animate, placeHolderDrawableId, null);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
+                                         @DrawableRes int placeHolderDrawableId,
+                                         @Nullable Object downloadTag) {
         Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
         Picasso picasso = Picasso.with(imageView.getContext());
         RequestCreator requestCreator = picasso.load(url)
                 .error(R.drawable.noimage)
                 .placeholder(placeHolderDrawableId);
+        if (downloadTag != null) {
+            requestCreator.tag(downloadTag);
+        }
         if (!animate) {
             requestCreator.noFade();
         }
@@ -596,4 +610,8 @@ public class UIUtil {
         return radioButton;
     }
 
+    public static String getIMEI(Context context) {
+        TelephonyManager mngr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return mngr.getDeviceId();
+    }
 }

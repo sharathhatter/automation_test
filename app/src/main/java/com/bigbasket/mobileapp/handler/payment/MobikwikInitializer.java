@@ -20,10 +20,6 @@ public class MobikwikInitializer {
         for (Map.Entry<String, String> entry : paymentParams.entrySet()) {
             walletIntent.putExtra(entry.getKey(), entry.getValue());
         }
-        int orderID = Integer.parseInt(paymentParams.get(Constants.MOBIKWIK_ORDER_ID));
-        orderID = orderID * 1000; //todo remove this
-        walletIntent.putExtra(Constants.MOBIKWIK_ORDER_ID, String.valueOf(orderID));
-
         walletIntent.putExtra(Constants.MOBIKWIK_MODE, Constants.MOBIKWIK_MODE_VALUE);
         walletIntent.putExtra(Constants.MOBIKWIK_SDK_SIGN, Constants.MOBIKWIK_SDK_SIGN_VALUE);
         walletIntent.putExtra(Constants.MOBIKWIK_PAYMENT_OPTION, Constants.MOBIKWIK_PAYMENT_MW);

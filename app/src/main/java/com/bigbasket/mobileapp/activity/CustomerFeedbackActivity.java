@@ -1,7 +1,8 @@
 package com.bigbasket.mobileapp.activity;
 
 
-import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
     private View base;
     private String caseId;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         caseId = getIntent().getStringExtra(Constants.CASE_ID);
@@ -44,16 +46,28 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
 
     private void showFeedbackLayout() {
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = getLayoutInflater();
         base = inflater.inflate(R.layout.customer_feedback, contentFrame, false);
         if (base == null)
             return;
         TextView labelRating = (TextView) base.findViewById(R.id.labelRating);
         EditText editTextComments = (EditText) base.findViewById(R.id.editTextComments);
         Button btnSubmit = (Button) base.findViewById(R.id.btnSubmit);
+
+        final RatingBar ratingBar = (RatingBar) base.findViewById(R.id.ratingBar);
+        ratingBar.setProgress(0);
+        LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(1).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(0).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
+
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Math.round(ratingBar.getRating()) == 0) {
+                    showToast(getResources().getString(R.string.rating_toast_msg));
+                    return;
+                }
                 postFeedback();
             }
         });
@@ -79,8 +93,6 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
             return;
         }
         EditText editTextComments = (EditText) base.findViewById(R.id.editTextComments);
-        if (editTextComments.getText() == null)
-            return;
         final RatingBar ratingBar = (RatingBar) base.findViewById(R.id.ratingBar);
         String comments = editTextComments.getText().toString().trim();
 

@@ -375,6 +375,7 @@ public class Constants {
     public static final String BB_TOKEN = "bb_token";
     public static final String OK = "OK";
     public static final String DEVICE_ID = "device_id";
+    public static final String DEVICE_IMEI = "imei";
     public static final String PROPERTIES = "properties";
     public static final String PLATFORM = "platform";
     public static final String DEVICE_MODEL = "device_model";
@@ -518,6 +519,7 @@ public class Constants {
     public static final String FREE_PRODUCTS = "free_products";
     public static final String MODE_HDFC_PAY = "restrict_payment_to_wibmo_iap";
     public static final String HDFC_POWER_PAY_EXPIRY = "hdfc_power_pay_expiry";
+    public static final String CITY_CACHE_EXPIRY = "city_cache_expiry";
     public static final String TAB_TYPE = "tab_type";
     public static final String SINGLE_TAB = "single_tab";
     public static final String HEADER_SECTION = "header_section";
@@ -580,8 +582,9 @@ public class Constants {
     public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
     public static final String MOBIKWIK_PAYMENT_MW = "mw";
     public static final String MOBIKWIK_STATUS = "status";
-    public static final String MOBIKWIK_STATUS_MSG = "statusMsg";
     public static final int MOBIKWIK_REQUEST_CODE = 9999;
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
+
+    public static final String PRODUCT_LIST_IMG_TAG = "plit";
 
 }

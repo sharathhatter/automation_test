@@ -3,4 +3,5 @@
     <dimen name="nav_text_margin_top">34dp</dimen>
     <dimen name="nav_img_margin_top">32dp</dimen>
     <dimen name="nav_city_margin_top">32dp</dimen>
+    <dimen name="fab_margin_in_non_coordinator_layout">16dp</dimen>
 </resources>

@@ -48,7 +48,7 @@ public class SectionManager {
             editor.remove(preferenceKey + TIME_KEY);
             editor.remove(preferenceKey + DURATION_KEY);
         }
-        editor.commit();
+        editor.apply();
     }
 
     public SectionData getStoredSectionData() {
@@ -91,7 +91,7 @@ public class SectionManager {
             editor.putString(preferenceKey + TIME_KEY, dateFormat.format(new Date()));
             editor.putInt(preferenceKey + DURATION_KEY, cacheDuration);
         }
-        editor.commit();
+        editor.apply();
     }
 
     private boolean isStale(String createdOn, SimpleDateFormat simpleDateFormat, int duration) {

@@ -85,7 +85,8 @@
     <string name="isSystemShoppingListMsg">Lists created by BigBasket cannot be edited!They are system generated lists.</string>
     <string name="my_orders">My Orders</string>
     <string name="bbCommHub">Communication Hub</string>
-    <string name="rating">Rating:</string>
+    <string name="rating">Please rate our service:</string>
+    <string name="rating_toast_msg">Please rate our service</string>
     <string name="yourComments">Your comments (optional)</string>
     <string name="submit">Submit</string>
     <string name="applyAllCaps">APPLY</string>
@@ -113,6 +114,7 @@
     <string name="drawer_open">Open navigation</string>
     <string name="drawer_close">Close navigation</string>
     <string name="please_wait">Please wait...</string>
+    <string name="changing_city">Changing your city...</string>
     <string name="placeOrderPleaseWait">Please wait while we place your order and transfer you to payment page.</string>
     <string name="email">E-mail</string>
     <string name="emailNewPassword">Email new password</string>
@@ -212,6 +214,7 @@
 
     <!-- Invoice -->
     <string name="thankYouHeader">Thank You!</string>
+    <string name="thankYouOrderPlacedHeader">Thank You! Your order has been placed.</string>
 
     <!-- cart page -->
     <string name="empty">Empty</string>
@@ -304,9 +307,9 @@
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
 
     <!-- order invoice -->
-    <string name="multi_order_place_txt">Your orders have been placed!</string>
-    <string name="order_place_txt">Your order has been placed!</string>
+    <string name="multi_order_place_txt">You will receive the order(s) in multiple deliveries</string>
     <string name="continue_shopping">CONTINUE SHOPPING!</string>
+    <string name="know_more">Know More</string>
 
     <string name="expressDelAvailable">\u0020 Express Delivery may be available</string>
     <string name="my_basket_header">My Basket</string>
@@ -337,4 +340,5 @@
 
     <string name="areaInputHint">Choose Area</string>
     <string name="chooseLocation">Choose Location</string>
+    <string name="reviewBasket">Review Basket</string>
 </resources>

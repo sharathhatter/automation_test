@@ -22,34 +22,12 @@
             android:layout_marginRight="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_small" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/textInputArea"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/spinnerCity"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:layout_marginRight="@dimen/margin_normal"
-            android:layout_marginTop="@dimen/margin_small">
-
-            <com.bigbasket.mobileapp.view.InstantAutoCompleteTextView
-                style="@style/BBEditTextStyle"
-                android:id="@+id/editTextArea"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/area"
-                android:inputType="textPostalAddress"
-                android:paddingLeft="@dimen/padding_small"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textColorHint="@color/uiv3_secondary_text_color"
-                android:textSize="@dimen/secondary_text_size" />
-        </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/textInputPincode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/textInputArea"
+            android:layout_below="@id/spinnerCity"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_small">
@@ -69,10 +47,33 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/textInputAddressNick"
+            android:id="@+id/textInputArea"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/textInputPincode"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_small">
+
+            <com.bigbasket.mobileapp.view.InstantAutoCompleteTextView
+                style="@style/BBEditTextStyle"
+                android:id="@+id/editTextArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/area"
+                android:inputType="textPostalAddress"
+                android:paddingLeft="@dimen/padding_small"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textColorHint="@color/uiv3_secondary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textInputAddressNick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textInputArea"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_small">

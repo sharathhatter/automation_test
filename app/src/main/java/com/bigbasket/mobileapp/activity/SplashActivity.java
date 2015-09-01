@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
@@ -35,6 +36,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.daimajia.slider.library.BuildConfig;
 import com.newrelic.agent.android.NewRelic;
 
@@ -57,6 +59,9 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         boolean reloadApp = getIntent().getBooleanExtra(Constants.RELOAD_APP, false);
         if (reloadApp) {
             setContentView(R.layout.loading_layout);
+            ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
+            UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo);
+
             mIsFromActivityResult = true;
             handleResults(true);
         } else {
@@ -75,14 +80,20 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             } catch (ClassCastException e) {
 
             }
-            if (checkInternetConnection() && !BuildConfig.DEBUG) {
-                NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
+            if(!BuildConfig.DEBUG) {
+                trackEventAppsFlyer(TrackingAware.APP_OPEN);
+                if (checkInternetConnection()) {
+                    NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
+                }
             }
         }
     }
 
     private void startSplashScreen() {
         setContentView(R.layout.loading_layout);
+        ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
+        UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo);
+
         if (AuthParameters.getInstance(this).isAuthTokenEmpty() && !CityManager.hasUserChosenCity(this)) {
             if (TextUtils.isEmpty(AuthParameters.getInstance(this).getVisitorId())) {
                 doRegisterDevice(new City("Bangalore", 1));
@@ -197,7 +208,8 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             Log.e("StartActivity", "Error while creating device-properties json");
         }
 
-        bigBasketApiService.registerDevice(deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
+        String imei = UIUtil.getIMEI(this);
+        bigBasketApiService.registerDevice(imei, deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
                 new Callback<RegisterDeviceResponse>() {
                     @Override
                     public void success(RegisterDeviceResponse registerDeviceResponse, Response response) {

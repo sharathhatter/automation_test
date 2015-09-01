@@ -295,9 +295,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
             layoutAddAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ShoppingListSummary shoppingListSummary =
-                            shoppingListSummaries.get(copyViewPagerIntoFinalForOnClick != null ?
-                                    copyViewPagerIntoFinalForOnClick.getCurrentItem() : 0);
+                    int currentItemIdx = copyViewPagerIntoFinalForOnClick != null ?
+                            copyViewPagerIntoFinalForOnClick.getCurrentItem() : 0;
+                    if (currentItemIdx >= shoppingListSummaries.size()) return;
+                    ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(currentItemIdx);
                     if (Product.areAllProductsOutOfStock(shoppingListSummary.getProducts())) {
                         String msg = numTabs > 1 ? getString(R.string.allAreOutOfStockForTabPrefix) + " "
                                 + shoppingListSummary.getFacetName() + " " + getString(R.string.allAreOutOfStockForTabSuffix)

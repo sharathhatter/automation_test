@@ -2,7 +2,8 @@ package com.bigbasket.mobileapp.handler.payment;
 
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ValidateOrderPaymentApiResponse;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
@@ -36,9 +37,9 @@ public class ValidatePaymentHandler<T> {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
         ((ProgressIndicationAware) ctx).showProgressDialog("Validating Payment...");
-        bigBasketApiService.validateOrderPayment(txnId, potentialOrderId, fullOrderId, new Callback<BaseApiResponse>() {
+        bigBasketApiService.validateOrderPayment(txnId, potentialOrderId, fullOrderId, new Callback<ApiResponse<ValidateOrderPaymentApiResponse>>() {
             @Override
-            public void success(BaseApiResponse validateOrderPaymentResponse, Response response) {
+            public void success(ApiResponse<ValidateOrderPaymentApiResponse> validateOrderPaymentResponse, Response response) {
                 if (((CancelableAware) ctx).isSuspended()) return;
                 try {
                     ((ProgressIndicationAware) ctx).hideProgressDialog();
@@ -47,11 +48,13 @@ public class ValidatePaymentHandler<T> {
                 }
                 switch (validateOrderPaymentResponse.status) {
                     case 0:
-                        ((OnPaymentValidationListener) ctx).onPaymentValidated(true, null);
+                        ((OnPaymentValidationListener) ctx).onPaymentValidated(true, null,
+                                validateOrderPaymentResponse.apiResponseContent.orders);
                         break;
                     case ApiErrorCodes.PAYMENT_ERROR:
                         ((OnPaymentValidationListener) ctx).onPaymentValidated(false,
-                                validateOrderPaymentResponse.message);
+                                validateOrderPaymentResponse.message,
+                                validateOrderPaymentResponse.apiResponseContent.orders);
                         break;
                     default:
                         ((HandlerAware) ctx).getHandler().sendEmptyMessage(validateOrderPaymentResponse.status,

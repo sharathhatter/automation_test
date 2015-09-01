@@ -57,7 +57,6 @@
         android:layout_marginBottom="@dimen/margin_normal"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_normal"
-        android:drawableLeft="@drawable/address_white"
         android:drawablePadding="@dimen/padding_normal"
         android:textColor="@color/white"
         android:textSize="@dimen/primary_text_size" />

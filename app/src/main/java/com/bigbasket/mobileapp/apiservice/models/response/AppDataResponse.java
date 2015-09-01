@@ -22,4 +22,7 @@ public class AppDataResponse {
 
     @SerializedName(Constants.HDFC_POWER_PAY_EXPIRY)
     public int hdfcPayzappExpiry;
+
+    @SerializedName(Constants.CITY_CACHE_EXPIRY)
+    public int cityCacheExpiry;
 }

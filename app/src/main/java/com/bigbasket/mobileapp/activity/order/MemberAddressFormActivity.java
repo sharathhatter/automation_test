@@ -27,11 +27,13 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
+import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -49,7 +51,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MemberAddressFormActivity extends BackButtonActivity implements OtpDialogAware {
+public class MemberAddressFormActivity extends BackButtonActivity implements OtpDialogAware,
+        CityListDisplayAware {
 
     private Address mAddress;
     private View base;
@@ -65,22 +68,25 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         super.onCreate(savedInstanceState);
         setTitle(getActivityTitle());
         mFromAccountPage = getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false);
-        if (mAddress == null) {
-            mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
+        mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
+        if (mAddress != null) {
+            mChoosenCity = new City(mAddress.getCityName(), mAddress.getCityId());
+        } else {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String cityName = preferences.getString(Constants.CITY, null);
+            int cityId = Integer.parseInt(preferences.getString(Constants.CITY_ID, "1"));
+            mChoosenCity = new City(cityName, cityId);
         }
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String cityName = preferences.getString(Constants.CITY, null);
-        int cityId = Integer.parseInt(preferences.getString(Constants.CITY_ID, "1"));
-        mChoosenCity = new City(cityName, cityId);
-
-        showForm();
+        new GetCitiesTask<>(this).startTask();  // Sync the cities
     }
 
-    private ArrayList<City> getCities() {
-        return CityManager.getStoredCity(this);
+    @Override
+    public void onReadyToDisplayCity(ArrayList<City> cities) {
+        // Callback once the cities get synced
+        showForm(cities);
     }
 
-    private void showForm() {
+    private void showForm(ArrayList<City> cities) {
         FrameLayout contentLayout = getContentView();
         if (contentLayout == null) return;
         contentLayout.removeAllViews();
@@ -96,15 +102,17 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         Spinner citySpinner = (Spinner) base.findViewById(R.id.spinnerCity);
 
         int color = getResources().getColor(R.color.uiv3_primary_text_color);
-        mCities = getCities();
+        mCities = cities;
         BBArrayAdapter<City> arrayAdapter = new BBArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, mCities, faceRobotoRegular,
+                android.R.layout.simple_spinner_item, mCities, faceRobotoRegular,
                 color, color);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         citySpinner.setAdapter(arrayAdapter);
         citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mChoosenCity = mCities.get(position);
+                setAdapterArea(editTextArea, editTextPincode, mChoosenCity.getName());
             }
 
             @Override
@@ -121,6 +129,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             }
         }
         citySpinner.setSelection(selectedPosition);
+        citySpinner.setEnabled(AuthParameters.getInstance(this).isMultiCityEnabled());
 
         TextView txtSaveAddress = (TextView) base.findViewById(R.id.txtSaveAddress);
         txtSaveAddress.setTypeface(faceRobotoMedium);
@@ -161,6 +170,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             }
             spinnerCity.setSelection(selectedPosition);
         }
+        spinnerCity.setEnabled(false); // Disallow user to change city for an existing address
 
         editTextAddressNick.setText(getValueOrBlank(mAddress.getAddressNickName()));
         editTextFirstName.setText(getValueOrBlank(mAddress.getFirstName()));
@@ -320,11 +330,10 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             {
                 put(Constants.IS_DEFAULT, chkIsAddrDefault.isChecked() ? "1" : "0");
             }
-
-            {
-                put(Constants.CITY_ID, String.valueOf(mChoosenCity.getId()));
-            }
         };
+        if (AuthParameters.getInstance(this).isMultiCityEnabled()) {
+            payload.put(Constants.CITY_ID, String.valueOf(mChoosenCity.getId()));
+        }
 
         if (otpCode != null) {
             payload.put(Constants.OTP_CODE, otpCode);
