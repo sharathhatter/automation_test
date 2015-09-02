@@ -36,21 +36,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_normal"
                 android:background="@drawable/grey_border_no_rounds"
                 android:padding="@dimen/padding_normal"
                 android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/lblKnowMore"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_horizontal"
-                    android:text="@string/know_more"
-                    android:textColor="@color/uiv3_dialog_header_text_bkg"
-                    android:textSize="@dimen/secondary_text_size" />
 
                 <TextView
                     android:id="@+id/txtNewCheckoutFlow"
@@ -58,10 +47,19 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginRight="@dimen/margin_large"
-                    android:layout_toLeftOf="@id/lblKnowMore"
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/primary_text_size" />
+
+                <TextView
+                    android:id="@+id/lblKnowMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_mini"
+                    android:layout_below="@id/txtNewCheckoutFlow"
+                    android:text="@string/know_more"
+                    android:textColor="@color/uiv3_dialog_header_text_bkg"
+                    android:textSize="@dimen/secondary_text_size" />
             </RelativeLayout>
 
             <LinearLayout

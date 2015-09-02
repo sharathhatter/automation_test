@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
@@ -11,6 +12,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,9 +105,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
         mOrderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
         if (mOrderDetails == null) return;
-        renderFooter(false);
         renderPaymentDetails();
         setUpNewCheckoutFlowMsg();
+        renderFooter(false);
         trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
     }
 
@@ -122,6 +124,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
                     Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             lblKnowMore.setText(spannableString);
+            lblKnowMore.setTypeface(faceRobotoRegular);
             lblKnowMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -135,12 +138,14 @@ public class PaymentSelectionActivity extends BackButtonActivity
             });
         }
 
-        String prefix = getString(R.string.newStr) + " ";
+        String prefix = getString(R.string.newStr) + "\n";
         String msg = getString(R.string.newCheckoutFlowMsg);
 
         SpannableString spannableString = new SpannableString(prefix + msg);
         spannableString.setSpan(new ForegroundColorSpan(getResources()
                         .getColor(R.color.uiv3_dialog_header_text_bkg)),
+                0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new StyleSpan(Typeface.BOLD),
                 0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         txtNewCheckoutFlowMsg.setText(spannableString);
     }
@@ -173,7 +178,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private void renderFooter(boolean refresh) {
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, mOrderDetails.getFormattedFinalTotal(),
-                getString(R.string.placeOrderCaps), false);
+                getString(isCreditCardPayment() ? R.string.placeOrderAndPayCaps : R.string.placeOrderCaps),
+                false);
         if (!refresh) {
             layoutCheckoutFooter.setOnClickListener(new DuplicateClickAware(mElapsedTime) {
                 @Override
@@ -314,6 +320,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                         if (isChecked) {
                             mSelectedPaymentMethod = paymentType.getValue();
                             toggleNewCheckoutFlowMsg(isCreditCardPayment());
+                            renderFooter(true);
                         }
                     }
                 });
@@ -623,8 +630,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void openPaymentGateway() {
-        final View layoutPaymentInProgress = findViewById(R.id.layoutPaymentInProgress);
-        layoutPaymentInProgress.setVisibility(View.VISIBLE);
+        final View paymentInProgressView = findViewById(R.id.layoutPaymentInProgress);
+        paymentInProgressView.setVisibility(View.VISIBLE);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         final int totalDuration = 5000;
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -641,8 +652,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
             @Override
             public void onFinish() {
-                layoutPaymentInProgress.setVisibility(View.GONE);
-                progressBar.setProgress(0);
+                progressBar.setProgress(totalDuration - 100);
                 getPaymentParams();
             }
         }.start();

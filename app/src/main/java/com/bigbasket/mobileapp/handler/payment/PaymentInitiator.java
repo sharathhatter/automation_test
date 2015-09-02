@@ -9,7 +9,6 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.payment.MobikwikAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayzappPaymentAware;
@@ -36,18 +35,12 @@ public class PaymentInitiator<T> {
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
-        ((ProgressIndicationAware) ctx).showProgressDialog("Redirecting to payment gateway...");
         switch (paymentMethod) {
             case Constants.PAYU:
                 bigBasketApiService.getOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
                     @Override
                     public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
                         if (((CancelableAware) ctx).isSuspended()) return;
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
                         switch (getPrepaidPaymentApiResponse.status) {
                             case 0:
                                 ((PayuPaymentAware) ctx).initializePayu(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
@@ -62,11 +55,6 @@ public class PaymentInitiator<T> {
                     @Override
                     public void failure(RetrofitError error) {
                         if (((CancelableAware) ctx).isSuspended()) return;
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
                         ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
                     }
                 });
@@ -76,11 +64,6 @@ public class PaymentInitiator<T> {
                     @Override
                     public void success(ApiResponse<GetPayzappPaymentParamsResponse> getPrepaidPaymentApiResponse, Response response) {
                         if (((CancelableAware) ctx).isSuspended()) return;
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
                         switch (getPrepaidPaymentApiResponse.status) {
                             case 0:
                                 ((PayzappPaymentAware) ctx).initializeHDFCPayzapp(getPrepaidPaymentApiResponse.apiResponseContent.payzappPostParams);
@@ -95,11 +78,6 @@ public class PaymentInitiator<T> {
                     @Override
                     public void failure(RetrofitError error) {
                         if (((CancelableAware) ctx).isSuspended()) return;
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
                         ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
                     }
                 });
@@ -109,11 +87,6 @@ public class PaymentInitiator<T> {
                     @Override
                     public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
                         if (((CancelableAware) ctx).isSuspended()) return;
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
                         switch (getPrepaidPaymentApiResponse.status) {
                             case 0:
                                 ((MobikwikAware) ctx).initializeMobikwik(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
@@ -128,11 +101,6 @@ public class PaymentInitiator<T> {
                     @Override
                     public void failure(RetrofitError error) {
                         if (((CancelableAware) ctx).isSuspended()) return;
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
                         ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
                     }
                 });

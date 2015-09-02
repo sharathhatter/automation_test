@@ -61,7 +61,8 @@
     <string name="chooseCity">Pick Your City</string>
     <string name="checkOut">CHECKOUT</string>
     <string name="continueCaps">CONTINUE</string>
-    <string name="placeOrderCaps">PLACE ORDER &amp; PAY</string>
+    <string name="placeOrderAndPayCaps">PLACE ORDER &amp; PAY</string>
+    <string name="placeOrderCaps">PLACE ORDER</string>
     <string name="changeCityMenuTxt">Change City</string>
     <string name="outOfStock">Out of stock</string>
     <string name="OR">OR</string>
@@ -115,7 +116,7 @@
     <string name="drawer_close">Close navigation</string>
     <string name="please_wait">Please wait...</string>
     <string name="changing_city">Changing your city...</string>
-    <string name="placeOrderPleaseWait">Please wait while we place your order and transfer you to payment page.</string>
+    <string name="placeOrderPleaseWait">Please wait while we place your order and transfer you to payment gateway.</string>
     <string name="email">E-mail</string>
     <string name="emailNewPassword">Email new password</string>
     <string name="oldPassword">Old password</string>
@@ -339,9 +340,7 @@
     <string name="fundWalletSuccess">You have successfully funded the wallet</string>
 
     <string name="reviewBasket">Review Basket</string>
-    <string name="newCheckoutFlowMsg">When you click on Place Order &amp; Pay - Your order will be placed first, &amp; then you will be taken to payment page.
-        In case of payment failure, order will be converted to "COD", and you can "PAY LATER".
-        To cancel orders please reach out to our customer service.</string>
-    <string name="newStr">New -</string>
-    <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.</string>
+    <string name="newCheckoutFlowMsg">When you click on Place Order &amp; Pay - Your order will be placed first &amp; then you will be taken to complete the payment.</string>
+    <string name="newStr">New</string>
+    <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.\nPlease don\'t press back button.</string>
 </resources>
