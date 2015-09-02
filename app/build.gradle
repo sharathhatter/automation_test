@@ -87,6 +87,7 @@ android {
 //            versionCode calculateVersionCodeFromDpi(640)
 //        }
 //    }
+    
 }
 
 int calculateVersionCodeFromDpi(int dpi) {
