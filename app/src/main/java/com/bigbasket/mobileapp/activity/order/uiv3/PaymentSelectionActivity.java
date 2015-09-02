@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -571,7 +573,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             mOrdersCreated = orders;
             mAddMoreLink = addMoreLink;
             mAddMoreMsg = addMoreMsg;
-            getPaymentParams();
+            openPaymentGateway();
         } else {
             showOrderThankyou(orders, addMoreLink, addMoreMsg);
         }
@@ -620,6 +622,37 @@ public class PaymentSelectionActivity extends BackButtonActivity
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
 
+    private void openPaymentGateway() {
+        final View layoutPaymentInProgress = findViewById(R.id.layoutPaymentInProgress);
+        layoutPaymentInProgress.setVisibility(View.VISIBLE);
+
+        final int totalDuration = 5000;
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setMax(totalDuration);
+        progressBar.setProgress(0);
+
+        ((TextView) findViewById(R.id.lblOrderPlaced)).setTypeface(faceRobotoRegular);
+
+        new CountDownTimer(totalDuration, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                progressBar.setProgress(totalDuration - (int) millisUntilFinished);
+            }
+
+            @Override
+            public void onFinish() {
+                layoutPaymentInProgress.setVisibility(View.GONE);
+                progressBar.setProgress(0);
+                getPaymentParams();
+            }
+        }.start();
+    }
+
+    private void getPaymentParams() {
+        new PaymentInitiator<>(this, mPotentialOrderId, mSelectedPaymentMethod)
+                .initiate();
+    }
+
     @Override
     public void initializeHDFCPayzapp(PayzappPostParams payzappPostParams) {
         mHDFCPayzappTxnId = payzappPostParams.getTxnId();
@@ -630,11 +663,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     public void initializePayu(HashMap<String, String> paymentParams) {
         mPayuTxnId = paymentParams.get(PayU.TXNID);
         PayuInitializer.initiate(paymentParams, this);
-    }
-
-    private void getPaymentParams() {
-        new PaymentInitiator<>(this, mPotentialOrderId, mSelectedPaymentMethod)
-                .initiate();
     }
 
     private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {

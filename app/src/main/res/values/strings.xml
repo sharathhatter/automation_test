@@ -343,4 +343,5 @@
         In case of payment failure, order will be converted to "COD", and you can "PAY LATER".
         To cancel orders please reach out to our customer service.</string>
     <string name="newStr">New -</string>
+    <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.</string>
 </resources>

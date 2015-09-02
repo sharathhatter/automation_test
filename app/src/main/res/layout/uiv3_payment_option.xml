@@ -57,8 +57,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_marginRight="@dimen/margin_large"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginRight="@dimen/margin_large"
                     android:layout_toLeftOf="@id/lblKnowMore"
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/primary_text_size" />
@@ -160,4 +160,32 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/layoutPaymentInProgress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/lblOrderPlaced"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginRight="@dimen/margin_large"
+            android:text="@string/orderPlacedTakingToPaymentGateway"
+            android:textSize="@dimen/heading_2_text_size" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginRight="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_normal" />
+    </LinearLayout>
 </RelativeLayout>
