@@ -53,13 +53,6 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
-    splits {
-        density {
-            enable true
-            exclude "ldpi", "tvdpi"
-            compatibleScreens 'small', 'normal', 'large', 'xlarge'
-        }
-    }
 
 //    Uncomment at the time of deployment, but don't commit the uncommented version to VCS.
 //    This is because build time increases significantly, due to which development time becomes slow
