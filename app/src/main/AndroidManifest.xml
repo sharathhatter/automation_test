@@ -541,6 +541,9 @@
             android:name="NOTIFICATION_ICON"
             android:value="notification_icon" />
 
+        <meta-data android:name="NOTIFICATION_LARGE_ICON"
+            android:value="@drawable/large_icon" />
+        
         <!-- moEngage UBox -->
         <activity
             android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
