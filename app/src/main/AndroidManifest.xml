@@ -542,7 +542,7 @@
             android:value="notification_icon" />
 
         <meta-data android:name="NOTIFICATION_LARGE_ICON"
-            android:value="@drawable/large_icon" />
+            android:value="@drawable/notification_icon_large_bbw" />
         
         <!-- moEngage UBox -->
         <activity
