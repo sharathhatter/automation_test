@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +30,8 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
+import com.daimajia.slider.library.SliderTypes.HelpSliderView;
+import com.daimajia.slider.library.Transformers.CubeOutTransformer;
 
 import java.util.ArrayList;
 
@@ -42,6 +45,7 @@ public class SectionView {
     private int sixteenDp;
     private String screenName;
     private int marginBetweenWidgets;
+    private boolean isHelp;
 
     public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName) {
         this.context = context;
@@ -52,6 +56,11 @@ public class SectionView {
         this.eightDp = (int) context.getResources().getDimension(R.dimen.margin_small);
         this.sixteenDp = (int) context.getResources().getDimension(R.dimen.margin_normal);
         this.marginBetweenWidgets = (int) context.getResources().getDimension(R.dimen.margin_mini);
+    }
+
+    public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName, boolean isHelp) {
+        this(context, faceRobotoRegular, mSectionData, screenName);
+        this.isHelp = isHelp;
     }
 
     private void parseRendererColors() {
@@ -152,25 +161,31 @@ public class SectionView {
     private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, parent, false);
         SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
+        bannerSlider.setPagerTransformer(false, new CubeOutTransformer());
         ViewGroup.LayoutParams bannerLayoutParams = bannerSlider.getLayoutParams();
-        if (bannerLayoutParams != null) {
+        if (bannerLayoutParams != null && !isHelp) {
             bannerLayoutParams.height = section.getWidgetHeight(context, mSectionData.getRenderersMap(), true);
             bannerSlider.setLayoutParams(bannerLayoutParams);
         }
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem.hasImage()) {
-                DefaultSliderView defaultSliderView = new DefaultSliderView(context);
-                defaultSliderView.setScaleType(BaseSliderView.ScaleType.CenterInside);
+                BaseSliderView sliderView;
+                if (isHelp) {
+                    sliderView = new HelpSliderView(context);
+                } else {
+                    sliderView = new DefaultSliderView(context);
+                    sliderView.setScaleType(BaseSliderView.ScaleType.CenterInside);
+                }
                 if (!TextUtils.isEmpty(sectionItem.getImage())) {
-                    defaultSliderView.image(sectionItem.getImage());
+                    sliderView.image(sectionItem.getImage());
                 } else if (!TextUtils.isEmpty(sectionItem.getImageName())) {
-                    defaultSliderView.image(mSectionData.getBaseImgUrl() +
+                    sliderView.image(mSectionData.getBaseImgUrl() +
                             UIUtil.getScreenDensity(context) + "/" + sectionItem.getImageName());
                 } else {
                     continue;
                 }
-                defaultSliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
-                bannerSlider.addSlider(defaultSliderView);
+                sliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+                bannerSlider.addSlider(sliderView);
             }
 
         }
@@ -587,7 +602,7 @@ public class SectionView {
         }
     }
 
-    private void formatSection(View parent, int txtViewId, Section section) {
+    private void formatSection(View parent, @IdRes int txtViewId, Section section) {
         Renderer sectionRender = mSectionData.getRenderersMap() != null ?
                 mSectionData.getRenderersMap().get(section.getRenderingId()) : null;
         if (sectionRender != null) {
@@ -606,18 +621,21 @@ public class SectionView {
                 }
             }
         }
-        TextView txtVw = (TextView) parent.findViewById(txtViewId);
-        if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-            txtVw.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
-            txtVw.setText(section.getTitle().getText());
-            Renderer renderer = mSectionData.getRenderersMap() != null ?
-                    mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
-            if (renderer != null) {
-                renderer.setRendering(txtVw, 0, 0, true, true, true, false,
-                        true, true, true, true);
+
+        if (txtViewId != 0) {
+            TextView txtVw = (TextView) parent.findViewById(txtViewId);
+            if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
+                txtVw.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+                txtVw.setText(section.getTitle().getText());
+                Renderer renderer = mSectionData.getRenderersMap() != null ?
+                        mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
+                if (renderer != null) {
+                    renderer.setRendering(txtVw, 0, 0, true, true, true, false,
+                            true, true, true, true);
+                }
+            } else {
+                txtVw.setVisibility(View.GONE);
             }
-        } else {
-            txtVw.setVisibility(View.GONE);
         }
     }
 

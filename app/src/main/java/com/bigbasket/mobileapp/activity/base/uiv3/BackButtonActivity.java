@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity.base.uiv3;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +21,12 @@ public class BackButtonActivity extends BBActivity {
         if (btnViewBasket != null) {
             btnViewBasket.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    @LayoutRes
+    public int getMainLayout() {
+        return R.layout.uiv3_main_sub_content_layout;
     }
 
     @Override

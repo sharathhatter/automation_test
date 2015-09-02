@@ -1,19 +1,24 @@
 package com.bigbasket.mobileapp.adapter.order;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.order.Order;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
 
@@ -73,15 +78,28 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
             OrderListRowHolder rowHolder = (OrderListRowHolder) holder;
             final Order order = orders.get(position);
 
-            String[] dateTime = order.getDeliveryDate().split(",");
+            String date = order.getSlotDisplay().getDate();
+            String time = order.getSlotDisplay().getTime();
+
             TextView txtSlotDate = rowHolder.getTxtSlotDate();
-            txtSlotDate.setTypeface(BaseActivity.faceRobotoBold);
-            txtSlotDate.setText(dateTime[0].trim() + ", " + dateTime[1].trim());
+
+            if (!TextUtils.isEmpty(date)) {
+                txtSlotDate.setText(date);
+                txtSlotDate.setTypeface(BaseActivity.faceRobotoBold);
+                txtSlotDate.setVisibility(View.VISIBLE);
+            } else {
+                txtSlotDate.setVisibility(View.INVISIBLE);
+            }
 
 
             TextView txtSlotTime = rowHolder.getTxtSlotTime();
-            txtSlotTime.setText(dateTime[2].trim());
-            txtSlotTime.setTypeface(BaseActivity.faceRobotoRegular);
+            if (!TextUtils.isEmpty(time)) {
+                txtSlotTime.setText(time);
+                txtSlotTime.setTypeface(BaseActivity.faceRobotoRegular);
+                txtSlotTime.setVisibility(View.VISIBLE);
+            } else {
+                txtSlotTime.setVisibility(View.INVISIBLE);
+            }
 
 
             TextView txtOrderId = rowHolder.getTxtOrderId();
@@ -103,11 +121,12 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
             ImageView imgOrderType = rowHolder.getImgOrderType();
-            LinearLayout layoutOrderData = rowHolder.getLayoutOrderData();
+            ViewGroup layoutOrderData = rowHolder.getLayoutOrderData();
+            Button btnPayNow = rowHolder.getBtnPayNow();
             if (order.getOrderState() == 0) { //active order
                 txtSlotTime.setPadding(0, 10, 0, 0);
                 txtOrderId.setPadding(0, 0, 0, 0);
-                layoutOrderData.setBackgroundResource(R.drawable.red_boarder);
+                layoutOrderData.setBackgroundResource(R.drawable.red_border);
                 imgOrderType.setImageResource(R.drawable.active_order);
                 txtSlotTime.setVisibility(View.VISIBLE);
             } else if (order.getOrderState() == 1) { //delivered
@@ -120,6 +139,20 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
                 layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.uiv3_large_list_item_bck));
                 imgOrderType.setImageResource(R.drawable.order_cancel);
                 txtSlotTime.setVisibility(View.GONE);
+            }
+
+            if (order.canPay()) {
+                btnPayNow.setVisibility(View.VISIBLE);
+                btnPayNow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), PayNowActivity.class);
+                        intent.putExtra(Constants.ORDER_ID, order.getOrderId());
+                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    }
+                });
+            } else {
+                btnPayNow.setVisibility(View.GONE);
             }
 
             if (orders.size() - 1 == position && currentPage != totalPages && totalPages != 0) {
@@ -148,9 +181,10 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
         private TextView txtSlotTime;
         private TextView txtOrderId;
         private TextView txtNumItems;
-        private LinearLayout layoutOrderData;
+        private ViewGroup layoutOrderData;
         private ImageView imgOrderType;
         private TextView txtOrderStatus;
+        private Button btnPayNow;
 
 
         private OrderListRowHolder(View itemView) {
@@ -191,9 +225,9 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
             return txtNumItems;
         }
 
-        public LinearLayout getLayoutOrderData() {
+        public ViewGroup getLayoutOrderData() {
             if (layoutOrderData == null)
-                layoutOrderData = (LinearLayout) itemView.findViewById(R.id.layoutOrderData);
+                layoutOrderData = (ViewGroup) itemView.findViewById(R.id.layoutOrderData);
             return layoutOrderData;
         }
 
@@ -203,5 +237,10 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
             return imgOrderType;
         }
 
+        public Button getBtnPayNow() {
+            if (btnPayNow == null)
+                btnPayNow = (Button) itemView.findViewById(R.id.btnPayNow);
+            return btnPayNow;
+        }
     }
 }

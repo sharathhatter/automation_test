@@ -17,17 +17,13 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
 
-import java.util.HashMap;
-
 public class OTPValidationDialogFragment extends AbstractDialogFragment {
 
     private TextView txtErrorValidateNumber, txtResendNumber;
-    private boolean isUpdateProfile;
     private EditText editTextMobileCode;
 
     public OTPValidationDialogFragment() {
@@ -38,18 +34,13 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
     }
 
 
-    public static OTPValidationDialogFragment newInstance(boolean isUpdateProfile) {
-        OTPValidationDialogFragment otpValidationDialogFragment = new OTPValidationDialogFragment();
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(Constants.IS_UPDATE_PROFILE, isUpdateProfile);
-        otpValidationDialogFragment.setArguments(bundle);
-        return otpValidationDialogFragment;
+    public static OTPValidationDialogFragment newInstance() {
+        return new OTPValidationDialogFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.isUpdateProfile = getArguments().getBoolean(Constants.IS_UPDATE_PROFILE);
     }
 
     @Nullable
@@ -125,14 +116,7 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
                 }
             });
         }
-        logOtpDialogEvent();
-    }
-
-    private void logOtpDialogEvent() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.NAVIGATION_CTX, isUpdateProfile ? TrackEventkeys.NAVIGATION_CTX_UPDATE_PROFILE :
-                TrackEventkeys.NAVIGATION_CTX_DELIVERY_ADDRESS);
-        ((TrackingAware) getActivity()).trackEvent(TrackingAware.OTP_DIALOG_SHOWN, map);
+        ((TrackingAware) getActivity()).trackEvent(TrackingAware.OTP_DIALOG_SHOWN, null);
     }
 
     public void showErrorText(String errorMsg) {

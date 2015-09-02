@@ -20,8 +20,8 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.AnalyticsEngine;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.AppCapability;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
@@ -29,9 +29,10 @@ import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.handler.AppUpdateHandler;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
-import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
+import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -66,6 +67,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getAppData(savedInstanceState);
+        trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
+        setNextScreenNavigationContext(TrackEventkeys.HOME);
     }
 
     private void homePageGetter(Bundle savedInstanceState) {
@@ -80,8 +83,16 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     @Override
+    public void onBackResume() {
+        super.onBackResume();
+        // removed home event from here
+        setNextScreenNavigationContext(TrackEventkeys.HOME);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        // removed home event from here
         AppUpdateHandler.AppUpdateData appUpdateData = AppUpdateHandler.isOutOfDate(getActivity());
         if (appUpdateData != null && !TextUtils.isEmpty(appUpdateData.getAppExpireBy())) {
             showUpgradeAppDialog(appUpdateData.getAppExpireBy(), appUpdateData.getAppUpdateMsg(),
@@ -128,7 +139,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.updateVersionNumber(preferences.getString(Constants.DEVICE_ID, null),
+        String imei = UIUtil.getIMEI(getActivity());
+        bigBasketApiService.updateVersionNumber(imei, preferences.getString(Constants.DEVICE_ID, null),
                 getAppVersion(), new Callback<ApiResponse<UpdateVersionInfoApiResponseContent>>() {
                     @Override
                     public void success(ApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse, Response response) {
@@ -144,7 +156,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                 SharedPreferences.Editor editor =
                                         PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
                                 editor.putString(Constants.VERSION_NAME, getAppVersion());
-                                editor.commit();
+                                editor.apply();
                                 if (updateVersionInfoApiResponse.apiResponseContent.userDetails != null) {
                                     UIUtil.updateStoredUserDetails(getActivity(),
                                             updateVersionInfoApiResponse.apiResponseContent.userDetails,
@@ -245,14 +257,14 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         if (!TextUtils.isEmpty(pendingDeepLink)) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.DEEP_LINK);
-            editor.commit();
+            editor.apply();
             getCurrentActivity().launchAppDeepLink(pendingDeepLink);
         } else {
             String pendingFragmentCode = preferences.getString(Constants.FRAGMENT_CODE, null);
             if (!TextUtils.isEmpty(pendingFragmentCode)) {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.remove(Constants.FRAGMENT_CODE);
-                editor.commit();
+                editor.apply();
                 if (TextUtils.isDigitsOnly(pendingFragmentCode)) {
                     int fragmentCode = Integer.parseInt(pendingFragmentCode);
                     if (fragmentCode == NavigationCodes.GO_TO_BASKET) {
@@ -315,12 +327,13 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         return HomeFragment.class.getName();
     }
 
-    private void setAnalyticalData(AnalyticsEngine analyticsEngine) {
-        if (analyticsEngine == null) return;
-        AuthParameters.getInstance(getCurrentActivity()).setAnyLyticsEnabled(analyticsEngine.isMoEngageEnabled(),
-                analyticsEngine.isAnalyticsEnabled(),
-                analyticsEngine.isFBLoggerEnabled(), getCurrentActivity());
-        AuthParameters.updateInstance(getCurrentActivity());
+    private void setAppCapability(AppCapability appCapability) {
+        if (appCapability == null) return;
+        AuthParameters.getInstance(getCurrentActivity()).setAppCapability(appCapability.isMoEngageEnabled(),
+                appCapability.isAnalyticsEnabled(),
+                appCapability.isFBLoggerEnabled(),
+                appCapability.isMultiCityEnabled(), getCurrentActivity());
+        AuthParameters.reset();
     }
 
     private void callGetAppData(String client, String versionName) {
@@ -330,7 +343,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 new Callback<ApiResponse<AppDataResponse>>() {
                     @Override
                     public void success(ApiResponse<AppDataResponse> callbackAppDataResponse, Response response) {
-                        if (callbackAppDataResponse.status == 0) {
+                        if (callbackAppDataResponse.status == 0 && getActivity() != null) {
                             String appExpiredBy = callbackAppDataResponse.apiResponseContent.appUpdate.expiryDate;
                             String upgradeMsg = callbackAppDataResponse.apiResponseContent.appUpdate.upgradeMsg;
                             String latestAppVersion = callbackAppDataResponse.apiResponseContent.appUpdate.latestAppVersion;
@@ -340,8 +353,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             } else {
                                 AppUpdateHandler.markAsCurrent(getActivity());
                             }
-                            AnalyticsEngine analyticsEngine = callbackAppDataResponse.apiResponseContent.capabilities;
-                            setAnalyticalData(analyticsEngine);
+                            AppCapability appCapability = callbackAppDataResponse.apiResponseContent.capabilities;
+                            setAppCapability(appCapability);
                             LoginUserDetails userDetails = callbackAppDataResponse.apiResponseContent.userDetails;
                             if (userDetails != null) {
                                 SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -349,10 +362,12 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                         prefer.getString(Constants.MEMBER_EMAIL_KEY, ""),
                                         prefer.getString(Constants.MID_KEY, ""));
                             }
-                            HDFCPowerPayHandler.setTimeOut(getCurrentActivity(),
-                                    callbackAppDataResponse.apiResponseContent.hdfcPowerPayExpiry);
+                            HDFCPayzappHandler.setTimeOut(getCurrentActivity(),
+                                    callbackAppDataResponse.apiResponseContent.hdfcPayzappExpiry);
                             savePopulateSearcher(callbackAppDataResponse.apiResponseContent.topSearches);
                             AppDataSyncHandler.updateLastAppDataCall(getCurrentActivity());
+                            CityManager.setCityCacheExpiry(getCurrentActivity(),
+                                    callbackAppDataResponse.apiResponseContent.cityCacheExpiry);
                         }
                         // Fail silently
                     }
@@ -371,7 +386,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.TOP_SEARCHES, topSearchCommaSeparatedString);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -406,7 +421,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         setSectionData(sectionData);
         setScreenName(screenName);
         renderHomePage();
-        trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
         //screen name pass to OnSectionItemClickListener
     }
 

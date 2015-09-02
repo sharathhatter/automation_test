@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bigbasket.mobileapp"
-    android:installLocation="auto">
+    android:installLocation="auto" >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -18,11 +18,13 @@
     <!-- HDFC -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-    <!-- don't required by AppsFlyer-->
-    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
+    <!-- PAYU -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
 
-    <!-- MOEngage UBox-->
+    <!-- MOEngage UBox -->
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
@@ -35,12 +37,7 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
-    <!--<permission-->
-    <!--android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"-->
-    <!--android:protectionLevel="signature" />-->
-
     <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
-
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <application
@@ -48,19 +45,18 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/BBAppTheme"
-        tools:replace="android:theme">
+        android:theme="@style/BBNavDrawerTheme"
+        tools:replace="android:theme,android:allowBackup">
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".activity.product.ProductListActivity" />
 
         <activity
             android:name=".activity.SplashActivity"
-            android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,12 +64,14 @@
             </intent-filter>
         </activity>
 
-        <!-- Please make sure that appFlyer receiver must be at the top of all other receivers
-         The AppsFlyer Install Receiver is first and will broadcast to all receivers placed below it-->
+        <!--
+         Please make sure that appFlyer receiver must be at the top of all other receivers
+         The AppsFlyer Install Receiver is first and will broadcast to all receivers placed below it
+        -->
 
         <receiver
             android:name="com.appsflyer.MultipleInstallBroadcastReceiver"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
@@ -81,37 +79,14 @@
 
         <activity
             android:name=".activity.CustomerFeedbackActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
-            android:name=".activity.promo.FlatPageWebViewActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-
-        <!-- <activity android:name="com.luminous.pick.CustomGalleryActivity" > -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="luminous.ACTION_PICK" /> -->
-        <!-- <action android:name="luminous.ACTION_MULTIPLE_PICK" /> -->
-
-
-        <!-- <category android:name="android.intent.category.DEFAULT" /> -->
-        <!-- </intent-filter> -->
-        <!-- </activity> -->
-
-
         <activity
             android:name=".activity.DeepLinkDispatcherActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan">
-
-            <!--android:parentActivityName=".activity.SplashActivity"-->
-            <!--<meta-data-->
-            <!--android:name="android.support.PARENT_ACTIVITY"-->
-            <!--android:value=".activity.SplashActivity" />-->
-
-
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -272,14 +247,45 @@
                     android:host="auth"
                     android:scheme="bigbasket" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="inbox"
+                    android:scheme="bigbasket" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="discount"
+                    android:scheme="bigbasket" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="home"
+                    android:scheme="bigbasket" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.base.uiv3.BBActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -288,7 +294,7 @@
             android:name=".activity.product.ProductListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -299,53 +305,54 @@
         </activity>
         <activity
             android:name=".activity.product.FilterActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/FilterTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.LandingPageActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.order.uiv3.ShowCartActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.product.DiscountActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/BBAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
+        <activity
+            android:name=".activity.HomeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name=".activity.SectionHelpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.OrderDetailActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.AvailableVoucherListActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.order.MemberAddressFormActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.shoppinglist.ShoppingListActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.shoppinglist.ShoppingListSummaryActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
@@ -354,51 +361,44 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
-            android:name=".activity.order.uiv3.PayuTransactionActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
             android:name=".activity.account.uiv3.ChangeCityActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.SignInActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.TutorialActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.SignupActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.SocialLoginConfirmActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.ShipmentSelectionActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.PaymentSelectionActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.order.uiv3.OrderInvoiceActivity"
+            android:name=".activity.order.uiv3.OrderThankyouActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <meta-data
@@ -408,37 +408,59 @@
         <activity
             android:name=".activity.account.uiv3.OrderListActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.base.uiv3.BackButtonActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.base.uiv3.BackButtonWithBasketButtonActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name=".activity.base.uiv3.BackButtonSpinnerDateActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BBNavDrawerTheme.SpinnerDatePickerTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.MyAccountActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
-        <activity
-            android:name=".activity.account.uiv3.UpdatePinActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.account.uiv3.DoWalletActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name=".activity.payment.MobiKwikResponseHandlerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.payment.PayNowActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name=".activity.payment.PayNowThankyouActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name=".activity.payment.FundWalletActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
             android:name=".activity.account.uiv3.WalletActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <provider
@@ -450,16 +472,14 @@
 
         <activity
             android:name=".activity.base.SearchableActivity"
-            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/BBAppTheme.SearchViewTheme"
+            android:theme="@style/BaseAppTheme.SearchViewTheme"
             android:windowSoftInputMode="stateVisible|adjustResize" />
-
 
         <!-- MOEngage -->
         <receiver
             android:name="com.moe.pushlibrary.PushGcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
@@ -469,13 +489,12 @@
         </receiver>
 
         <!-- MOENGAGE RECEIVER FOR RECEIVING INSTALLATION INTENT -->
-        <receiver android:name="com.moe.pushlibrary.InstallReceiver">
+        <receiver android:name="com.moe.pushlibrary.InstallReceiver" >
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver">
+        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
@@ -485,16 +504,23 @@
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name="com.payu.sdk.PaymentOptionsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.payu.sdk.ProcessPaymentActivity"
+            android:screenOrientation="portrait" />
+
         <provider
             android:name="com.moe.pushlibrary.providers.MoEProvider"
             android:authorities="com.bigbasket.mobileapp.moengage.provider"
             android:exported="false" />
 
-        <!-- push notification landing page Need to change parent Activity-->
+        <!-- push notification landing page Need to change parent Activity -->
         <activity
             android:name="com.moe.pushlibrary.activities.MoEActivity"
             android:parentActivityName=".activity.SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.SplashActivity" />
@@ -519,25 +545,34 @@
         <activity
             android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
             android:label="Communication Hub"
-            android:theme="@style/BaseAppTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="adjustResize" />
 
         <service
             android:name="com.moengage.addon.ubox.UBoxMessenger"
             android:exported="false" />
 
-
         <meta-data
             android:name="LOCALYTICS_APP_KEY"
             android:value="@string/localytics_api_key" />
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${crashlytics_id}" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="payu_merchant_id"
+            android:value="@string/payu_merchant_id" />
+        <meta-data
+            android:name="payu_merchant_salt"
+            android:value="@string/payu_merchant_salt" />
+        <!-- <meta-data android:name="payu_disable_back" android:value="true"/> -->
+
+        <service
+            android:name=".service.AreaPinInfoIntentService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

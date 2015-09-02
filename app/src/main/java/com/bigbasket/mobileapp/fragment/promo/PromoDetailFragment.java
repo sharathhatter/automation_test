@@ -71,7 +71,6 @@ public class PromoDetailFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         if (savedInstanceState != null) {
             mPromoDetail = savedInstanceState.getParcelable(Constants.PROMO_DETAIL);
             if (mPromoDetail != null) {
@@ -80,10 +79,8 @@ public class PromoDetailFragment extends BaseFragment {
                 return;
             }
         }
-
-        int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         mPromoCategory = getArguments().getParcelable(Constants.PROMO_CATS);
-        getPromoDetail(promoId);
+        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_DETAIL);
     }
 
     @Override
@@ -93,12 +90,6 @@ public class PromoDetailFragment extends BaseFragment {
         getPromoDetail(promoId);
     }
 
-    @Override
-    public void onBackResume() {
-        super.onBackResume();
-        int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
-        getPromoDetail(promoId);
-    }
 
     private void getPromoDetail(int promoId) {
         if (promoId > -1) {
@@ -120,7 +111,11 @@ public class PromoDetailFragment extends BaseFragment {
                             renderPromoDetail();
                             setCartSummary(promoDetailApiResponseContentApiResponse.cartSummary);
                             updateUIForCartInfo();
-                            trackEvent(TrackingAware.PROMO_DETAIL_SHOWN, null);
+                            HashMap<String, String> map = new HashMap<>();
+                            if (!TextUtils.isEmpty(mPromoDetail.getPromoName())) {
+                                map.put(TrackEventkeys.PROMO_NAME, mPromoDetail.getPromoName());
+                            }
+                            trackEvent(TrackingAware.PROMO_DETAIL_SHOWN, map);
                         } else {
                             handler.sendEmptyMessage(promoDetailApiResponseContentApiResponse.status,
                                     promoDetailApiResponseContentApiResponse.message, true);
@@ -295,6 +290,7 @@ public class PromoDetailFragment extends BaseFragment {
                 .setShowShoppingListBtn(false)
                 .setShowBasketBtn(false)
                 .setShowShopListDeleteBtn(false)
+                .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
         for (Product freeProduct : freeProducts) {
             View base = layoutInflater.inflate(R.layout.uiv3_product_row, view, false);
@@ -304,11 +300,10 @@ public class PromoDetailFragment extends BaseFragment {
             productRowParams.setMargins(8, 8, 8, 0);
 
             ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
-                    null, productViewDisplayDataHolder, false, null, getNavigationCtx());
+                    null, productViewDisplayDataHolder, false, null, getNextScreenNavigationContext(), null, "none");
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }
-        trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, null);
     }
 
     private View getPromoSetBar(String text, PromoDetail promoDetail, HashMap<String, Integer> cartInfo,
@@ -368,7 +363,7 @@ public class PromoDetailFragment extends BaseFragment {
                 String valInBasket = UIUtil.formatAsMoney((double) promoSet.getValueInBasket()) + " in basket";
                 txtValInBasket.setText(valInBasket);
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
-                    String moreQtyNeeded = String.valueOf(Math.abs(promoSet.getPromoCriteriaVal() - promoSet.getValueInBasket()));
+                    String moreQtyNeeded = UIUtil.roundOrInt(Math.abs(promoSet.getPromoCriteriaVal() - promoSet.getValueInBasket()));
                     txtValNeeded.setVisibility(View.VISIBLE);
                     txtValNeeded.setText(moreQtyNeeded +
                             " more needed for the promo");
@@ -382,7 +377,7 @@ public class PromoDetailFragment extends BaseFragment {
                         0, 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
                 txtValInBasket.setText(valInBasketSpan);
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
-                    String moreAmountNeeded = String.valueOf(Math.abs(promoSet.getPromoCriteriaVal() -
+                    String moreAmountNeeded = UIUtil.roundOrInt(Math.abs(promoSet.getPromoCriteriaVal() -
                             promoSet.getValueInBasket()));
                     String txt = "`" + moreAmountNeeded
                             + " more needed for the promo";
@@ -455,10 +450,6 @@ public class PromoDetailFragment extends BaseFragment {
     public String getTitle() {
         String promoName = getArguments() != null ? getArguments().getString(Constants.PROMO_NAME) : null;
         return TextUtils.isEmpty(promoName) ? "Promotion Detail" : promoName;
-    }
-
-    public String getNavigationCtx() {
-        return TrackEventkeys.NAVIGATION_CTX_PROMO_DETAIL;
     }
 
     @NonNull

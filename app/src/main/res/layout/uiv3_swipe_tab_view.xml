@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layoutSwipeTabContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <com.ogaclejapan.smarttablayout.SmartTabLayout
-        android:id="@+id/slidingTabs"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="48dip"
-        android:background="@color/uiv3_list_bkg_color"
-        app:stl_customTabTextLayoutId="@layout/tab_text"
-        app:stl_customTabTextViewId="@id/txtTab"
-        app:stl_dividerColor="@android:color/transparent"
-        app:stl_indicatorColor="@color/uiv3_action_bar_background"
-        app:stl_indicatorThickness="4dp" />
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/uiv3_tool_layout" />
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/slidingTabs"
+            style="@style/BaseAppTheme.TabStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="scrollable" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/uiv3_divider_color" />
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+</android.support.design.widget.CoordinatorLayout>

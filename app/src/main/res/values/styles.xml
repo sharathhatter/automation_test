@@ -23,6 +23,22 @@
         <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
     </style>
 
+    <style name="BackButtonTheme" parent="BaseAppTheme" />
+
+    <style name="BaseAppTheme.TabStyle" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/uiv3_action_bar_background</item>
+        <item name="tabIndicatorHeight">4dp</item>
+        <item name="android:background">@color/uiv3_list_bkg_color</item>
+        <item name="tabTextAppearance">@style/BaseAppTheme.Tab.TextStyle</item>
+        <item name="tabSelectedTextColor">@color/uiv3_action_bar_background</item>
+    </style>
+
+    <style name="BaseAppTheme.Tab.TextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/uiv3_secondary_text_color</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
     <style name="LandingPageTheme.DialogTheme" parent="BaseAppTheme.AlertDialogStyle">
         <item name="colorControlNormal">@color/uiv3_action_bar_background</item>
         <item name="colorControlHighlight">@color/uiv3_status_bar_background</item>
@@ -35,27 +51,29 @@
         <item name="colorControlActivated">@color/white</item>
     </style>
 
-    <style name="BBAppTheme" parent="BaseAppTheme" />
+    <style name="BBNavDrawerTheme" parent="BaseAppTheme" />
+
+    <style name="BBNavDrawerTheme.SpinnerDatePickerTheme" parent="BaseAppTheme" />
 
     <style name="FilterTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
     </style>
 
-    <style name="BBAppTheme.SearchViewTheme" parent="BBAppTheme" />
+    <style name="BaseAppTheme.SearchViewTheme" parent="BBNavDrawerTheme" />
 
     <!-- Nav drawer style to set width specified by Material Design specification -->
-    <style name="NavDrawer">
+    <style name="NavDrawer" parent="WindowStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_marginRight">@dimen/nav_drawer_margin_offset</item>
     </style>
 
-    <style name="BBAppTheme.ToolbarSpinnerTheme" parent="BBAppTheme">
+    <style name="BBNavDrawerTheme.ToolbarSpinnerTheme" parent="BBNavDrawerTheme">
         <item name="colorControlNormal">@android:color/white</item>
         <item name="colorControlHighlight">#88FFFFFF</item>
     </style>
 
     <style name="ToolbarSpinnerStyle" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
-        <item name="android:theme">@style/BBAppTheme.ToolbarSpinnerTheme</item>
+        <item name="android:theme">@style/BBNavDrawerTheme.ToolbarSpinnerTheme</item>
     </style>
 
     <style name="RightNavDrawer">
@@ -74,11 +92,7 @@
         <item name="android:imeOptions">actionNext</item>
     </style>
 
-    <style name="WindowStyle">
-        <item name="android:fitsSystemWindows">false</item>
-    </style>
-
-    <style name="WindowStyle.ContentArea" />
+    <style name="WindowStyle" />
 
     <style name="DefaultButtonStyle" parent="Base.Widget.AppCompat.Button">
         <item name="android:textSize">@dimen/primary_text_size</item>
@@ -212,18 +226,22 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
-    <style name="BBAppTheme.SocialButton">
+    <style name="BBNavDrawerTheme.SocialButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="BBAppTheme.FacebookButton" parent="BBAppTheme.SocialButton">
+    <style name="BBNavDrawerTheme.FacebookButton" parent="BBNavDrawerTheme.SocialButton">
         <item name="android:src">@drawable/fb_btn_img</item>
     </style>
 
-    <style name="BBAppTheme.GoogleButton" parent="BBAppTheme.SocialButton">
+    <style name="BBNavDrawerTheme.GoogleButton" parent="BBNavDrawerTheme.SocialButton">
         <item name="android:src">@drawable/gplus_btn_img</item>
     </style>
 
     <style name="SpinnerDialogMode" />
+
+    <style name="Widget.Design.ScrimInsetsFrameLayout" parent="">
+        <item name="insetForeground">#4000</item>
+    </style>
 </resources>

@@ -18,7 +18,7 @@ public class SocialLoginConfirmActivity extends ChangeCityActivity {
     private String mLoginType;
 
     @Override
-    protected void changeCity(City city) {
+    protected void requestCityChange(City city) {
         mLoginType = getIntent().getStringExtra(Constants.SOCIAL_LOGIN_TYPE);
         SocialAccount socialAccount = getIntent().getParcelableExtra(Constants.SOCIAL_LOGIN_PARAMS);
         onCreateNewAccount(socialAccount, city);

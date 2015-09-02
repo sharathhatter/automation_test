@@ -14,11 +14,14 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -55,18 +58,9 @@ public final class ProductView {
                                           ProductDetailOnClickListener productDetailOnClickListener,
                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                           final boolean skipChildDropDownRendering,
-                                          final T productDataAware, String navigationCtx) {
-        setProductView(productViewHolder, product, baseImgUrl, productDetailOnClickListener,
-                productViewDisplayDataHolder, skipChildDropDownRendering, productDataAware, navigationCtx,
-                null);
-    }
-
-    public static <T> void setProductView(final ProductViewHolder productViewHolder, final Product product, String baseImgUrl,
-                                          ProductDetailOnClickListener productDetailOnClickListener,
-                                          ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                          final boolean skipChildDropDownRendering,
                                           final T productDataAware, String navigationCtx,
-                                          @Nullable HashMap<String, Integer> cartInfo) {
+                                          @Nullable HashMap<String, Integer> cartInfo,
+                                          String tabName) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
                 productDetailOnClickListener, productDataAware);
@@ -74,10 +68,10 @@ public final class ProductView {
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
-                productDataAware, navigationCtx, cartInfo);
+                productDataAware, navigationCtx, cartInfo, tabName);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
-                    productDataAware, navigationCtx, cartInfo);
+                    productDataAware, navigationCtx, cartInfo, tabName);
         }
     }
 
@@ -97,7 +91,8 @@ public final class ProductView {
                                              final String baseImgUrl,
                                              final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                              final T productDataAware, final String navigationCtx,
-                                             @Nullable HashMap<String, Integer> cartInfo) {
+                                             @Nullable HashMap<String, Integer> cartInfo,
+                                             String tabName) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         final Button btnMorePackSizes = productViewHolder.getBtnMorePackSizes();
@@ -118,7 +113,7 @@ public final class ProductView {
                         if (isThisChildProductInBasket) {
                             childProductInBasket = childProduct;
                             listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
-                                    product, productViewHolder, baseImgUrl, navigationCtx, cartInfo);
+                                    product, productViewHolder, baseImgUrl, navigationCtx, cartInfo, tabName);
                             listener.setCurrentProduct(childProductInBasket);
                             break;
                         }
@@ -127,11 +122,11 @@ public final class ProductView {
             }
             if (listener == null) {
                 listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
-                        product, productViewHolder, baseImgUrl, navigationCtx, cartInfo);
+                        product, productViewHolder, baseImgUrl, navigationCtx, cartInfo, tabName);
             } else {
                 // There is a child product that is in basket
                 // Manually trigger click to change to that product
-                listener.swapWithChildProduct(childProductInBasket, btnMorePackSizes);
+                listener.swapWithChildProduct(childProductInBasket, btnMorePackSizes, tabName);
             }
             btnMorePackSizes.setOnClickListener(listener);
         } else {
@@ -326,14 +321,18 @@ public final class ProductView {
     private static <T> void setBasketAndAvailabilityViews(final ProductViewHolder productViewHolder, final Product product,
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                           final T basketOperationAware, final String navigationCtx,
-                                                          @Nullable final HashMap<String, Integer> cartInfo) {
+                                                          @Nullable final HashMap<String, Integer> cartInfo,
+                                                          final String tabName) {
         final ImageView imgAddToBasket = productViewHolder.getImgAddToBasket();
         final View viewDecBasketQty = productViewHolder.getViewDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
         final View viewIncBasketQty = productViewHolder.getViewIncBasketQty();
+        final EditText editTextQty = productViewHolder.getEditTextQty();
 
         TextView txtOutOfStockORNotForSale = productViewHolder.getTxtOutOfStockORNotForSale();
         txtInBasket.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+        editTextQty.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+        editTextQty.setText("1");
 
         if (productViewDisplayDataHolder.isShowBasketBtn()) {
             if (product.getProductStatus().equalsIgnoreCase("A")) {
@@ -345,7 +344,9 @@ public final class ProductView {
                     viewDecBasketQty.setVisibility(View.VISIBLE);
                     viewIncBasketQty.setVisibility(View.VISIBLE);
                     //productViewHolder.itemView.setBackgroundColor(Constants.IN_BASKET_COLOR);
-
+                    if (productViewDisplayDataHolder.isShowQtyInput()) {
+                        editTextQty.setVisibility(View.GONE);
+                    }
                     imgAddToBasket.setVisibility(View.GONE);
                 } else {
                     txtInBasket.setText("");
@@ -354,6 +355,9 @@ public final class ProductView {
                     viewIncBasketQty.setVisibility(View.GONE);
 
                     imgAddToBasket.setVisibility(View.VISIBLE);
+                    if (productViewDisplayDataHolder.isShowQtyInput()) {
+                        editTextQty.setVisibility(View.VISIBLE);
+                    }
                     //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
                 }
 
@@ -364,7 +368,8 @@ public final class ProductView {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
-                                    TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView, cartInfo);
+                                    TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView, cartInfo,
+                                    editTextQty, tabName);
                             basketOperationTask.startTask();
 
                         } else {
@@ -381,7 +386,8 @@ public final class ProductView {
                                     BasketOperation.DEC,
                                     product, txtInBasket, viewDecBasketQty, viewIncBasketQty,
                                     imgAddToBasket, TrackingAware.BASKET_DECREMENT,
-                                    navigationCtx, productViewHolder.itemView, cartInfo);
+                                    navigationCtx, productViewHolder.itemView, cartInfo, editTextQty,
+                                    tabName);
                             myTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -394,11 +400,22 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (((ConnectivityAware) basketOperationAware).checkInternetConnection()) {
+                            String qty = "1";
+                            if (productViewDisplayDataHolder.isShowQtyInput()) {
+                                String txt = editTextQty.getText().toString();
+                                if (TextUtils.isEmpty(txt)) {
+                                    Toast.makeText(((ActivityAware) basketOperationAware).getCurrentActivity(), "Quantity shouldn\'t be blank", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                BaseActivity.hideKeyboard(((ActivityAware) basketOperationAware).getCurrentActivity(),
+                                        editTextQty);
+                                qty = txt;
+                            }
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
-                                    "1", TrackingAware.BASKET_ADD, navigationCtx, productViewHolder.itemView,
-                                    cartInfo);
+                                    qty, TrackingAware.BASKET_ADD, navigationCtx, productViewHolder.itemView,
+                                    cartInfo, editTextQty, tabName);
                             basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -410,8 +427,9 @@ public final class ProductView {
                 txtInBasket.setVisibility(View.GONE);
                 viewDecBasketQty.setVisibility(View.GONE);
                 viewIncBasketQty.setVisibility(View.GONE);
-
+                editTextQty.setVisibility(View.GONE);
                 imgAddToBasket.setVisibility(View.GONE);
+
                 txtOutOfStockORNotForSale.setVisibility(View.VISIBLE);
                 txtOutOfStockORNotForSale.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
                 if (product.getProductStatus().equalsIgnoreCase("0") || product.getProductStatus().equalsIgnoreCase("O")) {  // zero not O
@@ -426,6 +444,7 @@ public final class ProductView {
             viewDecBasketQty.setVisibility(View.GONE);
             viewIncBasketQty.setVisibility(View.GONE);
             imgAddToBasket.setVisibility(View.GONE);
+            editTextQty.setVisibility(View.GONE);
             //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
         }
     }
@@ -441,11 +460,13 @@ public final class ProductView {
         private String navigationCtx;
         private Product currentProduct;
         private HashMap<String, Integer> cartInfo;
+        private String tabName;
 
         public OnShowChildProductDropdownClickListener(T productDataAware, ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                        Product product, ProductViewHolder productViewHolder,
                                                        String baseImgUrl, String navigationCtx,
-                                                       @Nullable HashMap<String, Integer> cartInfo) {
+                                                       @Nullable HashMap<String, Integer> cartInfo,
+                                                       String tabName) {
             this.productDataAware = productDataAware;
             this.productViewDisplayDataHolder = productViewDisplayDataHolder;
             this.product = product;
@@ -455,6 +476,7 @@ public final class ProductView {
             this.navigationCtx = navigationCtx;
             this.childProducts = product.getAllProducts();
             this.cartInfo = cartInfo;
+            this.tabName = tabName;
         }
 
         @Override
@@ -480,7 +502,7 @@ public final class ProductView {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Product childProduct = childProducts.get(position);
-                    swapWithChildProduct(childProduct, btnMorePackSizes);
+                    swapWithChildProduct(childProduct, btnMorePackSizes, tabName);
                     if (dialog.isShowing()) {
                         dialog.dismiss();
                     }
@@ -493,7 +515,7 @@ public final class ProductView {
             dialog.show();
         }
 
-        public void swapWithChildProduct(Product childProduct, Button btnMorePackSizes) {
+        public void swapWithChildProduct(Product childProduct, Button btnMorePackSizes, String tabName) {
             if (childProduct.getSku().equals(product.getSku())) {
                 childProduct = product;
             }
@@ -501,7 +523,8 @@ public final class ProductView {
             currentProduct = childProduct;
             setProductView(productViewHolder, childProduct, baseImgUrl,
                     new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
-                    productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo);
+                    productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo,
+                    tabName);
         }
 
         public void setCurrentProduct(Product currentProduct) {

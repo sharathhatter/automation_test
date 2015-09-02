@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.google.gson.Gson;
@@ -21,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class SectionManager {
     public static final String HOME_PAGE = "home-page";
     public static final String MAIN_MENU = "main-menu";
+    public static final String DISCOUNT_PAGE = "Discount Page";
 
 
     public static final String TIME_KEY = "_time";
@@ -48,7 +48,7 @@ public class SectionManager {
             editor.remove(preferenceKey + TIME_KEY);
             editor.remove(preferenceKey + DURATION_KEY);
         }
-        editor.commit();
+        editor.apply();
     }
 
     public SectionData getStoredSectionData() {
@@ -78,18 +78,23 @@ public class SectionManager {
             editor.remove(preferenceKey + TIME_KEY);
             editor.remove(preferenceKey + DURATION_KEY);
         } else {
-            String sectionJson = new Gson().toJson(sectionData);
+            String sectionJson;
+            try {
+                sectionJson = new Gson().toJson(sectionData);
+            } catch (OutOfMemoryError e) {
+                System.gc();
+                return;
+            }
             editor.putString(preferenceKey, sectionJson);
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                     Locale.getDefault());
             editor.putString(preferenceKey + TIME_KEY, dateFormat.format(new Date()));
             editor.putInt(preferenceKey + DURATION_KEY, cacheDuration);
         }
-        editor.commit();
+        editor.apply();
     }
 
     private boolean isStale(String createdOn, SimpleDateFormat simpleDateFormat, int duration) {
-        if (BuildConfig.DEBUG) return true;
         try {
             Date createOnDate = simpleDateFormat.parse(createdOn);
             Date now = new Date();

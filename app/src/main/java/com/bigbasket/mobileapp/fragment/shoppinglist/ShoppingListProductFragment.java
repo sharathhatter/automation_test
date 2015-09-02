@@ -12,10 +12,8 @@ import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -45,7 +43,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     private void loadShoppingListProducts() {
         ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
         String baseImgUrl = getArguments().getString(Constants.BASE_IMG_URL);
-        renderProducts(shoppingListSummary, baseImgUrl);
+        String tabName = getArguments().getString(Constants.TAB_NAME);
+        renderProducts(shoppingListSummary, baseImgUrl, tabName);
     }
 
     private ProductViewDisplayDataHolder getProductViewHolder(ShoppingListSummary shoppingListSummary) {
@@ -59,10 +58,12 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .setShowShopListDeleteBtn(!shoppingListSummary.getShoppingListName().isSystem())
                 .setShoppingListName(shoppingListSummary.getShoppingListName())
                 .setRupeeTypeface(faceRupee)
+                .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
     }
 
-    private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl) {
+    private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl,
+                                String tabName) {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
@@ -75,21 +76,22 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                     baseImgUrl,
                     getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(),
                     getNextScreenNavigationContext(),
-                    cartInfo);
+                    cartInfo, tabName);
         } else {
             productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
                     baseImgUrl,
                     getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(),
-                    getNextScreenNavigationContext());
+                    getNextScreenNavigationContext(), tabName);
         }
         productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(productRecyclerView);
     }
 
     public void notifyDataChanged(HashMap<String, Integer> cartInfo,
-                                  ShoppingListSummary shoppingListSummary, String baseImgUrl) {
+                                  ShoppingListSummary shoppingListSummary, String baseImgUrl,
+                                  String tabName) {
         this.cartInfo = cartInfo;
-        renderProducts(shoppingListSummary, baseImgUrl);
+        renderProducts(shoppingListSummary, baseImgUrl, tabName);
     }
 
     @Override
@@ -134,22 +136,5 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    public void logProductListingEvent() {
-        ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
-        ShoppingListName shoppingListName = shoppingListSummary.getShoppingListName();
-        HashMap<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(Constants.TYPE, shoppingListSummary.getFacetSlug());
-        if (shoppingListName != null) {
-            String nc = shoppingListName.getNc();
-            nc += "." + shoppingListSummary.getFacetSlug();
-            setNextScreenNavigationContext(nc);
-            eventAttribs.put(Constants.NAME, shoppingListName.getSlug());
-            if (!shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
-                trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, eventAttribs);
-            } else {
-                trackEvent(TrackingAware.SMART_BASKET_SUMMARY_SHOWN, eventAttribs);
-            }
-        }
-    }
+
 }

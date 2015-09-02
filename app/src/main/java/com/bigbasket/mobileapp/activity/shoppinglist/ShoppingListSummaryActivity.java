@@ -4,9 +4,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +36,7 @@ import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
@@ -42,7 +46,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
-import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +62,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private ShoppingListName mShoppingListName;
     @Nullable
     private ViewPager viewPager;
+    private TextView mTxtToolbarDropdown;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,46 +111,54 @@ public class ShoppingListSummaryActivity extends BBActivity {
             handler.sendOfflineError(true);
             return;
         }
-        mShoppingListName = getIntent().getParcelableExtra(Constants.SHOPPING_LIST_NAME);
+        if (mShoppingListName == null) {
+            mShoppingListName = getIntent().getParcelableExtra(Constants.SHOPPING_LIST_NAME);
+        }
         if (mShoppingListName == null) {
             return;
         }
-        setTitle(mShoppingListName.getName());
+        setTitle(null);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getShoppingListSummary(mShoppingListName.getSlug(), new Callback<ApiResponse<GetShoppingListSummaryResponse>>() {
-            @Override
-            public void success(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                switch (getShoppingListSummaryApiResponse.status) {
-                    case 0:
-                        renderShoppingListSummary(mShoppingListName,
-                                getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
-                                getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl);
-                        break;
-                    default:
-                        handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
-                                getShoppingListSummaryApiResponse.message, true);
-                        break;
-                }
-            }
+        bigBasketApiService.getShoppingListSummary(getCurrentNavigationContext(),
+                mShoppingListName.getSlug(), new Callback<ApiResponse<GetShoppingListSummaryResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (getShoppingListSummaryApiResponse.status) {
+                            case 0:
+                                if (mShoppingListName != null) {
+                                    mShoppingListName.setAsSystem(getShoppingListSummaryApiResponse.apiResponseContent.isSystem);
+                                }
+                                renderShoppingListSummary(mShoppingListName,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.headerSection,
+                                        getShoppingListSummaryApiResponse.apiResponseContent.headerSelectedOn);
+                                break;
+                            default:
+                                handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
+                                        getShoppingListSummaryApiResponse.message, true);
+                                break;
+                        }
+                    }
 
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error, true);
-            }
-        });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error, true);
+                    }
+                });
     }
 
     private void showNoShoppingListView(ViewGroup contentView) {
@@ -169,13 +182,39 @@ public class ShoppingListSummaryActivity extends BBActivity {
         contentView.addView(base);
     }
 
+    private void renderHeaderDropDown(@Nullable final Section headSection,
+                                      int headerSelectedOn) {
+        Toolbar toolbar = getToolbar();
+        if (mTxtToolbarDropdown == null) {
+            mTxtToolbarDropdown = (TextView) getLayoutInflater().
+                    inflate(R.layout.uiv3_product_header_text, toolbar, false);
+        }
+        new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
+                .withCtx(this)
+                .withDefaultSelectedIdx(headerSelectedOn)
+                .withFallbackHeaderTitle(mShoppingListName != null ? mShoppingListName.getName() : "")
+                .withHeadSection(headSection)
+                .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
+                .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
+                .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
+                .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
+                .withToolbar(getToolbar())
+                .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
+                .withTxtToolbarDropdown(mTxtToolbarDropdown)
+                .withTypeface(faceRobotoRegular)
+                .build()
+                .setView();
+    }
+
     private void renderShoppingListSummary(ShoppingListName shoppingListName,
                                            final ArrayList<ShoppingListSummary> shoppingListSummaries,
-                                           String baseImgUrl) {
+                                           String baseImgUrl, @Nullable Section headerSection,
+                                           int headerSelectedOn) {
         this.baseImgUrl = baseImgUrl;
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();
+        renderHeaderDropDown(headerSection, headerSelectedOn);
         if (shoppingListSummaries == null || shoppingListSummaries.size() == 0) {
             if (shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
                 showNoShoppingListView(contentFrame);
@@ -193,15 +232,17 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 txtSearchResultMsg2.setTypeface(faceRobotoRegular);
                 contentFrame.addView(relativeLayout);
             }
+            findViewById(R.id.slidingTabs).setVisibility(View.GONE);
             findViewById(R.id.layoutAddAll).setVisibility(View.GONE);
             return;
         }
 
         final int numTabs = shoppingListSummaries.size();
 
-        String nc = getNc();
+        final String nc = getNc();
         setNextScreenNavigationContext(nc);
         if (numTabs == 1) {
+            findViewById(R.id.slidingTabs).setVisibility(View.GONE);
             Bundle bundle = getBundleForShoppingListProductFragment(shoppingListSummaries.get(0),
                     shoppingListName, baseImgUrl);
             ShoppingListProductFragment shoppingListProductFragment = new ShoppingListProductFragment();
@@ -209,20 +250,40 @@ public class ShoppingListSummaryActivity extends BBActivity {
             replaceToMainLayout(shoppingListProductFragment, ShoppingListProductFragment.class.getName(), false,
                     contentFrame);
         } else {
-            View base = inflater.inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
+            findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
 
-            viewPager = (ViewPager) base.findViewById(R.id.pager);
+            viewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
             ProductListPagerAdapter productListPagerAdapter = new ProductListPagerAdapter(getCurrentActivity(),
                     getSupportFragmentManager(), getTabs(shoppingListSummaries, shoppingListName, baseImgUrl));
             if (viewPager != null) {
                 viewPager.setAdapter(productListPagerAdapter);
+                viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    }
 
-                SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
-                pagerSlidingTabStrip.setViewPager(viewPager);
+                    @Override
+                    public void onPageSelected(int position) {
+                        HashMap<String, String> eventAttribs = new HashMap<>();
+                        eventAttribs.put(Constants.TAB_NAME, shoppingListSummaries.get(position).getFacetSlug());
+                        String tabName = !TextUtils.isEmpty(nc) && nc.equals(TrackEventkeys.SB)
+                                ? "SmartBasket" : "ShoppingList";
+                        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                        trackEvent(tabName + "." + TrackingAware.TAB_CHANGED, eventAttribs);
+                    }
 
-                contentFrame.addView(base);
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+                    }
+                });
+
+                TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
+                pagerSlidingTabStrip.setupWithViewPager(viewPager);
+
+                contentFrame.addView(viewPager);
             }
         }
+        logShoppingListingEvent(shoppingListSummaries.get(0));
         final ViewPager copyViewPagerIntoFinalForOnClick = viewPager;
         View layoutAddAll = findViewById(R.id.layoutAddAll);
         if (areAllProductsOutOfStock(shoppingListSummaries) || (shoppingListName.isSystem() &&
@@ -234,9 +295,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
             layoutAddAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ShoppingListSummary shoppingListSummary =
-                            shoppingListSummaries.get(copyViewPagerIntoFinalForOnClick != null ?
-                                    copyViewPagerIntoFinalForOnClick.getCurrentItem() : 0);
+                    int currentItemIdx = copyViewPagerIntoFinalForOnClick != null ?
+                            copyViewPagerIntoFinalForOnClick.getCurrentItem() : 0;
+                    if (currentItemIdx >= shoppingListSummaries.size()) return;
+                    ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(currentItemIdx);
                     if (Product.areAllProductsOutOfStock(shoppingListSummary.getProducts())) {
                         String msg = numTabs > 1 ? getString(R.string.allAreOutOfStockForTabPrefix) + " "
                                 + shoppingListSummary.getFacetName() + " " + getString(R.string.allAreOutOfStockForTabSuffix)
@@ -254,6 +316,23 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     }
                 }
             });
+        }
+    }
+
+    public void logShoppingListingEvent(ShoppingListSummary shoppingListSummary) {
+        ShoppingListName shoppingListName = shoppingListSummary.getShoppingListName();
+        HashMap<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(Constants.TAB_NAME, shoppingListSummary.getFacetSlug());
+        if (shoppingListName != null) {
+            String nc = shoppingListName.getNc();
+            nc += "." + shoppingListSummary.getFacetSlug();
+            setNextScreenNavigationContext(nc);
+            eventAttribs.put(Constants.NAME, shoppingListName.getSlug());
+            if (!shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
+                trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, eventAttribs);
+            } else {
+                trackEvent(TrackingAware.SMART_BASKET_SUMMARY_SHOWN, eventAttribs);
+            }
         }
     }
 
@@ -286,6 +365,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
         shoppingListSummary.setShoppingListName(shoppingListName);
         bundle.putParcelable(Constants.SHOPPING_LIST_SUMMARY, shoppingListSummary);
         bundle.putString(Constants.BASE_IMG_URL, baseImgUrl);
+        bundle.putString(Constants.TAB_NAME, shoppingListSummary.getFacetSlug());
         return bundle;
     }
 
@@ -316,7 +396,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
             Fragment fragment = getCurrentFragment();
             if (fragment != null) {
                 ((ShoppingListProductFragment) fragment).notifyDataChanged(cartInfo,
-                        shoppingListSummary, baseImgUrl);
+                        shoppingListSummary, baseImgUrl, shoppingListSummary.getFacetName());
             }
         }
     }
@@ -550,8 +630,13 @@ public class ShoppingListSummaryActivity extends BBActivity {
 
     @Nullable
     private String getNc() {
-        String nc;
         if (mShoppingListName == null) return null;
         return mShoppingListName.getNc();
+    }
+
+    @Override
+    public void launchShoppingList(ShoppingListName shoppingListName) {
+        mShoppingListName = shoppingListName;
+        loadShoppingListSummary();
     }
 }

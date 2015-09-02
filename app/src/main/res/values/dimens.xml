@@ -2,7 +2,9 @@
 <resources>
     <dimen name="fab_size_normal">56dp</dimen>
     <dimen name="fab_size_mini">40dp</dimen>
-    <dimen name="fab_shadow_size">8dp</dimen>
+    <dimen name="fab_shadow_size">12dp</dimen>
+    <dimen name="fab_elevation_lollipop">8dp</dimen>
+
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_mini">4dp</dimen>
     <dimen name="padding_normal">16dp</dimen>
@@ -32,7 +34,6 @@
     <dimen name="vertical_tile_with_img_min_height">220dp</dimen>
     <integer name="numGridCols">2</integer>
 
-    <dimen name="margin_ref_small">5dp</dimen>
     <dimen name="grid_width">140dp</dimen>
 
     <dimen name="nav_drawer_margin_offset">-8dp</dimen>
@@ -41,9 +42,14 @@
     <dimen name="margin_22">22dp</dimen>
     <dimen name="padding_12">12dp</dimen>
     <dimen name="margin_12">12dp</dimen>
-    <dimen name="thank_you_page_top_margin">71dp</dimen>
-    <dimen name="thank_you_page_txt_margin">85dp</dimen>
+    <dimen name="thank_you_page_top_margin">32dp</dimen>
+    <dimen name="thank_you_page_txt_margin">48dp</dimen>
     <dimen name="thank_you_page_heading_text_size">51sp</dimen>
     <dimen name="thank_you_order_placed">30dp</dimen>
 
+    <dimen name="nav_text_margin_top">18dp</dimen>
+    <dimen name="nav_img_margin_top">16dp</dimen>
+    <dimen name="nav_city_margin_top">16dp</dimen>
+
+    <dimen name="fab_margin_in_non_coordinator_layout">0dp</dimen>
 </resources>

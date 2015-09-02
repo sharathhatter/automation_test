@@ -17,12 +17,11 @@ import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
-import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
+import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -37,13 +36,12 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
+import com.daimajia.slider.library.BuildConfig;
 import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -57,34 +55,45 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_SPLASH_SCREEN);
         boolean reloadApp = getIntent().getBooleanExtra(Constants.RELOAD_APP, false);
         if (reloadApp) {
             setContentView(R.layout.loading_layout);
+            ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
+            UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo);
+
             mIsFromActivityResult = true;
             handleResults(true);
         } else {
             AppsFlyerLib.setAppsFlyerKey(Constants.APP_FLYER_ID);
             AppsFlyerLib.setUseHTTPFalback(true);
             AppsFlyerLib.sendTracking(getApplicationContext()); //detects installation, session and updates
+            AppsFlyerLib.setCurrencyCode("INR");
 
             // Defensive fix
             removePendingCodes();
             try {
                 boolean isHDFCPayMode = getIntent().getBooleanExtra(Constants.MODE_HDFC_PAY, false);
                 if (isHDFCPayMode) {
-                    HDFCPowerPayHandler.setHDFCPayMode(this);
+                    HDFCPayzappHandler.setHDFCPayMode(this);
                 }
             } catch (ClassCastException e) {
 
             }
-            if (checkInternetConnection()) {
-                NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
+            if (!BuildConfig.DEBUG) {
+                trackEventAppsFlyer(TrackingAware.APP_OPEN);
+                if (checkInternetConnection()) {
+                    NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
+                }
             }
         }
     }
 
     private void startSplashScreen() {
         setContentView(R.layout.loading_layout);
+        ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
+        UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo);
+
         if (AuthParameters.getInstance(this).isAuthTokenEmpty() && !CityManager.hasUserChosenCity(this)) {
             if (TextUtils.isEmpty(AuthParameters.getInstance(this).getVisitorId())) {
                 doRegisterDevice(new City("Bangalore", 1));
@@ -157,7 +166,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void handleTutorialResponse(int resultCode) {
         if (resultCode == FragmentCodes.START_HOME) {
-            Intent homePageIntent = new Intent(this, BBActivity.class);
+            Intent homePageIntent = new Intent(this, HomeActivity.class);
             homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
             startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -199,7 +208,8 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             Log.e("StartActivity", "Error while creating device-properties json");
         }
 
-        bigBasketApiService.registerDevice(deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
+        String imei = UIUtil.getIMEI(this);
+        bigBasketApiService.registerDevice(imei, deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
                 new Callback<RegisterDeviceResponse>() {
                     @Override
                     public void success(RegisterDeviceResponse registerDeviceResponse, Response response) {
@@ -222,7 +232,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
                         editor.putString(Constants.MEMBER_EMAIL_KEY, null);
                         editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
                         editor.commit();
-                        AuthParameters.updateInstance(getCurrentActivity());
+                        AuthParameters.reset();
 
                         startLandingPage();
                     }
@@ -280,20 +290,9 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     protected void handleResults(boolean reloadApp) {
         removePendingGoToHome();
         if (reloadApp) {
-            trackCity();
             loadNavigation();
         } else {
             loadHomePage();
-        }
-    }
-
-    private void trackCity() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String city = preferences.getString(Constants.CITY, null);
-        if (!TextUtils.isEmpty(city)) {
-            Map<String, String> eventAttribs = new HashMap<>();
-            eventAttribs.put(TrackEventkeys.CITY, city);
-            trackEvent(TrackingAware.ENTRY_PAGE_SKIP_BUTTON_CLICKED, eventAttribs);
         }
     }
 

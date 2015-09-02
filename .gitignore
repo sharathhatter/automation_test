@@ -31,3 +31,6 @@ moEngageSDKv5.0/build/*
 captures/*
 moengagesdk/build/*
 moe-addon-ubox/build/*
+CustomBrowser-release/build/*
+payuSdk/build/*
+mobikwik_Payment_Android_SDK/build/*

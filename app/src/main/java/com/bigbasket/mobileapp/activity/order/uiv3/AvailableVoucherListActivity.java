@@ -21,15 +21,19 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class AvailableVoucherListActivity extends BackButtonActivity {
+
+    private EditText mEditTextVoucherCode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,9 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         setTitle(getString(R.string.selectAndApplyVoucher));
         ArrayList<ActiveVouchers> activeVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
         renderVouchers(activeVouchersList);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentNavigationContext());
+        trackEvent(TrackingAware.EVOUCHER_SHOWN, map);
     }
 
     private void renderVouchers(final ArrayList<ActiveVouchers> activeVouchersList) {
@@ -48,17 +55,17 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         LayoutInflater inflater = getLayoutInflater();
         View base = inflater.inflate(R.layout.uiv3_apply_voucher, contentLayout, false);
 
-        final EditText editTextVoucherCode = (EditText) base.findViewById(R.id.editTextVoucherCode);
-        editTextVoucherCode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mEditTextVoucherCode = (EditText) base.findViewById(R.id.editTextVoucherCode);
+        mEditTextVoucherCode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
                 if (((keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
                         actionId == EditorInfo.IME_ACTION_DONE) {
-                    String voucherCode = editTextVoucherCode.getText().toString();
+                    String voucherCode = mEditTextVoucherCode.getText().toString();
                     if (!TextUtils.isEmpty(voucherCode)) {
                         applyVoucher(voucherCode);
                     }
-                    hideKeyboard(getCurrentActivity(), editTextVoucherCode);
+                    hideKeyboard(getCurrentActivity(), mEditTextVoucherCode);
                 }
                 return false;
             }
@@ -66,7 +73,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         TextView lblApplyVoucher = (TextView) base.findViewById(R.id.lblApply);
         final ListView listVoucher = (ListView) base.findViewById(R.id.lstAvailableVouchers);
 
-        editTextVoucherCode.setTypeface(faceRobotoLight);
+        mEditTextVoucherCode.setTypeface(faceRobotoLight);
         if (activeVouchersList == null || activeVouchersList.size() == 0) {
             listVoucher.setVisibility(View.GONE);
         } else {
@@ -88,9 +95,9 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         lblApplyVoucher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!TextUtils.isEmpty(editTextVoucherCode.getText().toString())) {
-                    BaseActivity.hideKeyboard(getCurrentActivity(), editTextVoucherCode);
-                    String voucherCode = editTextVoucherCode.getText().toString();
+                if (!TextUtils.isEmpty(mEditTextVoucherCode.getText().toString())) {
+                    BaseActivity.hideKeyboard(getCurrentActivity(), mEditTextVoucherCode);
+                    String voucherCode = mEditTextVoucherCode.getText().toString();
                     applyVoucher(voucherCode);
                 }
             }
@@ -114,6 +121,14 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         data.putExtra(Constants.EVOUCHER_CODE, voucherCode);
         setResult(NavigationCodes.VOUCHER_APPLIED, data);
         finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mEditTextVoucherCode != null) {
+            hideKeyboard(this, mEditTextVoucherCode);
+        }
     }
 
     @Override

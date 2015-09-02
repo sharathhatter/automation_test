@@ -20,7 +20,6 @@ public interface ApiErrorCodes {
     int LIST_WITH_NAME_ALREADY_EXISTS = 117;
     int INVALID_INPUT = 119;
     int MEMBER_SHOPPING_LIST_DOESNT_EXISTS = 122;
-    String AMOUNT_MISMATCH_STR = "123";
     int PROMO_NOT_EXIST = 123;
     int PROMO_CATEGORY_NOT_EXIST = 124;
     int PROMO_CRITERIA_SET_NOT_EXISTS = 125;
@@ -35,4 +34,6 @@ public interface ApiErrorCodes {
     int PRODUCT_QTY_LIMIT = 184;
     int ADDRESS_NOT_SERVED = 185;
     int INVALID_REFERRAL_CODE = 186;
+    int GENERIC_ERROR = 190;
+    int PAYMENT_ERROR = 191;
 }

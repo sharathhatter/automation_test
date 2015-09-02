@@ -56,13 +56,9 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     }
 
     @Override
-    public void logProductListingEvent() {
-        // Don't do anything
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
+        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_SHOP_FROM_ORDER);
         loadProducts();
     }
 
@@ -156,11 +152,12 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 .setShowShoppingListBtn(true)
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
+                .showQtyInput(authParameters.isKirana())
                 .build();
 
         productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
                 productViewDisplayDataHolder, this, mProducts.size(),
-                getNextScreenNavigationContext());
+                getNextScreenNavigationContext(), TrackEventkeys.SINGLE_TAB_NAME);
 
         productRecyclerView.setAdapter(productListRecyclerAdapter);
         contentView.addView(shopFromOrderLayout);

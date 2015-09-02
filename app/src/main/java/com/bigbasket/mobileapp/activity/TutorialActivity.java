@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.fragment.TutorialItemFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 public class TutorialActivity extends BaseActivity {
 
@@ -22,6 +23,7 @@ public class TutorialActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_TUTORIAL_SCREEN);
         setContentView(R.layout.uiv3_tutorial_layout);
         showTutorial();
     }

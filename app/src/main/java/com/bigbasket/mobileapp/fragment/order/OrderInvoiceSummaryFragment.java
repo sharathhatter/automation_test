@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -43,6 +44,7 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loadOrderInvoiceSummary();
+        setNextScreenNavigationContext(TrackEventkeys.NC_ORDER_DETAIL);
     }
 
     private void loadOrderInvoiceSummary() {
@@ -50,6 +52,7 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         if (getArguments() != null) {
             orderInvoice = getArguments().getParcelable(Constants.ACTION_TAB_TAG);
             setTitle("Order Details");
+            if (orderInvoice == null) return;
             renderOrderInvoice(orderInvoice);
         }
     }
@@ -67,8 +70,7 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         // Render slots
         LinearLayout layoutDeliverySlot = (LinearLayout) base.findViewById(R.id.layoutDeliverySlot);
         View slotInfoRow = inflater.inflate(R.layout.uiv3_slot_info_row, layoutDeliverySlot, false);
-        String[] slotDateAndTime = orderInvoice.getSlot().getDisplayName().split("between");
-        renderSlotInfoRow(slotInfoRow, slotDateAndTime[0].trim(), slotDateAndTime[1].trim(),
+        renderSlotInfoRow(slotInfoRow, orderInvoice.getSlot().getDate(), orderInvoice.getSlot().getTime(),
                 orderInvoice.getFulfillmentInfo().getFulfilledBy(), false);
         layoutDeliverySlot.addView(slotInfoRow);
 
@@ -189,7 +191,7 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         return row;
     }
 
-    public void renderSlotInfoRow(View row, String slotDate, String slotTime,
+    public void renderSlotInfoRow(View row, @Nullable String slotDate, @Nullable String slotTime,
                                   String fulfilledBy, boolean hasMultipleSlots) {
         TextView txtNumItems = (TextView) row.findViewById(R.id.txtNumItems);
         TextView txtBasketVal = (TextView) row.findViewById(R.id.txtBasketVal);
@@ -199,8 +201,17 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         txtSlotDate.setTypeface(faceRobotoRegular);
         txtSlotTime.setTypeface(faceRobotoRegular);
 
-        txtSlotDate.setText(slotDate);
-        txtSlotTime.setText(slotTime);
+        if (!TextUtils.isEmpty(slotDate)) {
+            txtSlotDate.setText(slotDate);
+        } else {
+            txtSlotDate.setVisibility(View.GONE);
+        }
+        if (!TextUtils.isEmpty(slotTime)) {
+            txtSlotTime.setText(slotTime);
+        } else {
+            txtSlotTime.setVisibility(View.GONE);
+        }
+
         txtNumItems.setVisibility(View.GONE);
         txtBasketVal.setVisibility(View.GONE);
         if (!hasMultipleSlots) {

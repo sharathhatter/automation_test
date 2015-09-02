@@ -1,11 +1,13 @@
 package com.bigbasket.mobileapp.activity.product;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -14,11 +16,11 @@ import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -32,13 +34,14 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
+import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -48,7 +51,6 @@ import com.bigbasket.mobileapp.model.product.ProductTabInfo;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
-import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -56,10 +58,9 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.SectionView;
-import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
+import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
-import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,6 +101,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (mNameValuePairs != null)
+            setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
+    }
+
+    @Override
     @LayoutRes
     public int getMainLayout() {
         return R.layout.uiv3_product_list_layout;
@@ -115,14 +123,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         mArrayTabTypeAndFragmentPosition = null;
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
-
-        if (paramMap != null && paramMap.containsKey(Constants.TYPE)) {
-            // Using separate map since nc can be added by trackEvent which we don't want in paramMap
-            HashMap<String, String> eventAttribs = new HashMap<>(paramMap);
-            trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, eventAttribs);
-        }
         setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
-        new ProductListTask<>(this, paramMap).startTask();
+        new ProductListTask<>(this, paramMap, getCurrentNavigationContext()).startTask();
     }
 
     @Override
@@ -208,13 +210,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
             // Setup content
             if (productTabData.getProductTabInfos().size() > 1) {
+                findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
                 displayProductTabs(productTabData, contentFrame);
             } else {
                 // When only one product tab
+                findViewById(R.id.slidingTabs).setVisibility(View.GONE);
                 ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
                 ProductInfo productInfo = productTabInfo.getProductInfo();
                 Bundle bundle = getBundleForProductListFragment(productTabInfo, productInfo,
-                        productTabData.getBaseImgUrl());
+                        productTabData.getBaseImgUrl(), true);
                 GenericProductListFragment genericProductListFragment = new GenericProductListFragment();
                 genericProductListFragment.setArguments(bundle);
                 // Not using onChangeFragment/addToMainLayout since their implementation has been changed in this class
@@ -230,9 +234,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                             productTabInfo.getTabName() : mTitlePassedViaIntent;
                     setTitle(title);
                 }
+                logProductListingShownEvent(productTabInfo.getTabType());
                 renderHeaderDropDown(productTabData.getHeaderSection());
             }
         } else if (contentSectionView == null) {
+            findViewById(R.id.slidingTabs).setVisibility(View.GONE);
             UIUtil.showEmptyProductsView(this, contentFrame, getString(R.string.noProducts),
                     R.drawable.empty_smart_basket);
             renderHeaderDropDown(null);
@@ -249,8 +255,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     private void displayProductTabs(ProductTabData productTabData, ViewGroup contentFrame) {
-        View base = getLayoutInflater().inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
-        mViewPager = (ViewPager) base.findViewById(R.id.pager);
+        mViewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
         if (mViewPager == null) return;
 
         ArrayList<BBTab> bbTabs = new ArrayList<>();
@@ -261,7 +266,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             ProductInfo productInfo = productTabInfo.getProductInfo();
             if (productInfo != null) {
                 Bundle bundle = getBundleForProductListFragment(productTabInfo,
-                        productInfo, productTabData.getBaseImgUrl());
+                        productInfo, productTabData.getBaseImgUrl(), false);
                 bbTabs.add(new BBTab<>(productTabInfo.getTabName(),
                         GenericProductListFragment.class, bundle));
                 if (productInfo.getCurrentPage() == -1) {
@@ -271,6 +276,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     mArrayTabTypeAndFragmentPosition.put(i, productTabInfo.getTabType());
                     tabTypeWithNoProducts.add(productTabInfo.getTabType());
                 }
+                if (i == 0)
+                    logProductListingShownEvent(productTabInfo.getTabType());
             }
         }
 
@@ -278,26 +285,26 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
 
-        SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
-        pagerSlidingTabStrip.setViewPager(mViewPager);
-        pagerSlidingTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                HashMap<String, String> eventAttribs = new HashMap<>();
-                eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabName());
-                trackEvent(TrackingAware.PRODUCT_LIST_TAB_CHANGED, eventAttribs);
             }
 
             @Override
             public void onPageSelected(int position) {
-
+                HashMap<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabType());
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.PRODUCT_LIST_TAB_CHANGED, eventAttribs);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
+
+        TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
+        pagerSlidingTabStrip.setupWithViewPager(mViewPager);
         if (productTabData.getContentSectionData() != null) {
             LinearLayout layoutProducts = new LinearLayout(this);
             layoutProducts.setOrientation(LinearLayout.VERTICAL);
@@ -306,15 +313,21 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             if (sectionView != null) {
                 layoutProducts.addView(sectionView);
             }
-            layoutProducts.addView(base);
+            layoutProducts.addView(mViewPager);
             contentFrame.addView(layoutProducts);
         } else {
-            contentFrame.addView(base);
+            contentFrame.addView(mViewPager);
         }
         renderHeaderDropDown(productTabData.getHeaderSection());
 
         if (tabTypeWithNoProducts.size() > 0) {
-            ArrayList<NameValuePair> newNameValuePairs = new ArrayList<>(mNameValuePairs);
+            ArrayList<NameValuePair> newNameValuePairs;
+            if (mNameValuePairs != null) {
+                newNameValuePairs = new ArrayList<>(mNameValuePairs);
+            } else {
+                newNameValuePairs = new ArrayList<>();
+            }
+
             newNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(tabTypeWithNoProducts)));
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
             bigBasketApiService.productNextPage(NameValuePair.toMap(newNameValuePairs), new Callback<ApiResponse<ProductNextPageResponse>>() {
@@ -338,14 +351,45 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         }
     }
 
+
+    public void logProductListingShownEvent(String mTabType) {
+        if (mTabType == null) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(Constants.TAB_NAME, mTabType);
+        map = getProductListEventParams(mNameValuePairs, map);
+        trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
+        trackEventAppsFlyer(TrackingAware.PRODUCT_LIST_SHOWN);
+    }
+
+
+    private HashMap<String, String> getProductListEventParams(ArrayList<NameValuePair> nameValuePairs,
+                                                              HashMap<String, String> map) {
+        if (nameValuePairs == null || nameValuePairs.size() == 0) return map;
+        boolean is_express = false, filterApplied = false;
+        for (NameValuePair nameValuePair : nameValuePairs) {
+            if (nameValuePair.getName() != null && nameValuePair.getValue() != null) {
+                if (nameValuePair.getName().equalsIgnoreCase("is_express"))
+                    is_express = true;
+                else if (nameValuePair.getName().equalsIgnoreCase("filter_on"))
+                    filterApplied = true;
+                else
+                    map.put(nameValuePair.getName(), nameValuePair.getValue());
+            }
+        }
+        map.put(TrackEventkeys.IS_EXPRESS, is_express ? "yes" : "no");
+        map.put(TrackEventkeys.FILTER_APPLIED, filterApplied ? "yes" : "no");
+        return map;
+    }
+
     private Bundle getBundleForProductListFragment(ProductTabInfo productTabInfo,
                                                    ProductInfo productInfo,
-                                                   String baseImgUrl) {
+                                                   String baseImgUrl, boolean singleTab) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.PRODUCT_INFO, productInfo);
         bundle.putString(Constants.BASE_IMG_URL, baseImgUrl);
         bundle.putParcelableArrayList(Constants.PRODUCT_QUERY, mNameValuePairs);
         bundle.putString(Constants.TAB_TYPE, productTabInfo.getTabType());
+        bundle.putBoolean(Constants.SINGLE_TAB, singleTab);
         return bundle;
     }
 
@@ -363,6 +407,22 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             setProductListForFragmentAtPosition(currentPosition);
             setProductListForFragmentAtPosition(currentPosition + 1);
             setProductListForFragmentAtPosition(currentPosition - 1);
+        }
+    }
+
+    @Override
+    public void doSearch(String searchQuery, String referrer) {
+        if (!TextUtils.isEmpty(searchQuery)) {
+            mTitlePassedViaIntent = searchQuery;
+            mNameValuePairs = new ArrayList<>();
+            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
+            mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
+            if (getSupportFragmentManager().getFragments() != null &&
+                    getSupportFragmentManager().getFragments().size() > 0) {
+                // New product list is requested over current page, so change nc by copying next-nc
+                setCurrentNavigationContext(referrer);
+            }
+            loadProductTabs();
         }
     }
 
@@ -418,90 +478,25 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private void renderHeaderDropDown(@Nullable final Section headSection) {
         Toolbar toolbar = getToolbar();
-        ViewGroup layoutChildToolbarContainer = (ViewGroup) findViewById(R.id.layoutChildToolbarContainer);
-        ListView listChildProducts = (ListView) findViewById(R.id.listHeaderDropdown);
-        TextView txtChildDropdownTitle = (TextView) findViewById(R.id.txtListDialogTitle);
-        if (headSection != null && headSection.getSectionItems() != null
-                && headSection.getSectionItems().size() > 0) {
-
-            final OnChildDropdownRequested onChildDropdownRequested = new OnChildDropdownRequested(layoutChildToolbarContainer);
-            if (mToolbarTextDropdown == null) {
-                mToolbarTextDropdown = (TextView) getLayoutInflater().inflate(R.layout.uiv3_product_header_text, toolbar, false);
-                mToolbarTextDropdown.setTypeface(faceRobotoRegular);
-                toolbar.addView(mToolbarTextDropdown);
-                mToolbarTextDropdown.setOnClickListener(onChildDropdownRequested);
-            }
-            findViewById(R.id.imgCloseChildDropdown).setOnClickListener(onChildDropdownRequested);
-
-            if (mHeaderSelectedIdx >= headSection.getSectionItems().size()) {
-                // Defensive check
-                mHeaderSelectedIdx = 0;
-            }
-
-            SectionTextItem title = headSection.getSectionItems().get(mHeaderSelectedIdx).getTitle();
-            mToolbarTextDropdown.setText(title != null ? title.getText() : "");
-            txtChildDropdownTitle.setTypeface(faceRobotoRegular);
-            txtChildDropdownTitle.setText(title != null ? title.getText() : "");
-            txtChildDropdownTitle.setOnClickListener(onChildDropdownRequested);
-
-            BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(this, R.layout.uiv3_product_header_list_item, headSection.getSectionItems(),
-                    faceRobotoRegular, getResources().getColor(R.color.uiv3_primary_text_color), Color.WHITE);
-            bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            listChildProducts.setAdapter(bbArrayAdapter);
-
-            listChildProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (position != Spinner.INVALID_POSITION) {
-                        if (position != mHeaderSelectedIdx) {
-                            new OnSectionItemClickListener<>(getCurrentActivity(), headSection,
-                                    headSection.getSectionItems().get(position),
-                                    TrackingAware.PRODUCT_LIST_HEADER).onClick(view);
-                        }
-                        onChildDropdownRequested.onClick(view);  // Manually simulate click to hide dropdown
-                    }
-                }
-            });
-            findViewById(R.id.layoutListHeader).setOnClickListener(onChildDropdownRequested);
-
-        } else {
-            layoutChildToolbarContainer.setVisibility(View.GONE);
-            listChildProducts.setAdapter(null);
-            toolbar.setTitle(mTitlePassedViaIntent);
-            if (mToolbarTextDropdown != null) {
-                mToolbarTextDropdown.setOnClickListener(null);
-                toolbar.removeView(mToolbarTextDropdown);
-            }
+        if (mToolbarTextDropdown == null) {
+            mToolbarTextDropdown = (TextView) getLayoutInflater().
+                    inflate(R.layout.uiv3_product_header_text, toolbar, false);
         }
-    }
-
-    private class OnChildDropdownRequested implements View.OnClickListener {
-
-        private ViewGroup layoutChildToolbarContainer;
-
-        public OnChildDropdownRequested(ViewGroup layoutChildToolbarContainer) {
-            this.layoutChildToolbarContainer = layoutChildToolbarContainer;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (layoutChildToolbarContainer.getVisibility() == View.VISIBLE) {
-                layoutChildToolbarContainer.setVisibility(View.GONE);
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().show();
-                }
-                UIUtil.changeStatusBarColor(getCurrentActivity(),
-                        R.color.uiv3_status_bar_background);
-            } else {
-                layoutChildToolbarContainer.setVisibility(View.VISIBLE);
-                UIUtil.changeStatusBarColor(getCurrentActivity(),
-                        R.color.uiv3_grey_status_bar_color);
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().hide();
-                }
-            }
-            trackEvent(TrackingAware.PRODUCT_LIST_HEADER_CLICKED, null);
-        }
+        new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
+                .withCtx(this)
+                .withDefaultSelectedIdx(mHeaderSelectedIdx)
+                .withFallbackHeaderTitle(mTitlePassedViaIntent)
+                .withHeadSection(headSection)
+                .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
+                .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
+                .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
+                .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
+                .withToolbar(getToolbar())
+                .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
+                .withTxtToolbarDropdown(mToolbarTextDropdown)
+                .withTypeface(faceRobotoRegular)
+                .build()
+                .setView();
     }
 
     @Override
@@ -527,23 +522,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             setCurrentNavigationContext(getNextScreenNavigationContext());
         }
         loadProductTabs();
-    }
-
-    @Override
-    public void doSearch(String searchQuery) {
-        if (!TextUtils.isEmpty(searchQuery)) {
-            mTitlePassedViaIntent = searchQuery;
-            mNameValuePairs = new ArrayList<>();
-            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
-            mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
-            if (getSupportFragmentManager().getFragments() != null &&
-                    getSupportFragmentManager().getFragments().size() > 0) {
-                // New product list is requested over current page, so change nc by copying next-nc
-                setCurrentNavigationContext(getNextScreenNavigationContext());
-            }
-            setNextScreenNavigationContext(TrackEventkeys.PL_PS + "." + searchQuery);
-            loadProductTabs();
-        }
     }
 
     public void onFooterViewClicked(View v) {
@@ -582,7 +560,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     public void onClick(DialogInterface dialog, int which) {
                         int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
                         if (selectedPosition != ListView.INVALID_POSITION) {
-                            applySort(mSortOptions.get(selectedPosition).getSortSlug());
+                            applySort(mSortOptions.get(selectedPosition).getSortSlug(),
+                                    mSortOptions.get(selectedPosition).getSortName());
                         }
                     }
                 })
@@ -599,6 +578,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     private void onFilterScreenRequested() {
+        trackEvent(TrackingAware.PRODUCT_LIST_FILTER_CLICKED, null);
         Intent sortFilterIntent = new Intent(this, FilterActivity.class);
         sortFilterIntent.putExtra(Constants.FILTER_OPTIONS, mFilterOptionCategories);
         sortFilterIntent.putExtra(Constants.FILTERED_ON, mFilteredOns);
@@ -643,7 +623,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         loadProductTabs();
     }
 
-    private void applySort(String sortedOn) {
+    private void applySort(String sortedOn, String mSortedOnName) {
         if (sortedOn == null || sortedOn.equals(mSortedOn)) return;
         NameValuePair sortedOnNameValuePair = getSortedOnNameValuePair();
         if (sortedOnNameValuePair == null) {
@@ -652,7 +632,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         } else {
             sortedOnNameValuePair.setValue(sortedOn);
         }
+        trackSortByEvent(mSortedOnName);
         loadProductTabs();
+    }
+
+    private void trackSortByEvent(String sortedOn) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAME, sortedOn);
+        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        trackEvent(TrackingAware.SORT_BY, map);
     }
 
     @Nullable
@@ -679,20 +667,73 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (filteredOnArrayList == null || filteredOnArrayList.size() == 0) {
             trackEvent(TrackingAware.FILTER_CLEARED, null);
         } else {
-            Map<String, String> eventAttribs = new HashMap<>();
-            for (FilteredOn filteredOn : filteredOnArrayList) {
-                eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
-                trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs,
-                        TrackEventkeys.PRODUCT_LISTING_SCREEN, null, false);
-            }
+            if (mFilterOptionCategories != null && mFilterOptionCategories.size() > 0)
+                new FilterTrackEvent(this, getNextScreenNavigationContext(),
+                        mFilterOptionCategories, filteredOnArrayList).execute();
         }
     }
 
+
+    private static class FilterTrackEvent extends AsyncTask<Void, Void, Map<String, String>> {
+
+        private Context context;
+        private Map<String, String> eventAttribs;
+        private String mNextScreenNavigationContext;
+        private ArrayList<FilterOptionCategory> mFilterOptionCategories;
+        private ArrayList<FilteredOn> filteredOnArrayList;
+
+        FilterTrackEvent(Context context, String mNextScreenNavigationContext,
+                         ArrayList<FilterOptionCategory> mFilterOptionCategories,
+                         ArrayList<FilteredOn> filteredOnArrayList) {
+            this.context = context;
+            this.mNextScreenNavigationContext = mNextScreenNavigationContext;
+            this.mFilterOptionCategories = mFilterOptionCategories;
+            this.filteredOnArrayList = filteredOnArrayList;
+            eventAttribs = new HashMap<>();
+        }
+
+        @Override
+        protected Map<String, String> doInBackground(Void... Void) {
+            for (FilteredOn filteredOn : filteredOnArrayList) {
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, mNextScreenNavigationContext);
+                eventAttribs.put(filteredOn.getFilterSlug(), UIUtil.strJoin(getFilterDisplayName(filteredOn,
+                        mFilterOptionCategories), ","));
+            }
+            return eventAttribs;
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, String> map) {
+            super.onPostExecute(map);
+            ((ActivityAware) context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
+                    null, null, false);
+        }
+    }
+
+    private static ArrayList<String> getFilterDisplayName(final FilteredOn filteredOn,
+                                                          ArrayList<FilterOptionCategory> mFilterOptionCategories) {
+        final ArrayList<String> filterDisplayNameArrayList = new ArrayList<>();
+        for (FilterOptionCategory filterOptionCategory : mFilterOptionCategories) {
+            if (filterOptionCategory.getFilterSlug().equals(filteredOn.getFilterSlug())) {
+                for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
+                    for (String filterValue : filteredOn.getFilterValues()) {
+                        if (filterOptionItem.getFilterValueSlug().equals(filterValue)) {
+                            filterDisplayNameArrayList.add(filterOptionItem.getDisplayName());
+                        }
+                    }
+                }
+            }
+        }
+        return filterDisplayNameArrayList;
+    }
+
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket, Product product,
-                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap);
+                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
+                                                    @Nullable EditText editTextQty) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
+                viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
         if (cartInfoMap != null) {
             // Sync local cartInfoMap with this one
             mCartInfo = cartInfoMap;

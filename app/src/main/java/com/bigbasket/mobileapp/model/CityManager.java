@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +23,26 @@ import java.util.concurrent.TimeUnit;
 public class CityManager {
     private static final int TIMEOUT_IN_MINUTES = 60;
     private static final String preferenceKey = "stored_city";
+
+    public static boolean isAreaPinInfoDataStale(Context context) {
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
+        String areaInfoCalledLast = prefer.getString(Constants.AREA_INFO_CALL_LAST, null);
+        int cityCacheExpiryDays = prefer.getInt(preferenceKey + "_expiry", 7);
+        try {
+            DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+            Date d1 = format.getCalendar().getTime();
+            int days = 0;
+            if (areaInfoCalledLast != null) {
+                Date d2 = format.parse(areaInfoCalledLast);
+                long diff = d1.getTime() - d2.getTime();
+                days = (int) diff / (24 * 60 * 60 * 1000);
+            }
+            return areaInfoCalledLast == null || days > cityCacheExpiryDays;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 
     public static ArrayList<City> getStoredCity(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -46,7 +67,14 @@ public class CityManager {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                 Locale.getDefault());
         editor.putString(preferenceKey + "_time", dateFormat.format(new Date()));
-        editor.commit();
+        editor.apply();
+    }
+
+    public static void setCityCacheExpiry(Context context, int numDays) {
+        SharedPreferences.Editor editor = PreferenceManager
+                .getDefaultSharedPreferences(context).edit();
+        editor.putInt(preferenceKey + "_expiry", numDays);
+        editor.apply();
     }
 
     private static boolean isStale(String createdOn, SimpleDateFormat simpleDateFormat) {
@@ -59,6 +87,16 @@ public class CityManager {
         } catch (ParseException e) {
             return true;
         }
+    }
+
+    public static void setAreaPinInfoDate(Context context) {
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        Date d1 = format.getCalendar().getTime();
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefer.edit();
+        String currentDate = format.format(d1);
+        editor.putString(Constants.AREA_INFO_CALL_LAST, currentDate);
+        editor.apply();
     }
 
     public static boolean hasUserChosenCity(Context context) {

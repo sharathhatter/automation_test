@@ -68,11 +68,16 @@ public class QcListAdapter extends BaseAdapter {
             qty += " X " + qcErrorData.getProduct().getWeight();
         }
         txtQty.setText(qty);
-        if (Double.parseDouble(qcErrorData.getReservedQuantity()) > 0) {
-            txtStockAvailability.setText("Only " + qcErrorData.getReservedQuantity() +
-                    " available");
+
+        if (TextUtils.isEmpty(qcErrorData.getReason())) {
+            if (Double.parseDouble(qcErrorData.getReservedQuantity()) > 0) {
+                txtStockAvailability.setText("Only " + qcErrorData.getReservedQuantity() +
+                        " available");
+            } else {
+                txtStockAvailability.setText(R.string.out_of_stock);
+            }
         } else {
-            txtStockAvailability.setText(R.string.out_of_stock);
+            txtStockAvailability.setText(qcErrorData.getReason());
         }
         return convertView;
     }

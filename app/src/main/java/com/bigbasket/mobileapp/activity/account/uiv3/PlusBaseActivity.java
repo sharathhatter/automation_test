@@ -251,8 +251,13 @@ public abstract class PlusBaseActivity extends BaseActivity
 
         updatePlusConnectedButtonState();
         setProgressBarVisible(false);
-        onPlusClientSignIn(Plus.AccountApi.getAccountName(mGoogleApiClient),
-                Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
+        try {
+            onPlusClientSignIn(Plus.AccountApi.getAccountName(mGoogleApiClient),
+                    Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast("Sorry! An error occurred.\n Please try again");
+        }
     }
 
     /**

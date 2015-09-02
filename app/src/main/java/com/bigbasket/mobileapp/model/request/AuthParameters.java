@@ -10,7 +10,9 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.util.Constants;
 
 public class AuthParameters {
-    private static AuthParameters authParameters;
+    private static volatile AuthParameters authParameters;
+    private static final Object lock = new Object();
+
     private String visitorId;
     private String bbAuthToken;
     private String osVersion;
@@ -21,18 +23,20 @@ public class AuthParameters {
     private boolean isMoEngageEnabled;
     private boolean isLocalyticsEnabled;
     private boolean isFBLoggerEnabled;
+    private boolean isKirana;
+    private boolean isMultiCityEnabled;
 
     private AuthParameters(Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefer != null) {
-            visitorId = prefer.getString(Constants.VISITOR_ID_KEY, "");
-            if (visitorId == null || visitorId.length() == 0)
+            visitorId = prefer.getString(Constants.VISITOR_ID_KEY, null);
+            if (TextUtils.isEmpty(visitorId)) {
                 visitorId = prefer.getString(Constants.OLD_VISITOR_ID_KEY, "");
-
-            bbAuthToken = prefer.getString(Constants.BBTOKEN_KEY, "");
-            if (bbAuthToken == null || bbAuthToken.length() == 0)
+            }
+            bbAuthToken = prefer.getString(Constants.BBTOKEN_KEY, null);
+            if (TextUtils.isEmpty(bbAuthToken)) {
                 bbAuthToken = prefer.getString(Constants.OLD_BBTOKEN_KEY, "");
-
+            }
             mid = prefer.getString(Constants.MID_KEY, "");
             memberEmail = prefer.getString(Constants.MEMBER_EMAIL_KEY, "");
             memberFullName = prefer.getString(Constants.MEMBER_FULL_NAME_KEY, "");
@@ -41,19 +45,28 @@ public class AuthParameters {
             isLocalyticsEnabled = prefer.getBoolean(Constants.ENABLE_LOCALYTICS, true);
             isFBLoggerEnabled = prefer.getBoolean(Constants.ENABLE_FB_LOGGER, true);
             firstName = prefer.getString(Constants.FIRST_NAME_PREF, "");
+            isKirana = prefer.getBoolean(Constants.IS_KIRANA, false);
+            isMultiCityEnabled = prefer.getBoolean(Constants.IS_MULTICITY_ENABLED, false);
         }
     }
 
-    public static void updateInstance(Context context) {
-        authParameters = new AuthParameters(context);
-        BigBasketApiAdapter.refreshBigBasketApiService(context);
+    public static void reset() {
+        authParameters = null;
+        BigBasketApiAdapter.reset();
     }
 
     public static AuthParameters getInstance(Context context) {
-        if (authParameters == null) {
-            authParameters = new AuthParameters(context);
+        AuthParameters localInstance = authParameters;
+        if (localInstance == null) {
+            synchronized (lock) {
+                localInstance = authParameters;
+                if (localInstance == null) {
+                    localInstance = new AuthParameters(context);
+                    authParameters = localInstance;
+                }
+            }
         }
-        return authParameters;
+        return localInstance;
     }
 
     public String getVisitorId() {
@@ -74,6 +87,10 @@ public class AuthParameters {
 
     public String getMemberEmail() {
         return memberEmail != null ? memberEmail : "";
+    }
+
+    public boolean isKirana() {
+        return isKirana;
     }
 
     public String getFirstName() {
@@ -97,19 +114,23 @@ public class AuthParameters {
         return isMoEngageEnabled;
     }
 
-    public void setAnyLyticsEnabled(boolean isMoEngaleEnabled,
-                                    boolean isLocalyticsEnabled,
-                                    boolean isFBLoggerEnabled,
-                                    Context context) {
+    public void setAppCapability(boolean isMoEngaleEnabled,
+                                 boolean isLocalyticsEnabled,
+                                 boolean isFBLoggerEnabled,
+                                 boolean isMultiCityEnabled,
+                                 Context context) {
+        if (context == null) return;
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putBoolean(Constants.ENABLE_MOENGAGE, isMoEngaleEnabled);
         editor.putBoolean(Constants.ENABLE_LOCALYTICS, isLocalyticsEnabled);
         editor.putBoolean(Constants.ENABLE_FB_LOGGER, isFBLoggerEnabled);
+        editor.putBoolean(Constants.IS_MULTICITY_ENABLED, isMultiCityEnabled);
         editor.apply();
         this.isMoEngageEnabled = isMoEngaleEnabled;
         this.isLocalyticsEnabled = isLocalyticsEnabled;
         this.isFBLoggerEnabled = isFBLoggerEnabled;
+        this.isMultiCityEnabled = isMultiCityEnabled;
     }
 
     public boolean isLocalyticsEnabled() {
@@ -118,5 +139,9 @@ public class AuthParameters {
 
     public boolean isFBLoggerEnabled() {
         return isFBLoggerEnabled;
+    }
+
+    public boolean isMultiCityEnabled() {
+        return isMultiCityEnabled;
     }
 }

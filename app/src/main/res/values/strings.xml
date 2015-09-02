@@ -6,7 +6,7 @@
     <string name="product_id_invalid">Sorry, this product does not exists!</string>
     <string name="invalidBasketQty">You cannot add any more quantities for this product!</string>
     <string name="headingServerError">Server Error!</string>
-    <string name="server_error">Oops an error occurred!\nPlease try again later!</string>
+    <string name="server_error">Oops an error occurred!\nPlease try again later.</string>
     <string name="login_required">Please login to continue!</string>
     <string name="voucherCode">eVoucher Code</string>
     <string name="potentialOrderIdExpired">Previous checkout process timed out. Please start again!</string>
@@ -31,26 +31,21 @@
     <string name="promo">Promo</string>
     <string name="remove">Remove</string>
     <string name="add">Add</string>
-    <string name="saving">Savings:</string>
     <string name="regular_price">Regular Price</string>
     <string name="totalMrp">Total: </string>
-    <string name="current_pin">Your current Pin</string>
     <string name="update">Update</string>
     <string name="updateDialogTitle">Update BigBasket App</string>
     <string name="UPDATE">UPDATE</string>
     <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
-    <string name="pin_text_para1">Delivery PIN is a 4-digit number. You can change the PIN to something that can be remembered easily.</string>
-    <string name="pin_text_para2">The PIN is required to acknowledge order delivery.</string>
-    <string name="pin_text_para3">We request you not to share with the delivery person.</string>
-    <string name="pin_text_para4">The PIN will also be sent to you as part of the order ready SMS or notification for each order.</string>
     <string name="placeorder">Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
     <string name="vat">VAT</string>
     <string name="action">Action</string>
     <string name="item">Item</string>
-    <string name="txnFailedRetryTxt">Please choose a different payment method, or retry again!</string>
+    <string name="txnFailedRetryTxt">Please choose a different payment method, and try again!</string>
+    <string name="fromWalletMsg">Since, you have sufficient funds in wallet - total amount will be deducted directly from wallet.</string>
     <string name="ok">OK</string>
     <string name="yesTxt">Yes</string>
     <string name="noTxt">No</string>
@@ -66,6 +61,7 @@
     <string name="chooseCity">Pick Your City</string>
     <string name="checkOut">CHECKOUT</string>
     <string name="continueCaps">CONTINUE</string>
+    <string name="placeOrderAndPayCaps">PLACE ORDER &amp; PAY</string>
     <string name="placeOrderCaps">PLACE ORDER</string>
     <string name="changeCityMenuTxt">Change City</string>
     <string name="outOfStock">Out of stock</string>
@@ -90,7 +86,8 @@
     <string name="isSystemShoppingListMsg">Lists created by BigBasket cannot be edited!They are system generated lists.</string>
     <string name="my_orders">My Orders</string>
     <string name="bbCommHub">Communication Hub</string>
-    <string name="rating">Rating:</string>
+    <string name="rating">Please rate our service:</string>
+    <string name="rating_toast_msg">Please rate our service</string>
     <string name="yourComments">Your comments (optional)</string>
     <string name="submit">Submit</string>
     <string name="applyAllCaps">APPLY</string>
@@ -118,6 +115,8 @@
     <string name="drawer_open">Open navigation</string>
     <string name="drawer_close">Close navigation</string>
     <string name="please_wait">Please wait...</string>
+    <string name="changing_city">Changing your city...</string>
+    <string name="placeOrderPleaseWait">Please wait while we place your order and transfer you to payment gateway.</string>
     <string name="email">E-mail</string>
     <string name="emailNewPassword">Email new password</string>
     <string name="oldPassword">Old password</string>
@@ -176,14 +175,8 @@
     <string name="wallet_activity">My Wallet</string>
     <string name="delivery_time">Delivery Time:</string>
     <string name="delivery_charges">Delivery Charges:</string>
-    <string name="view_edit_pin_label">Delivery Pin</string>
     <string name="past_label">past</string>
     <string name="deleteShoppingList">Delete Shopping List</string>
-
-    <string name="min4digit">Pin should be a 4 digit number!</string>
-    <string name="not0000">Pin should be other than 0000!</string>
-    <string name="enterPin">Please enter a pin to update!</string>
-    <string name="pinUpdatedSuccessfully">Your pin was updated successfully!</string>
 
     <!-- wallet activity -->
     <string name="noActivityErrorMsg">No Wallet Activity for</string>
@@ -205,7 +198,7 @@
     <string name="calender">Calender</string>
     <string name="telNumber">Telephone Number</string>
     <string name="area">Area</string>
-    <string name="landmark">Landmarks</string>
+    <string name="landmark">Landmarks (Optional)</string>
     <string name="profileUpdated">Profile updated successfully!</string>
 
     <!-- main nav -->
@@ -222,8 +215,7 @@
 
     <!-- Invoice -->
     <string name="thankYouHeader">Thank You!</string>
-    <string name="orderThankyouText">Thank you for placing order with BigBasket.\nYour Order# is\u00A0</string>
-    <string name="viewInvoice">VIEW INVOICE</string>
+    <string name="thankYouOrderPlacedHeader">Thank You! Your order has been placed.</string>
 
     <!-- cart page -->
     <string name="empty">Empty</string>
@@ -232,7 +224,6 @@
 
 
     <string name="start_shopping_txt">START SHOPPING</string>
-    <string name="continue_shopping_txt">CONTINUE SHOPPING</string>
     <string name="lostInternetConnection">Lost internet connection?</string>
     <string name="tapRetry">Tap to Retry</string>
     <string name="productNextPageFailed">Failed to load products!</string>
@@ -253,10 +244,10 @@
     <string name="otherError">An error occurred</string>
     <string name="updateGooglePlayServices">Update Google Play Services</string>
     <string name="updateGooglePlayServicesDesc">You are using an outdated version of Google Play Services.\nPlease update it, in order to login with Google.</string>
-    <string name="termsAndCondHeading">Terms and conditions</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
     <string name="failedToProcess">Failed to process your transaction</string>
+    <!-- remove this -->
     <string name="youAborted">You aborted the transaction</string>
     <string name="smartBasket">Smart Basket</string>
     <string name="rateTheApp">Rate our App</string>
@@ -315,14 +306,11 @@
     <string name="addAnAddress"> \u0020 Add an Address</string>
     <string name="save">SAVE</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
-    <string name="deliveryPin">Delivery Pin</string>
-
 
     <!-- order invoice -->
-    <string name="multi_order_place_txt">Your orders have been placed!</string>
-    <string name="order_place_txt">Your order has been placed!</string>
-    <string name="order_review_txt">You can review your order at any time in</string>
+    <string name="multi_order_place_txt">You will receive the orders in multiple deliveries</string>
     <string name="continue_shopping">CONTINUE SHOPPING!</string>
+    <string name="know_more">Know More</string>
 
     <string name="expressDelAvailable">\u0020 Express Delivery may be available</string>
     <string name="my_basket_header">My Basket</string>
@@ -341,4 +329,18 @@
     <string name="add_bundle">ADD BUNDLE</string>
     <string name="error">Error!</string>
     <string name="emailBlank">Please enter an email address</string>
+    <string name="payNow">Pay Now</string>
+    <string name="payNowThankyou">Your payment was successful!</string>
+    <string name="txnFailureMsg">Failed to process your transaction.\nPlease contact our customer care, in case you got charged.</string>
+
+    <string name="fundWallet">Fund Wallet</string>
+    <string name="fundWalletHint">Amount</string>
+    <string name="invalidAmount">Please enter a valid amount</string>
+    <string name="missingPaymentMethod">Please choose at least one payment method</string>
+    <string name="fundWalletSuccess">You have successfully funded the wallet</string>
+
+    <string name="reviewBasket">Review Basket</string>
+    <string name="newCheckoutFlowMsg">When you click on Place Order &amp; Pay - Your order will be placed first &amp; then you will be taken to complete the payment.</string>
+    <string name="newStr">New</string>
+    <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.\nPlease don\'t press back button.</string>
 </resources>

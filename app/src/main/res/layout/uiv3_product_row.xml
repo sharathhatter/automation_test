@@ -118,6 +118,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <EditText
+            android:id="@+id/editTextQty"
+            style="@style/BBEditTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_mini"
+            android:inputType="numberSigned"
+            android:maxLength="2"
+            android:minLines="1"
+            android:paddingBottom="2dp"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small"
+            android:paddingTop="0dp"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/imgAddToBasket"
             android:layout_width="wrap_content"
@@ -137,11 +155,11 @@
 
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_below="@id/layoutProductPrice"
         android:id="@+id/layoutPromoName"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutProductPrice"
+        android:layout_marginTop="@dimen/margin_small">
 
         <ImageView
             android:id="@+id/imgPromoStar"
@@ -156,10 +174,10 @@
         <TextView
             android:id="@+id/txtPromoAddSavings"
             android:layout_width="match_parent"
-            android:layout_toRightOf="@id/imgPromoStar"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_small"
-            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/imgPromoStar"
             android:text="Save Rs. 22"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
@@ -167,10 +185,10 @@
         <TextView
             android:id="@+id/txtPromoName"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/txtPromoAddSavings"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_small"
-            android:layout_height="wrap_content"
             android:layout_toRightOf="@id/imgPromoStar"
             android:text="Buy 1 get 1 free"
             android:textColor="@color/uiv3_secondary_text_color"

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
@@ -43,6 +44,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_SINGUP_SCREEN);
         setTitle(getString(R.string.signUpCapsVerb));
 
         new GetCitiesTask<>(this).startTask();
@@ -53,7 +55,6 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         return R.layout.uiv3_signup;
     }
 
-    @Override
     public void onReadyToDisplayCity(ArrayList<City> cities) {
         mCities = cities;
 
@@ -88,6 +89,18 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String currentCityName = preferences.getString(Constants.CITY, cities.get(0).getName());
+        String cityIdStr = preferences.getString(Constants.CITY_ID, String.valueOf(cities.get(0).getId()));
+        if (TextUtils.isEmpty(cityIdStr) || !TextUtils.isDigitsOnly(cityIdStr)) {
+            cityIdStr = "1";
+        }
+        int cityId = Integer.parseInt(cityIdStr);
+        for (int i = 0; i < mCities.size(); i++) {
+            City city = mCities.get(i);
+            if (cityId == city.getId()) {
+                mSelectedCityIndx = i;
+                break;
+            }
+        }
         mCityView.setText(currentCityName);
         mCityView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,10 +134,16 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     public void onRegisterButtonClicked() {
         trackEvent(TrackingAware.REGISTER_BTN_CLICK, null);
 
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-        mFirstNameView.setError(null);
-        mLastNameView.setError(null);
+
+        TextInputLayout textInputEmail = (TextInputLayout) findViewById(R.id.textInputEmail);
+        TextInputLayout textInputPasswd = (TextInputLayout) findViewById(R.id.textInputPasswd);
+        TextInputLayout textInputFirstName = (TextInputLayout) findViewById(R.id.textInputFirstName);
+        TextInputLayout textInputLastName = (TextInputLayout) findViewById(R.id.textInputLastName);
+
+        UIUtil.resetFormInputField(textInputEmail);
+        UIUtil.resetFormInputField(textInputPasswd);
+        UIUtil.resetFormInputField(textInputFirstName);
+        UIUtil.resetFormInputField(textInputLastName);
 //        mRefCodeView.setError(null);
 
         boolean cancel = false;
@@ -139,36 +158,36 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
 
         // Check for a valid password
         if (TextUtils.isEmpty(password)) {
-            reportFormInputFieldError(mPasswordView, "Please enter your password");
+            UIUtil.reportFormInputFieldError(textInputPasswd, "Please enter your password");
             focusView = mPasswordView;
             cancel = true;
         } else if (password.length() < 4) {
-            reportFormInputFieldError(mPasswordView, getString(R.string.error_invalid_password));
+            UIUtil.reportFormInputFieldError(textInputPasswd, getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            reportFormInputFieldError(mEmailView, "Please enter your e-mail address");
+            UIUtil.reportFormInputFieldError(textInputEmail, "Please enter your e-mail address");
             focusView = mEmailView;
             cancel = true;
         } else if (!UIUtil.isValidEmail(email)) {
-            reportFormInputFieldError(mEmailView, getString(R.string.error_invalid_email));
+            UIUtil.reportFormInputFieldError(textInputEmail, getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
         }
 
         // Check for last name
         if (TextUtils.isEmpty(lastName)) {
-            reportFormInputFieldError(mLastNameView, "Please provide your last-name");
+            UIUtil.reportFormInputFieldError(textInputLastName, "Please provide your last-name");
             focusView = mLastNameView;
             cancel = true;
         }
 
         // Check for first name
         if (TextUtils.isEmpty(firstName)) {
-            reportFormInputFieldError(mFirstNameView, "Please provide your first-name");
+            UIUtil.reportFormInputFieldError(textInputFirstName, "Please provide your first-name");
             focusView = mFirstNameView;
             cancel = true;
         }

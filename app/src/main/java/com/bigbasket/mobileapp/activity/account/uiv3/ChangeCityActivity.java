@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,6 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +37,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_CITY_SELECTION_SCREEN);
         setTitle(getString(R.string.chooseCity));
         trackEvent(TrackingAware.CHANGE_CITY_SHOWN, null);
         loadCities();
@@ -44,11 +45,6 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
 
     private void loadCities() {
         new GetCitiesTask<>(this).startTask();
-    }
-
-    @Override
-    public void onReadyToDisplayCity(ArrayList<City> cities) {
-        renderCityList(cities);
     }
 
     private void renderCityList(final ArrayList<City> cities) {
@@ -74,7 +70,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
                 int position = listView.getCheckedItemPosition();
                 if (position > -1) {
                     City city = cities.get(position);
-                    changeCity(city);
+                    requestCityChange(city);
                 }
             }
         });
@@ -93,10 +89,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         return 0;
     }
 
-    protected void changeCity(final City city) {
-        Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.CITY, city.getName());
-        trackEvent(TrackingAware.CHANGE_CITY_POSSITIVE_BTN_CLICKED, eventAttribs);
+    protected void requestCityChange(final City city) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.changeCity(String.valueOf(city.getId()), new Callback<OldBaseApiResponse>() {
@@ -132,16 +125,14 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
     }
 
     private void onCityChanged(City city) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(Constants.CITY, city.getName());
-        editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
-        editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
-        editor.commit();
-
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.CITY, city.getName());
         trackEvent(TrackingAware.CHANGE_CITY_CLICKED, eventAttribs);
-        goToHome(true);
+        changeCity(city);
+    }
+
+    @Override
+    public void onReadyToDisplayCity(ArrayList<City> cities) {
+        renderCityList(cities);
     }
 }

@@ -1,12 +1,10 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
@@ -28,6 +26,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -42,9 +41,9 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
-import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
+import com.bigbasket.mobileapp.fragment.FlatPageFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountView;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
@@ -64,6 +63,7 @@ import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -80,6 +80,7 @@ import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
+import com.bigbasket.mobileapp.service.AreaPinInfoIntentService;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -124,6 +125,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         }
 
+        mListSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
+        if (mListSubNavigation != null) {
+            // Assign a layout manager as soon as RecyclerView is inflated to prevent onDestroy crash
+            mListSubNavigation.setHasFixedSize(false);
+            mListSubNavigation.setLayoutManager(new LinearLayoutManager(this));
+        }
+
         handler = new BigBasketMessageHandler<>(this);
         mTitle = getTitle().toString();
 
@@ -153,6 +161,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         });
         setNavDrawer(toolbar, savedInstanceState);
         setViewBasketFloatingButton();
+        if (CityManager.isAreaPinInfoDataStale(getCurrentActivity())) {
+            startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
+        }
     }
 
     public void onNoFragmentsInLayout() {
@@ -172,6 +183,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             btnViewBasket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    trackEvent(TrackingAware.BASKET_VIEW_CLICKED, map, null, null, false, true);
                     launchViewBasketScreen();
                 }
             });
@@ -199,32 +213,34 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 toolbar.setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
-                    onSubNavigationHideRequested();
+                    onSubNavigationHideRequested(false);
                 }
-                if (mNavRecyclerView != null && mNavRecyclerView.getVisibility() != View.VISIBLE) {
-                    // User was in settings menu, now restore the default state to avoid confusion
-                    ImageView imgSwitchNav = (ImageView) findViewById(R.id.imgSwitchNav);
-                    if (imgSwitchNav != null) {
-                        toggleNavigationArea(imgSwitchNav);
+                if (mNavRecyclerView != null) {
+                    if (mNavRecyclerView.getVisibility() != View.VISIBLE) {
+                        // User was in settings menu, now restore the default state to avoid confusion
+                        ImageView imgSwitchNav = (ImageView) findViewById(R.id.imgSwitchNav);
+                        if (imgSwitchNav != null) {
+                            toggleNavigationArea(imgSwitchNav);
+                        }
                     }
+                    mNavRecyclerView.scrollToPosition(0);
                 }
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-                trackEvent(TrackingAware.MENU_SHOWN, null);
+                Map<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setStatusBarBackground(R.color.uiv3_status_bar_background);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -250,7 +266,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
         if (frameLayout == null) return;
-        UIUtil.addNavigationContextToBundle(fragment);
+        UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -268,7 +284,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
         if (fragment == null) return;
-        UIUtil.addNavigationContextToBundle(fragment);
+        UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -284,6 +300,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mDrawerLayout.closeDrawers();
         }
     }
+
+    //method for add bundle
 
     public BBDrawerLayout getDrawerLayout() {
         return mDrawerLayout;
@@ -416,6 +434,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 dynamicScreenFragment.setArguments(bundle);
                 addToMainLayout(dynamicScreenFragment);
                 break;
+            case FragmentCodes.START_WEBVIEW:
+                bundle = new Bundle();
+                bundle.putString(Constants.WEBVIEW_URL, getIntent().getStringExtra(Constants.WEBVIEW_URL));
+                bundle.putString(Constants.WEBVIEW_TITLE, getIntent().getStringExtra(Constants.WEBVIEW_TITLE));
+                FlatPageFragment flatPageFragment = new FlatPageFragment();
+                flatPageFragment.setArguments(bundle);
+                addToMainLayout(flatPageFragment);
+                break;
         }
     }
 
@@ -442,9 +468,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (resultCode == NavigationCodes.START_SEARCH) {
             if (data != null) {
                 String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
+                String nc = data.getStringExtra(TrackEventkeys.NAVIGATION_CTX);
                 if (!TextUtils.isEmpty(searchQuery)) {
-                    logSearchEvent(searchQuery.trim());
-                    doSearch(searchQuery.trim());
+                    doSearch(searchQuery.trim(), nc);
                     return;
                 }
             }
@@ -477,21 +503,23 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
+    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                    Product product, String qty,
-                                                   String errorType, @Nullable View productView) {
+                                                   String errorType, @Nullable View productView,
+                                                   @Nullable EditText editTextQty) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
                                                     @Nullable View productView,
-                                                    @Nullable HashMap<String, Integer> cartInfoMap) {
+                                                    @Nullable HashMap<String, Integer> cartInfoMap,
+                                                    @Nullable EditText editTextQty) {
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
@@ -509,6 +537,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.VISIBLE);
             }
+            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQty.setText("1");
+                editTextQty.setVisibility(View.VISIBLE);
+            }
             if (basketCountTextView != null) {
                 basketCountTextView.setVisibility(View.GONE);
             }
@@ -525,6 +557,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (basketCountTextView != null) {
                 basketCountTextView.setText(String.valueOf(productQtyInBasket));
                 basketCountTextView.setVisibility(View.VISIBLE);
+            }
+            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQty.setVisibility(View.GONE);
             }
         }
 
@@ -556,7 +591,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (cartSummary == null) return;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(cartSummary.getNoOfItems()));
-        editor.commit();
+        editor.apply();
         updateCartCountHeaderTextView();
     }
 
@@ -564,7 +599,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void markBasketDirty() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putBoolean(Constants.IS_BASKET_COUNT_DIRTY, true);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isBasketDirty() {
@@ -576,7 +611,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void syncBasket() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.remove(Constants.IS_BASKET_COUNT_DIRTY);
-        editor.commit();
+        editor.apply();
         new GetCartCountTask<>(this).startTask();
     }
 
@@ -609,73 +644,21 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void handleIntent(Intent intent, Bundle savedInstanceState) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction()) && savedInstanceState == null) {
-            // User has entered something in search, and pressed enter and this is not due to a screen rotation
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            if (!TextUtils.isEmpty(query)) {
-                logSearchEvent(query.trim());
-                doSearch(query.trim());
-            }
-        } else if (Intent.ACTION_VIEW.equals(intent.getAction()) && savedInstanceState == null) {
-            // User has selected a suggestion and this is not due to a screen rotation
-            String categoryUrl = intent.getStringExtra(SearchManager.EXTRA_DATA_KEY);
-            Uri data = intent.getData();
-            if (data != null) {
-                String query = data.getLastPathSegment();
-                if (!TextUtils.isEmpty(categoryUrl) && categoryUrl.contains("/")) {
-                    String[] categoryUrlElements = categoryUrl.split("/");
-                    String slug = categoryUrlElements[categoryUrlElements.length - 1];
-                    launchCategoryProducts(query, categoryUrl, slug);
-                } else {
-                    logSearchEvent(query.trim());
-                    doSearch(query.trim());
-                }
-            }
-        } else {
-            currentFragmentTag = savedInstanceState != null ? savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
-            if (TextUtils.isEmpty(currentFragmentTag) ||
-                    getSupportFragmentManager().findFragmentByTag(currentFragmentTag) == null) {
-                startFragment();
-            }
+        currentFragmentTag = savedInstanceState != null ? savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
+        if (TextUtils.isEmpty(currentFragmentTag) ||
+                getSupportFragmentManager().findFragmentByTag(currentFragmentTag) == null) {
+            startFragment();
         }
     }
 
-    private void logSearchEvent(String query) {
-        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-        mostSearchesAdapter.update(query);
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.QUERY, query);
-        map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-        trackEvent(TrackingAware.SEARCH, map);
-    }
-
-    private void launchCategoryProducts(String categoryName, String categoryUrl,
-                                        String categorySlug) {
-        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-        mostSearchesAdapter.update(categoryName, categoryUrl);
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
-        nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
-        Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-    }
-
-    public void logHomeScreenEvent(String trackAwareName, String eventKeyName,
-                                   String navigationCtx) {
-        Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(eventKeyName, navigationCtx);
-        trackEvent(trackAwareName, eventAttribs);
-    }
-
-    public void doSearch(String searchQuery) {
+    public void doSearch(String searchQuery, String referrer) {
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
         intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         intent.putExtra(Constants.TITLE, searchQuery);
-        setNextScreenNavigationContext(TrackEventkeys.PL_PS + "." + searchQuery);
+        setNextScreenNavigationContext(referrer);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -740,6 +723,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     authParameters.getMemberFullName() : authParameters.getMemberEmail());
         } else {
             txtNavSalutation.setText(getString(R.string.bigbasketeer));
+        }
+        if (authParameters.isAuthTokenEmpty()) {
             txtCityName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -747,7 +732,15 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
             });
+            txtCityName.setCompoundDrawablesWithIntrinsicBounds(
+                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.address_white), null,
+                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.ic_edit_white_24dp), null);
+        } else {
+            txtCityName.setCompoundDrawablesWithIntrinsicBounds(
+                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.address_white),
+                    null, null, null);
         }
+
         imgSwitchNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -879,16 +872,16 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 sectionNavigationItems,
                 SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
         mListSubNavigation.setAdapter(navigationAdapter);
-        mSubNavLayout.setVisibility(View.VISIBLE);
+        mSubNavLayout.setVisibility(View.VISIBLE, true);
     }
 
     @Override
-    public void onSubNavigationHideRequested() {
+    public void onSubNavigationHideRequested(boolean animated) {
         if (mListSubNavigation != null) {
             mListSubNavigation.setAdapter(null);
         }
         if (mSubNavLayout != null) {
-            mSubNavLayout.setVisibility(View.GONE);
+            mSubNavLayout.setVisibility(View.GONE, animated);
         }
     }
 
@@ -954,7 +947,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         // Update from preference
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String cartCountStr = preferences.getString(Constants.GET_CART, "0");
-        if (cartSummary == null || cartCountStr == null || !TextUtils.isDigitsOnly(cartCountStr)) {
+        if (cartSummary == null || TextUtils.isEmpty(cartCountStr) || !TextUtils.isDigitsOnly(cartCountStr)) {
             cartSummary = new CartSummary(0, 0, Integer.parseInt(cartCountStr));
         } else if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
             cartSummary.setNoOfItems(Integer.parseInt(cartCountStr));
@@ -966,7 +959,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void onBackPressed() {
         if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
-                mSubNavLayout.setVisibility(View.GONE);
+                mSubNavLayout.setVisibility(View.GONE, true);
             } else {
                 mDrawerLayout.closeDrawers();
             }

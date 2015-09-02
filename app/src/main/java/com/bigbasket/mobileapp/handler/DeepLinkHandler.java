@@ -10,7 +10,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
-import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.activity.product.DiscountActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -175,7 +175,8 @@ public class DeepLinkHandler {
                 String url = uri.getQueryParameter("url");
                 try {
                     if (!TextUtils.isEmpty(url)) {
-                        intent = new Intent(context.getCurrentActivity(), FlatPageWebViewActivity.class);
+                        intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                         intent.putExtra(Constants.WEBVIEW_URL, URLDecoder.decode(url, "UTF-8"));
                         context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         return SUCCESS;
@@ -196,6 +197,19 @@ public class DeepLinkHandler {
                     return SUCCESS;
                 }
                 return FAILED;
+            case Constants.INBOX:
+                if (!authParameters.isAuthTokenEmpty()) {
+                    context.getCurrentActivity().launchMoEngageCommunicationHub();
+                    return SUCCESS;
+                }
+                return FAILED;
+            case Constants.DISCOUNT:
+                intent = new Intent(context.getCurrentActivity(), DiscountActivity.class);
+                context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                return SUCCESS;
+            case Constants.HOME:
+                context.getCurrentActivity().goToHome(false);
+                return SUCCESS;
             default:
                 return FAILED;
         }
@@ -210,6 +224,7 @@ public class DeepLinkHandler {
         loginRequiredUrls.add(Constants.ORDER_ITEMS);
         loginRequiredUrls.add(Constants.ALL_SL);
         loginRequiredUrls.add(Constants.SMART_BASKET_SLUG);
+        loginRequiredUrls.add(Constants.INBOX);
         return loginRequiredUrls;
     }
 }

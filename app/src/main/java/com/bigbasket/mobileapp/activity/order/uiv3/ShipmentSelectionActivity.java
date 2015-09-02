@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.order.LinkedProductsAdapter;
 import com.bigbasket.mobileapp.adapter.shipment.SlotListAdapter;
 import com.bigbasket.mobileapp.apiservice.models.request.SelectedShipment;
@@ -37,6 +36,7 @@ import com.bigbasket.mobileapp.model.shipments.Slot;
 import com.bigbasket.mobileapp.model.shipments.SlotDisplay;
 import com.bigbasket.mobileapp.task.PostShipmentTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -59,11 +59,11 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private ArrayList<Shipment> mShipments;
     private boolean mHasUserToggledShipments;
     private ArrayList<Integer> mSelectedShipmentIndx;
-    private boolean mHasDefaultSlotSelected = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.CO_DELIVERY_OPS);
         setTitle(getString(R.string.chooseSlot));
         mShipments = getIntent().getParcelableArrayListExtra(Constants.SHIPMENTS);
 
@@ -83,6 +83,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (mShipments == null || mShipments.size() == 0) return;
         renderFooter();
         renderShipments();
+        trackEvent(TrackingAware.CHECKOUT_DELIVERY_OPTION_SHOWN, null, null, null, false, true);
     }
 
     @Override
@@ -210,7 +211,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 imgHelp.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
+                        Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                         intent.putExtra(Constants.WEBVIEW_TITLE, shipment.getShipmentName());
                         intent.putExtra(Constants.WEBVIEW_URL, shipment.getHelpPage());
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -316,6 +318,9 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private class OnPostShipmentClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            trackEvent(TrackingAware.CHECKOUT_SLOT_SELECTED_CLICKED, map, null, null, false, true);
             if (mSelectedShipmentIndx == null || mSelectedShipmentIndx.size() == 0) {
                 showToast(getString(R.string.selectAllSlotsErrMsg));
                 return;
@@ -336,9 +341,6 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             if (potentialOrderId == null) return;
             new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId,
                     TrackEventkeys.CO_DELIVERY_OPS).startTask();
-
-            trackEvent(mHasDefaultSlotSelected ? TrackingAware.CHECKOUT_DEFAULT_SLOT_SELECTED :
-                    TrackingAware.CHECKOUT_SLOT_SELECTED, null);
         }
     }
 
@@ -397,7 +399,9 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         @Override
         public void onClick(View v) {
             showSlotListDialog(v);
-            trackEvent(TrackingAware.CHECKOUT_SLOT_SHOWN, null);
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            trackEvent(TrackingAware.CHECKOUT_SLOT_SHOWN, map);
         }
 
         public void showSlotListDialog(final View v) {
@@ -428,8 +432,13 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                         if (v instanceof Button) {
                             showSelectedSlot(selectedSlot, (Button) v);
                         }
+
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                        if (selectedSlot.getSlotDisplay() != null)
+                            map.put(TrackEventkeys.SELECTED_SLOT, selectedSlot.getSlotDisplay().getTime());
+                        trackEvent(TrackingAware.CHECKOUT_SLOT_SELECTED, map);
                     }
-                    mHasDefaultSlotSelected = false;
                 }
             });
 

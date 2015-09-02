@@ -25,4 +25,7 @@ public class PostShipmentResponseContent {
 
     @SerializedName(Constants.ORDER_DETAILS)
     public OrderDetails orderDetails;
+
+    @SerializedName(Constants.NEW_FLOW_URL)
+    public String newFlowUrl;
 }

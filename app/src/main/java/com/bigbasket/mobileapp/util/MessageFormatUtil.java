@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -10,7 +11,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.general.MessageParamInfo;
 
@@ -48,7 +49,8 @@ public class MessageFormatUtil<T> {
                         }
                     } else if (messageParamInfoArrayList.getType().equals(Constants.WEB_LINK)) {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
-                            Intent intent = new Intent(activity, FlatPageWebViewActivity.class);
+                            Intent intent = new Intent(activity, BackButtonActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                             intent.putExtra(Constants.WEBVIEW_URL, messageParamInfoArrayList.getInternalValue());
                             activity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
@@ -56,7 +58,7 @@ public class MessageFormatUtil<T> {
                 }
 
                 @Override
-                public void updateDrawState(TextPaint textPaint) {
+                public void updateDrawState(@NonNull TextPaint textPaint) {
                     textPaint.setColor(textPaint.linkColor);
                     textPaint.setUnderlineText(false); // set to false to remove underline
                 }
@@ -86,7 +88,8 @@ public class MessageFormatUtil<T> {
                 public void onClick(View widget) {
                     if (messageParamInfoArrayList.getType().equals(Constants.WEB_LINK)) {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
-                            Intent intent = new Intent(activity, FlatPageWebViewActivity.class);
+                            Intent intent = new Intent(activity, BackButtonActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                             intent.putExtra(Constants.WEBVIEW_URL, messageParamInfoArrayList.getInternalValue());
                             activity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
@@ -94,7 +97,7 @@ public class MessageFormatUtil<T> {
                 }
 
                 @Override
-                public void updateDrawState(TextPaint textPaint) {
+                public void updateDrawState(@NonNull TextPaint textPaint) {
                     textPaint.setColor(textPaint.linkColor);
                     textPaint.setUnderlineText(false); // set to false to remove underline
                 }

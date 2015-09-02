@@ -29,7 +29,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +48,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.SL);
         if (savedInstanceState != null) {
             mShoppingListNames = savedInstanceState.getParcelableArrayList(Constants.SHOPPING_LISTS);
             if (mShoppingListNames != null) {
@@ -126,8 +126,6 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
             showNoShoppingListView(base);
         }
 
-        FloatingActionButton fabCreateShoppingList = (FloatingActionButton) base.findViewById(R.id.btnFab);
-        base.removeView(fabCreateShoppingList);
         contentView.removeAllViews();
         contentView.addView(base);
     }

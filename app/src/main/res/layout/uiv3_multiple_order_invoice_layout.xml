@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:paddingBottom="@dimen/margin_normal"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:paddingBottom="@dimen/margin_normal">
 
 
     <LinearLayout
@@ -15,63 +15,76 @@
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/imgBBLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/thank_you_page_top_margin"
             android:layout_marginTop="@dimen/thank_you_page_top_margin"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/bb_logo_transparent_bkg" />
+            android:contentDescription="@string/app_name" />
 
         <TextView
             android:id="@+id/txtThankYou"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/thank_you_page_txt_margin"
-            android:text="@string/thankYouHeader"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/thankYouOrderPlacedHeader"
             android:textColor="@color/red_color"
-            android:textSize="@dimen/thank_you_page_heading_text_size" />
+            android:textSize="@dimen/large_text_size" />
 
         <TextView
             android:id="@+id/txtOrderPlaced"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/thank_you_order_placed"
-            android:text="@string/order_place_txt"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
             android:textColor="@color/red_color"
             android:textSize="@dimen/large_text_size" />
 
         <LinearLayout
             android:id="@+id/layoutOrderNumber"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
             android:orientation="vertical">
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/txtOrderReview"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/layoutKnowMore"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/order_review_txt"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_large"
+            android:background="@drawable/grey_border_no_rounds"
+            android:padding="@dimen/padding_normal">
 
-        <TextView
-            android:id="@+id/txtMyOrder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/my_orders"
-            android:textColor="@color/red_color"
-            android:textSize="@dimen/primary_text_size" />
+            <TextView
+                android:id="@+id/txtAddMoreProducts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/primary_text_size" />
+
+            <TextView
+                android:id="@+id/lblKnowMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtAddMoreProducts"
+                android:layout_marginTop="@dimen/margin_mini"
+                android:text="@string/know_more"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/secondary_text_size" />
+        </RelativeLayout>
 
         <Button
             android:id="@+id/btnLogin"
@@ -81,7 +94,6 @@
             android:layout_marginRight="@dimen/margin_large"
             android:layout_marginTop="@dimen/margin_xlarge"
             android:background="@drawable/red_rounded_btn_bkg"
-            android:clickable="true"
             android:onClick="onContinueBtnClicked"
             android:text="@string/continue_shopping"
             android:textColor="@color/white"

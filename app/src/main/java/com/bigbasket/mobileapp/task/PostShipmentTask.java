@@ -40,7 +40,7 @@ public class PostShipmentTask<T> {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(
                 ((ActivityAware) ctx).getCurrentActivity());
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        bigBasketApiService.postShipment(new Gson().toJson(selectedShipments), potentialOrderId, "yes", "yes",
+        bigBasketApiService.postShipment(new Gson().toJson(selectedShipments), potentialOrderId, "yes", "yes", "yes",
                 new Callback<ApiResponse<PostShipmentResponseContent>>() {
                     @Override
                     public void success(ApiResponse<PostShipmentResponseContent> postShipmentResponse, Response response) {
@@ -84,6 +84,7 @@ public class PostShipmentTask<T> {
                 postShipmentResponseContent.creditDetails);
         intent.putExtra(Constants.ORDER_DETAILS, postShipmentResponseContent.orderDetails);
         intent.putExtra(Constants.EVOUCHER_CODE, postShipmentResponseContent.evoucherCode);
+        intent.putExtra(Constants.NEW_FLOW_URL, postShipmentResponseContent.newFlowUrl);
         intent.putParcelableArrayListExtra(Constants.VOUCHERS,
                 postShipmentResponseContent.activeVouchersArrayList);
         ((ActivityAware) ctx).getCurrentActivity().setNextScreenNavigationContext(nc);

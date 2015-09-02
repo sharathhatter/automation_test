@@ -34,6 +34,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
 import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;
@@ -50,7 +51,9 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     private static final int VIEW_TYPE_FULFILLMENT_INFO = 3;
     private List<Object> orderList;
     private LayoutInflater inflater;
-    private OrderItemDisplaySource orderItemDisplaySource;
+    private
+    @OrderItemDisplaySource.Type
+    int orderItemDisplaySource;
     private boolean isReadOnlyBasket;
     private HashMap<String, String> fulfillmentInfoIdAndIconHashMap;
     private HashMap<String, AnnotationInfo> annotationHashMap;
@@ -60,7 +63,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     private T context;
 
     public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
-                                 Typeface faceRobotoRegular, OrderItemDisplaySource orderItemDisplaySource,
+                                 Typeface faceRobotoRegular, @OrderItemDisplaySource.Type int orderItemDisplaySource,
                                  boolean isReadOnly,
                                  HashMap<String, String> fulfillmentInfoIdAndIconHashMap,
                                  HashMap<String, AnnotationInfo> annotationHashMap,
@@ -272,22 +275,30 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         if (cartItem.getTotalPrice() > 0) {
             String prefix = "`";
             String salePriceStr = UIUtil.formatAsMoney(cartItem.getTotalPrice());
-            //String perItemCostStr = " (1@"+UIUtil.formatAsMoney(cartItem.getSalePrice())+")";
             int prefixLen = prefix.length();
-            //int salePriceLen = salePriceStr.length();
             SpannableString spannableSalePrice = new SpannableString(prefix + salePriceStr);
             spannableSalePrice.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-//            spannableSalePrice.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().
-//                           getResources().getColor(R.color.uiv3_secondary_text_color)),
-//                    prefixLen + salePriceLen, spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-//            spannableSalePrice.setSpan(new AbsoluteSizeSpan(30),
-//                    prefixLen + salePriceLen, spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtSalePrice.setText(spannableSalePrice);
             txtSalePrice.setVisibility(View.VISIBLE);
         } else {
             txtSalePrice.setText("Free!");
         }
+
+        /*
+        TextView txtSaving = rowHolder.getTxtSaving();
+        if (cartItem.getSaving() > 0 && (cartItem.getPromoAppliedType() >CartItem.REGULAR_PRICE_AND_PROMO_NOT_APPLIED &&
+                cartItem.getPromoAppliedType()<CartItem.REGULAR_PRICE_AND_NO_PROMO)) {
+            txtSaving.setVisibility(View.VISIBLE);
+            String prefix = "Save: `";
+            Spannable savingSpannable = new SpannableString(prefix + UIUtil.formatAsMoney(cartItem.getSaving()));
+            savingSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), prefix.length()-1, prefix.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            txtSaving.setText(savingSpannable);
+        }else {
+            txtSaving.setVisibility(View.GONE);
+        }
+        */
 
 
         final TextView txtInBasket = rowHolder.getTxtInBasket();
@@ -332,7 +343,8 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.DEC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT, navigationCtx, null, null);
+                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT,
+                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -350,7 +362,8 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.INC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT, navigationCtx, null, null);
+                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT,
+                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME);
                             basketOperationTask.startTask();
 
                         } else {
@@ -370,7 +383,8 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.EMPTY,
                                     product, txtInBasket, null, null, null, "0",
-                                    TrackingAware.BASKET_REMOVE, navigationCtx, null, null);
+                                    TrackingAware.BASKET_REMOVE, navigationCtx, null, null, null,
+                                    TrackEventkeys.SINGLE_TAB_NAME);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);

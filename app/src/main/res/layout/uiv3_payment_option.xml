@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/WindowStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -31,6 +30,38 @@
             android:layout_marginBottom="@dimen/margin_small"
             android:orientation="vertical">
 
+            <RelativeLayout
+                android:id="@+id/layoutKnowMore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:background="@drawable/grey_border_no_rounds"
+                android:padding="@dimen/padding_normal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/txtNewCheckoutFlow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/primary_text_size" />
+
+                <TextView
+                    android:id="@+id/lblKnowMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_mini"
+                    android:layout_below="@id/txtNewCheckoutFlow"
+                    android:text="@string/know_more"
+                    android:textColor="@color/uiv3_dialog_header_text_bkg"
+                    android:textSize="@dimen/secondary_text_size" />
+            </RelativeLayout>
+
             <LinearLayout
                 android:id="@+id/layoutChoosePayment"
                 android:layout_width="match_parent"
@@ -46,43 +77,22 @@
                 android:paddingRight="@dimen/padding_small"
                 android:paddingTop="@dimen/padding_normal">
 
-                <TextView
-                    android:id="@+id/lblTransactionFailed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:text="@string/transactionFailed"
-                    android:textColor="@color/dark_red"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/txtTransactionFailedReason"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:text="@string/transactionFailed"
-                    android:textColor="@color/dark_red"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/lblSelectAnotherMethod"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_normal"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:text="@string/txnFailedRetryTxt"
-                    android:textColor="@color/dark_red"
-                    android:textSize="@dimen/primary_text_size" />
-
                 <RadioGroup
                     android:id="@+id/layoutPaymentOptions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                 </RadioGroup>
+
+                <TextView
+                    android:id="@+id/lblAmountFromWallet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_small"
+                    android:layout_marginTop="@dimen/margin_mini"
+                    android:text="@string/fromWalletMsg"
+                    android:textColor="@color/uiv3_dialog_header_text_bkg"
+                    android:textSize="@dimen/primary_text_size" />
             </LinearLayout>
 
             <RelativeLayout
@@ -149,10 +159,31 @@
         </LinearLayout>
     </ScrollView>
 
-    <View
-        android:id="@+id/viewPaymentInProgress"
+    <LinearLayout
+        android:id="@+id/layoutPaymentInProgress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:visibility="gone" />
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/lblOrderPlaced"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginRight="@dimen/margin_large"
+            android:text="@string/orderPlacedTakingToPaymentGateway"
+            android:textSize="@dimen/heading_2_text_size" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginRight="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_normal" />
+    </LinearLayout>
 </RelativeLayout>

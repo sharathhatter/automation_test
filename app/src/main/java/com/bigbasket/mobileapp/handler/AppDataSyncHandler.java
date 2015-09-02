@@ -33,6 +33,14 @@ public class AppDataSyncHandler {
         editor.apply();
     }
 
+    public static void reset(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(LAST_APP_DATA_CALL_TIME);
+        editor.remove(LAST_APP_DATA_CALL_CITY_NAME);
+        editor.apply();
+    }
+
     @Nullable
     private static String getCurrentCity(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

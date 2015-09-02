@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="BBAppTheme.SearchViewTheme" parent="BBAppTheme">
+    <style name="BaseAppTheme.SearchViewTheme" parent="BaseAppTheme">
+        <item name="colorControlNormal">@color/translucent_white</item>
+        <item name="colorControlHighlight">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
         <item name="android:autoCompleteTextViewStyle">
-            @style/BBAppTheme.SearchViewTheme.CursorStyle
+            @style/BaseAppTheme.SearchViewTheme.CursorStyle
         </item>
     </style>
 
-    <style name="BBAppTheme.SearchViewTheme.CursorStyle" parent="Widget.AppCompat.AutoCompleteTextView">
+    <style name="BaseAppTheme.SearchViewTheme.CursorStyle" parent="Widget.AppCompat.AutoCompleteTextView">
         <item name="android:textCursorDrawable">@drawable/search_cursor</item>
     </style>
 </resources>

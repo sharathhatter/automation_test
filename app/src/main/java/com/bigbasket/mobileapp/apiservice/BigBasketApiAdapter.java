@@ -17,19 +17,31 @@ import retrofit.client.OkClient;
 
 public class BigBasketApiAdapter {
 
-    private static BigBasketApiService bigBasketApiService;
+    private static volatile BigBasketApiService bigBasketApiService;
+    private static final Object lock = new Object();
 
     private BigBasketApiAdapter() {
     }
 
     public static BigBasketApiService getApiService(Context context) {
-        if (bigBasketApiService == null) {
-            refreshBigBasketApiService(context);
+        BigBasketApiService localInstance = bigBasketApiService;
+        if (localInstance == null) {
+            synchronized (lock) {
+                localInstance = bigBasketApiService;
+                if (localInstance == null) {
+                    localInstance = refreshBigBasketApiService(context);
+                    bigBasketApiService = localInstance;
+                }
+            }
         }
         return bigBasketApiService;
     }
 
-    public static void refreshBigBasketApiService(final Context context) {
+    public static void reset() {
+        bigBasketApiService = null;
+    }
+
+    private static BigBasketApiService refreshBigBasketApiService(final Context context) {
         final AuthParameters authParameters = AuthParameters.getInstance(context);
 
         RequestInterceptor requestInterceptor = new RequestInterceptor() {
@@ -70,7 +82,6 @@ public class BigBasketApiAdapter {
                 .setClient(new OkClient(okHttpClient))
                 .build();
 
-        bigBasketApiService = restAdapter.create(BigBasketApiService.class);
+        return restAdapter.create(BigBasketApiService.class);
     }
-
 }

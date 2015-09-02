@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +21,6 @@ import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -57,6 +57,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     private String mBaseImgUrl;
     private String mTabType;
     private boolean mHasProductLoadingFailed;
+    private boolean mHasSingleTab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,14 +72,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     public void productListOnActivityCreated() {
         loadProducts();
-        logProductListingEvent();
-    }
-
-    public void logProductListingEvent() {
-        if (mTabType == null) return;
-        HashMap<String, String> map = new HashMap<>();
-        map.put(Constants.TYPE, mTabType);
-        trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
     }
 
     public void loadProducts() {
@@ -88,6 +81,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             ArrayList<NameValuePair> nameValuePairs = getArguments().getParcelableArrayList(Constants.PRODUCT_QUERY);
             mNameValuePairs = NameValuePair.toMap(nameValuePairs);
             mTabType = getArguments().getString(Constants.TAB_TYPE);
+            mHasSingleTab = getArguments().getBoolean(Constants.SINGLE_TAB, false);
             setProductListView();
         }
     }
@@ -172,7 +166,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             products = ((LazyProductListAware) getActivity()).provideProductsIfAvailable(mTabType);
         }
         if (products != null && products.size() > 0) {
-            RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
+            RecyclerView productRecyclerView = (RecyclerView) getActivity().
+                    getLayoutInflater().inflate(R.layout.uiv3_recyclerview, contentView, false);
+            UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
 
             // Set product-list data
             AuthParameters authParameters = AuthParameters.getInstance(getActivity());
@@ -185,10 +181,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     .setShowShoppingListBtn(true)
                     .setShowBasketBtn(true)
                     .setShowShopListDeleteBtn(false)
+                    .showQtyInput(authParameters.isKirana())
                     .build();
             mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, mBaseImgUrl,
                     productViewDisplayDataHolder, this, mProductInfo.getProductCount(),
-                    getNextScreenNavigationContext(), cartInfo);
+                    getNextScreenNavigationContext(), cartInfo,
+                    mHasSingleTab ? TrackEventkeys.SINGLE_TAB_NAME : mTabType);
 
             productRecyclerView.setAdapter(mProductListRecyclerAdapter);
             contentView.addView(productRecyclerView);
@@ -234,6 +232,13 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             return getCurrentActivity().getCurrentNavigationContext();
         }
         return null;
+    }
+
+    @Override
+    public void setNextScreenNavigationContext(@Nullable String nc) {
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().setNextScreenNavigationContext(nc);
+        }
     }
 
     @Override
@@ -311,16 +316,17 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView, View viewDecQty,
                                                     View viewIncQty, View btnAddToBasket, Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap) {
+                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
+                                                    @Nullable EditText editTextQty) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, product, qty, productView, cartInfoMap);
+                btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
         if (cartInfoMap != null) {
             if (getActivity() instanceof BasketOperationAware) {
                 ((BasketOperationAware) getActivity()).setBasketOperationResponse(basketOperationResponse);
                 ((BasketOperationAware) getActivity()).updateUIAfterBasketOperationSuccess(basketOperation,
-                        null, null, null, null, product, qty, null, cartInfoMap);
+                        null, null, null, null, product, qty, null, cartInfoMap, editTextQty);
             }
         }
     }

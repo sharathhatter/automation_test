@@ -1,87 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
     style="@style/WindowStyle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout
-        android:id="@+id/drawer_layout"
+    <!-- As the main content view, the view below consumes the entire
+         space available using match_parent in both dimensions. -->
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- As the main content view, the view below consumes the entire
-             space available using match_parent in both dimensions. -->
+        <LinearLayout
+            android:id="@+id/layoutAddAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="0dp"
+            android:background="@color/uiv3_list_bkg_color"
+            android:clickable="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-        <RelativeLayout
+            <TextView
+                android:id="@+id/txtAddAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:drawableLeft="@drawable/add_footer"
+                android:drawablePadding="@dimen/padding_small"
+                android:gravity="center"
+                android:paddingBottom="@dimen/padding_small"
+                android:paddingLeft="@dimen/padding_normal"
+                android:paddingRight="@dimen/padding_normal"
+                android:paddingTop="@dimen/padding_small"
+                android:text="@string/addAllProductsDisplay"
+                android:textColor="@color/uiv3_product_list_footer_txt_color"
+                android:textSize="@dimen/secondary_text_size" />
+        </LinearLayout>
+
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@id/layoutAddAll"
             android:orientation="vertical">
 
-            <include
-                android:id="@+id/toolbarMain"
-                layout="@layout/uiv3_tool_layout" />
-
-            <LinearLayout
-                android:id="@+id/layoutAddAll"
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/appBarLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="0dp"
-                android:background="@color/uiv3_list_bkg_color"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/txtAddAll"
-                    android:layout_width="wrap_content"
+                <include layout="@layout/uiv3_tool_layout" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/slidingTabs"
+                    style="@style/BaseAppTheme.TabStyle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="0dp"
-                    android:drawableLeft="@drawable/add_footer"
-                    android:drawablePadding="@dimen/padding_small"
-                    android:gravity="center"
-                    android:paddingBottom="@dimen/padding_small"
-                    android:paddingLeft="@dimen/padding_normal"
-                    android:paddingRight="@dimen/padding_normal"
-                    android:paddingTop="@dimen/padding_small"
-                    android:text="@string/addAllProductsDisplay"
-                    android:textColor="@color/uiv3_product_list_footer_txt_color"
-                    android:textSize="@dimen/secondary_text_size" />
-            </LinearLayout>
+                    app:tabMode="scrollable" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/uiv3_divider_color" />
+            </android.support.design.widget.AppBarLayout>
 
             <FrameLayout
                 android:id="@+id/content_frame"
-                style="@style/WindowStyle.ContentArea"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@id/layoutAddAll"
-                android:layout_below="@id/toolbarMain" />
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-            <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
-                android:id="@+id/btnViewBasket"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/content_frame"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="@dimen/margin_normal"
-                android:layout_marginRight="@dimen/margin_small"
-                android:src="@drawable/filled_basket"
-                app:fab_colorNormal="@color/uiv3_action_bar_background"
-                app:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
+        </android.support.design.widget.CoordinatorLayout>
 
-        </RelativeLayout>
+        <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
+            android:id="@+id/btnViewBasket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_small"
+            android:src="@drawable/filled_basket"
+            app:fab_colorNormal="@color/uiv3_action_bar_background"
+            app:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
 
-        <!-- android:layout_gravity="start" tells DrawerLayout to treat
-             this as a sliding drawer on the left side for left-to-right
-             languages and on the right side for right-to-left languages.
-             The drawer is given a fixed width in dp and extends the full height of
-             the container. A solid background is used for contrast
-             with the content view. -->
+        <include layout="@layout/uiv3_header_dropdown_layout" />
+    </RelativeLayout>
 
-        <include layout="@layout/uiv3_left_nav_layout" />
-    </com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>
-</LinearLayout>
+    <!-- android:layout_gravity="start" tells DrawerLayout to treat
+         this as a sliding drawer on the left side for left-to-right
+         languages and on the right side for right-to-left languages.
+         The drawer is given a fixed width in dp and extends the full height of
+         the container. A solid background is used for contrast
+         with the content view. -->
+
+    <include layout="@layout/uiv3_left_nav_layout" />
+</com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>

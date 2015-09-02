@@ -3,9 +3,6 @@
 
     <!-- Specifies how to place the content of an object, both
          on the x- and y-axis, within the object itself. -->
-    <declare-styleable name="ExpandableTextView">
-        <attr name="isExpanded" format="boolean" />
-    </declare-styleable>
     <attr name="gravity">
         <!-- Push object to the top of its container, not changing its size. -->
         <flag name="top" value="0x30" />
@@ -120,14 +117,6 @@
         </attr>
         <attr name="gravity" />
     </declare-styleable>
-    <!--<declare-styleable name="AddFloatingActionButton">-->
-    <!--<attr name="plusIconColor" format="color"/>-->
-    <!--</declare-styleable>-->
-    <!--<declare-styleable name="FloatingActionsMenu">-->
-    <!--<attr name="addButtonColorPressed" format="color"/>-->
-    <!--<attr name="addButtonColorNormal" format="color"/>-->
-    <!--<attr name="addButtonPlusIconColor" format="color"/>-->
-    <!--</declare-styleable>-->
     <declare-styleable name="FButton">
         <attr name="shadowEnabled" format="boolean" />
         <attr name="buttonColor" format="color" />
@@ -150,6 +139,17 @@
         <attr name="orientation" format="enum">
             <enum name="horizontal" value="0" />
             <enum name="vertical" value="1" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="FloatingActionButton">
+        <attr name="fab_colorPressed" format="color" />
+        <attr name="fab_colorNormal" format="color" />
+        <attr name="fab_colorRipple" format="color" />
+        <attr name="fab_colorDisabled" format="color" />
+        <attr name="fab_shadow" format="boolean" />
+        <attr name="fab_type" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="mini" value="1" />
         </attr>
     </declare-styleable>
 </resources>

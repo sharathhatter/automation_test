@@ -13,6 +13,7 @@ import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionUtil;
+import com.bigbasket.mobileapp.util.Constants;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -70,13 +71,14 @@ public class GetDynamicPageTask<T> {
         }
         switch (screenName) {
             case SectionManager.HOME_PAGE:
-                bigBasketApiService.getHomePage(new DynamicPageCallback(sectionManager));
+                bigBasketApiService.getHomePage(Constants.ANDROID, new DynamicPageCallback(sectionManager));
                 break;
             case SectionManager.MAIN_MENU:
-                bigBasketApiService.getMainMenu(new DynamicPageCallback(sectionManager));
+                bigBasketApiService.getMainMenu(Constants.ANDROID, new DynamicPageCallback(sectionManager));
                 break;
             default:
-                bigBasketApiService.getDynamicPage(screenName, new DynamicPageCallback(sectionManager));
+                bigBasketApiService.getDynamicPage(Constants.ANDROID,
+                        screenName, new DynamicPageCallback(sectionManager));
                 break;
         }
     }

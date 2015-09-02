@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -36,7 +37,9 @@ public class BasketOperationTask<T> {
 
     private T context;
     private Product product;
-    private BasketOperation basketOperation;
+    private
+    @BasketOperation.Mode
+    int basketOperation;
     private String qty;
     private TextView basketCountTextView;
     private View viewIncQty;
@@ -45,25 +48,32 @@ public class BasketOperationTask<T> {
     private String eventName;
     private View productView;
     private String navigationCtx;
-    private
     @Nullable
-    HashMap<String, Integer> cartInfo;
+    private HashMap<String, Integer> cartInfo;
+    @Nullable
+    private EditText editTextQty;
+    private String tabName;
 
-    public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
+    public BasketOperationTask(T context, @BasketOperation.Mode int basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, View viewAddToBasket, String eventName,
                                String navigationCtx, @Nullable View productView,
-                               @Nullable HashMap<String, Integer> cartInfo) {
+                               @Nullable HashMap<String, Integer> cartInfo,
+                               @Nullable EditText editTextQty,
+                               String tabName) {
         this(context, basketOperation, product, basketCountTextView, viewDecQty, viewIncQty,
-                viewAddToBasket, "1", eventName, navigationCtx, productView, cartInfo);
+                viewAddToBasket, "1", eventName, navigationCtx, productView, cartInfo, editTextQty,
+                tabName);
     }
 
-    public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
+    public BasketOperationTask(T context, @BasketOperation.Mode int basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, View viewAddToBasket,
                                String qty, String eventName,
                                String navigationCtx, @Nullable View productView,
-                               @Nullable HashMap<String, Integer> cartInfo) {
+                               @Nullable HashMap<String, Integer> cartInfo,
+                               @Nullable EditText editTextQty,
+                               String tabName) {
         this.context = context;
         this.product = product;
         this.basketOperation = basketOperation;
@@ -76,6 +86,8 @@ public class BasketOperationTask<T> {
         this.productView = productView;
         this.navigationCtx = navigationCtx;
         this.cartInfo = cartInfo;
+        this.editTextQty = editTextQty;
+        this.tabName = tabName;
     }
 
     public void startTask() {
@@ -90,17 +102,17 @@ public class BasketOperationTask<T> {
                 .getString(R.string.please_wait));
         String reqProdId = product.getSku();
         switch (basketOperation) {
-            case INC:
-                bigBasketApiService.incrementCartItem(reqProdId, qty, new CartOperationApiResponseCallback());
+            case BasketOperation.INC:
+                bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
-            case DEC:
-                bigBasketApiService.decrementCartItem(reqProdId, qty, new CartOperationApiResponseCallback());
+            case BasketOperation.DEC:
+                bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
-            case SET:
-                bigBasketApiService.setCartItem(reqProdId, qty, new CartOperationApiResponseCallback());
+            case BasketOperation.SET:
+                bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
                 break;
-            case EMPTY:
-                bigBasketApiService.setCartItem(reqProdId, "0", new CartOperationApiResponseCallback());
+            case BasketOperation.EMPTY:
+                bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", new CartOperationApiResponseCallback());
                 break;
         }
     }
@@ -118,7 +130,11 @@ public class BasketOperationTask<T> {
         if (navigationCtx != null) {
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         }
-        ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false);
+        eventAttribs.put(TrackEventkeys.TAB_NAME, tabName);
+        ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false, true);
+        if (!TextUtils.isEmpty(eventName) && eventName.equals(TrackingAware.BASKET_ADD)) {
+            ((TrackingAware) context).trackEventAppsFlyer(eventName);
+        }
     }
 
     private class CartOperationApiResponseCallback implements Callback<CartOperationApiResponse> {
@@ -146,7 +162,7 @@ public class BasketOperationTask<T> {
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
                     ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,
                             basketCountTextView, viewDecQty, viewIncQty, viewAddToBasket, product, qty,
-                            productView, cartInfo);
+                            productView, cartInfo, editTextQty);
                     break;
                 case Constants.ERROR:
                     switch (cartOperationApiResponse.errorType) {
@@ -161,7 +177,7 @@ public class BasketOperationTask<T> {
                     }
                     ((BasketOperationAware) context).updateUIAfterBasketOperationFailed(basketOperation,
                             basketCountTextView, viewDecQty, viewIncQty, viewAddToBasket, product, null,
-                            cartOperationApiResponse.errorType, productView);
+                            cartOperationApiResponse.errorType, productView, editTextQty);
                     break;
             }
         }

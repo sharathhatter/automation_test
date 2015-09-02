@@ -15,31 +15,30 @@ import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.telephony.TelephonyManager;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
-import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -48,8 +47,10 @@ import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
+import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -213,11 +214,15 @@ public class UIUtil {
     }
 
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
+        SectionManager.clearAllSectionData(ctx);
+        AppDataSyncHandler.reset(ctx);
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.FIRST_NAME_PREF, userDetails.firstName);
         editor.putString(Constants.MEMBER_FULL_NAME_KEY, userDetails.fullName);
         editor.putString(Constants.MID_KEY, mId);
+        editor.putBoolean(Constants.IS_KIRANA, userDetails.isKirana);
 
         String cityId = preferences.getString(Constants.CITY_ID, "-1");
         if (!TextUtils.isEmpty(cityId) &&
@@ -272,29 +277,18 @@ public class UIUtil {
             }
         }
         editor.commit();
-        AuthParameters.updateInstance(ctx);
+
+        AuthParameters.reset();
     }
 
-    public static void reportFormInputFieldError(EditText editText, String errMsg) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            editText.setError(errMsg);
-        } else {
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(errMsg);
-            spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
-                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            editText.setError(spannableStringBuilder);
-        }
+    public static void reportFormInputFieldError(TextInputLayout textInputLayout, String errMsg) {
+        textInputLayout.setErrorEnabled(true);
+        textInputLayout.setError(errMsg);
     }
 
-    public static void reportFormInputFieldError(AutoCompleteTextView autoCompleteTextView, String errMsg) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            autoCompleteTextView.setError(errMsg);
-        } else {
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(errMsg);
-            spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
-                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            autoCompleteTextView.setError(spannableStringBuilder);
-        }
+    public static void resetFormInputField(TextInputLayout textInputLayout) {
+        textInputLayout.setErrorEnabled(false);
+        textInputLayout.setError("");
     }
 
     public static int parseAsNativeColor(String rgbColorCode) {
@@ -344,6 +338,10 @@ public class UIUtil {
         displayAsyncImage(imageView, url, false, R.drawable.loading_small);
     }
 
+    public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId) {
+        Picasso.with(imageView.getContext()).load(drawableId).into(imageView);
+    }
+
     public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
                                          @DrawableRes int placeHolderDrawableId) {
         Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
@@ -362,8 +360,8 @@ public class UIUtil {
     }
 
     public static void preLoadImage(String url, Context context) {
-        Log.i(context.getClass().getName(), "Pre loading image = " + url);
-        Picasso.with(context).load(url).fetch();
+//        Log.i(context.getClass().getName(), "Pre loading image = " + url);
+//        Picasso.with(context).load(url).fetch();
     }
 
     public static void showEmptyProductsView(final Context context, ViewGroup parent, String msg,
@@ -525,10 +523,8 @@ public class UIUtil {
                 e1.printStackTrace();
                 return false;
             }
-            if (inputDate == null || toDaysData == null) return false;
-            if (inputDate.after(toDaysData))
-                return false;
-            return !inputDate.before(dateBefore1900);
+            return !(inputDate == null || toDaysData == null) &&
+                    !inputDate.after(toDaysData) && !inputDate.before(dateBefore1900);
         }
         return false;
     }
@@ -565,18 +561,21 @@ public class UIUtil {
     }
 
     public static void changeStatusBarColor(Context context, @ColorRes int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = ((Activity) context).getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(context.getResources().getColor(color));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && context instanceof Activity) {
+            DrawerLayout drawerLayout = (DrawerLayout) ((Activity) context).findViewById(R.id.drawer_layout);
+            if (drawerLayout != null) {
+                drawerLayout.setStatusBarBackground(color);
+            }
         }
     }
 
-    public static void addNavigationContextToBundle(Fragment fragment) {
+    public static void addNavigationContextToBundle(Fragment fragment, String mNextScreenNavigationContext) {
         Bundle args = fragment.getArguments();
         String nc = fragment instanceof AnalyticsNavigationContextAware ?
                 ((AnalyticsNavigationContextAware) fragment).getNextScreenNavigationContext() : null;
+
+        if (nc == null && fragment.getActivity() == null) // when Fragment's onActivityCreated in not called
+            nc = mNextScreenNavigationContext;
         if (nc == null && fragment.getActivity() != null &&
                 fragment.getActivity() instanceof AnalyticsNavigationContextAware) {
             // Use activity's current nc
@@ -593,5 +592,20 @@ public class UIUtil {
             args.putString(TrackEventkeys.NAVIGATION_CTX, nc);
             fragment.setArguments(args);
         }
+    }
+
+    public static RadioButton getPaymentOptionRadioButton(ViewGroup parent, Context context, LayoutInflater inflater) {
+        RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, parent, false);
+        RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 0, 0, (int) context.getResources().getDimension(R.dimen.margin_small));
+        radioButton.setLayoutParams(layoutParams);
+        radioButton.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        return radioButton;
+    }
+
+    public static String getIMEI(Context context) {
+        TelephonyManager mngr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return mngr.getDeviceId();
     }
 }

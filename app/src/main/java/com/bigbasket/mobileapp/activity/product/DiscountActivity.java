@@ -1,9 +1,8 @@
 package com.bigbasket.mobileapp.activity.product;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.view.View;
-import android.widget.FrameLayout;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
@@ -12,15 +11,16 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.fragment.product.DiscountFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
-import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -33,6 +33,7 @@ public class DiscountActivity extends BBActivity {
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_DISCOUNT_SCREEN);
         setTitle(getString(R.string.discounts));
         getDiscountData();
     }
@@ -80,51 +81,49 @@ public class DiscountActivity extends BBActivity {
     }
 
 
-    private void renderDiscountFragments(SectionData categorySectionData, SectionData binSectionData) {
-        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
-        if (contentFrame == null) return;
-        contentFrame.removeAllViews();
+    private void renderDiscountFragments(final SectionData categorySectionData, final SectionData binSectionData) {
 
         if (categorySectionData != null && categorySectionData.getSections() != null
                 && categorySectionData.getSections().size() > 0 &&
                 binSectionData != null && binSectionData.getSections() != null
                 && binSectionData.getSections().size() > 0) {
 
-            View view = getLayoutInflater().inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
-
             ArrayList<BBTab> bbTabs = new ArrayList<>();
             createTabFragment(categorySectionData, bbTabs);
             createTabFragment(binSectionData, bbTabs);
 
-            ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);
+            ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
             TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
                     bbTabs);
             viewPager.setAdapter(tabPagerAdapter);
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    HashMap<String, String> eventAttribs = new HashMap<>();
+                    if (position == 0 && categorySectionData.getScreenName() != null) {
+                        eventAttribs.put(Constants.TAB_NAME, categorySectionData.getScreenName());
+                    } else if (binSectionData.getScreenName() != null) {
+                        eventAttribs.put(Constants.TAB_NAME, binSectionData.getScreenName());
+                    }
+                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    trackEvent(TrackingAware.DISCOUNT_TAB_CHANGED, eventAttribs);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                }
+            });
 
 
-            SmartTabLayout pageTitleStrip = (SmartTabLayout) view.findViewById(R.id.slidingTabs);
-            pageTitleStrip.setDistributeEvenly(true);
-            pageTitleStrip.setViewPager(viewPager);
+            TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
+            pageTitleStrip.setupWithViewPager(viewPager);
 
-            contentFrame.addView(view);
-        } else {
-            SectionData availableSectionData = null;
-            if (categorySectionData != null && categorySectionData.getSections() != null
-                    && categorySectionData.getSections().size() > 0) {
-                availableSectionData = categorySectionData;
-            } else if (binSectionData != null && binSectionData.getSections() != null
-                    && binSectionData.getSections().size() > 0) {
-                availableSectionData = binSectionData;
-            }
-
-            if (availableSectionData != null) {
-                DiscountFragment discountFragment = new DiscountFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.SECTIONS, availableSectionData);
-                discountFragment.setArguments(bundle);
-                onChangeFragment(discountFragment);
-            }
         }
+        trackEvent(TrackingAware.DISCOUNT_SHOWN, null, null, null, false, true);
     }
 
     private ArrayList<BBTab> createTabFragment(SectionData categorySectionData, ArrayList<BBTab> bbTabs) {
@@ -140,4 +139,8 @@ public class DiscountActivity extends BBActivity {
         return TrackEventkeys.DISCOUNT_SCREEN;
     }
 
+    @Override
+    public int getMainLayout() {
+        return R.layout.uiv3_swipe_tabview_with_drawer;
+    }
 }

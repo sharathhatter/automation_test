@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,7 +65,6 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             mProduct = savedInstanceState.getParcelable(Constants.PRODUCT);
             if (mProduct != null) {
                 renderProductDetail();
-                return;
             }
         }
     }
@@ -86,6 +86,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             desc = " " + mProduct.getWeightAndPackDesc();
         map.put(TrackEventkeys.PRODUCT_DESC, desc);
         trackEvent(TrackingAware.PRODUCT_DETAIL_SHOWN, map);
+        trackEventAppsFlyer(TrackingAware.PRODUCT_DETAIL_SHOWN);
     }
 
     private void loadProductDetail() {
@@ -150,6 +151,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
                 .disableInBasketChildSwap(true)
+                .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
 
         LinearLayout layoutProductDetail = (LinearLayout) getView().findViewById(R.id.layoutProductDetail);
@@ -159,7 +161,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                false, this, getNextScreenNavigationContext());
+                false, this, getNextScreenNavigationContext(), null, "none");
 
         if (mProduct.getProductPromoInfo() == null ||
                 !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {
@@ -268,11 +270,12 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView, View viewDecQty,
                                                     View viewIncQty, View btnAddToBasket, Product product,
-                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap) {
+                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
+                                                    @Nullable EditText editTextQty) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
-                viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap);
+                viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
             productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());

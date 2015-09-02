@@ -5,7 +5,6 @@
     <color name="green_color">#709D03</color>
     <color name="dark_grey">#3D3D3D</color>
     <color name="light_grey">#ff8a8a8a</color>
-    <color name="lighter_grey">#C2C2C2</color>
     <color name="medium_grey">#727272</color>
     <color name="tabDark">#000000</color>
     <color name="red">#E10000</color>
@@ -19,8 +18,6 @@
     <color name="promo_red_color">#e80000</color>
     <color name="active_order_red_color">#ed5353</color>
     <color name="dark_black">#000000</color>
-    <color name="actualCostColor">#4CAF70</color>
-    <color name="buttonGreyBkg">#E4E4E4</color>
 
     <!-- UIv3 colours -->
     <color name="uiv3_action_bar_background">#F44336</color>

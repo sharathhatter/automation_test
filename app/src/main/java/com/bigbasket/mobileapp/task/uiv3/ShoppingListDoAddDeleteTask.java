@@ -28,10 +28,12 @@ public class ShoppingListDoAddDeleteTask<T> {
     private static final String TAG = ShoppingListDoAddDeleteTask.class.getName();
     private List<ShoppingListName> selectedShoppingListNames;
     private T ctx;
-    private ShoppingListOption shoppingListOption;
+    private
+    @ShoppingListOption.Method
+    int shoppingListOption;
 
     public ShoppingListDoAddDeleteTask(T ctx, List<ShoppingListName> selectedShoppingListNames,
-                                       ShoppingListOption shoppingListOption) {
+                                       @ShoppingListOption.Method int shoppingListOption) {
         this.ctx = ctx;
         this.selectedShoppingListNames = selectedShoppingListNames;
         this.shoppingListOption = shoppingListOption;
@@ -47,7 +49,7 @@ public class ShoppingListDoAddDeleteTask<T> {
         String selectedProductId = ((ShoppingListNamesAware) ctx).getSelectedProductId();
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
         switch (shoppingListOption) {
-            case ADD_TO_LIST:
+            case ShoppingListOption.ADD_TO_LIST:
                 List<String> slugList = new ArrayList<>();
                 for (ShoppingListName shoppingListName : selectedShoppingListNames) {
                     slugList.add(shoppingListName.getSlug());
@@ -55,7 +57,7 @@ public class ShoppingListDoAddDeleteTask<T> {
                 bigBasketApiService.addItemToShoppingList(selectedProductId, new Gson().toJson(slugList),
                         new ShoppingListOperationApiResponseCallback());
                 break;
-            case DELETE_ITEM:
+            case ShoppingListOption.DELETE_ITEM:
                 bigBasketApiService.deleteItemFromShoppingList(selectedProductId, selectedShoppingListNames.get(0).getSlug(),
                         new ShoppingListOperationApiResponseCallback());
                 break;
@@ -78,11 +80,11 @@ public class ShoppingListDoAddDeleteTask<T> {
             switch (oldBaseApiResponse.status) {
                 case Constants.OK:
                     switch (shoppingListOption) {
-                        case ADD_TO_LIST:
+                        case ShoppingListOption.ADD_TO_LIST:
                             ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.ADD_TO_SHOPPINGLIST_OK, null);
                             Log.d(TAG, "Sending message: MessageCode.ADD_TO_SHOPPINGLIST_OK");
                             break;
-                        case DELETE_ITEM:
+                        case ShoppingListOption.DELETE_ITEM:
                             ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.DELETE_FROM_SHOPPING_LIST_OK, null);
                             ((ShoppingListNamesAware) ctx).postShoppingListItemDeleteOperation();
                             Log.d(TAG, "Sending message: MessageCode.DELETE_FROM_SHOPPING_LIST_OK");

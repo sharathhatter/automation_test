@@ -21,16 +21,13 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.BBCheckedListAdapter;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -77,19 +74,23 @@ public class FilterActivity extends BackButtonActivity {
         ListView lstFilterName = (ListView) findViewById(R.id.lstFilterName);
 
         final FilterNameAdapter filterNameAdapter = new FilterNameAdapter(filterOptionCategories);
-        //Caused by: java.lang.NullPointerException
-        mCurrentlySelectedFilter = filterOptionCategories.get(0).getFilterSlug();
-        lstFilterName.setAdapter(filterNameAdapter);
-        renderFilterItems(filterOptionCategories.get(0));
-        lstFilterName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FilterOptionCategory filterOptionCategory = filterOptionCategories.get(position);
+        if (filterOptionCategories != null && filterOptionCategories.size() > 0) {
+            FilterOptionCategory filterOptionCategory = filterOptionCategories.get(0);
+            if (filterOptionCategory != null) {
                 mCurrentlySelectedFilter = filterOptionCategory.getFilterSlug();
-                filterNameAdapter.notifyDataSetChanged();
+                lstFilterName.setAdapter(filterNameAdapter);
                 renderFilterItems(filterOptionCategory);
+                lstFilterName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        FilterOptionCategory filterOptionCategory = filterOptionCategories.get(position);
+                        mCurrentlySelectedFilter = filterOptionCategory.getFilterSlug();
+                        filterNameAdapter.notifyDataSetChanged();
+                        renderFilterItems(filterOptionCategory);
+                    }
+                });
             }
-        });
+        }
     }
 
     private void renderFilterItems(final FilterOptionCategory filterOptionCategory) {
@@ -210,9 +211,6 @@ public class FilterActivity extends BackButtonActivity {
     private class OnApplyFilterListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.TYPE, "sort query");
-            trackEvent(TrackingAware.SORT_BY, map);
             Intent data = new Intent();
             data.putExtra(Constants.FILTERED_ON, mFilteredOns);
             setResult(NavigationCodes.FILTER_APPLIED, data);

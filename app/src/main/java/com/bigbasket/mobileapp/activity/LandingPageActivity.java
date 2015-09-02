@@ -18,6 +18,7 @@ public class LandingPageActivity extends SocialLoginActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_ENTRY_SCREEN);
         setContentView(R.layout.landing_page);
 
         ((Button) findViewById(R.id.btnLogin)).setTypeface(faceRobotoRegular);
@@ -37,7 +38,7 @@ public class LandingPageActivity extends SocialLoginActivity {
                 launchTutorial(NavigationCodes.LAUNCH_SIGNUP);
                 break;
             case R.id.btnSkip:
-                // Analytics for this is done in onActivityResult of SplashActivity
+                trackEvent(TrackingAware.ENTRY_PAGE_SKIP_BUTTON_CLICKED, null);
                 launchTutorial(NavigationCodes.LAUNCH_CITY);
                 break;
         }

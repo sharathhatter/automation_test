@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -15,148 +14,150 @@
         <RelativeLayout
             android:id="@+id/layoutName"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small">
 
             <com.bigbasket.mobileapp.view.uiv3.ImageViewCircular
-                android:layout_width="wrap_content"
                 android:id="@+id/circularImageView"
-                android:maxWidth="65dp"
-                android:minWidth="45dp"
-                android:minHeight="45dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:maxHeight="65dp"
                 android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_height="wrap_content" />
+                android:maxHeight="65dp"
+                android:maxWidth="65dp"
+                android:minHeight="45dp"
+                android:minWidth="45dp" />
 
             <LinearLayout
+                android:id="@+id/layoutEmailId"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="85dp"
-                android:orientation="vertical"
-                android:id="@+id/layoutEmailId"
                 android:layout_marginRight="@dimen/margin_small"
-                android:layout_height="wrap_content">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/txtMemberName"
-                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/large_text_size" />
 
                 <TextView
                     android:id="@+id/txtEmailId"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:textColor="@color/text_color_myaccount"
                     android:textSize="@dimen/primary_text_size"
-                    android:textStyle="italic"
-                    android:layout_height="wrap_content" />
+                    android:textStyle="italic" />
 
             </LinearLayout>
 
             <View
+                android:id="@+id/line1"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:id="@+id/line1"
-                android:layout_marginTop="@dimen/margin_medium_large"
                 android:layout_below="@id/layoutEmailId"
+                android:layout_marginTop="@dimen/margin_medium_large"
                 android:background="@color/separator_line_color" />
         </RelativeLayout>
 
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/layoutPhoneNumber"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_normal">
 
 
             <TextView
+                android:id="@+id/txtPhoneLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtPhoneLabel"
                 android:layout_marginLeft="@dimen/margin_large"
-                android:textSize="@dimen/primary_text_size"
+                android:text="@string/phone"
                 android:textColor="@color/uiv3_secondary_text_color"
-                android:text="@string/phone" />
+                android:textSize="@dimen/primary_text_size" />
 
             <ImageView
                 android:id="@+id/imgPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_small"
                 android:layout_below="@id/txtPhoneLabel"
                 android:layout_marginLeft="@dimen/margin_xlarge_account"
+                android:layout_marginTop="@dimen/margin_small"
+                android:contentDescription="@string/phone"
                 android:src="@drawable/phone_icon" />
 
             <TextView
                 android:id="@+id/txtPhone"
-                android:clickable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/txtPhoneLabel"
                 android:layout_marginLeft="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_small"
-                android:layout_below="@id/txtPhoneLabel"
-                android:textSize="@dimen/primary_text_size"
+                android:layout_toRightOf="@+id/imgPhone"
+                android:clickable="true"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:layout_toRightOf="@+id/imgPhone" />
+                android:textSize="@dimen/primary_text_size" />
 
 
             <View
+                android:id="@+id/line2"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:id="@+id/line2"
-                android:layout_marginTop="@dimen/margin_normal"
                 android:layout_below="@id/txtPhone"
+                android:layout_marginTop="@dimen/margin_normal"
                 android:background="@color/separator_line_color" />
 
         </RelativeLayout>
 
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/layoutBirthday"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_normal">
 
             <TextView
+                android:id="@+id/txtBirthdayLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtBirthdayLabel"
                 android:layout_marginLeft="@dimen/margin_large"
-                android:textSize="@dimen/primary_text_size"
+                android:text="@string/birthday"
                 android:textColor="@color/uiv3_secondary_text_color"
-                android:text="@string/birthday" />
+                android:textSize="@dimen/primary_text_size" />
 
             <ImageView
                 android:id="@+id/imgBirthday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_small"
                 android:layout_below="@id/txtBirthdayLabel"
                 android:layout_marginLeft="@dimen/margin_xlarge_account"
+                android:layout_marginTop="@dimen/margin_small"
+                android:contentDescription="@string/birthday"
                 android:src="@drawable/cake" />
 
             <TextView
                 android:id="@+id/txtBirthday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtBirthdayLabel"
                 android:layout_marginLeft="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_small"
-                android:layout_below="@id/txtBirthdayLabel"
                 android:layout_toRightOf="@id/imgBirthday"
-                android:textSize="@dimen/primary_text_size"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:textSize="@dimen/primary_text_size" />
 
             <View
+                android:id="@+id/line3"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:id="@+id/line3"
-                android:layout_marginTop="@dimen/margin_normal"
                 android:layout_below="@id/txtBirthday"
+                android:layout_marginTop="@dimen/margin_normal"
                 android:background="@color/separator_line_color" />
 
         </RelativeLayout>
@@ -165,118 +166,120 @@
         <RelativeLayout
             android:id="@+id/layoutAddress"
             android:layout_width="match_parent"
-            android:paddingBottom="@dimen/padding_small"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/padding_small">
 
             <TextView
+                android:id="@+id/txtAddressLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtAddressLabel"
-                android:layout_marginTop="@dimen/margin_normal"
                 android:layout_marginLeft="@dimen/margin_large"
-                android:textSize="@dimen/primary_text_size"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:text="@string/default_address"
                 android:textColor="@color/uiv3_secondary_text_color"
-                android:text="@string/default_address" />
+                android:textSize="@dimen/primary_text_size" />
 
             <TextView
-                android:layout_width="wrap_content"
                 android:id="@+id/txtViewAll"
-                android:text="@string/viewAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:paddingTop="@dimen/margin_mini"
-                android:paddingLeft="@dimen/margin_small"
-                android:paddingRight="@dimen/margin_small"
-                android:paddingBottom="@dimen/margin_small"
                 android:layout_marginRight="@dimen/margin_small"
                 android:layout_marginTop="@dimen/margin_small"
                 android:clickable="true"
                 android:onClick="renderAddressActivity"
-                android:textSize="@dimen/primary_text_size"
+                android:paddingBottom="@dimen/margin_small"
+                android:paddingLeft="@dimen/margin_small"
+                android:paddingRight="@dimen/margin_small"
+                android:paddingTop="@dimen/margin_mini"
+                android:text="@string/viewAll"
                 android:textColor="@color/text_color_myaccount"
-                android:layout_height="wrap_content" />
+                android:textSize="@dimen/primary_text_size" />
 
 
             <ImageView
                 android:id="@+id/imgAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_small"
                 android:layout_below="@id/txtAddressLabel"
                 android:layout_marginLeft="@dimen/margin_xlarge_account"
+                android:layout_marginTop="@dimen/margin_small"
+                android:contentDescription="@string/address"
                 android:src="@drawable/address" />
 
             <TextView
                 android:id="@+id/txtAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtAddressLabel"
                 android:layout_marginLeft="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_small"
-                android:layout_below="@id/txtAddressLabel"
                 android:layout_toLeftOf="@id/txtViewAll"
                 android:layout_toRightOf="@id/imgAddress"
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/primary_text_size"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:layout_height="wrap_content" />
+                android:textSize="@dimen/primary_text_size" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/layoutEmptyAddress"
-            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:paddingBottom="@dimen/padding_small"
-            android:layout_height="wrap_content">
+            android:visibility="gone">
 
             <TextView
+                android:id="@+id/txtEmptyAddressLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtEmptyAddressLabel"
-                android:layout_marginTop="@dimen/margin_normal"
                 android:layout_marginLeft="@dimen/margin_large"
-                android:textSize="@dimen/primary_text_size"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:text="@string/address"
                 android:textColor="@color/uiv3_secondary_text_color"
-                android:text="@string/address" />
+                android:textSize="@dimen/primary_text_size" />
 
             <TextView
-                android:layout_width="wrap_content"
                 android:id="@+id/txtAddAddress"
-                android:text="@string/addAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:drawableLeft="@drawable/small_add"
-                android:paddingTop="@dimen/margin_mini"
-                android:paddingLeft="@dimen/margin_small"
-                android:paddingRight="@dimen/margin_small"
-                android:paddingBottom="@dimen/margin_small"
                 android:layout_marginRight="@dimen/margin_small"
                 android:layout_marginTop="@dimen/margin_small"
                 android:clickable="true"
+                android:drawableLeft="@drawable/small_add"
                 android:onClick="renderAddressActivity"
-                android:textSize="@dimen/primary_text_size"
+                android:paddingBottom="@dimen/margin_small"
+                android:paddingLeft="@dimen/margin_small"
+                android:paddingRight="@dimen/margin_small"
+                android:paddingTop="@dimen/margin_mini"
+                android:text="@string/addAddress"
                 android:textColor="@color/text_color_myaccount"
-                android:layout_height="wrap_content" />
+                android:textSize="@dimen/primary_text_size" />
 
             <ImageView
                 android:id="@+id/imgEmptyAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_small"
                 android:layout_below="@id/txtAddAddress"
                 android:layout_marginLeft="@dimen/margin_xlarge_account"
+                android:layout_marginTop="@dimen/margin_small"
+                android:contentDescription="@string/address"
                 android:src="@drawable/address" />
 
 
             <TextView
                 android:id="@+id/txtAddressEmptyTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtEmptyAddressLabel"
                 android:layout_marginLeft="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_small"
-                android:layout_below="@id/txtEmptyAddressLabel"
                 android:layout_toLeftOf="@id/txtAddAddress"
-                android:text="@string/myAddressEmptyText"
                 android:layout_toRightOf="@id/txtEmptyAddressLabel"
-                android:layout_width="wrap_content"
-                android:textStyle="italic"
-                android:textSize="@dimen/primary_text_size"
+                android:text="@string/myAddressEmptyText"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:layout_height="wrap_content" />
+                android:textSize="@dimen/primary_text_size"
+                android:textStyle="italic" />
 
 
         </RelativeLayout>

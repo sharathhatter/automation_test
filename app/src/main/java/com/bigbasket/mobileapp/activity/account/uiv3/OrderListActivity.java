@@ -36,6 +36,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -54,12 +55,13 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setNextScreenNavigationContext(TrackEventkeys.ORDER_HISTORY);
         mOrderType = getIntent().getStringExtra(Constants.ORDER);
         mIsInShopFromPreviousOrderMode = getIntent().getBooleanExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, false);
         setTitle(mIsInShopFromPreviousOrderMode ? getString(R.string.shopFromPreviousOrder) :
                 getString(R.string.my_order_label));
         loadOrders(currentPage);
+
     }
 
     @Override
@@ -163,7 +165,9 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
     @Override
     public void onOrderItemClicked(Order order) {
-        trackEvent(TrackingAware.MY_ORDER_ITEM_CLICKED, null);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        trackEvent(TrackingAware.MY_ORDER_ITEM_CLICKED, map);
         if (mIsInShopFromPreviousOrderMode) {
             onShopFromThisOrder(order.getOrderNumber());
         } else {
@@ -189,14 +193,12 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
         Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
-        orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
     public void onShopFromThisOrder(String orderNumber) {
         Intent intent = new Intent(this, BackButtonWithBasketButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }

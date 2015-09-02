@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -59,21 +61,23 @@ import retrofit.client.Response;
 public class ShowCartActivity extends BackButtonActivity {
 
     private ArrayList<CartItemList> cartItemLists;
-    private ArrayList<FulfillmentInfo> fullfillmentInfos;
+    private ArrayList<FulfillmentInfo> fulfillmentInfos;
     private ArrayList<AnnotationInfo> annotationInfoArrayList;
+    @Nullable
     private MenuItem basketMenuItem;
     private TextView txtBasketSubTitle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
         setTitle(getString(R.string.my_basket_header));
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getCartItems(null);
+        getCartItems(null, false);
     }
 
     @Override
@@ -85,7 +89,7 @@ public class ShowCartActivity extends BackButtonActivity {
         basketMenuItem.setVisible(false);
     }
 
-    private void renderHearView(int totalItemCount) {
+    private void renderHeaderView(int totalItemCount) {
         Toolbar toolbar = getToolbar();
         if (txtBasketSubTitle != null) toolbar.removeView(txtBasketSubTitle);
         txtBasketSubTitle = (TextView) getLayoutInflater().inflate(R.layout.basket_header_layout, toolbar, false);
@@ -94,10 +98,14 @@ public class ShowCartActivity extends BackButtonActivity {
         if (totalItemCount > 0) {
             String itemString = totalItemCount > 1 ? " Items" : " Item";
             txtBasketSubTitle.setText(totalItemCount + itemString);
-            basketMenuItem.setVisible(true);
+            if (basketMenuItem != null) {
+                basketMenuItem.setVisible(true);
+            }
         } else {
             txtBasketSubTitle.setVisibility(View.GONE);
-            basketMenuItem.setVisible(false);
+            if (basketMenuItem != null) {
+                basketMenuItem.setVisible(false);
+            }
         }
     }
 
@@ -107,7 +115,7 @@ public class ShowCartActivity extends BackButtonActivity {
             case R.id.action_empty_basket:
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
                 String numItems = preferences.getString(Constants.GET_CART, "0");
-                if (numItems != null && !numItems.equals("0")) {
+                if (!TextUtils.isEmpty(numItems) && !numItems.equals("0")) {
                     showAlertDialog(null, getString(R.string.removeAllProducts), DialogButton.YES,
                             DialogButton.NO, Constants.EMPTY_BASKET, null, getString(R.string.emptyBasket));
                 }
@@ -122,11 +130,10 @@ public class ShowCartActivity extends BackButtonActivity {
         eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-        trackEvent(TrackingAware.BASKET_VIEW_CLICKED, eventAttribs);
+        trackEvent(TrackingAware.BASKET_VIEW_SHOWN, eventAttribs, null, null, false, true);
     }
 
-    private void renderCartItemList(CartSummary cartSummary, String baseImageUrl) {
+    private void renderCartItemList(CartSummary cartSummary, String baseImageUrl, boolean isCurrentPageRequest) {
         Map<String, String> eventAttribs = new HashMap<>();
 
         FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
@@ -157,14 +164,20 @@ public class ShowCartActivity extends BackButtonActivity {
                 cartItemHeaderList.add(cartItems.get(i));
                 if (cartItems.get(i).getPromoAppliedType() == 2 ||
                         cartItems.get(i).getPromoAppliedType() == 3) {
-                    trackEvent(TrackingAware.PROMO_REDEEMED, null);
+                    HashMap<String, String> map = new HashMap<>();
+                    if (isCurrentPageRequest) {
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    } else {
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentNavigationContext());
+                    }
+                    trackEvent(TrackingAware.PROMO_REDEEMED, map);
                 }
             }
         }
-        renderHearView(numItems);
+        renderHeaderView(numItems);
         HashMap<String, String> fulfillmentInfoIdAndIconHashMap = new HashMap<>();
-        if (fullfillmentInfos != null) {
-            for (FulfillmentInfo fullfillmentInfo : fullfillmentInfos) {
+        if (fulfillmentInfos != null) {
+            for (FulfillmentInfo fullfillmentInfo : fulfillmentInfos) {
                 fulfillmentInfoIdAndIconHashMap.put(fullfillmentInfo.getFulfillmentId(), fullfillmentInfo.getIcon());
                 if (fullfillmentInfo.getDisplayName() == null || fullfillmentInfo.getIcon() == null)
                     continue;
@@ -189,6 +202,9 @@ public class ShowCartActivity extends BackButtonActivity {
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.BASKET_CHECKOUT_CLICKED, map);
                 if (getCartSummary() != null && getCartSummary().getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
                         launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, NavigationCodes.GO_TO_BASKET);
@@ -200,13 +216,14 @@ public class ShowCartActivity extends BackButtonActivity {
         });
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemHeaderList, this,
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
-                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, getNavigationCtx());
+                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, getNextScreenNavigationContext());
         cartItemListView.setDivider(null);
         cartItemListView.setDividerHeight(0);
         cartItemListView.setAdapter(activeOrderRowAdapter);
         contentLayout.addView(basketView);
 
-        logViewBasketEvent(cartSummary, eventAttribs);
+        if (!isCurrentPageRequest)
+            logViewBasketEvent(cartSummary, eventAttribs);
     }
 
     private void startCheckout(String cartTotal) {
@@ -243,7 +260,9 @@ public class ShowCartActivity extends BackButtonActivity {
 
     private void emptyCart() {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) return;
-        trackEvent(TrackingAware.BASKET_EMPTY_CLICKED, null);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        trackEvent(TrackingAware.BASKET_EMPTY_CLICKED, map);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
@@ -266,8 +285,7 @@ public class ShowCartActivity extends BackButtonActivity {
                     handler.sendEmptyMessage(cartEmptyApiResponseCallback.status,
                             cartEmptyApiResponseCallback.message, true);
                 }
-                editor.commit();
-
+                editor.apply();
             }
 
             @Override
@@ -280,7 +298,7 @@ public class ShowCartActivity extends BackButtonActivity {
     }
 
 
-    private void getCartItems(String fulfillmentIds) {
+    private void getCartItems(String fulfillmentIds, final boolean isCurrentPageRequest) {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
             handler.sendOfflineError(true);
             return;
@@ -289,45 +307,47 @@ public class ShowCartActivity extends BackButtonActivity {
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
-        bigBasketApiService.cartGet(fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
-            @Override
-            public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
-                if (isSuspended()) return;
-                hideProgressView();
-                if (cartGetApiResponseContentApiResponse.status == 0) {
-                    CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
-                    setCartSummary(cartSummary);
-                    setBasketNumItemsDisplay();
-                    editor.putString(Constants.GET_CART,
-                            String.valueOf(cartSummary.getNoOfItems()));
-                    fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
-                    annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
-                    if (cartGetApiResponseContentApiResponse.apiResponseContent.
-                            cartGetApiCartItemsContent != null
-                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
-                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
-                        cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
-                                cartGetApiCartItemsContent.cartItemLists;
-                        renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
-                                .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl);
-                    } else {
-                        showBasketEmptyMessage();
-                        editor.putString(Constants.GET_CART, "0");
+        bigBasketApiService.cartGet(isCurrentPageRequest ?
+                        getNextScreenNavigationContext() : getCurrentNavigationContext(),
+                fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
+                    @Override
+                    public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        hideProgressView();
+                        if (cartGetApiResponseContentApiResponse.status == 0) {
+                            CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
+                            setCartSummary(cartSummary);
+                            setBasketNumItemsDisplay();
+                            editor.putString(Constants.GET_CART,
+                                    String.valueOf(cartSummary.getNoOfItems()));
+                            fulfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
+                            annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
+                            if (cartGetApiResponseContentApiResponse.apiResponseContent.
+                                    cartGetApiCartItemsContent != null
+                                    && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
+                                    && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
+                                cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
+                                        cartGetApiCartItemsContent.cartItemLists;
+                                renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
+                                        .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl, isCurrentPageRequest);
+                            } else {
+                                showBasketEmptyMessage();
+                                editor.putString(Constants.GET_CART, "0");
+                            }
+                        } else {
+                            handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
+                                    cartGetApiResponseContentApiResponse.message);
+                        }
+                        editor.apply();
                     }
-                } else {
-                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
-                            cartGetApiResponseContentApiResponse.message);
-                }
-                editor.commit();
-            }
 
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                hideProgressView();
-                handler.handleRetrofitError(error, true);
-            }
-        });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        hideProgressView();
+                        handler.handleRetrofitError(error, true);
+                    }
+                });
     }
 
     private void showBasketEmptyMessage() {
@@ -359,17 +379,14 @@ public class ShowCartActivity extends BackButtonActivity {
 
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo) {
+                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo,
+                                                    @Nullable EditText editTextQty) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, product, qty, productView, cartInfo);
-        getCartItems(null);
-    }
-
-    public String getNavigationCtx() {
-        return TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET;
+                btnAddToBasket, product, qty, productView, cartInfo, editTextQty);
+        getCartItems(null, true);
     }
 
     @Override

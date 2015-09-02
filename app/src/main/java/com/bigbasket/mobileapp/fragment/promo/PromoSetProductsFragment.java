@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,6 +37,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -67,7 +69,12 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
     @Override
     public void productListOnActivityCreated() {
-        logProductListingEvent();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_PRODUCT_LISTING);
     }
 
     @Override
@@ -287,11 +294,12 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
         if (cartInfo == null) {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                    getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext());
+                    getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
+                    TrackEventkeys.SINGLE_TAB_NAME);
         } else {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
                     getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
-                    cartInfo);
+                    cartInfo, TrackEventkeys.SINGLE_TAB_NAME);
         }
 
         productRecyclerView.setAdapter(productListAdapter);
@@ -306,7 +314,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             layoutAddBundle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    trackEvent(TrackingAware.BASKET_ADD_PROMO_BUNDLE, null);
+                    trackEvent(TrackingAware.PLACE_ORDER_KNOW_MORE_LINK_CLICKED, null);
                     addBundle(products, baseImgUrl);
                 }
             });
@@ -317,6 +325,11 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             hideProgressDialog();
         } catch (IllegalArgumentException e) {
         }
+
+        HashMap<String, String> map = new HashMap<>();
+        if (!TextUtils.isEmpty(getArguments().getString(Constants.PROMO_NAME)))
+            map.put(TrackEventkeys.PROMO_NAME, getArguments().getString(Constants.PROMO_NAME));
+        trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, map);
     }
 
     private void notifyPromoProducts(ArrayList<Product> products, String baseImgUrl) {
@@ -335,11 +348,12 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView, View viewDecQty,
                                                     View viewIncQty, View btnAddToBasket, Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo) {
+                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo,
+                                                    @Nullable EditText editTextQty) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
-                viewIncQty, btnAddToBasket, product, qty, productView, cartInfo);
+                viewIncQty, btnAddToBasket, product, qty, productView, cartInfo, editTextQty);
         getPromoSummary();
     }
 

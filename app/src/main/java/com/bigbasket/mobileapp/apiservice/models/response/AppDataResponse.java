@@ -12,7 +12,7 @@ public class AppDataResponse {
     public LoginUserDetails userDetails;
 
     @SerializedName(Constants.CAPABILITIES)
-    public AnalyticsEngine capabilities;
+    public AppCapability capabilities;
 
     @SerializedName(Constants.APP_UPDATE)
     public AppUpdate appUpdate;
@@ -21,5 +21,8 @@ public class AppDataResponse {
     public ArrayList<String> topSearches;
 
     @SerializedName(Constants.HDFC_POWER_PAY_EXPIRY)
-    public int hdfcPowerPayExpiry;
+    public int hdfcPayzappExpiry;
+
+    @SerializedName(Constants.CITY_CACHE_EXPIRY)
+    public int cityCacheExpiry;
 }

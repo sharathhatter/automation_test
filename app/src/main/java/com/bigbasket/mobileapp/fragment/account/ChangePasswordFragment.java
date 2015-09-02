@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,12 @@ public class ChangePasswordFragment extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
+    }
+
     public void initiateChangePassword(View base) {
 
         oldEditText = (EditText) base.findViewById(R.id.oldPwdEditTxt);
@@ -71,9 +78,17 @@ public class ChangePasswordFragment extends BaseFragment {
 
 
     private void OnUpdateBtnClick() {
-        oldEditText.setError(null);
-        newPwdText.setError(null);
-        confirmPwdEditText.setError(null);
+        View base = getContentView();
+        if (base == null) return;
+
+        TextInputLayout textInputOldPasswd = (TextInputLayout) base.findViewById(R.id.textInputOldPasswd);
+        TextInputLayout textInputNewPasswd = (TextInputLayout) base.findViewById(R.id.textInputNewPasswd);
+        TextInputLayout textInputConfirmPasswd = (TextInputLayout) base.findViewById(R.id.textInputConfirmPasswd);
+
+        UIUtil.resetFormInputField(textInputOldPasswd);
+        UIUtil.resetFormInputField(textInputNewPasswd);
+        UIUtil.resetFormInputField(textInputConfirmPasswd);
+
         String oldPassword = oldEditText.getText().toString();
         String newPassword = newPwdText.getText().toString();
         String confPassword = confirmPwdEditText.getText().toString();
@@ -82,29 +97,29 @@ public class ChangePasswordFragment extends BaseFragment {
         if (TextUtils.isEmpty(oldPassword)) {
             cancel = true;
             focusView = oldEditText;
-            UIUtil.reportFormInputFieldError(oldEditText, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputOldPasswd, getString(R.string.error_field_required));
         }
         if (TextUtils.isEmpty(newPassword)) {
             cancel = true;
             if (focusView == null) focusView = newPwdText;
-            UIUtil.reportFormInputFieldError(newPwdText, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputNewPasswd, getString(R.string.error_field_required));
         }
         if (TextUtils.isEmpty(confPassword)) {
             cancel = true;
             if (focusView == null) focusView = confirmPwdEditText;
-            UIUtil.reportFormInputFieldError(confirmPwdEditText, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputConfirmPasswd, getString(R.string.error_field_required));
         }
 
         if (newPassword.length() < 6 && !cancel) {
             cancel = true;
             focusView = newPwdText;
-            UIUtil.reportFormInputFieldError(newPwdText, getString(R.string.psswordMst6Digit));
+            UIUtil.reportFormInputFieldError(textInputNewPasswd, getString(R.string.psswordMst6Digit));
         }
 
         if (confPassword.length() < 6 && !cancel) {
             cancel = true;
             focusView = confirmPwdEditText;
-            UIUtil.reportFormInputFieldError(confirmPwdEditText, getString(R.string.psswordMst6Digit));
+            UIUtil.reportFormInputFieldError(textInputConfirmPasswd, getString(R.string.psswordMst6Digit));
         }
 
         if (cancel) {
