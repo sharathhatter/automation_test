@@ -65,11 +65,6 @@
 # Gson
 -keep class com.google.gson.stream.** { *; }
 
-# Moengage
--dontwarn com.google.android.gms.location.**
--keep class com.moe.** { *; }
--keep class com.moengage.** { *; }
-
 # Google licensing files
 -keep public class com.google.vending.licensing.ILicensingService
 -keep public class com.android.vending.licensing.ILicensingService
@@ -163,3 +158,34 @@
 }
 
 -keep class com.paymentsdk.android.model.** { *; }
+
+
+
+#moengage
+-keep class com.moe.** { *; }
+-keep class com.moengage.** { *; }
+
+# Required for fetching advertisement id
+-dontwarn com.google.android.gms.location.**
+-dontwarn com.google.android.gms.gcm.**
+-dontwarn com.google.android.gms.iid.**
+
+-keep class com.google.android.gms.gcm.** { *; }
+#-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.android.gms.iid.** { *; }
+
+-keep class com.moe.pushlibrary.activities.** { *; }
+-keep class com.moe.pushlibrary.internal.MoEService
+-keep class com.moe.pushlibrary.GeofenceIntentService
+-keep class com.moe.pushlibrary.InstallReceiver
+-keep class com.moengage.push.MoEPushWorker
+-keep class com.moe.pushlibrary.PushGcmBroadcastReceiver
+-keep class com.moe.pushlibrary.providers.MoEProvider
+-keep class com.moengage.receiver.MoEInstanceIDListener
+-keep class com.moengage.worker.MoEGCMListenerService
+-keep class com.moe.pushlibrary.models.** { *;}
+
+-dontwarn com.moengage.receiver.*
+-dontwarn com.moengage.worker.*
+
+-keep class com.delight.**  { *; }

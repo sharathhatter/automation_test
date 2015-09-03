@@ -578,7 +578,6 @@ public class Constants {
     public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
     public static final String MOBIKWIK_PAYMENT_MW = "mw";
     public static final String MOBIKWIK_STATUS = "status";
-    public static final int MOBIKWIK_REQUEST_CODE = 9999;
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
 
 }
