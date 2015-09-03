@@ -57,7 +57,7 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
 
         final RatingBar ratingBar = (RatingBar) base.findViewById(R.id.ratingBar);
         ratingBar.setProgress(0);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && ratingBar.getProgressDrawable() instanceof LayerDrawable) {
             LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
             stars.getDrawable(2).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
             stars.getDrawable(1).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
