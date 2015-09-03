@@ -618,7 +618,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mOrderDetails = null;
         mHDFCPayzappTxnId = null;
         mPayuTxnId = null;
-        mOrdersCreated = null;
         mAddMoreLink = null;
         mAddMoreMsg = null;
         mElapsedTime = null;
