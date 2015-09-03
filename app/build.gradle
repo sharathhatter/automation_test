@@ -117,7 +117,7 @@ dependencies {
     compile project(':wibmoSDK')
     compile files('libs/AF-Android-SDK-v2.3.1.17.jar')
     compile project(':moe-addon-ubox')
-    compile 'com.moengage:moe-android-sdk:5.3.04'
+    compile 'com.moengage:moe-android-sdk:5.3.05'
     compile project(':payuSdk')
     compile project(':mobikwik_Payment_Android_SDK')
 }
