@@ -2,10 +2,10 @@ package com.bigbasket.mobileapp.fragment.order;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
@@ -17,6 +17,8 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.RecyclerViewDividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,14 +67,14 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
             }
         }
 
-        // Render the consolidated listview
-        ListView listView = new ListView(getActivity());
+        RecyclerView recyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemConsolidatedList, this,
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.ORDER_DISPLAY, true,
                 null, null, orderInvoice.getBaseImgUrl(), null);
-        listView.setAdapter(activeOrderRowAdapter);
+        recyclerView.addItemDecoration(new RecyclerViewDividerItemDecoration(getActivity()));
+        recyclerView.setAdapter(activeOrderRowAdapter);
         hideProgressView();
-        contentView.addView(listView);
+        contentView.addView(recyclerView);
     }
 
     @Override
