@@ -512,9 +512,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             } else {
                 new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
             }
-        } else if (requestCode == Constants.MOBIKWIK_REQUEST_CODE) {
-            String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-            new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
         } else {
             switch (resultCode) {
                 case NavigationCodes.VOUCHER_APPLIED:
@@ -621,7 +618,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mOrderDetails = null;
         mHDFCPayzappTxnId = null;
         mPayuTxnId = null;
-        //mOrdersCreated = null;
+        mOrdersCreated = null;
         mAddMoreLink = null;
         mAddMoreMsg = null;
         mElapsedTime = null;
