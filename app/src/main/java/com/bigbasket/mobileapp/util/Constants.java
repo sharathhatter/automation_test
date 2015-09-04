@@ -21,6 +21,7 @@ public class Constants {
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
     public static final String PRODUCT_ID = "sku";
+    public static final String SKU_TYPE = "sku_type";
     public static final String IMAGE_URL = "p_img_url";
     public static final String MRP_PRICE = "mrp";
     public static final String SELL_PRICE = "sp";

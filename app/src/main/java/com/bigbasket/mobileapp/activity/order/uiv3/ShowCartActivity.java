@@ -6,11 +6,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,26 +22,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
+import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
+import com.bigbasket.mobileapp.fragment.ShowCartFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
-import com.bigbasket.mobileapp.model.cart.CartItem;
-import com.bigbasket.mobileapp.model.cart.CartItemHeader;
 import com.bigbasket.mobileapp.model.cart.CartItemList;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
-import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
@@ -48,11 +51,11 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -63,14 +66,19 @@ public class ShowCartActivity extends BackButtonActivity {
     private ArrayList<CartItemList> cartItemLists;
     private ArrayList<FulfillmentInfo> fulfillmentInfos;
     private ArrayList<AnnotationInfo> annotationInfoArrayList;
+    private ArrayList<CartItemList> cartItemLists_exp;
+    private ArrayList<CartItemList> cartItemLists_stnd;
     @Nullable
     private MenuItem basketMenuItem;
     private TextView txtBasketSubTitle;
+    private ViewPager mViewPager;
+    private boolean showMenu = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
+        setContentView(getMainLayout());
         setTitle(getString(R.string.my_basket_header));
     }
 
@@ -80,17 +88,23 @@ public class ShowCartActivity extends BackButtonActivity {
         getCartItems(null, false);
     }
 
-    @Override
-    protected void setOptionsMenu(Menu menu) {
-        super.setOptionsMenu(menu);
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.empty_basket, menu);
-        basketMenuItem = menu.getItem(0);
-        basketMenuItem.setVisible(false);
+    private Toolbar setToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        toolbar.setTitle(getString(R.string.my_basket_header));
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        return toolbar;
     }
 
     private void renderHeaderView(int totalItemCount) {
-        Toolbar toolbar = getToolbar();
+        Toolbar toolbar = setToolbar();
         if (txtBasketSubTitle != null) toolbar.removeView(txtBasketSubTitle);
         txtBasketSubTitle = (TextView) getLayoutInflater().inflate(R.layout.basket_header_layout, toolbar, false);
         txtBasketSubTitle.setTypeface(faceRobotoRegular);
@@ -98,15 +112,33 @@ public class ShowCartActivity extends BackButtonActivity {
         if (totalItemCount > 0) {
             String itemString = totalItemCount > 1 ? " Items" : " Item";
             txtBasketSubTitle.setText(totalItemCount + itemString);
-            if (basketMenuItem != null) {
-                basketMenuItem.setVisible(true);
-            }
+            showMenu = true;
+            this.invalidateOptionsMenu();
         } else {
             txtBasketSubTitle.setVisibility(View.GONE);
+            showMenu = false;
+            this.invalidateOptionsMenu();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.empty_basket, menu);
+        basketMenuItem = menu.findItem(R.id.action_empty_basket);
+        if (!showMenu) {
             if (basketMenuItem != null) {
                 basketMenuItem.setVisible(false);
             }
+        } else {
+            if (basketMenuItem != null) {
+                basketMenuItem.setVisible(true);
+            }
         }
+        return true;
+    }
+
+    public int getMainLayout() {
+        return R.layout.uiv3_show_cart_layout;
     }
 
     @Override
@@ -125,83 +157,25 @@ public class ShowCartActivity extends BackButtonActivity {
         }
     }
 
-    private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {
-        if (cartSummary == null) return;
-        eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
-        eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
-        eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
-        trackEvent(TrackingAware.BASKET_VIEW_SHOWN, eventAttribs, null, null, false, true);
-    }
-
-    private void renderCartItemList(CartSummary cartSummary, String baseImageUrl, boolean isCurrentPageRequest) {
-        Map<String, String> eventAttribs = new HashMap<>();
-
-        FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
-        contentLayout.removeAllViews();
-        contentLayout.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
-
-        LayoutInflater inflater = getLayoutInflater();
-        View basketView = inflater.inflate(R.layout.uiv3_list_with_action, contentLayout, false);
-
-        ListView cartItemListView = (ListView) basketView.findViewById(R.id.listWithFixedFooter);
-        //View basketSummaryView = getCartSummaryView(cartSummary, cartItemListView);
-
-        List<Object> cartItemHeaderList = new ArrayList<>();
+    private void renderCheckoutLayout(CartSummary cartSummary) {
         int numItems = 0;
         for (CartItemList cartItemInfoArray : cartItemLists) {
-            CartItemHeader cartItemHeader = new CartItemHeader();
-            cartItemHeaderList.add(cartItemHeader);
-            eventAttribs.put(cartItemInfoArray.getTopCatName() + " Items", String.valueOf(cartItemInfoArray.getTopCatItems()));
-            eventAttribs.put(cartItemInfoArray.getTopCatName() + " Value", String.valueOf(cartItemInfoArray.getTopCatTotal()));
-            cartItemHeader.setTopCatName(cartItemInfoArray.getTopCatName());
-            cartItemHeader.setTopCatItems(cartItemInfoArray.getTopCatItems());
-            cartItemHeader.setTopCatTotal(cartItemInfoArray.getTopCatTotal());
-
             int cartItemsSize = cartItemInfoArray.getCartItems().size();
             numItems += cartItemsSize;
-            ArrayList<CartItem> cartItems = cartItemInfoArray.getCartItems();
-            for (int i = 0; i < cartItemsSize; i++) {
-                cartItemHeaderList.add(cartItems.get(i));
-                if (cartItems.get(i).getPromoAppliedType() == 2 ||
-                        cartItems.get(i).getPromoAppliedType() == 3) {
-                    HashMap<String, String> map = new HashMap<>();
-                    if (isCurrentPageRequest) {
-                        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
-                    } else {
-                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentNavigationContext());
-                    }
-                    trackEvent(TrackingAware.PROMO_REDEEMED, map);
-                }
-            }
         }
+
         renderHeaderView(numItems);
-        HashMap<String, String> fulfillmentInfoIdAndIconHashMap = new HashMap<>();
-        if (fulfillmentInfos != null) {
-            for (FulfillmentInfo fullfillmentInfo : fulfillmentInfos) {
-                fulfillmentInfoIdAndIconHashMap.put(fullfillmentInfo.getFulfillmentId(), fullfillmentInfo.getIcon());
-                if (fullfillmentInfo.getDisplayName() == null || fullfillmentInfo.getIcon() == null)
-                    continue;
-                cartItemHeaderList.add(fullfillmentInfo);
-            }
-        }
 
-        HashMap<String, AnnotationInfo> annotationHashMap = new HashMap<>();
-        if (annotationInfoArrayList != null) {
-            for (AnnotationInfo anAnnotationInfoArrayList : annotationInfoArrayList) {
-                annotationHashMap.put(anAnnotationInfoArrayList.getAnnotationId(), anAnnotationInfoArrayList);
-                if (anAnnotationInfoArrayList.getDescription() == null || anAnnotationInfoArrayList.getIconUrl() == null)
-                    continue;
-                cartItemHeaderList.add(anAnnotationInfoArrayList);
-            }
-        }
-
-        ViewGroup layoutCheckoutFooter = (ViewGroup) basketView.findViewById(R.id.layoutCheckoutFooter);
+        ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
+        if (!layoutCheckoutFooter.isShown()) layoutCheckoutFooter.setVisibility(View.VISIBLE);
         final String cartTotal = UIUtil.formatAsMoney(cartSummary.getTotal());
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, cartTotal,
                 getString(R.string.checkOut), true);
+
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("CLICK", "INSIDE CLICK EVENT");
                 HashMap<String, String> map = new HashMap<>();
                 map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.BASKET_CHECKOUT_CLICKED, map);
@@ -214,16 +188,6 @@ public class ShowCartActivity extends BackButtonActivity {
                 }
             }
         });
-        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemHeaderList, this,
-                faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
-                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, getNextScreenNavigationContext());
-        cartItemListView.setDivider(null);
-        cartItemListView.setDividerHeight(0);
-        cartItemListView.setAdapter(activeOrderRowAdapter);
-        contentLayout.addView(basketView);
-
-        if (!isCurrentPageRequest)
-            logViewBasketEvent(cartSummary, eventAttribs);
     }
 
     private void startCheckout(String cartTotal) {
@@ -250,7 +214,6 @@ public class ShowCartActivity extends BackButtonActivity {
             super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
         }
     }
-
 
     public final void setBasketNumItemsDisplay() {
         if (getCartSummary() == null) return;
@@ -297,7 +260,6 @@ public class ShowCartActivity extends BackButtonActivity {
         });
     }
 
-
     private void getCartItems(String fulfillmentIds, final boolean isCurrentPageRequest) {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
             handler.sendOfflineError(true);
@@ -328,9 +290,14 @@ public class ShowCartActivity extends BackButtonActivity {
                                     && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
                                 cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
                                         cartGetApiCartItemsContent.cartItemLists;
-                                renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
-                                        .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl, isCurrentPageRequest);
+
+                                addTabsToPager(cartGetApiResponseContentApiResponse
+                                        .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl, isCurrentPageRequest, cartSummary);
+
+                                renderCheckoutLayout(cartSummary);
+
                             } else {
+                                Log.d("ELSE","Cart is empty..");
                                 showBasketEmptyMessage();
                                 editor.putString(Constants.GET_CART, "0");
                             }
@@ -350,11 +317,92 @@ public class ShowCartActivity extends BackButtonActivity {
                 });
     }
 
+    private void addTabsToPager(String baseImgUrl, boolean isCurrentPageRequest, CartSummary cartSummary) {
+
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+
+        cartItemLists_exp = new ArrayList<CartItemList>();
+        cartItemLists_stnd = new ArrayList<CartItemList>();
+
+        for (int i = 0; i < cartItemLists.size(); i++) {
+            for (int j = 0; j < cartItemLists.get(i).getCartItems().size(); j++) {
+                if (cartItemLists.get(i).getCartItems().get(j).getSkuType() != null) {
+                    cartItemLists_exp.add(cartItemLists.get(i));
+                } else {
+                    cartItemLists_stnd.add(cartItemLists.get(i));
+                }
+            }
+        }
+
+        ArrayList<BBTab> bbTabs = new ArrayList<>();
+
+        HashSet hs = new HashSet();
+        hs.addAll(cartItemLists_stnd);
+        cartItemLists_stnd.clear();
+
+        cartItemLists_stnd.addAll(hs);
+
+        cartItemLists_exp.addAll(cartItemLists_stnd);
+
+        TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
+        if (cartItemLists_exp.size() > 0 && cartItemLists_stnd.size() > 0) {
+            pageTitleStrip.setVisibility(View.VISIBLE);
+            createTabFragment(getString(R.string.exp_delivery), baseImgUrl, ShowCartFragment.class, cartItemLists_exp, bbTabs, isCurrentPageRequest, cartSummary);
+            createTabFragment(getString(R.string.stnd_delivery), baseImgUrl, ShowCartFragment.class, cartItemLists_stnd, bbTabs, isCurrentPageRequest, cartSummary);
+        } else if (cartItemLists_exp.size() > 0) {
+            pageTitleStrip.setVisibility(View.GONE);
+            createTabFragment(getString(R.string.exp_delivery), baseImgUrl, ShowCartFragment.class, cartItemLists_exp, bbTabs, isCurrentPageRequest, cartSummary);
+        } else if (cartItemLists_stnd.size() > 0) {
+            pageTitleStrip.setVisibility(View.GONE);
+            createTabFragment(getString(R.string.stnd_delivery), baseImgUrl, ShowCartFragment.class, cartItemLists_stnd, bbTabs, isCurrentPageRequest, cartSummary);
+        }
+
+        TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
+                bbTabs);
+        mViewPager.setAdapter(tabPagerAdapter);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+//        if(pageTitleStrip.isShown()){
+        pageTitleStrip.setupWithViewPager(mViewPager);
+//        }
+    }
+
+    private ArrayList<BBTab> createTabFragment(String tab_name, String baseUrl, Class<ShowCartFragment> showCartFragmentClass, ArrayList<CartItemList> cartItemList, ArrayList<BBTab> bbTabs, boolean isCurrentPageRequest, CartSummary cartSummary) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(Constants.CART_ITEMS, cartItemList);
+        bundle.putString(Constants.BASE_IMG_URL, baseUrl);
+        bundle.putBoolean(Constants.CURRENT_PAGE, isCurrentPageRequest);
+        bbTabs.add(new BBTab<>(tab_name, ShowCartFragment.class, bundle));
+        return bbTabs;
+    }
+
     private void showBasketEmptyMessage() {
-        ViewGroup contentView = getContentView();
-        if (contentView == null) return;
+
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.realative_show_cart);
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
+        TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_show_cart);
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layoutCheckoutFooter);
+
+        if (relativeLayout == null) return;
         LayoutInflater inflater = getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
+        View base = inflater.inflate(R.layout.uiv3_empty_data_text, relativeLayout, false);
+
         ImageView imgEmptyPage = (ImageView) base.findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setImageResource(R.drawable.empty_basket);
         TextView txtEmptyMsg1 = (TextView) base.findViewById(R.id.txtEmptyMsg1);
@@ -369,14 +417,19 @@ public class ShowCartActivity extends BackButtonActivity {
             }
         });
 
-        Toolbar toolbar = getToolbar();
+        Toolbar toolbar = setToolbar();
         toolbar.setTitle(getString(R.string.my_basket_header));
         if (txtBasketSubTitle != null) txtBasketSubTitle.setVisibility(View.GONE);
-        if (basketMenuItem != null) basketMenuItem.setVisible(false);
-        contentView.removeAllViews();
-        contentView.addView(base);
-    }
+        showMenu = false;
+        this.invalidateOptionsMenu();
 
+        appBarLayout.removeView(pageTitleStrip);
+        coordinatorLayout.removeView(mViewPager);
+        relativeLayout.removeView(linearLayout);
+
+        frameLayout.addView(base);
+
+    }
 
     @Override
     public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,

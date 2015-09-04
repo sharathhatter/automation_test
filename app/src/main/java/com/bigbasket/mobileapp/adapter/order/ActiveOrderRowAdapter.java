@@ -8,6 +8,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -299,7 +300,6 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             txtSaving.setVisibility(View.GONE);
         }
         */
-
 
         final TextView txtInBasket = rowHolder.getTxtInBasket();
         final View imgDecBasketQty = rowHolder.getViewDecBasketQty();
