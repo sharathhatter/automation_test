@@ -295,6 +295,7 @@ public class Constants {
     public static final String ANNOTATION_INFO = "annotation_info";
     public static final String FLAT_PAGE = "flat_page";
     public static final String EVOUCHER_CODE = "evoucher_code";
+    public static final String NEW_FLOW_URL = "new_flow_url";
     public static final String REMOVE_VOUCHER = "remove_voucher";
 
     public static final String ORDER = "order";
@@ -578,9 +579,6 @@ public class Constants {
     public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
     public static final String MOBIKWIK_PAYMENT_MW = "mw";
     public static final String MOBIKWIK_STATUS = "status";
-    public static final int MOBIKWIK_REQUEST_CODE = 9999;
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
-
-    public static final String PRODUCT_LIST_IMG_TAG = "plit";
 
 }

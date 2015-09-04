@@ -3,15 +3,23 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -97,9 +105,54 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
         mOrderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
         if (mOrderDetails == null) return;
-        renderFooter(false);
         renderPaymentDetails();
+        setUpNewCheckoutFlowMsg();
+        renderFooter(false);
         trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
+    }
+
+    private void setUpNewCheckoutFlowMsg() {
+        final String newFlowUrl = getIntent().getStringExtra(Constants.NEW_FLOW_URL);
+        TextView txtNewCheckoutFlowMsg = (TextView) findViewById(R.id.txtNewCheckoutFlow);
+        txtNewCheckoutFlowMsg.setTypeface(faceRobotoRegular);
+
+        TextView lblKnowMore = (TextView) findViewById(R.id.lblKnowMore);
+        if (TextUtils.isEmpty(newFlowUrl)) {
+            lblKnowMore.setVisibility(View.GONE);
+        } else {
+            SpannableString spannableString = new SpannableString(lblKnowMore.getText());
+            spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            lblKnowMore.setText(spannableString);
+            lblKnowMore.setTypeface(faceRobotoRegular);
+            lblKnowMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    trackEvent(TrackingAware.PLACE_ORDER_KNOW_MORE_LINK_CLICKED, null);
+                    Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
+                    intent.putExtra(Constants.WEBVIEW_URL, newFlowUrl);
+                    intent.putExtra(Constants.WEBVIEW_TITLE, "");
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                }
+            });
+        }
+
+        String prefix = getString(R.string.newStr) + "\n";
+        String msg = getString(R.string.newCheckoutFlowMsg);
+
+        SpannableString spannableString = new SpannableString(prefix + msg);
+        spannableString.setSpan(new ForegroundColorSpan(getResources()
+                        .getColor(R.color.uiv3_dialog_header_text_bkg)),
+                0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new StyleSpan(Typeface.BOLD),
+                0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        txtNewCheckoutFlowMsg.setText(spannableString);
+    }
+
+    private void toggleNewCheckoutFlowMsg(boolean show) {
+        View layoutKnowMore = findViewById(R.id.layoutKnowMore);
+        layoutKnowMore.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -125,7 +178,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private void renderFooter(boolean refresh) {
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, mOrderDetails.getFormattedFinalTotal(),
-                getString(R.string.placeOrderCaps), false);
+                getString(isCreditCardPayment() ? R.string.placeOrderAndPayCaps : R.string.placeOrderCaps),
+                false);
         if (!refresh) {
             layoutCheckoutFooter.setOnClickListener(new DuplicateClickAware(mElapsedTime) {
                 @Override
@@ -265,6 +319,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             mSelectedPaymentMethod = paymentType.getValue();
+                            toggleNewCheckoutFlowMsg(isCreditCardPayment());
+                            renderFooter(true);
                         }
                     }
                 });
@@ -456,9 +512,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             } else {
                 new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
             }
-        } else if (requestCode == Constants.MOBIKWIK_REQUEST_CODE) {
-            String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-            new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
         } else {
             switch (resultCode) {
                 case NavigationCodes.VOUCHER_APPLIED:
@@ -524,7 +577,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             mOrdersCreated = orders;
             mAddMoreLink = addMoreLink;
             mAddMoreMsg = addMoreMsg;
-            getPaymentParams();
+            openPaymentGateway();
         } else {
             showOrderThankyou(orders, addMoreLink, addMoreMsg);
         }
@@ -565,12 +618,45 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mOrderDetails = null;
         mHDFCPayzappTxnId = null;
         mPayuTxnId = null;
-        mOrdersCreated = null;
         mAddMoreLink = null;
         mAddMoreMsg = null;
         mElapsedTime = null;
 
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
+    }
+
+    private void openPaymentGateway() {
+        final View paymentInProgressView = findViewById(R.id.layoutPaymentInProgress);
+        paymentInProgressView.setVisibility(View.VISIBLE);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
+        final int totalDuration = 5000;
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setMax(totalDuration);
+        progressBar.setProgress(0);
+
+        ((TextView) findViewById(R.id.lblOrderPlaced)).setTypeface(faceRobotoRegular);
+
+        new CountDownTimer(totalDuration, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                progressBar.setProgress(totalDuration - (int) millisUntilFinished);
+            }
+
+            @Override
+            public void onFinish() {
+                progressBar.setProgress(totalDuration - 100);
+                getPaymentParams();
+            }
+        }.start();
+    }
+
+    private void getPaymentParams() {
+        new PaymentInitiator<>(this, mPotentialOrderId, mSelectedPaymentMethod)
+                .initiate();
     }
 
     @Override
@@ -583,11 +669,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     public void initializePayu(HashMap<String, String> paymentParams) {
         mPayuTxnId = paymentParams.get(PayU.TXNID);
         PayuInitializer.initiate(paymentParams, this);
-    }
-
-    private void getPaymentParams() {
-        new PaymentInitiator<>(this, mPotentialOrderId, mSelectedPaymentMethod)
-                .initiate();
     }
 
     private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {

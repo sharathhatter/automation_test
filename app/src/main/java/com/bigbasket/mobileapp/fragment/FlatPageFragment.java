@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
@@ -72,7 +71,7 @@ public class FlatPageFragment extends BaseFragment {
                 }
             }
         }));
-        bbWebView.setWebViewClient(new WebViewClient() {
+        bbWebView.setWebViewClient(new BBWebView.BBWebViewClient(getActivity()) {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);

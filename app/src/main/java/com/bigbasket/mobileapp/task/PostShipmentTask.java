@@ -84,6 +84,7 @@ public class PostShipmentTask<T> {
                 postShipmentResponseContent.creditDetails);
         intent.putExtra(Constants.ORDER_DETAILS, postShipmentResponseContent.orderDetails);
         intent.putExtra(Constants.EVOUCHER_CODE, postShipmentResponseContent.evoucherCode);
+        intent.putExtra(Constants.NEW_FLOW_URL, postShipmentResponseContent.newFlowUrl);
         intent.putParcelableArrayListExtra(Constants.VOUCHERS,
                 postShipmentResponseContent.activeVouchersArrayList);
         ((ActivityAware) ctx).getCurrentActivity().setNextScreenNavigationContext(nc);

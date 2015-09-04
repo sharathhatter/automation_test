@@ -288,7 +288,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         }
     }
 
-    private void setNc(boolean isBannerClicked ) {
+    private void setNc(boolean isBannerClicked) {
         StringBuilder ncBuilder = new StringBuilder();
         if (screenName != null) {
             switch (screenName) {
@@ -310,7 +310,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         } else {
             ncBuilder.append(TrackEventkeys.SCREEN);
         }
-        if(isBannerClicked)
+        if (isBannerClicked)
             ncBuilder.append(".").append(Section.BANNER);
 
         if (section != null) {

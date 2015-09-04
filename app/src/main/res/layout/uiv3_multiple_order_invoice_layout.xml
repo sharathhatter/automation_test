@@ -19,8 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/thank_you_page_top_margin"
             android:layout_marginBottom="@dimen/thank_you_page_top_margin"
+            android:layout_marginTop="@dimen/thank_you_page_top_margin"
             android:contentDescription="@string/app_name" />
 
         <TextView
@@ -67,26 +67,23 @@
             android:padding="@dimen/padding_normal">
 
             <TextView
-                android:id="@+id/lblKnowMore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="@dimen/margin_large"
-                android:text="@string/know_more"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/secondary_text_size" />
-
-            <TextView
                 android:id="@+id/txtAddMoreProducts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_gravity="center_horizontal"
-                android:layout_toLeftOf="@id/lblKnowMore"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/primary_text_size" />
+
+            <TextView
+                android:id="@+id/lblKnowMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtAddMoreProducts"
+                android:layout_marginTop="@dimen/margin_mini"
+                android:text="@string/know_more"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/secondary_text_size" />
         </RelativeLayout>
 
         <Button

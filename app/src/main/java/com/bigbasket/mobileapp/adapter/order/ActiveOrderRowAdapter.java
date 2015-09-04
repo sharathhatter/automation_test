@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.adapter.order;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
+public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_CART_ITEM = 0;
     private static final int VIEW_TYPE_CART_HEADER = 1;
@@ -83,8 +85,55 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     }
 
     @Override
-    public int getViewTypeCount() {
-        return 4;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            case VIEW_TYPE_CART_ITEM:
+                View row = inflater.inflate(R.layout.uiv3_cart_item_row, parent, false);
+                return new RowHolder(row);
+            case VIEW_TYPE_FULFILLMENT_INFO:
+                row = inflater.inflate(R.layout.fulfillment_info, parent, false);
+                return new FulfillmentInfoViewHolder(row);
+            case VIEW_TYPE_CART_ANNOTATION:
+                row = inflater.inflate(R.layout.fulfillment_info, parent, false);
+                return new FulfillmentInfoViewHolder(row);
+            default:
+                row = inflater.inflate(R.layout.uiv3_category_row, parent, false);
+                return new HeaderTitleHolder(row);
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        int viewType = getItemViewType(position);
+        final Object obj = orderList.get(position);
+
+        if (viewType == VIEW_TYPE_CART_ITEM) {
+            renderBasicView((RowHolder) holder, (CartItem) obj);
+
+            CartItem cartItem = (CartItem) obj;
+            switch (cartItem.getPromoAppliedType()) {
+                case CartItem.REGULAR_PRICE_AND_NO_PROMO:
+                    getRegularPriceAndNoPromoView((RowHolder) holder);
+                    break;
+                case CartItem.REGULAR_PRICE_AND_PROMO_NOT_APPLIED:
+                    getRegularPriceAndPromoNotAppliedView((RowHolder) holder, cartItem);
+                    break;
+                case CartItem.PROMO_APPLIED_AND_PROMO_PRICING:
+                    getPromoAppliedAndPromoPricingView((RowHolder) holder, cartItem);
+                    break;
+                case CartItem.PROMO_APPLIED_AND_MIXED_PRICING:
+                    getPromoAppliedAndMixedPromoPricingView((RowHolder) holder, cartItem);
+                    break;
+
+            }
+        } else if (viewType == VIEW_TYPE_FULFILLMENT_INFO) {
+            showFulfillmentInfo(obj, (FulfillmentInfoViewHolder) holder);
+        } else if (viewType == VIEW_TYPE_CART_ANNOTATION) {
+            showAnnotationInfo(obj, (FulfillmentInfoViewHolder) holder);
+        } else {
+            renderHeaderView((HeaderTitleHolder) holder, (CartItemHeader) obj);
+        }
     }
 
     @Override
@@ -101,20 +150,14 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     }
 
     @Override
-    public int getCount() {
-        return orderList.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return orderList.get(position);
-    }
-
-    @Override
     public long getItemId(int position) {
         return position;
     }
 
+    @Override
+    public int getItemCount() {
+        return orderList.size();
+    }
 
     private void renderHeaderView(HeaderTitleHolder headerTitleHolder, CartItemHeader cartItemList) {
 
@@ -151,71 +194,16 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public View getView(int position, View convertView, ViewGroup parent) {
-        final Object obj = orderList.get(position);
-
-        int viewType = getItemViewType(position);
-        View row = convertView;
-        RowHolder rowHolder;
-        if (viewType == VIEW_TYPE_CART_ITEM) {
-            if (row == null || row.getTag() == null) {
-                row = inflater.inflate(R.layout.uiv3_cart_item_row, parent, false);
-                rowHolder = new RowHolder(row);
-                row.setTag(rowHolder);
-            } else {
-                rowHolder = (RowHolder) row.getTag();
-            }
-            renderBasicView(rowHolder, (CartItem) obj);
-
-            CartItem cartItem = (CartItem) obj;
-            switch (cartItem.getPromoAppliedType()) {
-                case CartItem.REGULAR_PRICE_AND_NO_PROMO:
-                    getRegularPriceAndNoPromoView(rowHolder);
-                    break;
-                case CartItem.REGULAR_PRICE_AND_PROMO_NOT_APPLIED:
-                    getRegularPriceAndPromoNotAppliedView(rowHolder, cartItem);
-                    break;
-                case CartItem.PROMO_APPLIED_AND_PROMO_PRICING:
-                    getPromoAppliedAndPromoPricingView(rowHolder, cartItem);
-                    break;
-                case CartItem.PROMO_APPLIED_AND_MIXED_PRICING:
-                    getPromoAppliedAndMixedPromoPricingView(rowHolder, cartItem);
-                    break;
-
-            }
-        } else if (viewType == VIEW_TYPE_FULFILLMENT_INFO) {
-            return getFulfillmentInfo(obj);
-        } else if (viewType == VIEW_TYPE_CART_ANNOTATION) {
-            return showAnnotationInfo(obj);
-        } else {
-            HeaderTitleHolder headerTitleHolder;
-            row = inflater.inflate(R.layout.uiv3_category_row, parent, false);
-            headerTitleHolder = new HeaderTitleHolder(row);
-            renderHeaderView(headerTitleHolder, (CartItemHeader) obj);
-        }
-        return row;
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return getItemViewType(position) != VIEW_TYPE_CART_HEADER;
-    }
-
-    private View getFulfillmentInfo(Object obj) {
+    private void showFulfillmentInfo(Object obj, FulfillmentInfoViewHolder holder) {
         ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo<>((FulfillmentInfo) obj,
-                ((ActivityAware) context).getCurrentActivity(), faceRobotoRegular);
-        return showFulfillmentInfo.showFulfillmentInfo(true, true);
+                ((ActivityAware) context).getCurrentActivity(), faceRobotoRegular, holder);
+        showFulfillmentInfo.showFulfillmentInfo(true, true);
     }
 
-    private View showAnnotationInfo(Object obj) {
+    private void showAnnotationInfo(Object obj, FulfillmentInfoViewHolder holder) {
         ShowAnnotationInfo showAnnotationInfo = new ShowAnnotationInfo<>((AnnotationInfo) obj,
-                ((ActivityAware) context).getCurrentActivity());
-        View view = showAnnotationInfo.showAnnotationInfo();
-        if (view != null)
-            return view;
-        return null;
+                ((ActivityAware) context).getCurrentActivity(), holder);
+        showAnnotationInfo.showAnnotationInfo();
     }
 
     private void renderBasicView(RowHolder rowHolder, final CartItem cartItem) {
@@ -539,7 +527,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         }
     }
 
-    private class RowHolder {
+    private class RowHolder extends RecyclerView.ViewHolder {
         private ImageView imgProduct;
         private TextView txtProductDesc;
         private TextView txtSalePrice;
@@ -555,29 +543,28 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         private View viewIncBasketQty;
         private ImageView imgRemove;
         private ImageView imgLiquorIcon;
-        private View base;
         private TextView txtExpressAvailable;
         private TextView txtPackDesc;
 
         public RowHolder(View base) {
-            this.base = base;
+            super(base);
         }
 
         public ImageView getImgProduct() {
             if (imgProduct == null)
-                imgProduct = (ImageView) base.findViewById(R.id.imgProduct);
+                imgProduct = (ImageView) itemView.findViewById(R.id.imgProduct);
             return imgProduct;
         }
 
         public ImageView getImgLiquorIcon() {
             if (imgLiquorIcon == null)
-                imgLiquorIcon = (ImageView) base.findViewById(R.id.imgLiquorIcon);
+                imgLiquorIcon = (ImageView) itemView.findViewById(R.id.imgLiquorIcon);
             return imgLiquorIcon;
         }
 
         public TextView getTxtProductDesc() {
             if (txtProductDesc == null) {
-                txtProductDesc = (TextView) base.findViewById(R.id.txtProductDesc);
+                txtProductDesc = (TextView) itemView.findViewById(R.id.txtProductDesc);
                 txtProductDesc.setTypeface(faceRobotoRegular);
             }
             return txtProductDesc;
@@ -586,7 +573,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public TextView getTxtProductBrand() {
             if (txtProductBrand == null) {
-                txtProductBrand = (TextView) base.findViewById(R.id.txtProductBrand);
+                txtProductBrand = (TextView) itemView.findViewById(R.id.txtProductBrand);
                 txtProductBrand.setTypeface(faceRobotoRegular);
             }
             return txtProductBrand;
@@ -594,14 +581,14 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public TextView getTxtExpressAvailable() {
             if (txtExpressAvailable == null)
-                txtExpressAvailable = (TextView) base.findViewById(R.id.txtExpressAvailable);
+                txtExpressAvailable = (TextView) itemView.findViewById(R.id.txtExpressAvailable);
             txtExpressAvailable.setTypeface(faceRobotoRegular);
             return txtExpressAvailable;
         }
 
         public TextView getTxtSalePrice() {
             if (txtSalePrice == null) {
-                txtSalePrice = (TextView) base.findViewById(R.id.txtSalePrice);
+                txtSalePrice = (TextView) itemView.findViewById(R.id.txtSalePrice);
                 txtSalePrice.setTypeface(faceRobotoRegular);
             }
             return txtSalePrice;
@@ -609,7 +596,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public TextView getTxtInBasket() {
             if (txtInBasket == null) {
-                txtInBasket = (TextView) base.findViewById(R.id.txtInBasket);
+                txtInBasket = (TextView) itemView.findViewById(R.id.txtInBasket);
                 txtInBasket.setTypeface(faceRobotoRegular);
             }
             return txtInBasket;
@@ -617,13 +604,13 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public ImageView getImgRegularImg() {
             if (imgRegularImg == null)
-                imgRegularImg = (ImageView) base.findViewById(R.id.imgRegularImg);
+                imgRegularImg = (ImageView) itemView.findViewById(R.id.imgRegularImg);
             return imgRegularImg;
         }
 
         public TextView getTxtRegularPriceAndQty() {
             if (txtRegularPriceAndQty == null) {
-                txtRegularPriceAndQty = (TextView) base.findViewById(R.id.txtRegularPriceAndQty);
+                txtRegularPriceAndQty = (TextView) itemView.findViewById(R.id.txtRegularPriceAndQty);
                 txtRegularPriceAndQty.setTypeface(faceRobotoRegular);
             }
             return txtRegularPriceAndQty;
@@ -631,7 +618,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public TextView getLblRegularPrice() {
             if (lblRegularPrice == null) {
-                lblRegularPrice = (TextView) base.findViewById(R.id.lblRegularPrice);
+                lblRegularPrice = (TextView) itemView.findViewById(R.id.lblRegularPrice);
                 lblRegularPrice.setTypeface(faceRobotoRegular);
             }
             return lblRegularPrice;
@@ -639,13 +626,13 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public ImageView getImgPromoUsed() {
             if (imgPromoUsed == null)
-                imgPromoUsed = (ImageView) base.findViewById(R.id.imgPromoUsed);
+                imgPromoUsed = (ImageView) itemView.findViewById(R.id.imgPromoUsed);
             return imgPromoUsed;
         }
 
         public TextView getTxtPromoPriceAndQty() {
             if (txtPromoPriceAndQty == null) {
-                txtPromoPriceAndQty = (TextView) base.findViewById(R.id.txtPromoPriceAndQty);
+                txtPromoPriceAndQty = (TextView) itemView.findViewById(R.id.txtPromoPriceAndQty);
                 txtPromoPriceAndQty.setTypeface(faceRobotoRegular);
             }
             return txtPromoPriceAndQty;
@@ -653,7 +640,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public TextView getTxtPromoNameDesc() {
             if (txtPromoNameDesc == null) {
-                txtPromoNameDesc = (TextView) base.findViewById(R.id.txtPromoNameDesc);
+                txtPromoNameDesc = (TextView) itemView.findViewById(R.id.txtPromoNameDesc);
                 txtPromoNameDesc.setTypeface(faceRobotoRegular);
             }
             return txtPromoNameDesc;
@@ -661,7 +648,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public TextView getTxtPackDesc() {
             if (txtPackDesc == null) {
-                txtPackDesc = (TextView) base.findViewById(R.id.txtPackDesc);
+                txtPackDesc = (TextView) itemView.findViewById(R.id.txtPackDesc);
                 txtPackDesc.setTypeface(faceRobotoRegular);
             }
             return txtPackDesc;
@@ -669,36 +656,35 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public ImageView getImgRemove() {
             if (imgRemove == null)
-                imgRemove = (ImageView) base.findViewById(R.id.imgRemove);
+                imgRemove = (ImageView) itemView.findViewById(R.id.imgRemove);
             return imgRemove;
         }
 
         public View getViewIncBasketQty() {
             if (viewIncBasketQty == null)
-                viewIncBasketQty = base.findViewById(R.id.viewIncBasketQty);
+                viewIncBasketQty = itemView.findViewById(R.id.viewIncBasketQty);
             return viewIncBasketQty;
         }
 
         public View getViewDecBasketQty() {
             if (viewDecBasketQty == null)
-                viewDecBasketQty = base.findViewById(R.id.viewDecBasketQty);
+                viewDecBasketQty = itemView.findViewById(R.id.viewDecBasketQty);
             return viewDecBasketQty;
         }
     }
 
-    private class HeaderTitleHolder {
+    private class HeaderTitleHolder extends RecyclerView.ViewHolder {
         private TextView txtTopCategory;
         private TextView topCatTotalItems;
         private TextView topCatTotal;
-        private View base;
 
         public HeaderTitleHolder(View base) {
-            this.base = base;
+            super(base);
         }
 
         public TextView getTxtTopCategory() {
             if (txtTopCategory == null) {
-                txtTopCategory = (TextView) base.findViewById(R.id.txtTopCategory);
+                txtTopCategory = (TextView) itemView.findViewById(R.id.txtTopCategory);
                 txtTopCategory.setTypeface(faceRobotoRegular);
             }
             return txtTopCategory;
@@ -706,7 +692,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public TextView getTopCatTotalItems() {
             if (topCatTotalItems == null) {
-                topCatTotalItems = (TextView) base.findViewById(R.id.topCatTotalItems);
+                topCatTotalItems = (TextView) itemView.findViewById(R.id.topCatTotalItems);
                 topCatTotalItems.setTypeface(faceRobotoRegular);
             }
             return topCatTotalItems;
@@ -714,13 +700,59 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         public TextView getTopCatTotal() {
             if (topCatTotal == null) {
-                topCatTotal = (TextView) base.findViewById(R.id.topCatTotal);
+                topCatTotal = (TextView) itemView.findViewById(R.id.topCatTotal);
                 topCatTotal.setTypeface(faceRobotoRegular);
             }
             return topCatTotal;
         }
     }
 
+    public static class FulfillmentInfoViewHolder extends RecyclerView.ViewHolder {
+        private RelativeLayout layoutInfoMsg;
+        private ImageView imgLiquorIcon;
+        private TextView txtFulfilledBy;
+        private TextView txtTC1;
+        private TextView txtTC2;
+
+        public FulfillmentInfoViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        public RelativeLayout getLayoutInfoMsg() {
+            if (layoutInfoMsg == null) {
+                layoutInfoMsg = (RelativeLayout) itemView.findViewById(R.id.layoutInfoMsg);
+            }
+            return layoutInfoMsg;
+        }
+
+        public ImageView getImgLiquorIcon() {
+            if (imgLiquorIcon == null) {
+                imgLiquorIcon = (ImageView) itemView.findViewById(R.id.imgLiquorIcon);
+            }
+            return imgLiquorIcon;
+        }
+
+        public TextView getTxtFulfilledBy() {
+            if (txtFulfilledBy == null) {
+                txtFulfilledBy = (TextView) itemView.findViewById(R.id.txtFulfilledBy);
+            }
+            return txtFulfilledBy;
+        }
+
+        public TextView getTxtTC1() {
+            if (txtTC1 == null) {
+                txtTC1 = (TextView) itemView.findViewById(R.id.txtTC1);
+            }
+            return txtTC1;
+        }
+
+        public TextView getTxtTC2() {
+            if (txtTC2 == null) {
+                txtTC2 = (TextView) itemView.findViewById(R.id.txtTC2);
+            }
+            return txtTC2;
+        }
+    }
 
     private class PromoListener implements View.OnClickListener {
         private int promoId;

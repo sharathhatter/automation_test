@@ -1,15 +1,12 @@
 package com.bigbasket.mobileapp.view;
 
-import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -19,18 +16,18 @@ public class ShowAnnotationInfo<T> {
 
     private T ctx;
     private AnnotationInfo annotationInfo;
+    private ActiveOrderRowAdapter.FulfillmentInfoViewHolder holder;
 
-    public ShowAnnotationInfo(AnnotationInfo annotationInfo, T ctx) {
+    public ShowAnnotationInfo(AnnotationInfo annotationInfo, T ctx, ActiveOrderRowAdapter.FulfillmentInfoViewHolder holder) {
         this.ctx = ctx;
         this.annotationInfo = annotationInfo;
+        this.holder = holder;
     }
 
 
-    public View showAnnotationInfo() {
-        LayoutInflater inflater = (LayoutInflater) ((ActivityAware) ctx).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.fulfillment_info, null);
+    public void showAnnotationInfo() {
 
-        ImageView imgAnnotationIcon = (ImageView) base.findViewById(R.id.imgLiquorIcon);
+        ImageView imgAnnotationIcon = holder.getImgLiquorIcon();
         if (annotationInfo.getIconUrl() != null) {
             imgAnnotationIcon.setVisibility(View.VISIBLE);
             UIUtil.displayAsyncImage(imgAnnotationIcon, annotationInfo.getIconUrl());
@@ -38,7 +35,7 @@ public class ShowAnnotationInfo<T> {
             imgAnnotationIcon.setVisibility(View.GONE);
         }
 
-        final TextView txtFulfilledBy = (TextView) base.findViewById(R.id.txtFulfilledBy);
+        final TextView txtFulfilledBy = holder.getTxtFulfilledBy();
 
         if (annotationInfo.getMsgInfo().getParams() != null && annotationInfo.getMsgInfo().getMessageStr() != null) {
             MessageFormatUtil<T> messageFormatUtil = new MessageFormatUtil<>();
@@ -52,6 +49,5 @@ public class ShowAnnotationInfo<T> {
                 txtFulfilledBy.setSelected(true);
             }
         }
-        return base;
     }
 }

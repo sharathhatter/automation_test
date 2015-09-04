@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
+import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -56,6 +57,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -158,6 +160,16 @@ public class ShowCartActivity extends BackButtonActivity {
     }
 
     private void renderCheckoutLayout(CartSummary cartSummary) {
+//    private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {
+//        if (cartSummary == null) return;
+//        eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
+//        eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
+//        eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
+//        trackEvent(TrackingAware.BASKET_VIEW_SHOWN, eventAttribs, null, null, false, true);
+//    }
+
+//    private void renderCartItemList(CartSummary cartSummary, String baseImageUrl, boolean isCurrentPageRequest) {
+
         int numItems = 0;
         for (CartItemList cartItemInfoArray : cartItemLists) {
             int cartItemsSize = cartItemInfoArray.getCartItems().size();
@@ -188,6 +200,14 @@ public class ShowCartActivity extends BackButtonActivity {
                 }
             }
         });
+//        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemHeaderList, this,
+//                faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
+//                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, getNextScreenNavigationContext());
+//        cartItemRecyclerView.setAdapter(activeOrderRowAdapter);
+//        contentLayout.addView(basketView);
+//
+//        if (!isCurrentPageRequest)
+//            logViewBasketEvent(cartSummary, eventAttribs);
     }
 
     private void startCheckout(String cartTotal) {
