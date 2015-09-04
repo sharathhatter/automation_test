@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -141,9 +141,10 @@ public class ShowCartActivity extends BackButtonActivity {
         contentLayout.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
 
         LayoutInflater inflater = getLayoutInflater();
-        View basketView = inflater.inflate(R.layout.uiv3_list_with_action, contentLayout, false);
+        View basketView = inflater.inflate(R.layout.uiv3_recycler_view_with_action, contentLayout, false);
 
-        ListView cartItemListView = (ListView) basketView.findViewById(R.id.listWithFixedFooter);
+        RecyclerView cartItemRecyclerView = (RecyclerView) basketView.findViewById(R.id.recyclerView);
+        UIUtil.configureRecyclerView(cartItemRecyclerView, this, 1, 1);
         //View basketSummaryView = getCartSummaryView(cartSummary, cartItemListView);
 
         List<Object> cartItemHeaderList = new ArrayList<>();
@@ -217,9 +218,7 @@ public class ShowCartActivity extends BackButtonActivity {
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemHeaderList, this,
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, getNextScreenNavigationContext());
-        cartItemListView.setDivider(null);
-        cartItemListView.setDividerHeight(0);
-        cartItemListView.setAdapter(activeOrderRowAdapter);
+        cartItemRecyclerView.setAdapter(activeOrderRowAdapter);
         contentLayout.addView(basketView);
 
         if (!isCurrentPageRequest)

@@ -168,7 +168,8 @@ public interface TrackingAware {
     //thank you
     String THANK_YOU_PAGE_SHOWN = "Checkout.Thank You Page Shown";
     String BASKET_ADD_PROMO_BUNDLE = "Promo.Add Bundle";
-    String CHECKOUT_KNOW_MORE_LINK_CLICKED = "Checkout.Know More Link Clicked";
+    String CHECKOUT_KNOW_MORE_LINK_CLICKED = "Order Thank You.Know More Link Clicked";
+    String PLACE_ORDER_KNOW_MORE_LINK_CLICKED = "Place Order.Know More Link Clicked";
 
     //eVoucher
     String EVOUCHER_SHOWN = "EVocuher.Shown";

@@ -548,11 +548,11 @@
         <!-- MANDATORY FIELD: THE NOTIFICATION ICON WHICH WILL BE USED TO SET TO NOTIFICATIONS POSTED -->
         <meta-data
             android:name="NOTIFICATION_ICON"
-            android:value="notification_new" />
+            android:value="notification_icon_large_bbw" />
 
         <meta-data android:name="NOTIFICATION_LARGE_ICON"
-            android:value="@drawable/notification_icon" />
-
+            android:value="notification_icon" />
+        
         <!-- moEngage UBox -->
         <activity
             android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
