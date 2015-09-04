@@ -1,12 +1,10 @@
 package com.bigbasket.mobileapp.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -14,6 +12,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.util.Constants;
@@ -27,22 +26,23 @@ public class ShowFulfillmentInfo<T> {
     private FulfillmentInfo fulfillmentInfo;
     private T ctx;
     private Typeface faceRobotoSlabNrml;
+    private ActiveOrderRowAdapter.FulfillmentInfoViewHolder holder;
 
     public ShowFulfillmentInfo(FulfillmentInfo fulfillmentInfo, T ctx,
-                               Typeface faceRobotoSlabNrml) {
+                               Typeface faceRobotoSlabNrml,
+                               ActiveOrderRowAdapter.FulfillmentInfoViewHolder holder) {
         this.fulfillmentInfo = fulfillmentInfo;
         this.ctx = ctx;
         this.faceRobotoSlabNrml = faceRobotoSlabNrml;
+        this.holder = holder;
     }
 
-    public View showFulfillmentInfo(boolean showImgLiquorIcon, boolean showTC) {
-        LayoutInflater inflater = (LayoutInflater) ((ActivityAware) ctx).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.fulfillment_info, null);
-        RelativeLayout layoutInfoMsg = (RelativeLayout) base.findViewById(R.id.layoutInfoMsg);
+    public void showFulfillmentInfo(boolean showImgLiquorIcon, boolean showTC) {
+        RelativeLayout layoutInfoMsg = holder.getLayoutInfoMsg();
         layoutInfoMsg.setBackgroundResource(R.drawable.background);
 
         if (showImgLiquorIcon) {
-            ImageView imgLiquorIcon = (ImageView) base.findViewById(R.id.imgLiquorIcon);
+            ImageView imgLiquorIcon = holder.getImgLiquorIcon();
             if (fulfillmentInfo.getIcon() != null && !fulfillmentInfo.getIcon().equalsIgnoreCase("null")) {
                 imgLiquorIcon.setVisibility(View.VISIBLE);
                 UIUtil.displayAsyncImage(imgLiquorIcon, fulfillmentInfo.getIcon());
@@ -51,7 +51,7 @@ public class ShowFulfillmentInfo<T> {
             }
         }
 
-        final TextView txtFulfilledBy = (TextView) base.findViewById(R.id.txtFulfilledBy);
+        final TextView txtFulfilledBy = holder.getTxtFulfilledBy();
         if (!TextUtils.isEmpty(fulfillmentInfo.getFulfilledBy()) && !fulfillmentInfo.getFulfilledBy().equalsIgnoreCase("null")) {
             if (showImgLiquorIcon) { // show basket page
                 String prefix = " - Indicates " + fulfillmentInfo.getDisplayName() + " products fulfilled by ";
@@ -90,7 +90,7 @@ public class ShowFulfillmentInfo<T> {
 
         if (showTC) {
             //TextView txtTCLabel = (TextView) base.findViewById(R.id.txtTCLabel);
-            TextView txtTC1 = (TextView) base.findViewById(R.id.txtTC1);
+            TextView txtTC1 = holder.getTxtTC1();
             if (fulfillmentInfo.getTc1() != null && fulfillmentInfo.getTc1().length() > 0) {
                 txtTC1.setVisibility(View.VISIBLE);
                 txtTC1.setText(fulfillmentInfo.getTc1());
@@ -98,7 +98,7 @@ public class ShowFulfillmentInfo<T> {
                 txtTC1.setVisibility(View.GONE);
             }
 
-            TextView txtTC2 = (TextView) base.findViewById(R.id.txtTC2);
+            TextView txtTC2 = holder.getTxtTC2();
             if (fulfillmentInfo.getTc2() != null && fulfillmentInfo.getTc2().length() > 0) {
                 txtTC2.setVisibility(View.VISIBLE);
                 txtTC2.setText(fulfillmentInfo.getTc2());
@@ -106,11 +106,8 @@ public class ShowFulfillmentInfo<T> {
                 txtTC2.setVisibility(View.GONE);
             }
 
-//            if (txtTC1.getVisibility() == View.VISIBLE || txtTC2.getVisibility() == View.VISIBLE)
-//                txtTCLabel.setVisibility(View.VISIBLE);
         }
 
-        return base;
     }
 
     public void showFulfillmentInfoPage(String fulfillmentInfoPageUrl) {

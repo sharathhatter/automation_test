@@ -103,8 +103,10 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         for (final Order order : orders) {
             View base = inflater.inflate(R.layout.uiv3_order_thankyou_row, layoutOrderNumber, false);
             TextView txtOrderNum = (TextView) base.findViewById(R.id.txtOrderNum);
-            SpannableString orderNumSpannable = new SpannableString(getString(R.string.ordernumber) + " " + order.getOrderNumber());
-            orderNumSpannable.setSpan(new UnderlineSpan(), 0, orderNumSpannable.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            String prefix = getString(R.string.ordernumber) + "\n";
+            SpannableString orderNumSpannable = new SpannableString(prefix + order.getOrderNumber());
+            orderNumSpannable.setSpan(new UnderlineSpan(), prefix.length(), orderNumSpannable.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtOrderNum.setText(orderNumSpannable);
             txtOrderNum.setTypeface(faceRobotoRegular);
             txtOrderNum.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +130,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     }
                     display += time;
                 }
-                txtSlotTime.setText(getString(R.string.delivery_time) + " " + display);
+                txtSlotTime.setText(getString(R.string.delivery_time) + "\n" + display);
                 txtSlotTime.setTypeface(faceRobotoRegular);
             } else {
                 txtSlotTime.setVisibility(View.GONE);
