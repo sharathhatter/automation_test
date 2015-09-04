@@ -34,5 +34,5 @@
         android:layout_margin="@dimen/margin_large"
         android:background="@color/white"
         android:padding="@dimen/padding_normal"
-        android:hint="@string/areaInputHint" />
+        android:hint="@string/typeYourLocality" />
 </RelativeLayout>

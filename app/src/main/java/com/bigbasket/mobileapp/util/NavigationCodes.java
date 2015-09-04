@@ -19,6 +19,7 @@ public interface NavigationCodes {
     int GO_TO_BASKET = 1356;
     int BASKET_CHANGED = 1357;
     int FUND_WALLET = 1358;
+    int LOCATION_CHOSEN = 1359;
 
     int ADD_TO_SHOPPINGLIST_OK = 1221;
     int DELETE_FROM_SHOPPING_LIST_OK = 200;

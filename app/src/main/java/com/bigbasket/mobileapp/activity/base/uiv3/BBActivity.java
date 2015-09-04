@@ -47,6 +47,7 @@ import com.bigbasket.mobileapp.fragment.FlatPageFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountView;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
+import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;

@@ -38,7 +38,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.HomeActivity;
 import com.bigbasket.mobileapp.activity.SplashActivity;
 import com.bigbasket.mobileapp.activity.TutorialActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
@@ -870,7 +870,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     private void showChangeCity() {
-        Intent intent = new Intent(this, ChangeCityActivity.class);
+        Intent intent = new Intent(this, ChooseLocationActivity.class);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }

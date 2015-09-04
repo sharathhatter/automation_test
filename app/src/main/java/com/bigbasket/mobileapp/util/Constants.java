@@ -483,6 +483,7 @@ public class Constants {
 
 
     public static final String LOCAL_RES_PREFIX = "app://";
+    public static final String LOCATION = "location";
     public static final String NAME = "name";
     public static final String PRODUCT_LIST = "product_list";
     public static final String CATEGORY_LANDING = "category_landing";

@@ -1,33 +1,29 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.interfaces.location.LocationAutoSuggestListener;
 import com.bigbasket.mobileapp.interfaces.location.OnAddressFetchedListener;
-import com.bigbasket.mobileapp.model.location.AutoCompletePlace;
 import com.bigbasket.mobileapp.task.uiv3.ReverseGeocoderTask;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
+import com.bigbasket.mobileapp.util.location.LocationAutoSuggestHelper;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.AutocompletePredictionBuffer;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,11 +35,11 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PlacePickerApiActivity extends BackButtonActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener, OnAddressFetchedListener {
+        GoogleMap.OnMyLocationButtonClickListener, OnAddressFetchedListener,
+        LocationAutoSuggestListener {
 
     private GoogleApiClient mGoogleApiClient;
     private LatLng mSelectedLatLng;
@@ -51,16 +47,19 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     private GoogleMap mGoogleMap;
     @Nullable
     private Marker mGoogleMapMarker;
-    private BBArrayAdapter<AutoCompletePlace> mPlaceAutoSuggestAdapter;
-    private LatLngBounds mBounds;
-    private AutocompleteFilter mAutoCompleteFilter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.chooseLocation));
+        setTitle(getString(R.string.locateYourArea));
 
         renderChooseLocation();
+        if (!DataUtil.isLocationServiceEnabled(this)) {
+            showAlertDialog(getString(R.string.enableLocationHeading),
+                    getString(R.string.enableLocation),
+                    DialogButton.YES, DialogButton.CANCEL, Constants.LOCATION, null,
+                    getString(R.string.enable));
+        }
     }
 
     private void renderChooseLocation() {
@@ -77,40 +76,8 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
         AutoCompleteTextView aEditTextChooseArea =
                 (AutoCompleteTextView) findViewById(R.id.aEditTextChooseArea);
-        mPlaceAutoSuggestAdapter = new BBArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-                faceRobotoRegular, getResources().getColor(R.color.uiv3_primary_text_color),
-                getResources().getColor(R.color.uiv3_primary_text_color));
-        aEditTextChooseArea.setAdapter(mPlaceAutoSuggestAdapter);
-        aEditTextChooseArea.setThreshold(2);
-        aEditTextChooseArea.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!TextUtils.isEmpty(s) && s.length() > 2) {
-                    displaySuggestion(s.toString());
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        aEditTextChooseArea.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (mPlaceAutoSuggestAdapter != null && position != AdapterView.INVALID_POSITION) {
-                    AutoCompletePlace autoCompletePlace = mPlaceAutoSuggestAdapter.getItem(position);
-                    if (!TextUtils.isEmpty(autoCompletePlace.getPlaceId())) {
-                        setLocationFromId(autoCompletePlace.getPlaceId());
-                    }
-                }
-            }
-        });
+        new LocationAutoSuggestHelper<>(this, aEditTextChooseArea, mGoogleApiClient,
+                new LatLngBounds(new LatLng(7.43231, 65.82658), new LatLng(36.93593, 99.04924)), false).init();
         ViewGroup layoutChooseLocation = (ViewGroup) findViewById(R.id.layoutChooseLocation);
         UIUtil.setUpFooterButton(this, layoutChooseLocation, null, "Continue", true);
         layoutChooseLocation.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +86,12 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
                 new ReverseGeocoderTask<>(getCurrentActivity()).execute(mSelectedLatLng);
             }
         });
+    }
+
+    @Override
+    public void onLocationSelected(LatLng latLng) {
+        mSelectedLatLng = latLng;
+        updateLastKnownLocationOnMap();
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -212,59 +185,25 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         return false;
     }
 
-    private void displaySuggestion(String constraint) {
-        //Southwest corner to Northeast corner.
-        if (mBounds == null) {
-            mBounds = new LatLngBounds(new LatLng(7.43231, 65.82658), new LatLng(36.93593, 99.04924));
-        }
-        if (mAutoCompleteFilter == null) {
-            ArrayList<Integer> filterTypes = new ArrayList<>();
-            filterTypes.add(Place.TYPE_GEOCODE);
-            filterTypes.add(Place.TYPE_ESTABLISHMENT);
-            mAutoCompleteFilter = AutocompleteFilter.create(filterTypes);
-        }
-
-        Places.GeoDataApi.getAutocompletePredictions(mGoogleApiClient, constraint, mBounds,
-                mAutoCompleteFilter)
-                .setResultCallback(new ResultCallback<AutocompletePredictionBuffer>() {
-                    @Override
-                    public void onResult(AutocompletePredictionBuffer buffer) {
-                        if (buffer == null) return;
-                        if (buffer.getStatus().isSuccess()) {
-                            mPlaceAutoSuggestAdapter.clear();
-                            for (AutocompletePrediction prediction : buffer) {
-                                mPlaceAutoSuggestAdapter.add(new AutoCompletePlace(prediction.getPlaceId(),
-                                        prediction.getDescription()));
-                            }
-                            mPlaceAutoSuggestAdapter.notifyDataSetChanged();
-                        }
-                        buffer.release();
-                    }
-                });
-
-    }
-
-    private void setLocationFromId(String id) {
-        Places.GeoDataApi.getPlaceById(mGoogleApiClient, id).setResultCallback(new ResultCallback<PlaceBuffer>() {
-            @Override
-            public void onResult(PlaceBuffer places) {
-                if (places.getStatus().isSuccess()) {
-                    Place place = places.get(0);
-                    mSelectedLatLng = place.getLatLng();
-                    places.release();
-                    updateLastKnownLocationOnMap();
-                } else {
-                    places.release();
-                }
+    @Override
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
+        if (sourceName != null && sourceName.equals(Constants.LOCATION)) {
+            try {
+                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(myIntent);
+            } catch (ActivityNotFoundException e) {
+                showToast(getString(R.string.locationSettingError));
             }
-        });
+        } else {
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+        }
     }
 
     @Override
     public void onAddressFetched(@Nullable List<Address> addresses) {
         if (addresses != null && addresses.size() > 0) {
             showToast(addresses.get(0).getPostalCode() + ":" +
-            addresses.get(0).getLocality());
+                    addresses.get(0).getLocality());
         }
     }
 }
