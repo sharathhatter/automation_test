@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
@@ -86,6 +87,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private String mSortedOn;
     private ArrayList<Option> mSortOptions;
     private HashMap<String, Integer> mCartInfo;
+    //private int tabPosition = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -167,14 +169,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawers();
         }
-        mHeaderSelectedIdx = productTabData.getHeaderSelectedIndex();
+//        mHeaderSelectedIdx = productTabData.getHeaderSelectedIndex();
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
-
-        mFilteredOns = productTabData.getFilteredOn();
-        mFilterOptionCategories = productTabData.getFilterOptionItems();
-        mSortedOn = productTabData.getSortedOn();
-        mSortOptions = productTabData.getSortOptions();
 
         SectionData sectionData = productTabData.getContentSectionData();
         View contentSectionView = null;
@@ -190,24 +187,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 contentFrame.addView(contentSectionView);
             }
         }
-        boolean showFilters = hasProducts && productTabData.getFilterOptionItems() != null
-                && productTabData.getFilterOptionItems().size() > 0;
-        toggleFilterSortView(showFilters);
+//        boolean showFilters = hasProducts && productTabData.getFilterOptionItems() != null
+//                && productTabData.getFilterOptionItems().size() > 0;
+//        toggleFilterSortView(showFilters);
         mCartInfo = productTabData.getCartInfo();
         if (hasProducts) {
-            // Setup title
-            if (productTabData.getHeaderSection() != null &&
-                    productTabData.getHeaderSection().getSectionItems() != null &&
-                    productTabData.getHeaderSection().getSectionItems().size() > 0) {
-                mTitlePassedViaIntent = "";
-                setTitle(null);
-            } else if (!TextUtils.isEmpty(productTabData.getScreenName())) {
-                mTitlePassedViaIntent = productTabData.getScreenName();
-                setTitle(productTabData.getScreenName());
-            } else if (!TextUtils.isEmpty(mTitlePassedViaIntent)) {
-                setTitle(mTitlePassedViaIntent);
-            }
-
             // Setup content
             if (productTabData.getProductTabInfos().size() > 1) {
                 findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
@@ -225,36 +209,49 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_frame, genericProductListFragment, genericProductListFragment.getFragmentTxnTag())
                         .commit();
-                if (productTabData.getHeaderSection() != null &&
-                        productTabData.getHeaderSection().getSectionItems() != null &&
-                        productTabData.getHeaderSection().getSectionItems().size() > 0) {
-                    setTitle(null);
-                } else {
-                    String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
+//                if (productTabData.getHeaderSection() != null &&
+//                        productTabData.getHeaderSection().getSectionItems() != null &&
+//                        productTabData.getHeaderSection().getSectionItems().size() > 0) {
+//                    setTitle(null);
+//                } else {
+//                    String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
+//                            productTabInfo.getTabName() : mTitlePassedViaIntent;
+//                    setTitle(title);
+//                }
+                String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
                             productTabInfo.getTabName() : mTitlePassedViaIntent;
                     setTitle(title);
-                }
                 logProductListingShownEvent(productTabInfo.getTabType());
-                renderHeaderDropDown(productTabData.getHeaderSection());
+                renderHeaderDropDown(productTabData.getProductTabInfos().get(0).getHeaderSection(),
+                        productTabData.getProductTabInfos().get(0).getHeaderSelectedIndex());
+                setCurrentTabSortAndFilter(productTabInfo);
             }
         } else if (contentSectionView == null) {
             findViewById(R.id.slidingTabs).setVisibility(View.GONE);
             UIUtil.showEmptyProductsView(this, contentFrame, getString(R.string.noProducts),
                     R.drawable.empty_smart_basket);
-            renderHeaderDropDown(null);
+            renderHeaderDropDown(null, 0);
         } else if (!TextUtils.isEmpty(productTabData.getScreenName())) {
             mTitlePassedViaIntent = productTabData.getScreenName();
             setTitle(productTabData.getScreenName());
         }
     }
 
-    private void toggleFilterSortView(boolean isVisible) {
-        int visibility = isVisible ? View.VISIBLE : View.GONE;
-        findViewById(R.id.layoutFilter).setVisibility(visibility);
-        findViewById(R.id.layoutSort).setVisibility(visibility);
+    private void setCurrentTabSortAndFilter(ProductTabInfo productTabData){
+        mFilteredOns = productTabData.getFilteredOn();
+        mFilterOptionCategories = productTabData.getFilterOptionItems();
+        mSortedOn = productTabData.getSortedOn();
+        mSortOptions = productTabData.getSortOptions();
     }
 
-    private void displayProductTabs(ProductTabData productTabData, ViewGroup contentFrame) {
+
+//    private void toggleFilterSortView(boolean isVisible) {
+//        int visibility = isVisible ? View.VISIBLE : View.GONE;
+//        findViewById(R.id.layoutFilter).setVisibility(visibility);
+//        findViewById(R.id.layoutSort).setVisibility(visibility);
+//    }
+
+    private void displayProductTabs(final ProductTabData productTabData, ViewGroup contentFrame) {
         mViewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
         if (mViewPager == null) return;
 
@@ -285,6 +282,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
 
+        setCurrentTabSortAndFilter(productTabData.getProductTabInfos().get(0));
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -292,6 +290,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
             @Override
             public void onPageSelected(int position) {
+                //header content change
+                renderHeaderDropDown(productTabData.getProductTabInfos().get(position).getHeaderSection(),
+                        productTabData.getProductTabInfos().get(position).getHeaderSelectedIndex());
+                setCurrentTabSortAndFilter(productTabData.getProductTabInfos().get(position));
                 HashMap<String, String> eventAttribs = new HashMap<>();
                 eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabType());
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
@@ -318,7 +320,22 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         } else {
             contentFrame.addView(mViewPager);
         }
-        renderHeaderDropDown(productTabData.getHeaderSection());
+
+        // Setup title
+        if (productTabData.getProductTabInfos() != null &&
+                productTabData.getProductTabInfos().get(0) !=null &&
+                productTabData.getProductTabInfos().get(0).getHeaderSection() != null &&
+                productTabData.getProductTabInfos().get(0).getHeaderSection().getSectionItems() !=null &&
+                productTabData.getProductTabInfos().get(0).getHeaderSection().getSectionItems().size()>0){
+            mTitlePassedViaIntent = "";
+            renderHeaderDropDown(productTabData.getProductTabInfos().get(0).getHeaderSection(),
+                    productTabData.getProductTabInfos().get(0).getHeaderSelectedIndex());
+        } else if (!TextUtils.isEmpty(productTabData.getScreenName())) {
+            mTitlePassedViaIntent = productTabData.getScreenName();
+            setTitle(productTabData.getScreenName());
+        } else if (!TextUtils.isEmpty(mTitlePassedViaIntent)) {
+            setTitle(mTitlePassedViaIntent);
+        }
 
         if (tabTypeWithNoProducts.size() > 0) {
             ArrayList<NameValuePair> newNameValuePairs;
@@ -390,6 +407,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         bundle.putParcelableArrayList(Constants.PRODUCT_QUERY, mNameValuePairs);
         bundle.putString(Constants.TAB_TYPE, productTabInfo.getTabType());
         bundle.putBoolean(Constants.SINGLE_TAB, singleTab);
+//        bundle.putParcelableArrayList(Constants.FILTER_ON, productTabInfo.getFilteredOn());
+//        bundle.putParcelableArrayList(Constants.FILTER_OPTIONS, productTabInfo.getFilterOptionItems());
+//        bundle.putString(Constants.SORT_ON, productTabInfo.getSortedOn());
+//        bundle.putParcelableArrayList(Constants.PRODUCT_SORT_OPTION, productTabInfo.getSortOptions());
         return bundle;
     }
 
@@ -476,7 +497,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         return null;
     }
 
-    private void renderHeaderDropDown(@Nullable final Section headSection) {
+    private void renderHeaderDropDown(@Nullable final Section headSection, int mHeaderSelectedIdx) {
         Toolbar toolbar = getToolbar();
         if (mToolbarTextDropdown == null) {
             mToolbarTextDropdown = (TextView) getLayoutInflater().
