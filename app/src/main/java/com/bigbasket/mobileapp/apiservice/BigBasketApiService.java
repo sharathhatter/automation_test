@@ -428,4 +428,8 @@ public interface BigBasketApiService {
     void postPayzappFundWallet(@Field(Constants.PAYMENT_METHOD) String payment_method,
                                @Field(Constants.AMOUNT) String amount,
                                Callback<ApiResponse<GetPayzappPaymentParamsResponse>> getPrepaidPaymentApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/app-data-dynamic/")
+    ApiResponse<AutoSearchApiResponseContent> appDataDynamic(@Query("os") String osName);
 }

@@ -12,6 +12,9 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class LandingPageActivity extends SocialLoginActivity {
 
@@ -30,7 +33,9 @@ public class LandingPageActivity extends SocialLoginActivity {
     public void onLandingPageButtonClicked(View view) {
         switch (view.getId()) {
             case R.id.btnLogin:
-                trackEvent(TrackingAware.ENTRY_PAGE_LOGIN_CLICKED, null);
+                Map<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.ENTRY_PAGE_LOGIN_CLICKED, eventAttribs);
                 launchTutorial(NavigationCodes.LAUNCH_LOGIN);
                 break;
             case R.id.btnRegister:

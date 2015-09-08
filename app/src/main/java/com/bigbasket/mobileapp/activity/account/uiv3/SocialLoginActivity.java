@@ -81,6 +81,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     public void logSignInBtnClickEvent(String type) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.TYPE, type);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
         trackEvent(TrackingAware.LOGIN_BTN_CLICKED, eventAttribs);
     }
 
