@@ -168,11 +168,6 @@ public abstract class PlusBaseActivity extends BaseActivity
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         initiatePlusClientDisconnect();

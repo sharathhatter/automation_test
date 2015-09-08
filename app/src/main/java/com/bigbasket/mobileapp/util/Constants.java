@@ -21,6 +21,7 @@ public class Constants {
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
     public static final String PRODUCT_ID = "sku";
+    public static final String SKU_TYPE = "sku_type";
     public static final String IMAGE_URL = "p_img_url";
     public static final String MRP_PRICE = "mrp";
     public static final String SELL_PRICE = "sp";
@@ -492,6 +493,7 @@ public class Constants {
 
 
     public static final String LOCAL_RES_PREFIX = "app://";
+    public static final String LOCATION = "location";
     public static final String NAME = "name";
     public static final String PRODUCT_LIST = "product_list";
     public static final String CATEGORY_LANDING = "category_landing";
@@ -574,7 +576,6 @@ public class Constants {
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
 
-
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
     public static final String MOBIKWIKSDK = "MobikwikSDK";
@@ -588,5 +589,14 @@ public class Constants {
     public static final String MOBIKWIK_PAYMENT_MW = "mw";
     public static final String MOBIKWIK_STATUS = "status";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
+
+    // Sku Tabs
+    public static final int TAB_TYPE_EXPRESS = 0;
+    public static final int TAB_TYPE_STANDARD = 1;
+    public static final String SKU_TYPE_EXPRESS = "express";
+    public static final String SKU_TYPE_JIT = "jit-express";
+    public static final String SKU_TYPE_KIRANA = "kirana-express";
+    public static final String SKU_TYPE_STANDARD = "standard";
+
 
 }

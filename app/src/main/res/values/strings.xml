@@ -307,6 +307,10 @@
     <string name="save">SAVE</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
 
+    <!-- Show cart tabs -->
+    <string name="exp_delivery">Express Delivery</string>
+    <string name="stnd_delivery">Standard Delivery</string>
+
     <!-- order invoice -->
     <string name="multi_order_place_txt">You will receive the orders in multiple deliveries</string>
     <string name="continue_shopping">CONTINUE SHOPPING!</string>
@@ -340,12 +344,26 @@
     <string name="fundWalletSuccess">You have successfully funded the wallet</string>
     <string name="reviewBasket">Review Basket</string>
 
-    <string name="areaInputHint">Choose Area</string>
-    <string name="chooseLocation">Choose Location</string>
+    <string name="chooseYourLocation">Choose your Location</string>
+    <string name="locateYourArea">Locate your area</string>
+    <string name="typeYourLocality">Type your locality</string>
     <string name="locationOrArea">Location/Area</string>
     <string name="useMyLocation">Use My Location</string>
+    <string name="enableLocationHeading">Enable Location</string>
+    <string name="enableLocation">Enable location to get correct address</string>
+    <string name="enable">Enable</string>
+    <string name="locationSettingError">Unable to open location window.\nPlease enable it by going to settings.</string>
 
     <string name="newCheckoutFlowMsg">When you click on Place Order &amp; Pay - Your order will be placed first &amp; then you will be taken to complete the payment.</string>
     <string name="newStr">New</string>
     <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.\nPlease don\'t press back button.</string>
+
+    <string name="chooseLocationDesc">
+        * Selection of city and area correctly is very important to help us provide you with right information on
+        delivery time and availability of products, price, promotions, discounts and your favorite neighborhood stores.\n\n
+        * BigBasket will now bring you, your favorite snacks from neighborhood stores such as Iyengar’s, Just Bake, Warrier’s at your
+        finger tips. Type in correct area name to enjoy these services.
+    </string>
+
+    <string name="productListTransition">ProductListTransition</string>
 </resources>

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
+import android.provider.Settings;
+import android.text.TextUtils;
 
 public class DataUtil {
 
@@ -33,5 +36,21 @@ public class DataUtil {
             appVersionName = null;
         }
         return appVersionName;
+    }
+
+    public static boolean isLocationServiceEnabled(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int locationMode;
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(),
+                        Settings.Secure.LOCATION_MODE);
+            } catch (Settings.SettingNotFoundException e) {
+                locationMode = Settings.Secure.LOCATION_MODE_OFF;
+            }
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+        } else {
+            return !TextUtils.isEmpty(Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.LOCATION_PROVIDERS_ALLOWED));
+        }
     }
 }

@@ -23,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,7 @@ import com.bigbasket.mobileapp.fragment.FlatPageFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountView;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
+import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
@@ -520,6 +522,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                                                     @Nullable View productView,
                                                     @Nullable HashMap<String, Integer> cartInfoMap,
                                                     @Nullable EditText editTextQty) {
+
+        Log.d("BB","BB ACTIVITY updateUIAfterBasketOperationSuccess");
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {

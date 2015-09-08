@@ -3,12 +3,16 @@ package com.bigbasket.mobileapp.model.cart;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class CartItemList implements Parcelable {
+
+    ArrayList<CartItem> arrayList_cartItems;
 
     public static final Parcelable.Creator<CartItemList> CREATOR = new Parcelable.Creator<CartItemList>() {
         @Override
@@ -29,6 +33,13 @@ public class CartItemList implements Parcelable {
     private double topCatTotal;
     @SerializedName(Constants.TLC_NUM_ITEMS)
     private int topCatItems;
+
+    public CartItemList(ArrayList<CartItem> cartItems,String topCatName,double topCatTotal,int topCatItems){
+        this.cartItems = cartItems;
+        this.topCatName = topCatName;
+        this.topCatTotal = topCatTotal;
+        this.topCatItems = topCatItems;
+    }
 
     CartItemList(Parcel source) {
         cartItems = new ArrayList<>();
