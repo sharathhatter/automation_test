@@ -87,7 +87,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private String mSortedOn;
     private ArrayList<Option> mSortOptions;
     private HashMap<String, Integer> mCartInfo;
-    //private int tabPosition = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
