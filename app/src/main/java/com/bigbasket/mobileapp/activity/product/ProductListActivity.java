@@ -187,9 +187,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 contentFrame.addView(contentSectionView);
             }
         }
-//        boolean showFilters = hasProducts && productTabData.getFilterOptionItems() != null
-//                && productTabData.getFilterOptionItems().size() > 0;
-//        toggleFilterSortView(showFilters);
+
         mCartInfo = productTabData.getCartInfo();
         if (hasProducts) {
             // Setup content
@@ -209,21 +207,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_frame, genericProductListFragment, genericProductListFragment.getFragmentTxnTag())
                         .commit();
-//                if (productTabData.getHeaderSection() != null &&
-//                        productTabData.getHeaderSection().getSectionItems() != null &&
-//                        productTabData.getHeaderSection().getSectionItems().size() > 0) {
-//                    setTitle(null);
-//                } else {
-//                    String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
-//                            productTabInfo.getTabName() : mTitlePassedViaIntent;
-//                    setTitle(title);
-//                }
-                String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
+                if(productTabData.getProductTabInfos().get(0).getHeaderSection()!= null){
+                    renderHeaderDropDown(productTabData.getProductTabInfos().get(0).getHeaderSection(),
+                            productTabData.getProductTabInfos().get(0).getHeaderSelectedIndex());
+                }else {
+                    String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
                             productTabInfo.getTabName() : mTitlePassedViaIntent;
                     setTitle(title);
+                }
                 logProductListingShownEvent(productTabInfo.getTabType());
-                renderHeaderDropDown(productTabData.getProductTabInfos().get(0).getHeaderSection(),
-                        productTabData.getProductTabInfos().get(0).getHeaderSelectedIndex());
                 setCurrentTabSortAndFilter(productTabInfo);
             }
         } else if (contentSectionView == null) {
@@ -237,19 +229,30 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         }
     }
 
-    private void setCurrentTabSortAndFilter(ProductTabInfo productTabData){
-        mFilteredOns = productTabData.getFilteredOn();
-        mFilterOptionCategories = productTabData.getFilterOptionItems();
-        mSortedOn = productTabData.getSortedOn();
-        mSortOptions = productTabData.getSortOptions();
+    private void setCurrentTabSortAndFilter(ProductTabInfo productTabInfo){
+        //display or hide tab
+        if(productTabInfo == null) {
+            toggleFilterSortView(false);
+            return;
+        }
+        boolean hasProducts = productTabInfo.getProductInfo() !=null &&
+                productTabInfo.getProductInfo().getProducts() !=null &&
+                productTabInfo.getProductInfo().getProducts().size() > 0;
+        boolean showFilters = hasProducts && productTabInfo.getFilterOptionItems() != null
+                && productTabInfo.getFilterOptionItems().size() > 0;
+        toggleFilterSortView(showFilters);
+        mFilteredOns = productTabInfo.getFilteredOn();
+        mFilterOptionCategories = productTabInfo.getFilterOptionItems();
+        mSortedOn = productTabInfo.getSortedOn();
+        mSortOptions = productTabInfo.getSortOptions();
     }
 
 
-//    private void toggleFilterSortView(boolean isVisible) {
-//        int visibility = isVisible ? View.VISIBLE : View.GONE;
-//        findViewById(R.id.layoutFilter).setVisibility(visibility);
-//        findViewById(R.id.layoutSort).setVisibility(visibility);
-//    }
+    private void toggleFilterSortView(boolean isVisible) {
+        int visibility = isVisible ? View.VISIBLE : View.GONE;
+        findViewById(R.id.layoutFilter).setVisibility(visibility);
+        findViewById(R.id.layoutSort).setVisibility(visibility);
+    }
 
     private void displayProductTabs(final ProductTabData productTabData, ViewGroup contentFrame) {
         mViewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
@@ -281,7 +284,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         ProductListPagerAdapter statePagerAdapter =
                 new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
-
         setCurrentTabSortAndFilter(productTabData.getProductTabInfos().get(0));
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -324,9 +326,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         // Setup title
         if (productTabData.getProductTabInfos() != null &&
                 productTabData.getProductTabInfos().get(0) !=null &&
-                productTabData.getProductTabInfos().get(0).getHeaderSection() != null &&
-                productTabData.getProductTabInfos().get(0).getHeaderSection().getSectionItems() !=null &&
-                productTabData.getProductTabInfos().get(0).getHeaderSection().getSectionItems().size()>0){
+                productTabData.getProductTabInfos().get(0).getHeaderSection() != null){
             mTitlePassedViaIntent = "";
             renderHeaderDropDown(productTabData.getProductTabInfos().get(0).getHeaderSection(),
                     productTabData.getProductTabInfos().get(0).getHeaderSelectedIndex());
