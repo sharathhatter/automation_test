@@ -10,5 +10,5 @@ public class GetDynamicPageApiResponse {
     public SectionData sectionData;
 
     @SerializedName(Constants.CACHE_DURATION)
-    public int cacheDuration = 10000000;
+    public int cacheDuration;
 }

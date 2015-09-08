@@ -16,10 +16,10 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
         AuthParameters.reset();
         FacebookSdk.sdkInitialize(this.getApplicationContext());
-        //MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
-        //LocalyticsWrapper.integrate(this);
+        MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
+        LocalyticsWrapper.integrate(this);
     }
 }
