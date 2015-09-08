@@ -368,4 +368,6 @@
     <string name="selectLocationManually">SELECT LOCATION MANUALLY</string>
     <string name="readingYourCurrentLocation">Reading your current location...</string>
     <string name="unableToReadLocation">Unable to read location!</string>
+    <string name="refresh">Refresh</string>
+    <string name="unknown">Unknown</string>
 </resources>

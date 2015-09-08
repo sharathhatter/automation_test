@@ -1,11 +1,8 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +12,6 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.interfaces.location.LocationAutoSuggestListener;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.location.LocationAutoSuggestHelper;
@@ -49,12 +44,6 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         setTitle(getString(R.string.locateYourArea));
 
         renderChooseLocation();
-        if (!DataUtil.isLocationServiceEnabled(this)) {
-            showAlertDialog(getString(R.string.enableLocationHeading),
-                    getString(R.string.enableLocation),
-                    DialogButton.YES, DialogButton.CANCEL, Constants.LOCATION, null,
-                    getString(R.string.enable));
-        }
     }
 
     private void renderChooseLocation() {
@@ -182,19 +171,5 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
             updateLastKnownLocationOnMap();
         }
         return false;
-    }
-
-    @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null && sourceName.equals(Constants.LOCATION)) {
-            try {
-                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(myIntent);
-            } catch (ActivityNotFoundException e) {
-                showToast(getString(R.string.locationSettingError));
-            }
-        } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
-        }
     }
 }
