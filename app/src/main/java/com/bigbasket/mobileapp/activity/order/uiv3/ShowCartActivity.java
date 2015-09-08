@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,6 @@ public class ShowCartActivity extends BackButtonActivity {
     @Nullable
     private MenuItem basketMenuItem;
     private TextView txtBasketSubTitle;
-    private boolean showMenu = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,53 +83,30 @@ public class ShowCartActivity extends BackButtonActivity {
         getCartItems(null, false);
     }
 
-    private Toolbar setToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
-        toolbar.setTitle(getString(R.string.my_basket_header));
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        return toolbar;
-    }
-
     private void renderHeaderView(int totalItemCount) {
-        Toolbar toolbar = setToolbar();
+        Toolbar toolbar = getToolbar();
         if (txtBasketSubTitle != null) toolbar.removeView(txtBasketSubTitle);
         txtBasketSubTitle = (TextView) getLayoutInflater().inflate(R.layout.basket_header_layout, toolbar, false);
         txtBasketSubTitle.setTypeface(faceRobotoRegular);
         toolbar.addView(txtBasketSubTitle);
         if (totalItemCount > 0) {
+            txtBasketSubTitle.setVisibility(View.VISIBLE);
             String itemString = totalItemCount > 1 ? " Items" : " Item";
             txtBasketSubTitle.setText(totalItemCount + itemString);
-            showMenu = true;
-            this.invalidateOptionsMenu();
+            if (basketMenuItem != null) basketMenuItem.setVisible(true);
         } else {
             txtBasketSubTitle.setVisibility(View.GONE);
-            showMenu = false;
-            this.invalidateOptionsMenu();
         }
     }
 
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.empty_basket, menu);
-        basketMenuItem = menu.findItem(R.id.action_empty_basket);
-        if (!showMenu) {
-            if (basketMenuItem != null) {
-                basketMenuItem.setVisible(false);
-            }
-        } else {
-            if (basketMenuItem != null) {
-                basketMenuItem.setVisible(true);
-            }
-        }
-        return true;
+    protected void setOptionsMenu(Menu menu) {
+        super.setOptionsMenu(menu);
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.empty_basket, menu);
+        basketMenuItem = menu.getItem(0);
+        basketMenuItem.setVisible(false);
     }
 
     @Override
@@ -222,7 +199,7 @@ public class ShowCartActivity extends BackButtonActivity {
 
     @Override
     public void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null) {
+        if (!TextUtils.isEmpty(sourceName)) {
             switch (sourceName) {
                 case Constants.EMPTY_BASKET:
                     if (cartItemLists != null)
@@ -340,27 +317,27 @@ public class ShowCartActivity extends BackButtonActivity {
     }
 
     private ArrayList<CartItemList> getSkuForTabs(ArrayList<CartItemList> totalList, int tabType) {
-        ArrayList<CartItemList> tabList = new ArrayList<CartItemList>();
+        ArrayList<CartItemList> tabList = new ArrayList<>();
 
-        for (int i = 0; i < totalList.size(); i++) {
-            ArrayList<CartItem> lists = new ArrayList<CartItem>();
-            for (int j = 0; j < totalList.get(i).getCartItems().size(); j++) {
-                String sku_type = totalList.get(i).getCartItems().get(j).getSkuType();
+        for (CartItemList cartItemList : totalList) {
+            ArrayList<CartItem> lists = new ArrayList<>();
+            for (CartItem cartItem : cartItemList.getCartItems()) {
+                String sku_type = cartItem.getSkuType();
                 if (tabType == Constants.TAB_TYPE_EXPRESS) {
-                    if (sku_type != null && sku_type.equals(Constants.SKU_TYPE_EXPRESS) || sku_type.equals(Constants.SKU_TYPE_JIT) ||
-                            sku_type.equals(Constants.SKU_TYPE_KIRANA)) {
-                        lists.add(totalList.get(i).getCartItems().get(j));
+                    if (!TextUtils.isEmpty(sku_type) &&
+                            (sku_type.equals(Constants.SKU_TYPE_EXPRESS) ||
+                                    sku_type.equals(Constants.SKU_TYPE_JIT) ||
+                                    sku_type.equals(Constants.SKU_TYPE_KIRANA))) {
+                        lists.add(cartItem);
                     }
                 } else if (tabType == Constants.TAB_TYPE_STANDARD) {
-                    if (sku_type != null && sku_type.equals(Constants.SKU_TYPE_STANDARD)) {
-                        lists.add(totalList.get(i).getCartItems().get(j));
-                    }
+                    lists.add(cartItem);
                 }
             }
             if (lists.size() > 0) {
-                CartItemList cartItemList = new CartItemList(lists, totalList.get(i).getTopCatName(),
-                        totalList.get(i).getTopCatTotal(), totalList.get(i).getTopCatItems());
-                tabList.add(cartItemList);
+                CartItemList returnCartItemList = new CartItemList(lists, cartItemList.getTopCatName(),
+                        cartItemList.getTopCatTotal(), cartItemList.getTopCatItems());
+                tabList.add(returnCartItemList);
             }
         }
         return tabList;
@@ -371,28 +348,28 @@ public class ShowCartActivity extends BackButtonActivity {
 
         ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
 
-        ArrayList<CartItemList> cartItemLists_stnd = getSkuForTabs(cartItemLists, Constants.TAB_TYPE_STANDARD);
-        ArrayList<CartItemList> cartItemLists_exp = getSkuForTabs(cartItemLists, Constants.TAB_TYPE_EXPRESS);
+        ArrayList<CartItemList> cartItemListsStnd = getSkuForTabs(cartItemLists, Constants.TAB_TYPE_STANDARD);
+        ArrayList<CartItemList> cartItemListsExp = getSkuForTabs(cartItemLists, Constants.TAB_TYPE_EXPRESS);
 
         ArrayList<BBTab> bbTabs = new ArrayList<>();
 
         TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
 
-        if (cartItemLists_stnd != null && cartItemLists_exp != null &&
-                cartItemLists_stnd.size() > 0 && cartItemLists_exp.size() > 0) {
+        if (cartItemListsStnd.size() > 0 && cartItemListsExp.size() > 0) {
             pageTitleStrip.setVisibility(View.VISIBLE);
             createTabFragment(getString(R.string.stnd_delivery), baseImgUrl,
-                    cartItemLists_stnd, fulfillmentInfos, annotationInfoArrayList, bbTabs);
+                    cartItemListsStnd, fulfillmentInfos, annotationInfoArrayList, bbTabs);
             createTabFragment(getString(R.string.exp_delivery), baseImgUrl,
-                    cartItemLists_exp, fulfillmentInfos, annotationInfoArrayList, bbTabs);
-        } else if (cartItemLists_stnd != null && cartItemLists_exp != null &&
-                cartItemLists_stnd.size() > 0 || cartItemLists_exp.size() > 0) {
+                    cartItemListsExp, fulfillmentInfos, annotationInfoArrayList, bbTabs);
+        } else if (cartItemListsStnd.size() > 0 || cartItemListsExp.size() > 0) {
             pageTitleStrip.setVisibility(View.GONE);
-            cartItemLists_exp = cartItemLists_exp.size() > 0 ? cartItemLists_exp : cartItemLists_stnd;
-            String title = cartItemLists_exp.size() > 0 ? getString(R.string.exp_delivery) :
+            cartItemListsExp = cartItemListsExp.size() > 0 ? cartItemListsExp : cartItemListsStnd;
+            String title = cartItemListsExp.size() > 0 ? getString(R.string.exp_delivery) :
                     getString(R.string.stnd_delivery);
             createTabFragment(title, baseImgUrl,
-                    cartItemLists_exp, fulfillmentInfos, annotationInfoArrayList, bbTabs);
+                    cartItemListsExp, fulfillmentInfos, annotationInfoArrayList, bbTabs);
+        } else {
+            throw new AssertionError("Both Standard and Express can't be Empty");
         }
 
         TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
@@ -417,7 +394,9 @@ public class ShowCartActivity extends BackButtonActivity {
         pageTitleStrip.setupWithViewPager(mViewPager);
     }
 
-    private ArrayList<BBTab> createTabFragment(String tab_name, String baseUrl, ArrayList<CartItemList> cartItemList, ArrayList<FulfillmentInfo> fulfillmentInfos, ArrayList<AnnotationInfo> annotationInfoArrayList, ArrayList<BBTab> bbTabs) {
+    private ArrayList<BBTab> createTabFragment(String tab_name, String baseUrl, ArrayList<CartItemList>
+            cartItemList, ArrayList<FulfillmentInfo> fulfillmentInfos, ArrayList<AnnotationInfo>
+                                                       annotationInfoArrayList, ArrayList<BBTab> bbTabs) {
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(Constants.CART_ITEMS, cartItemList);
         bundle.putParcelableArrayList(Constants.FULFILLMENT_INFO, fulfillmentInfos);
@@ -454,11 +433,10 @@ public class ShowCartActivity extends BackButtonActivity {
             }
         });
 
-        Toolbar toolbar = setToolbar();
+        Toolbar toolbar = getToolbar();
         toolbar.setTitle(getString(R.string.my_basket_header));
         if (txtBasketSubTitle != null) txtBasketSubTitle.setVisibility(View.GONE);
-        showMenu = false;
-        this.invalidateOptionsMenu();
+        if (basketMenuItem != null) basketMenuItem.setVisible(false);
 
         appBarLayout.removeView(pageTitleStrip);
         coordinatorLayout.removeView(mViewPager);
