@@ -23,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -521,6 +522,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                                                     @Nullable View productView,
                                                     @Nullable HashMap<String, Integer> cartInfoMap,
                                                     @Nullable EditText editTextQty) {
+
+        Log.d("BB","BB ACTIVITY updateUIAfterBasketOperationSuccess");
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
