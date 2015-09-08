@@ -1,40 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/realative_show_cart"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <include
         android:id="@+id/coordinator_layout"
+        layout="@layout/uiv3_swipe_tab_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/layoutCheckoutFooter">
-
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appBarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <include layout="@layout/uiv3_tool_layout" />
-
-            <android.support.design.widget.TabLayout
-                android:id="@+id/slidingTabs"
-                style="@style/BaseAppTheme.TabStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabMode="scrollable" />
-
-        </android.support.design.widget.AppBarLayout>
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    </android.support.design.widget.CoordinatorLayout>
+        android:layout_above="@+id/layoutCheckoutFooter"
+        android:layout_alignParentTop="true" />
 
     <FrameLayout
         android:id="@+id/frame_show_cart"
@@ -47,8 +22,8 @@
         layout="@layout/uiv3_checkout_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true" />
+        android:layout_alignParentLeft="true"
+        android:visibility="visible" />
 
 </RelativeLayout>

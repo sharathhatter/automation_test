@@ -12,7 +12,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +28,6 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
-import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -39,6 +37,7 @@ import com.bigbasket.mobileapp.fragment.ShowCartFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
+import com.bigbasket.mobileapp.model.cart.CartItem;
 import com.bigbasket.mobileapp.model.cart.CartItemList;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
@@ -56,8 +55,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -68,20 +66,15 @@ public class ShowCartActivity extends BackButtonActivity {
     private ArrayList<CartItemList> cartItemLists;
     private ArrayList<FulfillmentInfo> fulfillmentInfos;
     private ArrayList<AnnotationInfo> annotationInfoArrayList;
-    private ArrayList<CartItemList> cartItemLists_exp;
-    private ArrayList<CartItemList> cartItemLists_stnd;
     @Nullable
     private MenuItem basketMenuItem;
     private TextView txtBasketSubTitle;
-    private ViewPager mViewPager;
     private boolean showMenu = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
-        setContentView(getMainLayout());
-        setTitle(getString(R.string.my_basket_header));
     }
 
     @Override
@@ -139,6 +132,7 @@ public class ShowCartActivity extends BackButtonActivity {
         return true;
     }
 
+    @Override
     public int getMainLayout() {
         return R.layout.uiv3_show_cart_layout;
     }
@@ -159,21 +153,27 @@ public class ShowCartActivity extends BackButtonActivity {
         }
     }
 
-    private void renderCheckoutLayout(CartSummary cartSummary) {
-//    private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {
-//        if (cartSummary == null) return;
-//        eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
-//        eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
-//        eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
-//        trackEvent(TrackingAware.BASKET_VIEW_SHOWN, eventAttribs, null, null, false, true);
-//    }
-
-//    private void renderCartItemList(CartSummary cartSummary, String baseImageUrl, boolean isCurrentPageRequest) {
-
+    private void renderCheckoutLayout(CartSummary cartSummary, boolean isCurrentPageRequest) {
+        Map<String, String> eventAttribs = new HashMap<>();
         int numItems = 0;
         for (CartItemList cartItemInfoArray : cartItemLists) {
+            eventAttribs.put(cartItemInfoArray.getTopCatName() + " Items", String.valueOf(cartItemInfoArray.getTopCatItems()));
+            eventAttribs.put(cartItemInfoArray.getTopCatName() + " Value", String.valueOf(cartItemInfoArray.getTopCatTotal()));
             int cartItemsSize = cartItemInfoArray.getCartItems().size();
             numItems += cartItemsSize;
+            ArrayList<CartItem> cartItems = cartItemInfoArray.getCartItems();
+            for (int i = 0; i < cartItemsSize; i++) {
+                if (cartItems.get(i).getPromoAppliedType() == 2 ||
+                        cartItems.get(i).getPromoAppliedType() == 3) {
+                    HashMap<String, String> map = new HashMap<>();
+                    if (isCurrentPageRequest) {
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    } else {
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentNavigationContext());
+                    }
+                    trackEvent(TrackingAware.PROMO_REDEEMED, map);
+                }
+            }
         }
 
         renderHeaderView(numItems);
@@ -187,7 +187,6 @@ public class ShowCartActivity extends BackButtonActivity {
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("CLICK", "INSIDE CLICK EVENT");
                 HashMap<String, String> map = new HashMap<>();
                 map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.BASKET_CHECKOUT_CLICKED, map);
@@ -200,14 +199,17 @@ public class ShowCartActivity extends BackButtonActivity {
                 }
             }
         });
-//        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemHeaderList, this,
-//                faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
-//                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, getNextScreenNavigationContext());
-//        cartItemRecyclerView.setAdapter(activeOrderRowAdapter);
-//        contentLayout.addView(basketView);
-//
-//        if (!isCurrentPageRequest)
-//            logViewBasketEvent(cartSummary, eventAttribs);
+
+        if (!isCurrentPageRequest)
+            logViewBasketEvent(cartSummary, eventAttribs);
+    }
+
+    private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {
+        if (cartSummary == null) return;
+        eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
+        eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
+        eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
+        trackEvent(TrackingAware.BASKET_VIEW_SHOWN, eventAttribs, null, null, false, true);
     }
 
     private void startCheckout(String cartTotal) {
@@ -304,6 +306,7 @@ public class ShowCartActivity extends BackButtonActivity {
                                     String.valueOf(cartSummary.getNoOfItems()));
                             fulfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
                             annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
+
                             if (cartGetApiResponseContentApiResponse.apiResponseContent.
                                     cartGetApiCartItemsContent != null
                                     && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
@@ -312,12 +315,11 @@ public class ShowCartActivity extends BackButtonActivity {
                                         cartGetApiCartItemsContent.cartItemLists;
 
                                 addTabsToPager(cartGetApiResponseContentApiResponse
-                                        .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl, isCurrentPageRequest, cartSummary);
+                                        .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl, fulfillmentInfos, annotationInfoArrayList);
 
-                                renderCheckoutLayout(cartSummary);
+                                renderCheckoutLayout(cartSummary, isCurrentPageRequest);
 
                             } else {
-                                Log.d("ELSE","Cart is empty..");
                                 showBasketEmptyMessage();
                                 editor.putString(Constants.GET_CART, "0");
                             }
@@ -337,44 +339,60 @@ public class ShowCartActivity extends BackButtonActivity {
                 });
     }
 
-    private void addTabsToPager(String baseImgUrl, boolean isCurrentPageRequest, CartSummary cartSummary) {
+    private ArrayList<CartItemList> getSkuForTabs(ArrayList<CartItemList> totalList, int tabType) {
+        ArrayList<CartItemList> tabList = new ArrayList<CartItemList>();
 
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-
-        cartItemLists_exp = new ArrayList<CartItemList>();
-        cartItemLists_stnd = new ArrayList<CartItemList>();
-
-        for (int i = 0; i < cartItemLists.size(); i++) {
-            for (int j = 0; j < cartItemLists.get(i).getCartItems().size(); j++) {
-                if (cartItemLists.get(i).getCartItems().get(j).getSkuType() != null) {
-                    cartItemLists_exp.add(cartItemLists.get(i));
-                } else {
-                    cartItemLists_stnd.add(cartItemLists.get(i));
+        for (int i = 0; i < totalList.size(); i++) {
+            ArrayList<CartItem> lists = new ArrayList<CartItem>();
+            for (int j = 0; j < totalList.get(i).getCartItems().size(); j++) {
+                String sku_type = totalList.get(i).getCartItems().get(j).getSkuType();
+                if (tabType == Constants.TAB_TYPE_EXPRESS) {
+                    if (sku_type != null && sku_type.equals(Constants.SKU_TYPE_EXPRESS) || sku_type.equals(Constants.SKU_TYPE_JIT) ||
+                            sku_type.equals(Constants.SKU_TYPE_KIRANA)) {
+                        lists.add(totalList.get(i).getCartItems().get(j));
+                    }
+                } else if (tabType == Constants.TAB_TYPE_STANDARD) {
+                    if (sku_type != null && sku_type.equals(Constants.SKU_TYPE_STANDARD)) {
+                        lists.add(totalList.get(i).getCartItems().get(j));
+                    }
                 }
             }
+            if (lists.size() > 0) {
+                CartItemList cartItemList = new CartItemList(lists, totalList.get(i).getTopCatName(),
+                        totalList.get(i).getTopCatTotal(), totalList.get(i).getTopCatItems());
+                tabList.add(cartItemList);
+            }
         }
+        return tabList;
+    }
+
+    private void addTabsToPager(String baseImgUrl, ArrayList<FulfillmentInfo> fulfillmentInfos,
+                                ArrayList<AnnotationInfo> annotationInfoArrayList) {
+
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
+
+        ArrayList<CartItemList> cartItemLists_stnd = getSkuForTabs(cartItemLists, Constants.TAB_TYPE_STANDARD);
+        ArrayList<CartItemList> cartItemLists_exp = getSkuForTabs(cartItemLists, Constants.TAB_TYPE_EXPRESS);
 
         ArrayList<BBTab> bbTabs = new ArrayList<>();
 
-        HashSet hs = new HashSet();
-        hs.addAll(cartItemLists_stnd);
-        cartItemLists_stnd.clear();
-
-        cartItemLists_stnd.addAll(hs);
-
-        cartItemLists_exp.addAll(cartItemLists_stnd);
-
         TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
-        if (cartItemLists_exp.size() > 0 && cartItemLists_stnd.size() > 0) {
+
+        if (cartItemLists_stnd != null && cartItemLists_exp != null &&
+                cartItemLists_stnd.size() > 0 && cartItemLists_exp.size() > 0) {
             pageTitleStrip.setVisibility(View.VISIBLE);
-            createTabFragment(getString(R.string.exp_delivery), baseImgUrl, ShowCartFragment.class, cartItemLists_exp, bbTabs, isCurrentPageRequest, cartSummary);
-            createTabFragment(getString(R.string.stnd_delivery), baseImgUrl, ShowCartFragment.class, cartItemLists_stnd, bbTabs, isCurrentPageRequest, cartSummary);
-        } else if (cartItemLists_exp.size() > 0) {
+            createTabFragment(getString(R.string.stnd_delivery), baseImgUrl,
+                    cartItemLists_stnd, fulfillmentInfos, annotationInfoArrayList, bbTabs);
+            createTabFragment(getString(R.string.exp_delivery), baseImgUrl,
+                    cartItemLists_exp, fulfillmentInfos, annotationInfoArrayList, bbTabs);
+        } else if (cartItemLists_stnd != null && cartItemLists_exp != null &&
+                cartItemLists_stnd.size() > 0 || cartItemLists_exp.size() > 0) {
             pageTitleStrip.setVisibility(View.GONE);
-            createTabFragment(getString(R.string.exp_delivery), baseImgUrl, ShowCartFragment.class, cartItemLists_exp, bbTabs, isCurrentPageRequest, cartSummary);
-        } else if (cartItemLists_stnd.size() > 0) {
-            pageTitleStrip.setVisibility(View.GONE);
-            createTabFragment(getString(R.string.stnd_delivery), baseImgUrl, ShowCartFragment.class, cartItemLists_stnd, bbTabs, isCurrentPageRequest, cartSummary);
+            cartItemLists_exp = cartItemLists_exp.size() > 0 ? cartItemLists_exp : cartItemLists_stnd;
+            String title = cartItemLists_exp.size() > 0 ? getString(R.string.exp_delivery) :
+                    getString(R.string.stnd_delivery);
+            createTabFragment(title, baseImgUrl,
+                    cartItemLists_exp, fulfillmentInfos, annotationInfoArrayList, bbTabs);
         }
 
         TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
@@ -396,16 +414,15 @@ public class ShowCartActivity extends BackButtonActivity {
             }
         });
 
-//        if(pageTitleStrip.isShown()){
         pageTitleStrip.setupWithViewPager(mViewPager);
-//        }
     }
 
-    private ArrayList<BBTab> createTabFragment(String tab_name, String baseUrl, Class<ShowCartFragment> showCartFragmentClass, ArrayList<CartItemList> cartItemList, ArrayList<BBTab> bbTabs, boolean isCurrentPageRequest, CartSummary cartSummary) {
+    private ArrayList<BBTab> createTabFragment(String tab_name, String baseUrl, ArrayList<CartItemList> cartItemList, ArrayList<FulfillmentInfo> fulfillmentInfos, ArrayList<AnnotationInfo> annotationInfoArrayList, ArrayList<BBTab> bbTabs) {
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(Constants.CART_ITEMS, cartItemList);
+        bundle.putParcelableArrayList(Constants.FULFILLMENT_INFO, fulfillmentInfos);
+        bundle.putParcelableArrayList(Constants.ANNOTATION_INFO, annotationInfoArrayList);
         bundle.putString(Constants.BASE_IMG_URL, baseUrl);
-        bundle.putBoolean(Constants.CURRENT_PAGE, isCurrentPageRequest);
         bbTabs.add(new BBTab<>(tab_name, ShowCartFragment.class, bundle));
         return bbTabs;
     }
@@ -418,8 +435,8 @@ public class ShowCartActivity extends BackButtonActivity {
         TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_show_cart);
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layoutCheckoutFooter);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
 
-        if (relativeLayout == null) return;
         LayoutInflater inflater = getLayoutInflater();
         View base = inflater.inflate(R.layout.uiv3_empty_data_text, relativeLayout, false);
 
@@ -446,9 +463,7 @@ public class ShowCartActivity extends BackButtonActivity {
         appBarLayout.removeView(pageTitleStrip);
         coordinatorLayout.removeView(mViewPager);
         relativeLayout.removeView(linearLayout);
-
         frameLayout.addView(base);
-
     }
 
     @Override

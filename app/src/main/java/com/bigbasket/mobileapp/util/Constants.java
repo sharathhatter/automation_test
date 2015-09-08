@@ -566,7 +566,6 @@ public class Constants {
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
 
-
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
     public static final String MOBIKWIKSDK = "MobikwikSDK";
@@ -580,5 +579,14 @@ public class Constants {
     public static final String MOBIKWIK_PAYMENT_MW = "mw";
     public static final String MOBIKWIK_STATUS = "status";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
+
+    // Sku Tabs
+    public static final int TAB_TYPE_EXPRESS = 0;
+    public static final int TAB_TYPE_STANDARD = 1;
+    public static final String SKU_TYPE_EXPRESS = "express";
+    public static final String SKU_TYPE_JIT = "jit-express";
+    public static final String SKU_TYPE_KIRANA = "kirana-express";
+    public static final String SKU_TYPE_STANDARD = "standard";
+
 
 }
