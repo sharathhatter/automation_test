@@ -362,4 +362,10 @@
     </string>
 
     <string name="productListTransition">ProductListTransition</string>
+    <string name="pleaseChooseLocationToProceed">Please choose a location to proceed further</string>
+    <string name="yourCurrentLoc">Your Current Location</string>
+    <string name="toMyCurrentLocation">TO MY CURRENT LOCATION</string>
+    <string name="selectLocationManually">SELECT LOCATION MANUALLY</string>
+    <string name="readingYourCurrentLocation">Reading your current location...</string>
+    <string name="unableToReadLocation">Unable to read location!</string>
 </resources>

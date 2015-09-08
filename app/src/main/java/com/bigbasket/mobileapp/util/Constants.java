@@ -224,6 +224,8 @@ public class Constants {
     public static final String ID = "id";
     public static final String ADDRESS_ID = "address_id";
     public static final String MEMBER_ADDRESS_ID = "member_address_id";
+    public static final String LAT = "lat";
+    public static final String LNG = "lng";
     public static final String IS_DEFAULT = "is_default";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";

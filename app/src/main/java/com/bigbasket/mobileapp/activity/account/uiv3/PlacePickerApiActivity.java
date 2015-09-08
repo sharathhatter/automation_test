@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -15,11 +14,10 @@ import android.widget.AutoCompleteTextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.interfaces.location.LocationAutoSuggestListener;
-import com.bigbasket.mobileapp.interfaces.location.OnAddressFetchedListener;
-import com.bigbasket.mobileapp.task.uiv3.ReverseGeocoderTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.location.LocationAutoSuggestHelper;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -35,11 +33,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.List;
-
 public class PlacePickerApiActivity extends BackButtonActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener, OnAddressFetchedListener,
-        LocationAutoSuggestListener {
+        GoogleMap.OnMyLocationButtonClickListener, LocationAutoSuggestListener {
 
     private GoogleApiClient mGoogleApiClient;
     private LatLng mSelectedLatLng;
@@ -83,7 +78,11 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         layoutChooseLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ReverseGeocoderTask<>(getCurrentActivity()).execute(mSelectedLatLng);
+                Intent intent = new Intent();
+                intent.putExtra(Constants.LAT, mSelectedLatLng);
+                setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED,
+                        intent);
+                finish();
             }
         });
     }
@@ -196,14 +195,6 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
             }
         } else {
             super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
-        }
-    }
-
-    @Override
-    public void onAddressFetched(@Nullable List<Address> addresses) {
-        if (addresses != null && addresses.size() > 0) {
-            showToast(addresses.get(0).getPostalCode() + ":" +
-                    addresses.get(0).getLocality());
         }
     }
 }
