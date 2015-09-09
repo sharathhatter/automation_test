@@ -375,4 +375,5 @@
     <string name="refresh">Refresh</string>
     <string name="unknown">Unknown</string>
     <string name="saveThisLocation">SAVE THIS LOCATION</string>
+    <string name="changeMyLocation">CHANGE MY LOCATION</string>
 </resources>

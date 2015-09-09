@@ -110,7 +110,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     protected BigBasketMessageHandler handler;
     private ActionBarDrawerToggle mDrawerToggle;
-    private String mTitle;
+    protected String mTitle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartSummary = new CartSummary();
     private BBDrawerLayout mDrawerLayout;
@@ -120,6 +120,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private FloatingBadgeCountView mBtnViewBasket;
     private RecyclerView mListSubNavigation;
     private boolean mSyncNeeded;
+    @Nullable
+    protected AddressBroadcastReceiver mAddressBroadcastReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -172,9 +174,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
         }
 
-        IntentFilter addressSyncIntentFilter = new IntentFilter(Constants.ADDRESS_SYNC_BROADCAST_ACTION);
-        LocalBroadcastManager.getInstance(this).registerReceiver(new AddressBroadcastReceiver<>(this),
-                addressSyncIntentFilter);
+        mAddressBroadcastReceiver = new AddressBroadcastReceiver<>(this);
     }
 
     public void onAddressSynced() {
@@ -241,7 +241,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                toolbar.setTitle(formatToolbarTitle(mTitle));
+                setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
                     onSubNavigationHideRequested(false);
@@ -549,7 +549,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                                                     @Nullable HashMap<String, Integer> cartInfoMap,
                                                     @Nullable EditText editTextQty) {
 
-        Log.d("BB","BB ACTIVITY updateUIAfterBasketOperationSuccess");
+        Log.d("BB", "BB ACTIVITY updateUIAfterBasketOperationSuccess");
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
@@ -946,6 +946,16 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (mAddressBroadcastReceiver != null) {
+            IntentFilter addressSyncIntentFilter = new IntentFilter(Constants.ADDRESS_SYNC_BROADCAST_ACTION);
+            LocalBroadcastManager.getInstance(this).registerReceiver(mAddressBroadcastReceiver,
+                    addressSyncIntentFilter);
+        }
+
+        // Also manually trigger it once to sync address-change in case receiver got unregistered
+        onAddressSynced();
+
         FragmentManager sfm = getSupportFragmentManager();
         if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {
             LocalyticsWrapper.tagScreen(getScreenTag());
@@ -986,6 +996,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         super.onPause();
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+
+        if (mAddressBroadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mAddressBroadcastReceiver);
         }
     }
 

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bigbasket.mobileapp"
-    android:installLocation="auto" >
+    android:installLocation="auto">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -60,7 +60,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -75,7 +75,7 @@
 
         <receiver
             android:name="com.appsflyer.MultipleInstallBroadcastReceiver"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
@@ -90,7 +90,7 @@
             android:name=".activity.DeepLinkDispatcherActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -285,7 +285,7 @@
         <activity
             android:name=".activity.base.uiv3.BBActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -298,7 +298,7 @@
             android:name=".activity.product.ProductListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -493,7 +493,7 @@
         <!-- MOEngage -->
         <receiver
             android:name="com.moe.pushlibrary.PushGcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
@@ -503,12 +503,12 @@
         </receiver>
 
         <!-- MOENGAGE RECEIVER FOR RECEIVING INSTALLATION INTENT -->
-        <receiver android:name="com.moe.pushlibrary.InstallReceiver" >
+        <receiver android:name="com.moe.pushlibrary.InstallReceiver">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver" >
+        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
@@ -534,7 +534,7 @@
         <activity
             android:name="com.moe.pushlibrary.activities.MoEActivity"
             android:parentActivityName=".activity.SplashActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.SplashActivity" />
@@ -555,9 +555,10 @@
             android:name="NOTIFICATION_ICON"
             android:value="notification_icon_large_bbw" />
 
-        <meta-data android:name="NOTIFICATION_LARGE_ICON"
+        <meta-data
+            android:name="NOTIFICATION_LARGE_ICON"
             android:value="notification_icon" />
-        
+
         <!-- moEngage UBox -->
         <activity
             android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
@@ -588,7 +589,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAcAYm_JguAF9LmBnNW1YC0Hmz6_UuO3Cw"/>
+            android:value="AIzaSyAcAYm_JguAF9LmBnNW1YC0Hmz6_UuO3Cw" />
 
         <service
             android:name=".service.AreaPinInfoIntentService"

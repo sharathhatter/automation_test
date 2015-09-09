@@ -51,7 +51,7 @@ public final class AddressManager {
         try {
             DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
             Date lastCalledDate = format.parse(lastFetchedStr);
-            Date now = format.getCalendar().getTime();
+            Date now = new Date();
             long diff = now.getTime() - lastCalledDate.getTime();
             return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS) > TIMEOUT;
         } catch (ParseException e) {

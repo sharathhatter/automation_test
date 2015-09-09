@@ -592,7 +592,6 @@ public class Constants {
     public static final String MOBIKWIK_STATUS = "status";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
 
-    public static final String ADD_TO_BASKET_POST_PARAMS = "add_to_basket_post_params";
     public static final String ADDRESS_SYNC_BROADCAST_ACTION = "com.bigbasket.mobileapp.broadcase.AddressSync";
 
     // Sku Tabs

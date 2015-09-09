@@ -2,9 +2,11 @@
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/text1"
+    style="?attr/spinnerDropDownItemStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:drawablePadding="@dimen/padding_small"
     android:drawableRight="@drawable/ic_edit_white_24dp"
     android:padding="@dimen/padding_normal"
-    android:textColor="@color/uiv3_primary_text_color"
-    android:textSize="@dimen/primary_text_size" />
+    android:textColor="@color/white"
+    android:textSize="@dimen/secondary_text_size" />
