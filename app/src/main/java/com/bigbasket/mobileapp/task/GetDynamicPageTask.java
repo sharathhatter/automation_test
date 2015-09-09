@@ -10,7 +10,7 @@ import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
-import com.bigbasket.mobileapp.model.SectionManager;
+import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionUtil;
 import com.bigbasket.mobileapp.util.Constants;

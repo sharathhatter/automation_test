@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.activity.base.uiv3;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -63,9 +65,11 @@ import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.CityManager;
+import com.bigbasket.mobileapp.managers.AddressManager;
+import com.bigbasket.mobileapp.managers.CityManager;
+import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.SectionManager;
+import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
@@ -80,7 +84,9 @@ import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
+import com.bigbasket.mobileapp.receivers.AddressBroadcastReceiver;
 import com.bigbasket.mobileapp.service.AreaPinInfoIntentService;
+import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -164,6 +170,27 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (CityManager.isAreaPinInfoDataStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
         }
+
+        IntentFilter addressSyncIntentFilter = new IntentFilter(Constants.ADDRESS_SYNC_BROADCAST_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(new AddressBroadcastReceiver<>(this),
+                addressSyncIntentFilter);
+    }
+
+    public void onAddressSynced() {
+        ArrayList<AddressSummary> addressSummaries = AddressManager.getStoredAddresses(this);
+        if (addressSummaries == null || addressSummaries.size() == 0) return;
+
+        AddressSummary defaultAddress = addressSummaries.get(0);
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString(Constants.CITY, defaultAddress.getCityName());
+        editor.putString(Constants.CITY_ID, String.valueOf(defaultAddress.getCityId()));
+        editor.apply();
+
+        setCityText(defaultAddress.toString());
+    }
+
+    public void onAddressSyncFailure() {
+
     }
 
     public void onNoFragmentsInLayout() {
@@ -712,18 +739,50 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
         txtNavSalutation.setTypeface(faceRobotoMedium);
         ((TextView) findViewById(R.id.lblWelcome)).setTypeface(faceRobotoMedium);
-        TextView txtCityName = (TextView) findViewById(R.id.txtCityName);
-        txtCityName.setTypeface(faceRobotoMedium);
         ImageView imgSwitchNav = (ImageView) findViewById(R.id.imgSwitchNav);
 
         AuthParameters authParameters = AuthParameters.getInstance(this);
 
+        ArrayList<AddressSummary> addressSummaries = AddressManager.getStoredAddresses(this);
+        if (addressSummaries != null && addressSummaries.size() > 0) {
+            setCityText(addressSummaries.get(0).toString());
+        } else {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            setCityText(preferences.getString(Constants.CITY, ""));
+        }
         if (!authParameters.isAuthTokenEmpty()) {
             txtNavSalutation.setText(!TextUtils.isEmpty(authParameters.getMemberFullName()) ?
                     authParameters.getMemberFullName() : authParameters.getMemberEmail());
         } else {
             txtNavSalutation.setText(getString(R.string.bigbasketeer));
         }
+
+        imgSwitchNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleNavigationArea((ImageView) v);
+            }
+        });
+
+        Object[] data = getSectionNavigationItems();
+        ArrayList<SectionNavigationItem> sectionNavigationItems = (ArrayList<SectionNavigationItem>) data[0];
+        String baseImgUrl = (String) data[1];
+        HashMap<Integer, Renderer> rendererHashMap = (HashMap<Integer, Renderer>) data[2];
+
+        ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
+        new AccountView<>(this, lstMyAccount);
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
+                sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
+        mNavRecyclerView.setAdapter(navigationAdapter);
+    }
+
+    private void setCityText(String text) {
+        TextView txtCityName = (TextView) findViewById(R.id.txtCityName);
+        if (txtCityName == null) return;
+        txtCityName.setTypeface(faceRobotoMedium);
+
+        AuthParameters authParameters = AuthParameters.getInstance(this);
+
         if (authParameters.isAuthTokenEmpty()) {
             txtCityName.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -740,27 +799,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     ContextCompat.getDrawable(getCurrentActivity(), R.drawable.address_white),
                     null, null, null);
         }
-
-        imgSwitchNav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleNavigationArea((ImageView) v);
-            }
-        });
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        txtCityName.setText(preferences.getString(Constants.CITY, ""));
-
-        Object[] data = getSectionNavigationItems();
-        ArrayList<SectionNavigationItem> sectionNavigationItems = (ArrayList<SectionNavigationItem>) data[0];
-        String baseImgUrl = (String) data[1];
-        HashMap<Integer, Renderer> rendererHashMap = (HashMap<Integer, Renderer>) data[2];
-
-        ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
-        new AccountView<>(this, lstMyAccount);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
-                sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
-        mNavRecyclerView.setAdapter(navigationAdapter);
+        txtCityName.setText(text);
     }
 
     private void toggleNavigationArea(ImageView imgSwitchNav) {
@@ -921,6 +960,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             loadNavigationItems();
         } else {
             syncMainMenuIfNeeded();
+        }
+
+        if (AddressManager.isStale(getCurrentActivity())) {
+            startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
         }
     }
 

@@ -10,7 +10,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAreaInfoResponse;
-import com.bigbasket.mobileapp.model.CityManager;
+import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.account.City;
 
 import java.util.ArrayList;

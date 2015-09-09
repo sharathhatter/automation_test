@@ -1,4 +1,4 @@
-package com.bigbasket.mobileapp.model;
+package com.bigbasket.mobileapp.managers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,7 +20,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class CityManager {
+public final class CityManager {
+    private CityManager() {}
     private static final int TIMEOUT_IN_MINUTES = 60;
     private static final String preferenceKey = "stored_city";
 

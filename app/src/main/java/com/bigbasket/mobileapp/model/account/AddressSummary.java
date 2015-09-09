@@ -64,8 +64,9 @@ public class AddressSummary implements Parcelable {
 
     @Override
     public String toString() {
-        return ((!TextUtils.isEmpty(area) ? area + " - " : "") +
-                (!TextUtils.isEmpty(cityName) ? cityName : ""));
+        return ((!TextUtils.isEmpty(area) ? area + "\n" : "") +
+                (!TextUtils.isEmpty(cityName) ? cityName : "") +
+                (!TextUtils.isEmpty(pincode) ? "- " + pincode : ""));
     }
 
     public String getId() {

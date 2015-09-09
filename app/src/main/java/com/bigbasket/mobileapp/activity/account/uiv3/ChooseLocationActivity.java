@@ -187,7 +187,9 @@ public class ChooseLocationActivity extends BackButtonActivity {
             lblCurrentLocation.setVisibility(View.VISIBLE);
             txtDetectedArea.setVisibility(View.VISIBLE);
             txtNotServedMsg.setVisibility(View.GONE);
-            txtDetectedArea.setText(mChosenAddressSummary.toString());
+            String area = !TextUtils.isEmpty(mChosenAddressSummary.getArea()) ?
+                    mChosenAddressSummary.getArea() + ", " : "";
+            txtDetectedArea.setText(area + mChosenAddressSummary.getCityName());
         }
     }
 

@@ -25,11 +25,12 @@ import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.CityManager;
-import com.bigbasket.mobileapp.model.SectionManager;
+import com.bigbasket.mobileapp.managers.CityManager;
+import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
+import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -85,6 +86,11 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
                 if (checkInternetConnection()) {
                     NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
                 }
+            }
+
+            // Explicitly start the service to sync data, provided register-device has been completed
+            if (!TextUtils.isEmpty(AuthParameters.getInstance(this).getVisitorId())) {
+                startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
             }
         }
     }

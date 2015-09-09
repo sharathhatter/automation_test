@@ -13,6 +13,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAddressSummaryResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetAppDataDynamicResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAreaInfoResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
@@ -436,4 +437,7 @@ public interface BigBasketApiService {
                            @Field(Constants.LAT) String latitude,
                            @Field(Constants.LNG) String longitude,
                            Callback<ApiResponse<GetAddressSummaryResponse>> getAddressSummaryResponseCallback);
+
+    @POST("/get-app-data-dynamic/")
+    ApiResponse<GetAppDataDynamicResponse> getAppDataDynamic();
 }

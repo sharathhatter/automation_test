@@ -592,8 +592,10 @@
 
         <service
             android:name=".service.AreaPinInfoIntentService"
-            android:exported="false" >
-        </service>
+            android:exported="false" />
+        <service
+            android:name=".service.GetAppDataDynamicIntentService"
+            android:exported="false" />
     </application>
 
 </manifest>

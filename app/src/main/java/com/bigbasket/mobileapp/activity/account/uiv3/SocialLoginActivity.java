@@ -16,7 +16,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.SectionManager;
+import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;

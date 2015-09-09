@@ -58,8 +58,9 @@ import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.managers.AddressManager;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.SectionManager;
+import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
@@ -792,6 +793,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         editor.apply();
 
         SectionManager.clearAllSectionData(this);
+        AddressManager.reset(this);
         goToHome(true);
     }
 
