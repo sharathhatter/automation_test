@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,29 +9,35 @@
         android:id="@+id/toolbarMain"
         layout="@layout/uiv3_tool_layout" />
 
-    <include
-        android:id="@+id/layoutChooseLocation"
-        layout="@layout/uiv3_checkout_footer"
+    <TextView
+        android:id="@+id/txtAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/main_btn_bkg_not_rounded"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_normal"
+        android:text="@string/saveThisLocation"
+        android:textColor="@color/white"
+        android:textSize="@dimen/large_text_size" />
 
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/layoutChooseLocation"
-        android:layout_below="@id/toolbarMain"
-        tools:ignore="MissingPrefix" />
+        android:layout_above="@id/txtAction"
+        android:layout_below="@id/toolbarMain" />
 
     <AutoCompleteTextView
         android:id="@+id/aEditTextChooseArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbarMain"
-        android:layout_margin="@dimen/margin_large"
+        android:layout_margin="@dimen/margin_normal"
         android:background="@color/white"
-        android:padding="@dimen/padding_normal"
-        android:hint="@string/typeYourLocality" />
+        android:hint="@string/typeYourLocality"
+        android:padding="@dimen/padding_normal" />
 </RelativeLayout>

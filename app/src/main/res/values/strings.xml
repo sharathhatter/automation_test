@@ -370,4 +370,5 @@
     <string name="unableToReadLocation">Unable to read location!</string>
     <string name="refresh">Refresh</string>
     <string name="unknown">Unknown</string>
+    <string name="saveThisLocation">SAVE THIS LOCATION</string>
 </resources>

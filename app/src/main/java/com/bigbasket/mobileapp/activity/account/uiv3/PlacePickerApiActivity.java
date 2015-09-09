@@ -5,15 +5,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.interfaces.location.LocationAutoSuggestListener;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.location.LocationAutoSuggestHelper;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -55,6 +54,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.getUiSettings().setZoomControlsEnabled(true);
         map.setOnMyLocationButtonClickListener(this);
+        map.setPadding(0, 160, 0, 0);
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
 
@@ -62,9 +62,10 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
                 (AutoCompleteTextView) findViewById(R.id.aEditTextChooseArea);
         new LocationAutoSuggestHelper<>(this, aEditTextChooseArea, mGoogleApiClient,
                 new LatLngBounds(new LatLng(7.43231, 65.82658), new LatLng(36.93593, 99.04924)), false).init();
-        ViewGroup layoutChooseLocation = (ViewGroup) findViewById(R.id.layoutChooseLocation);
-        UIUtil.setUpFooterButton(this, layoutChooseLocation, null, "Continue", true);
-        layoutChooseLocation.setOnClickListener(new View.OnClickListener() {
+
+        TextView txtAction = (TextView) findViewById(R.id.txtAction);
+        txtAction.setTypeface(faceRobotoLight);
+        txtAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -114,6 +115,10 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
     @Override
     public void onConnected(Bundle connectionHint) {
+        readLastKnownLocation();
+    }
+
+    private void readLastKnownLocation() {
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if (lastLocation != null) {
@@ -142,6 +147,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 mGoogleMapMarker = marker;
+                mSelectedLatLng = marker.getPosition();
             }
         });
         animateToMarker();
@@ -166,9 +172,11 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
     @Override
     public boolean onMyLocationButtonClick() {
-        if (mGoogleMap != null && mGoogleMapMarker != null) {
-            mGoogleMapMarker.remove();
-            updateLastKnownLocationOnMap();
+        if (mGoogleMap != null) {
+            if (mGoogleMapMarker != null) {
+                mGoogleMapMarker.remove();
+            }
+            readLastKnownLocation();
         }
         return false;
     }
