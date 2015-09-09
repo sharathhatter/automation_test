@@ -14,23 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ProductTabData implements Parcelable {
-    @SerializedName(Constants.HEADER_SECTION)
-    private Section headerSection;
 
-    @SerializedName(Constants.HEADER_SEL)
-    private int headerSelectedIndex;
-
-    @SerializedName(Constants.SORT_ON)
-    private String sortedOn;
-
-    @SerializedName(Constants.FILTERED_ON)
-    private ArrayList<FilteredOn> filteredOn;
-
-    @SerializedName(Constants.PRODUCT_SORT_OPTION)
-    private ArrayList<Option> sortOptions;
-
-    @SerializedName(Constants.FILTER_OPTIONS)
-    private ArrayList<FilterOptionCategory> filterOptionItems;
 
     @SerializedName(Constants.BASE_IMG_URL)
     private String baseImgUrl;
@@ -49,29 +33,7 @@ public class ProductTabData implements Parcelable {
 
     @SuppressWarnings("unchecked")
     public ProductTabData(Parcel source) {
-        boolean isHeaderSectionNull = source.readByte() == (byte) 1;
-        if (!isHeaderSectionNull) {
-            headerSection = source.readParcelable(ProductTabData.class.getClassLoader());
-        }
-        boolean isSortedOnNull = source.readByte() == (byte) 1;
-        if (!isSortedOnNull) {
-            sortedOn = source.readString();
-        }
-        boolean isFilteredOnNull = source.readByte() == (byte) 1;
-        if (!isFilteredOnNull) {
-            filteredOn = new ArrayList<>();
-            source.readTypedList(filteredOn, FilteredOn.CREATOR);
-        }
-        boolean isSortOptionsNull = source.readByte() == (byte) 1;
-        if (!isSortOptionsNull) {
-            sortOptions = new ArrayList<>();
-            source.readTypedList(sortOptions, Option.CREATOR);
-        }
-        boolean isFilterOptionCategoryNull = source.readByte() == (byte) 1;
-        if (!isFilterOptionCategoryNull) {
-            filterOptionItems = new ArrayList<>();
-            source.readTypedList(filterOptionItems, FilterOptionCategory.CREATOR);
-        }
+
         boolean isBaseImgUrlNull = source.readByte() == (byte) 1;
         if (!isBaseImgUrlNull) {
             baseImgUrl = source.readString();
@@ -91,7 +53,6 @@ public class ProductTabData implements Parcelable {
             productTabInfos = new ArrayList<>();
             source.readTypedList(productTabInfos, ProductTabInfo.CREATOR);
         }
-        headerSelectedIndex = source.readInt();
         boolean isScreenNameNull = source.readByte() == (byte) 1;
         if (!isScreenNameNull) {
             screenName = source.readString();
@@ -105,31 +66,6 @@ public class ProductTabData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        boolean isHeaderSectionNull = headerSection == null;
-        dest.writeByte(isHeaderSectionNull ? (byte) 1 : (byte) 0);
-        if (!isHeaderSectionNull) {
-            dest.writeParcelable(headerSection, flags);
-        }
-        boolean isSortedOnNull = sortedOn == null;
-        dest.writeByte(isSortedOnNull ? (byte) 1 : (byte) 0);
-        if (!isSortedOnNull) {
-            dest.writeString(sortedOn);
-        }
-        boolean isFilteredOnNull = filteredOn == null;
-        dest.writeByte(isFilteredOnNull ? (byte) 1 : (byte) 0);
-        if (!isFilteredOnNull) {
-            dest.writeTypedList(filteredOn);
-        }
-        boolean isSortOptionsNull = sortOptions == null;
-        dest.writeByte(isSortOptionsNull ? (byte) 1 : (byte) 0);
-        if (!isSortOptionsNull) {
-            dest.writeTypedList(sortOptions);
-        }
-        boolean isFilterOptionCategoryNull = filterOptionItems == null;
-        dest.writeByte(isFilterOptionCategoryNull ? (byte) 1 : (byte) 0);
-        if (!isFilterOptionCategoryNull) {
-            dest.writeTypedList(filterOptionItems);
-        }
         boolean isBaseImgUrlNull = baseImgUrl == null;
         dest.writeByte(isBaseImgUrlNull ? (byte) 1 : (byte) 0);
         if (!isBaseImgUrlNull) {
@@ -150,7 +86,6 @@ public class ProductTabData implements Parcelable {
         if (!isProductTabInfoNull) {
             dest.writeTypedList(productTabInfos);
         }
-        dest.writeInt(headerSelectedIndex);
         boolean isScreenNameNull = screenName == null;
         dest.writeByte(isScreenNameNull ? (byte) 1 : (byte) 0);
         if (!isScreenNameNull) {
@@ -171,31 +106,6 @@ public class ProductTabData implements Parcelable {
     };
 
     @Nullable
-    public Section getHeaderSection() {
-        return headerSection;
-    }
-
-    @Nullable
-    public String getSortedOn() {
-        return sortedOn;
-    }
-
-    @Nullable
-    public ArrayList<FilteredOn> getFilteredOn() {
-        return filteredOn;
-    }
-
-    @Nullable
-    public ArrayList<Option> getSortOptions() {
-        return sortOptions;
-    }
-
-    @Nullable
-    public ArrayList<FilterOptionCategory> getFilterOptionItems() {
-        return filterOptionItems;
-    }
-
-    @Nullable
     public String getBaseImgUrl() {
         return baseImgUrl;
     }
@@ -210,19 +120,11 @@ public class ProductTabData implements Parcelable {
         return cartInfo;
     }
 
-    public void setFilteredOn(ArrayList<FilteredOn> filteredOn) {
-        this.filteredOn = filteredOn;
-    }
-
     public ArrayList<ProductTabInfo> getProductTabInfos() {
         return productTabInfos;
     }
 
     public String getScreenName() {
         return screenName;
-    }
-
-    public int getHeaderSelectedIndex() {
-        return headerSelectedIndex;
     }
 }

@@ -21,6 +21,7 @@ public class Constants {
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
     public static final String PRODUCT_ID = "sku";
+    public static final String SKU_TYPE = "sku_type";
     public static final String IMAGE_URL = "p_img_url";
     public static final String MRP_PRICE = "mrp";
     public static final String SELL_PRICE = "sp";
@@ -108,6 +109,15 @@ public class Constants {
     public static final String FILTER_VALUES = "values";
     public static final String FILTER_VALUES_SLUG = "filter_value_slug";
 
+    public static final String SELLER_INFO = "seller_info";
+    public static final String STORE_ID = "store_id";
+    public static final String AVAILABILITY = "availability";
+    public static final String AVAILABILITY_INFO_ID = "availability_info_id";
+
+    //update-app-data
+    public static final String ADD_TO_BASKET_POST_PARAMS = "add_to_basket_post_params";
+    public static final String EXPRESS_AVAILABLE = "express_available";
+    public static final String AVAILABILITY_INFOS = "availability_infos";
     //Error codes
     public static final String PRODUCT_ID_NOT_FOUND = "101";
     public static final String PRODUCT_INFO = "product_info";
@@ -568,7 +578,6 @@ public class Constants {
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
 
-
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
     public static final String MOBIKWIKSDK = "MobikwikSDK";
@@ -585,4 +594,13 @@ public class Constants {
 
     public static final String ADD_TO_BASKET_POST_PARAMS = "add_to_basket_post_params";
     public static final String ADDRESS_SYNC_BROADCAST_ACTION = "com.bigbasket.mobileapp.broadcase.AddressSync";
+
+    // Sku Tabs
+    public static final int TAB_TYPE_EXPRESS = 0;
+    public static final int TAB_TYPE_STANDARD = 1;
+    public static final String SKU_TYPE_EXPRESS = "express";
+    public static final String SKU_TYPE_JIT = "jit-express";
+    public static final String SKU_TYPE_KIRANA = "kirana-express";
+    public static final String SKU_TYPE_STANDARD = "standard";
+
 }

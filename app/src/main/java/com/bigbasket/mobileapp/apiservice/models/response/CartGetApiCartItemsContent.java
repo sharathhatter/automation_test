@@ -13,4 +13,5 @@ public class CartGetApiCartItemsContent {
 
     @SerializedName(Constants.ITEMS)
     public ArrayList<CartItemList> cartItemLists;
+
 }

@@ -9,6 +9,7 @@ import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.ProductTabData;
+import com.bigbasket.mobileapp.model.product.ProductTabInfo;
 
 import java.util.ArrayList;
 
@@ -40,13 +41,17 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
         }
         if (productListDataApiResponse.status == 0) {
             ProductTabData productTabData = productListDataApiResponse.apiResponseContent;
-            if (productTabData != null) {
-                if (productTabData.getFilteredOn() == null) {
-                    productTabData.setFilteredOn(new ArrayList<FilteredOn>());
+            if (productTabData != null && productTabData.getProductTabInfos() !=null) {
+                for (ProductTabInfo productTabInfo : productTabData.getProductTabInfos()) {
+                    if (productTabInfo.getFilteredOn() == null) {
+                        productTabInfo.setFilteredOn(new ArrayList<FilteredOn>());
+                    }
                 }
+            }
 
-                ArrayList<FilterOptionCategory> filterOptionCategories = productTabData.getFilterOptionItems();
-                ArrayList<FilteredOn> filteredOns = productTabData.getFilteredOn();
+            for(ProductTabInfo productTabInfo : productTabData.getProductTabInfos()){
+                ArrayList<FilterOptionCategory> filterOptionCategories = productTabInfo.getFilterOptionItems();
+                ArrayList<FilteredOn> filteredOns = productTabInfo.getFilteredOn();
                 if (filteredOns != null && filteredOns.size() > 0 && filterOptionCategories != null) {
                     for (FilterOptionCategory filterOptionCategory : filterOptionCategories) {
                         for (FilteredOn filteredOn : filteredOns) {

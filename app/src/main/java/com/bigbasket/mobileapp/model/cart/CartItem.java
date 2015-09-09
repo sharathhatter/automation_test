@@ -50,6 +50,8 @@ public class CartItem extends BaseCartItem {
     private String packDesc;
     @SerializedName(Constants.PRODUCT_WEIGHT)
     private String productWeight;
+    @SerializedName(Constants.SKU_TYPE)
+    private String skuType;
 
     CartItem(Parcel source) {
         super(source);
@@ -70,6 +72,7 @@ public class CartItem extends BaseCartItem {
         isExpress = source.readByte() == (byte) 1;
         packDesc = source.readString();
         productWeight = source.readString();
+        skuType = source.readString();
     }
 
     @Override
@@ -98,6 +101,7 @@ public class CartItem extends BaseCartItem {
         dest.writeByte(isExpress ? (byte) 1 : (byte) 0);
         dest.writeString(packDesc);
         dest.writeString(productWeight);
+        dest.writeString(skuType);
     }
 
     public String getAnnotationId() {
@@ -158,5 +162,9 @@ public class CartItem extends BaseCartItem {
 
     public String getProductWeight() {
         return productWeight;
+    }
+
+    public String getSkuType() {
+        return skuType;
     }
 }

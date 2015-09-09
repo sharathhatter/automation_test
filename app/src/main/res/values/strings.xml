@@ -307,6 +307,10 @@
     <string name="save">SAVE</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
 
+    <!-- Show cart tabs -->
+    <string name="exp_delivery">Express Delivery</string>
+    <string name="stnd_delivery">Standard Delivery</string>
+
     <!-- order invoice -->
     <string name="multi_order_place_txt">You will receive the orders in multiple deliveries</string>
     <string name="continue_shopping">CONTINUE SHOPPING!</string>

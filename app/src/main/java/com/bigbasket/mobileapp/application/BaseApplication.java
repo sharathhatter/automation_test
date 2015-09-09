@@ -22,5 +22,4 @@ public class BaseApplication extends Application {
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
         LocalyticsWrapper.integrate(this);
     }
-
 }
