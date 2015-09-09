@@ -20,8 +20,8 @@ public class AddressSummaryDropdownAdapter extends BaseAdapter {
     // hence using a dirty implementation in getView(),
     // given that that VIEW_TYPE_CHANGE will only occur once.
 
-    private static final int VIEW_TYPE_ADDRESS = 0;
-    private static final int VIEW_TYPE_CHANGE = 1;
+    public static final int VIEW_TYPE_ADDRESS = 0;
+    public static final int VIEW_TYPE_CHANGE = 1;
 
     private ArrayList<AddressSummary> addressSummaries;
     private String changeAddressTxt;
