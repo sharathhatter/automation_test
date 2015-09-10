@@ -46,6 +46,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.UpdateBasketResponseCo
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.ValidateOrderPaymentApiResponse;
+import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
@@ -437,6 +438,11 @@ public interface BigBasketApiService {
                            @Field(Constants.LAT) String latitude,
                            @Field(Constants.LNG) String longitude,
                            Callback<ApiResponse<GetAddressSummaryResponse>> getAddressSummaryResponseCallback);
+
+    @GET("/get-location-detail/")
+    void getLocationDetail(@Query(Constants.LAT) String latitude,
+                           @Query(Constants.LNG) String longitude,
+                           Callback<ApiResponse<AddressSummary>> getAddressSummaryResponseCallback);
 
     @POST("/get-app-data-dynamic/")
     ApiResponse<GetAppDataDynamicResponse> getAppDataDynamic();

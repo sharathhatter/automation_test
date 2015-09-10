@@ -32,7 +32,6 @@ public final class AddressManager {
     @Nullable
     public static ArrayList<AddressSummary> getStoredAddresses(@Nullable Context context) {
         if (context == null) return null;
-        if (isStale(context)) return null;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String addressJson = preferences.getString(PREFERENCE_KEY, null);
         if (!TextUtils.isEmpty(addressJson)) {

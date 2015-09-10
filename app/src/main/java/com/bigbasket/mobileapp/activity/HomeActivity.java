@@ -60,7 +60,8 @@ public class HomeActivity extends BBActivity implements OnAddressChangeListener 
             mSpinnerArea.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (position == Spinner.INVALID_POSITION || position == mCurrentSpinnerIdx) return;
+                    if (position == Spinner.INVALID_POSITION || position == mCurrentSpinnerIdx)
+                        return;
                     if (adapter.getSpinnerViewType(position) == AddressSummaryDropdownAdapter.VIEW_TYPE_ADDRESS) {
                         mCurrentSpinnerIdx = position;
                         setCurrentDeliveryAddress(addressSummaries.get(position));
@@ -112,12 +113,11 @@ public class HomeActivity extends BBActivity implements OnAddressChangeListener 
             addressId = addressSummary.getId();
             lat = lng = null;
         }
-        new ChangeAddressTask<>(this, false, addressId, lat, lng).startTask();
+        new ChangeAddressTask<>(this, addressId, lat, lng).startTask();
     }
 
     @Override
-    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries,
-                                 boolean isSomeoneAlreadyShowingProgressBar) {
+    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries) {
         if (addressSummaries != null && addressSummaries.size() > 0) {
             City newCity = new City(addressSummaries.get(0).getCityName(),
                     addressSummaries.get(0).getCityId());

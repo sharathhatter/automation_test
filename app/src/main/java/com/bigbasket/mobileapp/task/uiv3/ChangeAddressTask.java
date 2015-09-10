@@ -20,7 +20,6 @@ import retrofit.client.Response;
 
 public class ChangeAddressTask<T extends OnAddressChangeListener> {
     private T ctx;
-    private boolean isSomeonAlreadyShowingProgressBar;
     @Nullable
     private String addressId;
     @Nullable
@@ -28,12 +27,11 @@ public class ChangeAddressTask<T extends OnAddressChangeListener> {
     @Nullable
     private String lng;
 
-    public ChangeAddressTask(T ctx, boolean isSomeonAlreadyShowingProgressBar,
+    public ChangeAddressTask(T ctx,
                              @Nullable String addressId,
                              @Nullable String lat,
                              @Nullable String lng) {
         this.ctx = ctx;
-        this.isSomeonAlreadyShowingProgressBar = isSomeonAlreadyShowingProgressBar;
         this.addressId = addressId;
         this.lat = lat;
         this.lng = lng;
@@ -46,9 +44,7 @@ public class ChangeAddressTask<T extends OnAddressChangeListener> {
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter
                 .getApiService(((ActivityAware) ctx).getCurrentActivity());
-        if (!isSomeonAlreadyShowingProgressBar) {
-            ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        }
+        ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
         bigBasketApiService.setCurrentAddress(addressId, lat, lng, new Callback<ApiResponse<GetAddressSummaryResponse>>() {
             @Override
             public void success(ApiResponse<GetAddressSummaryResponse> getAddressSummaryApiResponse, Response response) {
@@ -60,8 +56,7 @@ public class ChangeAddressTask<T extends OnAddressChangeListener> {
                 }
                 switch (getAddressSummaryApiResponse.status) {
                     case 0:
-                        ctx.onAddressChanged(getAddressSummaryApiResponse.apiResponseContent.addressSummaries,
-                                isSomeonAlreadyShowingProgressBar);
+                        ctx.onAddressChanged(getAddressSummaryApiResponse.apiResponseContent.addressSummaries);
                         break;
                     case ApiErrorCodes.ADDRESS_NOT_SERVED:
                         ctx.onAddressNotSupported(getAddressSummaryApiResponse.message);
