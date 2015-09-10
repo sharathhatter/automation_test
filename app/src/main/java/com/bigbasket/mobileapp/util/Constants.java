@@ -538,6 +538,7 @@ public class Constants {
     public static final String HEADER_SEL = "header_sel";
     public static final String TAB_INFO = "tab_info";
     public static final String TAB_NAME = "tab_name";
+    public static final String TAB_IMG = "tab_img";
     public static final String CONTENT_SECTION = "content_section";
     public static final String CART_INFO = "cart_info";
 

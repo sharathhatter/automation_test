@@ -4,8 +4,14 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
@@ -35,6 +41,15 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return bbTabs.size();
+    }
+
+    public View getTabView(int position) {
+        View v = LayoutInflater.from(ctx).inflate(R.layout.custom_tab, null);
+        TextView txtTitle = (TextView) v.findViewById(R.id.textView_title);
+        txtTitle.setText(bbTabs.get(position).getTabTitle());
+        ImageView imgIcon = (ImageView) v.findViewById(R.id.imageView_icon);
+        imgIcon.setImageResource(bbTabs.get(position).getArgs().getInt(Constants.TAB_IMG));
+        return v;
     }
 
     @Override

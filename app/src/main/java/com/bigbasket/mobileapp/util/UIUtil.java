@@ -435,7 +435,7 @@ public class UIUtil {
                                          @Nullable String total, String actionText,
                                          boolean showNextArrow) {
         TextView txtTotal = (TextView) checkoutContainer.findViewById(R.id.txtTotal);
-        txtTotal.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        txtTotal.setTypeface(FontHolder.getInstance(context).getFaceRobotoBold());
         TextView txtAction = (TextView) checkoutContainer.findViewById(R.id.txtAction);
 
         if (!showNextArrow) {
