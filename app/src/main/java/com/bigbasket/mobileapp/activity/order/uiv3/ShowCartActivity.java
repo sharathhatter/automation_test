@@ -11,10 +11,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -310,35 +310,37 @@ public class ShowCartActivity extends BackButtonActivity {
                 });
     }
 
-    private ArrayList<CartItemList> getSkuForTabs(ArrayList<CartItemList> totalList, int tabType) {
-        ArrayList<CartItemList> tabList = new ArrayList<>();
+    private Pair<ArrayList<CartItemList>, ArrayList<CartItemList>> getGroupedSkuTabs(ArrayList<CartItemList> totalList) {
+        ArrayList<CartItemList> expressTabList = new ArrayList<>();
+        ArrayList<CartItemList> standardTabList = new ArrayList<>();
 
         for (CartItemList cartItemList : totalList) {
-            ArrayList<CartItem> lists = new ArrayList<>();
+
+            ArrayList<CartItem> listExpress = new ArrayList<>();
+            ArrayList<CartItem> listStandard = new ArrayList<>();
             for (CartItem cartItem : cartItemList.getCartItems()) {
                 String sku_type = cartItem.getSkuType();
-                if (tabType == Constants.TAB_TYPE_EXPRESS) {
-                    if (!TextUtils.isEmpty(sku_type) &&
-                            (sku_type.equals(Constants.SKU_TYPE_EXPRESS) ||
-                                    sku_type.equals(Constants.SKU_TYPE_JIT) ||
-                                    sku_type.equals(Constants.SKU_TYPE_KIRANA))) {
-                        Log.d("", "EXP IN");
-                        lists.add(cartItem);
-                    }
-                } else if (tabType == Constants.TAB_TYPE_STANDARD) {
-                    if (TextUtils.isEmpty(sku_type) || sku_type.equals(Constants.SKU_TYPE_STANDARD)) {
-                        Log.d("", "STND IN");
-                        lists.add(cartItem);
-                    }
+                if (!TextUtils.isEmpty(sku_type) &&
+                        (sku_type.equals(Constants.SKU_TYPE_EXPRESS) ||
+                                sku_type.equals(Constants.SKU_TYPE_JIT) ||
+                                sku_type.equals(Constants.SKU_TYPE_KIRANA))) {
+                    listExpress.add(cartItem);
+                } else {
+                    listStandard.add(cartItem);
                 }
             }
-            if (lists.size() > 0) {
-                CartItemList returnCartItemList = new CartItemList(lists, cartItemList.getTopCatName(),
+            if (listExpress.size() > 0) {
+                CartItemList returnCartItemList = new CartItemList(listExpress, cartItemList.getTopCatName(),
                         cartItemList.getTopCatTotal(), cartItemList.getTopCatItems());
-                tabList.add(returnCartItemList);
+                expressTabList.add(returnCartItemList);
+            }
+            if (listStandard.size() > 0) {
+                CartItemList returnCartItemList = new CartItemList(listStandard, cartItemList.getTopCatName(),
+                        cartItemList.getTopCatTotal(), cartItemList.getTopCatItems());
+                standardTabList.add(returnCartItemList);
             }
         }
-        return tabList;
+        return new Pair<>(expressTabList, standardTabList);
     }
 
     private void addTabsToPager(boolean showTabs, String baseImgUrl, ArrayList<FulfillmentInfo> fulfillmentInfos,
@@ -476,13 +478,15 @@ public class ShowCartActivity extends BackButtonActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgressDialog("Preparing basket");
+            showProgressDialog(getString(R.string.preparingBasket));
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            cartItemListsExp = getSkuForTabs(cartItemLists, Constants.TAB_TYPE_EXPRESS);
-            cartItemListsStnd = getSkuForTabs(cartItemLists, Constants.TAB_TYPE_STANDARD);
+            Pair<ArrayList<CartItemList>, ArrayList<CartItemList>> expressStandardListPair =
+                    getGroupedSkuTabs(cartItemLists);
+            cartItemListsExp = expressStandardListPair.first;
+            cartItemListsStnd = expressStandardListPair.second;
             return null;
         }
 

@@ -1,33 +1,25 @@
 package com.bigbasket.mobileapp.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.account.AddressSummaryDropdownAdapter;
-import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.managers.AddressManager;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
-import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
-import com.bigbasket.mobileapp.util.MemberAddressPageMode;
-import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends BBActivity implements OnAddressChangeListener {
+public class HomeActivity extends BBActivity {
 
     private Spinner mSpinnerArea;
     private ProgressBar mProgressBarArea;
@@ -93,18 +85,6 @@ public class HomeActivity extends BBActivity implements OnAddressChangeListener 
         }
     }
 
-    private void changeAddressRequested() {
-        if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
-            Intent intent = new Intent(this, ChooseLocationActivity.class);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        } else {
-            Intent intent = new Intent(this, BackButtonActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
-            intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ADDRESS_SELECT);
-            startActivityForResult(intent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
-        }
-    }
-
     private void setCurrentDeliveryAddress(AddressSummary addressSummary) {
         String addressId, lat, lng;
         if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
@@ -116,26 +96,6 @@ public class HomeActivity extends BBActivity implements OnAddressChangeListener 
             lat = lng = null;
         }
         new ChangeAddressTask<>(this, addressId, lat, lng).startTask();
-    }
-
-    private void setCurrentDeliveryAddress(String addressId) {
-        new ChangeAddressTask<>(this, addressId, null, null).startTask();
-    }
-
-    @Override
-    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries) {
-        if (addressSummaries != null && addressSummaries.size() > 0) {
-            City newCity = new City(addressSummaries.get(0).getCityName(),
-                    addressSummaries.get(0).getCityId());
-            changeCity(newCity);
-        } else {
-            showToast(getString(R.string.unknownError));
-        }
-    }
-
-    @Override
-    public void onAddressNotSupported(String msg) {
-        showAlertDialog(msg);
     }
 
     @Override
@@ -166,17 +126,5 @@ public class HomeActivity extends BBActivity implements OnAddressChangeListener 
     public void onResume() {
         super.onResume();
         setNextScreenNavigationContext(TrackEventkeys.HOME);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED && data != null) {
-            String addressId = data.getStringExtra(Constants.ADDRESS_ID);
-            if (!TextUtils.isEmpty(addressId)) {
-                setCurrentDeliveryAddress(addressId);
-                return;
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }

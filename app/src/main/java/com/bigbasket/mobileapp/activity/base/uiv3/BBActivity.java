@@ -64,6 +64,7 @@ import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.AddressManager;
@@ -71,6 +72,7 @@ import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
@@ -90,6 +92,7 @@ import com.bigbasket.mobileapp.service.AreaPinInfoIntentService;
 import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
+import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
@@ -107,7 +110,8 @@ import java.util.Map;
 
 
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
-        CartInfoAware, HandlerAware, SubNavigationAware, FloatingBasketUIAware {
+        CartInfoAware, HandlerAware, SubNavigationAware, FloatingBasketUIAware,
+        OnAddressChangeListener {
 
     protected BigBasketMessageHandler handler;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -489,6 +493,26 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
+    private void setCurrentDeliveryAddress(String addressId) {
+        new ChangeAddressTask<>(this, addressId, null, null).startTask();
+    }
+
+    @Override
+    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries) {
+        if (addressSummaries != null && addressSummaries.size() > 0) {
+            City newCity = new City(addressSummaries.get(0).getCityName(),
+                    addressSummaries.get(0).getCityId());
+            changeCity(newCity);
+        } else {
+            showToast(getString(R.string.unknownError));
+        }
+    }
+
+    @Override
+    public void onAddressNotSupported(String msg) {
+        showAlertDialog(msg);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == NavigationCodes.START_SEARCH) {
@@ -507,6 +531,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         } else if (resultCode == NavigationCodes.ACCOUNT_UPDATED) {
             setTxtNavSalutation();
             return;
+        } else if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED && data != null) {
+            String addressId = data.getStringExtra(Constants.ADDRESS_ID);
+            if (!TextUtils.isEmpty(addressId)) {
+                setCurrentDeliveryAddress(addressId);
+                return;
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -784,12 +814,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         AuthParameters authParameters = AuthParameters.getInstance(this);
 
-        if (authParameters.isAuthTokenEmpty()) {
+        if (authParameters.isAuthTokenEmpty() || authParameters.isMultiCityEnabled()) {
             txtCityName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getCurrentActivity(), ChooseLocationActivity.class);
-                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    changeAddressRequested();
                 }
             });
             txtCityName.setCompoundDrawablesWithIntrinsicBounds(
@@ -801,6 +830,18 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     null, null, null);
         }
         txtCityName.setText(text);
+    }
+
+    public void changeAddressRequested() {
+        if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
+            Intent intent = new Intent(this, ChooseLocationActivity.class);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        } else {
+            Intent intent = new Intent(this, BackButtonActivity.class);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+            intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ADDRESS_SELECT);
+            startActivityForResult(intent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
+        }
     }
 
     private void toggleNavigationArea(ImageView imgSwitchNav) {

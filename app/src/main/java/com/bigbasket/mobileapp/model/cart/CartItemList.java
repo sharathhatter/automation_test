@@ -12,8 +12,6 @@ import java.util.ArrayList;
 
 public class CartItemList implements Parcelable {
 
-    ArrayList<CartItem> arrayList_cartItems;
-
     public static final Parcelable.Creator<CartItemList> CREATOR = new Parcelable.Creator<CartItemList>() {
         @Override
         public CartItemList createFromParcel(Parcel source) {

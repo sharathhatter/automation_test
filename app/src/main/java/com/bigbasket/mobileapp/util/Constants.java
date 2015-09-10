@@ -596,8 +596,6 @@ public class Constants {
     public static final String ADDRESS_SYNC_BROADCAST_ACTION = "com.bigbasket.mobileapp.broadcase.AddressSync";
 
     // Sku Tabs
-    public static final int TAB_TYPE_EXPRESS = 0;
-    public static final int TAB_TYPE_STANDARD = 1;
     public static final String SKU_TYPE_EXPRESS = "express";
     public static final String SKU_TYPE_JIT = "jit-express";
     public static final String SKU_TYPE_KIRANA = "kirana-express";
