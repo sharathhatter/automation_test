@@ -80,7 +80,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private SparseArray<String> mArrayTabTypeAndFragmentPosition;
     private String mTitlePassedViaIntent;
     private TextView mToolbarTextDropdown;
-    private int mHeaderSelectedIdx;
     private ArrayList<FilteredOn> mFilteredOns;
     private ArrayList<FilterOptionCategory> mFilterOptionCategories;
     private String mSortedOn;
@@ -205,10 +204,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_frame, genericProductListFragment, genericProductListFragment.getFragmentTxnTag())
                         .commit();
-                if(productTabData.getProductTabInfos().get(0).getHeaderSection()!= null){
+                if (productTabData.getProductTabInfos().get(0).getHeaderSection() != null) {
                     renderHeaderDropDown(productTabData.getProductTabInfos().get(0).getHeaderSection(),
                             productTabData.getProductTabInfos().get(0).getHeaderSelectedIndex());
-                }else {
+                } else {
                     String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
                             productTabInfo.getTabName() : mTitlePassedViaIntent;
                     setTitle(title);
@@ -227,14 +226,14 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         }
     }
 
-    private void setCurrentTabSortAndFilter(ProductTabInfo productTabInfo){
+    private void setCurrentTabSortAndFilter(ProductTabInfo productTabInfo) {
         //display or hide tab
-        if(productTabInfo == null) {
+        if (productTabInfo == null) {
             toggleFilterSortView(false);
             return;
         }
-        boolean hasProducts = productTabInfo.getProductInfo() !=null &&
-                productTabInfo.getProductInfo().getProducts() !=null &&
+        boolean hasProducts = productTabInfo.getProductInfo() != null &&
+                productTabInfo.getProductInfo().getProducts() != null &&
                 productTabInfo.getProductInfo().getProducts().size() > 0;
         boolean showFilters = hasProducts && productTabInfo.getFilterOptionItems() != null
                 && productTabInfo.getFilterOptionItems().size() > 0;
@@ -323,8 +322,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
         // Setup title
         if (productTabData.getProductTabInfos() != null &&
-                productTabData.getProductTabInfos().get(0) !=null &&
-                productTabData.getProductTabInfos().get(0).getHeaderSection() != null){
+                productTabData.getProductTabInfos().get(0) != null &&
+                productTabData.getProductTabInfos().get(0).getHeaderSection() != null) {
             mTitlePassedViaIntent = "";
             renderHeaderDropDown(productTabData.getProductTabInfos().get(0).getHeaderSection(),
                     productTabData.getProductTabInfos().get(0).getHeaderSelectedIndex());

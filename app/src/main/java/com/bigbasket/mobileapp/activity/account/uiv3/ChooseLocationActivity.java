@@ -16,13 +16,10 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
-import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetAddressSummaryResponse;
+import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
-import com.bigbasket.mobileapp.util.ApiErrorCodes;
+import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -33,11 +30,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import java.util.ArrayList;
 
-public class ChooseLocationActivity extends BackButtonActivity {
+public class ChooseLocationActivity extends BackButtonActivity implements OnAddressChangeListener {
 
     private GoogleApiClient mGoogleApiClient;
     private AddressSummary mChosenAddressSummary;
@@ -125,49 +120,29 @@ public class ChooseLocationActivity extends BackButtonActivity {
     }
 
     private void updateLocation(final boolean isSomeoneAlreadyShowingProgressBar, LatLng latLng) {
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        if (!isSomeoneAlreadyShowingProgressBar) {
-            showProgressDialog(getString(R.string.please_wait));
-        }
-        bigBasketApiService.setCurrentAddress(null, String.valueOf(latLng.latitude),
-                String.valueOf(latLng.longitude), new Callback<ApiResponse<GetAddressSummaryResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetAddressSummaryResponse> getAddressSummaryApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (getAddressSummaryApiResponse.status) {
-                            case 0:
-                                mChosenAddressSummary = getAddressSummaryApiResponse.apiResponseContent.addressSummaries.get(0);
-                                if (isSomeoneAlreadyShowingProgressBar) {
-                                    showSelectedLocation(null);
-                                } else {
-                                    onLocationChanged();
-                                }
-                                break;
-                            case ApiErrorCodes.ADDRESS_NOT_SERVED:
-                                showSelectedLocation(getAddressSummaryApiResponse.message);
-                                break;
-                            default:
-                                handler.sendEmptyMessage(getAddressSummaryApiResponse.status,
-                                        getAddressSummaryApiResponse.message);
-                        }
-                    }
+        new ChangeAddressTask<>(this, isSomeoneAlreadyShowingProgressBar,
+                null, String.valueOf(latLng.latitude),
+                String.valueOf(latLng.longitude)).startTask();
+    }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
+    @Override
+    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries,
+                                 boolean isSomeoneAlreadyShowingProgressBar) {
+        if (addressSummaries != null && addressSummaries.size() > 0) {
+            mChosenAddressSummary = addressSummaries.get(0);
+            if (isSomeoneAlreadyShowingProgressBar) {
+                showSelectedLocation(null);
+            } else {
+                onLocationChanged();
+            }
+        } else {
+            showToast(getString(R.string.unknownError));
+        }
+    }
+
+    @Override
+    public void onAddressNotSupported(String msg) {
+        showSelectedLocation(msg);
     }
 
     private void showSelectedLocation(@Nullable String errMsg) {
