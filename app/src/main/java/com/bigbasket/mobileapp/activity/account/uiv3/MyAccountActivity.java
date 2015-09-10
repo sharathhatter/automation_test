@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -200,7 +201,7 @@ public class MyAccountActivity extends BackButtonActivity {
     public void renderAddressActivity(View view) {
         Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
-        intent.putExtra(Constants.FROM_ACCOUNT_PAGE, true);
+        intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ACCOUNT);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());

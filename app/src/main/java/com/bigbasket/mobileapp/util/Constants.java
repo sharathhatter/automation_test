@@ -249,7 +249,7 @@ public class Constants {
     public static final String LASTNAME = "last_name";
     public static final String ADDR_NICK = "nick";
     public static final String UPDATE_ADDRESS = "update-address";
-    public static final String FROM_ACCOUNT_PAGE = "from_account_page";
+    public static final String ADDRESS_PAGE_MODE = "address_pg_mode";
     public static final String RATING = "rating";
     public static final String COMMENTS = "comments";
     public static final String CASE_ID = "case_id";
@@ -600,6 +600,5 @@ public class Constants {
     public static final String SKU_TYPE_EXPRESS = "express";
     public static final String SKU_TYPE_JIT = "jit-express";
     public static final String SKU_TYPE_KIRANA = "kirana-express";
-    public static final String SKU_TYPE_STANDARD = "standard";
 
 }

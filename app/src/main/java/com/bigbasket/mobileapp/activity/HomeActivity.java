@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
@@ -20,6 +21,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -97,9 +99,9 @@ public class HomeActivity extends BBActivity implements OnAddressChangeListener 
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } else {
             Intent intent = new Intent(this, BackButtonActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
-            intent.putExtra(Constants.FROM_ACCOUNT_PAGE, true);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+            intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ADDRESS_SELECT);
+            startActivityForResult(intent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
         }
     }
 
@@ -114,6 +116,10 @@ public class HomeActivity extends BBActivity implements OnAddressChangeListener 
             lat = lng = null;
         }
         new ChangeAddressTask<>(this, addressId, lat, lng).startTask();
+    }
+
+    private void setCurrentDeliveryAddress(String addressId) {
+        new ChangeAddressTask<>(this, addressId, null, null).startTask();
     }
 
     @Override
@@ -160,5 +166,17 @@ public class HomeActivity extends BBActivity implements OnAddressChangeListener 
     public void onResume() {
         super.onResume();
         setNextScreenNavigationContext(TrackEventkeys.HOME);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED && data != null) {
+            String addressId = data.getStringExtra(Constants.ADDRESS_ID);
+            if (!TextUtils.isEmpty(addressId)) {
+                setCurrentDeliveryAddress(addressId);
+                return;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

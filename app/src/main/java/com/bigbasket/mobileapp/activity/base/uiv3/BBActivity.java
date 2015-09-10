@@ -92,6 +92,7 @@ import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -390,15 +391,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case FragmentCodes.START_VIEW_DELIVERY_ADDRESS:
                 MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
                 Bundle addressbundle = new Bundle();
-                addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE,
-                        getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false));
+                addressbundle.putInt(Constants.ADDRESS_PAGE_MODE,
+                        getIntent().getIntExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.CHECKOUT));
                 addressbundle.putString(Constants.TOTAL_BASKET_VALUE,
                         getIntent().getStringExtra(Constants.TOTAL_BASKET_VALUE));
                 memberAddressListFragment.setArguments(addressbundle);
                 addToMainLayout(memberAddressListFragment);
-                break;
-            case FragmentCodes.START_ADDRESS_SELECTION:
-                addToMainLayout(new MemberAddressListFragment());
                 break;
             case FragmentCodes.START_COMMUNICATION_HUB:
                 launchMoEngageCommunicationHub();

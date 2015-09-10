@@ -41,6 +41,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -61,7 +62,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     protected ArrayList<Address> mAddressArrayList;
     private MemberAddressListAdapter memberAddressListAdapter;
-    private boolean mFromAccountPage;
+    private int mAddressPageMode;
     private String addressId;
     private ViewGroup layoutCheckoutFooter;
 
@@ -74,8 +75,9 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle args = getArguments();
-        mFromAccountPage = args != null && args.getBoolean(Constants.FROM_ACCOUNT_PAGE, false);
-        if (mFromAccountPage) {
+        mAddressPageMode = args != null ?
+                args.getInt(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.CHECKOUT) : MemberAddressPageMode.CHECKOUT;
+        if (mAddressPageMode == MemberAddressPageMode.ACCOUNT) {
             setNextScreenNavigationContext(TrackEventkeys.NC_ACCOUNT_ADDRESS);
         } else {
             setNextScreenNavigationContext(TrackEventkeys.CO_ADDRESS);
@@ -190,7 +192,8 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             addressObjectList.add(3, getString(R.string.addAnAddress));
 
             memberAddressListAdapter =
-                    new MemberAddressListAdapter<>(this, addressObjectList, mFromAccountPage);
+                    new MemberAddressListAdapter<>(this, addressObjectList,
+                            mAddressPageMode != MemberAddressPageMode.CHECKOUT);
             addressRecyclerView.setAdapter(memberAddressListAdapter);
         } else {
             hideCheckOutBtn = true;
@@ -201,30 +204,33 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         String total = getArguments() != null ? getArguments().getString(Constants.TOTAL_BASKET_VALUE) : null;
         UIUtil.setUpFooterButton(getCurrentActivity(), layoutCheckoutFooter, total,
                 getString(R.string.continueCaps), true);
-        layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
-                trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
-                if (addressId != null) {
-                    postDeliveryAddress(addressId);
-                } else if (memberAddressListAdapter.getSelectedAddress() != null) {
-                    addressId = memberAddressListAdapter.getSelectedAddress().getId();
-                    postDeliveryAddress(addressId);
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        if (!mFromAccountPage && !hideCheckOutBtn) {
+        if (mAddressPageMode == MemberAddressPageMode.CHECKOUT && !hideCheckOutBtn) {
+            layoutCheckoutFooter.setOnClickListener(new AddressListFooterButtonOnClickListener());
             layoutCheckoutFooter.setVisibility(View.VISIBLE);
         } else {
             layoutCheckoutFooter.setVisibility(View.GONE);
         }
 
         contentView.addView(addressView);
+    }
+
+    private class AddressListFooterButtonOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
+            if (addressId != null) {
+                postDeliveryAddress(addressId);
+            } else if (memberAddressListAdapter.getSelectedAddress() != null) {
+                addressId = memberAddressListAdapter.getSelectedAddress().getId();
+                postDeliveryAddress(addressId);
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -235,7 +241,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     protected void showCreateAddressForm() {
         showAddressForm(null);
         HashMap<String, String> map = new HashMap<>();
-        if (mFromAccountPage) {
+        if (mAddressPageMode != MemberAddressPageMode.CHECKOUT) {
             setCurrentNavigationContext(TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
             trackEvent(TrackingAware.NEW_ADDRESS_CLICKED, map);
         } else {
@@ -252,7 +258,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     protected void showAddressForm(Address address) {
         if (getActivity() == null) return;
         Intent memberAddressFormIntent = new Intent(getActivity(), MemberAddressFormActivity.class);
-        memberAddressFormIntent.putExtra(Constants.FROM_ACCOUNT_PAGE, mFromAccountPage);
+        memberAddressFormIntent.putExtra(Constants.ADDRESS_PAGE_MODE, mAddressPageMode);
         memberAddressFormIntent.putExtra(Constants.UPDATE_ADDRESS, address);
         startActivityForResult(memberAddressFormIntent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
     }
@@ -261,7 +267,14 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     public void onAddressSelected(Address address) {
         this.addressId = address.getId();
         memberAddressListAdapter.notifyDataSetChanged();
-        trackEvent(TrackingAware.CHECKOUT_ADDRESS_SELECTED, null, null, null, false, true);
+        if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
+            trackEvent(TrackingAware.CHECKOUT_ADDRESS_SELECTED, null, null, null, false, true);
+        } else if (mAddressPageMode == MemberAddressPageMode.ADDRESS_SELECT) {
+            Intent intent = new Intent();
+            intent.putExtra(Constants.ADDRESS_ID, addressId);
+            getActivity().setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED, intent);
+            finish();
+        }
     }
 
     @Override
@@ -381,8 +394,16 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     @Override
     public String getTitle() {
         Bundle args = getArguments();
-        mFromAccountPage = args != null && args.getBoolean(Constants.FROM_ACCOUNT_PAGE, false);
-        return mFromAccountPage ? "Delivery Address" : "Pick an address";
+        mAddressPageMode = args != null ? args.getInt(Constants.ADDRESS_PAGE_MODE,
+                MemberAddressPageMode.CHECKOUT) : MemberAddressPageMode.CHECKOUT;
+        switch (mAddressPageMode) {
+            case MemberAddressPageMode.ADDRESS_SELECT:
+                return "Choose address";
+            case MemberAddressPageMode.ACCOUNT:
+                return "Delivery address";
+            default:
+                return "Pick an address";
+        }
     }
 
     @NonNull
@@ -405,7 +426,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED) {
             if (data != null) {
                 String addressId = data.getStringExtra(Constants.MEMBER_ADDRESS_ID);
-                if (!TextUtils.isEmpty(addressId) && !mFromAccountPage) {
+                if (!TextUtils.isEmpty(addressId) && mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
                     this.addressId = addressId;
                     if (layoutCheckoutFooter != null) {
                         layoutCheckoutFooter.setVisibility(View.VISIBLE);

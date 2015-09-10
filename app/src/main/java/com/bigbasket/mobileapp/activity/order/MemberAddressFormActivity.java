@@ -36,6 +36,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -61,13 +62,14 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     private InstantAutoCompleteTextView editTextArea;
     private String mErrorMsg;
     private OTPValidationDialogFragment otpValidationDialogFragment;
-    private boolean mFromAccountPage = false;
+    private int mAddressPageMode;
     private ArrayList<City> mCities;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getActivityTitle());
-        mFromAccountPage = getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false);
+        mAddressPageMode = getIntent().getIntExtra(Constants.ADDRESS_PAGE_MODE,
+                MemberAddressPageMode.CHECKOUT);
         mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         if (mAddress != null) {
             mChoosenCity = new City(mAddress.getCityName(), mAddress.getCityId());
@@ -465,7 +467,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                             otpValidationDialogFragment.dismiss();
                     }
 
-                    if (!mFromAccountPage) {
+                    if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
                         trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, null);
                     }
                     if (mAddress == null) {
