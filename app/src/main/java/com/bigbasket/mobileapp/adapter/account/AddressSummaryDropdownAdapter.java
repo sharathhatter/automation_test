@@ -2,6 +2,9 @@ package com.bigbasket.mobileapp.adapter.account;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.util.FontHolder;
 
@@ -28,6 +32,7 @@ public class AddressSummaryDropdownAdapter extends BaseAdapter {
     private Context context;
     private Typeface faceRobotLight;
     private Typeface faceRobotoRegular;
+    private Typeface faceRobotoBold;
 
     public AddressSummaryDropdownAdapter(ArrayList<AddressSummary> addressSummaries,
                                          String changeAddressTxt, Context context) {
@@ -36,6 +41,7 @@ public class AddressSummaryDropdownAdapter extends BaseAdapter {
         this.context = context;
         this.faceRobotLight = FontHolder.getInstance(context).getFaceRobotoLight();
         this.faceRobotoRegular = FontHolder.getInstance(context).getFaceRobotoRegular();
+        this.faceRobotoBold = FontHolder.getInstance(context).getFaceRobotoBold();
     }
 
     @Override
@@ -76,7 +82,16 @@ public class AddressSummaryDropdownAdapter extends BaseAdapter {
             } else {
                 addressViewHolder = (AddressViewHolder) convertView.getTag();
             }
-            addressViewHolder.getTxtAreaName().setText(addressSummary.getArea());
+            String nick = addressSummary.getAddressNickName();
+            if (TextUtils.isEmpty(nick)) {
+                addressViewHolder.getTxtAreaName().setText(addressSummary.getArea());
+            } else {
+                SpannableString spannableString = new SpannableString(nick + " - " +
+                        addressSummary.getArea());
+                spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoBold), 0,
+                        nick.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                addressViewHolder.getTxtAreaName().setText(spannableString);
+            }
             addressViewHolder.getTxtCityName().setText(addressSummary.getCityName());
         } else {
             convertView = LayoutInflater.from(context)

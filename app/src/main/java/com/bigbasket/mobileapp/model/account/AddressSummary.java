@@ -21,6 +21,8 @@ public class AddressSummary implements Parcelable {
         }
     };
 
+    @SerializedName(Constants.ADDR_NICK)
+    private String addressNickName;
     @SerializedName(Constants.ID)
     private String id;
     @SerializedName(Constants.AREA)
@@ -44,6 +46,10 @@ public class AddressSummary implements Parcelable {
         this.pincode = source.readString();
         this.latitude = source.readDouble();
         this.longitude = source.readDouble();
+        boolean isAddressNickNameNull = source.readByte() == (byte) 1;
+        if (!isAddressNickNameNull) {
+            this.addressNickName = source.readString();
+        }
     }
 
     @Override
@@ -55,6 +61,11 @@ public class AddressSummary implements Parcelable {
         dest.writeString(pincode);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
+        boolean isAddressNickNameNull = addressNickName == null;
+        dest.writeByte(isAddressNickNameNull ? (byte) 1 : (byte) 0);
+        if (!isAddressNickNameNull) {
+            dest.writeString(addressNickName);
+        }
     }
 
     @Override
@@ -103,5 +114,9 @@ public class AddressSummary implements Parcelable {
 
     public double getLongitude() {
         return longitude;
+    }
+
+    public String getAddressNickName() {
+        return addressNickName;
     }
 }

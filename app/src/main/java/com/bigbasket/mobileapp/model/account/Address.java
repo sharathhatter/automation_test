@@ -26,8 +26,6 @@ public class Address extends AddressSummary {
 
     @SerializedName(Constants.CONTACT_NUM)
     private String contactNum;
-    @SerializedName(Constants.ADDR_NICK)
-    private String addressNickName;
     @SerializedName(Constants.FIRSTNAME)
     private String firstName;
     @SerializedName(Constants.LASTNAME)
@@ -50,7 +48,6 @@ public class Address extends AddressSummary {
         byte isDefaultByteVal = source.readByte();
         this.isDefault = isDefaultByteVal == (byte) 1;
         this.contactNum = source.readString();
-        this.addressNickName = source.readString();
         this.firstName = source.readString();
         this.lastName = source.readString();
         this.houseNumber = source.readString();
@@ -66,7 +63,6 @@ public class Address extends AddressSummary {
         super.writeToParcel(dest, flags);
         dest.writeByte(isDefault ? (byte) 1 : (byte) 0);
         dest.writeString(contactNum);
-        dest.writeString(addressNickName);
         dest.writeString(firstName);
         dest.writeString(lastName);
         dest.writeString(houseNumber);
@@ -92,10 +88,6 @@ public class Address extends AddressSummary {
 
     public String getContactNum() {
         return contactNum;
-    }
-
-    public String getAddressNickName() {
-        return addressNickName;
     }
 
     public String getFirstName() {
