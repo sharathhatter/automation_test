@@ -538,6 +538,7 @@ public class Constants {
     public static final String HEADER_SEL = "header_sel";
     public static final String TAB_INFO = "tab_info";
     public static final String TAB_NAME = "tab_name";
+    public static final String TAB_IMG = "tab_img";
     public static final String CONTENT_SECTION = "content_section";
     public static final String CART_INFO = "cart_info";
 
@@ -592,7 +593,6 @@ public class Constants {
     public static final String MOBIKWIK_STATUS = "status";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
 
-    public static final String ADD_TO_BASKET_POST_PARAMS = "add_to_basket_post_params";
     public static final String ADDRESS_SYNC_BROADCAST_ACTION = "com.bigbasket.mobileapp.broadcase.AddressSync";
 
     // Sku Tabs

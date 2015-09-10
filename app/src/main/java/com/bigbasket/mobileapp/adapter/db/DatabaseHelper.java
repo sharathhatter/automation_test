@@ -66,7 +66,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         createTable(db);
     }
 
-
     private void createTable(SQLiteDatabase db) {
         db.execSQL(CategoryAdapter.createTable);
         db.execSQL(SubCategoryAdapter.createTable);

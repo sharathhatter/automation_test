@@ -39,7 +39,6 @@ import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
