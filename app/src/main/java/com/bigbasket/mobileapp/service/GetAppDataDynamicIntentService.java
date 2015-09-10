@@ -8,7 +8,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAppDataDynamicResponse;
-import com.bigbasket.mobileapp.managers.AddressManager;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.util.Constants;
 
 import retrofit.RetrofitError;
@@ -25,10 +25,10 @@ public class GetAppDataDynamicIntentService extends IntentService {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         try {
             ApiResponse<GetAppDataDynamicResponse> getDynamicPageApiResponse = bigBasketApiService.getAppDataDynamic();
-            if (getDynamicPageApiResponse.status == 0
-                    && getDynamicPageApiResponse.apiResponseContent.addressSummaries != null
-                    && getDynamicPageApiResponse.apiResponseContent.addressSummaries.size() > 0) {
-                AddressManager.storeAddresses(this, getDynamicPageApiResponse.apiResponseContent.addressSummaries);
+            if (getDynamicPageApiResponse.status == 0) {
+                AppDataDynamic.updateInstance(this,
+                        getDynamicPageApiResponse.apiResponseContent.addressSummaries,
+                        getDynamicPageApiResponse.apiResponseContent.isContextualMode);
                 sendSuccessBroadcast();
             } else {
                 sendErrorBroadcast();

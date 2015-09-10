@@ -599,5 +599,6 @@ public class Constants {
     public static final String SKU_TYPE_EXPRESS = "express";
     public static final String SKU_TYPE_JIT = "jit-express";
     public static final String SKU_TYPE_KIRANA = "kirana-express";
+    public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
 
 }

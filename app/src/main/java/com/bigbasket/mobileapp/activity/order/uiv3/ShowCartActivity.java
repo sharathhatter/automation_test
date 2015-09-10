@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.fragment.ShowCartFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.CartItem;
@@ -278,15 +279,15 @@ public class ShowCartActivity extends BackButtonActivity {
                             fulfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
                             annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
 
-                            if (cartGetApiResponseContentApiResponse.apiResponseContent.
-                                    cartGetApiCartItemsContent != null
+                            if (cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent != null
                                     && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
                                     && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
                                 cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
                                         cartGetApiCartItemsContent.cartItemLists;
 
-                                addTabsToPager(true, cartGetApiResponseContentApiResponse
-                                        .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl, fulfillmentInfos, annotationInfoArrayList);
+                                addTabsToPager(AppDataDynamic.getInstance(getCurrentActivity()).isContextualMode(),
+                                        cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.baseImgUrl,
+                                        fulfillmentInfos, annotationInfoArrayList);
 
                                 renderCheckoutLayout(cartSummary, isCurrentPageRequest);
 

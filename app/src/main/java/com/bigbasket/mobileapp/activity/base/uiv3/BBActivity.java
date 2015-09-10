@@ -67,9 +67,9 @@ import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.managers.AddressManager;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
@@ -87,7 +87,7 @@ import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
-import com.bigbasket.mobileapp.receivers.AddressBroadcastReceiver;
+import com.bigbasket.mobileapp.receivers.DynamicAppDataBroadcastReceiver;
 import com.bigbasket.mobileapp.service.AreaPinInfoIntentService;
 import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
@@ -126,7 +126,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private RecyclerView mListSubNavigation;
     private boolean mSyncNeeded;
     @Nullable
-    protected AddressBroadcastReceiver mAddressBroadcastReceiver;
+    protected DynamicAppDataBroadcastReceiver mDynamicAppDataBroadcastReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -179,11 +179,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
         }
 
-        mAddressBroadcastReceiver = new AddressBroadcastReceiver<>(this);
+        mDynamicAppDataBroadcastReceiver = new DynamicAppDataBroadcastReceiver<>(this);
     }
 
-    public void onAddressSynced() {
-        ArrayList<AddressSummary> addressSummaries = AddressManager.getStoredAddresses(this);
+    public void onDataSynced() {
+        ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
         if (addressSummaries == null || addressSummaries.size() == 0) return;
 
         AddressSummary defaultAddress = addressSummaries.get(0);
@@ -195,7 +195,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         setCityText(defaultAddress.toString());
     }
 
-    public void onAddressSyncFailure() {
+    public void onDataSyncFailure() {
 
     }
 
@@ -702,7 +702,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void handleIntent(Intent intent, Bundle savedInstanceState) {
-        currentFragmentTag = savedInstanceState != null ? savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
+        currentFragmentTag = savedInstanceState != null ?
+                savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
         if (TextUtils.isEmpty(currentFragmentTag) ||
                 getSupportFragmentManager().findFragmentByTag(currentFragmentTag) == null) {
             startFragment();
@@ -774,7 +775,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         AuthParameters authParameters = AuthParameters.getInstance(this);
 
-        ArrayList<AddressSummary> addressSummaries = AddressManager.getStoredAddresses(this);
+        ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
         if (addressSummaries != null && addressSummaries.size() > 0) {
             setCityText(addressSummaries.get(0).toString());
         } else {
@@ -986,14 +987,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     protected void onResume() {
         super.onResume();
 
-        if (mAddressBroadcastReceiver != null) {
+        if (mDynamicAppDataBroadcastReceiver != null) {
             IntentFilter addressSyncIntentFilter = new IntentFilter(Constants.ADDRESS_SYNC_BROADCAST_ACTION);
-            LocalBroadcastManager.getInstance(this).registerReceiver(mAddressBroadcastReceiver,
+            LocalBroadcastManager.getInstance(this).registerReceiver(mDynamicAppDataBroadcastReceiver,
                     addressSyncIntentFilter);
         }
 
         // Also manually trigger it once to sync address-change in case receiver got unregistered
-        onAddressSynced();
+        onDataSynced();
 
         FragmentManager sfm = getSupportFragmentManager();
         if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {
@@ -1014,7 +1015,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             syncMainMenuIfNeeded();
         }
 
-        if (AddressManager.isStale(getCurrentActivity())) {
+        if (AppDataDynamic.isStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
         }
     }
@@ -1037,8 +1038,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
 
-        if (mAddressBroadcastReceiver != null) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mAddressBroadcastReceiver);
+        if (mDynamicAppDataBroadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mDynamicAppDataBroadcastReceiver);
         }
     }
 

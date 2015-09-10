@@ -9,11 +9,11 @@ import com.bigbasket.mobileapp.util.Constants;
 
 import java.lang.ref.WeakReference;
 
-public class AddressBroadcastReceiver<T extends BBActivity> extends BroadcastReceiver {
+public class DynamicAppDataBroadcastReceiver<T extends BBActivity> extends BroadcastReceiver {
 
     private WeakReference<T> activityWeakRef;
 
-    public AddressBroadcastReceiver(T activity) {
+    public DynamicAppDataBroadcastReceiver(T activity) {
         this.activityWeakRef = new WeakReference<>(activity);
     }
 
@@ -22,9 +22,9 @@ public class AddressBroadcastReceiver<T extends BBActivity> extends BroadcastRec
         if (activityWeakRef != null && activityWeakRef.get() != null
                 && !activityWeakRef.get().isSuspended()) {
             if (intent.getBooleanExtra(Constants.STATUS, false)) {
-                activityWeakRef.get().onAddressSynced();
+                activityWeakRef.get().onDataSynced();
             } else {
-                activityWeakRef.get().onAddressSyncFailure();
+                activityWeakRef.get().onDataSyncFailure();
             }
         }
     }

@@ -9,7 +9,7 @@ import android.widget.Spinner;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.account.AddressSummaryDropdownAdapter;
-import com.bigbasket.mobileapp.managers.AddressManager;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
@@ -42,7 +42,7 @@ public class HomeActivity extends BBActivity {
     }
 
     private void setUpAddressSpinner() {
-        final ArrayList<AddressSummary> addressSummaries = AddressManager.getStoredAddresses(this);
+        final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
 
         if (addressSummaries != null && addressSummaries.size() > 0) {
             mSpinnerArea.setVisibility(View.VISIBLE);
@@ -99,14 +99,14 @@ public class HomeActivity extends BBActivity {
     }
 
     @Override
-    public void onAddressSynced() {
-        super.onAddressSynced();
+    public void onDataSynced() {
+        super.onDataSynced();
         setUpAddressSpinner();
     }
 
     @Override
-    public void onAddressSyncFailure() {
-        super.onAddressSyncFailure();
+    public void onDataSyncFailure() {
+        super.onDataSyncFailure();
         setUpEmptyAddress();
     }
 

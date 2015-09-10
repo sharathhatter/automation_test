@@ -12,4 +12,7 @@ public class GetAppDataDynamicResponse {
 
     @SerializedName(Constants.ADDRESSES)
     public ArrayList<AddressSummary> addressSummaries;
+
+    @SerializedName(Constants.IS_CONTEXTUAL_MODE)
+    public boolean isContextualMode;
 }
