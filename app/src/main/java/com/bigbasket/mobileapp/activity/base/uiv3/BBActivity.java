@@ -60,6 +60,7 @@ import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
@@ -77,6 +78,7 @@ import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
+import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -102,6 +104,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
+import com.bigbasket.mobileapp.view.uiv3.BasketDeltaDialog;
 import com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView;
 
 import java.util.ArrayList;
@@ -111,7 +114,7 @@ import java.util.Map;
 
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
         CartInfoAware, HandlerAware, SubNavigationAware, FloatingBasketUIAware,
-        OnAddressChangeListener {
+        OnAddressChangeListener, BasketDeltaUserActionListener {
 
     protected BigBasketMessageHandler handler;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -494,7 +497,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void setCurrentDeliveryAddress(String addressId) {
-        new ChangeAddressTask<>(this, addressId, null, null).startTask();
+        new ChangeAddressTask<>(this, addressId, null, null, true).startTask();
     }
 
     @Override
@@ -511,6 +514,22 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     @Override
     public void onAddressNotSupported(String msg) {
         showAlertDialog(msg);
+    }
+
+    @Override
+    public void onBasketDelta(String addressId, String title, String msg, boolean hasQcError, ArrayList<QCErrorData> qcErrorDatas) {
+        new BasketDeltaDialog<>().show(this, title, msg, hasQcError, qcErrorDatas, addressId,
+                getString(R.string.change));
+    }
+
+    @Override
+    public void onNoBasketDelta(String addressId) {
+        new ChangeAddressTask<>(this, addressId, null, null, false).startTask();
+    }
+
+    @Override
+    public void onUpdateBasket(String addressId) {
+        new ChangeAddressTask<>(this, addressId, null, null, false).startTask();
     }
 
     @Override

@@ -177,7 +177,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     private void updateLocation(LatLng latLng) {
         new ChangeAddressTask<>(this,
                 null, String.valueOf(latLng.latitude),
-                String.valueOf(latLng.longitude)).startTask();
+                String.valueOf(latLng.longitude), false).startTask();
     }
 
     @Override

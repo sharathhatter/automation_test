@@ -12,7 +12,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiRespon
 import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.GetAddressSummaryResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAppDataDynamicResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAreaInfoResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
@@ -30,7 +29,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
@@ -41,8 +39,9 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponse
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.SetAddressResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.SetAddressTransientResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.UpdateBasketResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.ValidateOrderPaymentApiResponse;
@@ -273,15 +272,6 @@ public interface BigBasketApiService {
     @GET("/co-get-delivery-addresses/")
     void getDeliveryAddresses(Callback<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddressApiResponseCallback);
 
-    @FormUrlEncoded
-    @POST("/co-post-delivery-addresses/")
-    void postDeliveryAddresses(@Field(Constants.ADDRESS_ID) String addressId,
-                               Callback<ApiResponse<PostDeliveryAddressApiResponseContent>> postDeliveryAddressApiResponseCallback);
-
-    @FormUrlEncoded
-    @POST("/co-update-basket/")
-    void updateBasket(@Field(Constants.ADDRESS_ID) String addressId, Callback<ApiResponse<UpdateBasketResponseContent>> updateBasketApiResponseCallback);
-
     @GET("/search-tc/")
     ApiResponse<AutoSearchApiResponseContent> autoSearch(@Query("t") String term);
 
@@ -437,7 +427,16 @@ public interface BigBasketApiService {
     void setCurrentAddress(@Field(Constants.ID) String id,
                            @Field(Constants.LAT) String latitude,
                            @Field(Constants.LNG) String longitude,
-                           Callback<ApiResponse<GetAddressSummaryResponse>> getAddressSummaryResponseCallback);
+                           Callback<ApiResponse<SetAddressResponse>> getAddressSummaryResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/set-current-address/")
+    void setCurrentAddress(@Field(Constants.ID) String id,
+                           @Field(Constants.LAT) String latitude,
+                           @Field(Constants.LNG) String longitude,
+                           @Field(Constants.TRANSIENT) String isTransient,
+                           Callback<ApiResponse<SetAddressTransientResponse>>
+                                   getAddressSummaryResponseCallback);
 
     @GET("/get-location-detail/")
     void getLocationDetail(@Query(Constants.LAT) String latitude,

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShipmentSelectionActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
@@ -27,18 +28,18 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.UpdateBasketResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
+import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
-import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
+import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
@@ -58,7 +59,7 @@ import retrofit.client.Response;
 
 
 public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware,
-        CreatePotentialOrderAware, BasketDeltaUserActionListener {
+        CreatePotentialOrderAware, BasketDeltaUserActionListener, OnAddressChangeListener {
 
     protected ArrayList<Address> mAddressArrayList;
     private MemberAddressListAdapter memberAddressListAdapter;
@@ -289,53 +290,34 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             handler.sendOfflineError();
             return;
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.postDeliveryAddresses(addressId, new Callback<ApiResponse<PostDeliveryAddressApiResponseContent>>() {
-            @Override
-            public void success(ApiResponse<PostDeliveryAddressApiResponseContent> postDeliveryAddressApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                switch (postDeliveryAddressApiResponse.status) {
-                    case 0:
-                        showBasketDeltaOnAddressChange(addressId,
-                                postDeliveryAddressApiResponse.apiResponseContent.title,
-                                postDeliveryAddressApiResponse.apiResponseContent.msg,
-                                postDeliveryAddressApiResponse.apiResponseContent.hasQcErrors,
-                                postDeliveryAddressApiResponse.apiResponseContent.qcErrorDatas);
-                        break;
-                    default:
-                        handler.sendEmptyMessage(postDeliveryAddressApiResponse.status,
-                                postDeliveryAddressApiResponse.message);
-                        break;
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error);
-            }
-        });
+        new ChangeAddressTask<>(this, addressId, null, null, true).startTask();
     }
 
-    private void showBasketDeltaOnAddressChange(String addressId, String title, String msg,
-                                                boolean hasQcError, ArrayList<QCErrorData> qcErrorDatas) {
-        if (TextUtils.isEmpty(title) && TextUtils.isEmpty(msg) && !hasQcError
-                && (qcErrorDatas == null || qcErrorDatas.size() == 0)) {
-            new CreatePotentialOrderTask<>(this, addressId).startTask();
-        } else {
-            new BasketDeltaDialog<>().show(this, title, msg, hasQcError, qcErrorDatas, addressId);
-        }
+    @Override
+    public void onBasketDelta(String addressId, String title, String msg, boolean hasQcError,
+                              ArrayList<QCErrorData> qcErrorDatas) {
+        new BasketDeltaDialog<>().show(this, title, msg, hasQcError, qcErrorDatas, addressId,
+                getString(R.string.reviewBasket));
+    }
+
+    @Override
+    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries) {
+        if (getCurrentActivity() == null) return;
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        editor.putString(Constants.FRAGMENT_CODE, String.valueOf(NavigationCodes.GO_TO_BASKET));
+        editor.apply();
+        ((BBActivity) getActivity()).onAddressChanged(addressSummaries);
+    }
+
+    @Override
+    public void onAddressNotSupported(String msg) {
+        if (getCurrentActivity() == null) return;
+        ((BBActivity) getCurrentActivity()).onAddressNotSupported(msg);
+    }
+
+    @Override
+    public void onNoBasketDelta(String addressId) {
+        new CreatePotentialOrderTask<>(this, addressId).startTask();
     }
 
     @Override
@@ -344,47 +326,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             handler.sendOfflineError();
             return;
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.changing_city));
-        bigBasketApiService.updateBasket(addressId, new Callback<ApiResponse<UpdateBasketResponseContent>>() {
-            @Override
-            public void success(ApiResponse<UpdateBasketResponseContent> updateBasketApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                switch (updateBasketApiResponse.status) {
-                    case 0:
-                        refreshAppOnCityChange(updateBasketApiResponse.apiResponseContent.city);
-                        break;
-                    default:
-                        handler.sendEmptyMessage(updateBasketApiResponse.status,
-                                updateBasketApiResponse.message);
-                        break;
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error);
-            }
-        });
-    }
-
-    private void refreshAppOnCityChange(City newCity) {
-        if (getCurrentActivity() == null) return;
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.putString(Constants.FRAGMENT_CODE, String.valueOf(NavigationCodes.GO_TO_BASKET));
-        editor.apply();
-        getCurrentActivity().changeCity(newCity);
+        new ChangeAddressTask<>(this, addressId, null, null, false).startTask();
     }
 
     public ViewGroup getContentView() {

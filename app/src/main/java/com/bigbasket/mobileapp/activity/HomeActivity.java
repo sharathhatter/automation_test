@@ -87,15 +87,18 @@ public class HomeActivity extends BBActivity {
 
     private void setCurrentDeliveryAddress(AddressSummary addressSummary) {
         String addressId, lat, lng;
+        boolean isTransient;
         if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
             addressId = null;
             lat = String.valueOf(addressSummary.getLatitude());
             lng = String.valueOf(addressSummary.getLongitude());
+            isTransient = false;
         } else {
             addressId = addressSummary.getId();
             lat = lng = null;
+            isTransient = true;
         }
-        new ChangeAddressTask<>(this, addressId, lat, lng).startTask();
+        new ChangeAddressTask<>(this, addressId, lat, lng, isTransient).startTask();
     }
 
     @Override

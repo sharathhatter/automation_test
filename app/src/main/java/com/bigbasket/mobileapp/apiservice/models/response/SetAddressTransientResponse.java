@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class PostDeliveryAddressApiResponseContent {
+public class SetAddressTransientResponse {
     @SerializedName(Constants.QC_HAS_VALIDATION_ERRORS)
     public boolean hasQcErrors;
     @SerializedName(Constants.QC_VALIDATION_ERROR_DATA)
