@@ -294,10 +294,11 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     @Override
-    public void onBasketDelta(String addressId, String title, String msg, boolean hasQcError,
+    public void onBasketDelta(String addressId, String lat, String lng,
+                              String title, String msg, boolean hasQcError,
                               ArrayList<QCErrorData> qcErrorDatas) {
         new BasketDeltaDialog<>().show(this, title, msg, hasQcError, qcErrorDatas, addressId,
-                getString(R.string.reviewBasket));
+                getString(R.string.reviewBasket), lat, lng);
     }
 
     @Override
@@ -316,17 +317,17 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     @Override
-    public void onNoBasketDelta(String addressId) {
+    public void onNoBasketDelta(String addressId, String lat, String lng) {
         new CreatePotentialOrderTask<>(this, addressId).startTask();
     }
 
     @Override
-    public void onUpdateBasket(String addressId) {
+    public void onUpdateBasket(String addressId, String lat, String lng) {
         if (!checkInternetConnection()) {
             handler.sendOfflineError();
             return;
         }
-        new ChangeAddressTask<>(this, addressId, null, null, false).startTask();
+        new ChangeAddressTask<>(this, addressId, lat, lng, false).startTask();
     }
 
     public ViewGroup getContentView() {

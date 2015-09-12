@@ -9,6 +9,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -282,16 +283,17 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
         setCurrentTabSortAndFilter(productTabData.getProductTabInfos().get(0));
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
 
+        TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
+        pagerSlidingTabStrip.setupWithViewPager(mViewPager);
+        pagerSlidingTabStrip.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onPageSelected(int position) {
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
                 //header content change
                 renderHeaderDropDown(productTabData.getProductTabInfos().get(position).getHeaderSection(),
                         productTabData.getProductTabInfos().get(position).getHeaderSelectedIndex());
+
                 setCurrentTabSortAndFilter(productTabData.getProductTabInfos().get(position));
                 HashMap<String, String> eventAttribs = new HashMap<>();
                 eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabType());
@@ -300,12 +302,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
-
-        TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
-        pagerSlidingTabStrip.setupWithViewPager(mViewPager);
         if (productTabData.getContentSectionData() != null) {
             LinearLayout layoutProducts = new LinearLayout(this);
             layoutProducts.setOrientation(LinearLayout.VERTICAL);
@@ -344,24 +349,25 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
             newNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(tabTypeWithNoProducts)));
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-            bigBasketApiService.productNextPage(NameValuePair.toMap(newNameValuePairs), new Callback<ApiResponse<ProductNextPageResponse>>() {
-                @Override
-                public void success(ApiResponse<ProductNextPageResponse> productNextPageApiResponse, Response response) {
-                    if (isSuspended()) return;
-                    if (productNextPageApiResponse.status == 0) {
-                        mMapForTabWithNoProducts = productNextPageApiResponse.apiResponseContent.productListMap;
-                        setUpProductsInEmptyFragments();
-                    } else {
-                        notifyEmptyFragmentAboutFailure();
-                    }
-                }
+            bigBasketApiService.productNextPage(NameValuePair.toMap(newNameValuePairs),
+                    new Callback<ApiResponse<ProductNextPageResponse>>() {
+                        @Override
+                        public void success(ApiResponse<ProductNextPageResponse> productNextPageApiResponse, Response response) {
+                            if (isSuspended()) return;
+                            if (productNextPageApiResponse.status == 0) {
+                                mMapForTabWithNoProducts = productNextPageApiResponse.apiResponseContent.productListMap;
+                                setUpProductsInEmptyFragments();
+                            } else {
+                                notifyEmptyFragmentAboutFailure();
+                            }
+                        }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    if (isSuspended()) return;
-                    notifyEmptyFragmentAboutFailure();
-                }
-            });
+                        @Override
+                        public void failure(RetrofitError error) {
+                            if (isSuspended()) return;
+                            notifyEmptyFragmentAboutFailure();
+                        }
+                    });
         }
     }
 
@@ -478,12 +484,12 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     @Override
     @Nullable
-    public ArrayList<Product> provideProductsIfAvailable(String tabType) {
+    public Pair<ArrayList<Product>, Integer> provideProductsIfAvailable(String tabType) {
         if (mMapForTabWithNoProducts != null) {
             // This means product has been downloaded
             ArrayList<Product> products = mMapForTabWithNoProducts.get(tabType);
             if (products != null) {
-                return products;
+                return new Pair<>(products, 1);
             } else {
                 Fragment currentFragment = getCurrentFragment();
                 if (currentFragment != null) {

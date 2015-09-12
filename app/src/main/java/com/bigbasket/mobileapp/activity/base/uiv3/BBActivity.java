@@ -517,19 +517,21 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void onBasketDelta(String addressId, String title, String msg, boolean hasQcError, ArrayList<QCErrorData> qcErrorDatas) {
+    public void onBasketDelta(String addressId, String lat, String lng,
+                              String title, String msg, boolean hasQcError,
+                              ArrayList<QCErrorData> qcErrorDatas) {
         new BasketDeltaDialog<>().show(this, title, msg, hasQcError, qcErrorDatas, addressId,
-                getString(R.string.change));
+                getString(R.string.change), lat, lng);
     }
 
     @Override
-    public void onNoBasketDelta(String addressId) {
-        new ChangeAddressTask<>(this, addressId, null, null, false).startTask();
+    public void onNoBasketDelta(String addressId, String lat, String lng) {
+        new ChangeAddressTask<>(this, addressId, lat, lng, false).startTask();
     }
 
     @Override
-    public void onUpdateBasket(String addressId) {
-        new ChangeAddressTask<>(this, addressId, null, null, false).startTask();
+    public void onUpdateBasket(String addressId, String lat, String lng) {
+        new ChangeAddressTask<>(this, addressId, lat, lng, false).startTask();
     }
 
     @Override

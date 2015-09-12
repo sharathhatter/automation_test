@@ -41,7 +41,7 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
         }
         if (productListDataApiResponse.status == 0) {
             ProductTabData productTabData = productListDataApiResponse.apiResponseContent;
-            if (productTabData != null && productTabData.getProductTabInfos() !=null) {
+            if (productTabData != null && productTabData.getProductTabInfos() != null) {
                 for (ProductTabInfo productTabInfo : productTabData.getProductTabInfos()) {
                     if (productTabInfo.getFilteredOn() == null) {
                         productTabInfo.setFilteredOn(new ArrayList<FilteredOn>());
@@ -49,7 +49,7 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                 }
             }
 
-            for(ProductTabInfo productTabInfo : productTabData.getProductTabInfos()){
+            for (ProductTabInfo productTabInfo : productTabData.getProductTabInfos()) {
                 ArrayList<FilterOptionCategory> filterOptionCategories = productTabInfo.getFilterOptionItems();
                 ArrayList<FilteredOn> filteredOns = productTabInfo.getFilteredOn();
                 if (filteredOns != null && filteredOns.size() > 0 && filterOptionCategories != null) {

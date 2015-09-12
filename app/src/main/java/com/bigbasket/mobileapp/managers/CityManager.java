@@ -21,7 +21,9 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public final class CityManager {
-    private CityManager() {}
+    private CityManager() {
+    }
+
     private static final int TIMEOUT_IN_MINUTES = 60;
     private static final String preferenceKey = "stored_city";
 
