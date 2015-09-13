@@ -26,7 +26,7 @@ public class AppDataDynamic {
     private static final String TIMEOUT_KEY = "dynamic_data_timeout";
     private static final long TIMEOUT = 2;  // minutes
 
-    private static AppDataDynamic appDataDynamic;
+    private static volatile AppDataDynamic appDataDynamic;
     private static final Object lock = new Object();
 
     private ArrayList<AddressSummary> addressSummaries;
