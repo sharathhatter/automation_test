@@ -77,6 +77,7 @@ public class ShowCartActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(getString(R.string.my_basket_header));
         setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
     }
 
