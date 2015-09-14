@@ -15,4 +15,7 @@ public class GetAppDataDynamicResponse {
 
     @SerializedName(Constants.IS_CONTEXTUAL_MODE)
     public boolean isContextualMode;
+
+    @SerializedName(Constants.EXPRESS_AVAILABILITY)
+    public String expressAvailability;
 }

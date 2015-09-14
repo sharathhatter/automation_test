@@ -469,6 +469,7 @@ public class Constants {
     public static final String RENDERING_ID = "rendering_id";
     public static final String IMAGE_NAME = "image_name";
     public static final String IMAGE_PARAMS = "image_params";
+    public static final String TITLE_TYPE = "title_type";
     public static final String TEXT_COLOR = "text_color";
     public static final String BACKGROUND_COLOR = "background_color";
     public static final String PADDING = "padding";
@@ -601,5 +602,6 @@ public class Constants {
     public static final String SKU_TYPE_JIT = "jit-express";
     public static final String SKU_TYPE_KIRANA = "kirana-express";
     public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
+    public static final String EXPRESS_AVAILABILITY = "express_availability";
 
 }

@@ -196,6 +196,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         editor.apply();
 
         setCityText(defaultAddress.toString());
+
+        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager()
+                .findFragmentByTag(HomeFragment.class.getName());
+        if (homeFragment != null) {
+            homeFragment.syncDynamicTiles();
+        }
     }
 
     public void onDataSyncFailure() {

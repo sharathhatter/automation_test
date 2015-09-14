@@ -30,8 +30,8 @@ public class AppDataDynamic {
     private static final Object lock = new Object();
 
     private ArrayList<AddressSummary> addressSummaries;
-
     private boolean isContextualMode;
+    private String expressAvailability;
 
     public static AppDataDynamic getInstance(Context context) {
         AppDataDynamic localInstance = appDataDynamic;
@@ -49,7 +49,8 @@ public class AppDataDynamic {
 
     public static void updateInstance(@Nullable Context context,
                                       ArrayList<AddressSummary> addressSummaries,
-                                      boolean isContextualMode) {
+                                      boolean isContextualMode,
+                                      String expressAvailability) {
         if (context == null) return;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         if (addressSummaries != null) {
@@ -59,6 +60,7 @@ public class AppDataDynamic {
         editor.putBoolean(Constants.IS_CONTEXTUAL_MODE, isContextualMode);
         editor.putString(TIMEOUT_KEY, new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                 Locale.getDefault()).format(new Date()));
+        editor.putString(Constants.EXPRESS_AVAILABILITY, expressAvailability);
         editor.apply();
         appDataDynamic = null;
     }
@@ -91,6 +93,7 @@ public class AppDataDynamic {
         }
 
         isContextualMode = preferences.getBoolean(Constants.IS_CONTEXTUAL_MODE, false);
+        expressAvailability = preferences.getString(Constants.EXPRESS_AVAILABILITY, null);
     }
 
     public static void reset(Context context) {
@@ -99,6 +102,7 @@ public class AppDataDynamic {
         editor.remove(Constants.ADDRESSES)
                 .remove(Constants.IS_CONTEXTUAL_MODE)
                 .remove(TIMEOUT_KEY)
+                .remove(Constants.EXPRESS_AVAILABILITY)
                 .apply();
         appDataDynamic = null;
     }
@@ -109,5 +113,10 @@ public class AppDataDynamic {
 
     public boolean isContextualMode() {
         return isContextualMode;
+    }
+
+    @Nullable
+    public String getExpressAvailability() {
+        return expressAvailability;
     }
 }

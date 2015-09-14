@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -54,6 +55,10 @@ import retrofit.client.Response;
 public class HomeFragment extends BaseSectionFragment implements DynamicScreenAware {
 
     private boolean mSyncChanges;
+    @Nullable
+    private RecyclerView mRecyclerView;
+    @Nullable
+    private ArrayList<Integer> mDynamicTiles;
 
     @Nullable
     @Override
@@ -238,16 +243,25 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         showProgressView();
 
         contentView.removeAllViews();
-        //Trace.beginSection("Home page section rendering begin");
-        RecyclerView recyclerView = getSectionRecylerView(contentView);
-        if (recyclerView != null) {
-            contentView.addView(recyclerView);
-        }
-        //Trace.beginSection("Home page section rendering end");
 
+        Pair<RecyclerView, ArrayList<Integer>> pair = getSectionRecylerView(contentView);
+        mRecyclerView = pair.first;
+        if (mRecyclerView != null) {
+            contentView.addView(mRecyclerView);
+        }
+        mDynamicTiles = pair.second;
 
         // Check if any deep-link needs to be opened
         processPendingDeepLink();
+    }
+
+    public void syncDynamicTiles() {
+        if (isSuspended() || isDetached()) return;
+        if (mDynamicTiles != null && mDynamicTiles.size() > 0 && mRecyclerView != null) {
+            for (Integer i : mDynamicTiles) {
+                mRecyclerView.getAdapter().notifyItemChanged(i);
+            }
+        }
     }
 
     private void processPendingDeepLink() {

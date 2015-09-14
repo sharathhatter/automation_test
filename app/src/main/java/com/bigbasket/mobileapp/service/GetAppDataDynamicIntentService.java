@@ -28,7 +28,8 @@ public class GetAppDataDynamicIntentService extends IntentService {
             if (getDynamicPageApiResponse.status == 0) {
                 AppDataDynamic.updateInstance(this,
                         getDynamicPageApiResponse.apiResponseContent.addressSummaries,
-                        getDynamicPageApiResponse.apiResponseContent.isContextualMode);
+                        getDynamicPageApiResponse.apiResponseContent.isContextualMode,
+                        getDynamicPageApiResponse.apiResponseContent.expressAvailability);
                 sendSuccessBroadcast();
             } else {
                 sendErrorBroadcast();
