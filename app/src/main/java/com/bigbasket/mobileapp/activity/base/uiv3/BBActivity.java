@@ -388,7 +388,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void startFragment(int fragmentCode) {
         switch (fragmentCode) {
             case FragmentCodes.START_HOME:
-                addToMainLayout(new HomeFragment(), Constants.HOME);
+                addToMainLayout(new HomeFragment());
                 break;
             case FragmentCodes.START_UPDATE_PROFILE:
                 UpdateProfileFragment updateProfileFragment = new UpdateProfileFragment();
