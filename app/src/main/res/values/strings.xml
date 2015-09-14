@@ -371,4 +371,6 @@
     <string name="saveThisLocation">SAVE THIS LOCATION</string>
     <string name="changeMyLocation">CHANGE MY LOCATION</string>
     <string name="preparingBasket">Preparing basket</string>
+    <string name="status">Status</string>
+    <string name="retry">Retry</string>
 </resources>
