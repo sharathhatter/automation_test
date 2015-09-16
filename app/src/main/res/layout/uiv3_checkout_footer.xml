@@ -7,7 +7,7 @@
     android:background="@drawable/main_btn_bkg_not_rounded"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="@dimen/padding_small">
+    android:padding="@dimen/padding_normal">
 
     <LinearLayout
         android:layout_width="0dp"
