@@ -1,10 +1,8 @@
 package com.bigbasket.mobileapp.apiservice.models.response;
 
-import com.bigbasket.mobileapp.util.Constants;
-import com.google.gson.annotations.SerializedName;
+import com.bigbasket.mobileapp.model.account.Address;
 
 public class CreateUpdateAddressApiResponseContent {
 
-    @SerializedName(Constants.ID)
-    public String addressId;
+    public Address address;
 }

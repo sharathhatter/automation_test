@@ -371,4 +371,5 @@
     <string name="saveThisLocation">SAVE THIS LOCATION</string>
     <string name="changeMyLocation">CHANGE MY LOCATION</string>
     <string name="preparingBasket">Preparing basket</string>
+    <string name="needMoreAddressInfo">We need more information to complete your address and help you checkout the items in Basket.</string>
 </resources>
