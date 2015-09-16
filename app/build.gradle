@@ -124,4 +124,5 @@ dependencies {
     compile 'com.moengage:moe-android-sdk:5.3.05'
     compile project(':payuSdk')
     compile project(':mobikwik_Payment_Android_SDK')
+    compile files('libs/pgsdk.jar')
 }

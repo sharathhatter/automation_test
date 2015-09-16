@@ -599,4 +599,10 @@ public class Constants {
     public static final String SKU_TYPE_STANDARD = "standard";
 
 
+
+
+    //PayTM
+    public static final String PAYTMSDK = "PayTMSDK";
+
+
 }

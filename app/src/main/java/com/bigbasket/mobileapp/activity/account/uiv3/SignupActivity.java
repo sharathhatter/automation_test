@@ -211,6 +211,12 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         userDetailsJsonObj.addProperty(Constants.CITY_ID, mCities.get(mSelectedCityIndx).getId());
         userDetailsJsonObj.addProperty(Constants.NEWSLETTER_SUBSCRIPTION, true);
 
+        System.out.println("manu---------userdetails-----" + userDetailsJsonObj.toString());
+        System.out.println("manu--------email--------"+email);
+        System.out.println("manu--------passowrd-----"+passwd);
+
+
+
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         bigBasketApiService.registerMember(userDetailsJsonObj.toString(),
                 new LoginApiResponseCallback(email, passwd, true, Constants.REGISTER_ACCOUNT_TYPE));

@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.handler.payment;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetPaytmPaymentParams;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
@@ -10,6 +11,7 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.payment.MobikwikAware;
+import com.bigbasket.mobileapp.interfaces.payment.PayTMPaymentAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayzappPaymentAware;
 import com.bigbasket.mobileapp.util.Constants;
@@ -82,6 +84,9 @@ public class PaymentInitiator<T> {
                     }
                 });
                 break;
+
+
+            /*
             case Constants.MOBIKWIK_PAYMENT:
                 bigBasketApiService.getOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
                     @Override
@@ -105,6 +110,40 @@ public class PaymentInitiator<T> {
                     }
                 });
                 break;
+*/
+
+            /***
+             * Paytm call
+             */
+
+            case Constants.MOBIKWIK_PAYMENT:
+
+                bigBasketApiService.getOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        switch (getPrepaidPaymentApiResponse.status) {
+                            case 0:
+                                ((PayTMPaymentAware) ctx).initializePayTm(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
+                                break;
+                            default:
+                                ((HandlerAware) ctx).getHandler()
+                                        .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                    }
+                });
+
+
+                break;
+
+
         }
     }
 }

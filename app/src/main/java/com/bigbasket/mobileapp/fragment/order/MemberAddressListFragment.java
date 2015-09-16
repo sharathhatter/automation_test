@@ -72,6 +72,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+
+        Toast.makeText(getCurrentActivity(),getCurrentActivity().getPackageName(),Toast.LENGTH_SHORT).show();
+        System.out.println("in side memeber address lsitfragment....");
+
         super.onActivityCreated(savedInstanceState);
         Bundle args = getArguments();
         mFromAccountPage = args != null && args.getBoolean(Constants.FROM_ACCOUNT_PAGE, false);
