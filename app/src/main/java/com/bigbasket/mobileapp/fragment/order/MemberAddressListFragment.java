@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +63,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     protected ArrayList<Address> mAddressArrayList;
     private MemberAddressListAdapter memberAddressListAdapter;
     private int mAddressPageMode;
-    private String addressId;
+    private Address mSelectedAddress;
     private ViewGroup layoutCheckoutFooter;
 
     @Override
@@ -222,11 +221,11 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
             trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
-            if (addressId != null) {
-                postDeliveryAddress(addressId);
+            if (mSelectedAddress != null) {
+                postDeliveryAddress();
             } else if (memberAddressListAdapter.getSelectedAddress() != null) {
-                addressId = memberAddressListAdapter.getSelectedAddress().getId();
-                postDeliveryAddress(addressId);
+                mSelectedAddress = memberAddressListAdapter.getSelectedAddress();
+                postDeliveryAddress();
             } else {
                 Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
                         Toast.LENGTH_SHORT).show();
@@ -266,31 +265,36 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     @Override
     public void onAddressSelected(Address address) {
-        this.addressId = address.getId();
+        this.mSelectedAddress = address;
         memberAddressListAdapter.notifyDataSetChanged();
         if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
             trackEvent(TrackingAware.CHECKOUT_ADDRESS_SELECTED, null, null, null, false, true);
         } else if (mAddressPageMode == MemberAddressPageMode.ADDRESS_SELECT) {
             Intent intent = new Intent();
-            intent.putExtra(Constants.ADDRESS_ID, addressId);
+            intent.putExtra(Constants.ADDRESS_ID, mSelectedAddress.getId());
             getActivity().setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED, intent);
             finish();
         }
     }
 
     @Override
-    public String getSelectedAddressId() {
-        return this.addressId;
+    public Address getSelectedAddress() {
+        return this.mSelectedAddress;
     }
 
-    private void postDeliveryAddress(final String addressId) {
+    private void postDeliveryAddress() {
+        if (mSelectedAddress == null) {
+            Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         // First check the basket for changes, as product's
         // availability may change when address changes
         if (!checkInternetConnection()) {
             handler.sendOfflineError();
             return;
         }
-        new ChangeAddressTask<>(this, addressId, null, null, true).startTask();
+        new ChangeAddressTask<>(this, mSelectedAddress.getId(), null, null, true).startTask();
     }
 
     @Override
@@ -368,9 +372,9 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         setSuspended(false);
         if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED) {
             if (data != null) {
-                String addressId = data.getStringExtra(Constants.MEMBER_ADDRESS_ID);
-                if (!TextUtils.isEmpty(addressId) && mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
-                    this.addressId = addressId;
+                Address address = data.getParcelableExtra(Constants.UPDATE_ADDRESS);
+                if (address != null && mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
+                    this.mSelectedAddress = address;
                     if (layoutCheckoutFooter != null) {
                         layoutCheckoutFooter.setVisibility(View.VISIBLE);
                     }
@@ -384,7 +388,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 loadAddresses();
             }
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
-            postDeliveryAddress(addressId);
+            postDeliveryAddress();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

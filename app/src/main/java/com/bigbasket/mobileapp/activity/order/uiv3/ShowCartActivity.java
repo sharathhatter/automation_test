@@ -154,6 +154,7 @@ public class ShowCartActivity extends BackButtonActivity {
             if (basketMenuItem != null) basketMenuItem.setVisible(numItems > 0);
         }
 
+        layoutCheckoutFooter.setPadding(8, 8, 8, 8);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, cartTotal,
                 getString(R.string.checkOut), true);
 
@@ -250,7 +251,7 @@ public class ShowCartActivity extends BackButtonActivity {
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 hideProgressView();
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }
@@ -298,7 +299,7 @@ public class ShowCartActivity extends BackButtonActivity {
                             }
                         } else {
                             handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
-                                    cartGetApiResponseContentApiResponse.message);
+                                    cartGetApiResponseContentApiResponse.message, true);
                         }
                         editor.apply();
                     }

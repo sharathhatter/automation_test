@@ -144,6 +144,15 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (mAddress != null) {
             populateUiFields();
         }
+
+        TextView lblNeedMoreAddressInfo = (TextView) base.findViewById(R.id.lblNeedMoreAddressInfo);
+        if (mAddress != null && mAddress.isPartial() && mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
+            lblNeedMoreAddressInfo.setTypeface(faceRobotoRegular);
+            lblNeedMoreAddressInfo.setVisibility(View.VISIBLE);
+        } else {
+            lblNeedMoreAddressInfo.setVisibility(View.GONE);
+        }
+
         setAdapterArea(editTextArea, editTextPincode, mChoosenCity.getName());
         contentLayout.addView(base);
     }
@@ -360,9 +369,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         uploadAddress(otpCode);
     }
 
-    private void addressCreatedModified(String addressId) {
+    private void addressCreatedModified(Address address) {
         Intent result = new Intent();
-        result.putExtra(Constants.MEMBER_ADDRESS_ID, addressId);
+        result.putExtra(Constants.UPDATE_ADDRESS, address);
         setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED, result);
         finish();
     }
@@ -472,7 +481,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                     }
                     if (mAddress == null) {
                         Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.addressId);
+                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.address);
                     } else {
                         Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
                         addressCreatedModified();
