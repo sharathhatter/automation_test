@@ -26,19 +26,46 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txtDeliverablesHeading"
+            <LinearLayout
+                android:id="@+id/layoutShipmentToggleContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_normal"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/secondary_text_size" />
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_large"
+                android:gravity="right|center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/txtShipmentAnnotation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delivery_time"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/large_text_size" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switchToggleDelivery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_normal" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layoutShipmentContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/txtDeliverablesHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_normal"
+                android:textColor="@color/uiv3_primary_btn_bkg"
+                android:textSize="@dimen/secondary_text_size" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

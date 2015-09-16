@@ -110,12 +110,14 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         LinearLayout layoutShipmentContainer = (LinearLayout) findViewById(R.id.layoutShipmentContainer);
         layoutShipmentContainer.removeAllViews();
         int marginVertical = (int) getResources().getDimension(R.dimen.margin_normal);
+        SwitchCompat switchToggleDelivery = (SwitchCompat) findViewById(R.id.switchToggleDelivery);
+        TextView txtShipmentAnnotation = (TextView) findViewById(R.id.txtShipmentAnnotation);
+        ViewGroup layoutShipmentToggleContainer = (ViewGroup) findViewById(R.id.layoutShipmentToggleContainer);
+
         for (int i = 0; i < mShipments.size(); i++) {
             final Shipment shipment = mShipments.get(i);
             View shipmentView = getLayoutInflater().inflate(R.layout.shipment_row,
                     layoutShipmentContainer, false);
-
-            SwitchCompat switchToggleDelivery = (SwitchCompat) shipmentView.findViewById(R.id.switchToggleDelivery);
 
             BaseShipmentAction shipmentAction = shipmentActionHashMap != null ?
                     shipmentActionHashMap.get(shipment.getShipmentId()) : null;
@@ -140,6 +142,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                             break;
                     }
                 }
+
                 if (!TextUtils.isEmpty(shipmentAction.getActionMsg())) {
                     actionName = shipmentAction.getActionMsg();
                     if (TextUtils.isEmpty(shipmentAction.getActionState())) {
@@ -147,6 +150,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                     } else {
                         switchToggleDelivery.setChecked(shipmentAction.getActionState().equalsIgnoreCase(Constants.ON));
                         switchToggleDelivery.setOnCheckedChangeListener(new OnShipmentToggleListener(shipment));
+                        switchToggleDelivery.setVisibility(View.VISIBLE);
+                        layoutShipmentToggleContainer.setVisibility(View.VISIBLE);
                     }
                 } else {
                     switchToggleDelivery.setVisibility(View.GONE);
@@ -156,19 +161,20 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                     applyBottom = i != 0;
                 }
                 shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
-                switchToggleDelivery.setVisibility(View.GONE);
+//                switchToggleDelivery.setVisibility(View.GONE);
                 mSelectedShipmentIndx.add(i);
             }
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) shipmentView.getLayoutParams();
             marginLayoutParams.bottomMargin = applyBottom ? marginVertical : 0;
             shipmentView.setLayoutParams(marginLayoutParams);
 
-            TextView txtShipmentAction = (TextView) shipmentView.findViewById(R.id.txtShipmentAnnotation);
-            txtShipmentAction.setTypeface(faceRobotoRegular);
             if (!TextUtils.isEmpty(actionName)) {
-                txtShipmentAction.setText(actionName);
+                txtShipmentAnnotation.setTypeface(faceRobotoRegular);
+                txtShipmentAnnotation.setText(actionName);
+                txtShipmentAnnotation.setVisibility(View.VISIBLE);
+                layoutShipmentToggleContainer.setVisibility(View.VISIBLE);
             } else {
-                txtShipmentAction.setVisibility(View.GONE);
+                txtShipmentAnnotation.setVisibility(View.GONE);
             }
 
             ((TextView) shipmentView.findViewById(R.id.lblDeliveryTime)).setTypeface(faceRobotoRegular);
@@ -245,9 +251,12 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
     private void setShipmentHeaderMsg(int numVisibleShipments) {
         TextView txtDeliverablesHeading = (TextView) findViewById(R.id.txtDeliverablesHeading);
-        txtDeliverablesHeading.setTypeface(faceRobotoRegular);
-        txtDeliverablesHeading.setText(numVisibleShipments > 1 ? R.string.deliverableTextPlural :
-                R.string.deliverableTextSingular);
+        if (numVisibleShipments > 1) {
+            txtDeliverablesHeading.setTypeface(faceRobotoRegular);
+            txtDeliverablesHeading.setText(R.string.deliverableTextPlural);
+        } else {
+            txtDeliverablesHeading.setVisibility(View.GONE);
+        }
     }
 
     private class OnViewShipmentLinkedProductsListener implements View.OnClickListener {

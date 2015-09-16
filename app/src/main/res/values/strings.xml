@@ -324,8 +324,7 @@
     <string name="noProductsUnavailable">No Products available!</string>
     <string name="continueAnyway">Continue Anyway</string>
     <string name="help">Help</string>
-    <string name="deliverableTextSingular">Your purchase will arrive in the following delivery</string>
-    <string name="deliverableTextPlural">Your purchase will arrive in the following deliveries</string>
+    <string name="deliverableTextPlural">Based on the items in Basket, your deliveries will come in multiple shipments.</string>
     <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
     <string name="voucherApplicableSingular">Voucher Applicable</string>
     <string name="voucherApplicablePlural">Vouchers Applicable</string>
