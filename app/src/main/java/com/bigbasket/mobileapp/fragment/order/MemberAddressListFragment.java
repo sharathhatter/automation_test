@@ -98,6 +98,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                     "You are not signed in.\nPlease sign-in to continue", NavigationCodes.GO_TO_LOGIN);
             return;
         }
+        mSelectedAddress = null; // Reset
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
         bigBasketApiService.getDeliveryAddresses(new Callback<ApiResponse<GetDeliveryAddressApiResponseContent>>() {
@@ -221,11 +222,15 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
             trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
-            if (mSelectedAddress != null) {
-                postDeliveryAddress();
-            } else if (memberAddressListAdapter.getSelectedAddress() != null) {
+            if (mSelectedAddress == null) {
                 mSelectedAddress = memberAddressListAdapter.getSelectedAddress();
-                postDeliveryAddress();
+            }
+            if (mSelectedAddress != null) {
+                if (mSelectedAddress.isPartial()) {
+                    showAddressForm(mSelectedAddress);
+                } else {
+                    postDeliveryAddress();
+                }
             } else {
                 Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
                         Toast.LENGTH_SHORT).show();

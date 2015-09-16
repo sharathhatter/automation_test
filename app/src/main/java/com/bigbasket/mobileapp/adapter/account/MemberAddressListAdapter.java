@@ -94,10 +94,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 Address selectedAddress = ((AddressSelectionAware) context).getSelectedAddress();
                 boolean isSelected = selectedAddress == null || TextUtils.isEmpty(selectedAddress.getId()) ?
                         address.isDefault() : (selectedAddress.getId().equals(address.getId()));
-                if (isSelected) {
-                    radioBtnSelectedAddress.setChecked(true);
-                } else
-                    radioBtnSelectedAddress.setChecked(false);
+                radioBtnSelectedAddress.setChecked(isSelected);
             }
 
             TextView txtAddress = memberAddressViewHolder.getTxtAddress();
