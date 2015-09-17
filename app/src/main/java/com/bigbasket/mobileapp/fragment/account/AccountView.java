@@ -12,7 +12,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.MyAccountActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
@@ -160,9 +159,7 @@ public class AccountView<T> {
                     break;
                 case 2:
                     ctx.trackEvent(TrackingAware.HOME_CHANGE_CITY, map);
-                    Intent intent = new Intent(ctx, ChooseLocationActivity.class);
-                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
-                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    ctx.showChangeCity(false, TrackEventkeys.ACCOUNT_MENU);
                     break;
                 case 3:
                     ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, map);

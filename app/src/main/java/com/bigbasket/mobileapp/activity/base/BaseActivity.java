@@ -863,7 +863,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
                 break;
             case NavigationCodes.LAUNCH_CITY:
-                showChangeCity();
+                showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
                 break;
             case NavigationCodes.LAUNCH_SIGNUP:
                 launchRegistrationPage();
@@ -871,8 +871,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    private void showChangeCity() {
-        Intent intent = new Intent(this, ChooseLocationActivity.class);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    public void showChangeCity(boolean isFirstTime, String nc) {
+        Intent intent = new Intent(getCurrentActivity(), ChooseLocationActivity.class);
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, nc);
+        intent.putExtra(Constants.IS_FIRST_TIME, isFirstTime);
+        getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }

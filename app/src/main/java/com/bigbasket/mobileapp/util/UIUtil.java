@@ -236,6 +236,7 @@ public class UIUtil {
         if (userDetails.analytics != null) {
             editor.putString(Constants.CITY, userDetails.analytics.city);
             editor.putString(Constants.CITY_ID, String.valueOf(userDetails.analytics.cityId));
+            editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
 
             // Any key added here, must be cleared when user logs-out
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, mId);

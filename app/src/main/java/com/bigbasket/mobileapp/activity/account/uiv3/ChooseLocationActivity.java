@@ -44,12 +44,13 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     private GoogleApiClient mGoogleApiClient;
     private AddressSummary mChosenAddressSummary;
+    private boolean mIsFirstTime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseYourLocation));
-
+        mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
         renderLocation();
     }
 
@@ -175,9 +176,10 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     private void updateLocation(LatLng latLng) {
+        boolean isTransientCall = !mIsFirstTime;
         new ChangeAddressTask<>(this,
                 null, String.valueOf(latLng.latitude),
-                String.valueOf(latLng.longitude), true).startTask();
+                String.valueOf(latLng.longitude), isTransientCall).startTask();
     }
 
     @Override

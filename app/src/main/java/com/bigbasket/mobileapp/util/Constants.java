@@ -248,6 +248,7 @@ public class Constants {
     public static final String CITY_NAME = "city_name";
     public static final String PIN = "pin";
     public static final String FIRSTNAME = "first_name";
+    public static final String IS_FIRST_TIME = "is_first_time";
     public static final String LASTNAME = "last_name";
     public static final String ADDR_NICK = "nick";
     public static final String UPDATE_ADDRESS = "update-address";

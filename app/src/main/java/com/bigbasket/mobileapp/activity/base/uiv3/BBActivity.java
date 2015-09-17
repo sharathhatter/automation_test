@@ -37,7 +37,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -862,8 +861,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public void changeAddressRequested() {
         if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
-            Intent intent = new Intent(this, ChooseLocationActivity.class);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            showChangeCity(false, getNextScreenNavigationContext());
         } else {
             Intent intent = new Intent(this, BackButtonActivity.class);
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
