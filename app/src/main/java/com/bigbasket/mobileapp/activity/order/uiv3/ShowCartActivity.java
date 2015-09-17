@@ -77,6 +77,7 @@ public class ShowCartActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(getString(R.string.my_basket_header));
         setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
     }
 
@@ -153,9 +154,9 @@ public class ShowCartActivity extends BackButtonActivity {
             if (basketMenuItem != null) basketMenuItem.setVisible(numItems > 0);
         }
 
-        layoutCheckoutFooter.setPadding(8, 8, 8, 8);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, cartTotal,
                 getString(R.string.checkOut), true);
+        layoutCheckoutFooter.setPadding(16, 8, 16, 8);
 
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
