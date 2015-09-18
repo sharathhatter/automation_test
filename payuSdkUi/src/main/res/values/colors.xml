@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="button_selected_state_color">#F44336</color>
+    <color name="amt_txn_textColor">#C82506</color>
+
+</resources>

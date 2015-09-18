@@ -64,7 +64,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
-import com.payu.sdk.PayU;
+import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -547,7 +547,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                     communicateHdfcPayzappResponseFailure(null, null);
                 }
             }
-        } else if (requestCode == PayU.RESULT) {
+        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
             String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
             if (resultCode == RESULT_OK) {
                 new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
@@ -709,7 +709,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     @Override
     public void initializePayu(HashMap<String, String> paymentParams) {
-        mPayuTxnId = paymentParams.get(PayU.TXNID);
+        mPayuTxnId = paymentParams.get(PayuConstants.TXNID);
         PayuInitializer.initiate(paymentParams, this);
     }
 

@@ -9,8 +9,6 @@
     <string name="localytics_api_key" templateMergeStrategy="preserve">
         4a77ed943c8630492e4885d-d8efb860-3507-11e5-62e9-00736b041834
     </string>
-    <string name="payu_merchant_id" templateMergeStrategy="preserve">fcGIvG</string>
-    <string name="payu_merchant_salt" templateMergeStrategy="preserve">XLw5BpAT</string>
     <string name="google_geo_api_key" templateMergeStrategy="preserve">AIzaSyAcAYm_JguAF9LmBnNW1YC0Hmz6_UuO3Cw</string>
     <string name="mobikwik_sdk_sign">aead83c772d44fb48eace92beab20c8a</string>
     <string name="mobikwik_mode">1</string>
