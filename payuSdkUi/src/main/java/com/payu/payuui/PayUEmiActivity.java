@@ -20,16 +20,13 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.payu.india.Model.CCDCCard;
 import com.payu.india.Model.Emi;
-import com.payu.india.Model.PaymentDefaultParams;
 import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
 import com.payu.india.Model.PayuHashes;
 import com.payu.india.Model.PostData;
 import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
-import com.payu.india.PostParams.EmiPostParams;
 import com.payu.india.PostParams.PaymentPostParams;
 
 import java.util.ArrayList;
@@ -67,10 +64,11 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_emi);
 
         // Todo lets set the toolbar
-        /*toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
         
         bundle = getIntent().getExtras();
 
@@ -138,13 +136,13 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_emi, menu);
+//        getMenuInflater().inflate(R.menu.menu_emi, menu);
         return true;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
+        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode==RESULT_OK) {
             setResult(resultCode, data);
             finish();
         }
@@ -156,6 +154,10 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if(id == android.R.id.home) {
+            finish();
+        }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {

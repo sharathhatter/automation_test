@@ -2,7 +2,6 @@ package com.payu.payuui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -11,9 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+
 import com.payu.india.Interfaces.PaymentRelatedDetailsListener;
 import com.payu.india.Model.MerchantWebService;
-import com.payu.india.Model.PaymentDefaultParams;
 import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
 import com.payu.india.Model.PayuHashes;
@@ -23,8 +22,8 @@ import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
 import com.payu.india.PostParams.MerchantWebServicePostParams;
 import com.payu.india.PostParams.PaymentPostParams;
-import com.payu.india.PostParams.PayuWalletPostParams;
 import com.payu.india.Tasks.GetPaymentRelatedDetailsTask;
+
 
 public class PayUBaseActivity extends AppCompatActivity implements View.OnClickListener, PaymentRelatedDetailsListener {
 
@@ -46,16 +45,22 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
 
     Bundle bundle;
 
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
         // Todo lets set the toolbar
-        /*toolbar = (Toolbar) findViewById(R.id.app_bar);
+       toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
+
+
+
 
         // leets register the buttons
         (netBankingButton = (Button) findViewById(R.id.button_netbanking)).setOnClickListener(this);
@@ -104,17 +109,21 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
                 GetPaymentRelatedDetailsTask paymentRelatedDetailsForMobileSdkTask = new GetPaymentRelatedDetailsTask(this);
                 paymentRelatedDetailsForMobileSdkTask.execute(payuConfig);
             } else {
-                Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
                 // close the progress bar
                 findViewById(R.id.progress_bar).setVisibility(View.GONE);
             }
         }
+
+
+
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_base, menu);
+//        getMenuInflater().inflate(R.menu.menu_base, menu);
         return true;
     }
 
@@ -126,7 +135,8 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
         int id = item.getItemId();
 
         if(id == android.R.id.home){
-            NavUtils.navigateUpFromSameTask(this);
+            finish();
+//            NavUtils.navigateUpFromSameTask(this);
         }else if(id == R.id.action_exit){
             // Not decided yet what to do
         }else if(id == R.id.action_demo){
@@ -136,9 +146,17 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
         return super.onOptionsItemSelected(item);
     }
 
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
+        if (data!=null)
+        if (data.hasExtra("transaction_status")){
+            setResult(resultCode, data);
+            finish();
+        }
+        else if (requestCode == PayuConstants.PAYU_REQUEST_CODE  && resultCode==RESULT_OK) {
             setResult(resultCode, data);
             finish();
         }
@@ -193,7 +211,7 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
             intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
             startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
         }else{
-            Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
         }
 
     }
@@ -216,7 +234,7 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
         mPayuResponse = payuResponse;
         findViewById(R.id.progress_bar).setVisibility(View.GONE);
         if(payuResponse.isResponseAvailable() && payuResponse.getResponseStatus().getCode() == PayuErrors.NO_ERROR){ // ok we are good to go
-            Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
             if(payuResponse.isStoredCardsAvailable()){
                 findViewById(R.id.linear_layout_stored_card).setVisibility(View.VISIBLE);
             }
@@ -240,6 +258,7 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
         }
 
         // no mater what response i get just show this button, so that we can go further.
-        findViewById(R.id.linear_layout_verify_api).setVisibility(View.VISIBLE);
+        /***************hiding the verify API button************/
+        findViewById(R.id.linear_layout_verify_api).setVisibility(View.GONE);
     }
 }

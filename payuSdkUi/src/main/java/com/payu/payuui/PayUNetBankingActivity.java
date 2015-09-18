@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -16,7 +18,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.payu.india.Model.PaymentDefaultParams;
 import com.payu.india.Model.PaymentDetails;
 import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
@@ -24,7 +25,6 @@ import com.payu.india.Model.PayuHashes;
 import com.payu.india.Model.PostData;
 import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
-import com.payu.india.PostParams.NBPostParams;
 import com.payu.india.PostParams.PaymentPostParams;
 
 import java.util.ArrayList;
@@ -56,10 +56,11 @@ public class PayUNetBankingActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_net_banking);
 
         // todo lets set the toolbar
-        /*toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
         
         (payNowButton = (Button) findViewById(R.id.button_pay_now)).setOnClickListener(this);
         spinnerNetbanking = (Spinner) findViewById(R.id.spinner_netbanking);
@@ -101,6 +102,41 @@ public class PayUNetBankingActivity extends AppCompatActivity implements View.On
     }
 
 
+    /***********
+     *
+     *
+     * back button of toolbar
+     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_base, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if(id == android.R.id.home){
+            finish();
+//            NavUtils.navigateUpFromSameTask(this);
+        }else if(id == R.id.action_exit){
+            // Not decided yet what to do
+        }else if(id == R.id.action_demo){
+            // not decided yet!
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    /***************************/
+
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.button_pay_now) {
@@ -126,9 +162,16 @@ public class PayUNetBankingActivity extends AppCompatActivity implements View.On
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
+        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode==RESULT_OK) {
             setResult(resultCode, data);
             finish();
+        }
+        else {
+
+            data.putExtra("transaction_status",false);
+            setResult(resultCode, data);
+            finish();
+
         }
     }
 

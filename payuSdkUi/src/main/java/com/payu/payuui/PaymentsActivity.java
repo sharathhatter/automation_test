@@ -6,13 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -184,6 +183,7 @@ public class PaymentsActivity extends AppCompatActivity{
                         public void run() {
                             Intent intent = new Intent();
                             intent.putExtra("result", result);
+                            intent.putExtra("transaction_status", false);
                             setResult(RESULT_CANCELED, intent);
                             finish();
                         }
@@ -195,12 +195,14 @@ public class PaymentsActivity extends AppCompatActivity{
 
             });
             mWebView.setWebViewClient(new WebViewClient());
+
         }
 
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
         url = payuConfig.getEnvironment() == PayuConstants.PRODUCTION_ENV?  PayuConstants.PRODUCTION_PAYMENT_URL : PayuConstants.MOBILE_TEST_PAYMENT_URL ;
         mWebView.postUrl(url, EncodingUtils.getBytes(payuConfig.getData(), "base64"));
+
 
     }
 
@@ -232,6 +234,7 @@ public class PaymentsActivity extends AppCompatActivity{
             cancelTransaction = false;
             Intent intent = new Intent();
             intent.putExtra("result", "Transaction canceled due to back pressed!");
+            intent.putExtra("transaction_status",false);
             setResult(RESULT_CANCELED, intent);
             super.onBackPressed();
             return;
@@ -246,6 +249,9 @@ public class PaymentsActivity extends AppCompatActivity{
                 cancelTransaction = true;
                 dialog.dismiss();
                 onBackPressed();
+
+
+
             }
         });
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -255,5 +261,14 @@ public class PaymentsActivity extends AppCompatActivity{
             }
         });
         alertDialog.show();
+
     }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(mReceiver);
+        super.onStop();
+
+    }
+
 }

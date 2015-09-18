@@ -9,20 +9,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.payu.india.Model.CCDCCard;
-import com.payu.india.Model.PaymentDefaultParams;
 import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
 import com.payu.india.Model.PayuHashes;
 import com.payu.india.Model.PostData;
 import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
-import com.payu.india.PostParams.CCDCPostParams;
 import com.payu.india.PostParams.PaymentPostParams;
 
 
@@ -59,10 +55,11 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
         setContentView(R.layout.activity_card);
 
         // todo lets set the toolbar
-        /*toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
         
         (payNowButton = (Button) findViewById(R.id.button_card_make_payment)).setOnClickListener(this);
 
@@ -96,7 +93,7 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_card, menu);
+//        getMenuInflater().inflate(R.menu.menu_card, menu);
         return true;
     }
 
@@ -107,6 +104,10 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if(id == android.R.id.home){
+            finish();
+//            NavUtils.navigateUpFromSameTask(this);
+        }
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -164,9 +165,16 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
+        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode==RESULT_OK) {
             setResult(resultCode, data);
             finish();
+        }
+        else {
+
+            data.putExtra("transaction_status",false);
+            setResult(resultCode, data);
+            finish();
+
         }
     }
 }

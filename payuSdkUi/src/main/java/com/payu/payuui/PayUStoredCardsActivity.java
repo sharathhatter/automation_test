@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +26,6 @@ import android.widget.Toast;
 import com.payu.india.Interfaces.DeleteCardApiListener;
 import com.payu.india.Interfaces.GetStoredCardApiListener;
 import com.payu.india.Model.MerchantWebService;
-import com.payu.india.Model.PaymentDefaultParams;
 import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
 import com.payu.india.Model.PayuHashes;
@@ -39,7 +37,6 @@ import com.payu.india.Payu.PayuErrors;
 import com.payu.india.Payu.PayuUtils;
 import com.payu.india.PostParams.MerchantWebServicePostParams;
 import com.payu.india.PostParams.PaymentPostParams;
-import com.payu.india.PostParams.StoredCardPostParams;
 import com.payu.india.Tasks.DeleteCardTask;
 import com.payu.india.Tasks.GetStoredCardTask;
 
@@ -67,10 +64,10 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
         setContentView(R.layout.activity_user_cards);
 
         // TODO lets set the toolbar
-        /*toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         storedCardListView = (ListView) findViewById(R.id.list_view_user_card);
 
@@ -163,9 +160,16 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
+        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode==RESULT_OK) {
             setResult(resultCode, data);
             finish();
+        }
+        else {
+
+            data.putExtra("transaction_status",false);
+            setResult(resultCode, data);
+            finish();
+
         }
     }
 
