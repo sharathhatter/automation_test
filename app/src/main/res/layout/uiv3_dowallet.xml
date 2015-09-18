@@ -173,7 +173,6 @@
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
-                android:visibility="gone"
                 android:onClick="onFundWalletBtnClicked"
                 android:text="@string/fundWallet" />
 

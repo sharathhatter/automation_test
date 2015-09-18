@@ -19,10 +19,12 @@ import com.bigbasket.mobileapp.util.FontHolder;
 
 import java.util.ArrayList;
 
-public class BasketDeltaDialog<T> {
+public class BasketDeltaDialog<T extends BasketDeltaUserActionListener> {
     public void show(final T ctx, @Nullable String title, @Nullable String msg, boolean hasQcErrors,
                      @Nullable ArrayList<QCErrorData> qcErrorDatas,
-                     final String addressId) {
+                     @Nullable final String addressId, String positiveMsg,
+                     @Nullable final String lat,
+                     @Nullable final String lng) {
         final BaseActivity activity = ((ActivityAware) ctx).getCurrentActivity();
 
         View baseView = null;
@@ -52,10 +54,10 @@ public class BasketDeltaDialog<T> {
         if (baseView != null) {
             builder.setView(baseView);
         }
-        builder.setPositiveButton(R.string.reviewBasket, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(positiveMsg, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ((BasketDeltaUserActionListener) ctx).onUpdateBasket(addressId);
+                ctx.onUpdateBasket(addressId, lat, lng);
             }
         }).setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
             @Override

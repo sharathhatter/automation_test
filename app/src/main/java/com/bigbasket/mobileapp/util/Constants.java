@@ -116,8 +116,8 @@ public class Constants {
 
     //update-app-data
     public static final String ADD_TO_BASKET_POST_PARAMS = "add_to_basket_post_params";
-    public static final String EXPRESS_AVAILABLE = "express_available";
-    public static final String AVAILABILITY_INFOS = "availability_infos";
+    public static final String MODE_NAME = "mode_name";
+
     //Error codes
     public static final String PRODUCT_ID_NOT_FOUND = "101";
     public static final String PRODUCT_INFO = "product_info";
@@ -234,6 +234,10 @@ public class Constants {
     public static final String ID = "id";
     public static final String ADDRESS_ID = "address_id";
     public static final String MEMBER_ADDRESS_ID = "member_address_id";
+    public static final String LAT = "lat";
+    public static final String LNG = "lng";
+    public static final String IS_PARTIAL = "is_partial";
+    public static final String TRANSIENT = "transient";
     public static final String IS_DEFAULT = "is_default";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
@@ -244,10 +248,11 @@ public class Constants {
     public static final String CITY_NAME = "city_name";
     public static final String PIN = "pin";
     public static final String FIRSTNAME = "first_name";
+    public static final String IS_FIRST_TIME = "is_first_time";
     public static final String LASTNAME = "last_name";
     public static final String ADDR_NICK = "nick";
     public static final String UPDATE_ADDRESS = "update-address";
-    public static final String FROM_ACCOUNT_PAGE = "from_account_page";
+    public static final String ADDRESS_PAGE_MODE = "address_pg_mode";
     public static final String RATING = "rating";
     public static final String COMMENTS = "comments";
     public static final String CASE_ID = "case_id";
@@ -466,6 +471,7 @@ public class Constants {
     public static final String RENDERING_ID = "rendering_id";
     public static final String IMAGE_NAME = "image_name";
     public static final String IMAGE_PARAMS = "image_params";
+    public static final String TITLE_TYPE = "title_type";
     public static final String TEXT_COLOR = "text_color";
     public static final String BACKGROUND_COLOR = "background_color";
     public static final String PADDING = "padding";
@@ -536,6 +542,7 @@ public class Constants {
     public static final String HEADER_SEL = "header_sel";
     public static final String TAB_INFO = "tab_info";
     public static final String TAB_NAME = "tab_name";
+    public static final String TAB_IMG = "tab_img";
     public static final String CONTENT_SECTION = "content_section";
     public static final String CART_INFO = "cart_info";
 
@@ -590,19 +597,14 @@ public class Constants {
     public static final String MOBIKWIK_STATUS = "status";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
 
+    public static final String ADDRESS_SYNC_BROADCAST_ACTION = "com.bigbasket.mobileapp.broadcase.AddressSync";
+
     // Sku Tabs
-    public static final int TAB_TYPE_EXPRESS = 0;
-    public static final int TAB_TYPE_STANDARD = 1;
     public static final String SKU_TYPE_EXPRESS = "express";
     public static final String SKU_TYPE_JIT = "jit-express";
     public static final String SKU_TYPE_KIRANA = "kirana-express";
-    public static final String SKU_TYPE_STANDARD = "standard";
 
-
-
-
-    //PayTM
-    public static final String PAYTMSDK = "PayTMSDK";
-
-
+    public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
+    public static final String EXPRESS_AVAILABILITY = "express_availability";
+    public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
 }

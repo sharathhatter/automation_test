@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -122,6 +123,46 @@ public class PaymentSelectionActivity extends BackButtonActivity
         setUpNewCheckoutFlowMsg();
         renderFooter(false);
         trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mOrdersCreated != null) {
+            outState.putParcelableArrayList(Constants.ORDERS, mOrdersCreated);
+        }
+        if (mPayuTxnId != null) {
+            outState.putString(Constants.PAYU, mPayuTxnId);
+        }
+        if (mHDFCPayzappTxnId != null) {
+            outState.putString(Constants.HDFC_POWER_PAY, mHDFCPayzappTxnId);
+        }
+        if (mSelectedPaymentMethod != null) {
+            outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
+        }
+        if (mPotentialOrderId != null) {
+            outState.putString(Constants.P_ORDER_ID, mPotentialOrderId);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (mOrdersCreated == null) {
+            mOrdersCreated = savedInstanceState.getParcelableArrayList(Constants.ORDERS);
+        }
+        if (mPayuTxnId == null) {
+            mPayuTxnId = savedInstanceState.getString(Constants.PAYU);
+        }
+        if (mHDFCPayzappTxnId == null) {
+            mHDFCPayzappTxnId = savedInstanceState.getString(Constants.HDFC_POWER_PAY);
+        }
+        if (mSelectedPaymentMethod == null) {
+            mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
+        }
+        if (mPotentialOrderId == null) {
+            mPotentialOrderId = savedInstanceState.getString(Constants.P_ORDER_ID);
+        }
     }
 
     private void setUpNewCheckoutFlowMsg() {
@@ -337,6 +378,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 if (isSelected) {
                     rbtnPaymentType.setChecked(true);
                     mSelectedPaymentMethod = paymentType.getValue();
+                    toggleNewCheckoutFlowMsg(isCreditCardPayment());
                 }
                 rbtnPaymentType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override

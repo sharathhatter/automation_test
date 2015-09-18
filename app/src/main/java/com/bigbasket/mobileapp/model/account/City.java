@@ -17,10 +17,6 @@ public class City implements Parcelable {
     };
     private String name;
     private int id;
-    private double lbx;
-    private double lby;
-    private double ubx;
-    private double uby;
 
     public City(String name, int id) {
         this.name = name;
@@ -30,10 +26,6 @@ public class City implements Parcelable {
     public City(Parcel source) {
         name = source.readString();
         id = source.readInt();
-        lbx = source.readDouble();
-        lby = source.readDouble();
-        ubx = source.readDouble();
-        uby = source.readDouble();
     }
 
     public String getName() {
@@ -42,22 +34,6 @@ public class City implements Parcelable {
 
     public int getId() {
         return id;
-    }
-
-    public double getLbx() {
-        return lbx;
-    }
-
-    public double getLby() {
-        return lby;
-    }
-
-    public double getUbx() {
-        return ubx;
-    }
-
-    public double getUby() {
-        return uby;
     }
 
     @Override
@@ -74,9 +50,5 @@ public class City implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeInt(id);
-        dest.writeDouble(lbx);
-        dest.writeDouble(lby);
-        dest.writeDouble(ubx);
-        dest.writeDouble(uby);
     }
 }

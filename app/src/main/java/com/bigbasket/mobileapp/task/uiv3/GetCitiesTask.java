@@ -9,7 +9,7 @@ import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
-import com.bigbasket.mobileapp.model.CityManager;
+import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.account.City;
 
 import java.util.ArrayList;

@@ -91,14 +91,10 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             if (fromAccount) {
                 radioBtnSelectedAddress.setVisibility(View.GONE);
             } else {
-                String selectedAddressId = ((AddressSelectionAware) context).getSelectedAddressId();
-                boolean isSelected = TextUtils.isEmpty(selectedAddressId) ?
-                        address.isDefault() : (selectedAddressId.equals(address.getId()));
-                if (isSelected) {
-                    selectedAddress = address;
-                    radioBtnSelectedAddress.setChecked(true);
-                } else
-                    radioBtnSelectedAddress.setChecked(false);
+                Address selectedAddress = ((AddressSelectionAware) context).getSelectedAddress();
+                boolean isSelected = selectedAddress == null || TextUtils.isEmpty(selectedAddress.getId()) ?
+                        address.isDefault() : (selectedAddress.getId().equals(address.getId()));
+                radioBtnSelectedAddress.setChecked(isSelected);
             }
 
             TextView txtAddress = memberAddressViewHolder.getTxtAddress();

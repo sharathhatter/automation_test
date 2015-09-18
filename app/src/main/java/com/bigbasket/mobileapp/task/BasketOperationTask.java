@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.task;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -161,7 +160,6 @@ public class BasketOperationTask<T> {
                         ((OnBasketChangeListener) context).markBasketChanged(null);
                     }
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
-                    Log.d("CONTEXT CHECK", ""+context.getClass().getSimpleName());
                     ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,
                             basketCountTextView, viewDecQty, viewIncQty, viewAddToBasket, product, qty,
                             productView, cartInfo, editTextQty);

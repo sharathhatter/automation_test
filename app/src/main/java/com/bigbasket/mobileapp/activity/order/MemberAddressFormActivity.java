@@ -36,6 +36,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -61,13 +62,14 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     private InstantAutoCompleteTextView editTextArea;
     private String mErrorMsg;
     private OTPValidationDialogFragment otpValidationDialogFragment;
-    private boolean mFromAccountPage = false;
+    private int mAddressPageMode;
     private ArrayList<City> mCities;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getActivityTitle());
-        mFromAccountPage = getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false);
+        mAddressPageMode = getIntent().getIntExtra(Constants.ADDRESS_PAGE_MODE,
+                MemberAddressPageMode.CHECKOUT);
         mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         if (mAddress != null) {
             mChoosenCity = new City(mAddress.getCityName(), mAddress.getCityId());
@@ -142,6 +144,15 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (mAddress != null) {
             populateUiFields();
         }
+
+        TextView lblNeedMoreAddressInfo = (TextView) base.findViewById(R.id.lblNeedMoreAddressInfo);
+        if (mAddress != null && mAddress.isPartial() && mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
+            lblNeedMoreAddressInfo.setTypeface(faceRobotoRegular);
+            lblNeedMoreAddressInfo.setVisibility(View.VISIBLE);
+        } else {
+            lblNeedMoreAddressInfo.setVisibility(View.GONE);
+        }
+
         setAdapterArea(editTextArea, editTextPincode, mChoosenCity.getName());
         contentLayout.addView(base);
     }
@@ -358,9 +369,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         uploadAddress(otpCode);
     }
 
-    private void addressCreatedModified(String addressId) {
+    private void addressCreatedModified(Address address) {
         Intent result = new Intent();
-        result.putExtra(Constants.MEMBER_ADDRESS_ID, addressId);
+        result.putExtra(Constants.UPDATE_ADDRESS, address);
         setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED, result);
         finish();
     }
@@ -465,12 +476,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                             otpValidationDialogFragment.dismiss();
                     }
 
-                    if (!mFromAccountPage) {
+                    if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
                         trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, null);
                     }
                     if (mAddress == null) {
                         Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.addressId);
+                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.address);
                     } else {
                         Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
                         addressCreatedModified();

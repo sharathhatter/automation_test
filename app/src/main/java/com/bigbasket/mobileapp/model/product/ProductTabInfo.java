@@ -6,9 +6,13 @@ import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ProductTabInfo implements Parcelable {
     @SerializedName(Constants.TAB_NAME)
@@ -39,7 +43,7 @@ public class ProductTabInfo implements Parcelable {
     private ArrayList<FilterOptionCategory> filterOptionItems;
 
     @SerializedName(Constants.SELLER_INFO)
-    private SellerInfo sellerInfo;
+    private HashMap<String, String> sellerInfoMap;
 
 
     public ProductTabInfo(Parcel source) {
@@ -78,7 +82,10 @@ public class ProductTabInfo implements Parcelable {
 
         boolean isContentSellerIfoNull = source.readByte() == (byte) 1;
         if (!isContentSellerIfoNull) {
-            sellerInfo = source.readParcelable(ProductTabInfo.class.getClassLoader());
+            String sellerInfoJson = source.readString();
+            Type type = new TypeToken<HashMap<String, String>>() {
+            }.getType();
+            sellerInfoMap = new Gson().fromJson(sellerInfoJson, type);
         }
     }
 
@@ -125,10 +132,10 @@ public class ProductTabInfo implements Parcelable {
         }
         dest.writeInt(headerSelectedIndex);
 
-        boolean isContentSellerIfoNull = sellerInfo == null;
+        boolean isContentSellerIfoNull = sellerInfoMap == null;
         dest.writeByte(isContentSellerIfoNull ? (byte) 1 : (byte) 0);
         if (!isContentSellerIfoNull) {
-            dest.writeParcelable(sellerInfo, flags);
+            dest.writeString(new Gson().toJson(sellerInfoMap));
         }
     }
 

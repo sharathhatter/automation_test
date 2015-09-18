@@ -324,8 +324,7 @@
     <string name="noProductsUnavailable">No Products available!</string>
     <string name="continueAnyway">Continue Anyway</string>
     <string name="help">Help</string>
-    <string name="deliverableTextSingular">Your purchase will arrive in the following delivery</string>
-    <string name="deliverableTextPlural">Your purchase will arrive in the following deliveries</string>
+    <string name="deliverableTextPlural">Based on the items in Basket, your deliveries will come in multiple shipments.</string>
     <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
     <string name="voucherApplicableSingular">Voucher Applicable</string>
     <string name="voucherApplicablePlural">Vouchers Applicable</string>
@@ -358,12 +357,18 @@
     <string name="newStr">New</string>
     <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.\nPlease don\'t press back button.</string>
 
-    <string name="chooseLocationDesc">
-        * Selection of city and area correctly is very important to help us provide you with right information on
-        delivery time and availability of products, price, promotions, discounts and your favorite neighborhood stores.\n\n
-        * BigBasket will now bring you, your favorite snacks from neighborhood stores such as Iyengar’s, Just Bake, Warrier’s at your
-        finger tips. Type in correct area name to enjoy these services.
-    </string>
-
     <string name="productListTransition">ProductListTransition</string>
+    <string name="pleaseChooseLocationToProceed">Please choose a location to proceed further</string>
+    <string name="yourCurrentLoc">Your Current Location</string>
+    <string name="toMyCurrentLocation">TO MY CURRENT LOCATION</string>
+    <string name="selectLocationManually">SELECT LOCATION MANUALLY</string>
+    <string name="readingYourCurrentLocation">Reading your current location...</string>
+    <string name="unableToReadLocation">Unable to read location!</string>
+    <string name="refresh">Refresh</string>
+    <string name="unknown">Unknown</string>
+    <string name="unknownError">An unknown error occurred</string>
+    <string name="saveThisLocation">SAVE THIS LOCATION</string>
+    <string name="changeMyLocation">CHANGE MY LOCATION</string>
+    <string name="preparingBasket">Preparing basket</string>
+    <string name="needMoreAddressInfo">We need more information to complete your address and help you checkout the items in Basket.</string>
 </resources>

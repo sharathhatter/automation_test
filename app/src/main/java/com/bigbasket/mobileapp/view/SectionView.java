@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.CarouselAdapter;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -46,6 +47,7 @@ public class SectionView {
     private String screenName;
     private int marginBetweenWidgets;
     private boolean isHelp;
+    private ArrayList<Integer> dynamicTiles;
 
     public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName) {
         this.context = context;
@@ -95,7 +97,7 @@ public class SectionView {
             View sectionView;
             try {
                 Section section = sections.get(i);
-                sectionView = getViewToRender(section, inflater, mainLayout);
+                sectionView = getViewToRender(section, inflater, mainLayout, i);
                 if (sectionView == null || sectionView.getLayoutParams() == null) {
                     continue;
                 }
@@ -130,16 +132,17 @@ public class SectionView {
     }
 
     @Nullable
-    private View getViewToRender(Section section, LayoutInflater inflater, ViewGroup mainLayout) {
+    private View getViewToRender(Section section, LayoutInflater inflater, ViewGroup mainLayout,
+                                 int position) {
         switch (section.getSectionType()) {
             case Section.BANNER:
                 return getBannerView(section, inflater, mainLayout);
             case Section.SALUTATION:
                 return getSalutationView(section, inflater, mainLayout);
             case Section.TILE:
-                return getTileView(section, inflater, mainLayout, false);
+                return getTileView(section, inflater, mainLayout, false, position);
             case Section.GRID:
-                return getGridLayoutView(section, inflater, mainLayout);
+                return getGridLayoutView(section, inflater, mainLayout, position);
             case Section.PRODUCT_CAROUSEL:
                 return getCarouselView(section, inflater, mainLayout);
             case Section.NON_PRODUCT_CAROUSEL:
@@ -147,7 +150,7 @@ public class SectionView {
             case Section.INFO_WIDGET:
                 return getInfoWidgetView(section);
             case Section.AD_IMAGE:
-                return getTileView(section, inflater, mainLayout, true);
+                return getTileView(section, inflater, mainLayout, true, position);
             case Section.SALUTATION_TITLE:
                 return getMsgView(section, inflater);
             case Section.MSG:
@@ -404,7 +407,8 @@ public class SectionView {
         return menuContainer;
     }
 
-    private View getGridLayoutView(final Section section, LayoutInflater inflater, ViewGroup parent) {
+    private View getGridLayoutView(final Section section, LayoutInflater inflater, ViewGroup parent,
+                                   int position) {
 
         ArrayList<ArrayList<SectionItem>> sectionItemRows = new ArrayList<>();
         int numCols = context.getResources().getInteger(R.integer.numGridCols);
@@ -439,14 +443,15 @@ public class SectionView {
             tileBase.findViewById(R.id.btnMore).setVisibility(View.GONE);
 
             LinearLayout tileContainer = (LinearLayout) tileBase.findViewById(R.id.layoutTileContainer);
-            addTilesToParent(tileContainer, false, section, sectionItems, inflater, false);
+            addTilesToParent(tileContainer, false, section, sectionItems, inflater, false,
+                    position);
             layoutGridContainer.addView(tileBase);
         }
         return base;
     }
 
     private View getTileView(Section section, LayoutInflater inflater, ViewGroup parent,
-                             boolean isVertical) {
+                             boolean isVertical, int position) {
         View base = inflater.inflate(R.layout.uiv3_tile_container, parent, false);
         formatSection(base, R.id.txtListTitle, section);
         setViewMoreBehaviour(base.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
@@ -456,14 +461,15 @@ public class SectionView {
             tileContainer.setOrientation(LinearLayout.VERTICAL);
         }
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
-        addTilesToParent(tileContainer, isVertical, section, sectionItems, inflater, true);
+        addTilesToParent(tileContainer, isVertical, section, sectionItems, inflater, true,
+                position);
         return base;
     }
 
     private void addTilesToParent(ViewGroup tileContainer, boolean isVertical,
                                   Section section, ArrayList<SectionItem> sectionItems,
                                   LayoutInflater inflater,
-                                  boolean stretchImage) {
+                                  boolean stretchImage, int postion) {
         boolean hasSectionTitle = section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText());
         int numSectionItems = sectionItems.size();
         Typeface titleTypeface = isVertical ? FontHolder.getInstance(context).getFaceRobotoMedium() : faceRobotoRegular;
@@ -493,7 +499,18 @@ public class SectionView {
             if (txtTitle != null) {
                 if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                     txtTitle.setTypeface(titleTypeface);
-                    txtTitle.setText(sectionItem.getTitle().getText());
+                    String titleText = sectionItem.getTitle().getText();
+                    if (sectionItem.isExpressDynamicTitle()) {
+                        String expressAvailability = AppDataDynamic.getInstance(context).getExpressAvailability();
+                        if (!TextUtils.isEmpty(expressAvailability)) {
+                            titleText += " " + expressAvailability;
+                            if (dynamicTiles == null) {
+                                dynamicTiles = new ArrayList<>();
+                            }
+                            dynamicTiles.add(postion);
+                        }
+                    }
+                    txtTitle.setText(titleText);
                     Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
                             mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
                     if (itemRenderer != null) {
@@ -673,7 +690,8 @@ public class SectionView {
             sectionViewHolderRow.removeAllViews();
 
             try {
-                View sectionView = getViewToRender(section, LayoutInflater.from(context), sectionViewHolderRow);
+                View sectionView = getViewToRender(section, LayoutInflater.from(context),
+                        sectionViewHolderRow, position);
                 if (sectionView == null || sectionView.getLayoutParams() == null) {
                     return;
                 }
@@ -707,5 +725,10 @@ public class SectionView {
         public ViewGroup getRow() {
             return (ViewGroup) itemView;
         }
+    }
+
+    @Nullable
+    public ArrayList<Integer> getDynamicTiles() {
+        return dynamicTiles;
     }
 }

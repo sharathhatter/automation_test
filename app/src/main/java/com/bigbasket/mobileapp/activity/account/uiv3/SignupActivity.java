@@ -8,7 +8,9 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -61,6 +63,17 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         ((TextView) findViewById(R.id.txtOrSeparator)).setTypeface(faceRobotoRegular);
         ((TextView) findViewById(R.id.lblConnectUsing)).setTypeface(faceRobotoLight);
         mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (((keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                        actionId == EditorInfo.IME_ACTION_DONE) {
+                    onRegisterButtonClicked();
+                    hideKeyboard(getCurrentActivity(), mPasswordView);
+                }
+                return false;
+            }
+        });
         mFirstNameView = (EditText) findViewById(R.id.editTextFirstName);
         mFirstNameView.setNextFocusDownId(R.id.editTextLastName);
         mLastNameView = (EditText) findViewById(R.id.editTextLastName);

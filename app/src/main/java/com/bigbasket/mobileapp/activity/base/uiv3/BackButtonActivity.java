@@ -16,6 +16,12 @@ import com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView;
 public class BackButtonActivity extends BBActivity {
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mDynamicAppDataBroadcastReceiver = null; // We don't want any receiver here
+    }
+
+    @Override
     public void setViewBasketFloatingButton() {
         FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (btnViewBasket != null) {

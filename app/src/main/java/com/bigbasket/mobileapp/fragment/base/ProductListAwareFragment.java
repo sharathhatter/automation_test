@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -163,7 +164,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 ((ProductListDataAware) getActivity()).getCartInfo() : null;
         ArrayList<Product> products = mProductInfo != null ? mProductInfo.getProducts() : null;
         if (products == null || products.size() == 0) {
-            products = ((LazyProductListAware) getActivity()).provideProductsIfAvailable(mTabType);
+            Pair<ArrayList<Product>, Integer> pair = ((LazyProductListAware) getActivity()).provideProductsIfAvailable(mTabType);
+            if (pair != null) {
+                products = pair.first;
+                mProductInfo.setCurrentPage(pair.second);
+            }
         }
         if (products != null && products.size() > 0) {
             RecyclerView productRecyclerView = (RecyclerView) getActivity().

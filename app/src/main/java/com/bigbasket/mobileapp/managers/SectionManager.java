@@ -1,4 +1,4 @@
-package com.bigbasket.mobileapp.model;
+package com.bigbasket.mobileapp.managers;
 
 import android.content.Context;
 import android.content.SharedPreferences;

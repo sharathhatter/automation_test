@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.HomeActivity;
 import com.bigbasket.mobileapp.activity.SectionHelpActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -28,9 +29,9 @@ import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.managers.SectionHelpManager;
+import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.SectionHelpManager;
-import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.HelpDestinationInfo;
@@ -440,6 +441,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private boolean hasMainMenu() {
         return context instanceof BBActivity && !(context instanceof BackButtonActivity)
+                && !(context instanceof HomeActivity)
                 && (((BaseActivity) context).findViewById(R.id.slidingTabs) == null)
                 && ((BaseActivity) context).findViewById(R.id.content_frame) != null;
     }

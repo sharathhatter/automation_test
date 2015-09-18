@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import retrofit.RetrofitError;
@@ -50,9 +52,9 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
         showProgressView();
         contentView.removeAllViews();
 
-        RecyclerView recyclerView = getSectionRecylerView(contentView);
-        if (recyclerView != null) {
-            contentView.addView(recyclerView);
+        Pair<RecyclerView, ArrayList<Integer>> pair = getSectionRecylerView(contentView);
+        if (pair.first != null) {
+            contentView.addView(pair.first);
         }
 
         if (!TextUtils.isEmpty(sectionData.getScreenName())) {

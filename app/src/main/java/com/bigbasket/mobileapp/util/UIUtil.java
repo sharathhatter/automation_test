@@ -49,8 +49,9 @@ import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
+import com.bigbasket.mobileapp.managers.SectionManager;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -216,6 +217,7 @@ public class UIUtil {
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
         SectionManager.clearAllSectionData(ctx);
         AppDataSyncHandler.reset(ctx);
+        AppDataDynamic.reset(ctx);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = preferences.edit();
@@ -234,6 +236,7 @@ public class UIUtil {
         if (userDetails.analytics != null) {
             editor.putString(Constants.CITY, userDetails.analytics.city);
             editor.putString(Constants.CITY_ID, String.valueOf(userDetails.analytics.cityId));
+            editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
 
             // Any key added here, must be cleared when user logs-out
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, mId);
@@ -433,7 +436,7 @@ public class UIUtil {
                                          @Nullable String total, String actionText,
                                          boolean showNextArrow) {
         TextView txtTotal = (TextView) checkoutContainer.findViewById(R.id.txtTotal);
-        txtTotal.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        txtTotal.setTypeface(FontHolder.getInstance(context).getFaceRobotoBold());
         TextView txtAction = (TextView) checkoutContainer.findViewById(R.id.txtAction);
 
         if (!showNextArrow) {

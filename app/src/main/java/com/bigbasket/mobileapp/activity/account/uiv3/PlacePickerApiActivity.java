@@ -1,27 +1,22 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.content.Intent;
-import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.interfaces.location.LocationAutoSuggestListener;
-import com.bigbasket.mobileapp.interfaces.location.OnAddressFetchedListener;
-import com.bigbasket.mobileapp.task.uiv3.ReverseGeocoderTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.location.LocationAutoSuggestHelper;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
@@ -35,11 +30,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.List;
-
 public class PlacePickerApiActivity extends BackButtonActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener, OnAddressFetchedListener,
-        LocationAutoSuggestListener {
+        GoogleMap.OnMyLocationButtonClickListener, LocationAutoSuggestListener {
 
     private GoogleApiClient mGoogleApiClient;
     private LatLng mSelectedLatLng;
@@ -52,13 +44,17 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.locateYourArea));
-
-        renderChooseLocation();
-        if (!DataUtil.isLocationServiceEnabled(this)) {
-            showAlertDialog(getString(R.string.enableLocationHeading),
-                    getString(R.string.enableLocation),
-                    DialogButton.YES, DialogButton.CANCEL, Constants.LOCATION, null,
-                    getString(R.string.enable));
+        int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
+        switch (playServicesAvailable) {
+            case ConnectionResult.SUCCESS:
+                renderChooseLocation();
+                break;
+            default:
+                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(playServicesAvailable,
+                        getCurrentActivity(), NavigationCodes.GO_TO_HOME);
+                dialog.setCancelable(false);
+                dialog.show();
+                break;
         }
     }
 
@@ -71,6 +67,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.getUiSettings().setZoomControlsEnabled(true);
         map.setOnMyLocationButtonClickListener(this);
+        map.setPadding(0, 160, 0, 0);
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
 
@@ -78,12 +75,17 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
                 (AutoCompleteTextView) findViewById(R.id.aEditTextChooseArea);
         new LocationAutoSuggestHelper<>(this, aEditTextChooseArea, mGoogleApiClient,
                 new LatLngBounds(new LatLng(7.43231, 65.82658), new LatLng(36.93593, 99.04924)), false).init();
-        ViewGroup layoutChooseLocation = (ViewGroup) findViewById(R.id.layoutChooseLocation);
-        UIUtil.setUpFooterButton(this, layoutChooseLocation, null, "Continue", true);
-        layoutChooseLocation.setOnClickListener(new View.OnClickListener() {
+
+        TextView txtAction = (TextView) findViewById(R.id.txtAction);
+        txtAction.setTypeface(faceRobotoLight);
+        txtAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ReverseGeocoderTask<>(getCurrentActivity()).execute(mSelectedLatLng);
+                Intent intent = new Intent();
+                intent.putExtra(Constants.LAT, mSelectedLatLng);
+                setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED,
+                        intent);
+                finish();
             }
         });
     }
@@ -126,6 +128,10 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
     @Override
     public void onConnected(Bundle connectionHint) {
+        readLastKnownLocation();
+    }
+
+    private void readLastKnownLocation() {
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if (lastLocation != null) {
@@ -154,6 +160,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 mGoogleMapMarker = marker;
+                mSelectedLatLng = marker.getPosition();
             }
         });
         animateToMarker();
@@ -178,32 +185,12 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
     @Override
     public boolean onMyLocationButtonClick() {
-        if (mGoogleMap != null && mGoogleMapMarker != null) {
-            mGoogleMapMarker.remove();
-            updateLastKnownLocationOnMap();
+        if (mGoogleMap != null) {
+            if (mGoogleMapMarker != null) {
+                mGoogleMapMarker.remove();
+            }
+            readLastKnownLocation();
         }
         return false;
-    }
-
-    @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null && sourceName.equals(Constants.LOCATION)) {
-            try {
-                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(myIntent);
-            } catch (ActivityNotFoundException e) {
-                showToast(getString(R.string.locationSettingError));
-            }
-        } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
-        }
-    }
-
-    @Override
-    public void onAddressFetched(@Nullable List<Address> addresses) {
-        if (addresses != null && addresses.size() > 0) {
-            showToast(addresses.get(0).getPostalCode() + ":" +
-                    addresses.get(0).getLocality());
-        }
     }
 }
