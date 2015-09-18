@@ -112,7 +112,7 @@
                     android:drawableRight="@drawable/ic_visibility_white_18dp"
                     android:ems="10"
                     android:hint="@string/password"
-                    android:imeActionLabel="@string/action_sign_in_short"
+                    android:imeActionLabel="@string/action_sign_up_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:paddingBottom="@dimen/padding_normal"
