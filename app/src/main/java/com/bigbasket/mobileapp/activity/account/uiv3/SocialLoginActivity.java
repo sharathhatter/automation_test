@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,7 +23,7 @@ import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
@@ -56,14 +57,18 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 }
                 // Don't offer G+ sign in if the app's version is too low to support Google Play
                 // Services.
-                if (supportsGooglePlayServices()) {
-                    initializeGooglePlusSignIn();
-                    logSignInBtnClickEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE);
-                    signInViaGPlus();
-                } else {
-                    // Show update dialog
-                    showAlertDialog(getString(R.string.updateGooglePlayServices), getString(R.string.updateGooglePlayServicesDesc),
-                            DialogButton.OK, DialogButton.CANCEL, Constants.GOOGLE_PLAY_SERVICES, null, getString(R.string.update));
+                int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
+                switch (playServicesAvailable) {
+                    case ConnectionResult.SUCCESS:
+                        initializeGooglePlusSignIn();
+                        logSignInBtnClickEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE);
+                        signInViaGPlus();
+                        break;
+                    default:
+                        Dialog dialog = GooglePlayServicesUtil.getErrorDialog(playServicesAvailable,
+                                getCurrentActivity(), NavigationCodes.GO_TO_HOME);
+                        dialog.show();
+                        break;
                 }
             }
         });
@@ -84,17 +89,6 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         eventAttribs.put(TrackEventkeys.TYPE, type);
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
         trackEvent(TrackingAware.LOGIN_BTN_CLICKED, eventAttribs);
-    }
-
-    /**
-     * Check if the device supports Google Play Services.  It's best
-     * practice to check first rather than handling this as an error case.
-     *
-     * @return whether the device supports Google Play Services
-     */
-    protected boolean supportsGooglePlayServices() {
-        return GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity()) ==
-                ConnectionResult.SUCCESS;
     }
 
     @Override

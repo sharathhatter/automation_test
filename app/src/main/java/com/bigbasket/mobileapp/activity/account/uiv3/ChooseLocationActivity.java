@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,6 +30,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
@@ -51,7 +53,18 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseYourLocation));
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
-        renderLocation();
+        int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
+        switch (playServicesAvailable) {
+            case ConnectionResult.SUCCESS:
+                renderLocation();
+                break;
+            default:
+                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(playServicesAvailable,
+                        getCurrentActivity(), NavigationCodes.GO_TO_HOME);
+                dialog.setCancelable(false);
+                dialog.show();
+                break;
+        }
     }
 
     private void renderLocation() {
@@ -118,6 +131,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     private void updateLastKnownLocation(boolean setAsCurrentAddress) {
+        if (mGoogleApiClient == null) return;
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (lastLocation != null) {
             LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
@@ -250,7 +264,8 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     private void onLocationReadFailure() {
-        showToast(getString(R.string.unableToReadLocation));
+        Snackbar.make(findViewById(R.id.layoutChooseLocation),
+                R.string.unableToReadLocation, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -271,7 +286,8 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                 Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(myIntent);
             } catch (ActivityNotFoundException e) {
-                showToast(getString(R.string.locationSettingError));
+                Snackbar.make(findViewById(R.id.layoutChooseLocation),
+                        R.string.locationSettingError, Snackbar.LENGTH_SHORT).show();
             }
         } else {
             super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
