@@ -116,8 +116,8 @@ public class Constants {
 
     //update-app-data
     public static final String ADD_TO_BASKET_POST_PARAMS = "add_to_basket_post_params";
-    public static final String EXPRESS_AVAILABLE = "express_available";
-    public static final String AVAILABILITY_INFOS = "availability_infos";
+    public static final String MODE_NAME = "mode_name";
+
     //Error codes
     public static final String PRODUCT_ID_NOT_FOUND = "101";
     public static final String PRODUCT_INFO = "product_info";
@@ -605,5 +605,5 @@ public class Constants {
     public static final String SKU_TYPE_KIRANA = "kirana-express";
     public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
     public static final String EXPRESS_AVAILABILITY = "express_availability";
-
+    public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
 }

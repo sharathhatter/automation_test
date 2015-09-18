@@ -27,9 +27,12 @@ public class GetAppDataDynamicIntentService extends IntentService {
             ApiResponse<GetAppDataDynamicResponse> getDynamicPageApiResponse = bigBasketApiService.getAppDataDynamic();
             if (getDynamicPageApiResponse.status == 0) {
                 AppDataDynamic.updateInstance(this,
+                        getDynamicPageApiResponse.apiResponseContent.addToBasketPostParams,
                         getDynamicPageApiResponse.apiResponseContent.addressSummaries,
                         getDynamicPageApiResponse.apiResponseContent.isContextualMode,
-                        getDynamicPageApiResponse.apiResponseContent.expressAvailability);
+                        getDynamicPageApiResponse.apiResponseContent.expressAvailability,
+                        getDynamicPageApiResponse.apiResponseContent.abModeName,
+                        getDynamicPageApiResponse.apiResponseContent.storeAvailabilityMap);
                 sendSuccessBroadcast();
             } else {
                 sendErrorBroadcast();

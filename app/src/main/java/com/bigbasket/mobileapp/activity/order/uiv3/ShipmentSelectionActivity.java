@@ -113,7 +113,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         SwitchCompat switchToggleDelivery = (SwitchCompat) findViewById(R.id.switchToggleDelivery);
         TextView txtShipmentAnnotation = (TextView) findViewById(R.id.txtShipmentAnnotation);
         ViewGroup layoutShipmentToggleContainer = (ViewGroup) findViewById(R.id.layoutShipmentToggleContainer);
-
+        boolean hasBeenMadeVisible = false;
         for (int i = 0; i < mShipments.size(); i++) {
             final Shipment shipment = mShipments.get(i);
             View shipmentView = getLayoutInflater().inflate(R.layout.shipment_row,
@@ -146,15 +146,20 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 if (!TextUtils.isEmpty(shipmentAction.getActionMsg())) {
                     actionName = shipmentAction.getActionMsg();
                     if (TextUtils.isEmpty(shipmentAction.getActionState())) {
-                        switchToggleDelivery.setVisibility(View.GONE);
+                        if (!hasBeenMadeVisible) {
+                            switchToggleDelivery.setVisibility(View.GONE);
+                        }
                     } else {
                         switchToggleDelivery.setChecked(shipmentAction.getActionState().equalsIgnoreCase(Constants.ON));
                         switchToggleDelivery.setOnCheckedChangeListener(new OnShipmentToggleListener(shipment));
                         switchToggleDelivery.setVisibility(View.VISIBLE);
                         layoutShipmentToggleContainer.setVisibility(View.VISIBLE);
+                        hasBeenMadeVisible = true;
                     }
                 } else {
-                    switchToggleDelivery.setVisibility(View.GONE);
+                    if (!hasBeenMadeVisible) {
+                        switchToggleDelivery.setVisibility(View.GONE);
+                    }
                 }
             } else {
                 if (isAdjacentShipmentDisabled(i, shipmentActionHashMap)) {
@@ -169,12 +174,15 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             shipmentView.setLayoutParams(marginLayoutParams);
 
             if (!TextUtils.isEmpty(actionName)) {
+                hasBeenMadeVisible = true;
                 txtShipmentAnnotation.setTypeface(faceRobotoRegular);
                 txtShipmentAnnotation.setText(actionName);
                 txtShipmentAnnotation.setVisibility(View.VISIBLE);
                 layoutShipmentToggleContainer.setVisibility(View.VISIBLE);
             } else {
-                txtShipmentAnnotation.setVisibility(View.GONE);
+                if (!hasBeenMadeVisible) {
+                    txtShipmentAnnotation.setVisibility(View.GONE);
+                }
             }
 
             ((TextView) shipmentView.findViewById(R.id.lblDeliveryTime)).setTypeface(faceRobotoRegular);
