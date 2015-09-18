@@ -93,14 +93,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         Bundle args = getArguments();
         if (args == null) return;
         String productId = args.getString(Constants.SKU_ID);
-
-        System.out.println("product id-----------"+productId);
-
-
         String eanCode = args.getString(Constants.EAN_CODE);
-
-        System.out.println("EAN code-----------"+eanCode);
-
         if (TextUtils.isEmpty(productId) && TextUtils.isEmpty(eanCode)) return;
         setNextScreenNavigationContext("pd." + (productId != null ? productId : eanCode));
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
@@ -108,10 +101,6 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         bigBasketApiService.productDetails(productId, eanCode, new Callback<ProductDetailApiResponse>() {
             @Override
             public void success(ProductDetailApiResponse productDetailApiResponse, Response response) {
-
-                System.out.println("product callback--------"+productDetailApiResponse.toString());
-
-
                 if (isSuspended()) return;
                 try {
                     hideProgressDialog();

@@ -33,7 +33,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
-import com.payu.sdk.PayU;
+import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -306,7 +306,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                     communicateHdfcPayzappResponseFailure(null, null);
                 }
             }
-        } else if (requestCode == PayU.RESULT) {
+        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 onFundWalletSuccess();
             } else {

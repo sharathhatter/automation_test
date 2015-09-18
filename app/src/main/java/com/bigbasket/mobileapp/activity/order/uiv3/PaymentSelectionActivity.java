@@ -66,9 +66,8 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
-import com.paytm.pgsdk.PaytmPGService;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
-import com.payu.sdk.PayU;
+import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,14 +104,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
         super.onCreate(savedInstanceState);
         mElapsedTime = new MutableLong();
 
-
-
-        Toast.makeText(this,"u called me payment selction",Toast.LENGTH_SHORT).show();
-
         setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
         mPotentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
-
-        System.out.println("manu--------mpotential order id-------"+mPotentialOrderId);
 
         if (TextUtils.isEmpty(mPotentialOrderId)) return;
         setTitle(getString(R.string.placeorder));
@@ -253,16 +246,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mAppliedVoucherCode = getIntent().getStringExtra(Constants.EVOUCHER_CODE);
 
         mPaymentTypeList = getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES);
-
-        for (int i=0;i<mPaymentTypeList.size();i++)
-        System.out.println("manu-------display name---------"+mPaymentTypeList.get(i).getDisplayName());
-
-        for (PaymentType paymentType : mPaymentTypeList) {
-            System.out.println("manu--------display name------"+paymentType.getDisplayName());
-            System.out.println("manu--------display value------"+paymentType.getValue());
-        }
-
-
 
         ArrayList<CreditDetails> creditDetails = getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS);
         renderPaymentMethodsAndSummary(creditDetails);
@@ -418,27 +401,22 @@ public class PaymentSelectionActivity extends BackButtonActivity
     PaytmPaymentTransactionCallback paymentTransactionCallback=new PaytmPaymentTransactionCallback() {
         @Override
         public void onTransactionSuccess(Bundle bundle) {
-            System.out.println("transaction sucess----");
         }
 
         @Override
         public void onTransactionFailure(String s, Bundle bundle) {
-            System.out.println("transaction failure----");
         }
 
         @Override
         public void networkNotAvailable() {
-            System.out.println("networkNotAvailable----");
         }
 
         @Override
         public void clientAuthenticationFailed(String s) {
-            System.out.println("clientAuthenticationFailed----");
         }
 
         @Override
         public void someUIErrorOccurred(String s) {
-            System.out.println("someUIErrorOccured----");
         }
 
         @Override
@@ -446,9 +424,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
         }
     };
-
-
-
 
     private class OnShowAvailableVouchersListener implements View.OnClickListener {
         @Override
@@ -620,7 +595,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                     communicateHdfcPayzappResponseFailure(null, null);
                 }
             }
-        } else if (requestCode == PayU.RESULT) {
+        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
             String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
             if (resultCode == RESULT_OK) {
                 new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
@@ -649,12 +624,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void placeOrder() {
-
-
-        System.out.println("u called me palce order....");
-        Toast.makeText(this,"u called me.....plce order",Toast.LENGTH_SHORT).show();
-
-
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
                 false);
@@ -791,7 +760,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     @Override
     public void initializePayu(HashMap<String, String> paymentParams) {
-        mPayuTxnId = paymentParams.get(PayU.TXNID);
+        mPayuTxnId = paymentParams.get(PayuConstants.TXNID);
         PayuInitializer.initiate(paymentParams, this);
     }
 
