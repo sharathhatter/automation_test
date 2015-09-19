@@ -378,6 +378,7 @@ public interface BigBasketApiService {
                       @Field(Constants.SUPPORT_CC) String supportsCreditCard,
                       @Field(Constants.SUPPORT_POWER_PAY) String supportsPowerPay,
                       @Field(Constants.SUPPORT_MOBIKWIK) String supportsMobikWik,
+                      @Field(Constants.SUPPORT_PAYTM) String supportsPaytm,
                       Callback<ApiResponse<PostShipmentResponseContent>> apiResponseCallback);
 
     @FormUrlEncoded
@@ -387,9 +388,11 @@ public interface BigBasketApiService {
                     Callback<OldApiResponse<PlaceOrderApiResponseContent>> placeOrderApiResponseCallback);
 
     @GET("/pay-now/")
-    void getPayNowDetails(@Query(Constants.ORDER_ID) String orderId, @Query(Constants.SUPPORT_POWER_PAY) String supportPp,
+    void getPayNowDetails(@Query(Constants.ORDER_ID) String orderId,
+                          @Query(Constants.SUPPORT_POWER_PAY) String supportPp,
                           @Query(Constants.SUPPORT_CC) String supportPayu,
                           @Query(Constants.SUPPORT_MOBIKWIK) String mobikWik,
+                          @Query(Constants.SUPPORT_PAYTM) String supportsPaytm,
                           Callback<ApiResponse<GetPayNowParamsResponse>> getPayNowParamsResponseCallback);
 
     @FormUrlEncoded
@@ -408,6 +411,7 @@ public interface BigBasketApiService {
     void getFundWalletPayments(@Query(Constants.SUPPORT_CC) String supportsPayu,
                                @Query(Constants.SUPPORT_POWER_PAY) String supportPowerPay,
                                @Query(Constants.SUPPORT_MOBIKWIK) String mobikwik,
+                               @Query(Constants.SUPPORT_PAYTM) String supportsPaytm,
                                Callback<ApiResponse<GetPaymentTypes>> getFundWalletPaymentApiResponseCallback);
 
     @FormUrlEncoded

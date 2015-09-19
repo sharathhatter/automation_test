@@ -224,6 +224,9 @@ public class Constants {
     public static final String PAYU = "payu";
     public static final String PAY_NOW = "pay_now";
     public static final String HDFC_POWER_PAY = "hdfc-power-pay";
+    public static final String PAYTM_WALLET = "paytm_wallet";
+    public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
+    public static final String PAYTM_HASH_GENERATION_URL = "GURL";
     public static final String SOURCE_PLACE_ORDER = "placeOrder";
     public static final String WALLET_USED = "wallet_used";
     public static final String AMT_PAYABLE = "amount_payable";
@@ -233,7 +236,6 @@ public class Constants {
     public static final String ADDRESSES = "addresses";
     public static final String ID = "id";
     public static final String ADDRESS_ID = "address_id";
-    public static final String MEMBER_ADDRESS_ID = "member_address_id";
     public static final String LAT = "lat";
     public static final String LNG = "lng";
     public static final String IS_PARTIAL = "is_partial";
@@ -529,6 +531,7 @@ public class Constants {
     public static final String DATA_PICKUP_CODE = "data_pickup_code";
     public static final String SUPPORT_POWER_PAY = "support_pp";
     public static final String SUPPORT_MOBIKWIK = "support_mk";
+    public static final String SUPPORT_PAYTM = "support_pm";
     public static final String ERR_RES_CODE = "err_res_code";
     public static final String ERR_RES_DESC = "err_res_desc";
     public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";

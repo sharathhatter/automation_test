@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsRespons
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
+import com.bigbasket.mobileapp.handler.payment.PayTMInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
@@ -33,6 +35,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
+import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
 import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
@@ -64,6 +67,34 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         getPayNowParams();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mHDFCPayzappTxnId != null) {
+            outState.putString(Constants.TXN_ID, mHDFCPayzappTxnId);
+        }
+        if (mSelectedPaymentMethod != null) {
+            outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
+        }
+        if (mFinalTotal != 0) {
+            outState.putDouble(Constants.FINAL_TOTAL, mFinalTotal);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (mHDFCPayzappTxnId == null) {
+            mHDFCPayzappTxnId = savedInstanceState.getString(Constants.TXN_ID);
+        }
+        if (mSelectedPaymentMethod == null) {
+            mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
+        }
+        if (mFinalTotal == 0) {
+            mFinalTotal = savedInstanceState.getDouble(Constants.FINAL_TOTAL);
+        }
+    }
+
     private void getPayNowParams() {
         if (!checkInternetConnection()) {
             handler.sendOfflineError(true);
@@ -71,7 +102,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes",
+        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes",
                 new Callback<ApiResponse<GetPayNowParamsResponse>>() {
                     @Override
                     public void success(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse, Response response) {
@@ -192,6 +223,40 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                                         MobikwikInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
                                                 getCurrentActivity());
                                         break;
+                                    case Constants.PAYTM_WALLET:
+                                        PayTMInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
+                                                getCurrentActivity(), new PaytmPaymentTransactionCallback() {
+                                                    @Override
+                                                    public void onTransactionSuccess(Bundle bundle) {
+                                                        onPayNowSuccess();
+                                                    }
+
+                                                    @Override
+                                                    public void onTransactionFailure(String s, Bundle bundle) {
+                                                        onPayNowFailure();
+                                                    }
+
+                                                    @Override
+                                                    public void networkNotAvailable() {
+                                                        onPayNowFailure();
+                                                    }
+
+                                                    @Override
+                                                    public void clientAuthenticationFailed(String s) {
+                                                        onPayNowFailure();
+                                                    }
+
+                                                    @Override
+                                                    public void someUIErrorOccurred(String s) {
+                                                        onPayNowFailure();
+                                                    }
+
+                                                    @Override
+                                                    public void onErrorLoadingWebPage(int i, String s, String s1) {
+                                                        onPayNowFailure();
+                                                    }
+                                                });
+                                        break;
                                     default:
                                         onPayNowSuccess();
                                         break;
@@ -269,8 +334,9 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
             } else {
                 onPayNowFailure();
             }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void onPayNowSuccess() {
