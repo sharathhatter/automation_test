@@ -110,9 +110,6 @@ public class Constants {
     public static final String FILTER_VALUES_SLUG = "filter_value_slug";
 
     public static final String SELLER_INFO = "seller_info";
-    public static final String STORE_ID = "store_id";
-    public static final String AVAILABILITY = "availability";
-    public static final String AVAILABILITY_INFO_ID = "availability_info_id";
 
     //update-app-data
     public static final String ADD_TO_BASKET_POST_PARAMS = "add_to_basket_post_params";
@@ -482,10 +479,8 @@ public class Constants {
     public static final String RENDERERS = "renderers";
 
     //fb login and register
-    public static final String FB_GENDER = "gender";
-    public static final String FB_VERIFIED = "verified";
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
-    public static final String SOCIAL_LOGIN_PARAMS = "social_login_params";
+    public static final String AUTH_TOKEN = "auth_token";
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
     public static final String SOCIAL_LOGOUT = "social_logout";
     public static final int SOCIAL_ACCOUNT_NOT_LINKED = 1835;

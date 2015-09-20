@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,12 +13,13 @@ import android.view.View;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
-import com.bigbasket.mobileapp.model.account.SocialAccount;
+import com.bigbasket.mobileapp.model.account.SocialAccountType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
@@ -29,15 +29,10 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.Gson;
-
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -92,53 +87,21 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     }
 
     @Override
-    protected void onPlusClientSignIn(String email, Person person) {
+    protected void onPlusClientSignIn(String authToken) {
         if (mIsInLogoutMode) {
             hideProgressDialog();
             signOutFromGplus();
             return;
         }
-        if (TextUtils.isEmpty(email)) {
-            showAlertDialog("Email required", "Unable to get your email-address\n" +
-                    "Please check your privacy settings.", Constants.SOCIAL_LOGOUT, SocialAccount.GP);
-            return;
-        }
-        if (person == null) {
-            showAlertDialog(null, "Unable to read your profile information\n" +
-                    "Please check your privacy settings.", Constants.SOCIAL_LOGOUT, SocialAccount.GP);
-            return;
-        }
-
-        String displayName = person.getDisplayName();
-        String firstName = null;
-        String lastName = null;
-        String imgUrl = null;
-        if (person.getName() != null) {
-            firstName = person.getName().getGivenName();
-            lastName = person.getName().getFamilyName();
-        }
-
-        String gender = person.getGender() == Person.Gender.FEMALE ? "female" : "male";
-        String profileLink = person.getUrl();
-        boolean isVerified = person.isVerified();
-        String uid = person.getId();
-        if (person.getImage() != null) {
-            imgUrl = person.getImage().getUrl();
-        }
-
-        SocialAccount socialAccount = new SocialAccount(email, displayName, gender, profileLink, uid,
-                isVerified, firstName, lastName, imgUrl);
-
-        startSocialLogin(SocialAccount.GP, socialAccount);
+        startSocialLogin(SocialAccountType.GP, authToken);
     }
 
-    private void startSocialLogin(String loginType, SocialAccount socialAccount) {
+    private void startSocialLogin(String loginType, String authToken) {
         showProgressDialog(getString(R.string.please_wait));
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        Gson gson = new Gson();
-        bigBasketApiService.socialLogin(loginType, gson.toJson(socialAccount, SocialAccount.class),
-                new LoginApiResponseCallback(socialAccount.getEmail(),
-                        null, false, loginType, socialAccount));
+        bigBasketApiService.socialLogin(loginType, authToken,
+                new LoginApiResponseCallback(null,
+                        null, false, loginType));
     }
 
     @Override
@@ -147,36 +110,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             doLogout();
             return;
         }
-        showProgressDialog(getString(R.string.please_wait));
-        GraphRequest graphRequest = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-            @Override
-            public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
-                hideProgressDialog();
-                if (jsonObject != null) {
-                    String email = jsonObject.optString("email");
-                    if (TextUtils.isEmpty(email)) {
-                        showAlertDialog("Email required", "Unable to get your email-address\n" +
-                                "Please check your privacy settings.", Constants.SOCIAL_LOGOUT, SocialAccount.FB);
-                        return;
-                    }
-                    String firstName = jsonObject.optString("first_name");
-                    String lastName = jsonObject.optString("last_name");
-                    String gender = jsonObject.optString(Constants.FB_GENDER);
-                    String profileLink = jsonObject.optString("link");
-                    boolean isVerified = jsonObject.optBoolean(Constants.FB_VERIFIED, false);
-                    String uid = jsonObject.optString("id");
-                    SocialAccount socialAccount = new SocialAccount(email, firstName, gender, profileLink, uid,
-                            isVerified, firstName, lastName, null);
-                    startSocialLogin(SocialAccount.FB, socialAccount);
-                } else if (graphResponse.getError() != null) {
-                    showAlertDialog(null, graphResponse.getError().getErrorMessage());
-                }
-            }
-        });
-        Bundle bundle = new Bundle();
-        bundle.putString("fields", "id,first_name,last_name,email,gender,verified,link");
-        graphRequest.setParameters(bundle);
-        graphRequest.executeAsync();
+        startSocialLogin(SocialAccountType.FB, accessToken.getToken());
     }
 
     @Override
@@ -218,10 +152,10 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             String loginType = data.getStringExtra(Constants.SOCIAL_LOGIN_TYPE);
             if (!TextUtils.isEmpty(loginType)) {
                 switch (loginType) {
-                    case SocialAccount.GP:
+                    case SocialAccountType.GP:
                         revokeGPlusAccess();
                         break;
-                    case SocialAccount.FB:
+                    case SocialAccountType.FB:
                         revokeFbAccess();
                         break;
                 }
@@ -243,9 +177,9 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     break;
                 case Constants.SOCIAL_LOGOUT:
                     if (valuePassed != null) {
-                        if (valuePassed.equals(SocialAccount.GP)) {
+                        if (valuePassed.equals(SocialAccountType.GP)) {
                             signOutFromGplus();
-                        } else if (valuePassed.equals(SocialAccount.FB)) {
+                        } else if (valuePassed.equals(SocialAccountType.FB)) {
                             revokeFbAccess();
                         }
                     }
@@ -267,14 +201,14 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             handler.sendOfflineError();
             return;
         }
-        if (!TextUtils.isEmpty(socialAccountType) && SocialAccount.getSocialLoginTypes().contains(socialAccountType)) {
+        if (!TextUtils.isEmpty(socialAccountType) && SocialAccountType.getSocialLoginTypes().contains(socialAccountType)) {
             switch (socialAccountType) {
-                case SocialAccount.FB:
+                case SocialAccountType.FB:
                     mIsInLogoutMode = true;
                     LoginManager.getInstance().logOut();
                     doLogout();
                     break;
-                case SocialAccount.GP:
+                case SocialAccountType.GP:
                     mIsInLogoutMode = true;
                     if (UIUtil.isPhoneWithGoogleAccount(this)) {
                         initializeGooglePlusSignIn();
@@ -345,7 +279,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.BBTOKEN_KEY, loginApiResponse.bbToken);
         editor.putString(Constants.MEMBER_EMAIL_KEY, email);
-        if (!TextUtils.isEmpty(socialAccountType) && SocialAccount.getSocialLoginTypes().contains(socialAccountType)) {
+        if (!TextUtils.isEmpty(socialAccountType) && SocialAccountType.getSocialLoginTypes().contains(socialAccountType)) {
             editor.putString(Constants.SOCIAL_ACCOUNT_TYPE, socialAccountType);
         } else {
             editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
@@ -390,13 +324,12 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         trackEvent(TrackingAware.LOGIN_FAILED, map);
     }
 
-    public class LoginApiResponseCallback implements Callback<LoginApiResponse> {
+    public class LoginApiResponseCallback implements Callback<ApiResponse<LoginApiResponse>> {
 
         private String loginType;
         private String email;
         private String password;
         private boolean rememberMe;
-        private SocialAccount socialAccount;
 
         public LoginApiResponseCallback(String email, String password, boolean rememberMe, String loginType) {
             this.email = email;
@@ -405,15 +338,8 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             this.loginType = loginType;
         }
 
-        public LoginApiResponseCallback(String email, String password, boolean rememberMe, String loginType,
-                                        SocialAccount socialAccount) {
-            this(email, password, rememberMe, loginType);
-            this.loginType = loginType;
-            this.socialAccount = socialAccount;
-        }
-
         @Override
-        public void success(LoginApiResponse loginApiResponse, retrofit.client.Response response) {
+        public void success(ApiResponse<LoginApiResponse> loginApiResponse, retrofit.client.Response response) {
             if (isSuspended()) return;
             try {
                 hideProgressDialog();
@@ -421,68 +347,34 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 return;
             }
             switch (loginApiResponse.status) {
-                case Constants.OK:
-                    saveLoginUserDetailInPreference(loginApiResponse, loginType,
+                case 0:
+                    if (TextUtils.isEmpty(email)) {
+                        email = loginApiResponse.apiResponseContent.email;
+                    }
+                    saveLoginUserDetailInPreference(loginApiResponse.apiResponseContent, loginType,
                             email, password, rememberMe);
-                    /*
-                    switch (loginType) {
-                        case SocialAccount.FB:
-                            trackEventNewAccount(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS,
-                                    email, isNewAccount);
-                            break;
-                        case SocialAccount.GP:
-                            trackEventNewAccount(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_SUCCESS,
-                                    email, isNewAccount);
-                            break;
-                        case Constants.SIGN_IN_ACCOUNT_TYPE:
-                            trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_SUCCESS, null);
-                            break;
-                        case Constants.REGISTER_ACCOUNT_TYPE:
-                            showToast(getString(R.string.thanksForRegistering));
-                            trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_SUCCESS, null);
-                            break;
-                        default:
-                            throw new AssertionError("Login or register type error while success(status=OK)");
-                    }
-                    */
                     break;
-                case Constants.ERROR:
-                    switch (loginApiResponse.getErrorTypeAsInt()) {
-                        case ApiErrorCodes.INVALID_USER_PASSED:
-                            showAlertDialog(null, getString(R.string.INVALID_USER_PASS));
-                            break;
-                        case ApiErrorCodes.NO_ACCOUNT:
-                            Intent intent = new Intent(getCurrentActivity(), SocialLoginConfirmActivity.class);
-                            intent.putExtra(Constants.SOCIAL_LOGIN_PARAMS, socialAccount);
-                            intent.putExtra(Constants.SOCIAL_LOGIN_TYPE, loginType);
-                            startActivityForResult(intent, Constants.SOCIAL_ACCOUNT_NOT_LINKED);
-                            break;
-                        case ApiErrorCodes.INVALID_REFERRAL_CODE:
-                            showAlertDialog(null, loginApiResponse.message);
-                            break;
-                        default:
-                            handler.sendEmptyMessage(loginApiResponse.getErrorTypeAsInt(),
-                                    loginApiResponse.message);
-                            break;
-                    }
-
+                case ApiErrorCodes.INVALID_USER_PASSED:
+                    showAlertDialog(null, getString(R.string.INVALID_USER_PASS));
+                    break;
+                default:
+                    handler.sendEmptyMessage(loginApiResponse.status,
+                            loginApiResponse.message);
                     switch (loginType) {
-                        case SocialAccount.FB:
+                        case SocialAccountType.FB:
                             logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_FACEBOOK, loginApiResponse.message);
                             break;
-                        case SocialAccount.GP:
+                        case SocialAccountType.GP:
                             logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE, loginApiResponse.message);
                             break;
                         case Constants.SIGN_IN_ACCOUNT_TYPE:
-                            logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE, loginApiResponse.message);
+                            logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_NORMAL, loginApiResponse.message);
                             break;
                         case Constants.REGISTER_ACCOUNT_TYPE:
                             HashMap<String, String> map = new HashMap<>();
                             map.put(TrackEventkeys.FAILURE_REASON, loginApiResponse.message);
                             trackEvent(TrackingAware.REGISTRATION_FAILED, map);
                             break;
-                        default:
-                            throw new AssertionError("Login or register type error while success(status=ERROR)");
                     }
                     break;
             }
@@ -498,10 +390,10 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             }
             handler.handleRetrofitError(error);
             switch (loginType) {
-                case SocialAccount.FB:
+                case SocialAccountType.FB:
                     logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_FACEBOOK, error.toString());
                     break;
-                case SocialAccount.GP:
+                case SocialAccountType.GP:
                     logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE, error.toString());
                     break;
                 case Constants.SIGN_IN_ACCOUNT_TYPE:

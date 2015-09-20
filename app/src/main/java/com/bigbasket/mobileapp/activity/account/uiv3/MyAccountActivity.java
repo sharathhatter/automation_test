@@ -23,7 +23,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.account.SocialAccount;
+import com.bigbasket.mobileapp.model.account.SocialAccountType;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -238,8 +238,9 @@ public class MyAccountActivity extends BackButtonActivity {
     }
 
     @Override
-    protected void onPlusClientSignIn(String email, Person person) {
-        loadGPlusImage(person);
+    protected void onPlusClientSignIn(String authToken) {
+        // TODO : Implement this
+        //loadGPlusImage(person);
     }
 
     private void loadProfileImage() {
@@ -247,14 +248,14 @@ public class MyAccountActivity extends BackButtonActivity {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, "");
-        if (!TextUtils.isEmpty(socialAccountType) && SocialAccount.getSocialLoginTypes().contains(socialAccountType)
+        if (!TextUtils.isEmpty(socialAccountType) && SocialAccountType.getSocialLoginTypes().contains(socialAccountType)
                 && checkInternetConnection()) {
             switch (socialAccountType) {
-                case SocialAccount.GP:
+                case SocialAccountType.GP:
                     initializeGooglePlusSignIn();
                     initiatePlusClientConnect();
                     break;
-                case SocialAccount.FB:
+                case SocialAccountType.FB:
                     onFacebookSignIn(AccessToken.getCurrentAccessToken());
                     break;
             }

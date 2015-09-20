@@ -68,7 +68,6 @@ public final class TrackEventkeys {
     //REGISTER
     public static final String REGISTER_MEMBER_SCREEN = "Registration Page";
     public static final String SIGN_IN_SCREEN = "Login or Register";
-    public static final String SOCIAL_ACCOUNT_CONFIRMATION_SCREEN = "Social Account Confirmation";
     //ACCOUNT
     public static final String ACCOUNT_SCREEN = "My Account";
     public static final String ACCOUNT_CHANGE_PASSWORD_SCREEN = "Change Password";
@@ -77,7 +76,6 @@ public final class TrackEventkeys {
     public static final String ACCOUNT_WALLET_SCREEN = "Wallet Summary";
     public static final String ACCOUNT_WALLET_ACTIVITY_SCREEN = "Wallet Activity";
     public static final String VIEW_DELIVERY_ADDRESS_SCREEN = "Delivery Address";
-    public static final String ACCOUNT_EDIT_PIN_SCREEN = "Change Pin";
     //ORDER AND PRODUCT OTHER PAGE
     public static final String ORDER_DETAILS_SUMMARY_SCREEN = "Order Details";
     public static final String ORDER_DETAILS_ITEMS_SCREEN = null;

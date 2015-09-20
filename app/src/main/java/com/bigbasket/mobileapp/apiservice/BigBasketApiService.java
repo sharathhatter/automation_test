@@ -214,24 +214,18 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/login/")
     void login(@Field(Constants.EMAIL) String email, @Field(Constants.PASSWORD) String password,
-               Callback<LoginApiResponse> loginApiResponseContent);
+               Callback<ApiResponse<LoginApiResponse>> loginApiResponseContent);
 
     @FormUrlEncoded
     @POST("/social-login/")
     void socialLogin(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
-                     @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
-                     Callback<LoginApiResponse> loginApiResponseContent);
-
-    @FormUrlEncoded
-    @POST("/social-register-member/")
-    void socialRegisterMember(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
-                              @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
-                              @Field(Constants.CITY_ID) String cityId,
-                              Callback<LoginApiResponse> loginApiResponseContent);
+                     @Field(Constants.AUTH_TOKEN) String authToken,
+                     Callback<ApiResponse<LoginApiResponse>> loginApiResponseContent);
 
     @FormUrlEncoded
     @POST("/register-member/")
-    void registerMember(@Field(Constants.USER_DETAILS) String userDetails, Callback<LoginApiResponse> loginApiResponseCallback);
+    void registerMember(@Field(Constants.USER_DETAILS) String userDetails,
+                        Callback<ApiResponse<LoginApiResponse>> loginApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/create-address/")
