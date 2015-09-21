@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -14,6 +15,8 @@ import com.bigbasket.mobileapp.interfaces.location.LocationAutoSuggestListener;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.location.LocationAutoSuggestHelper;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
@@ -41,8 +44,18 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.locateYourArea));
-
-        renderChooseLocation();
+        int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
+        switch (playServicesAvailable) {
+            case ConnectionResult.SUCCESS:
+                renderChooseLocation();
+                break;
+            default:
+                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(playServicesAvailable,
+                        getCurrentActivity(), NavigationCodes.GO_TO_HOME);
+                dialog.setCancelable(false);
+                dialog.show();
+                break;
+        }
     }
 
     private void renderChooseLocation() {

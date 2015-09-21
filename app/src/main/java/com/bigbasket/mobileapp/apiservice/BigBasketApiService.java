@@ -214,24 +214,18 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/login/")
     void login(@Field(Constants.EMAIL) String email, @Field(Constants.PASSWORD) String password,
-               Callback<LoginApiResponse> loginApiResponseContent);
+               Callback<ApiResponse<LoginApiResponse>> loginApiResponseContent);
 
     @FormUrlEncoded
     @POST("/social-login/")
     void socialLogin(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
-                     @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
-                     Callback<LoginApiResponse> loginApiResponseContent);
-
-    @FormUrlEncoded
-    @POST("/social-register-member/")
-    void socialRegisterMember(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
-                              @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
-                              @Field(Constants.CITY_ID) String cityId,
-                              Callback<LoginApiResponse> loginApiResponseContent);
+                     @Field(Constants.AUTH_TOKEN) String authToken,
+                     Callback<ApiResponse<LoginApiResponse>> loginApiResponseContent);
 
     @FormUrlEncoded
     @POST("/register-member/")
-    void registerMember(@Field(Constants.USER_DETAILS) String userDetails, Callback<LoginApiResponse> loginApiResponseCallback);
+    void registerMember(@Field(Constants.USER_DETAILS) String userDetails,
+                        Callback<ApiResponse<LoginApiResponse>> loginApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/create-address/")
@@ -378,6 +372,7 @@ public interface BigBasketApiService {
                       @Field(Constants.SUPPORT_CC) String supportsCreditCard,
                       @Field(Constants.SUPPORT_POWER_PAY) String supportsPowerPay,
                       @Field(Constants.SUPPORT_MOBIKWIK) String supportsMobikWik,
+                      @Field(Constants.SUPPORT_PAYTM) String supportsPaytm,
                       Callback<ApiResponse<PostShipmentResponseContent>> apiResponseCallback);
 
     @FormUrlEncoded
@@ -387,9 +382,11 @@ public interface BigBasketApiService {
                     Callback<OldApiResponse<PlaceOrderApiResponseContent>> placeOrderApiResponseCallback);
 
     @GET("/pay-now/")
-    void getPayNowDetails(@Query(Constants.ORDER_ID) String orderId, @Query(Constants.SUPPORT_POWER_PAY) String supportPp,
+    void getPayNowDetails(@Query(Constants.ORDER_ID) String orderId,
+                          @Query(Constants.SUPPORT_POWER_PAY) String supportPp,
                           @Query(Constants.SUPPORT_CC) String supportPayu,
                           @Query(Constants.SUPPORT_MOBIKWIK) String mobikWik,
+                          @Query(Constants.SUPPORT_PAYTM) String supportsPaytm,
                           Callback<ApiResponse<GetPayNowParamsResponse>> getPayNowParamsResponseCallback);
 
     @FormUrlEncoded
@@ -408,6 +405,7 @@ public interface BigBasketApiService {
     void getFundWalletPayments(@Query(Constants.SUPPORT_CC) String supportsPayu,
                                @Query(Constants.SUPPORT_POWER_PAY) String supportPowerPay,
                                @Query(Constants.SUPPORT_MOBIKWIK) String mobikwik,
+                               @Query(Constants.SUPPORT_PAYTM) String supportsPaytm,
                                Callback<ApiResponse<GetPaymentTypes>> getFundWalletPaymentApiResponseCallback);
 
     @FormUrlEncoded

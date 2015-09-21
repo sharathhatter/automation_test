@@ -21,10 +21,6 @@ public interface TrackingAware {
     String DISCOUNT_SHOWN = "Discounts Page.Shown";
     String SEARCH_SHOWN = "Search Page.Shown";
 
-    //change city dialog
-    String CHANGE_CITY_SHOWN = "Select City.Shown";
-    String CHANGE_CITY_CLICKED = "Select City.Continue";
-
     //login and register
     String LOGIN_SHOWN = "Login Page.Shown";
     String LOGIN_BTN_CLICKED = "Login Button.Clicked";

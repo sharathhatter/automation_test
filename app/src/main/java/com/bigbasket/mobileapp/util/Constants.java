@@ -224,6 +224,9 @@ public class Constants {
     public static final String PAYU = "payu";
     public static final String PAY_NOW = "pay_now";
     public static final String HDFC_POWER_PAY = "hdfc-power-pay";
+    public static final String PAYTM_WALLET = "paytm_wallet";
+    public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
+    public static final String PAYTM_HASH_GENERATION_URL = "GURL";
     public static final String SOURCE_PLACE_ORDER = "placeOrder";
     public static final String WALLET_USED = "wallet_used";
     public static final String AMT_PAYABLE = "amount_payable";
@@ -233,7 +236,6 @@ public class Constants {
     public static final String ADDRESSES = "addresses";
     public static final String ID = "id";
     public static final String ADDRESS_ID = "address_id";
-    public static final String MEMBER_ADDRESS_ID = "member_address_id";
     public static final String LAT = "lat";
     public static final String LNG = "lng";
     public static final String IS_PARTIAL = "is_partial";
@@ -480,10 +482,8 @@ public class Constants {
     public static final String RENDERERS = "renderers";
 
     //fb login and register
-    public static final String FB_GENDER = "gender";
-    public static final String FB_VERIFIED = "verified";
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
-    public static final String SOCIAL_LOGIN_PARAMS = "social_login_params";
+    public static final String AUTH_TOKEN = "auth_token";
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
     public static final String SOCIAL_LOGOUT = "social_logout";
     public static final int SOCIAL_ACCOUNT_NOT_LINKED = 1835;
@@ -529,6 +529,7 @@ public class Constants {
     public static final String DATA_PICKUP_CODE = "data_pickup_code";
     public static final String SUPPORT_POWER_PAY = "support_pp";
     public static final String SUPPORT_MOBIKWIK = "support_mk";
+    public static final String SUPPORT_PAYTM = "support_pm";
     public static final String ERR_RES_CODE = "err_res_code";
     public static final String ERR_RES_DESC = "err_res_desc";
     public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";
@@ -603,6 +604,7 @@ public class Constants {
     public static final String SKU_TYPE_EXPRESS = "express";
     public static final String SKU_TYPE_JIT = "jit-express";
     public static final String SKU_TYPE_KIRANA = "kirana-express";
+
     public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
     public static final String EXPRESS_AVAILABILITY = "express_availability";
     public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
