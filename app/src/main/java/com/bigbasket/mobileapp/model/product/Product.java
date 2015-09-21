@@ -113,12 +113,12 @@ public class Product implements Parcelable {
             brandSlug = source.readString();
         }
 
-        boolean isContentSellerIfoNull = source.readByte() == (byte) 1;
-        if (!isContentSellerIfoNull) {
-            String sellerInfoJson = source.readString();
-            Type type = new TypeToken<HashMap<String, String>>() {
+        boolean isStoreAvailabilityNull = source.readByte() == (byte) 1;
+        if (!isStoreAvailabilityNull) {
+            String storeAvailabilityJson = source.readString();
+            Type type = new TypeToken<ArrayList<HashMap<String, String>>>() {
             }.getType();
-            storeAvailability = new Gson().fromJson(sellerInfoJson, type);
+            storeAvailability = new Gson().fromJson(storeAvailabilityJson, type);
         }
     }
 
@@ -201,9 +201,9 @@ public class Product implements Parcelable {
             dest.writeString(brandSlug);
         }
 
-        boolean isContentSellerIfoNull = storeAvailability == null;
-        dest.writeByte(isContentSellerIfoNull ? (byte) 1 : (byte) 0);
-        if (!isContentSellerIfoNull) {
+        boolean isStoreAvailabilityNull = storeAvailability == null;
+        dest.writeByte(isStoreAvailabilityNull ? (byte) 1 : (byte) 0);
+        if (!isStoreAvailabilityNull) {
             dest.writeString(new Gson().toJson(storeAvailability));
         }
     }

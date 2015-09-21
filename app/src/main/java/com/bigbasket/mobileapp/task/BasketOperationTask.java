@@ -53,6 +53,7 @@ public class BasketOperationTask<T> {
     @Nullable
     private EditText editTextQty;
     private String tabName;
+    private Map<String, String> basketQueryMap;
 
     public BasketOperationTask(T context, @BasketOperation.Mode int basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
@@ -60,10 +61,10 @@ public class BasketOperationTask<T> {
                                String navigationCtx, @Nullable View productView,
                                @Nullable HashMap<String, Integer> cartInfo,
                                @Nullable EditText editTextQty,
-                               String tabName) {
+                               String tabName, @Nullable Map<String, String> basketQueryMap) {
         this(context, basketOperation, product, basketCountTextView, viewDecQty, viewIncQty,
                 viewAddToBasket, "1", eventName, navigationCtx, productView, cartInfo, editTextQty,
-                tabName);
+                tabName, basketQueryMap);
     }
 
     public BasketOperationTask(T context, @BasketOperation.Mode int basketOperation, @NonNull Product product,
@@ -73,7 +74,7 @@ public class BasketOperationTask<T> {
                                String navigationCtx, @Nullable View productView,
                                @Nullable HashMap<String, Integer> cartInfo,
                                @Nullable EditText editTextQty,
-                               String tabName) {
+                               String tabName, @Nullable Map<String, String> basketQueryMap) {
         this.context = context;
         this.product = product;
         this.basketOperation = basketOperation;
@@ -88,6 +89,7 @@ public class BasketOperationTask<T> {
         this.cartInfo = cartInfo;
         this.editTextQty = editTextQty;
         this.tabName = tabName;
+        this.basketQueryMap = basketQueryMap;
     }
 
     public void startTask() {
@@ -103,16 +105,20 @@ public class BasketOperationTask<T> {
         String reqProdId = product.getSku();
         switch (basketOperation) {
             case BasketOperation.INC:
-                bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
+                bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, basketQueryMap,
+                        new CartOperationApiResponseCallback());
                 break;
             case BasketOperation.DEC:
-                bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
+                bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, basketQueryMap,
+                        new CartOperationApiResponseCallback());
                 break;
             case BasketOperation.SET:
-                bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, new CartOperationApiResponseCallback());
+                bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, basketQueryMap,
+                        new CartOperationApiResponseCallback());
                 break;
             case BasketOperation.EMPTY:
-                bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", new CartOperationApiResponseCallback());
+                bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", basketQueryMap,
+                        new CartOperationApiResponseCallback());
                 break;
         }
     }

@@ -2,7 +2,9 @@ package com.bigbasket.mobileapp.adapter.order;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -40,9 +42,14 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
 import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -306,6 +313,22 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
             txtPackDesc.setVisibility(View.GONE);
         }
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(((ActivityAware)
+                context).getCurrentActivity());
+        String addToBasketPostParams = preferences.getString(Constants.ADD_TO_BASKET_POST_PARAMS, null);
+        ArrayList<String> addToBasketPostParamsArrayList;
+        final Map<String, String> basketQueryMap = new HashMap<>();
+        HashMap<String, String> productStoreAvailabilityMap = cartItem.getStoreAvailability();
+        if (addToBasketPostParams != null && productStoreAvailabilityMap!=null &&
+                productStoreAvailabilityMap.size()>0) {
+            Type collectionType = new TypeToken<ArrayList<String>>() {}.getType();
+            addToBasketPostParamsArrayList = new Gson().fromJson(addToBasketPostParams, collectionType);
+            for(String basketPostParam : addToBasketPostParamsArrayList){
+                if(productStoreAvailabilityMap.containsKey(basketPostParam)) {
+                    basketQueryMap.put(basketPostParam, productStoreAvailabilityMap.get(basketPostParam));
+                }
+            }
+        }
         if (imgDecBasketQty != null && imgIncBasketQty != null && imgRemove != null) {
             if (orderItemDisplaySource == OrderItemDisplaySource.BASKET && !isReadOnlyBasket && cartItem.getTotalPrice() > 0) {
                 txtInBasket.setVisibility(View.VISIBLE);
@@ -331,7 +354,8 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.DEC, product,
                                     null, null, null, null, null, TrackingAware.BASKET_DECREMENT,
-                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME);
+                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME,
+                                    basketQueryMap);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -350,7 +374,8 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.INC, product,
                                     null, null, null, null, null, TrackingAware.BASKET_INCREMENT,
-                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME);
+                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME,
+                                    basketQueryMap);
                             basketOperationTask.startTask();
 
                         } else {
@@ -371,7 +396,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                     BasketOperation.EMPTY,
                                     product, txtInBasket, null, null, null, "0",
                                     TrackingAware.BASKET_REMOVE, navigationCtx, null, null, null,
-                                    TrackEventkeys.SINGLE_TAB_NAME);
+                                    TrackEventkeys.SINGLE_TAB_NAME, basketQueryMap);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
