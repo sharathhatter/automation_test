@@ -223,6 +223,12 @@ public interface BigBasketApiService {
                      Callback<ApiResponse<LoginApiResponse>> loginApiResponseContent);
 
     @FormUrlEncoded
+    @POST("/social-register-member/")
+    void socialRegisterMember(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
+                              @Field(Constants.AUTH_TOKEN) String authToken,
+                              Callback<ApiResponse<LoginApiResponse>> loginApiResponseContent);
+
+    @FormUrlEncoded
     @POST("/register-member/")
     void registerMember(@Field(Constants.USER_DETAILS) String userDetails,
                         Callback<ApiResponse<LoginApiResponse>> loginApiResponseCallback);

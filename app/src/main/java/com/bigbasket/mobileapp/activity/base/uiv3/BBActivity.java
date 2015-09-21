@@ -184,7 +184,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         mDynamicAppDataBroadcastReceiver = new DynamicAppDataBroadcastReceiver<>(this);
     }
 
-    public void onDataSynced() {
+    public void onDataSynced(boolean isManuallyTriggered) {
         ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
         if (addressSummaries == null || addressSummaries.size() == 0) return;
 
@@ -510,7 +510,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (addressSummaries != null && addressSummaries.size() > 0) {
             City newCity = new City(addressSummaries.get(0).getCityName(),
                     addressSummaries.get(0).getCityId());
-            changeCity(newCity);
+            changeCity(newCity, false);
         } else {
             showToast(getString(R.string.unknownError));
         }
@@ -537,6 +537,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     @Override
     public void onUpdateBasket(String addressId, String lat, String lng) {
         new ChangeAddressTask<>(this, addressId, lat, lng, false).startTask();
+    }
+
+    @Override
+    public void onNoBasketUpdate() {
+
     }
 
     @Override
@@ -861,7 +866,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public void changeAddressRequested() {
         if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
-            showChangeCity(false, getNextScreenNavigationContext());
+            showChangeCity(false, getNextScreenNavigationContext(), false);
         } else {
             Intent intent = new Intent(this, BackButtonActivity.class);
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
@@ -1019,7 +1024,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
 
         // Also manually trigger it once to sync address-change in case receiver got unregistered
-        onDataSynced();
+        onDataSynced(true);
 
         FragmentManager sfm = getSupportFragmentManager();
         if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {

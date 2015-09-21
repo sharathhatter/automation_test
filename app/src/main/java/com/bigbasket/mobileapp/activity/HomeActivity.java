@@ -85,6 +85,15 @@ public class HomeActivity extends BBActivity {
         }
     }
 
+    @Override
+    public void onNoBasketUpdate() {
+        super.onNoBasketUpdate();
+        if (mSpinnerArea != null && mSpinnerArea.getAdapter() != null
+                && mSpinnerArea.getAdapter().getCount() > 0) {
+            mSpinnerArea.setSelection(0);
+        }
+    }
+
     private void setCurrentDeliveryAddress(AddressSummary addressSummary) {
         String addressId, lat, lng;
         boolean isTransient;
@@ -102,8 +111,8 @@ public class HomeActivity extends BBActivity {
     }
 
     @Override
-    public void onDataSynced() {
-        super.onDataSynced();
+    public void onDataSynced(boolean isManuallyTriggered) {
+        super.onDataSynced(isManuallyTriggered);
         setUpAddressSpinner();
     }
 

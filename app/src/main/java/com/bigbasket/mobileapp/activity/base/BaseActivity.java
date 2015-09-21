@@ -169,6 +169,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
+        if (progressDialog != null && progressDialog.isShowing()) return;
         progressDialog = new ProgressDialog(this);
         if (isDeterminate) {
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -784,17 +785,20 @@ public abstract class BaseActivity extends AppCompatActivity implements
         startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    public void changeCity(City city) {
+    public void changeCity(City city, boolean reopenLandingPage) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(Constants.CITY, city.getName());
-        editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
-        editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
-        editor.apply();
+        editor.putString(Constants.CITY, city.getName())
+                .putString(Constants.CITY_ID, String.valueOf(city.getId()))
+                .putBoolean(Constants.HAS_USER_CHOSEN_CITY, true)
+                .apply();
 
         SectionManager.clearAllSectionData(this);
         AppDataDynamic.reset(this);
-        goToHome(true);
+
+        if (!reopenLandingPage) {
+            goToHome(true);
+        }
     }
 
     public void launchRegistrationPage() {
@@ -863,7 +867,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
                 break;
             case NavigationCodes.LAUNCH_CITY:
-                showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
+                showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, false);
                 break;
             case NavigationCodes.LAUNCH_SIGNUP:
                 launchRegistrationPage();
@@ -871,10 +875,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void showChangeCity(boolean isFirstTime, String nc) {
+    public void showChangeCity(boolean isFirstTime, String nc, boolean reopenLandingPage) {
         Intent intent = new Intent(getCurrentActivity(), ChooseLocationActivity.class);
         intent.putExtra(TrackEventkeys.NAVIGATION_CTX, nc);
         intent.putExtra(Constants.IS_FIRST_TIME, isFirstTime);
+        intent.putExtra(Constants.REOPEN_LANDING_PAGE, reopenLandingPage);
         getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }

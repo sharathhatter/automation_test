@@ -84,6 +84,12 @@ public class AddressSummary implements Parcelable {
                 (!TextUtils.isEmpty(pincode) ? "- " + pincode : ""));
     }
 
+    public String toStringSameLine() {
+        return ((!TextUtils.isEmpty(area) ? area + ", " : "") +
+                (!TextUtils.isEmpty(cityName) ? cityName : "") +
+                (!TextUtils.isEmpty(pincode) ? "- " + pincode : ""));
+    }
+
     public String getId() {
         return id;
     }

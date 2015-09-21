@@ -361,6 +361,11 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
+            android:name=".activity.account.uiv3.SocialLoginConfirmActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"

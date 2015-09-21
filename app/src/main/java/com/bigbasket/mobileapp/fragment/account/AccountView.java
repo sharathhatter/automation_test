@@ -159,7 +159,7 @@ public class AccountView<T> {
                     break;
                 case 2:
                     ctx.trackEvent(TrackingAware.HOME_CHANGE_CITY, map);
-                    ctx.showChangeCity(false, TrackEventkeys.ACCOUNT_MENU);
+                    ctx.showChangeCity(false, TrackEventkeys.ACCOUNT_MENU, false);
                     break;
                 case 3:
                     ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, map);

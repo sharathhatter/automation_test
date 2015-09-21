@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -101,7 +102,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         bigBasketApiService.socialLogin(loginType, authToken,
                 new LoginApiResponseCallback(null,
-                        null, false, loginType));
+                        null, false, loginType, authToken));
     }
 
     @Override
@@ -115,7 +116,6 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     @Override
     protected void onPlusClientRevokeAccess() {
-        showProgressDialog(getString(R.string.please_wait));
         initializeGooglePlusSignIn();
     }
 
@@ -330,12 +330,16 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         private String email;
         private String password;
         private boolean rememberMe;
+        private String authToken;
 
-        public LoginApiResponseCallback(String email, String password, boolean rememberMe, String loginType) {
+        public LoginApiResponseCallback(String email, String password, boolean rememberMe,
+                                        String loginType,
+                                        @Nullable String authToken) {
             this.email = email;
             this.password = password;
             this.rememberMe = rememberMe;
             this.loginType = loginType;
+            this.authToken = authToken;
         }
 
         @Override
@@ -353,6 +357,13 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     }
                     saveLoginUserDetailInPreference(loginApiResponse.apiResponseContent, loginType,
                             email, password, rememberMe);
+                    break;
+                case ApiErrorCodes.NO_ACCOUNT:
+                    Intent intent = new Intent(getCurrentActivity(), SocialLoginConfirmActivity.class);
+                    intent.putExtra(Constants.SOCIAL_LOGIN_TYPE, loginType);
+                    intent.putExtra(Constants.AUTH_TOKEN, authToken);
+                    setNextScreenNavigationContext(TrackEventkeys.NC_SIGNUP_SCREEN);
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case ApiErrorCodes.INVALID_USER_PASSED:
                     showAlertDialog(null, getString(R.string.INVALID_USER_PASS));

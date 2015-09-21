@@ -169,7 +169,7 @@ public abstract class PlusBaseActivity extends BaseActivity
                     // Revoke access to this entire application. This will call back to
                     // onAccessRevoked when it is complete, as it needs to reach the Google
                     // authentication servers to revoke all tokens.
-                    updatePlusConnectedButtonState();
+                    hideProgressDialog();
                     onPlusClientRevokeAccess();
                 }
             });

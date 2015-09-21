@@ -484,6 +484,7 @@ public class Constants {
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
     public static final String SOCIAL_LOGOUT = "social_logout";
     public static final int SOCIAL_ACCOUNT_NOT_LINKED = 1835;
+    public static final String REOPEN_LANDING_PAGE = "reopen_landing";
 
     //account type signin and register
     public static final String SIGN_IN_ACCOUNT_TYPE = "signIn";

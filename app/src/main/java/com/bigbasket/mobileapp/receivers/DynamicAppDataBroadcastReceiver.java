@@ -22,7 +22,7 @@ public class DynamicAppDataBroadcastReceiver<T extends BBActivity> extends Broad
         if (activityWeakRef != null && activityWeakRef.get() != null
                 && !activityWeakRef.get().isSuspended()) {
             if (intent.getBooleanExtra(Constants.STATUS, false)) {
-                activityWeakRef.get().onDataSynced();
+                activityWeakRef.get().onDataSynced(false);
             } else {
                 activityWeakRef.get().onDataSyncFailure();
             }

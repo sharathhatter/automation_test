@@ -339,6 +339,11 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         new ChangeAddressTask<>(this, addressId, lat, lng, false).startTask();
     }
 
+    @Override
+    public void onNoBasketUpdate() {
+
+    }
+
     public ViewGroup getContentView() {
         return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
