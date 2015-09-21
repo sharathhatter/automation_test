@@ -257,7 +257,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
 
-    public void toggleFilterSortView(boolean isVisible) {
+    private void toggleFilterSortView(boolean isVisible) {
         int visibility = isVisible ? View.VISIBLE : View.GONE;
         findViewById(R.id.layoutFilter).setVisibility(visibility);
         findViewById(R.id.layoutSort).setVisibility(visibility);
