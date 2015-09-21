@@ -153,12 +153,39 @@
             android:visibility="gone" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/layoutExpressMsg"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:orientation="vertical"
+        android:layout_toRightOf="@id/imgProduct"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_below="@id/layoutProductPrice"
+        android:layout_height="wrap_content">
+
+        <RadioGroup
+            android:id="@+id/radioGroupExpress"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/txtExpressMsg"
+            android:layout_width="match_parent"
+            android:textColor="@color/uiv3_status_bar_background"
+            android:visibility="gone"
+            android:textSize="@dimen/secondary_text_size"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/layoutPromoName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layoutProductPrice"
+        android:layout_below="@id/layoutExpressMsg"
         android:layout_marginTop="@dimen/margin_small">
 
         <ImageView

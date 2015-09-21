@@ -1,6 +1,8 @@
 package com.bigbasket.mobileapp.adapter.product;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +17,13 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
+import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,6 +47,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private HashMap<String, Integer> cartInfo;
     private boolean mLoadingFailed;
     private String mTabType;
+    private HashMap<String, String> storeAvailabilityMap;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -53,6 +60,13 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         this.serverListSize = productCount;
         this.navigationCtx = navigationCtx;
         this.mTabType = mTabType;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activityAware.getCurrentActivity());
+        String storeJson = preferences.getString(Constants.STORE_AVAILABILITY_MAP, null);
+        if (storeJson != null) {
+            Type collectionType = new TypeToken<HashMap<String, String>>() {
+            }.getType();
+            this.storeAvailabilityMap = new Gson().fromJson(storeJson, collectionType);
+        }
     }
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
@@ -117,7 +131,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             ProductView.setProductView((ProductViewHolder) viewHolder, product, baseImgUrl,
                     new ProductDetailOnClickListener(product.getSku(), activityAware),
                     productViewDisplayDataHolder,
-                    false, activityAware, navigationCtx, cartInfo, mTabType);
+                    false, activityAware, navigationCtx, cartInfo, mTabType, storeAvailabilityMap);
 
             int endPosition = position + DELTA_FOR_PRELOADING_IMG;
             if (endPosition < products.size()) {

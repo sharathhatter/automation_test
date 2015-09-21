@@ -199,6 +199,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             if (mHasProductLoadingFailed) {
                 UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.productTabErrorMsg),
                         R.drawable.ic_error_red_36dp);
+
+                ((ProductListDataAware) getActivity()).setTabNameWithEmptyProductView(mTabType);
             } else {
                 if (mProductInfo != null) {
                     if (mProductInfo.getCurrentPage() == -1) {
@@ -206,10 +208,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     } else {
                         UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.noProducts),
                                 R.drawable.empty_smart_basket);
+                        ((ProductListDataAware) getActivity()).setTabNameWithEmptyProductView(mTabType);
                     }
                 } else {
                     UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.noProducts),
                             R.drawable.empty_smart_basket);
+                    ((ProductListDataAware) getActivity()).setTabNameWithEmptyProductView(mTabType);
                 }
             }
         }

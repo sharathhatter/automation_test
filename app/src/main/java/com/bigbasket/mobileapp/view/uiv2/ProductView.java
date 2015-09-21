@@ -10,13 +10,17 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StrikethroughSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,18 +64,22 @@ public final class ProductView {
                                           final boolean skipChildDropDownRendering,
                                           final T productDataAware, String navigationCtx,
                                           @Nullable HashMap<String, Integer> cartInfo,
-                                          String tabName) {
+                                          String tabName,
+                                          HashMap<String, String> storeAvailabilityMap) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
                 productDetailOnClickListener, productDataAware);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
+        setExpressMsg(productViewHolder, product, productViewDisplayDataHolder, productDataAware,
+                navigationCtx, cartInfo, tabName, storeAvailabilityMap);
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
-        setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
+        setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
+                productDataAware, null);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
-                productDataAware, navigationCtx, cartInfo, tabName);
+                productDataAware, navigationCtx, cartInfo, tabName, null);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
-                    productDataAware, navigationCtx, cartInfo, tabName);
+                    productDataAware, navigationCtx, cartInfo, tabName, storeAvailabilityMap);
         }
     }
 
@@ -92,7 +100,7 @@ public final class ProductView {
                                              final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                              final T productDataAware, final String navigationCtx,
                                              @Nullable HashMap<String, Integer> cartInfo,
-                                             String tabName) {
+                                             String tabName, HashMap<String, String> storeAvailabilityMap) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         final Button btnMorePackSizes = productViewHolder.getBtnMorePackSizes();
@@ -113,7 +121,8 @@ public final class ProductView {
                         if (isThisChildProductInBasket) {
                             childProductInBasket = childProduct;
                             listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
-                                    product, productViewHolder, baseImgUrl, navigationCtx, cartInfo, tabName);
+                                    product, productViewHolder, baseImgUrl, navigationCtx, cartInfo,
+                                    tabName, storeAvailabilityMap);
                             listener.setCurrentProduct(childProductInBasket);
                             break;
                         }
@@ -122,7 +131,8 @@ public final class ProductView {
             }
             if (listener == null) {
                 listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
-                        product, productViewHolder, baseImgUrl, navigationCtx, cartInfo, tabName);
+                        product, productViewHolder, baseImgUrl, navigationCtx, cartInfo, tabName,
+                        storeAvailabilityMap);
             } else {
                 // There is a child product that is in basket
                 // Manually trigger click to change to that product
@@ -191,6 +201,77 @@ public final class ProductView {
                 UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())), productViewDisplayDataHolder.getRupeeTypeface()));
     }
 
+    private static <T> void setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
+                                          final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                          final T productDataAware, final String navigationCtx,
+                                          @Nullable final HashMap<String, Integer> cartInfo,
+                                          final String tabName,
+                                          HashMap<String, String> storeAvailabilityMap){
+
+        ArrayList<HashMap<String, String>> storeAvailabilityArrayList = product.getStoreAvailability();
+        LinearLayout layoutExpressMsg = productViewHolder.getLayoutExpressMsg();
+        RadioGroup radioGroupExpress = productViewHolder.getRadioGroupExpress();
+        radioGroupExpress.removeAllViews();
+
+        if(storeAvailabilityArrayList !=null && storeAvailabilityArrayList.size()>0 &&
+                storeAvailabilityMap != null && productViewDisplayDataHolder.isShowBasketBtn()){
+            TextView txtExpressMsg = productViewHolder.getTxtExpressMsg();
+            productViewHolder.getLayoutExpressMsg().setVisibility(View.VISIBLE);
+            if(storeAvailabilityArrayList.size()>1){
+                for(int i=0; i<storeAvailabilityArrayList.size(); i++){
+                    String storeId = storeAvailabilityArrayList.get(i).get(Constants.STORE_ID);
+                    if(!TextUtils.isEmpty(storeId) && storeAvailabilityMap.containsKey(storeId)){
+                    RadioButton rbtnPaymentType = UIUtil.
+                            getPaymentOptionRadioButton(radioGroupExpress,
+                                    ((ActivityAware) productDataAware).getCurrentActivity(),
+                                    ((ActivityAware) productDataAware).getCurrentActivity().getLayoutInflater());
+                    rbtnPaymentType.setText(storeAvailabilityMap.get(storeId));
+                        rbtnPaymentType.setTag(storeAvailabilityMap.get(Constants.PRODUCT_STATUS));
+                    if(i==0) rbtnPaymentType.setChecked(true);
+                    radioGroupExpress.addView(rbtnPaymentType);
+                    }
+                }
+                if(radioGroupExpress.getChildCount()>1){
+                    radioGroupExpress.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                            setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
+                                    productDataAware, String.valueOf(radioGroup.getFocusedChild().getTag()));
+                            setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
+                                    productDataAware, navigationCtx, cartInfo, tabName,
+                                    String.valueOf(radioGroup.getFocusedChild().getTag()));
+                        }
+                    });
+                    txtExpressMsg.setVisibility(View.GONE);
+                    radioGroupExpress.setVisibility(View.VISIBLE);
+                }else {
+                    setExpressDisplayNameMsg(storeAvailabilityArrayList, radioGroupExpress,
+                            storeAvailabilityMap, txtExpressMsg);
+                }
+            }else {
+                setExpressDisplayNameMsg(storeAvailabilityArrayList, radioGroupExpress,
+                        storeAvailabilityMap, txtExpressMsg);
+            }
+            layoutExpressMsg.setVisibility(View.VISIBLE);
+        }else {
+            layoutExpressMsg.setVisibility(View.GONE);
+        }
+    }
+
+    private static void setExpressDisplayNameMsg(ArrayList<HashMap<String, String>> storeAvailabilityArrayList,
+                                          RadioGroup radioGroupExpress,
+                                          HashMap<String, String> storeAvailabilityMap,
+                                          TextView txtExpressMsg){
+        String storeId = storeAvailabilityArrayList.get(0).get(Constants.STORE_ID);
+        radioGroupExpress.setVisibility(View.GONE);
+        if(!TextUtils.isEmpty(storeId) && storeAvailabilityMap.containsKey(storeId)){
+            txtExpressMsg.setText(storeAvailabilityMap.get(storeId));
+            txtExpressMsg.setVisibility(View.VISIBLE);
+        }else {
+            txtExpressMsg.setVisibility(View.GONE);
+        }
+    }
+
     private static <T> void setPromo(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                      final T activityAware) {
         ImageView imgPromoStar = productViewHolder.getImgPromoStar();
@@ -245,13 +326,24 @@ public final class ProductView {
         }
     }
 
+    private static String getAvailability(Product product, String storeAvailability){
+        if(!TextUtils.isEmpty(storeAvailability)){
+            return storeAvailability;
+        }else if(product.getStoreAvailability() != null && product.getStoreAvailability().size()>0 &&
+                product.getStoreAvailability().get(0).containsKey(Constants.PRODUCT_STATUS)){
+            return product.getStoreAvailability().get(0).get(Constants.PRODUCT_STATUS);
+        }else {
+            return product.getProductStatus();
+        }
+    }
+
     private static <T> void setProductAdditionalActionMenu(ProductViewHolder productViewHolder, final Product product,
                                                            final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                           final T shoppingListNamesAware) {
+                                                           final T shoppingListNamesAware, String storeAvailability) {
         final ImageView imgProductOverflowAction = productViewHolder.getImgProductOverflowAction();
         if ((productViewDisplayDataHolder.isShowShoppingListBtn() || productViewDisplayDataHolder.showShopListDeleteBtn())
                 && productViewDisplayDataHolder.isLoggedInMember()
-                && !product.getProductStatus().equalsIgnoreCase("N")) {
+                && !getAvailability(product, storeAvailability).equalsIgnoreCase("N")) {
             int imageDrawableId = productViewDisplayDataHolder.showShopListDeleteBtn() ?
                     R.drawable.delete_product : R.drawable.add_to_shopping_list;
             if (productViewDisplayDataHolder.showShopListDeleteBtn()) {
@@ -322,7 +414,7 @@ public final class ProductView {
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                           final T basketOperationAware, final String navigationCtx,
                                                           @Nullable final HashMap<String, Integer> cartInfo,
-                                                          final String tabName) {
+                                                          final String tabName, String storeAvailability) {
         final ImageView imgAddToBasket = productViewHolder.getImgAddToBasket();
         final View viewDecBasketQty = productViewHolder.getViewDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
@@ -335,7 +427,7 @@ public final class ProductView {
         editTextQty.setText("1");
 
         if (productViewDisplayDataHolder.isShowBasketBtn()) {
-            if (product.getProductStatus().equalsIgnoreCase("A")) {
+            if (getAvailability(product, storeAvailability).equalsIgnoreCase("A")) {
                 int noOfItemsInCart = getNoOfItemsInCart(product, cartInfo);
 
                 if (noOfItemsInCart > 0) {
@@ -432,7 +524,8 @@ public final class ProductView {
 
                 txtOutOfStockORNotForSale.setVisibility(View.VISIBLE);
                 txtOutOfStockORNotForSale.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-                if (product.getProductStatus().equalsIgnoreCase("0") || product.getProductStatus().equalsIgnoreCase("O")) {  // zero not O
+                if (getAvailability(product, storeAvailability).equalsIgnoreCase("0")
+                        || getAvailability(product, storeAvailability).equalsIgnoreCase("O")) {  // zero not O
                     txtOutOfStockORNotForSale.setText("Out of Stock");
                 } else {
                     txtOutOfStockORNotForSale.setText("Not for sale");
@@ -461,12 +554,13 @@ public final class ProductView {
         private Product currentProduct;
         private HashMap<String, Integer> cartInfo;
         private String tabName;
+        private HashMap<String, String> storeAvailabilityMap;
 
         public OnShowChildProductDropdownClickListener(T productDataAware, ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                        Product product, ProductViewHolder productViewHolder,
                                                        String baseImgUrl, String navigationCtx,
                                                        @Nullable HashMap<String, Integer> cartInfo,
-                                                       String tabName) {
+                                                       String tabName, HashMap<String, String> storeAvailabilityMap) {
             this.productDataAware = productDataAware;
             this.productViewDisplayDataHolder = productViewDisplayDataHolder;
             this.product = product;
@@ -477,6 +571,7 @@ public final class ProductView {
             this.childProducts = product.getAllProducts();
             this.cartInfo = cartInfo;
             this.tabName = tabName;
+            this.storeAvailabilityMap = storeAvailabilityMap;
         }
 
         @Override
@@ -524,7 +619,7 @@ public final class ProductView {
             setProductView(productViewHolder, childProduct, baseImgUrl,
                     new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
                     productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo,
-                    tabName);
+                    tabName, storeAvailabilityMap);
         }
 
         public void setCurrentProduct(Product currentProduct) {

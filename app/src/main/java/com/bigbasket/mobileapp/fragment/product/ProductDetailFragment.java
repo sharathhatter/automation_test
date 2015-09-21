@@ -1,7 +1,9 @@
 package com.bigbasket.mobileapp.fragment.product;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -37,7 +39,10 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -160,8 +165,16 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String storeJson = preferences.getString(Constants.STORE_AVAILABILITY_MAP, null);
+        HashMap<String, String> storeAvailabilityMap = null;
+        if (storeJson != null) {
+            Type collectionType = new TypeToken<HashMap<String, String>>() {
+            }.getType();
+            storeAvailabilityMap = new Gson().fromJson(storeJson, collectionType);
+        }
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                false, this, getNextScreenNavigationContext(), null, "none");
+                false, this, getNextScreenNavigationContext(), null, "none", storeAvailabilityMap);
 
         if (mProduct.getProductPromoInfo() == null ||
                 !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {
