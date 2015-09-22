@@ -109,7 +109,10 @@ public class Constants {
     public static final String FILTER_VALUES = "values";
     public static final String FILTER_VALUES_SLUG = "filter_value_slug";
 
-    public static final String SELLER_INFO = "seller_info";
+    public static final String STORE_AVAILABILITY = "store_availability";
+    public static final String STORE_ID = "store_id";
+    public static final String AVAILABILITY = "availability";
+    public static final String AVAILABILITY_INFO_ID = "availability_info_id";
 
     //update-app-data
     public static final String ADD_TO_BASKET_POST_PARAMS = "add_to_basket_post_params";

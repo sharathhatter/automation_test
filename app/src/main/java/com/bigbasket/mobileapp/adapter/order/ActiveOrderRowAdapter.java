@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.CartItem;
@@ -41,8 +42,10 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
 import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -306,6 +309,19 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
             txtPackDesc.setVisibility(View.GONE);
         }
 
+        ArrayList<String> addToBasketPostParamsArrayList = AppDataDynamic.
+                getInstance(((ActivityAware) context).getCurrentActivity()).getAddToBasketPostParams();
+        final Map<String, String> basketQueryMap = new HashMap<>();
+        HashMap<String, String> productStoreAvailabilityMap = cartItem.getStoreAvailability();
+        if (addToBasketPostParamsArrayList != null && addToBasketPostParamsArrayList.size() > 0 &&
+                productStoreAvailabilityMap != null &&
+                productStoreAvailabilityMap.size() > 0) {
+            for (String basketPostParam : addToBasketPostParamsArrayList) {
+                if (productStoreAvailabilityMap.containsKey(basketPostParam)) {
+                    basketQueryMap.put(basketPostParam, productStoreAvailabilityMap.get(basketPostParam));
+                }
+            }
+        }
         if (imgDecBasketQty != null && imgIncBasketQty != null && imgRemove != null) {
             if (orderItemDisplaySource == OrderItemDisplaySource.BASKET && !isReadOnlyBasket && cartItem.getTotalPrice() > 0) {
                 txtInBasket.setVisibility(View.VISIBLE);
@@ -331,7 +347,8 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.DEC, product,
                                     null, null, null, null, null, TrackingAware.BASKET_DECREMENT,
-                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME);
+                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME,
+                                    basketQueryMap);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -350,7 +367,8 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.INC, product,
                                     null, null, null, null, null, TrackingAware.BASKET_INCREMENT,
-                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME);
+                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME,
+                                    basketQueryMap);
                             basketOperationTask.startTask();
 
                         } else {
@@ -371,7 +389,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                     BasketOperation.EMPTY,
                                     product, txtInBasket, null, null, null, "0",
                                     TrackingAware.BASKET_REMOVE, navigationCtx, null, null, null,
-                                    TrackEventkeys.SINGLE_TAB_NAME);
+                                    TrackEventkeys.SINGLE_TAB_NAME, basketQueryMap);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);

@@ -153,6 +153,8 @@ public final class TrackEventkeys {
     public static final String FILTER_APPLIED = "filter_applied";
     public static final String IS_EXPRESS = "is_express";
 
+    public static final String FIS = "fis";
+
     private TrackEventkeys() {
     }
 }

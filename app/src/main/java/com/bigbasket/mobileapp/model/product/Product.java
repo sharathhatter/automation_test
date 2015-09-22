@@ -2,13 +2,18 @@ package com.bigbasket.mobileapp.model.product;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.promo.ProductPromoInfo;
 import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Product implements Parcelable {
@@ -62,6 +67,8 @@ public class Product implements Parcelable {
     private String productCategoryName;
     @SerializedName(Constants.BRAND_SLUG)
     private String brandSlug;
+    @SerializedName(Constants.STORE_AVAILABILITY)
+    private ArrayList<HashMap<String, String>> storeAvailability;
 
     public Product(Parcel source) {
         description = source.readString();
@@ -106,6 +113,14 @@ public class Product implements Parcelable {
         if (!isBrandSlugNull) {
             brandSlug = source.readString();
         }
+
+        boolean isStoreAvailabilityNull = source.readByte() == (byte) 1;
+        if (!isStoreAvailabilityNull) {
+            String storeAvailabilityJson = source.readString();
+            Type type = new TypeToken<ArrayList<HashMap<String, String>>>() {
+            }.getType();
+            storeAvailability = new Gson().fromJson(storeAvailabilityJson, type);
+        }
     }
 
     public Product() {
@@ -122,8 +137,16 @@ public class Product implements Parcelable {
 
     public static boolean areAllProductsOutOfStock(List<Product> productList) {
         for (Product product : productList) {
-            if (product != null && product.getProductStatus().equalsIgnoreCase("A")) {
-                return false;
+            if (product != null) {
+                if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0) {
+                    for (HashMap<String, String> availabilityMap : product.getStoreAvailability())
+                        if (availabilityMap.get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A")) {
+                            return false;
+                        }
+                } else if (!TextUtils.isEmpty(product.getProductStatus())
+                        && product.getProductStatus().equals("A")) {
+                    return false;
+                }
             }
         }
         return true;
@@ -182,6 +205,12 @@ public class Product implements Parcelable {
         dest.writeByte(isBrandSlugNull ? (byte) 1 : (byte) 0);
         if (!isBrandSlugNull) {
             dest.writeString(brandSlug);
+        }
+
+        boolean isStoreAvailabilityNull = storeAvailability == null;
+        dest.writeByte(isStoreAvailabilityNull ? (byte) 1 : (byte) 0);
+        if (!isStoreAvailabilityNull) {
+            dest.writeString(new Gson().toJson(storeAvailability));
         }
     }
 
@@ -284,5 +313,10 @@ public class Product implements Parcelable {
 
     public String getBrandSlug() {
         return brandSlug;
+    }
+
+    @Nullable
+    public ArrayList<HashMap<String, String>> getStoreAvailability() {
+        return storeAvailability;
     }
 }

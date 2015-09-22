@@ -182,18 +182,21 @@ public interface BigBasketApiService {
     @POST("/c-incr-i/")
     void incrementCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                            @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                           @FieldMap Map<String, String> basketQueryMap,
                            Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/c-decr-i/")
     void decrementCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                            @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                           @FieldMap Map<String, String> basketQueryMap,
                            Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/c-set-i/")
     void setCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                      @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                     @FieldMap Map<String, String> basketQueryMap,
                      Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
 
     @FormUrlEncoded
