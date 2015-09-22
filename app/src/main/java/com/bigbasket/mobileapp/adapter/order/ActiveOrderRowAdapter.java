@@ -2,9 +2,7 @@ package com.bigbasket.mobileapp.adapter.order;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -26,6 +24,7 @@ import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.CartItem;
@@ -42,10 +41,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
 import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -313,18 +309,15 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
             txtPackDesc.setVisibility(View.GONE);
         }
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(((ActivityAware)
-                context).getCurrentActivity());
-        String addToBasketPostParams = preferences.getString(Constants.ADD_TO_BASKET_POST_PARAMS, null);
-        ArrayList<String> addToBasketPostParamsArrayList;
+        ArrayList<String> addToBasketPostParamsArrayList = AppDataDynamic.
+                getInstance(((ActivityAware) context).getCurrentActivity()).getAddToBasketPostParams();
         final Map<String, String> basketQueryMap = new HashMap<>();
         HashMap<String, String> productStoreAvailabilityMap = cartItem.getStoreAvailability();
-        if (addToBasketPostParams != null && productStoreAvailabilityMap!=null &&
-                productStoreAvailabilityMap.size()>0) {
-            Type collectionType = new TypeToken<ArrayList<String>>() {}.getType();
-            addToBasketPostParamsArrayList = new Gson().fromJson(addToBasketPostParams, collectionType);
-            for(String basketPostParam : addToBasketPostParamsArrayList){
-                if(productStoreAvailabilityMap.containsKey(basketPostParam)) {
+        if (addToBasketPostParamsArrayList != null && addToBasketPostParamsArrayList.size() > 0 &&
+                productStoreAvailabilityMap != null &&
+                productStoreAvailabilityMap.size() > 0) {
+            for (String basketPostParam : addToBasketPostParamsArrayList) {
+                if (productStoreAvailabilityMap.containsKey(basketPostParam)) {
                     basketQueryMap.put(basketPostParam, productStoreAvailabilityMap.get(basketPostParam));
                 }
             }

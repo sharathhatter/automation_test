@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
@@ -165,16 +166,9 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String storeJson = preferences.getString(Constants.STORE_AVAILABILITY_MAP, null);
-        HashMap<String, String> storeAvailabilityMap = null;
-        if (storeJson != null) {
-            Type collectionType = new TypeToken<HashMap<String, String>>() {
-            }.getType();
-            storeAvailabilityMap = new Gson().fromJson(storeJson, collectionType);
-        }
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                false, this, getNextScreenNavigationContext(), null, "none", storeAvailabilityMap);
+                false, this, getNextScreenNavigationContext(), null, "none",
+                AppDataDynamic.getInstance(getActivity()).getStoreAvailabilityMap());
 
         if (mProduct.getProductPromoInfo() == null ||
                 !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {

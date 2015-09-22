@@ -3,8 +3,6 @@ package com.bigbasket.mobileapp.view.uiv2;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
@@ -12,7 +10,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StrikethroughSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -40,6 +37,7 @@ import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -53,10 +51,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,22 +66,22 @@ public final class ProductView {
                                           final T productDataAware, String navigationCtx,
                                           @Nullable HashMap<String, Integer> cartInfo,
                                           String tabName,
-                                          HashMap<String, String> AppDataStoreAvailabilityMap) {
+                                          HashMap<String, String> appDataStoreAvailabilityMap) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
                 productDetailOnClickListener, productDataAware);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
         setExpressMsg(productViewHolder, product, productViewDisplayDataHolder, productDataAware,
-                navigationCtx, cartInfo, tabName, AppDataStoreAvailabilityMap);
+                navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap);
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, null);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, navigationCtx, cartInfo, tabName, null,
-                product.getStoreAvailability().get(0));
+                product.getStoreAvailability() != null ? product.getStoreAvailability().get(0) : null);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
-                    productDataAware, navigationCtx, cartInfo, tabName, AppDataStoreAvailabilityMap);
+                    productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap);
         }
     }
 
@@ -107,7 +102,7 @@ public final class ProductView {
                                              final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                              final T productDataAware, final String navigationCtx,
                                              @Nullable HashMap<String, Integer> cartInfo,
-                                             String tabName, HashMap<String, String> AppDataStoreAvailabilityMap) {
+                                             @Nullable String tabName, HashMap<String, String> AppDataStoreAvailabilityMap) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         final Button btnMorePackSizes = productViewHolder.getBtnMorePackSizes();
@@ -213,33 +208,33 @@ public final class ProductView {
                                           final T productDataAware, final String navigationCtx,
                                           @Nullable final HashMap<String, Integer> cartInfo,
                                           final String tabName,
-                                          final HashMap<String, String> AppDataStoreAvailabilityMap){
+                                          @Nullable final HashMap<String, String> appDataStoreAvailabilityMap) {
 
         final ArrayList<HashMap<String, String>> storeAvailabilityArrayList = product.getStoreAvailability();
         LinearLayout layoutExpressMsg = productViewHolder.getLayoutExpressMsg();
         RadioGroup radioGroupExpress = productViewHolder.getRadioGroupExpress();
         radioGroupExpress.removeAllViews();
-        if(storeAvailabilityArrayList !=null && storeAvailabilityArrayList.size()>0 &&
-                AppDataStoreAvailabilityMap != null && productViewDisplayDataHolder.isShowBasketBtn()){
+        if (storeAvailabilityArrayList != null && storeAvailabilityArrayList.size() > 0 &&
+                appDataStoreAvailabilityMap != null && productViewDisplayDataHolder.isShowBasketBtn()) {
             TextView txtExpressMsg = productViewHolder.getTxtExpressMsg();
             productViewHolder.getLayoutExpressMsg().setVisibility(View.VISIBLE);
-            if(storeAvailabilityArrayList.size()>1){
-                for(int i=0; i<storeAvailabilityArrayList.size(); i++){
+            if (storeAvailabilityArrayList.size() > 1) {
+                for (int i = 0; i < storeAvailabilityArrayList.size(); i++) {
                     String storeId = storeAvailabilityArrayList.get(i).get(Constants.STORE_ID);
-                    if(!TextUtils.isEmpty(storeId) && AppDataStoreAvailabilityMap.containsKey(storeId)){
-                    RadioButton rbtnAvailabilityType = UIUtil.
-                            getPaymentOptionRadioButton(radioGroupExpress,
-                                    ((ActivityAware) productDataAware).getCurrentActivity(),
-                                    ((ActivityAware) productDataAware).getCurrentActivity().getLayoutInflater());
-                        rbtnAvailabilityType.setText(AppDataStoreAvailabilityMap.get(storeId));
+                    if (!TextUtils.isEmpty(storeId) && appDataStoreAvailabilityMap.containsKey(storeId)) {
+                        RadioButton rbtnAvailabilityType = UIUtil.
+                                getPaymentOptionRadioButton(radioGroupExpress,
+                                        ((ActivityAware) productDataAware).getCurrentActivity(),
+                                        ((ActivityAware) productDataAware).getCurrentActivity().getLayoutInflater());
+                        rbtnAvailabilityType.setText(appDataStoreAvailabilityMap.get(storeId));
                         rbtnAvailabilityType.setId(i);
-                        if(i==0){
+                        if (i == 0) {
                             rbtnAvailabilityType.setChecked(true);
                         }
                         radioGroupExpress.addView(rbtnAvailabilityType);
                     }
                 }
-                if(radioGroupExpress.getChildCount()>1){
+                if (radioGroupExpress.getChildCount() > 1) {
                     radioGroupExpress.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -253,30 +248,30 @@ public final class ProductView {
                     });
                     txtExpressMsg.setVisibility(View.GONE);
                     radioGroupExpress.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     setExpressDisplayNameMsg(storeAvailabilityArrayList, radioGroupExpress,
-                            AppDataStoreAvailabilityMap, txtExpressMsg);
+                            appDataStoreAvailabilityMap, txtExpressMsg);
                 }
-            }else {
+            } else {
                 setExpressDisplayNameMsg(storeAvailabilityArrayList, radioGroupExpress,
-                        AppDataStoreAvailabilityMap, txtExpressMsg);
+                        appDataStoreAvailabilityMap, txtExpressMsg);
             }
             layoutExpressMsg.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             layoutExpressMsg.setVisibility(View.GONE);
         }
     }
 
     private static void setExpressDisplayNameMsg(ArrayList<HashMap<String, String>> storeAvailabilityArrayList,
-                                          RadioGroup radioGroupExpress,
-                                          HashMap<String, String> storeAvailabilityMap,
-                                          TextView txtExpressMsg){
+                                                 RadioGroup radioGroupExpress,
+                                                 HashMap<String, String> storeAvailabilityMap,
+                                                 TextView txtExpressMsg) {
         String storeId = storeAvailabilityArrayList.get(0).get(Constants.STORE_ID);
         radioGroupExpress.setVisibility(View.GONE);
-        if(!TextUtils.isEmpty(storeId) && storeAvailabilityMap.containsKey(storeId)){
+        if (!TextUtils.isEmpty(storeId) && storeAvailabilityMap.containsKey(storeId)) {
             txtExpressMsg.setText(storeAvailabilityMap.get(storeId));
             txtExpressMsg.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             txtExpressMsg.setVisibility(View.GONE);
         }
     }
@@ -335,13 +330,13 @@ public final class ProductView {
         }
     }
 
-    private static String getAvailability(Product product, String storeAvailability){
-        if(!TextUtils.isEmpty(storeAvailability)){
+    private static String getAvailability(Product product, String storeAvailability) {
+        if (!TextUtils.isEmpty(storeAvailability)) {
             return storeAvailability;
-        }else if(product.getStoreAvailability() != null && product.getStoreAvailability().size()>0 &&
-                product.getStoreAvailability().get(0).containsKey(Constants.PRODUCT_STATUS)){
+        } else if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0 &&
+                product.getStoreAvailability().get(0).containsKey(Constants.PRODUCT_STATUS)) {
             return product.getStoreAvailability().get(0).get(Constants.PRODUCT_STATUS);
-        }else {
+        } else {
             return product.getProductStatus();
         }
     }
@@ -424,7 +419,7 @@ public final class ProductView {
                                                           final T basketOperationAware, final String navigationCtx,
                                                           @Nullable final HashMap<String, Integer> cartInfo,
                                                           final String tabName, String storeAvailability,
-                                                          HashMap<String, String> productStoreAvailabilityMap) {
+                                                          @Nullable HashMap<String, String> productStoreAvailabilityMap) {
         final ImageView imgAddToBasket = productViewHolder.getImgAddToBasket();
         final View viewDecBasketQty = productViewHolder.getViewDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
@@ -436,16 +431,13 @@ public final class ProductView {
         editTextQty.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
         editTextQty.setText("1");
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(((ActivityAware)
-                basketOperationAware).getCurrentActivity());
-        String addToBasketPostParams = preferences.getString(Constants.ADD_TO_BASKET_POST_PARAMS, null);
-        ArrayList<String> addToBasketPostParamsArrayList;
+        ArrayList<String> addToBasketPostParamsArrayList = AppDataDynamic.getInstance(((ActivityAware) basketOperationAware)
+                .getCurrentActivity()).getAddToBasketPostParams();
         final Map<String, String> basketQueryMap = new HashMap<>();
-        if (addToBasketPostParams != null) {
-            Type collectionType = new TypeToken<ArrayList<String>>() {}.getType();
-            addToBasketPostParamsArrayList = new Gson().fromJson(addToBasketPostParams, collectionType);
-            for(String basketPostParam : addToBasketPostParamsArrayList){
-                if(productStoreAvailabilityMap.containsKey(basketPostParam)) {
+        if (addToBasketPostParamsArrayList != null && addToBasketPostParamsArrayList.size() > 0
+                && productStoreAvailabilityMap != null && productStoreAvailabilityMap.size() > 0) {
+            for (String basketPostParam : addToBasketPostParamsArrayList) {
+                if (productStoreAvailabilityMap.containsKey(basketPostParam)) {
                     basketQueryMap.put(basketPostParam, productStoreAvailabilityMap.get(basketPostParam));
                 }
             }

@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.cart;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.Gson;
@@ -161,6 +162,7 @@ public class CartItem extends BaseCartItem {
         return getSalePrice() * this.totalQty;
     }
 
+    @Nullable
     public HashMap<String, String> getStoreAvailability() {
         return storeAvailability;
     }

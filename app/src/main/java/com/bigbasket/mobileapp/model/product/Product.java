@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.product;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.promo.ProductPromoInfo;
@@ -136,11 +137,16 @@ public class Product implements Parcelable {
 
     public static boolean areAllProductsOutOfStock(List<Product> productList) {
         for (Product product : productList) {
-            if(product != null){
-                for(HashMap<String, String> availabilityMap : product.getStoreAvailability())
-                    if (availabilityMap.get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A")) {
-                        return false;
-                    }
+            if (product != null) {
+                if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0) {
+                    for (HashMap<String, String> availabilityMap : product.getStoreAvailability())
+                        if (availabilityMap.get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A")) {
+                            return false;
+                        }
+                } else if (!TextUtils.isEmpty(product.getProductStatus())
+                        && product.getProductStatus().equals("A")) {
+                    return false;
+                }
             }
         }
         return true;
@@ -309,6 +315,7 @@ public class Product implements Parcelable {
         return brandSlug;
     }
 
+    @Nullable
     public ArrayList<HashMap<String, String>> getStoreAvailability() {
         return storeAvailability;
     }
