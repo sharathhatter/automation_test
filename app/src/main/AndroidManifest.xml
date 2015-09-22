@@ -281,6 +281,43 @@
                     android:host="home"
                     android:scheme="bigbasket" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="bigbasket"
+                    android:scheme="bigbasket-app" />
+            </intent-filter>
+            <!--<intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/host_url"
+                    android:path="/"
+                    android:pathPrefix="/"
+                    android:scheme="https" />
+                <data
+                    android:host="@string/host_url"
+                    android:path="/"
+                    android:pathPrefix="/"
+                    android:scheme="http" />
+                <data
+                    android:host="bigbasket.com"
+                    android:path="/"
+                    android:pathPrefix="/"
+                    android:scheme="http" />
+                <data
+                    android:host="bigbasket.com"
+                    android:path="/"
+                    android:pathPrefix="/"
+                    android:scheme="https" />
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".activity.base.uiv3.BBActivity"

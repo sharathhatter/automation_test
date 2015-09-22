@@ -128,6 +128,7 @@ public class Constants {
     public static final String SMART_BASKET = "Smart Basket";
     public static final String SMART_BASKET_SLUG = "smart-basket";
     public static final String BASKET = "basket";
+   /* public static final String HOST_URL = "www.bigbasket.com";*/
 
     public static final String PROMO_CATS = "promo_categories";
     public static final String NUM_IN_BASKET = "num_completed_in_basket";

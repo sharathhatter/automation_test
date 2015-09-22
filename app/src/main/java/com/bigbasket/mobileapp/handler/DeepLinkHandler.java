@@ -49,6 +49,11 @@ public class DeepLinkHandler {
         }
         UtmHandler.postUtm(context.getCurrentActivity(), uri);
         switch (uri.getHost()) {
+
+           /* case Constants.HOST_URL:
+                String path = uri.getPath();
+
+                return SUCCESS;*/
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
