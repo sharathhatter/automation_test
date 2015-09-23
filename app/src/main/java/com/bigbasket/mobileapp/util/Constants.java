@@ -609,4 +609,13 @@ public class Constants {
     public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
     public static final String EXPRESS_AVAILABILITY = "express_availability";
     public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
+
+    // Gift items
+    public static final String GIFTS = "gifts";
+    public static final String GIFT_WRAP_CHARGE = "gift_wrap_charge";
+    public static final String MAX_NUM_CHARS = "num_chars";
+    public static final String IS_READONLY = "is_readonly";
+    public static final String IS_PREWRAPPED = "is_prewrapped";
+    public static final String IS_CONVERTIBLE_TO_NORMAL = "is_convertible_to_normal";
+    public static final String COMMON_MSG = "common_msg";
 }

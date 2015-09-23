@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PostGiftItemsResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
@@ -373,6 +374,12 @@ public interface BigBasketApiService {
     @POST("/co-create-po/")
     void createPotentialOrder(@Field(Constants.ADDRESS_ID) String addressId,
                               Callback<ApiResponse<CreatePotentialOrderResponseContent>> apiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/co-post-gifts/")
+    void postGifts(@Field(Constants.P_ORDER_ID) String potentialOrderId,
+                   @Field(Constants.GIFTS) String addressId,
+                   Callback<ApiResponse<PostGiftItemsResponseContent>> apiResponseCallback);
 
     @FormUrlEncoded
     @POST("/co-post-shipment/")
