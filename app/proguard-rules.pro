@@ -189,3 +189,10 @@
 -dontwarn com.moengage.worker.*
 
 -keep class com.delight.**  { *; }
+
+# PayU SDK
+-keepclassmembers class com.payu.custombrowser.** {
+ *;
+}
+
+-dontwarn com.mixpanel.**
