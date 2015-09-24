@@ -84,6 +84,7 @@ public final class TrackEventkeys {
     public static final String FLAT_PAGE_SCREEN = "Flat Page";
     public static final String CUSTOMER_FEEDBACK_SCREEN = "Customer FeedBack";
     public static final String DEEP_LINK_DISPATCHER_SCREEN = "Deep Link Dispatcher";
+    public static final String SOCIAL_ACCOUNT_CONFIRMATION_SCREEN = "Social Account Confirmation";
     //PROMO
     public static final String PROMO_CATEGORY_SCREEN = "Promo Category";
     public static final String PROMO_DETAIL_SCREEN = "Promo Detail";
@@ -127,7 +128,7 @@ public final class TrackEventkeys {
     public static final String NC_TUTORIAL_SCREEN = "tutorial";
     public static final String NC_LOGIN_SCREEN = "login";
     public static final String NC_CITY_SELECTION_SCREEN = "city-selection";
-    public static final String NC_SINGUP_SCREEN = "signup";
+    public static final String NC_SIGNUP_SCREEN = "signup";
     public static final String NC_DISCOUNT_SCREEN = "discount";
     public static final String NC_PROMO_CAT_LISTING = "promo-listing";
     public static final String NC_PROMO_DETAIL = "promo-detail";
@@ -151,6 +152,8 @@ public final class TrackEventkeys {
     public static final String SINGLE_TAB_NAME = "none";
     public static final String FILTER_APPLIED = "filter_applied";
     public static final String IS_EXPRESS = "is_express";
+
+    public static final String FIS = "fis";
 
     private TrackEventkeys() {
     }

@@ -22,9 +22,9 @@ public class PayTMInitializer {
 
         String vurl = paymentParams.remove(Constants.PAYTM_HASH_VERIFICATION_URL);
         String gurl = paymentParams.remove(Constants.PAYTM_HASH_GENERATION_URL);
-        PaytmMerchant Merchant = new PaytmMerchant(gurl, vurl);
-        PaytmOrder Order = new PaytmOrder(paymentParams);
-        paytmPGService.initialize(Order, Merchant, null);
+        PaytmMerchant merchant = new PaytmMerchant(gurl, vurl);
+        PaytmOrder order = new PaytmOrder(paymentParams);
+        paytmPGService.initialize(order, merchant, null);
         paytmPGService.startPaymentTransaction(ctx, false, false, paymentTransactionCallback);
     }
 

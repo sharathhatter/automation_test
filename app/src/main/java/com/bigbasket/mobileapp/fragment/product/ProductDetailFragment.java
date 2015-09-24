@@ -1,7 +1,9 @@
 package com.bigbasket.mobileapp.fragment.product;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -22,6 +24,7 @@ import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
@@ -37,7 +40,10 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -161,7 +167,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                false, this, getNextScreenNavigationContext(), null, "none");
+                false, this, getNextScreenNavigationContext(), null, "none",
+                AppDataDynamic.getInstance(getActivity()).getStoreAvailabilityMap());
 
         if (mProduct.getProductPromoInfo() == null ||
                 !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {

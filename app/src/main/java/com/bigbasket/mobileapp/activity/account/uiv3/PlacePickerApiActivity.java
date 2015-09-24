@@ -143,6 +143,9 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
     private void updateLastKnownLocationOnMap() {
         if (mGoogleMap == null) return;
+        if (mGoogleMapMarker != null) {
+            mGoogleMapMarker.remove();
+        }
         mGoogleMapMarker = mGoogleMap.addMarker(new MarkerOptions()
                 .position(mSelectedLatLng)
                 .draggable(true));
@@ -186,9 +189,6 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     @Override
     public boolean onMyLocationButtonClick() {
         if (mGoogleMap != null) {
-            if (mGoogleMapMarker != null) {
-                mGoogleMapMarker.remove();
-            }
             readLastKnownLocation();
         }
         return false;

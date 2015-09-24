@@ -182,18 +182,21 @@ public interface BigBasketApiService {
     @POST("/c-incr-i/")
     void incrementCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                            @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                           @FieldMap Map<String, String> basketQueryMap,
                            Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/c-decr-i/")
     void decrementCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                            @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                           @FieldMap Map<String, String> basketQueryMap,
                            Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/c-set-i/")
     void setCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                      @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                     @FieldMap Map<String, String> basketQueryMap,
                      Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
 
     @FormUrlEncoded
@@ -221,6 +224,12 @@ public interface BigBasketApiService {
     void socialLogin(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
                      @Field(Constants.AUTH_TOKEN) String authToken,
                      Callback<ApiResponse<LoginApiResponse>> loginApiResponseContent);
+
+    @FormUrlEncoded
+    @POST("/social-register-member/")
+    void socialRegisterMember(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
+                              @Field(Constants.AUTH_TOKEN) String authToken,
+                              Callback<ApiResponse<LoginApiResponse>> loginApiResponseContent);
 
     @FormUrlEncoded
     @POST("/register-member/")

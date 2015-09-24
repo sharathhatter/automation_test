@@ -254,7 +254,16 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         }
         City newCity = new City(mChosenAddressSummary.getCityName(),
                 mChosenAddressSummary.getCityId());
-        changeCity(newCity);
+        requestCityChange(newCity);
+    }
+
+    public void requestCityChange(City newCity) {
+        boolean reopenLandingPage = getIntent().getBooleanExtra(Constants.REOPEN_LANDING_PAGE, false);
+        changeCity(newCity, reopenLandingPage);
+        if (reopenLandingPage) {
+            setResult(NavigationCodes.LOCATION_CHOSEN);
+            finish();
+        }
     }
 
     @Override

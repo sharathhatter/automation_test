@@ -109,7 +109,10 @@ public class Constants {
     public static final String FILTER_VALUES = "values";
     public static final String FILTER_VALUES_SLUG = "filter_value_slug";
 
-    public static final String SELLER_INFO = "seller_info";
+    public static final String STORE_AVAILABILITY = "store_availability";
+    public static final String STORE_ID = "store_id";
+    public static final String AVAILABILITY = "availability";
+    public static final String AVAILABILITY_INFO_ID = "availability_info_id";
 
     //update-app-data
     public static final String ADD_TO_BASKET_POST_PARAMS = "add_to_basket_post_params";
@@ -484,6 +487,7 @@ public class Constants {
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
     public static final String SOCIAL_LOGOUT = "social_logout";
     public static final int SOCIAL_ACCOUNT_NOT_LINKED = 1835;
+    public static final String REOPEN_LANDING_PAGE = "reopen_landing";
 
     //account type signin and register
     public static final String SIGN_IN_ACCOUNT_TYPE = "signIn";

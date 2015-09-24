@@ -13,6 +13,7 @@ import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -41,6 +42,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private HashMap<String, Integer> cartInfo;
     private boolean mLoadingFailed;
     private String mTabType;
+    private HashMap<String, String> storeAvailabilityMap;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -53,6 +55,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         this.serverListSize = productCount;
         this.navigationCtx = navigationCtx;
         this.mTabType = mTabType;
+        this.storeAvailabilityMap = AppDataDynamic.getInstance(activityAware.getCurrentActivity()).getStoreAvailabilityMap();
     }
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
@@ -117,7 +120,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             ProductView.setProductView((ProductViewHolder) viewHolder, product, baseImgUrl,
                     new ProductDetailOnClickListener(product.getSku(), activityAware),
                     productViewDisplayDataHolder,
-                    false, activityAware, navigationCtx, cartInfo, mTabType);
+                    false, activityAware, navigationCtx, cartInfo, mTabType, storeAvailabilityMap);
 
             int endPosition = position + DELTA_FOR_PRELOADING_IMG;
             if (endPosition < products.size()) {
