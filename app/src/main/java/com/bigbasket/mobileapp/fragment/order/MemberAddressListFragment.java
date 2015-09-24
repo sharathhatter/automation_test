@@ -215,29 +215,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         contentView.addView(addressView);
     }
 
-    private class AddressListFooterButtonOnClickListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
-            trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
-            if (mSelectedAddress == null) {
-                mSelectedAddress = memberAddressListAdapter.getSelectedAddress();
-            }
-            if (mSelectedAddress != null) {
-                if (mSelectedAddress.isPartial()) {
-                    showAddressForm(mSelectedAddress);
-                } else {
-                    postDeliveryAddress();
-                }
-            } else {
-                Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     @Override
     public void onAddNewAddressClicked() {
         showCreateAddressForm();
@@ -404,7 +381,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         }
     }
 
-
     @Override
     public void onPotentialOrderCreated(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
         if (createPotentialOrderResponseContent.hasQcErrors &&
@@ -447,5 +423,28 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     @Override
     public String getScreenTag() {
         return TrackEventkeys.VIEW_DELIVERY_ADDRESS_SCREEN;
+    }
+
+    private class AddressListFooterButtonOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
+            if (mSelectedAddress == null) {
+                mSelectedAddress = memberAddressListAdapter.getSelectedAddress();
+            }
+            if (mSelectedAddress != null) {
+                if (mSelectedAddress.isPartial()) {
+                    showAddressForm(mSelectedAddress);
+                } else {
+                    postDeliveryAddress();
+                }
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

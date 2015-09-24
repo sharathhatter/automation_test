@@ -213,6 +213,15 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
+    private void renderGiftLayout() {
+        LinearLayout layoutPaymentContainer = (LinearLayout) findViewById(R.id.layoutPaymentContainer);
+        String[] array_txtValues = new String[]{"Address", "Gift", "Slots", "Order"};
+        Integer[] array_compPos = new Integer[]{0, 1, 2};
+        int selectedPos = 3;
+        View giftView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
+        if (giftView != null) layoutPaymentContainer.addView(giftView, 1);
+    }
+
     private void renderFooter(boolean refresh) {
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, mOrderDetails.getFormattedFinalTotal(),
@@ -368,6 +377,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 i++;
             }
         }
+        renderGiftLayout();
     }
 
     @Override
@@ -381,15 +391,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
         String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
         PayTMInitializer.initiate(paymentParams, this,
                 new PaytmTxnCallback<>(this, fullOrderId, mTxnId, mPotentialOrderId));
-    }
-
-    private class OnShowAvailableVouchersListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            Intent availableVoucherListActivity = new Intent(getCurrentActivity(), AvailableVoucherListActivity.class);
-            availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
-            startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
-        }
     }
 
     public void onVoucherApplied(String voucher, OrderDetails orderDetails,
@@ -787,5 +788,14 @@ public class PaymentSelectionActivity extends BackButtonActivity
     @Override
     public String getScreenTag() {
         return TrackEventkeys.PAYMENT_SELECTION_SCREEN;
+    }
+
+    private class OnShowAvailableVouchersListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Intent availableVoucherListActivity = new Intent(getCurrentActivity(), AvailableVoucherListActivity.class);
+            availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
+            startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
+        }
     }
 }

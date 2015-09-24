@@ -65,10 +65,12 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeSet;
 
 public class UIUtil {
 
@@ -430,6 +432,68 @@ public class UIUtil {
             default:
                 return 1;
         }
+    }
+
+    public static View getCheckoutProgressView(Context context, @Nullable ViewGroup parent, String[] array_txtValues,
+                                               Integer[] array_compPos, int selectedPos) {
+        View container = LayoutInflater.from(context).inflate(R.layout.uiv3_gift_flow,
+                parent, false);
+        LinearLayout layoutGift = (LinearLayout) container.findViewById(R.id.layout_gift);
+
+        ImageView imageViewAddress = (ImageView) container.findViewById(R.id.imageView_address);
+        ImageView imageViewGift = (ImageView) container.findViewById(R.id.imageView_gifts);
+        ImageView imageViewSlots = (ImageView) container.findViewById(R.id.imageView_slots);
+        ImageView imageViewOrder = (ImageView) container.findViewById(R.id.imageView_order);
+
+        TextView textViewAddress = (TextView) container.findViewById(R.id.textView_address);
+        TextView textViewGift = (TextView) container.findViewById(R.id.textView_gifts);
+        TextView textViewSlots = (TextView) container.findViewById(R.id.textView_slots);
+        TextView textViewOrder = (TextView) container.findViewById(R.id.textView_order);
+
+        ArrayList<ImageView> listImageViews = new ArrayList<>();
+        listImageViews.add(imageViewAddress);
+        listImageViews.add(imageViewGift);
+        listImageViews.add(imageViewSlots);
+        listImageViews.add(imageViewOrder);
+
+        Integer[] tot;
+
+        if (array_txtValues.length == 4) {
+            textViewAddress.setText(array_txtValues[0]);
+            textViewGift.setText(array_txtValues[1]);
+            textViewSlots.setText(array_txtValues[2]);
+            textViewOrder.setText(array_txtValues[3]);
+            tot = new Integer[]{0, 1, 2, 3};
+        } else {
+            layoutGift.setVisibility(View.GONE);
+            listImageViews.remove(1);
+            textViewAddress.setText(array_txtValues[0]);
+            textViewSlots.setText(array_txtValues[1]);
+            textViewOrder.setText(array_txtValues[2]);
+            tot = new Integer[]{0, 1, 2};
+        }
+
+        for (int i = 0; i < array_compPos.length; i++) {
+            listImageViews.get(array_compPos[i]).setBackgroundResource(R.drawable.promo_used);
+        }
+
+        List<Integer> list = new ArrayList<Integer>(Arrays.asList(tot));
+        TreeSet<Integer> set = new TreeSet<Integer>(list);
+        set.removeAll(Arrays.asList(array_compPos));
+        Integer[] rem = set.toArray(new Integer[set.size()]);
+        for (int i = 0; i < rem.length; i++) {
+            if (rem[i] != selectedPos) {
+                listImageViews.get(rem[i]).setBackgroundResource(R.drawable.promo_unused);
+            }
+        }
+
+        listImageViews.get(selectedPos).setBackgroundResource(R.drawable.done_green_24dp);
+
+        textViewAddress.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+        textViewSlots.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+        textViewOrder.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+        textViewGift.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+        return container;
     }
 
     public static void setUpFooterButton(Context context, ViewGroup checkoutContainer,

@@ -100,8 +100,18 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         layoutCheckoutFooter.setOnClickListener(new OnPostShipmentClickListener());
     }
 
+    private void renderGiftLayout() {
+        LinearLayout layoutShipment = (LinearLayout) findViewById(R.id.layout_shipment);
+        String[] array_txtValues = new String[] {"Address","Gift","Slots","Order"};
+        Integer[] array_compPos = new Integer[]{0,1};
+        int selectedPos = 2;
+        View giftView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
+        if (giftView != null) layoutShipment.addView(giftView, 1);
+    }
+
     private void renderShipments() {
         displayShipmentsBasedOnViewState(mDefaultShipmentActions);
+        renderGiftLayout();
     }
 
     private void displayShipmentsBasedOnViewState(@Nullable HashMap<String, BaseShipmentAction> shipmentActionHashMap) {
@@ -267,6 +277,64 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         }
     }
 
+    private void displaySelectedSlot(View shipmentView, Shipment shipment) {
+        ArrayList<Slot> slots = shipment.getSlots();
+        if (slots == null || slots.size() == 0) return;
+        TextView txtReadonlySelectedSlot = (TextView) shipmentView.findViewById(R.id.txtReadonlySelectedSlot);
+        txtReadonlySelectedSlot.setTypeface(faceRobotoMedium);
+        Button btnSelectedSlot = (Button) shipmentView.findViewById(R.id.btnSelectedSlot);
+        btnSelectedSlot.setTypeface(faceRobotoMedium);
+        Slot selectedSlot;
+        if (slots.size() == 1) {
+            btnSelectedSlot.setVisibility(View.GONE);
+            selectedSlot = setAvailableSlot(slots);
+            shipment.setSelectedSlot(selectedSlot);
+            if (selectedSlot.getSlotDisplay() != null) {
+                showSelectedSlot(selectedSlot, txtReadonlySelectedSlot);
+            }
+        } else {
+            txtReadonlySelectedSlot.setVisibility(View.GONE);
+            selectedSlot = setAvailableSlot(slots);
+            shipment.setSelectedSlot(selectedSlot);
+            if (selectedSlot.getSlotDisplay() != null) {
+                showSelectedSlot(selectedSlot, btnSelectedSlot);
+            }
+            btnSelectedSlot.setOnClickListener(new OnSelectSlotClickListener(shipment));
+        }
+    }
+
+    private Slot setAvailableSlot(ArrayList<Slot> slots) {
+        for (Slot slot : slots) {
+            if (slot.isAvailable())
+                return slot;
+        }
+        return slots.get(0);
+    }
+
+    private void showSelectedSlot(Slot selectedSlot, TextView txtVw) {
+        if (selectedSlot.getSlotDisplay() != null) {
+            SlotDisplay slotDisplay = selectedSlot.getSlotDisplay();
+            String display = TextUtils.isEmpty(slotDisplay.getDate()) ? slotDisplay.getTime() :
+                    slotDisplay.getDate() + "     " + slotDisplay.getTime();
+            txtVw.setText(display);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
+            setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
+            finish();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SLOT_SELECTION_SCREEN;
+    }
+
     private class OnViewShipmentLinkedProductsListener implements View.OnClickListener {
         private Shipment shipment;
 
@@ -361,49 +429,6 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         }
     }
 
-    private void displaySelectedSlot(View shipmentView, Shipment shipment) {
-        ArrayList<Slot> slots = shipment.getSlots();
-        if (slots == null || slots.size() == 0) return;
-        TextView txtReadonlySelectedSlot = (TextView) shipmentView.findViewById(R.id.txtReadonlySelectedSlot);
-        txtReadonlySelectedSlot.setTypeface(faceRobotoMedium);
-        Button btnSelectedSlot = (Button) shipmentView.findViewById(R.id.btnSelectedSlot);
-        btnSelectedSlot.setTypeface(faceRobotoMedium);
-        Slot selectedSlot;
-        if (slots.size() == 1) {
-            btnSelectedSlot.setVisibility(View.GONE);
-            selectedSlot = setAvailableSlot(slots);
-            shipment.setSelectedSlot(selectedSlot);
-            if (selectedSlot.getSlotDisplay() != null) {
-                showSelectedSlot(selectedSlot, txtReadonlySelectedSlot);
-            }
-        } else {
-            txtReadonlySelectedSlot.setVisibility(View.GONE);
-            selectedSlot = setAvailableSlot(slots);
-            shipment.setSelectedSlot(selectedSlot);
-            if (selectedSlot.getSlotDisplay() != null) {
-                showSelectedSlot(selectedSlot, btnSelectedSlot);
-            }
-            btnSelectedSlot.setOnClickListener(new OnSelectSlotClickListener(shipment));
-        }
-    }
-
-    private Slot setAvailableSlot(ArrayList<Slot> slots) {
-        for (Slot slot : slots) {
-            if (slot.isAvailable())
-                return slot;
-        }
-        return slots.get(0);
-    }
-
-    private void showSelectedSlot(Slot selectedSlot, TextView txtVw) {
-        if (selectedSlot.getSlotDisplay() != null) {
-            SlotDisplay slotDisplay = selectedSlot.getSlotDisplay();
-            String display = TextUtils.isEmpty(slotDisplay.getDate()) ? slotDisplay.getTime() :
-                    slotDisplay.getDate() + "     " + slotDisplay.getTime();
-            txtVw.setText(display);
-        }
-    }
-
     private class OnSelectSlotClickListener implements View.OnClickListener {
 
         private Shipment shipment;
@@ -465,20 +490,5 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                     (int) (displayRectangle.height() * 0.7f));
             mSlotListDialog.show();
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
-            setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
-            finish();
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public String getScreenTag() {
-        return TrackEventkeys.SLOT_SELECTION_SCREEN;
     }
 }
