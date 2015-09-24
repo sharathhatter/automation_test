@@ -36,7 +36,7 @@
                     android:layout_height="2dp"
                     android:layout_gravity="center"
                     android:layout_weight="0.5"
-                    android:background="@color/common_action_bar_splitter" />
+                    android:background="@color/strokeLine" />
             </LinearLayout>
 
             <TextView
@@ -72,7 +72,7 @@
                     android:layout_height="2dp"
                     android:layout_gravity="center"
                     android:layout_weight="0.5"
-                    android:background="@color/common_action_bar_splitter" />
+                    android:background="@color/strokeLine" />
             </LinearLayout>
 
             <TextView
@@ -108,7 +108,7 @@
                     android:layout_height="2dp"
                     android:layout_gravity="center"
                     android:layout_weight="0.5"
-                    android:background="@color/common_action_bar_splitter" />
+                    android:background="@color/strokeLine" />
             </LinearLayout>
 
             <TextView
@@ -143,7 +143,7 @@
                     android:layout_height="2dp"
                     android:layout_gravity="center"
                     android:layout_weight="0.5"
-                    android:background="@color/common_action_bar_splitter"
+                    android:background="@color/strokeLine"
                     android:visibility="gone" />
             </LinearLayout>
 

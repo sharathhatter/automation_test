@@ -85,6 +85,7 @@ public final class TrackEventkeys {
     public static final String CUSTOMER_FEEDBACK_SCREEN = "Customer FeedBack";
     public static final String DEEP_LINK_DISPATCHER_SCREEN = "Deep Link Dispatcher";
     public static final String SOCIAL_ACCOUNT_CONFIRMATION_SCREEN = "Social Account Confirmation";
+    public static final String GIFT_OPTIONS_SCREEN = "Gift Options";
     //PROMO
     public static final String PROMO_CATEGORY_SCREEN = "Promo Category";
     public static final String PROMO_DETAIL_SCREEN = "Promo Detail";

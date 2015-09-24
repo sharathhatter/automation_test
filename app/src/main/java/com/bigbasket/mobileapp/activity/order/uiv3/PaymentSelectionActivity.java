@@ -213,7 +213,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
-    private void renderGiftLayout() {
+    private void renderCheckOutProgressView() {
         LinearLayout layoutPaymentContainer = (LinearLayout) findViewById(R.id.layoutPaymentContainer);
         String[] array_txtValues = new String[]{"Address", "Gift", "Slots", "Order"};
         Integer[] array_compPos = new Integer[]{0, 1, 2};
@@ -377,7 +377,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 i++;
             }
         }
-        renderGiftLayout();
+        renderCheckOutProgressView();
     }
 
     @Override

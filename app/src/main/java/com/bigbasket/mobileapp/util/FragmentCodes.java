@@ -16,6 +16,7 @@ public final class FragmentCodes {
     public static final int START_DYNAMIC_SCREEN = 31;
     public static final int START_COMMUNICATION_HUB = 32;
     public static final int START_WEBVIEW = 33;
+    public static final int START_GIFTFRAGMENT = 13;
 
     private FragmentCodes() {
     }

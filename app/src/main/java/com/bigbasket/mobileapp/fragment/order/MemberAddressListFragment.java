@@ -19,8 +19,8 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.ShipmentSelectionActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -41,13 +41,13 @@ import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BasketDeltaDialog;
 import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -405,7 +405,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     private void launchSlotSelection(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
-        Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
+       /* Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
         intent.putParcelableArrayListExtra(Constants.SHIPMENTS, createPotentialOrderResponseContent.shipments);
         intent.putExtra(Constants.ORDER_DETAILS, createPotentialOrderResponseContent.orderDetails);
         intent.putExtra(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
@@ -417,7 +417,20 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             intent.putExtra(Constants.ON_TOGGLE_ACTIONS,
                     new Gson().toJson(createPotentialOrderResponseContent.toggleShipmentActions));
         }
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);*/
+        if (createPotentialOrderResponseContent.gift != null) {
+            Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GIFTFRAGMENT);
+            intent.putExtra(Constants.NUM_GIFTS, createPotentialOrderResponseContent.gift.getCount());
+            intent.putExtra(Constants.COMMON_MSG, createPotentialOrderResponseContent.gift.getCommonMsg());
+            intent.putParcelableArrayListExtra(Constants.GIFTS, createPotentialOrderResponseContent.gift.getGiftItems());
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        } else {
+            Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GIFTFRAGMENT);
+            intent.putExtra(Constants.NUM_GIFTS, 3);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        }
     }
 
     @Override
