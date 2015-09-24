@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParam
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayTMInitializer;
+import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
@@ -35,7 +36,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
-import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
 import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
@@ -239,37 +239,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                                     break;
                                 case Constants.PAYTM_WALLET:
                                     PayTMInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
-                                            getCurrentActivity(), new PaytmPaymentTransactionCallback() {
-                                                @Override
-                                                public void onTransactionSuccess(Bundle bundle) {
-                                                    onFundWalletSuccess();
-                                                }
-
-                                                @Override
-                                                public void onTransactionFailure(String s, Bundle bundle) {
-                                                    onFundWalletFailure();
-                                                }
-
-                                                @Override
-                                                public void networkNotAvailable() {
-                                                    onFundWalletFailure();
-                                                }
-
-                                                @Override
-                                                public void clientAuthenticationFailed(String s) {
-                                                    onFundWalletFailure();
-                                                }
-
-                                                @Override
-                                                public void someUIErrorOccurred(String s) {
-                                                    onFundWalletFailure();
-                                                }
-
-                                                @Override
-                                                public void onErrorLoadingWebPage(int i, String s, String s1) {
-                                                    onFundWalletFailure();
-                                                }
-                                            });
+                                            getCurrentActivity(),
+                                            new PaytmTxnCallback<>(getCurrentActivity(), null, null, false, true));
                                     break;
                             }
                             break;
@@ -370,9 +341,11 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {
-        new PostPaymentHandler<>(this, null, mSelectedPaymentMethod, txnId,
-                true, UIUtil.formatAsMoney(mFinalTotal), null)
+        new PostPaymentHandler<>(this, null, mSelectedPaymentMethod,
+                true, null)
                 .isWallet(true)
+                .setTxnId(txnId)
+                .setAmount(UIUtil.formatAsMoney(mFinalTotal))
                 .setDataPickupCode(dataPickupCode)
                 .setPgTxnId(pgTxnId)
                 .start();
@@ -380,20 +353,22 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
 
     private void communicateHdfcPayzappResponseFailure(String resCode, String resDesc) {
         new PostPaymentHandler<>(this, null, mSelectedPaymentMethod,
-                mHDFCPayzappTxnId, false, UIUtil.formatAsMoney(mFinalTotal), null)
+                false, null)
                 .isWallet(true)
+                .setTxnId(mHDFCPayzappTxnId)
+                .setAmount(UIUtil.formatAsMoney(mFinalTotal))
                 .setErrResCode(resCode)
                 .setErrResDesc(resDesc)
                 .start();
     }
 
     @Override
-    public void onPostPaymentFailure(String txnId) {
+    public void onPostPaymentFailure(String txnId, String paymentType) {
         onFundWalletFailure();
     }
 
     @Override
-    public void onPostPaymentSuccess(String txnId) {
+    public void onPostPaymentSuccess(String txnId, String paymentType) {
         onFundWalletSuccess();
     }
 
