@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,6 +84,11 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         bigBasketApiService.getProductsForOrder(mOrderId, new Callback<ApiResponse<GetProductsForOrderApiResponseContent>>() {
             @Override
             public void success(ApiResponse<GetProductsForOrderApiResponseContent> getProductsForOrderApiResponse, Response response) {
+
+                String json = new Gson().toJson(getProductsForOrderApiResponse);
+                System.out.println("response in shop from this order-------"+json);
+
+
                 if (isSuspended()) return;
                 try {
                     hideProgressDialog();
@@ -141,28 +147,33 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         RecyclerView productRecyclerView = (RecyclerView) shopFromOrderLayout.findViewById(R.id.recyclerView);
         UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
 
+
         // Set product-list data
-        AuthParameters authParameters = AuthParameters.getInstance(getActivity());
-        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
-                .setCommonTypeface(faceRobotoRegular)
-                .setSansSerifMediumTypeface(faceRobotoMedium)
-                .setRupeeTypeface(faceRupee)
-                .setHandler(handler)
-                .setLoggedInMember(!authParameters.isAuthTokenEmpty())
-                .setShowShoppingListBtn(true)
-                .setShowBasketBtn(true)
-                .setShowShopListDeleteBtn(false)
-                .showQtyInput(authParameters.isKirana())
-                .build();
 
-        productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
-                productViewDisplayDataHolder, this, mProducts.size(),
-                getNextScreenNavigationContext(), TrackEventkeys.SINGLE_TAB_NAME);
+            AuthParameters authParameters = AuthParameters.getInstance(getActivity());
+            ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                    .setCommonTypeface(faceRobotoRegular)
+                    .setSansSerifMediumTypeface(faceRobotoMedium)
+                    .setRupeeTypeface(faceRupee)
+                    .setHandler(handler)
+                    .setLoggedInMember(!authParameters.isAuthTokenEmpty())
+                    .setShowShoppingListBtn(true)
+                    .setShowBasketBtn(true)
+                    .setShowShopListDeleteBtn(false)
+                    .showQtyInput(authParameters.isKirana())
+                    .build();
 
-        productRecyclerView.setAdapter(productListRecyclerAdapter);
-        contentView.addView(shopFromOrderLayout);
-        logShopFromOrderEvent();
-    }
+
+            productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
+                    productViewDisplayDataHolder, this, mProducts.size(),
+                    getNextScreenNavigationContext(), TrackEventkeys.SINGLE_TAB_NAME);
+
+            productRecyclerView.setAdapter(productListRecyclerAdapter);
+            contentView.addView(shopFromOrderLayout);
+            logShopFromOrderEvent();
+            hideProgressView();
+        }
+
 
 
     @Override

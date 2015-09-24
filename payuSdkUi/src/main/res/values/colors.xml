@@ -3,5 +3,7 @@
 
     <color name="button_selected_state_color">#F44336</color>
     <color name="amt_txn_textColor">#C82506</color>
+    <color name="uiv3_status_bar_background">#bd1c24</color>
+    <color name="uiv3_action_bar_background">#F44336</color>
 
 </resources>

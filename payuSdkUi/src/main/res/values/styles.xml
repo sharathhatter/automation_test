@@ -1,5 +1,10 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="AppTheme">
+
+    <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/uiv3_action_bar_background</item>
+        <item name="colorPrimaryDark">@color/uiv3_status_bar_background</item>
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+
     </style>
 </resources>
+

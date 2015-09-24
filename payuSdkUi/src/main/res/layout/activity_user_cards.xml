@@ -14,6 +14,7 @@
         android:background="@drawable/bb_logo_transparent_bkg"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
+        android:layout_below="@+id/toolbarMain"
         />
 
     <LinearLayout
