@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.handler.payment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
@@ -67,9 +68,15 @@ public class PaytmTxnCallback<T> implements PaytmPaymentTransactionCallback {
                 paramsMap.put(key, val.toString());
             }
         }
+
+        String txnId = paramsMap.get("ORDERID");
+        if (TextUtils.isEmpty(txnId)) {
+            paramsMap.get("ORDER_ID");
+        }
         new PostPaymentHandler<>(ctx, potentialOrderId, Constants.PAYTM_WALLET, status, orderId)
                 .setPayNow(isPayNow)
                 .isWallet(isWallet)
+                .setTxnId(txnId)
                 .setPayTmParams(paramsMap)
                 .start();
     }
