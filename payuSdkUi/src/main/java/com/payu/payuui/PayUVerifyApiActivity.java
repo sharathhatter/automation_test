@@ -3,6 +3,7 @@ package com.payu.payuui;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -107,7 +110,13 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
         (getTransactionInformationButton = (Button) findViewById(R.id.button_get_transaction_information)).setOnClickListener(this);
         (getOfferStatusButton = (Button) findViewById(R.id.button_get_offer_status)).setOnClickListener(this);
         (verifyTransactionButton = (Button) findViewById(R.id.button_verify_transaction)).setOnClickListener(this);
-
+/*******************setting status bar color**************/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(this.getResources().getColor(R.color.uiv3_status_bar_background));
+        }
 
     }
 

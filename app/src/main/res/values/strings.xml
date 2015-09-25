@@ -346,7 +346,7 @@
 
     <string name="chooseYourLocation">Choose your Location</string>
     <string name="locateYourArea">Locate your area</string>
-    <string name="typeYourLocality">Type your locality</string>
+    <string name="typeYourLocality">Type your locality like M.G. Road</string>
     <string name="locationOrArea">Location/Area</string>
     <string name="useMyLocation">Use My Location</string>
     <string name="enableLocationHeading">Enable Location</string>

@@ -1,15 +1,17 @@
 package com.payu.payuui;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
-
 
 import com.payu.india.Interfaces.PaymentRelatedDetailsListener;
 import com.payu.india.Model.MerchantWebService;
@@ -62,7 +64,7 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
 
 
 
-        // leets register the buttons
+        // lets register the buttons
         (netBankingButton = (Button) findViewById(R.id.button_netbanking)).setOnClickListener(this);
         (emiButton = (Button) findViewById(R.id.button_emi)).setOnClickListener(this);
         (cashCardButton = (Button) findViewById(R.id.button_cash_card)).setOnClickListener(this);
@@ -114,10 +116,13 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
                 findViewById(R.id.progress_bar).setVisibility(View.GONE);
             }
         }
-
-
-
-
+/*******************setting status bar color**************/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(this.getResources().getColor(R.color.uiv3_status_bar_background));
+        }
     }
 
     @Override
@@ -136,11 +141,6 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
 
         if(id == android.R.id.home){
             finish();
-//            NavUtils.navigateUpFromSameTask(this);
-        }else if(id == R.id.action_exit){
-            // Not decided yet what to do
-        }else if(id == R.id.action_demo){
-            // not decided yet!
         }
 
         return super.onOptionsItemSelected(item);
