@@ -283,9 +283,6 @@ public interface BigBasketApiService {
     void postVoucher(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.EVOUCHER_CODE) String evoucherCode,
                      Callback<ApiResponse<PostVoucherApiResponseContent>> postVoucherApiResponseCallback);
 
-    @GET("/change-city/")
-    void changeCity(@Query("new_city_id") String newCityId, Callback<OldBaseApiResponse> oldBaseApiResponseCallback);
-
     @GET("/get-area-info/")
     ApiResponse<GetAreaInfoResponse> getAreaInfo(@Query(Constants.CITY_ID) String cityId);
 
@@ -340,22 +337,7 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/post-order-payment/")
-    void postPrepaidPayment(@Field(Constants.TXN_ID) String txnId, @Field(Constants.P_ORDER_ID) String potentialOrderId,
-                            @Field(Constants.PAYMENT_TYPE) String paymentType, @Field(Constants.STATUS) String status,
-                            @Field(Constants.PG_TXN_ID) String pgTxnId, @Field(Constants.DATA_PICKUP_CODE) String dataPickupCode,
-                            @Field(Constants.AMOUNT) String amount, @Field(Constants.ORDER_ID) String orderId,
-                            @Field(Constants.PAY_NOW) String payNow,
-                            @Field(Constants.WALLET) String isWallet,
-                            Callback<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPaymentApiResponseCallback);
-
-    @FormUrlEncoded
-    @POST("/post-order-payment/")
-    void postPrepaidPayment(@Field(Constants.TXN_ID) String txnId, @Field(Constants.P_ORDER_ID) String potentialOrderId,
-                            @Field(Constants.PAYMENT_TYPE) String paymentType, @Field(Constants.STATUS) String status,
-                            @Field(Constants.ERR_RES_CODE) String errResCode, @Field(Constants.ERR_RES_DESC) String errResDesc,
-                            @Field(Constants.ORDER_ID) String orderId,
-                            @Field(Constants.PAY_NOW) String payNow,
-                            @Field(Constants.WALLET) String isWallet,
+    void postPrepaidPayment(@FieldMap Map<String, String> paymentParams,
                             Callback<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPaymentApiResponseCallback);
 
     @GET("/validate-order-payment/")
