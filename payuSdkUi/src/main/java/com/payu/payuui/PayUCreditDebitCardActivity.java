@@ -98,8 +98,6 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(this.getResources().getColor(R.color.uiv3_status_bar_background));
         }
-
-
     }
 
     @Override
@@ -118,13 +116,7 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
 
         if(id == android.R.id.home){
             finish();
-//            NavUtils.navigateUpFromSameTask(this);
         }
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

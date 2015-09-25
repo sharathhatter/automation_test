@@ -86,10 +86,8 @@ public class AddressSummaryDropdownAdapter extends BaseAdapter {
             String nick = addressSummary.getAddressNickName();
             /************Setting different color for gingerbread and below******/
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-
                 addressViewHolder.getTxtAreaName().setTextColor(context.getResources().getColor(R.color.dark_black));
                 addressViewHolder.getTxtCityName().setTextColor(context.getResources().getColor(R.color.dark_black));
-
             }
             if (TextUtils.isEmpty(nick)) {
                 addressViewHolder.getTxtAreaName().setText(addressSummary.getArea());
@@ -107,18 +105,11 @@ public class AddressSummaryDropdownAdapter extends BaseAdapter {
             TextView txtChangeCity = (TextView) convertView;
             txtChangeCity.setTypeface(faceRobotoRegular);
             txtChangeCity.setText(changeAddressTxt);
-
-
             /************Setting different color for gingerbread and below******/
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-
                 txtChangeCity.setTextColor(context.getResources().getColor(R.color.dark_black));
-
             }
         }
-
-
-
         return convertView;
     }
 

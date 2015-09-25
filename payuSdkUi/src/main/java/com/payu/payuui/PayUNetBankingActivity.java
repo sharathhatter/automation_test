@@ -134,13 +134,7 @@ public class PayUNetBankingActivity extends AppCompatActivity implements View.On
 
         if(id == android.R.id.home){
             finish();
-//            NavUtils.navigateUpFromSameTask(this);
-        }else if(id == R.id.action_exit){
-            // Not decided yet what to do
-        }else if(id == R.id.action_demo){
-            // not decided yet!
         }
-
         return super.onOptionsItemSelected(item);
     }
 

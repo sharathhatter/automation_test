@@ -84,8 +84,6 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
         } else {
             Toast.makeText(this, "Cash card not found", Toast.LENGTH_LONG).show();
         }
-
-
         /*******************setting status bar color**************/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = this.getWindow();
@@ -113,11 +111,6 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
         if(id == android.R.id.home) {
             finish();
         }
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

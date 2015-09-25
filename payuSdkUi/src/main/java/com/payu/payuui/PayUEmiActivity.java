@@ -167,12 +167,6 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
         if(id == android.R.id.home) {
             finish();
         }
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

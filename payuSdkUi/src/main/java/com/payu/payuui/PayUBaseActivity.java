@@ -116,7 +116,6 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
                 findViewById(R.id.progress_bar).setVisibility(View.GONE);
             }
         }
-
 /*******************setting status bar color**************/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = this.getWindow();
@@ -124,7 +123,6 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(this.getResources().getColor(R.color.uiv3_status_bar_background));
         }
-
     }
 
     @Override
@@ -143,11 +141,6 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
 
         if(id == android.R.id.home){
             finish();
-//            NavUtils.navigateUpFromSameTask(this);
-        }else if(id == R.id.action_exit){
-            // Not decided yet what to do
-        }else if(id == R.id.action_demo){
-            // not decided yet!
         }
 
         return super.onOptionsItemSelected(item);

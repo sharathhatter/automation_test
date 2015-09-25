@@ -122,13 +122,7 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
         int id = item.getItemId();
         if(id == android.R.id.home){
             finish();
-//            NavUtils.navigateUpFromSameTask(this);
         }
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
