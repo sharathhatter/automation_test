@@ -219,7 +219,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         Integer[] array_compPos = new Integer[]{0, 1, 2};
         int selectedPos = 3;
         View giftView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
-        if (giftView != null) layoutPaymentContainer.addView(giftView, 1);
+        if (giftView != null) layoutPaymentContainer.addView(giftView, 0);
     }
 
     private void renderFooter(boolean refresh) {

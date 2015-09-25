@@ -435,7 +435,7 @@ public class UIUtil {
     }
 
     public static View getCheckoutProgressView(Context context, @Nullable ViewGroup parent, String[] array_txtValues,
-                                               Integer[] array_compPos, int selectedPos) {
+                                               @Nullable Integer[] array_compPos, int selectedPos) {
         View container = LayoutInflater.from(context).inflate(R.layout.uiv3_gift_flow,
                 parent, false);
         LinearLayout layoutGift = (LinearLayout) container.findViewById(R.id.layout_gift);
@@ -473,14 +473,21 @@ public class UIUtil {
             tot = new Integer[]{0, 1, 2};
         }
 
-        for (int i = 0; i < array_compPos.length; i++) {
-            listImageViews.get(array_compPos[i]).setBackgroundResource(R.drawable.promo_used);
+        if (array_compPos != null) {
+            for (int i = 0; i < array_compPos.length; i++) {
+                listImageViews.get(array_compPos[i]).setBackgroundResource(R.drawable.promo_used);
+            }
+        }
+        Integer[] rem;
+        if (array_compPos != null) {
+            List<Integer> list = new ArrayList<Integer>(Arrays.asList(tot));
+            TreeSet<Integer> set = new TreeSet<Integer>(list);
+            set.removeAll(Arrays.asList(array_compPos));
+            rem = set.toArray(new Integer[set.size()]);
+        } else {
+            rem = tot;
         }
 
-        List<Integer> list = new ArrayList<Integer>(Arrays.asList(tot));
-        TreeSet<Integer> set = new TreeSet<Integer>(list);
-        set.removeAll(Arrays.asList(array_compPos));
-        Integer[] rem = set.toArray(new Integer[set.size()]);
         for (int i = 0; i < rem.length; i++) {
             if (rem[i] != selectedPos) {
                 listImageViews.get(rem[i]).setBackgroundResource(R.drawable.promo_unused);
@@ -489,10 +496,10 @@ public class UIUtil {
 
         listImageViews.get(selectedPos).setBackgroundResource(R.drawable.done_green_24dp);
 
-        textViewAddress.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
-        textViewSlots.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
-        textViewOrder.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
-        textViewGift.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+        textViewAddress.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewSlots.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewOrder.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewGift.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
         return container;
     }
 

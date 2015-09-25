@@ -119,6 +119,7 @@ public final class TrackEventkeys {
     public static final String CO_ADDRESS = "co.address";
     public static final String CO_QC = "co.qc";
     public static final String CO_DELIVERY_OPS = "co.delivery-options";
+    public static final String CO_GIFT_OPS = "xo.gift-options";
     public static final String CO_PAYMENT = "co.payment";
     public static final String ACCOUNT_MENU = "account-menu";
     public static final String ORDER_HISTORY = "order-history";

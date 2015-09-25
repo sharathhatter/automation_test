@@ -12,14 +12,13 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.model.product.gift.Gift;
+import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-/**
- * Created by mrudula on 24/9/15.
- */
 public class GiftOptionsFragment extends BaseFragment {
 
     @Override
@@ -32,8 +31,7 @@ public class GiftOptionsFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            int numOfGifts = args.getInt(Constants.NUM_GIFTS);
-            renderGiftLayout(numOfGifts);
+            renderGiftLayout(args);
         }
     }
 
@@ -45,19 +43,30 @@ public class GiftOptionsFragment extends BaseFragment {
         if (giftView != null) layout.addView(giftView, 0);
     }
 
-    private void renderGiftLayout(int count) {
+    private void renderGiftLayout(Bundle args) {
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
         LinearLayout layout = (LinearLayout) contentView.findViewById(R.id.layoutGiftScroll);
         renderCheckOutProgressView(layout);
         TextView textViewCount = (TextView) contentView.findViewById(R.id.textViewNumGifts);
-        textViewCount.setText("You have " + count + " gift items in your basket!");
-        textViewCount.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoMedium());
+        Gift gift = args.getParcelable(Constants.GIFTS);
+        int giftCount;
+        if (gift != null) {
+            giftCount = gift.getCount();
+            textViewCount.setText("You have " + giftCount + " gift items in your basket!");
+            textViewCount.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoMedium());
+        }
+        final String potentialOrderId = args.getString(Constants.P_ORDER_ID);
         Button btnSkipAndProceed = (Button) contentView.findViewById(R.id.buttonSkipPro);
         btnSkipAndProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (!checkInternetConnection()) {
+                    handler.sendOfflineError();
+                    return;
+                }
+                new PostGiftTask<>(getCurrentActivity(), potentialOrderId, null,
+                        TrackEventkeys.CO_DELIVERY_OPS).startTask();
             }
         });
         Button btnGiftOptions = (Button) contentView.findViewById(R.id.buttonGiftWrapOpt);

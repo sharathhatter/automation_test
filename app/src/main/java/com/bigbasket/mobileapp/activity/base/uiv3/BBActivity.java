@@ -425,10 +425,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 break;
             case FragmentCodes.START_GIFTFRAGMENT:
                 GiftOptionsFragment giftOptionsFragment = new GiftOptionsFragment();
-                Bundle giftBundle = new Bundle();
-//                giftBundle.putParcelableArrayList(Constants.GIFTS, getIntent().getParcelableArrayListExtra(Constants.GIFTS));
-                giftBundle.putInt(Constants.NUM_GIFTS, getIntent().getIntExtra(Constants.NUM_GIFTS, 0));
-//                giftBundle.putString(Constants.COMMON_MSG, getIntent().getStringExtra(Constants.COMMON_MSG));
+                Bundle giftBundle = getIntent().getExtras();
                 giftOptionsFragment.setArguments(giftBundle);
                 addToMainLayout(giftOptionsFragment);
                 break;
