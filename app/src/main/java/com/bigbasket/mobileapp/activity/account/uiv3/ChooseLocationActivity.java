@@ -279,10 +279,13 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED && data != null
-                && data.getParcelableExtra(Constants.LAT) != null) {
-            LatLng latLng = data.getParcelableExtra(Constants.LAT);
-            updateLocation(latLng);
+        if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED) {
+            if (data != null && data.hasExtra(Constants.LAT)) {
+                LatLng latLng = data.getParcelableExtra(Constants.LAT);
+                updateLocation(latLng);
+            } else {
+                buildGoogleApiClient();
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -177,8 +178,17 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
+        super.onBackPressed();
     }
 
     @Override

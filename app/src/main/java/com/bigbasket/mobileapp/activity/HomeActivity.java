@@ -44,12 +44,13 @@ public class HomeActivity extends BBActivity {
     private void setUpAddressSpinner() {
         final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
 
+        boolean isGuest = AuthParameters.getInstance(this).isAuthTokenEmpty();
         if (addressSummaries != null && addressSummaries.size() > 0) {
             mSpinnerArea.setVisibility(View.VISIBLE);
             mProgressBarArea.setVisibility(View.GONE);
             final AddressSummaryDropdownAdapter adapter = new
                     AddressSummaryDropdownAdapter(addressSummaries,
-                    getString(R.string.changeMyLocation), this);
+                    isGuest ? getString(R.string.changeMyLocation) : getString(R.string.changeMyAddress), this);
             mSpinnerArea.setAdapter(adapter);
             mSpinnerArea.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
