@@ -43,6 +43,8 @@ import com.newrelic.agent.android.NewRelic;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;

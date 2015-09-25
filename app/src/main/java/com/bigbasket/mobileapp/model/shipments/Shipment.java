@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.shipments;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -28,6 +29,8 @@ public class Shipment implements Parcelable {
     private Slot selectedSlot;
     @SerializedName(Constants.HELP_PAGE)
     private String helpPage;
+    @SerializedName(Constants.SHIPMENT_TYPE)
+    private String shipmentType;
 
     @Override
     public int describeContents() {
@@ -56,6 +59,7 @@ public class Shipment implements Parcelable {
         if (!wasSelectedSlotNull) {
             dest.writeParcelable(selectedSlot, flags);
         }
+        dest.writeString(shipmentType);
     }
 
     public Shipment(Parcel source) {
@@ -78,6 +82,7 @@ public class Shipment implements Parcelable {
         if (!wasSelectedSlotNull) {
             selectedSlot = source.readParcelable(Shipment.class.getClassLoader());
         }
+        shipmentType = source.readString();
     }
 
     public static final Parcelable.Creator<Shipment> CREATOR = new Parcelable.Creator<Shipment>() {
@@ -142,5 +147,10 @@ public class Shipment implements Parcelable {
 
     public void setSelectedSlot(Slot selectedSlot) {
         this.selectedSlot = selectedSlot;
+    }
+
+    @Nullable
+    public String getShipmentType() {
+        return shipmentType;
     }
 }

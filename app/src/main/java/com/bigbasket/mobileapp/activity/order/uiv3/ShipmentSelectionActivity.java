@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.adapter.shipment.SlotListAdapter;
 import com.bigbasket.mobileapp.apiservice.models.request.SelectedShipment;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.shipments.BaseShipmentAction;
 import com.bigbasket.mobileapp.model.shipments.Shipment;
@@ -44,6 +45,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +61,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private ArrayList<Shipment> mShipments;
     private boolean mHasUserToggledShipments;
     private ArrayList<Integer> mSelectedShipmentIndx;
+    private HashMap<String, String> originalShipmentMap;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +87,27 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         renderFooter();
         renderShipments();
         trackEvent(TrackingAware.CHECKOUT_DELIVERY_OPTION_SHOWN, null, null, null, false, true);
+        //todo checkout A|B|C shown and fis params
     }
+
+    private void trackCheckEventShown(ArrayList<Shipment> mShipments){
+        if(mShipments == null || mShipments.size() == 0 ||
+                TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+        HashMap<String, String> map = new HashMap<>();
+        if(originalShipmentMap==null) {
+            originalShipmentMap = new HashMap<>();
+        }
+        for(Shipment shipment : mShipments){
+            map.put(TrackEventkeys.FIS, shipment.getShipmentType());
+            originalShipmentMap.put(shipment.getShipmentId(), shipment.getShipmentType());
+            if(!TextUtils.isEmpty(shipment.getShipmentType()) &&
+                    !TextUtils.isEmpty(String.valueOf(shipment.getCount()))) {
+                map.put(shipment.getDeliveryCharge()+"_items", String.valueOf(shipment.getCount()));
+            }
+        }
+        trackEvent("Checkout."+ AppDataDynamic.getInstance(this).getAbModeName() + "Shown", map);
+    }
+
 
     @Override
     public int getMainLayout() {
@@ -326,10 +349,19 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             if (mHasUserToggledShipments) {
                 displayShipmentsBasedOnViewState(mToggleShipmentActions != null ?
                         mToggleShipmentActions.get(shipment.getShipmentId()) : null);
+
+                //todo CheckOut A|B|C toggle  merge|split
             } else {
                 renderShipments();
             }
         }
+    }
+
+    private void trackToggleEvent(){
+        if(TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.ACTION_NAME, "");
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + "Toggle", map);
     }
 
     private class OnPostShipmentClickListener implements View.OnClickListener {
@@ -358,7 +390,21 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             if (potentialOrderId == null) return;
             new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId,
                     TrackEventkeys.CO_DELIVERY_OPS).startTask();
+            //todo checkout A|B|C final state
         }
+    }
+
+    private void trackFinalShipmentEvent(ArrayList<Shipment> shipments){
+        if(TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.ACTION_NAME, "");
+        for(Shipment shipment : shipments){
+            map.put(TrackEventkeys.FINAL_FIS, shipment.getShipmentType());
+            map.put(TrackEventkeys.ORIGINAL_FIS, originalShipmentMap.get(shipment.getShipmentId()));
+            map.put("Final_"+shipment.getShipmentType()+"_items", String.valueOf(shipment.getCount()));
+        }
+
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + "FinalStatus", map);
     }
 
     private void displaySelectedSlot(View shipmentView, Shipment shipment) {

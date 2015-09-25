@@ -287,7 +287,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     tabTypeWithNoProducts.add(productTabInfo.getTabType());
                 }
                 if (i == 0) {
-                    tabType = productTabData.getProductTabInfos().get(0).getTabType();
+                    tabType = productTabInfo.getTabType();
                     logProductListingShownEvent(productTabInfo.getTabType());
                 }
             }
@@ -313,14 +313,14 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 tabType = productTabInfos.get(position).getTabType();
                 if(mTabNameWithEmptyProductView !=null && mTabNameWithEmptyProductView.contains(tabType)){
                     toggleFilterSortView(false);
-                    renderHeaderDropDown(null, 0, productTabData.getScreenName());
+                    //renderHeaderDropDown(null, 0, productTabData.getScreenName());
                 }else {
-                    renderHeaderDropDown(productTabData.getProductTabInfos().get(position).getHeaderSection(),
-                            productTabData.getProductTabInfos().get(position).getHeaderSelectedIndex(),
-                            productTabData.getScreenName());
                     setCurrentTabSortAndFilter(productTabData.getProductTabInfos().get(position),
                             hasProducts);
                 }
+                renderHeaderDropDown(productTabData.getProductTabInfos().get(position).getHeaderSection(),
+                        productTabData.getProductTabInfos().get(position).getHeaderSelectedIndex(),
+                        productTabData.getScreenName());
                 HashMap<String, String> eventAttribs = new HashMap<>();
                 eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabType());
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
@@ -708,12 +708,12 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                                     ((ProductListAwareFragment) fragment).insertProductList(products);
                                 } else {
                                     FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
-                                    Snackbar.make(contentFrame, "Unable to " + type+ " items", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(contentFrame, "Unable to " + type + " items", Snackbar.LENGTH_SHORT).show();
                                 }
                             }
                         } else {
                             FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
-                            Snackbar.make(contentFrame, "Unable to " + type +"items", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(contentFrame, "Unable to " + type + "items", Snackbar.LENGTH_SHORT).show();
                         }
                     }
 
@@ -830,12 +830,17 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
         if (cartInfoMap != null) {
             // Sync local cartInfoMap with this one
-            mCartInfo = cartInfoMap;
+            //mCartInfo = cartInfoMap;
+            setCartInfo(cartInfoMap);
             // Update in-memory fragments
-            if (mViewPager != null) { // if list page don't have tabs
-                setProductListForFragmentAtPosition(mViewPager.getCurrentItem() - 1);
-                setProductListForFragmentAtPosition(mViewPager.getCurrentItem() + 1);
-            }
+//            if (mViewPager != null) { // if list page don't have tabs
+//                if(mViewPager.getCurrentItem() == 1){
+//                    redrawFragment(0);
+//                }else {
+//                    setProductListForFragmentAtPosition(mViewPager.getCurrentItem() - 1);
+//                }
+//                setProductListForFragmentAtPosition(mViewPager.getCurrentItem() + 1);
+//            }
         }
     }
 
