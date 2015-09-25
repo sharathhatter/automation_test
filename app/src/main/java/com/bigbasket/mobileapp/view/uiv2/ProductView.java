@@ -78,7 +78,8 @@ public final class ProductView {
                 productDataAware, null);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, navigationCtx, cartInfo, tabName, null,
-                product.getStoreAvailability() != null ? product.getStoreAvailability().get(0) : null);
+                product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0
+                        ? product.getStoreAvailability().get(0) : null);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
                     productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap);
@@ -217,59 +218,70 @@ public final class ProductView {
         if (storeAvailabilityArrayList != null && storeAvailabilityArrayList.size() > 0 &&
                 appDataStoreAvailabilityMap != null && productViewDisplayDataHolder.isShowBasketBtn()) {
             TextView txtExpressMsg = productViewHolder.getTxtExpressMsg();
-            productViewHolder.getLayoutExpressMsg().setVisibility(View.VISIBLE);
-            if (storeAvailabilityArrayList.size() > 1) {
-                for (int i = 0; i < storeAvailabilityArrayList.size(); i++) {
-                    String storeId = storeAvailabilityArrayList.get(i).get(Constants.STORE_ID);
-                    if (!TextUtils.isEmpty(storeId) && appDataStoreAvailabilityMap.containsKey(storeId)) {
-                        RadioButton rbtnAvailabilityType = UIUtil.
-                                getPaymentOptionRadioButton(radioGroupExpress,
-                                        ((ActivityAware) productDataAware).getCurrentActivity(),
-                                        ((ActivityAware) productDataAware).getCurrentActivity().getLayoutInflater());
-                        rbtnAvailabilityType.setText(appDataStoreAvailabilityMap.get(storeId));
-                        rbtnAvailabilityType.setId(i);
-                        if (i == 0) {
-                            rbtnAvailabilityType.setChecked(true);
-                        }
-                        radioGroupExpress.addView(rbtnAvailabilityType);
+            if(AppDataDynamic.getInstance(((ActivityAware) productDataAware).getCurrentActivity()).isContextualMode() &&
+                    storeAvailabilityArrayList.size() > 1){
+                for(HashMap<String, String> stringStringHashMap : storeAvailabilityArrayList){
+                    if(stringStringHashMap.containsKey(Constants.TAB_TYPE) &&
+                            stringStringHashMap.get(Constants.TAB_TYPE).equals(Constants.EXPRESS)){
+                        setExpressDisplayNameMsg(stringStringHashMap, radioGroupExpress,
+                                appDataStoreAvailabilityMap, txtExpressMsg);
                     }
                 }
-                if (radioGroupExpress.getChildCount() > 1) {
-                    radioGroupExpress.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                            setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                                    productDataAware, String.valueOf(radioGroup.getFocusedChild().getTag()));
-                            setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
-                                    productDataAware, navigationCtx, cartInfo, tabName,
-                                    storeAvailabilityArrayList.get(radioGroup.getFocusedChild().getId()).get(Constants.PRODUCT_STATUS),
-                                    storeAvailabilityArrayList.get(radioGroup.getFocusedChild().getId()));
+            }else {
+                productViewHolder.getLayoutExpressMsg().setVisibility(View.VISIBLE);
+                if (storeAvailabilityArrayList.size() > 1) {
+                    for (int i = 0; i < storeAvailabilityArrayList.size(); i++) {
+                        String availabilityInfoId = storeAvailabilityArrayList.get(i).get(Constants.AVAILABILITY_INFO_ID);
+                        if (!TextUtils.isEmpty(availabilityInfoId) && appDataStoreAvailabilityMap.containsKey(availabilityInfoId)) {
+                            RadioButton rbtnAvailabilityType = UIUtil.
+                                    getPaymentOptionRadioButton(radioGroupExpress,
+                                            ((ActivityAware) productDataAware).getCurrentActivity(),
+                                            ((ActivityAware) productDataAware).getCurrentActivity().getLayoutInflater());
+                            rbtnAvailabilityType.setText(appDataStoreAvailabilityMap.get(availabilityInfoId));
+                            rbtnAvailabilityType.setId(i);
+                            if (i == 0) {
+                                rbtnAvailabilityType.setChecked(true);
+                            }
+                            radioGroupExpress.addView(rbtnAvailabilityType);
                         }
-                    });
-                    txtExpressMsg.setVisibility(View.GONE);
-                    radioGroupExpress.setVisibility(View.VISIBLE);
+                    }
+                    if (radioGroupExpress.getChildCount() > 1) {
+                        radioGroupExpress.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                                setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
+                                        productDataAware, String.valueOf(radioGroup.getFocusedChild().getTag()));
+                                setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
+                                        productDataAware, navigationCtx, cartInfo, tabName,
+                                        storeAvailabilityArrayList.get(radioGroup.getFocusedChild().getId()).get(Constants.PRODUCT_STATUS),
+                                        storeAvailabilityArrayList.get(radioGroup.getFocusedChild().getId()));
+                            }
+                        });
+                        txtExpressMsg.setVisibility(View.GONE);
+                        radioGroupExpress.setVisibility(View.VISIBLE);
+                    } else {
+                        setExpressDisplayNameMsg(storeAvailabilityArrayList.get(0), radioGroupExpress,
+                                appDataStoreAvailabilityMap, txtExpressMsg);
+                    }
                 } else {
-                    setExpressDisplayNameMsg(storeAvailabilityArrayList, radioGroupExpress,
+                    setExpressDisplayNameMsg(storeAvailabilityArrayList.get(0), radioGroupExpress,
                             appDataStoreAvailabilityMap, txtExpressMsg);
                 }
-            } else {
-                setExpressDisplayNameMsg(storeAvailabilityArrayList, radioGroupExpress,
-                        appDataStoreAvailabilityMap, txtExpressMsg);
+                layoutExpressMsg.setVisibility(View.VISIBLE);
             }
-            layoutExpressMsg.setVisibility(View.VISIBLE);
         } else {
             layoutExpressMsg.setVisibility(View.GONE);
         }
     }
 
-    private static void setExpressDisplayNameMsg(ArrayList<HashMap<String, String>> storeAvailabilityArrayList,
+    private static void setExpressDisplayNameMsg(HashMap<String, String> storeAvailabilityHashMap,
                                                  RadioGroup radioGroupExpress,
                                                  HashMap<String, String> storeAvailabilityMap,
                                                  TextView txtExpressMsg) {
-        String storeId = storeAvailabilityArrayList.get(0).get(Constants.STORE_ID);
+        String availabilityInfoId = storeAvailabilityHashMap.get(Constants.AVAILABILITY_INFO_ID);
         radioGroupExpress.setVisibility(View.GONE);
-        if (!TextUtils.isEmpty(storeId) && storeAvailabilityMap.containsKey(storeId)) {
-            txtExpressMsg.setText(storeAvailabilityMap.get(storeId));
+        if (!TextUtils.isEmpty(availabilityInfoId) && storeAvailabilityMap.containsKey(availabilityInfoId)) {
+            txtExpressMsg.setText(storeAvailabilityMap.get(availabilityInfoId));
             txtExpressMsg.setVisibility(View.VISIBLE);
         } else {
             txtExpressMsg.setVisibility(View.GONE);

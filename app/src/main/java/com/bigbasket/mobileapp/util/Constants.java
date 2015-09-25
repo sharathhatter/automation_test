@@ -110,8 +110,9 @@ public class Constants {
     public static final String FILTER_VALUES_SLUG = "filter_value_slug";
 
     public static final String STORE_AVAILABILITY = "store_availability";
-    public static final String STORE_ID = "store_id";
+    //public static final String STORE_ID = "store_id";
     public static final String AVAILABILITY = "availability";
+    public static final String EXPRESS = "express";
     public static final String AVAILABILITY_INFO_ID = "availability_info_id";
 
     //update-app-data
@@ -566,6 +567,7 @@ public class Constants {
     public static final String SKU_LIST = "sku_list";
     public static final String DISPLAY = "display";
     public static final String HELP_PAGE = "help_page";
+    public static final String SHIPMENT_TYPE = "shipment_type";
     public static final String ACTION_MSG = "action_msg";
     public static final String ACTION_STATE = "action_state";
     public static final String ON = "on";

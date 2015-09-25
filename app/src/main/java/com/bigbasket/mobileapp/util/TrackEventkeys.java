@@ -154,6 +154,9 @@ public final class TrackEventkeys {
     public static final String IS_EXPRESS = "is_express";
 
     public static final String FIS = "fis";
+    public static final String ACTION_NAME = "action_name";
+    public static final String FINAL_FIS = "final_fis";
+    public static final String ORIGINAL_FIS = "original_fis";
 
     private TrackEventkeys() {
     }

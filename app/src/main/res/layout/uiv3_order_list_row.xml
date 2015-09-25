@@ -78,12 +78,21 @@
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />
 
+        <TextView
+            android:id="@+id/txtAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtOrderId"
+            android:text="@string/order_pay_now_amount"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
 
         <TextView
             android:id="@+id/txtNumItems"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txtOrderId"
+            android:layout_below="@id/txtAmount"
             android:text="2 Items"
             android:textColor="@color/uiv3_secondary_text_color"
             android:textSize="@dimen/secondary_text_size" />
@@ -96,6 +105,7 @@
         android:layout_alignBottom="@id/layoutOrderData"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/margin_normal"
+
         android:paddingBottom="@dimen/padding_small"
         android:paddingRight="@dimen/padding_normal"
         android:text="Status"

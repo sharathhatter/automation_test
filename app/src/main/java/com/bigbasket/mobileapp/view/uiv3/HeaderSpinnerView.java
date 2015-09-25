@@ -70,6 +70,7 @@ public class HeaderSpinnerView<T> {
             if (toolbar.findViewById(txtToolbarDropdown.getId()) == null) {
                 txtToolbarDropdown.setTypeface(typeface);
                 toolbar.addView(txtToolbarDropdown);
+                toolbar.setTitle("");
             }
             txtToolbarDropdown.setOnClickListener(onChildDropdownRequested);
             imgCloseChildDropdown.setOnClickListener(onChildDropdownRequested);
