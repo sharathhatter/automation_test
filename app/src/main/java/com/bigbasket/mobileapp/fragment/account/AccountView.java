@@ -62,8 +62,6 @@ public class AccountView<T> {
                     ctx.getResources().getString(R.string.change_password),
                     ctx.getResources().getString(R.string.bbCommHub),
                     ctx.getResources().getString(R.string.wallet_activity),
-                    ctx.getResources().getString(R.string.shoppingList),
-                    ctx.getResources().getString(R.string.smartBasket),
                     ctx.getResources().getString(R.string.rateTheApp),
                     ctx.getResources().getString(R.string.signOut)};
 
@@ -108,22 +106,6 @@ public class AccountView<T> {
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 5:
-                    ctx.trackEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, map);
-                    intent = new Intent(ctx, ShoppingListActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
-                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
-                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    break;
-                case 6:
-                    ctx.trackEvent(TrackingAware.SMART_BASKET_ICON_CLICKED, map);
-                    ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
-                            Constants.SMART_BASKET_SLUG, true);
-                    intent = new Intent(ctx, ShoppingListSummaryActivity.class);
-                    intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
-                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
-                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    break;
-                case 7:
                     ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, map);
                     try {
                         ctx.startActivity(new Intent(Intent.ACTION_VIEW,
@@ -133,7 +115,7 @@ public class AccountView<T> {
                                 Uri.parse("https://play.google.com/store/apps/details?id=" + Constants.BASE_PKG_NAME)));
                     }
                     break;
-                case 8:
+                case 6:
                     ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, map);
                     if (ctx instanceof SocialLoginActivity) {
                         ((SocialLoginActivity) ctx).onLogoutRequested();

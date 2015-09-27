@@ -938,6 +938,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     private ArrayList<SectionNavigationItem> getPreBakedNavigationItems() {
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
+
+        // Home
         SectionItem homeSectionItem = new SectionItem(new SectionTextItem(getString(R.string.home), 0),
                 null, null, -1, new DestinationInfo(DestinationInfo.HOME, null));
         ArrayList<SectionItem> homeSectionItems = new ArrayList<>();
@@ -945,6 +947,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         Section homeSection = new Section(null, null, Section.MSG, homeSectionItems, null);
         sectionNavigationItems.add(new SectionNavigationItem<>(homeSection, homeSectionItem));
 
+        // My Basket
         SectionItem myBasketSectionItem = new SectionItem(new SectionTextItem(getString(R.string.my_basket_header), 0),
                 null, null, -1, new DestinationInfo(DestinationInfo.BASKET, null));
         ArrayList<SectionItem> myBasketSectionItems = new ArrayList<>();
@@ -952,6 +955,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         Section myBasketSection = new Section(null, null, Section.MSG, myBasketSectionItems, null);
         sectionNavigationItems.add(new SectionNavigationItem<>(myBasketSection, myBasketSectionItem));
 
+        // Smart Basket
         String smartBasketDeepLink = "bigbasket://smart-basket/";
         SectionItem smartBasketSectionItem = new SectionItem(new SectionTextItem(getString(R.string.smartBasket), 0),
                 null, null, -1, new DestinationInfo(DestinationInfo.DEEP_LINK, smartBasketDeepLink));
@@ -959,6 +963,15 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         smartBasketSectionItems.add(smartBasketSectionItem);
         Section smartBasketSection = new Section(null, null, Section.MSG, smartBasketSectionItems, null);
         sectionNavigationItems.add(new SectionNavigationItem<>(smartBasketSection, smartBasketSectionItem));
+
+        // Shopping List
+        String shoppingListDeepLink = "bigbasket://sl/";
+        SectionItem shoppingListSectionItem = new SectionItem(new SectionTextItem(getString(R.string.shoppingList), 0),
+                null, null, -1, new DestinationInfo(DestinationInfo.DEEP_LINK, shoppingListDeepLink));
+        ArrayList<SectionItem> shoppingListSections = new ArrayList<>();
+        shoppingListSections.add(shoppingListSectionItem);
+        Section shoppingListSection = new Section(null, null, Section.MSG, shoppingListSections, null);
+        sectionNavigationItems.add(new SectionNavigationItem<>(shoppingListSection, shoppingListSectionItem));
         return sectionNavigationItems;
     }
 

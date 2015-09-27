@@ -16,10 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,7 +56,8 @@ import java.util.Map;
 
 public final class ProductView {
 
-    public static <T> void setProductView(final ProductViewHolder productViewHolder, final Product product, String baseImgUrl,
+    public static <T> void setProductView(final ProductViewHolder productViewHolder,
+                                          final Product product, String baseImgUrl,
                                           ProductDetailOnClickListener productDetailOnClickListener,
                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                           final boolean skipChildDropDownRendering,
@@ -72,7 +70,7 @@ public final class ProductView {
                 productDetailOnClickListener, productDataAware);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
         setExpressMsg(productViewHolder, product, productViewDisplayDataHolder, productDataAware,
-                navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap);
+                navigationCtx, tabName, appDataStoreAvailabilityMap);
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, null);
@@ -207,85 +205,53 @@ public final class ProductView {
     private static <T> void setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                           final T productDataAware, final String navigationCtx,
-                                          @Nullable final HashMap<String, Integer> cartInfo,
                                           final String tabName,
-                                          @Nullable final HashMap<String, String> appDataStoreAvailabilityMap) {
+                                          @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
 
         final ArrayList<HashMap<String, String>> storeAvailabilityArrayList = product.getStoreAvailability();
-        LinearLayout layoutExpressMsg = productViewHolder.getLayoutExpressMsg();
-        RadioGroup radioGroupExpress = productViewHolder.getRadioGroupExpress();
-        radioGroupExpress.removeAllViews();
-        if (storeAvailabilityArrayList != null && storeAvailabilityArrayList.size() > 0 &&
-                appDataStoreAvailabilityMap != null && productViewDisplayDataHolder.isShowBasketBtn()) {
-            TextView txtExpressMsg = productViewHolder.getTxtExpressMsg();
-            if(AppDataDynamic.getInstance(((ActivityAware) productDataAware).getCurrentActivity()).isContextualMode() &&
-                    storeAvailabilityArrayList.size() > 1){
-                for(HashMap<String, String> stringStringHashMap : storeAvailabilityArrayList){
-                    if(stringStringHashMap.containsKey(Constants.TAB_TYPE) &&
-                            stringStringHashMap.get(Constants.TAB_TYPE).equals(Constants.EXPRESS)){
-                        setExpressDisplayNameMsg(stringStringHashMap, radioGroupExpress,
-                                appDataStoreAvailabilityMap, txtExpressMsg);
-                    }
-                }
-            }else {
-                productViewHolder.getLayoutExpressMsg().setVisibility(View.VISIBLE);
-                if (storeAvailabilityArrayList.size() > 1) {
-                    for (int i = 0; i < storeAvailabilityArrayList.size(); i++) {
-                        String availabilityInfoId = storeAvailabilityArrayList.get(i).get(Constants.AVAILABILITY_INFO_ID);
-                        if (!TextUtils.isEmpty(availabilityInfoId) && appDataStoreAvailabilityMap.containsKey(availabilityInfoId)) {
-                            RadioButton rbtnAvailabilityType = UIUtil.
-                                    getPaymentOptionRadioButton(radioGroupExpress,
-                                            ((ActivityAware) productDataAware).getCurrentActivity(),
-                                            ((ActivityAware) productDataAware).getCurrentActivity().getLayoutInflater());
-                            rbtnAvailabilityType.setText(appDataStoreAvailabilityMap.get(availabilityInfoId));
-                            rbtnAvailabilityType.setId(i);
-                            if (i == 0) {
-                                rbtnAvailabilityType.setChecked(true);
-                            }
-                            radioGroupExpress.addView(rbtnAvailabilityType);
-                        }
-                    }
-                    if (radioGroupExpress.getChildCount() > 1) {
-                        radioGroupExpress.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                                setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                                        productDataAware, String.valueOf(radioGroup.getFocusedChild().getTag()));
-                                setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
-                                        productDataAware, navigationCtx, cartInfo, tabName,
-                                        storeAvailabilityArrayList.get(radioGroup.getFocusedChild().getId()).get(Constants.PRODUCT_STATUS),
-                                        storeAvailabilityArrayList.get(radioGroup.getFocusedChild().getId()));
-                            }
-                        });
-                        txtExpressMsg.setVisibility(View.GONE);
-                        radioGroupExpress.setVisibility(View.VISIBLE);
+        TextView txtExpressMsg = productViewHolder.getTxtExpressMsg();
+        if (storeAvailabilityArrayList == null || storeAvailabilityArrayList.size() == 0
+                || allStoreAvailabilityMsgMap == null || !productViewDisplayDataHolder.isShowBasketBtn()) {
+            txtExpressMsg.setVisibility(View.GONE);
+            return;
+        }
+        txtExpressMsg.setVisibility(View.VISIBLE);
+        if (!productViewDisplayDataHolder.disableAbMode()
+                && AppDataDynamic.getInstance(((ActivityAware) productDataAware).getCurrentActivity()).isContextualMode()
+                && storeAvailabilityArrayList.size() > 1 && !TextUtils.isEmpty(tabName)
+                && tabName.equals(Constants.EXPRESS)) {
+            for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
+                if (particularStoreMap.containsKey(Constants.TAB_TYPE) &&
+                        particularStoreMap.get(Constants.TAB_TYPE).equals(Constants.EXPRESS)) {
+                    String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+                    if (!TextUtils.isEmpty(msg)) {
+                        txtExpressMsg.setText(msg);
                     } else {
-                        setExpressDisplayNameMsg(storeAvailabilityArrayList.get(0), radioGroupExpress,
-                                appDataStoreAvailabilityMap, txtExpressMsg);
+                        txtExpressMsg.setVisibility(View.GONE);
                     }
-                } else {
-                    setExpressDisplayNameMsg(storeAvailabilityArrayList.get(0), radioGroupExpress,
-                            appDataStoreAvailabilityMap, txtExpressMsg);
                 }
-                layoutExpressMsg.setVisibility(View.VISIBLE);
             }
         } else {
-            layoutExpressMsg.setVisibility(View.GONE);
+            ArrayList<String> msgs = new ArrayList<>();
+            for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
+                String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+                if (!TextUtils.isEmpty(msg)) {
+                    msgs.add(msg);
+                }
+            }
+            if (msgs.size() > 0) {
+                txtExpressMsg.setText(UIUtil.strJoin(msgs, "\n"));
+            } else {
+                txtExpressMsg.setVisibility(View.GONE);
+            }
         }
     }
 
-    private static void setExpressDisplayNameMsg(HashMap<String, String> storeAvailabilityHashMap,
-                                                 RadioGroup radioGroupExpress,
-                                                 HashMap<String, String> storeAvailabilityMap,
-                                                 TextView txtExpressMsg) {
-        String availabilityInfoId = storeAvailabilityHashMap.get(Constants.AVAILABILITY_INFO_ID);
-        radioGroupExpress.setVisibility(View.GONE);
-        if (!TextUtils.isEmpty(availabilityInfoId) && storeAvailabilityMap.containsKey(availabilityInfoId)) {
-            txtExpressMsg.setText(storeAvailabilityMap.get(availabilityInfoId));
-            txtExpressMsg.setVisibility(View.VISIBLE);
-        } else {
-            txtExpressMsg.setVisibility(View.GONE);
-        }
+    @Nullable
+    private static String getExpressDisplayNameMsg(HashMap<String, String> particularStoreMap,
+                                                   HashMap<String, String> allStoreAvailabilityMap) {
+        String availabilityInfoId = particularStoreMap.get(Constants.AVAILABILITY_INFO_ID);
+        return !TextUtils.isEmpty(availabilityInfoId) ? allStoreAvailabilityMap.get(availabilityInfoId) : null;
     }
 
     private static <T> void setPromo(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,

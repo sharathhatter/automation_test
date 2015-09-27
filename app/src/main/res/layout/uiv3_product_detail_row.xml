@@ -165,38 +165,24 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/layoutExpressMsg"
+    <TextView
+        android:id="@+id/txtExpressMsg"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutProductPrice"
         android:layout_marginBottom="@dimen/margin_small"
-        android:orientation="vertical"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
-        android:visibility="gone"
         android:layout_marginTop="@dimen/margin_normal"
-        android:layout_below="@id/layoutProductPrice"
-        android:layout_height="wrap_content">
-
-        <RadioGroup
-            android:id="@+id/radioGroupExpress"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/txtExpressMsg"
-            android:layout_width="match_parent"
-            android:textColor="@color/uiv3_status_bar_background"
-            android:visibility="gone"
-            android:textSize="@dimen/secondary_text_size"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        android:textColor="@color/uiv3_status_bar_background"
+        android:textSize="@dimen/secondary_text_size"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/layoutPromoInfoBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layoutExpressMsg"
+        android:layout_below="@id/txtExpressMsg"
         android:layout_marginTop="@dimen/margin_normal"
         android:background="@color/uiv3_list_bkg_color"
         android:paddingBottom="@dimen/padding_small"
