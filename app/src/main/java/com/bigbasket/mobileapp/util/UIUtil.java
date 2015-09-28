@@ -435,16 +435,14 @@ public class UIUtil {
     }
 
     public static View getCheckoutProgressView(Context context, @Nullable ViewGroup parent, String[] array_txtValues,
-                                               Integer[] array_compPos, int selectedPos) {
+                                               @Nullable Integer[] array_compPos, int selectedPos) {
         View container = LayoutInflater.from(context).inflate(R.layout.uiv3_gift_flow,
                 parent, false);
         LinearLayout layoutGift = (LinearLayout) container.findViewById(R.id.layout_gift);
-
         ImageView imageViewAddress = (ImageView) container.findViewById(R.id.imageView_address);
         ImageView imageViewGift = (ImageView) container.findViewById(R.id.imageView_gifts);
         ImageView imageViewSlots = (ImageView) container.findViewById(R.id.imageView_slots);
         ImageView imageViewOrder = (ImageView) container.findViewById(R.id.imageView_order);
-
         TextView textViewAddress = (TextView) container.findViewById(R.id.textView_address);
         TextView textViewGift = (TextView) container.findViewById(R.id.textView_gifts);
         TextView textViewSlots = (TextView) container.findViewById(R.id.textView_slots);
@@ -457,7 +455,6 @@ public class UIUtil {
         listImageViews.add(imageViewOrder);
 
         Integer[] tot;
-
         if (array_txtValues.length == 4) {
             textViewAddress.setText(array_txtValues[0]);
             textViewGift.setText(array_txtValues[1]);
@@ -473,26 +470,30 @@ public class UIUtil {
             tot = new Integer[]{0, 1, 2};
         }
 
-        for (int i = 0; i < array_compPos.length; i++) {
-            listImageViews.get(array_compPos[i]).setBackgroundResource(R.drawable.promo_used);
-        }
-
-        List<Integer> list = new ArrayList<Integer>(Arrays.asList(tot));
-        TreeSet<Integer> set = new TreeSet<Integer>(list);
-        set.removeAll(Arrays.asList(array_compPos));
-        Integer[] rem = set.toArray(new Integer[set.size()]);
-        for (int i = 0; i < rem.length; i++) {
-            if (rem[i] != selectedPos) {
-                listImageViews.get(rem[i]).setBackgroundResource(R.drawable.promo_unused);
+        if (array_compPos != null) {
+            for (Integer array_compPo : array_compPos) {
+                listImageViews.get(array_compPo).setBackgroundResource(R.drawable.promo_used);
             }
         }
-
+        Integer[] rem;
+        if (array_compPos != null) {
+            List<Integer> list = new ArrayList<>(Arrays.asList(tot));
+            TreeSet<Integer> set = new TreeSet<>(list);
+            set.removeAll(Arrays.asList(array_compPos));
+            rem = set.toArray(new Integer[set.size()]);
+        } else {
+            rem = tot;
+        }
+        for (Integer aRem : rem)
+            if (aRem != selectedPos) {
+                listImageViews.get(aRem).setBackgroundResource(R.drawable.promo_unused);
+            }
         listImageViews.get(selectedPos).setBackgroundResource(R.drawable.done_green_24dp);
 
-        textViewAddress.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
-        textViewSlots.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
-        textViewOrder.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
-        textViewGift.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+        textViewAddress.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewSlots.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewOrder.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewGift.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
         return container;
     }
 

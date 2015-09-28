@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
+import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -211,7 +212,9 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         } else {
             layoutCheckoutFooter.setVisibility(View.GONE);
         }
-
+        if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
+            renderCheckOutProgressView(contentView);
+        }
         contentView.addView(addressView);
     }
 
@@ -340,6 +343,13 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         }
     }
 
+    private void renderCheckOutProgressView(ViewGroup contentView) {
+        String[] array_txtValues = new String[]{"Address", "Gift", "Slots", "Order"};
+        int selectedPos = 0;
+        View giftView = UIUtil.getCheckoutProgressView(getActivity(), null, array_txtValues, null, selectedPos);
+        if (giftView != null) contentView.addView(giftView, 0);
+    }
+
     @NonNull
     @Override
     public String getFragmentTxnTag() {
@@ -420,16 +430,25 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);*/
         if (createPotentialOrderResponseContent.gift != null) {
             Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GIFTFRAGMENT);
-            intent.putExtra(Constants.NUM_GIFTS, createPotentialOrderResponseContent.gift.getCount());
-            intent.putExtra(Constants.COMMON_MSG, createPotentialOrderResponseContent.gift.getCommonMsg());
-            intent.putParcelableArrayListExtra(Constants.GIFTS, createPotentialOrderResponseContent.gift.getGiftItems());
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.GIFTS, createPotentialOrderResponseContent.gift);
+            bundle.putString(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
+            bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_GIFTFRAGMENT);
+            intent.putExtras(bundle);
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } else {
-            Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GIFTFRAGMENT);
-            intent.putExtra(Constants.NUM_GIFTS, 3);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+          /*  Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.GIFTS, createPotentialOrderResponseContent.gift);
+            bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_GIFTFRAGMENT);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);*/
+            if (!checkInternetConnection()) {
+                handler.sendOfflineError();
+                return;
+            }
+            new PostGiftTask<>(getCurrentActivity(), createPotentialOrderResponseContent.potentialOrderId, null,
+                    TrackEventkeys.CO_GIFT_OPS).startTask();
         }
     }
 
