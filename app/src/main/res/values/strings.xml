@@ -378,4 +378,5 @@
     <string name="giftWrapMsg">Would you like to personalize them with a gift wrap\u2215message?</string>
     <string name="giftWrapOptions">View Gift Wrap Options</string>
     <string name="skipAndPro">Skip and Proceed</string>
+    <string name="giftCont">GiftImg</string>
 </resources>

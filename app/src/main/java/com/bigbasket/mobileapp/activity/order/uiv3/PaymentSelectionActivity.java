@@ -95,7 +95,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mAddMoreMsg;
     private MutableLong mElapsedTime;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
