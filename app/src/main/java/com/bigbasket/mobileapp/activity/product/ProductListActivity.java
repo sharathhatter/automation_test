@@ -63,7 +63,9 @@ import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -638,7 +640,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             }
             applyFilter(filteredOns);
         } else if (resultCode == NavigationCodes.BASKET_CHANGED) {
-            onBasketChanged(data);
+            if(data != null && !TextUtils.isEmpty(data.getStringExtra(Constants.SKU_ID)) &&
+                    data.getIntExtra(Constants.PRODUCT_NO_ITEM_IN_CART, 0)>0 ){
+                mCartInfo.put(data.getStringExtra(Constants.SKU_ID),
+                        data.getIntExtra(Constants.PRODUCT_NO_ITEM_IN_CART, 0));
+                setCartInfo(mCartInfo);
+            }else {
+                onBasketChanged(data);
+            }
+
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -706,6 +716,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                                         mMapForTabWithNoProducts.get(tabType) : null;
                                 if (products != null) {
                                     ((ProductListAwareFragment) fragment).insertProductList(products);
+
                                 } else {
                                     FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
                                     Snackbar.make(contentFrame, "Unable to " + type + " items", Snackbar.LENGTH_SHORT).show();
@@ -870,7 +881,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             // There's only one fragment
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(GenericProductListFragment.class.getName());
             if (fragment != null) {
-                ((ProductListAwareFragment) fragment).redrawProductList();
+                ((ProductListAwareFragment) fragment).redrawProductList(mCartInfo);
             }
         }
     }
@@ -879,7 +890,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (mViewPager == null) return;
         Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(position);
         if (fragment != null) {
-            ((ProductListAwareFragment) fragment).redrawProductList();
+            ((ProductListAwareFragment) fragment).redrawProductList(mCartInfo);
         }
     }
 
