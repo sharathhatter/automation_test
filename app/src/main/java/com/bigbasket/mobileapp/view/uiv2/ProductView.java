@@ -88,8 +88,13 @@ public final class ProductView {
                                         ProductDetailOnClickListener productDetailOnClickListener) {
         ImageView imgProduct = productViewHolder.getImgProduct();
         if (product.getImageUrl() != null) {
-            UIUtil.displayAsyncImage(imgProduct, baseImgUrl != null ? baseImgUrl + product.getImageUrl() :
-                    product.getImageUrl());
+            String url;
+            if (TextUtils.isEmpty(baseImgUrl) || product.getImageUrl().startsWith("http")) {
+                url = product.getImageUrl();
+            } else {
+                url = baseImgUrl + product.getImageUrl();
+            }
+            UIUtil.displayAsyncImage(imgProduct, url);
         } else {
             imgProduct.setImageResource(R.drawable.noimage);
         }
@@ -585,7 +590,7 @@ public final class ProductView {
 
             final ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
                     childProducts, productViewDisplayDataHolder.getSerifTypeface(),
-                    productViewDisplayDataHolder.getRupeeTypeface(), product, baseImgUrl);
+                    productViewDisplayDataHolder.getRupeeTypeface(), product);
             productListSpinnerAdapter.setCurrentProduct(currentProduct);
             listView.setAdapter(productListSpinnerAdapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

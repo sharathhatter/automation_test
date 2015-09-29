@@ -126,14 +126,6 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                     productViewDisplayDataHolder,
                     false, activityAware, navigationCtx, cartInfo, mTabType, storeAvailabilityMap);
 
-            int endPosition = position + DELTA_FOR_PRELOADING_IMG;
-            if (endPosition < products.size()) {
-                for (int i = position + 1; i <= endPosition; i++) {
-                    Product nextProduct = products.get(i);
-                    UIUtil.preLoadImage(baseImgUrl != null ? baseImgUrl + nextProduct.getImageUrl() :
-                            nextProduct.getImageUrl(), activityAware.getCurrentActivity());
-                }
-            }
             int positionToCheckForNextPageLoad = position + DELTA_FOR_NEXT_PAGE_LOAD;
             if (positionToCheckForNextPageLoad <= serverListSize && serverListSize > 0 &&
                     positionToCheckForNextPageLoad > products.size() && !mLoadingFailed) {
