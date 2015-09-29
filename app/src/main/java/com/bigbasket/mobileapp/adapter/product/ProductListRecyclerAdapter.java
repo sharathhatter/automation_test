@@ -67,6 +67,10 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         this.cartInfo = cartInfo;
     }
 
+    public void setCartInfo(HashMap<String, Integer> cartInfo){
+        this.cartInfo = cartInfo;
+    }
+
     @Override
     public int getItemViewType(int position) {
         if (position == 0) return VIEW_TYPE_PRODUCT_COUNT;

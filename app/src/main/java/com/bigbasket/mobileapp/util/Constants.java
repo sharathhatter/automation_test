@@ -20,6 +20,7 @@ public class Constants {
 
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
+    public static final String PRODUCT_NO_ITEM_IN_CART = "p_no_items_in_cart";
     public static final String PRODUCT_ID = "sku";
     public static final String SKU_TYPE = "sku_type";
     public static final String IMAGE_URL = "p_img_url";
@@ -292,6 +293,7 @@ public class Constants {
     public static final String TC2 = "tc2";
     public static final String FULFILLMENT_INFOS = "fulfillment_infos";
     public static final String FULFILLMENT_ID = "fulfillment_id";
+    public static final String FULFILLMENT_TYPE = "fulfillment_type";
     public static final String FULFILLED_BY_INFO_PAGE = "fulfilled_by_info_page";
     public static final String TC1 = "tc1";
     public static final String TC = "tc";
@@ -348,6 +350,7 @@ public class Constants {
     public static final String DELIVERY_CHARGES = "delivery_charges";
     public static final String FINAL_TOTAL = "final_total";
     public static final String ORDER_DETAILS = "order_details";
+    public static final String CITY_MODE = "city_mode";
     public static final String CREDIT_DETAILS = "credit_details";
     public static final String DETAILS = "details";
     public static final String CREDIT_VALUE = "credit_value";
@@ -611,4 +614,6 @@ public class Constants {
     public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
     public static final String EXPRESS_AVAILABILITY = "express_availability";
     public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
+
+    public static final String APP_LAUNCH = "appLaunch";
 }

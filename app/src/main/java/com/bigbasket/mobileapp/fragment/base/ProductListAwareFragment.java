@@ -219,8 +219,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
-    public void redrawProductList() {
+    public void redrawProductList(HashMap<String, Integer> cartInfo) {
         if (mProductListRecyclerAdapter != null) {
+            mProductListRecyclerAdapter.setCartInfo(cartInfo);
             mProductListRecyclerAdapter.notifyDataSetChanged();
         }
     }
