@@ -85,20 +85,32 @@ public class AddressSummaryDropdownAdapter extends BaseAdapter {
             }
             String nick = addressSummary.getAddressNickName();
             /************Setting different color for gingerbread and below******/
+
+            TextView txtCityName = addressViewHolder.getTxtCityName();
+            TextView txtAreaName = addressViewHolder.getTxtAreaName();
+            TextView txtSlotTime = addressViewHolder.getTxtSlotTime();
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-                addressViewHolder.getTxtAreaName().setTextColor(context.getResources().getColor(R.color.dark_black));
-                addressViewHolder.getTxtCityName().setTextColor(context.getResources().getColor(R.color.dark_black));
+                txtAreaName.setTextColor(context.getResources().getColor(R.color.dark_black));
+                txtCityName.setTextColor(context.getResources().getColor(R.color.dark_black));
+                txtSlotTime.setTextColor(context.getResources().getColor(R.color.dark_black));
             }
             if (TextUtils.isEmpty(nick)) {
-                addressViewHolder.getTxtAreaName().setText(addressSummary.getArea());
+                txtAreaName.setText(addressSummary.getArea());
             } else {
                 SpannableString spannableString = new SpannableString(nick + " - " +
                         addressSummary.getArea());
                 spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoBold), 0,
                         nick.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                addressViewHolder.getTxtAreaName().setText(spannableString);
+                txtAreaName.setText(spannableString);
             }
-            addressViewHolder.getTxtCityName().setText(addressSummary.getCityName());
+            txtCityName.setText(addressSummary.getCityName());
+            String slot = addressSummary.getSlot();
+            if (!TextUtils.isEmpty(slot)) {
+                txtSlotTime.setText(slot);
+                txtSlotTime.setVisibility(View.VISIBLE);
+            } else {
+                txtSlotTime.setVisibility(View.GONE);
+            }
         } else {
             convertView = LayoutInflater.from(context)
                     .inflate(R.layout.uiv3_change_city_spinner_row, parent, false);
@@ -117,6 +129,7 @@ public class AddressSummaryDropdownAdapter extends BaseAdapter {
         private View itemView;
         private TextView txtAreaName;
         private TextView txtCityName;
+        private TextView txtSlotTime;
 
         public AddressViewHolder(View itemView) {
             this.itemView = itemView;
@@ -136,6 +149,13 @@ public class AddressSummaryDropdownAdapter extends BaseAdapter {
                 txtCityName.setTypeface(faceRobotLight);
             }
             return txtCityName;
+        }
+
+        public TextView getTxtSlotTime() {
+            if (txtSlotTime == null) {
+                txtSlotTime = (TextView) itemView.findViewById(R.id.txtSlotTime);
+            }
+            return txtSlotTime;
         }
     }
 }

@@ -39,6 +39,7 @@ public class AddressSummary implements Parcelable {
     private double longitude;
     @SerializedName(Constants.IS_PARTIAL)
     private boolean isPartial;
+    private String slot;
 
     public AddressSummary(Parcel source) {
         this.id = source.readString();
@@ -53,6 +54,10 @@ public class AddressSummary implements Parcelable {
             this.addressNickName = source.readString();
         }
         this.isPartial = source.readByte() == (byte) 1;
+        boolean isSlotNull = source.readByte() == (byte) 1;
+        if (!isSlotNull) {
+            this.slot = source.readString();
+        }
     }
 
     @Override
@@ -70,6 +75,11 @@ public class AddressSummary implements Parcelable {
             dest.writeString(addressNickName);
         }
         dest.writeByte(isPartial ? (byte) 1 : (byte) 0);
+        boolean isSlotNull = slot == null;
+        dest.writeByte(isSlotNull ? (byte) 1 : (byte) 0);
+        if (!isSlotNull) {
+            dest.writeString(slot);
+        }
     }
 
     @Override
@@ -128,6 +138,10 @@ public class AddressSummary implements Parcelable {
 
     public String getAddressNickName() {
         return addressNickName;
+    }
+
+    public String getSlot() {
+        return slot;
     }
 
     public boolean isPartial() {

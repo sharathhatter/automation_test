@@ -7,8 +7,7 @@
     android:paddingBottom="@dimen/padding_small"
     android:paddingLeft="@dimen/padding_normal"
     android:paddingRight="@dimen/padding_normal"
-    android:paddingTop="@dimen/padding_small"
-    >
+    android:paddingTop="@dimen/padding_small">
 
     <TextView
         android:id="@+id/txtAreaName"
@@ -24,5 +23,11 @@
         android:textColor="@color/white"
         android:textSize="@dimen/small_text_size" />
 
-
+    <TextView
+        android:id="@+id/txtSlotTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="@dimen/small_text_size"
+        android:textStyle="italic" />
 </LinearLayout>
