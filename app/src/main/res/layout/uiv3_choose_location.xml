@@ -99,7 +99,7 @@
                 android:paddingRight="@dimen/padding_normal"
                 android:paddingTop="@dimen/padding_small"
                 android:text="@string/selectLocationManually"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="@dimen/secondary_text_size" />
         </RelativeLayout>
     </RelativeLayout>

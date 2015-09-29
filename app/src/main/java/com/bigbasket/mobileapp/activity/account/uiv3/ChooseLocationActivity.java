@@ -47,12 +47,19 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     private GoogleApiClient mGoogleApiClient;
     private AddressSummary mChosenAddressSummary;
     private boolean mIsFirstTime;
+    private boolean mIsViaOnActivityResult;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseYourLocation));
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mIsViaOnActivityResult) return;
         int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
         switch (playServicesAvailable) {
             case ConnectionResult.SUCCESS:
@@ -280,6 +287,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED) {
+            mIsViaOnActivityResult = true;
             if (data != null && data.hasExtra(Constants.LAT)) {
                 LatLng latLng = data.getParcelableExtra(Constants.LAT);
                 updateLocation(latLng);
