@@ -80,7 +80,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
             }
             if (!BuildConfig.DEBUG) {
-                PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Constants.APP_LUNCH, true).commit();
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Constants.APP_LAUNCH, true).commit();
                 if (checkInternetConnection()) {
                     NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
                 }

@@ -22,7 +22,7 @@ public class BaseApplication extends Application {
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
         LocalyticsWrapper.integrate(this);
-        if(BuildConfig.DEBUG) {
+        if(!BuildConfig.DEBUG) {
             AdWordsConversionReporter.reportWithConversionId(this.getApplicationContext(),
                     "990877306", "wqThCIz2ql8Q-qy-2AM", "0.00", false);
         }

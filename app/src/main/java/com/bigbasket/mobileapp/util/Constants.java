@@ -615,5 +615,5 @@ public class Constants {
     public static final String EXPRESS_AVAILABILITY = "express_availability";
     public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
 
-    public static final String APP_LUNCH = "appLaunch";
+    public static final String APP_LAUNCH = "appLaunch";
 }

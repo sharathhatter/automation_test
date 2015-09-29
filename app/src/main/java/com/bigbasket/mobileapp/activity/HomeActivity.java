@@ -39,11 +39,11 @@ public class HomeActivity extends BBActivity {
         mProgressBarArea.setVisibility(View.VISIBLE);
         mCurrentSpinnerIdx = 0;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(preferences.getBoolean(Constants.APP_LUNCH, false)){
+        if(preferences.getBoolean(Constants.APP_LAUNCH, false)){
             HashMap<String, Object> appFlyerHashMap = new HashMap<>();
             appFlyerHashMap.put(Constants.CITY, preferences.getString(Constants.CITY, ""));
             trackEventAppsFlyer(TrackingAware.APP_OPEN, appFlyerHashMap);
-            preferences.edit().putBoolean(Constants.APP_LUNCH, false).apply();
+            preferences.edit().putBoolean(Constants.APP_LAUNCH, false).apply();
         }
     }
 
