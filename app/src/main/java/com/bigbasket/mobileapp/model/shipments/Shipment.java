@@ -21,6 +21,8 @@ public class Shipment implements Parcelable {
     private String fulfillmentName;
     @SerializedName(Constants.FULFILLMENT_ID)
     private String fulfillmentId;
+    @SerializedName(Constants.FULFILLMENT_TYPE)
+    private String fulfillmentType;
     @SerializedName(Constants.DELIVERY_CHARGE)
     private String deliveryCharge;
     @SerializedName(Constants.LINKED_SHIPMENTS)
@@ -46,6 +48,7 @@ public class Shipment implements Parcelable {
         dest.writeString(shipmentName);
         dest.writeString(fulfillmentName);
         dest.writeString(fulfillmentId);
+        dest.writeString(fulfillmentType);
         dest.writeString(deliveryCharge);
         boolean wasHelpPageNull = helpPage == null;
         dest.writeByte(wasHelpPageNull ? (byte) 1 : (byte) 0);
@@ -70,6 +73,7 @@ public class Shipment implements Parcelable {
         shipmentName = source.readString();
         fulfillmentName = source.readString();
         fulfillmentId = source.readString();
+        fulfillmentType = source.readString();
         deliveryCharge = source.readString();
         boolean wasHelpPageNull = source.readByte() == (byte) 1;
         if (!wasHelpPageNull) {
@@ -152,5 +156,9 @@ public class Shipment implements Parcelable {
     @Nullable
     public String getShipmentType() {
         return shipmentType;
+    }
+
+    public String getFulfillmentType() {
+        return fulfillmentType;
     }
 }

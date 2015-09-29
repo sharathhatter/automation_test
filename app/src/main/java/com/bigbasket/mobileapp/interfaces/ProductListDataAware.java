@@ -7,7 +7,8 @@ import com.bigbasket.mobileapp.model.product.ProductTabData;
 import java.util.HashMap;
 
 public interface ProductListDataAware {
-    void setProductTabData(ProductTabData productTabData, int currentTabIndex);
+    void setProductTabData(ProductTabData productTabData, int currentTabIndex,
+                           boolean isFilterOrSortApplied);
 
     @Nullable
     HashMap<String, Integer> getCartInfo();

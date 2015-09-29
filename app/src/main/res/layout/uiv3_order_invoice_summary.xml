@@ -13,17 +13,51 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin_small"
             android:id="@+id/layoutBtn"
             android:layout_gravity="center"
             android:gravity="center"
-            android:layout_height="wrap_content" />
-        <!--<Button-->
-            <!--android:id="@+id/btnShopFromOrder"-->
-            <!--style="@style/EmptyPageButtonStyle"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="@dimen/margin_normal"-->
-            <!--android:text="@string/shopFromOrder" />-->
+            android:weightSum="2"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/btnShopFromOrder"
+                style="@style/EmptyPageButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginRight="@dimen/padding_mini"
+                android:paddingBottom="@dimen/padding_12"
+                android:paddingLeft="@dimen/padding_small"
+                android:paddingTop="@dimen/padding_12"
+                android:text="@string/shopFromOrder"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/secondary_text_size" />
+
+            <Button
+                android:id="@+id/btnPayNow"
+                style="@style/EmptyPageButtonStyle"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:clickable="true"
+                android:minHeight="0dp"
+                android:layout_marginLeft="@dimen/margin_mini"
+                android:layout_marginRight="@dimen/margin_small"
+                android:minWidth="0dp"
+                android:paddingBottom="@dimen/padding_12"
+                android:paddingLeft="@dimen/padding_small"
+                android:paddingTop="@dimen/padding_12"
+                android:text="@string/payNow"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/secondary_text_size" />
+
+        </LinearLayout>
+
 
         <TextView
             style="@style/CardViewHeading"

@@ -125,4 +125,5 @@ dependencies {
     compile project(':mobikwik_Payment_Android_SDK')
     compile files('libs/pgsdk.jar')
     compile project(':payuSdkUi')
+    compile files('libs/GoogleConversionTrackingSdk-2.2.4.jar')
 }

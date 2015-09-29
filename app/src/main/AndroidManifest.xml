@@ -589,6 +589,13 @@
         <service
             android:name=".service.GetAppDataDynamicIntentService"
             android:exported="false" />
+
+        <receiver android:name="com.google.ads.conversiontracking.InstallReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
