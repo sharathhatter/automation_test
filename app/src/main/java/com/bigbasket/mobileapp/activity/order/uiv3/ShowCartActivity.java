@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -357,7 +356,7 @@ public class ShowCartActivity extends BackButtonActivity {
             pageTitleStrip.setVisibility(View.GONE);
             ArrayList<BBTab> bbTabs = new ArrayList<>();
 
-            createTabFragment(getString(R.string.stnd_delivery), R.drawable.promo_used, baseImgUrl,
+            createTabFragment(getString(R.string.stnd_delivery), baseImgUrl,
                     cartItemLists, fulfillmentInfos, annotationInfoArrayList, bbTabs);
 
             TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
@@ -366,7 +365,7 @@ public class ShowCartActivity extends BackButtonActivity {
         }
     }
 
-    private ArrayList<BBTab> createTabFragment(String tab_name, @DrawableRes int tabImgId, String baseUrl, ArrayList<CartItemList>
+    private ArrayList<BBTab> createTabFragment(String tab_name, String baseUrl, ArrayList<CartItemList>
             cartItemList, ArrayList<FulfillmentInfo> fulfillmentInfos, ArrayList<AnnotationInfo>
                                                        annotationInfoArrayList, ArrayList<BBTab> bbTabs) {
         Bundle bundle = new Bundle();
@@ -374,7 +373,6 @@ public class ShowCartActivity extends BackButtonActivity {
         bundle.putParcelableArrayList(Constants.FULFILLMENT_INFO, fulfillmentInfos);
         bundle.putParcelableArrayList(Constants.ANNOTATION_INFO, annotationInfoArrayList);
         bundle.putString(Constants.BASE_IMG_URL, baseUrl);
-        bundle.putInt(Constants.TAB_IMG, tabImgId);
         bbTabs.add(new BBTab<>(tab_name, ShowCartFragment.class, bundle));
         return bbTabs;
     }
@@ -439,16 +437,16 @@ public class ShowCartActivity extends BackButtonActivity {
 
         if (cartItemListsStnd.size() > 0 && cartItemListsExp.size() > 0) {
             pageTitleStrip.setVisibility(View.VISIBLE);
-            createTabFragment(getString(R.string.stnd_delivery), R.drawable.tab_icon_states_standard, baseImgUrl,
+            createTabFragment(getString(R.string.stnd_delivery), baseImgUrl,
                     cartItemListsStnd, fulfillmentInfos, annotationInfoArrayList, bbTabs);
-            createTabFragment(getString(R.string.exp_delivery), R.drawable.tab_icon_state, baseImgUrl,
+            createTabFragment(getString(R.string.exp_delivery), baseImgUrl,
                     cartItemListsExp, fulfillmentInfos, annotationInfoArrayList, bbTabs);
         } else if (cartItemListsStnd.size() > 0 || cartItemListsExp.size() > 0) {
             pageTitleStrip.setVisibility(View.GONE);
             cartItemListsExp = cartItemListsExp.size() > 0 ? cartItemListsExp : cartItemListsStnd;
             String title = cartItemListsExp.size() > 0 ? getString(R.string.exp_delivery) :
                     getString(R.string.stnd_delivery);
-            createTabFragment(title, R.drawable.promo_used, baseImgUrl,
+            createTabFragment(title, baseImgUrl,
                     cartItemListsExp, fulfillmentInfos, annotationInfoArrayList, bbTabs);
         } else {
             throw new AssertionError("Both Standard and Express can't be Empty");
@@ -460,12 +458,6 @@ public class ShowCartActivity extends BackButtonActivity {
 
         if (pageTitleStrip.isShown()) {
             pageTitleStrip.setupWithViewPager(mViewPager);
-            for (int i = 0; i < pageTitleStrip.getTabCount(); i++) {
-                TabLayout.Tab tab = pageTitleStrip.getTabAt(i);
-                if (tab != null) {
-                    tab.setCustomView(tabPagerAdapter.getTabView(i));
-                }
-            }
         }
     }
 
