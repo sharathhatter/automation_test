@@ -216,6 +216,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
                 ProductInfo productInfo = productTabInfo.getProductInfo();
                 ArrayList<Product> products = productInfo != null ? productInfo.getProducts() : null;
+                if (mMapForTabWithNoProducts == null) {
+                    mMapForTabWithNoProducts = new HashMap<>();
+                }
                 mMapForTabWithNoProducts.put(tabType, products);
                 renderFilterAndSortProductList(productTabInfo, tabType, currentTabIndex);
             } else {
@@ -286,6 +289,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         mFilterOptionCategories = filterOptionItems;
         mSortedOn = sortedOn;
         mSortOptions = sortOptions;
+        if (mNameValuePairs != null) {
+            updateNameValuePairWithFilterOns(filteredOns, false);
+            updateNameValuePairsWithSortedOn(sortedOn);
+        }
     }
 
 
@@ -420,7 +427,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                         public void success(ApiResponse<ProductNextPageResponse> productNextPageApiResponse, Response response) {
                             if (isSuspended()) return;
                             if (productNextPageApiResponse.status == 0) {
-                                mMapForTabWithNoProducts = productNextPageApiResponse.apiResponseContent.productListMap;
+                                if (mMapForTabWithNoProducts != null) {
+                                    if (productNextPageApiResponse.apiResponseContent.productListMap != null) {
+                                        mMapForTabWithNoProducts.putAll(productNextPageApiResponse.apiResponseContent.productListMap);
+                                    }
+                                } else {
+                                    mMapForTabWithNoProducts = productNextPageApiResponse.apiResponseContent.productListMap;
+                                }
                                 setUpProductsInEmptyFragments();
                             } else {
                                 notifyEmptyFragmentAboutFailure();
@@ -729,6 +742,12 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private void applyFilter(@Nullable ArrayList<FilteredOn> filteredOns) {
         if (mNameValuePairs == null) return;
+        updateNameValuePairWithFilterOns(filteredOns, true);
+        callApiForSortAndApplied();
+    }
+
+    private void updateNameValuePairWithFilterOns(@Nullable ArrayList<FilteredOn> filteredOns,
+                                                  boolean trackFilterEvent) {
         NameValuePair filterOnNameValuePair = getFilterOnNameValuePair();
         if (filterOnNameValuePair == null) {
             if (filteredOns == null) {
@@ -737,23 +756,31 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             filterOnNameValuePair = new NameValuePair(Constants.FILTER_ON,
                     new Gson().toJson(filteredOns));
             mNameValuePairs.add(filterOnNameValuePair);
-            trackFilterAppliedEvent(filteredOns);
+            if (trackFilterEvent) {
+                trackFilterAppliedEvent(filteredOns);
+            }
         } else {
             if (filteredOns != null) {
                 filterOnNameValuePair.setValue(new Gson().toJson(filteredOns));
-                trackFilterAppliedEvent(filteredOns);
+                if (trackFilterEvent) {
+                    trackFilterAppliedEvent(filteredOns);
+                }
             } else {
                 mNameValuePairs.remove(filterOnNameValuePair);
             }
         }
-
-        //productTabInfo.setFilteredOn(filteredOns);
-        //applyFilterAndSort("");
-        callApiForSortAndApplied();
     }
 
     private void applySort(String sortedOn, String mSortedOnName) {
         if (sortedOn == null || sortedOn.equals(mSortedOn)) return;
+        updateNameValuePairsWithSortedOn(sortedOn);
+        trackSortByEvent(mSortedOnName);
+        callApiForSortAndApplied();
+
+    }
+
+    private void updateNameValuePairsWithSortedOn(String sortedOn) {
+        if (sortedOn == null) sortedOn = "";
         NameValuePair sortedOnNameValuePair = getSortedOnNameValuePair();
         if (sortedOnNameValuePair == null) {
             sortedOnNameValuePair = new NameValuePair(Constants.SORT_ON, sortedOn);
@@ -761,9 +788,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         } else {
             sortedOnNameValuePair.setValue(sortedOn);
         }
-        trackSortByEvent(mSortedOnName);
-        callApiForSortAndApplied();
-
     }
 
     private void callApiForSortAndApplied() {
