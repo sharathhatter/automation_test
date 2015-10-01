@@ -1,6 +1,8 @@
 package com.bigbasket.mobileapp.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
@@ -9,6 +11,7 @@ import android.widget.Spinner;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.account.AddressSummaryDropdownAdapter;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -18,6 +21,7 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HomeActivity extends BBActivity {
 
@@ -34,6 +38,13 @@ public class HomeActivity extends BBActivity {
         mSpinnerArea.setVisibility(View.GONE);
         mProgressBarArea.setVisibility(View.VISIBLE);
         mCurrentSpinnerIdx = 0;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(preferences.getBoolean(Constants.APP_LAUNCH, false)){
+            HashMap<String, Object> appFlyerHashMap = new HashMap<>();
+            appFlyerHashMap.put(Constants.CITY, preferences.getString(Constants.CITY, ""));
+            trackEventAppsFlyer(TrackingAware.APP_OPEN, appFlyerHashMap);
+            preferences.edit().putBoolean(Constants.APP_LAUNCH, false).apply();
+        }
     }
 
     @Override
@@ -44,12 +55,13 @@ public class HomeActivity extends BBActivity {
     private void setUpAddressSpinner() {
         final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
 
+        boolean isGuest = AuthParameters.getInstance(this).isAuthTokenEmpty();
         if (addressSummaries != null && addressSummaries.size() > 0) {
             mSpinnerArea.setVisibility(View.VISIBLE);
             mProgressBarArea.setVisibility(View.GONE);
             final AddressSummaryDropdownAdapter adapter = new
                     AddressSummaryDropdownAdapter(addressSummaries,
-                    getString(R.string.changeMyLocation), this);
+                    isGuest ? getString(R.string.changeMyLocation) : getString(R.string.changeMyAddress), this);
             mSpinnerArea.setAdapter(adapter);
             mSpinnerArea.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override

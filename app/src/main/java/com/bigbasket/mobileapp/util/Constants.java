@@ -20,6 +20,7 @@ public class Constants {
 
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
+    public static final String PRODUCT_NO_ITEM_IN_CART = "p_no_items_in_cart";
     public static final String PRODUCT_ID = "sku";
     public static final String SKU_TYPE = "sku_type";
     public static final String IMAGE_URL = "p_img_url";
@@ -110,8 +111,9 @@ public class Constants {
     public static final String FILTER_VALUES_SLUG = "filter_value_slug";
 
     public static final String STORE_AVAILABILITY = "store_availability";
-    public static final String STORE_ID = "store_id";
+    //public static final String STORE_ID = "store_id";
     public static final String AVAILABILITY = "availability";
+    public static final String EXPRESS = "express";
     public static final String AVAILABILITY_INFO_ID = "availability_info_id";
 
     //update-app-data
@@ -291,6 +293,7 @@ public class Constants {
     public static final String TC2 = "tc2";
     public static final String FULFILLMENT_INFOS = "fulfillment_infos";
     public static final String FULFILLMENT_ID = "fulfillment_id";
+    public static final String FULFILLMENT_TYPE = "fulfillment_type";
     public static final String FULFILLED_BY_INFO_PAGE = "fulfilled_by_info_page";
     public static final String TC1 = "tc1";
     public static final String TC = "tc";
@@ -347,6 +350,7 @@ public class Constants {
     public static final String DELIVERY_CHARGES = "delivery_charges";
     public static final String FINAL_TOTAL = "final_total";
     public static final String ORDER_DETAILS = "order_details";
+    public static final String CITY_MODE = "city_mode";
     public static final String CREDIT_DETAILS = "credit_details";
     public static final String DETAILS = "details";
     public static final String CREDIT_VALUE = "credit_value";
@@ -566,6 +570,7 @@ public class Constants {
     public static final String SKU_LIST = "sku_list";
     public static final String DISPLAY = "display";
     public static final String HELP_PAGE = "help_page";
+    public static final String SHIPMENT_TYPE = "shipment_type";
     public static final String ACTION_MSG = "action_msg";
     public static final String ACTION_STATE = "action_state";
     public static final String ON = "on";
@@ -618,4 +623,5 @@ public class Constants {
     public static final String IS_PREWRAPPED = "is_prewrapped";
     public static final String IS_CONVERTIBLE_TO_NORMAL = "is_convertible_to_normal";
     public static final String COMMON_MSG = "common_msg";
+    public static final String APP_LAUNCH = "appLaunch";
 }

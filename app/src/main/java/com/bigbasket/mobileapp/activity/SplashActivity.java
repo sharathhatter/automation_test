@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.appsflyer.AppsFlyerLib;
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -24,7 +25,6 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
@@ -37,7 +37,6 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.daimajia.slider.library.BuildConfig;
 import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
@@ -81,7 +80,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
             }
             if (!BuildConfig.DEBUG) {
-                trackEventAppsFlyer(TrackingAware.APP_OPEN);
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Constants.APP_LAUNCH, true).commit();
                 if (checkInternetConnection()) {
                     NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
                 }

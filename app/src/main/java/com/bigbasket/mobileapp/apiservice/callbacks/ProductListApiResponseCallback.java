@@ -22,11 +22,14 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
     private T ctx;
     private boolean isInlineProgressBar;
     private int currentTabIndex;
+    private boolean isFilterOrSortApplied;
 
-    public ProductListApiResponseCallback(T ctx, boolean isInlineProgressBar, int currentTabIndex) {
+    public ProductListApiResponseCallback(T ctx, boolean isInlineProgressBar, int currentTabIndex,
+                                          boolean isFilterOrSortApplied) {
         this.ctx = ctx;
         this.isInlineProgressBar = isInlineProgressBar;
         this.currentTabIndex = currentTabIndex;
+        this.isFilterOrSortApplied = isFilterOrSortApplied;
     }
 
     @Override
@@ -72,7 +75,8 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                     }
                 }
             }
-            ((ProductListDataAware) ctx).setProductTabData(productTabData, currentTabIndex);
+            ((ProductListDataAware) ctx).setProductTabData(productTabData, currentTabIndex,
+                    isFilterOrSortApplied);
 
         } else {
             ((HandlerAware) ctx).getHandler().sendEmptyMessage(productListDataApiResponse.status,

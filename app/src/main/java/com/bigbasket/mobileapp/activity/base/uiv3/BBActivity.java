@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -906,8 +905,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
                     sectionNavigationItems.add(new SectionNavigationItem(section));
                 }
-                setSectionNavigationItemList(this, sectionNavigationItems, section.getSectionItems(),
-                        section, sectionData.getBaseImgUrl());
+                setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
+                        section);
             }
         }
         return new Object[]{sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null,
@@ -915,18 +914,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private static <T extends SectionItem> void
-    setSectionNavigationItemList(Context context, ArrayList<SectionNavigationItem> sectionNavigationItems,
+    setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
                                  ArrayList<T> sectionItems,
-                                 Section section, String baseImgUrl) {
+                                 Section section) {
         for (int i = 0; i < sectionItems.size(); i++) {
             SectionItem sectionItem = sectionItems.get(i);
             if ((sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText()))
                     || (sectionItem instanceof SubSectionItem && ((SubSectionItem) sectionItem).isLink())) {
-                if (sectionItem.hasImage()) {
-                    UIUtil.preLoadImage(TextUtils.isEmpty(sectionItem.getImage()) ?
-                                    sectionItem.constructImageUrl(context, baseImgUrl) : sectionItem.getImage(),
-                            context);
-                }
                 if (i == 0 && ((sectionItem instanceof SubSectionItem) && !((SubSectionItem) sectionItem).isLink())) {
                     // Duplicate the first element as it'll be used to display the back arrow
                     sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
@@ -938,6 +932,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     private ArrayList<SectionNavigationItem> getPreBakedNavigationItems() {
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
+
+        // Home
         SectionItem homeSectionItem = new SectionItem(new SectionTextItem(getString(R.string.home), 0),
                 null, null, -1, new DestinationInfo(DestinationInfo.HOME, null));
         ArrayList<SectionItem> homeSectionItems = new ArrayList<>();
@@ -945,6 +941,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         Section homeSection = new Section(null, null, Section.MSG, homeSectionItems, null);
         sectionNavigationItems.add(new SectionNavigationItem<>(homeSection, homeSectionItem));
 
+        // My Basket
         SectionItem myBasketSectionItem = new SectionItem(new SectionTextItem(getString(R.string.my_basket_header), 0),
                 null, null, -1, new DestinationInfo(DestinationInfo.BASKET, null));
         ArrayList<SectionItem> myBasketSectionItems = new ArrayList<>();
@@ -952,6 +949,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         Section myBasketSection = new Section(null, null, Section.MSG, myBasketSectionItems, null);
         sectionNavigationItems.add(new SectionNavigationItem<>(myBasketSection, myBasketSectionItem));
 
+        // Smart Basket
         String smartBasketDeepLink = "bigbasket://smart-basket/";
         SectionItem smartBasketSectionItem = new SectionItem(new SectionTextItem(getString(R.string.smartBasket), 0),
                 null, null, -1, new DestinationInfo(DestinationInfo.DEEP_LINK, smartBasketDeepLink));
@@ -959,6 +957,15 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         smartBasketSectionItems.add(smartBasketSectionItem);
         Section smartBasketSection = new Section(null, null, Section.MSG, smartBasketSectionItems, null);
         sectionNavigationItems.add(new SectionNavigationItem<>(smartBasketSection, smartBasketSectionItem));
+
+        // Shopping List
+        String shoppingListDeepLink = "bigbasket://sl/";
+        SectionItem shoppingListSectionItem = new SectionItem(new SectionTextItem(getString(R.string.shoppingList), 0),
+                null, null, -1, new DestinationInfo(DestinationInfo.DEEP_LINK, shoppingListDeepLink));
+        ArrayList<SectionItem> shoppingListSections = new ArrayList<>();
+        shoppingListSections.add(shoppingListSectionItem);
+        Section shoppingListSection = new Section(null, null, Section.MSG, shoppingListSections, null);
+        sectionNavigationItems.add(new SectionNavigationItem<>(shoppingListSection, shoppingListSectionItem));
         return sectionNavigationItems;
     }
 
@@ -978,8 +985,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mListSubNavigation.setLayoutManager(new LinearLayoutManager(this));
         }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        setSectionNavigationItemList(this, sectionNavigationItems, subNavigationSectionItems, section,
-                baseImgUrl);
+        setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems,
                 SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);

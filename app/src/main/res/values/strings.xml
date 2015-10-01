@@ -93,7 +93,7 @@
     <string name="applyAllCaps">APPLY</string>
     <string name="apply">Apply</string>
     <string name="pleaseNote">Please Note:</string>
-    <string name="shopFromOrder">Shop from this order</string>
+    <string name="shopFromOrder">Shop from order</string>
 
     <style name="placeOrder">Place Order</style>
 
@@ -333,6 +333,7 @@
     <string name="error">Error!</string>
     <string name="emailBlank">Please enter an email address</string>
     <string name="payNow">Pay Now</string>
+    <string name="order_pay_now_amount">Amount :</string>
     <string name="payNowThankyou">Your payment was successful!</string>
     <string name="txnFailureMsg">Failed to process your transaction.\nPlease contact our customer care, in case you got charged.</string>
 
@@ -345,7 +346,7 @@
 
     <string name="chooseYourLocation">Choose your Location</string>
     <string name="locateYourArea">Locate your area</string>
-    <string name="typeYourLocality">Type your locality</string>
+    <string name="typeYourLocality">Type your locality eg: M.G. Road</string>
     <string name="locationOrArea">Location/Area</string>
     <string name="useMyLocation">Use My Location</string>
     <string name="enableLocationHeading">Enable Location</string>
@@ -363,12 +364,13 @@
     <string name="toMyCurrentLocation">TO MY CURRENT LOCATION</string>
     <string name="selectLocationManually">SELECT LOCATION MANUALLY</string>
     <string name="readingYourCurrentLocation">Reading your current location...</string>
-    <string name="unableToReadLocation">Unable to read location!</string>
+    <string name="unableToReadLocation">Unable to read location. Please re-try!</string>
     <string name="refresh">Refresh</string>
     <string name="unknown">Unknown</string>
     <string name="unknownError">An unknown error occurred</string>
     <string name="saveThisLocation">SAVE THIS LOCATION</string>
     <string name="changeMyLocation">CHANGE MY LOCATION</string>
+    <string name="changeMyAddress">CHANGE MY ADDRESS</string>
     <string name="preparingBasket">Preparing basket</string>
     <string name="status">Status</string>
     <string name="retry">Retry</string>

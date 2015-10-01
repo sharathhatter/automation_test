@@ -47,12 +47,23 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     private GoogleApiClient mGoogleApiClient;
     private AddressSummary mChosenAddressSummary;
     private boolean mIsFirstTime;
+    private boolean mIsViaOnActivityResult;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseYourLocation));
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mIsViaOnActivityResult) return;
+        triggerLocationFetching();
+    }
+
+    private void triggerLocationFetching() {
         int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
         switch (playServicesAvailable) {
             case ConnectionResult.SUCCESS:
@@ -76,7 +87,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         } else {
             showProgressDialog(getString(R.string.readingYourCurrentLocation));
             if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                updateLastKnownLocation(false);
+                updateLastKnownLocation(false, false);
             } else {
                 buildGoogleApiClient();
             }
@@ -127,10 +138,10 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        updateLastKnownLocation(false);
+        updateLastKnownLocation(false, false);
     }
 
-    private void updateLastKnownLocation(boolean setAsCurrentAddress) {
+    private void updateLastKnownLocation(boolean setAsCurrentAddress, boolean autoMode) {
         if (mGoogleApiClient == null) return;
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (lastLocation != null) {
@@ -141,8 +152,12 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                 getCurrentLocationDetail(latLng);
             }
         } else {
-            hideProgressDialog();
-            onLocationReadFailure();
+            if (autoMode) {
+                triggerLocationFetching();
+            } else {
+                hideProgressDialog();
+                onLocationReadFailure();
+            }
         }
     }
 
@@ -237,7 +252,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     public void onLocationButtonClicked(View v) {
         switch (v.getId()) {
             case R.id.btnToCurrentLocation:
-                updateLastKnownLocation(true);
+                updateLastKnownLocation(true, true);
                 break;
             case R.id.btnChooseLocation:
                 Intent intent = new Intent(this, PlacePickerApiActivity.class);
@@ -279,10 +294,14 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED && data != null
-                && data.getParcelableExtra(Constants.LAT) != null) {
-            LatLng latLng = data.getParcelableExtra(Constants.LAT);
-            updateLocation(latLng);
+        if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED) {
+            mIsViaOnActivityResult = true;
+            if (data != null && data.hasExtra(Constants.LAT)) {
+                LatLng latLng = data.getParcelableExtra(Constants.LAT);
+                updateLocation(latLng);
+            } else {
+                buildGoogleApiClient();
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

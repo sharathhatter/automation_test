@@ -141,7 +141,9 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         RecyclerView productRecyclerView = (RecyclerView) shopFromOrderLayout.findViewById(R.id.recyclerView);
         UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
 
+
         // Set product-list data
+
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
@@ -153,7 +155,9 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
                 .showQtyInput(authParameters.isKirana())
+                .disableAbMode(true)
                 .build();
+
 
         productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
                 productViewDisplayDataHolder, this, mProducts.size(),
@@ -162,7 +166,9 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         productRecyclerView.setAdapter(productListRecyclerAdapter);
         contentView.addView(shopFromOrderLayout);
         logShopFromOrderEvent();
-    }
+        hideProgressView();
+        }
+
 
 
     @Override

@@ -123,14 +123,10 @@ public class DeepLinkHandler {
                 }
                 return FAILED;
             case Constants.ALL_SL:
-                id = uri.getQueryParameter(Constants.ID);
-                if (!TextUtils.isEmpty(id)) {
-                    intent = new Intent(context.getCurrentActivity(), ShoppingListActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
-                    context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    return SUCCESS;
-                }
-                return FAILED;
+                intent = new Intent(context.getCurrentActivity(), ShoppingListActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
+                context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                return SUCCESS;
             case Constants.SL_SUMMARY:
                 slug = uri.getQueryParameter(Constants.SLUG);
                 name = uri.getQueryParameter(Constants.NAME);

@@ -380,7 +380,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxnId = paymentParams.get("ORDER_ID");
         String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
         PayTMInitializer.initiate(paymentParams, this,
-                new PaytmTxnCallback<>(this, fullOrderId, mTxnId, mPotentialOrderId));
+                new PaytmTxnCallback<>(this, fullOrderId, mPotentialOrderId, false, false));
     }
 
     private class OnShowAvailableVouchersListener implements View.OnClickListener {
@@ -720,23 +720,27 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {
-        new PostPaymentHandler<>(this, mPotentialOrderId, mSelectedPaymentMethod, txnId,
-                true, mOrderDetails.getFormattedFinalTotal(), null)
+        new PostPaymentHandler<>(this, mPotentialOrderId, mSelectedPaymentMethod,
+                true, null)
                 .setDataPickupCode(dataPickupCode)
                 .setPgTxnId(pgTxnId)
+                .setTxnId(txnId)
+                .setAmount(mOrderDetails.getFormattedFinalTotal())
                 .start();
     }
 
     private void communicateHdfcPayzappResponseFailure(String resCode, String resDesc) {
         new PostPaymentHandler<>(this, mPotentialOrderId, mSelectedPaymentMethod,
-                mTxnId, false, mOrderDetails.getFormattedFinalTotal(), null)
+                false, null)
                 .setErrResCode(resCode)
                 .setErrResDesc(resDesc)
+                .setTxnId(mTxnId)
+                .setAmount(mOrderDetails.getFormattedFinalTotal())
                 .start();
     }
 
     @Override
-    public void onPostPaymentFailure(String txnId) {
+    public void onPostPaymentFailure(String txnId, String paymentType) {
         // When transaction has failed. Place order as Cash on Delivery.
         // User can later use 'Pay Now' to complete order.
         String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
@@ -744,7 +748,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void onPostPaymentSuccess(String txnId) {
+    public void onPostPaymentSuccess(String txnId, String paymentType) {
         // Now Validate payment from server for excess collection
         String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
         new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();

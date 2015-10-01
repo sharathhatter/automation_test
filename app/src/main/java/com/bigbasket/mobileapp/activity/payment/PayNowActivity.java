@@ -22,6 +22,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParam
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayTMInitializer;
+import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
@@ -225,37 +226,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                                         break;
                                     case Constants.PAYTM_WALLET:
                                         PayTMInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
-                                                getCurrentActivity(), new PaytmPaymentTransactionCallback() {
-                                                    @Override
-                                                    public void onTransactionSuccess(Bundle bundle) {
-                                                        onPayNowSuccess();
-                                                    }
-
-                                                    @Override
-                                                    public void onTransactionFailure(String s, Bundle bundle) {
-                                                        onPayNowFailure();
-                                                    }
-
-                                                    @Override
-                                                    public void networkNotAvailable() {
-                                                        onPayNowFailure();
-                                                    }
-
-                                                    @Override
-                                                    public void clientAuthenticationFailed(String s) {
-                                                        onPayNowFailure();
-                                                    }
-
-                                                    @Override
-                                                    public void someUIErrorOccurred(String s) {
-                                                        onPayNowFailure();
-                                                    }
-
-                                                    @Override
-                                                    public void onErrorLoadingWebPage(int i, String s, String s1) {
-                                                        onPayNowFailure();
-                                                    }
-                                                });
+                                                getCurrentActivity(),
+                                                new PaytmTxnCallback<>(getCurrentActivity(), mOrderId, null, true, false));
                                         break;
                                     default:
                                         onPayNowSuccess();
@@ -355,9 +327,11 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {
-        new PostPaymentHandler<>(this, null, mSelectedPaymentMethod, txnId,
-                true, UIUtil.formatAsMoney(mFinalTotal), mOrderId)
+        new PostPaymentHandler<>(this, null, mSelectedPaymentMethod,
+                true, mOrderId)
                 .setPayNow(true)
+                .setTxnId(txnId)
+                .setAmount(UIUtil.formatAsMoney(mFinalTotal))
                 .setDataPickupCode(dataPickupCode)
                 .setPgTxnId(pgTxnId)
                 .start();
@@ -365,20 +339,22 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
 
     private void communicateHdfcPayzappResponseFailure(String resCode, String resDesc) {
         new PostPaymentHandler<>(this, null, mSelectedPaymentMethod,
-                mHDFCPayzappTxnId, false, UIUtil.formatAsMoney(mFinalTotal), mOrderId)
+                false, mOrderId)
                 .setPayNow(true)
+                .setTxnId(mHDFCPayzappTxnId)
+                .setAmount(UIUtil.formatAsMoney(mFinalTotal))
                 .setErrResCode(resCode)
                 .setErrResDesc(resDesc)
                 .start();
     }
 
     @Override
-    public void onPostPaymentFailure(String txnId) {
+    public void onPostPaymentFailure(String txnId, String paymentType) {
         onPayNowFailure();
     }
 
     @Override
-    public void onPostPaymentSuccess(String txnId) {
+    public void onPostPaymentSuccess(String txnId, String paymentType) {
         onPayNowSuccess();
     }
 

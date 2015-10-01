@@ -157,6 +157,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
                 .disableInBasketChildSwap(true)
+                .disableAbMode(true)
                 .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
 
@@ -291,6 +292,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             Intent data = new Intent();
             data.putExtra(Constants.SKU_ID, product.getSku());
             data.putExtra(Constants.NO_ITEM_IN_CART, productQtyInBasket);
+            data.putExtra(Constants.PRODUCT_NO_ITEM_IN_CART, product.getNoOfItemsInCart());
             getActivity().setResult(NavigationCodes.BASKET_CHANGED, data);
         }
     }

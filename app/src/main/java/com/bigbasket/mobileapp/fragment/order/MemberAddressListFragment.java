@@ -431,6 +431,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     private void launchSlotSelection(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
         Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
         intent.putParcelableArrayListExtra(Constants.SHIPMENTS, createPotentialOrderResponseContent.shipments);
+        intent.putExtra(Constants.CITY_MODE, createPotentialOrderResponseContent.cityMode);
         intent.putExtra(Constants.ORDER_DETAILS, createPotentialOrderResponseContent.orderDetails);
         intent.putExtra(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
         if (createPotentialOrderResponseContent.defaultShipmentActions != null) {

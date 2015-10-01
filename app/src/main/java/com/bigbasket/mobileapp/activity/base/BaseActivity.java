@@ -553,6 +553,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    public void trackEventAppsFlyer(String eventName, HashMap<String, Object> eventAttr) {
+        try {
+            AppsFlyerLib.trackEvent(getApplicationContext(), eventName, eventAttr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
         try {
             AppsFlyerLib.sendTrackingWithEvent(getApplicationContext(), eventName, valueToSum);

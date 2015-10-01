@@ -27,6 +27,10 @@ public class OrderInvoice implements Parcelable {
     };
     @SerializedName(Constants.ORDER_NUMBER)
     private String orderNumber;
+    @SerializedName(Constants.ORDER_ID)
+    private String orderId;
+    @SerializedName(Constants.CAN_PAY)
+    private boolean canPay;
     @SerializedName(Constants.MEMBER_DETAILS)
     private MemberSummary memberSummary;
     @SerializedName(Constants.SLOT_INFO)
@@ -48,6 +52,8 @@ public class OrderInvoice implements Parcelable {
 
     public OrderInvoice(Parcel source) {
         this.orderNumber = source.readString();
+        this.orderId = source.readString();
+        this.canPay = source.readByte() == (byte) 1;
         this.memberSummary = source.readParcelable(OrderInvoice.class.getClassLoader());
         this.slotDisplay = source.readParcelable(OrderInvoice.class.getClassLoader());
         this.invoiceNumber = source.readString();
@@ -76,6 +82,8 @@ public class OrderInvoice implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(orderNumber);
+        dest.writeString(orderId);
+        dest.writeByte(canPay ? (byte) 1 : (byte) 0);
         dest.writeParcelable(memberSummary, flags);
         dest.writeParcelable(slotDisplay, flags);
         dest.writeString(invoiceNumber);
@@ -97,6 +105,14 @@ public class OrderInvoice implements Parcelable {
 
     public String getOrderNumber() {
         return orderNumber;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public boolean isCanPay() {
+        return canPay;
     }
 
     public MemberSummary getMemberSummary() {

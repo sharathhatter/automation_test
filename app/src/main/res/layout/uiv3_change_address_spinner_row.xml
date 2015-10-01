@@ -22,4 +22,12 @@
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:textSize="@dimen/small_text_size" />
+
+    <TextView
+        android:id="@+id/txtSlotTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="@dimen/small_text_size"
+        android:textStyle="italic" />
 </LinearLayout>
