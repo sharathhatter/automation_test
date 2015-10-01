@@ -443,7 +443,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(currentTabIndex);
         if (fragment != null) {
             ArrayList<Product> products = productTabInfo.getProductInfo().getProducts();
-            if (products == null || products.size() == 0) {
+            if (products == null) {
                 ((ProductListAwareFragment) fragment).setLazyProductLoadingFailure();
             }
             ((ProductListAwareFragment) fragment).updateProductInfo(productTabInfo.getProductInfo());
