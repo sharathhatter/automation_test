@@ -155,7 +155,9 @@ public class ShowCartActivity extends BackButtonActivity {
 
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, cartTotal,
                 getString(R.string.checkOut), true);
-        layoutCheckoutFooter.setPadding(16, 12, 16, 12);
+        int dp16 = (int) getResources().getDimension(R.dimen.margin_normal);
+        int dp8 = (int) getResources().getDimension(R.dimen.margin_small);
+        layoutCheckoutFooter.setPadding(dp16, dp8, dp16, dp8);
 
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
