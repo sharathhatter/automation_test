@@ -45,7 +45,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,21 +91,21 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         trackCheckEventShown(mShipments);
     }
 
-    private void trackCheckEventShown(ArrayList<Shipment> mShipments){
-        if(mShipments == null || mShipments.size() == 0 ||
+    private void trackCheckEventShown(ArrayList<Shipment> mShipments) {
+        if (mShipments == null || mShipments.size() == 0 ||
                 TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
         HashMap<String, String> map = new HashMap<>();
-        if(originalShipmentMap==null) {
+        if (originalShipmentMap == null) {
             originalShipmentMap = new HashMap<>();
         }
-        for(Shipment shipment : mShipments){
+        for (Shipment shipment : mShipments) {
             map.put(TrackEventkeys.FIS, shipment.getFulfillmentType());
             originalShipmentMap.put(shipment.getShipmentId(), shipment.getFulfillmentType());
-            if(!TextUtils.isEmpty(String.valueOf(shipment.getCount()))) {
-                map.put(shipment.getFulfillmentType()+"_items", String.valueOf(shipment.getCount()));
+            if (!TextUtils.isEmpty(String.valueOf(shipment.getCount()))) {
+                map.put(shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
             }
         }
-        trackEvent("Checkout."+ AppDataDynamic.getInstance(this).getAbModeName() + ".Shown", map);
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Shown", map);
     }
 
 
@@ -126,6 +125,16 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
     private void renderShipments(String cityMode) {
         displayShipmentsBasedOnViewState(mDefaultShipmentActions, cityMode);
+        renderCheckOutProgressView();
+    }
+
+    private void renderCheckOutProgressView() {
+        LinearLayout layoutShipment = (LinearLayout) findViewById(R.id.layout_shipment);
+        String[] array_txtValues = new String[]{"Address", "Gift", "Slots", "Order"};
+        Integer[] array_compPos = new Integer[]{0, 1};
+        int selectedPos = 2;
+        View giftView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
+        if (giftView != null) layoutShipment.addView(giftView, 1);
     }
 
     private void displayShipmentsBasedOnViewState(@Nullable HashMap<String, BaseShipmentAction> shipmentActionHashMap,
@@ -292,6 +301,64 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         }
     }
 
+    private void displaySelectedSlot(View shipmentView, Shipment shipment) {
+        ArrayList<Slot> slots = shipment.getSlots();
+        if (slots == null || slots.size() == 0) return;
+        TextView txtReadonlySelectedSlot = (TextView) shipmentView.findViewById(R.id.txtReadonlySelectedSlot);
+        txtReadonlySelectedSlot.setTypeface(faceRobotoMedium);
+        Button btnSelectedSlot = (Button) shipmentView.findViewById(R.id.btnSelectedSlot);
+        btnSelectedSlot.setTypeface(faceRobotoMedium);
+        Slot selectedSlot;
+        if (slots.size() == 1) {
+            btnSelectedSlot.setVisibility(View.GONE);
+            selectedSlot = setAvailableSlot(slots);
+            shipment.setSelectedSlot(selectedSlot);
+            if (selectedSlot.getSlotDisplay() != null) {
+                showSelectedSlot(selectedSlot, txtReadonlySelectedSlot);
+            }
+        } else {
+            txtReadonlySelectedSlot.setVisibility(View.GONE);
+            selectedSlot = setAvailableSlot(slots);
+            shipment.setSelectedSlot(selectedSlot);
+            if (selectedSlot.getSlotDisplay() != null) {
+                showSelectedSlot(selectedSlot, btnSelectedSlot);
+            }
+            btnSelectedSlot.setOnClickListener(new OnSelectSlotClickListener(shipment));
+        }
+    }
+
+    private Slot setAvailableSlot(ArrayList<Slot> slots) {
+        for (Slot slot : slots) {
+            if (slot.isAvailable())
+                return slot;
+        }
+        return slots.get(0);
+    }
+
+    private void showSelectedSlot(Slot selectedSlot, TextView txtVw) {
+        if (selectedSlot.getSlotDisplay() != null) {
+            SlotDisplay slotDisplay = selectedSlot.getSlotDisplay();
+            String display = TextUtils.isEmpty(slotDisplay.getDate()) ? slotDisplay.getTime() :
+                    slotDisplay.getDate() + "     " + slotDisplay.getTime();
+            txtVw.setText(display);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
+            setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
+            finish();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SLOT_SELECTION_SCREEN;
+    }
+
     private class OnViewShipmentLinkedProductsListener implements View.OnClickListener {
         private Shipment shipment;
 
@@ -350,7 +417,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             mHasUserToggledShipments = !mHasUserToggledShipments;
-            if(mHasUserToggledShipments) {
+            if (mHasUserToggledShipments) {
                 trackToggleEvent(cityMode);
                 mHasUserToggledShipmentsAtAll = true;
             }
@@ -364,8 +431,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         }
     }
 
-    private void trackToggleEvent(String cityMode){
-        if(TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+    private void trackToggleEvent(String cityMode) {
+        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.ACTION_NAME, cityMode);
         trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Toggle", map);
@@ -374,9 +441,11 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private class OnPostShipmentClickListener implements View.OnClickListener {
 
         private String cityMode;
-        public OnPostShipmentClickListener(String cityMode){
+
+        public OnPostShipmentClickListener(String cityMode) {
             this.cityMode = cityMode;
         }
+
         @Override
         public void onClick(View v) {
             HashMap<String, String> map = new HashMap<>();
@@ -406,60 +475,17 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         }
     }
 
-    private void trackFinalShipmentEvent(ArrayList<Shipment> shipments, String cityMode){
-        if(TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+    private void trackFinalShipmentEvent(ArrayList<Shipment> shipments, String cityMode) {
+        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.ACTION_NAME, !mHasUserToggledShipmentsAtAll ? "none" : cityMode);
-        for(Shipment shipment : shipments){
+        for (Shipment shipment : shipments) {
             map.put(TrackEventkeys.FINAL_FIS, shipment.getFulfillmentType());
             map.put(TrackEventkeys.ORIGINAL_FIS, originalShipmentMap.get(shipment.getShipmentId()));
-            map.put("Final_"+shipment.getFulfillmentType()+"_items", String.valueOf(shipment.getCount()));
+            map.put("Final_" + shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
         }
 
         trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".FinalStatus", map);
-    }
-
-    private void displaySelectedSlot(View shipmentView, Shipment shipment) {
-        ArrayList<Slot> slots = shipment.getSlots();
-        if (slots == null || slots.size() == 0) return;
-        TextView txtReadonlySelectedSlot = (TextView) shipmentView.findViewById(R.id.txtReadonlySelectedSlot);
-        txtReadonlySelectedSlot.setTypeface(faceRobotoMedium);
-        Button btnSelectedSlot = (Button) shipmentView.findViewById(R.id.btnSelectedSlot);
-        btnSelectedSlot.setTypeface(faceRobotoMedium);
-        Slot selectedSlot;
-        if (slots.size() == 1) {
-            btnSelectedSlot.setVisibility(View.GONE);
-            selectedSlot = setAvailableSlot(slots);
-            shipment.setSelectedSlot(selectedSlot);
-            if (selectedSlot.getSlotDisplay() != null) {
-                showSelectedSlot(selectedSlot, txtReadonlySelectedSlot);
-            }
-        } else {
-            txtReadonlySelectedSlot.setVisibility(View.GONE);
-            selectedSlot = setAvailableSlot(slots);
-            shipment.setSelectedSlot(selectedSlot);
-            if (selectedSlot.getSlotDisplay() != null) {
-                showSelectedSlot(selectedSlot, btnSelectedSlot);
-            }
-            btnSelectedSlot.setOnClickListener(new OnSelectSlotClickListener(shipment));
-        }
-    }
-
-    private Slot setAvailableSlot(ArrayList<Slot> slots) {
-        for (Slot slot : slots) {
-            if (slot.isAvailable())
-                return slot;
-        }
-        return slots.get(0);
-    }
-
-    private void showSelectedSlot(Slot selectedSlot, TextView txtVw) {
-        if (selectedSlot.getSlotDisplay() != null) {
-            SlotDisplay slotDisplay = selectedSlot.getSlotDisplay();
-            String display = TextUtils.isEmpty(slotDisplay.getDate()) ? slotDisplay.getTime() :
-                    slotDisplay.getDate() + "     " + slotDisplay.getTime();
-            txtVw.setText(display);
-        }
     }
 
     private class OnSelectSlotClickListener implements View.OnClickListener {
@@ -523,20 +549,5 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                     (int) (displayRectangle.height() * 0.7f));
             mSlotListDialog.show();
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
-            setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
-            finish();
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public String getScreenTag() {
-        return TrackEventkeys.SLOT_SELECTION_SCREEN;
     }
 }

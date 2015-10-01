@@ -360,7 +360,7 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/co-post-gifts/")
     void postGifts(@Field(Constants.P_ORDER_ID) String potentialOrderId,
-                   @Field(Constants.GIFTS) String addressId,
+                   @Field(Constants.GIFTS) String gifts,
                    Callback<ApiResponse<PostGiftItemsResponseContent>> apiResponseCallback);
 
     @FormUrlEncoded
@@ -441,4 +441,5 @@ public interface BigBasketApiService {
 
     @POST("/get-app-data-dynamic/")
     ApiResponse<GetAppDataDynamicResponse> getAppDataDynamic();
+
 }

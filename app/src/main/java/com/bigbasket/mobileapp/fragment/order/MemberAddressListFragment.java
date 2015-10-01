@@ -19,8 +19,8 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.ShipmentSelectionActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -39,15 +39,16 @@ import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
+import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BasketDeltaDialog;
 import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -211,31 +212,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         } else {
             layoutCheckoutFooter.setVisibility(View.GONE);
         }
-
-        contentView.addView(addressView);
-    }
-
-    private class AddressListFooterButtonOnClickListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
-            trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
-            if (mSelectedAddress == null) {
-                mSelectedAddress = memberAddressListAdapter.getSelectedAddress();
-            }
-            if (mSelectedAddress != null) {
-                if (mSelectedAddress.isPartial()) {
-                    showAddressForm(mSelectedAddress);
-                } else {
-                    postDeliveryAddress();
-                }
-            } else {
-                Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
-                        Toast.LENGTH_SHORT).show();
-            }
+        if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
+            renderCheckOutProgressView(contentView);
         }
+        contentView.addView(addressView);
     }
 
     @Override
@@ -363,6 +343,13 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         }
     }
 
+    private void renderCheckOutProgressView(ViewGroup contentView) {
+        String[] array_txtValues = new String[]{"Address", "Gift", "Slots", "Order"};
+        int selectedPos = 0;
+        View giftView = UIUtil.getCheckoutProgressView(getActivity(), null, array_txtValues, null, selectedPos);
+        if (giftView != null) contentView.addView(giftView, 0);
+    }
+
     @NonNull
     @Override
     public String getFragmentTxnTag() {
@@ -404,7 +391,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         }
     }
 
-
     @Override
     public void onPotentialOrderCreated(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
         if (createPotentialOrderResponseContent.hasQcErrors &&
@@ -429,7 +415,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     private void launchSlotSelection(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
-        Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
+       /* Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
         intent.putParcelableArrayListExtra(Constants.SHIPMENTS, createPotentialOrderResponseContent.shipments);
         intent.putExtra(Constants.CITY_MODE, createPotentialOrderResponseContent.cityMode);
         intent.putExtra(Constants.ORDER_DETAILS, createPotentialOrderResponseContent.orderDetails);
@@ -442,11 +428,56 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             intent.putExtra(Constants.ON_TOGGLE_ACTIONS,
                     new Gson().toJson(createPotentialOrderResponseContent.toggleShipmentActions));
         }
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);*/
+        if (createPotentialOrderResponseContent.gift == null) {
+            Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.GIFTS, createPotentialOrderResponseContent.gift);
+            bundle.putString(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
+            bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_GIFTFRAGMENT);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        } else {
+          /*  Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.GIFTS, createPotentialOrderResponseContent.gift);
+            bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_GIFTFRAGMENT);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);*/
+            if (!checkInternetConnection()) {
+                handler.sendOfflineError();
+                return;
+            }
+            new PostGiftTask<>(getCurrentActivity(), createPotentialOrderResponseContent.potentialOrderId, null,
+                    TrackEventkeys.CO_GIFT_OPS).startTask();
+        }
     }
 
     @Override
     public String getScreenTag() {
         return TrackEventkeys.VIEW_DELIVERY_ADDRESS_SCREEN;
+    }
+
+    private class AddressListFooterButtonOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
+            if (mSelectedAddress == null) {
+                mSelectedAddress = memberAddressListAdapter.getSelectedAddress();
+            }
+            if (mSelectedAddress != null) {
+                if (mSelectedAddress.isPartial()) {
+                    showAddressForm(mSelectedAddress);
+                } else {
+                    postDeliveryAddress();
+                }
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -614,6 +614,7 @@ public class Constants {
     public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
     public static final String EXPRESS_AVAILABILITY = "express_availability";
     public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
+    public static final String APP_LAUNCH = "appLaunch";
 
     // Gift items
     public static final String GIFTS = "gifts";
@@ -623,5 +624,5 @@ public class Constants {
     public static final String IS_PREWRAPPED = "is_prewrapped";
     public static final String IS_CONVERTIBLE_TO_NORMAL = "is_convertible_to_normal";
     public static final String COMMON_MSG = "common_msg";
-    public static final String APP_LAUNCH = "appLaunch";
+    public static final String NUM_GIFTS = "num_gifts";
 }

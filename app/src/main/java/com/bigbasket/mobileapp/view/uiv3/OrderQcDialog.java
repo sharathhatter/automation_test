@@ -21,10 +21,10 @@ public class OrderQcDialog<T> {
         View baseView = activity.getLayoutInflater().inflate(R.layout.uiv3_qc_dialog, null);
         ListView listView = (ListView) baseView.findViewById(R.id.lstQc);
 
-        final boolean allOutOfStock = createPotentialOrderResponseContent.orderDetails.getTotalItems() == 0;
+//        final boolean allOutOfStock = createPotentialOrderResponseContent.orderDetails.getTotalItems() == 0;
 
 
-        QcListAdapter qcListAdapter = new QcListAdapter(activity, createPotentialOrderResponseContent.qcErrorDatas,
+      /*  QcListAdapter qcListAdapter = new QcListAdapter(activity, createPotentialOrderResponseContent.qcErrorDatas,
                 FontHolder.getInstance(activity).getFaceRobotoRegular());
         listView.setAdapter(qcListAdapter);
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -50,6 +50,6 @@ public class OrderQcDialog<T> {
         }
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new OnDialogShowListener());
-        dialog.show();
+        dialog.show();*/
     }
 }

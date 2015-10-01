@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingTop="@dimen/padding_normal">
+
+    <ImageView
+        android:id="@+id/imgProduct"
+        android:layout_width="@dimen/product_image_width"
+        android:layout_height="@dimen/product_image_height"
+        android:contentDescription="@string/product_image"
+        android:padding="2dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/noimage" />
+
+
+    <TextView
+        android:id="@+id/txtProductDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_toRightOf="@id/imgProduct"
+        android:text="Tender Coconut"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
+
+    <TextView
+        android:id="@+id/txtProductBrand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtProductDesc"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_toRightOf="@id/imgProduct"
+        android:text="Hampi Organic"
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
+
+    <TextView
+        android:id="@+id/txtProductQuantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtProductBrand"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_toRightOf="@id/imgProduct"
+        android:text="Qty in basket"
+        android:layout_marginTop="@dimen/item_margin_top"
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:textSize="@dimen/secondary_text_size"/>
+
+    <TextView
+        android:id="@+id/txtProductGiftWrapPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtProductQuantity"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_toRightOf="@id/imgProduct"
+        android:text="Gift wrap charge"
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:textSize="@dimen/secondary_text_size"/>
+
+    <ImageButton
+        android:id="@+id/btnDecreaseQuantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/basket_minus"
+        android:layout_below="@id/txtProductGiftWrapPrice"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_toRightOf="@id/imgProduct"/>
+
+    <TextView
+        android:id="@+id/txtProductGiftWrapQuantityStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtProductGiftWrapPrice"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_toRightOf="@id/btnDecreaseQuantity"
+        android:text="9 quantity"
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:layout_alignBottom="@+id/btnDecreaseQuantity"
+        android:gravity="center"
+        android:textSize="@dimen/secondary_text_size"/>
+
+    <ImageButton
+        android:id="@+id/btnIncreaseQuantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/txtProductGiftWrapQuantityStatus"
+        android:layout_alignBottom="@+id/btnDecreaseQuantity"
+        android:background="@drawable/basket_plus"/>
+
+    <TextView
+        android:id="@+id/txtProductGiftWrapTotalPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnDecreaseQuantity"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_toRightOf="@id/imgProduct"
+        android:text="total price"
+        android:layout_marginTop="@dimen/item_margin_top"
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:textSize="@dimen/secondary_text_size"/>
+
+
+    <View
+        android:id="@+id/viewSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/txtProductGiftWrapTotalPrice"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:background="@color/dark_black" />
+</RelativeLayout>

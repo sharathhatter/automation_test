@@ -375,4 +375,10 @@
     <string name="status">Status</string>
     <string name="retry">Retry</string>
     <string name="needMoreAddressInfo">We need more information to complete your address and help you checkout the items in Basket.</string>
+
+    <string name="giftOptions">Gift Options</string>
+    <string name="giftWrapMsg">Would you like to personalize them with a gift wrap\u2215message?</string>
+    <string name="giftWrapOptions">View Gift Wrap Options</string>
+    <string name="skipAndPro">Skip and Proceed</string>
+    <string name="giftCont">GiftImg</string>
 </resources>
