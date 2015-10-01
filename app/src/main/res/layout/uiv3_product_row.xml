@@ -165,6 +165,7 @@
         android:layout_toRightOf="@id/imgProduct"
         android:textColor="@color/uiv3_status_bar_background"
         android:textSize="@dimen/secondary_text_size"
+        android:lineSpacingExtra="@dimen/margin_mini"
         android:visibility="visible" />
 
     <RelativeLayout
@@ -214,6 +215,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/layoutPromoName"
-        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_small"
         android:background="@color/uiv3_large_divider_color" />
 </RelativeLayout>

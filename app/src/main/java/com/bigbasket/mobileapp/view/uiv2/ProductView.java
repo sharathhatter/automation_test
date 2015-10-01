@@ -245,7 +245,7 @@ public final class ProductView {
                 }
             }
             if (msgs.size() > 0) {
-                txtExpressMsg.setText(UIUtil.strJoin(msgs, "\n\n"));
+                txtExpressMsg.setText(UIUtil.strJoin(msgs, "\n"));
             } else {
                 txtExpressMsg.setVisibility(View.GONE);
             }
