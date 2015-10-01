@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.order;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.gift.GiftHomeActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
@@ -43,7 +45,7 @@ public class GiftOptionsFragment extends BaseFragment {
         if (giftView != null) layout.addView(giftView, 0);
     }
 
-    private void renderGiftLayout(Bundle args) {
+    private void renderGiftLayout(final Bundle args) {
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
         LinearLayout layout = (LinearLayout) contentView.findViewById(R.id.layoutGiftScroll);
@@ -74,6 +76,8 @@ public class GiftOptionsFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
 
+                Intent intent=new Intent(getActivity(), GiftHomeActivity.class);
+                startActivity(intent);
             }
         });
     }

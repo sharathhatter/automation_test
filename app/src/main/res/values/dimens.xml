@@ -52,4 +52,9 @@
     <dimen name="nav_city_margin_top">16dp</dimen>
 
     <dimen name="fab_margin_in_non_coordinator_layout">0dp</dimen>
+
+    <!-- Gift Item -->
+    <dimen name="item_margin_top">10dp</dimen>
+
+
 </resources>

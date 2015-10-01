@@ -428,7 +428,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                     new Gson().toJson(createPotentialOrderResponseContent.toggleShipmentActions));
         }
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);*/
-        if (createPotentialOrderResponseContent.gift != null) {
+        if (createPotentialOrderResponseContent.gift == null) {
             Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
             Bundle bundle = new Bundle();
             bundle.putParcelable(Constants.GIFTS, createPotentialOrderResponseContent.gift);

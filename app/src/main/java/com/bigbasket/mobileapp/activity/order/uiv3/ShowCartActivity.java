@@ -456,6 +456,8 @@ public class ShowCartActivity extends BackButtonActivity {
         TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
                 bbTabs);
         mViewPager.setAdapter(tabPagerAdapter);
+        pageTitleStrip.getSelectedTabPosition();
+
 
         if (pageTitleStrip.isShown()) {
             pageTitleStrip.setupWithViewPager(mViewPager);
