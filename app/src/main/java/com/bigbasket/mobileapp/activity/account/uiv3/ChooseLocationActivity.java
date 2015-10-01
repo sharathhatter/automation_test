@@ -60,6 +60,10 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     protected void onResume() {
         super.onResume();
         if (mIsViaOnActivityResult) return;
+        triggerLocationFetching();
+    }
+
+    private void triggerLocationFetching() {
         int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
         switch (playServicesAvailable) {
             case ConnectionResult.SUCCESS:
@@ -83,7 +87,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         } else {
             showProgressDialog(getString(R.string.readingYourCurrentLocation));
             if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                updateLastKnownLocation(false);
+                updateLastKnownLocation(false, false);
             } else {
                 buildGoogleApiClient();
             }
@@ -134,10 +138,10 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        updateLastKnownLocation(false);
+        updateLastKnownLocation(false, false);
     }
 
-    private void updateLastKnownLocation(boolean setAsCurrentAddress) {
+    private void updateLastKnownLocation(boolean setAsCurrentAddress, boolean autoMode) {
         if (mGoogleApiClient == null) return;
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (lastLocation != null) {
@@ -148,8 +152,12 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                 getCurrentLocationDetail(latLng);
             }
         } else {
-            hideProgressDialog();
-            onLocationReadFailure();
+            if (autoMode) {
+                triggerLocationFetching();
+            } else {
+                hideProgressDialog();
+                onLocationReadFailure();
+            }
         }
     }
 
@@ -244,7 +252,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     public void onLocationButtonClicked(View v) {
         switch (v.getId()) {
             case R.id.btnToCurrentLocation:
-                updateLastKnownLocation(true);
+                updateLastKnownLocation(true, true);
                 break;
             case R.id.btnChooseLocation:
                 Intent intent = new Intent(this, PlacePickerApiActivity.class);

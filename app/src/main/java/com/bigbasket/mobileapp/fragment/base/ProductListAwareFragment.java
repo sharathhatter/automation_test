@@ -151,11 +151,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         setProductListView();
     }
 
-    public void updateProductInfo(@NonNull ProductInfo productInfo) {
+    public void updateProductInfo(@NonNull ProductInfo productInfo, ArrayList<NameValuePair> nameValuePairs) {
         hideProgressView();
         mProductInfo = productInfo;
         mProductInfo.setCurrentPage(productInfo.getCurrentPage());
         mProductInfo.setProducts(productInfo.getProducts());
+        mNameValuePairs = NameValuePair.toMap(nameValuePairs);
         setProductListView();
     }
 

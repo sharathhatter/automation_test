@@ -459,7 +459,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             if (products == null) {
                 ((ProductListAwareFragment) fragment).setLazyProductLoadingFailure();
             }
-            ((ProductListAwareFragment) fragment).updateProductInfo(productTabInfo.getProductInfo());
+            ((ProductListAwareFragment) fragment).updateProductInfo(productTabInfo.getProductInfo(), mNameValuePairs);
             if (fragment.getArguments() != null) {
                 fragment.getArguments().putParcelable(Constants.PRODUCT_INFO, productTabInfo.getProductInfo());
                 fragment.getArguments().putParcelableArrayList(Constants.FILTER_ON, productTabInfo.getFilteredOn());
@@ -468,6 +468,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 fragment.getArguments().putParcelableArrayList(Constants.PRODUCT_SORT_OPTION, productTabInfo.getSortOptions());
                 fragment.getArguments().putParcelable(Constants.HEADER_SECTION, productTabInfo.getHeaderSection());
                 fragment.getArguments().putInt(Constants.HEADER_SEL, productTabInfo.getHeaderSelectedIndex());
+                fragment.getArguments().putParcelableArrayList(Constants.PRODUCT_QUERY, mNameValuePairs);
             }
         }
     }
