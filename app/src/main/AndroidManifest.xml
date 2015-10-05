@@ -589,7 +589,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAcAYm_JguAF9LmBnNW1YC0Hmz6_UuO3Cw" />
+            android:value="@string/google_geo_api_key" />
 
         <service
             android:name=".service.AreaPinInfoIntentService"

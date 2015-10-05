@@ -69,15 +69,15 @@ public final class ProductView {
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
                 productDetailOnClickListener, productDataAware);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
-        setExpressMsg(productViewHolder, product, productViewDisplayDataHolder, productDataAware,
-                navigationCtx, tabName, appDataStoreAvailabilityMap);
+        HashMap<String, String> basketQueryMap =
+                setExpressMsg(productViewHolder, product, productViewDisplayDataHolder,
+                        productDataAware, tabName, appDataStoreAvailabilityMap);
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, null);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, navigationCtx, cartInfo, tabName, null,
-                product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0
-                        ? product.getStoreAvailability().get(0) : null);
+                basketQueryMap);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
                     productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap);
@@ -197,19 +197,21 @@ public final class ProductView {
                 UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())), productViewDisplayDataHolder.getRupeeTypeface()));
     }
 
-    private static <T> void setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
-                                          final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                          final T productDataAware, final String navigationCtx,
-                                          final String tabName,
-                                          @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
+    @Nullable
+    private static <T> HashMap<String, String> setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
+                                                             final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                             final T productDataAware,
+                                                             final String tabName,
+                                                             @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
 
         final ArrayList<HashMap<String, String>> storeAvailabilityArrayList = product.getStoreAvailability();
         TextView txtExpressMsg = productViewHolder.getTxtExpressMsg();
         if (storeAvailabilityArrayList == null || storeAvailabilityArrayList.size() == 0
                 || allStoreAvailabilityMsgMap == null || !productViewDisplayDataHolder.isShowBasketBtn()) {
             txtExpressMsg.setVisibility(View.GONE);
-            return;
+            return null;
         }
+        HashMap<String, String> currentStoreMap = null;
         txtExpressMsg.setVisibility(View.VISIBLE);
         if (!productViewDisplayDataHolder.disableAbMode()
                 && AppDataDynamic.getInstance(((ActivityAware) productDataAware).getCurrentActivity()).isContextualMode()
@@ -221,6 +223,7 @@ public final class ProductView {
                     String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
                     if (!TextUtils.isEmpty(msg)) {
                         txtExpressMsg.setText(msg);
+                        currentStoreMap = particularStoreMap;
                     } else {
                         txtExpressMsg.setVisibility(View.GONE);
                     }
@@ -233,6 +236,9 @@ public final class ProductView {
                 if (!TextUtils.isEmpty(msg)) {
                     msgs.add(msg);
                 }
+                if (currentStoreMap == null) {
+                    currentStoreMap = particularStoreMap;
+                }
             }
             if (msgs.size() > 0) {
                 txtExpressMsg.setText(UIUtil.strJoin(msgs, "\n"));
@@ -240,6 +246,7 @@ public final class ProductView {
                 txtExpressMsg.setVisibility(View.GONE);
             }
         }
+        return currentStoreMap;
     }
 
     @Nullable
@@ -578,7 +585,8 @@ public final class ProductView {
             txtChildDropdownTitle.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
             txtChildDropdownTitle.setText("Select Pack Size");
 
-            final ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
+            final ProductListSpinnerAdapter productListSpinnerAdapter =
+                    new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
                     childProducts, productViewDisplayDataHolder.getSerifTypeface(),
                     productViewDisplayDataHolder.getRupeeTypeface(), product);
             productListSpinnerAdapter.setCurrentProduct(currentProduct);
