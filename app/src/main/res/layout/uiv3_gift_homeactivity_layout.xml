@@ -15,7 +15,7 @@
 
     <android.support.design.widget.TabLayout
         android:id="@+id/slidingTabs"
-        style="@style/BaseAppTheme.TabStyle"
+        style="@style/BaseAppTheme.GiftTabStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabMode="scrollable" />
