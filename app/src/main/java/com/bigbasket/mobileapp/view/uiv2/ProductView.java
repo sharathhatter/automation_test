@@ -87,17 +87,7 @@ public final class ProductView {
     private static void setProductImage(ProductViewHolder productViewHolder, Product product, String baseImgUrl,
                                         ProductDetailOnClickListener productDetailOnClickListener) {
         ImageView imgProduct = productViewHolder.getImgProduct();
-        if (product.getImageUrl() != null) {
-            String url;
-            if (TextUtils.isEmpty(baseImgUrl) || product.getImageUrl().startsWith("http")) {
-                url = product.getImageUrl();
-            } else {
-                url = baseImgUrl + product.getImageUrl();
-            }
-            UIUtil.displayAsyncImage(imgProduct, url);
-        } else {
-            imgProduct.setImageResource(R.drawable.noimage);
-        }
+        UIUtil.displayProductImage(baseImgUrl, product.getImageUrl(), imgProduct);
         imgProduct.setOnClickListener(productDetailOnClickListener);
     }
 

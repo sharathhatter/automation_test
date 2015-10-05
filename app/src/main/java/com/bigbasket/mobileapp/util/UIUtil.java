@@ -337,6 +337,21 @@ public class UIUtil {
         return new SimpleDateFormat(format, Locale.getDefault()).format(date);
     }
 
+    public static void displayProductImage(@Nullable String baseImgUrl, @Nullable String productImgUrl,
+                                           ImageView imgProduct) {
+        if (productImgUrl != null) {
+            String url;
+            if (TextUtils.isEmpty(baseImgUrl) || productImgUrl.startsWith("http")) {
+                url = productImgUrl;
+            } else {
+                url = baseImgUrl + productImgUrl;
+            }
+            UIUtil.displayAsyncImage(imgProduct, url);
+        } else {
+            imgProduct.setImageResource(R.drawable.noimage);
+        }
+    }
+
     public static void displayAsyncImage(ImageView imageView, String url) {
         displayAsyncImage(imageView, url, false, R.drawable.loading_small);
     }
