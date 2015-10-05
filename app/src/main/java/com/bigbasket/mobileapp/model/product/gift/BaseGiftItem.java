@@ -93,4 +93,8 @@ public class BaseGiftItem extends BaseProduct {
     public double getGiftWrapCharge() {
         return giftWrapCharge;
     }
+
+    public void setReservedQty(int reservedQty) {
+        this.reservedQty = reservedQty;
+    }
 }

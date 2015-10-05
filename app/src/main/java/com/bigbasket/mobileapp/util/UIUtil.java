@@ -172,6 +172,15 @@ public class UIUtil {
         return spannableString;
     }
 
+    public static SpannableString asRupeeSpannable(String prefix, String amtTxt, Typeface faceRupee) {
+        String rupeeSym = "`";
+        SpannableString spannableString = new SpannableString(prefix + rupeeSym + amtTxt);
+        spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), prefix.length(),
+                prefix.length() + rupeeSym.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        return spannableString;
+    }
+
     public static SpannableString asRupeeSpannable(double amt, Typeface faceRupee) {
         return asRupeeSpannable(formatAsMoney(amt), faceRupee);
     }
@@ -446,7 +455,7 @@ public class UIUtil {
 
     public static View getCheckoutProgressView(Context context, @Nullable ViewGroup parent, String[] array_txtValues,
                                                @Nullable Integer[] array_compPos, int selectedPos) {
-        View container = LayoutInflater.from(context).inflate(R.layout.uiv3_gift_flow,
+        View container = LayoutInflater.from(context).inflate(R.layout.uiv3_checkout_progress_view,
                 parent, false);
         LinearLayout layoutGift = (LinearLayout) container.findViewById(R.id.layout_gift);
         ImageView imageViewAddress = (ImageView) container.findViewById(R.id.imageView_address);

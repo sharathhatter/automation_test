@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.apiservice.models.response;
 
+import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.util.Constants;
@@ -16,4 +17,6 @@ public class CreatePotentialOrderResponseContent {
     public ArrayList<QCErrorData> qcErrorDatas;
     @SerializedName(Constants.GIFTS)
     public Gift gift;
+    @SerializedName(Constants.ORDER_DETAILS)
+    public OrderDetails orderDetails;
 }

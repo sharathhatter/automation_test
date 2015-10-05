@@ -160,6 +160,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/gift_layout"
-        android:background="@android:color/black" />
+        android:background="@color/uiv3_primary_text_color" />
 </LinearLayout>

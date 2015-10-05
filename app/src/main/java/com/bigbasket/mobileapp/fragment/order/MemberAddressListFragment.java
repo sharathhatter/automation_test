@@ -36,6 +36,8 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
+import com.bigbasket.mobileapp.model.product.gift.Gift;
+import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
@@ -415,35 +417,26 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     private void launchSlotSelection(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
-       /* Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
-        intent.putParcelableArrayListExtra(Constants.SHIPMENTS, createPotentialOrderResponseContent.shipments);
-        intent.putExtra(Constants.CITY_MODE, createPotentialOrderResponseContent.cityMode);
-        intent.putExtra(Constants.ORDER_DETAILS, createPotentialOrderResponseContent.orderDetails);
-        intent.putExtra(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
-        if (createPotentialOrderResponseContent.defaultShipmentActions != null) {
-            intent.putExtra(Constants.DEFAULT_ACTIONS,
-                    new Gson().toJson(createPotentialOrderResponseContent.defaultShipmentActions));
-        }
-        if (createPotentialOrderResponseContent.toggleShipmentActions != null) {
-            intent.putExtra(Constants.ON_TOGGLE_ACTIONS,
-                    new Gson().toJson(createPotentialOrderResponseContent.toggleShipmentActions));
-        }
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);*/
-        if (createPotentialOrderResponseContent.gift == null) {
+
+        if (createPotentialOrderResponseContent.gift != null
+                && createPotentialOrderResponseContent.gift.getCount() > 0) {
             Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.GIFTS, createPotentialOrderResponseContent.gift);
+            Gift gift = createPotentialOrderResponseContent.gift;
+            // Reserve all items as gift for now
+            if (gift != null && gift.getCount() > 0 && gift.getGiftItems() != null) {
+                for (GiftItem giftItem: gift.getGiftItems()) {
+                    if (giftItem.isReadOnly() || (giftItem.getReservedQty() <= 0 && giftItem.getQuantity() > 0)) {
+                        giftItem.setReservedQty(giftItem.getQuantity());
+                    }
+                }
+            }
+            bundle.putParcelable(Constants.GIFTS, gift);
             bundle.putString(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
             bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_GIFTFRAGMENT);
             intent.putExtras(bundle);
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } else {
-          /*  Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.GIFTS, createPotentialOrderResponseContent.gift);
-            bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_GIFTFRAGMENT);
-            intent.putExtras(bundle);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);*/
             if (!checkInternetConnection()) {
                 handler.sendOfflineError();
                 return;

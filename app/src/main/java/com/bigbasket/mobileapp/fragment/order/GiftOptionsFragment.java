@@ -51,11 +51,9 @@ public class GiftOptionsFragment extends BaseFragment {
         LinearLayout layout = (LinearLayout) contentView.findViewById(R.id.layoutGiftScroll);
         renderCheckOutProgressView(layout);
         TextView textViewCount = (TextView) contentView.findViewById(R.id.textViewNumGifts);
-        Gift gift = args.getParcelable(Constants.GIFTS);
-        int giftCount;
+        final Gift gift = args.getParcelable(Constants.GIFTS);
         if (gift != null) {
-            giftCount = gift.getCount();
-            textViewCount.setText("You have " + giftCount + " gift items in your basket!");
+            textViewCount.setText("You have " + gift.getCount() + " gift items in your basket!");
             textViewCount.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoMedium());
         }
         final String potentialOrderId = args.getString(Constants.P_ORDER_ID);
@@ -75,11 +73,15 @@ public class GiftOptionsFragment extends BaseFragment {
         btnGiftOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent=new Intent(getActivity(), GiftHomeActivity.class);
-                startActivity(intent);
+                openGiftSelection(gift);
             }
         });
+    }
+
+    private void openGiftSelection(Gift gift) {
+        Intent intent = new Intent(getActivity(), GiftHomeActivity.class);
+        intent.putExtra(Constants.GIFTS, gift);
+        startActivity(intent);
     }
 
     @Override

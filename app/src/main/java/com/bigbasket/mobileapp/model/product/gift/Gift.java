@@ -26,6 +26,8 @@ public class Gift implements Parcelable {
     @SerializedName(Constants.COMMON_MSG)
     private String commonMsg;
     private int count;
+    @SerializedName(Constants.BASE_IMG_URL)
+    private String baseImgUrl;
 
     public Gift(Parcel source) {
         boolean isGiftNull = source.readByte() == (byte) 1;
@@ -35,7 +37,10 @@ public class Gift implements Parcelable {
         }
         this.commonMsg = source.readString();
         this.count = source.readInt();
-
+        boolean isBaseImgUrlNull = source.readByte() == (byte) 1;
+        if (!isBaseImgUrlNull) {
+            this.baseImgUrl = source.readString();
+        }
     }
 
     @Override
@@ -47,6 +52,11 @@ public class Gift implements Parcelable {
         }
         dest.writeString(commonMsg);
         dest.writeInt(count);
+        boolean isBaseImgUrlNull = baseImgUrl == null;
+        dest.writeByte(isBaseImgUrlNull ? (byte) 1 : (byte) 0);
+        if (!isBaseImgUrlNull) {
+            dest.writeString(baseImgUrl);
+        }
     }
 
     @Override
@@ -60,6 +70,10 @@ public class Gift implements Parcelable {
 
     public String getCommonMsg() {
         return commonMsg;
+    }
+
+    public String getBaseImgUrl() {
+        return baseImgUrl;
     }
 
     public int getCount() {
