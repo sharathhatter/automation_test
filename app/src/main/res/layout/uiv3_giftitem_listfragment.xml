@@ -4,20 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnAddMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/margin_small"
-        android:background="@drawable/main_button_rounded_background"
-        android:text="@string/addMsg"
-        android:textColor="@android:color/white" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerViewGifts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/btnAddMessage" />
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

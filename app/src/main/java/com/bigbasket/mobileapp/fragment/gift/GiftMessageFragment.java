@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.gift.GiftItemMessageRecyclerAdapter;
@@ -71,6 +72,10 @@ public class GiftMessageFragment extends BaseFragment {
                 spannableStringIndividualMsg.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         rbtnIndividualMsg.setText(spannableStringIndividualMsg);
+
+        TextView txtChooseYourMsgOption = (TextView) base.findViewById(R.id.txtChooseYourMsgOption);
+        txtChooseYourMsgOption.setTypeface(faceRobotoRegular);
+        txtChooseYourMsgOption.setText(getString(R.string.chooseYourMsg));
     }
 
     private void setUpGiftMsgFragment(boolean useCommonMsg) {
@@ -84,6 +89,13 @@ public class GiftMessageFragment extends BaseFragment {
         GiftItemMessageRecyclerAdapter giftItemMessageRecyclerAdapter =
                 new GiftItemMessageRecyclerAdapter<>(this, gift.getGiftItems(), useCommonMsg);
         recyclerViewGiftMsgs.setAdapter(giftItemMessageRecyclerAdapter);
+    }
+
+    public void redrawGiftMessageRecyclerView(int position) {
+        View base = getView();
+        if (base == null) return;
+        RecyclerView recyclerViewGiftMsgs = (RecyclerView) base.findViewById(R.id.recyclerViewGiftMsgs);
+        recyclerViewGiftMsgs.getAdapter().notifyItemChanged(position);
     }
 
     @Override

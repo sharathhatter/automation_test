@@ -1,33 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@android:color/white">
 
-    <include layout="@layout/uiv3_tool_layout" />
-
-    <LinearLayout
-        android:id="@+id/layoutGiftProgressView"
+    <Button
+        android:id="@+id/btnFooter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" />
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/margin_small"
+        android:background="@drawable/main_button_rounded_background"
+        android:text="@string/addMsg"
+        android:textColor="@android:color/white" />
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/slidingTabs"
-        style="@style/BaseAppTheme.GiftTabStyle"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabMode="scrollable" />
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnFooter">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/uiv3_divider_color" />
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <com.bigbasket.mobileapp.view.uiv3.NonSwipeableViewPager
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+            <include layout="@layout/uiv3_tool_layout" />
 
-</LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutGiftProgressView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                app:layout_scrollFlags="scroll|enterAlways" />
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/slidingTabs"
+                style="@style/BaseAppTheme.GiftTabStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabGravity="fill"
+                app:tabMode="fixed" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/uiv3_primary_text_color" />
+        </android.support.design.widget.AppBarLayout>
+
+        <com.bigbasket.mobileapp.view.uiv3.NonSwipeableViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

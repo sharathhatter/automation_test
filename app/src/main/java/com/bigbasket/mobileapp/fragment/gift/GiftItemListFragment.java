@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.gift;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.gift.GiftItemAware;
@@ -33,7 +35,6 @@ public class GiftItemListFragment extends BaseFragment implements GiftOperationA
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loadGiftItems();
-        setAddMessageButton();
     }
 
     private void loadGiftItems() {
@@ -53,19 +54,6 @@ public class GiftItemListFragment extends BaseFragment implements GiftOperationA
         giftRecyclerView.setAdapter(mGiftItemListRecyclerAdapter);
 
     }
-
-    private void setAddMessageButton() {
-        View base = getView();
-        if (base == null) return;
-        base.findViewById(R.id.btnAddMessage).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ViewPager pager = (ViewPager) getActivity().findViewById(R.id.viewPager);
-                pager.setCurrentItem(1);
-            }
-        });
-    }
-
 
     @Override
     public String getTitle() {
@@ -102,5 +90,12 @@ public class GiftItemListFragment extends BaseFragment implements GiftOperationA
         }
         giftItem.setReservedQty(reservedQty);
         mGiftItemListRecyclerAdapter.notifyItemChanged(position);
+
+        ViewPager pager = (ViewPager) getActivity().findViewById(R.id.viewPager);
+        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) pager.getAdapter()).getRegisteredFragment(1);
+        if (fragment != null && fragment instanceof GiftMessageFragment) {
+            GiftMessageFragment giftMessageFragment = (GiftMessageFragment) fragment;
+            giftMessageFragment.redrawGiftMessageRecyclerView(position);
+        }
     }
 }

@@ -5,10 +5,11 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
+import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.fragment.gift.GiftItemListFragment;
 import com.bigbasket.mobileapp.fragment.gift.GiftMessageFragment;
 import com.bigbasket.mobileapp.interfaces.gift.GiftItemAware;
@@ -59,13 +60,45 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
         bbTabs.add(new BBTab<>(getString(R.string.addMsgSnum),
                 GiftMessageFragment.class));
 
-        TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(this, getSupportFragmentManager(),
-                bbTabs);
+        TabPagerAdapterWithFragmentRegistration tabPagerAdapter =
+                new TabPagerAdapterWithFragmentRegistration(this, getSupportFragmentManager(), bbTabs);
         pager.setAdapter(tabPagerAdapter);
-        tabLayout.setTabMode(TabLayout.MODE_FIXED);
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setupWithViewPager(pager);
 
+        final Button btnFooter = (Button) findViewById(R.id.btnFooter);
+        btnFooter.setTypeface(faceRobotoRegular);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) {
+                    btnFooter.setText(getString(R.string.addMsg));
+                    btnFooter.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pager.setCurrentItem(1);
+                        }
+                    });
+                } else {
+                    btnFooter.setText(getString(R.string.saveAndContinue));
+                    btnFooter.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showToast("Yet to plugin!");
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
