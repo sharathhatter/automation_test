@@ -53,6 +53,7 @@
 
     <Button
         android:id="@+id/buttonGiftWrapOpt"
+        style="@style/DefaultButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -62,10 +63,11 @@
         android:layout_marginRight="@dimen/margin_small"
         android:background="@drawable/main_button_rounded_background"
         android:text="@string/giftWrapOptions"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/buttonSkipPro"
+        style="@style/DefaultButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/buttonGiftWrapOpt"
@@ -73,7 +75,6 @@
         android:layout_margin="@dimen/margin_small"
         android:background="@drawable/skip_and_proceed_rounded_background"
         android:text="@string/skipAndPro"
-        android:textColor="@android:color/black" />
-
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>

@@ -12,12 +12,10 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
-import com.bigbasket.mobileapp.model.product.gift.GiftItem;
+import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.google.gson.Gson;
-
-import java.util.ArrayList;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -26,22 +24,22 @@ import retrofit.client.Response;
 public class PostGiftTask<T> {
     private T ctx;
     private String potentialOrderId;
-    private ArrayList<GiftItem> gifts;
+    private Gift gift;
     private String nc;
 
-    public PostGiftTask(T ctx, String potentialOrderId, @Nullable ArrayList<GiftItem> gifts,
+    public PostGiftTask(T ctx, String potentialOrderId, @Nullable Gift gift,
                         String nc) {
         this.ctx = ctx;
         this.potentialOrderId = potentialOrderId;
         this.nc = nc;
-        this.gifts = gifts;
+        this.gift = gift;
     }
 
     public void startTask() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(
                 ((ActivityAware) ctx).getCurrentActivity());
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        String giftsJson = gifts != null ? new Gson().toJson(gifts) : null;
+        String giftsJson = gift != null ? new Gson().toJson(gift) : null;
         bigBasketApiService.postGifts(potentialOrderId, giftsJson,
                 new Callback<ApiResponse<PostGiftItemsResponseContent>>() {
                     @Override

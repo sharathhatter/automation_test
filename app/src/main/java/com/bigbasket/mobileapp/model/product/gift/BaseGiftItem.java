@@ -2,12 +2,14 @@ package com.bigbasket.mobileapp.model.product.gift;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.product.BaseProduct;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class BaseGiftItem extends BaseProduct {
     public static final Parcelable.Creator<BaseGiftItem> CREATOR = new Parcelable.Creator<BaseGiftItem>() {
@@ -96,5 +98,12 @@ public class BaseGiftItem extends BaseProduct {
 
     public void setReservedQty(int reservedQty) {
         this.reservedQty = reservedQty;
+    }
+
+    public void setMessage(String message) {
+        this.messages = new ArrayList<>();
+        if (TextUtils.isEmpty(message)) return;
+        message = message.trim();
+        Collections.addAll(messages, message.split("\n"));
     }
 }

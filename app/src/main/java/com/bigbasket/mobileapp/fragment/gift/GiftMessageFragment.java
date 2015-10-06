@@ -48,7 +48,7 @@ public class GiftMessageFragment extends BaseFragment {
         Gift gift = ((GiftItemAware) getActivity()).getGifts();
 
         GiftItemMessageRecyclerAdapter giftItemMessageRecyclerAdapter =
-                new GiftItemMessageRecyclerAdapter<>(this, gift.getGiftItems(), useCommonMsg);
+                new GiftItemMessageRecyclerAdapter<>(this, gift, useCommonMsg);
         recyclerViewGiftMsgs.setAdapter(giftItemMessageRecyclerAdapter);
     }
 
@@ -58,6 +58,14 @@ public class GiftMessageFragment extends BaseFragment {
         RecyclerView recyclerViewGiftMsgs = (RecyclerView) base.findViewById(R.id.recyclerViewGifts);
         GiftItemMessageRecyclerAdapter adapter = (GiftItemMessageRecyclerAdapter) recyclerViewGiftMsgs.getAdapter();
         adapter.notifyItemChanged(position + 1); // Since position 0 is of header-view
+    }
+
+    public boolean useCommonMsg() {
+        View base = getView();
+        if (base == null) return true;
+        RecyclerView recyclerViewGiftMsgs = (RecyclerView) base.findViewById(R.id.recyclerViewGifts);
+        GiftItemMessageRecyclerAdapter adapter = (GiftItemMessageRecyclerAdapter) recyclerViewGiftMsgs.getAdapter();
+        return adapter.isShowCommonMsg();
     }
 
     @Override

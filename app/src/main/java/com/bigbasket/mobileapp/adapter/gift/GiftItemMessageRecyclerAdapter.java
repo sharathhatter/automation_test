@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.text.style.AbsoluteSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +20,10 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.List;
 
@@ -29,18 +33,20 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
     private static final int VIEW_TYPE_HEADER = 2;
 
     private T context;
+    private Gift gift;
     private List<GiftItem> giftItems;
     private boolean showCommonMsg;
     private Typeface faceRobotoRegular;
     private Typeface faceRobotoMedium;
 
-    public GiftItemMessageRecyclerAdapter(T context, List<GiftItem> giftItems, boolean showCommonMsg) {
+    public GiftItemMessageRecyclerAdapter(T context, Gift gift, boolean showCommonMsg) {
         this.context = context;
-        this.giftItems = giftItems;
+        this.giftItems = gift.getGiftItems();
         this.showCommonMsg = showCommonMsg;
         Activity activity = ((ActivityAware) context).getCurrentActivity();
         this.faceRobotoRegular = FontHolder.getInstance(activity).getFaceRobotoRegular();
         this.faceRobotoMedium = FontHolder.getInstance(activity).getFaceRobotoMedium();
+        this.gift = gift;
     }
 
     @Override
@@ -110,17 +116,20 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
             TextView txtTypeYourMsg = giftItemMsgViewHolder.getTxtTypeYourMsg();
             EditText editTextGiftMessage = giftItemMsgViewHolder.getEditTextGiftMessage();
             ViewGroup layoutGiftMsg = giftItemMsgViewHolder.getLayoutGiftMsg();
+            removeTextWatcher(giftItemMsgViewHolder);
 
-            editTextGiftMessage.setText("");
             if (viewType == VIEW_TYPE_GIFT) {
-                position = getActualPosition(position);
-                GiftItem giftItem = giftItems.get(position);
+                int itemPosition = getActualPosition(position);
+                GiftItem giftItem = giftItems.get(itemPosition);
                 GiftItemViewHolder giftItemViewHolder = (GiftItemViewHolder) giftItemMsgViewHolder;
                 if (showCommonMsg || giftItem.getReservedQty() == 0) {
                     layoutGiftMsg.setVisibility(View.GONE);
+                    editTextGiftMessage.setText("");
                 } else {
+                    addTextWatcher(giftItemViewHolder, position);
                     layoutGiftMsg.setVisibility(View.VISIBLE);
                     Activity activity = ((ActivityAware) context).getCurrentActivity();
+                    editTextGiftMessage.setText(UIUtil.strJoin(giftItem.getMessages(), "\n"));
                     txtTypeYourMsg.setText(activity.getString(R.string.typeInYourMsg) + " " +
                             giftItem.getMaxNumChars() + " " + activity.getString(R.string.charsColon));
                 }
@@ -129,13 +138,59 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
                 TextView txtProductDesc = giftItemViewHolder.getTxtProductDesc();
                 TextView txtQty = giftItemViewHolder.getTxtQty();
 
-                txtSnum.setText(position + 1 + ".");
+                txtSnum.setText(itemPosition + 1 + ".");
                 txtProductBrand.setText(giftItem.getBrand());
                 txtProductDesc.setText(giftItem.getDescription());
                 txtQty.setText("Qty: " + giftItem.getReservedQty());
             } else {
+                addTextWatcher(giftItemMsgViewHolder, position);
+                editTextGiftMessage.setText(gift.getCommonMsg());
                 layoutGiftMsg.setVisibility(View.VISIBLE);
             }
+        }
+    }
+
+    private void addTextWatcher(GiftItemMsgViewHolder holder, int position) {
+        GiftMessageTextWatcher watcher = new GiftMessageTextWatcher(position);
+        EditText editTextGiftMessage = holder.getEditTextGiftMessage();
+        editTextGiftMessage.addTextChangedListener(watcher);
+        holder.setGiftMessageTextWatcher(watcher);
+    }
+
+    private void removeTextWatcher(GiftItemMsgViewHolder holder) {
+        GiftMessageTextWatcher watcher = holder.getGiftMessageTextWatcher();
+        if (watcher != null) {
+            EditText editTextGiftMessage = holder.getEditTextGiftMessage();
+            editTextGiftMessage.removeTextChangedListener(watcher);
+        }
+    }
+
+    private class GiftMessageTextWatcher implements TextWatcher {
+        private int position;
+
+        public GiftMessageTextWatcher(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            int viewType = getItemViewType(position);
+            if (viewType == VIEW_TYPE_GIFT_MSG) {
+                gift.setCommonMsg(s == null ? "" : s.toString());
+            } else {
+                GiftItem giftItem = giftItems.get(getActualPosition(position));
+                giftItem.setMessage(s.toString());
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
         }
     }
 
@@ -156,6 +211,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
         private TextView txtTypeYourMsg;
         private EditText editTextGiftMessage;
         private ViewGroup layoutGiftMsg;
+        private GiftMessageTextWatcher giftMessageTextWatcher;
 
         public GiftItemMsgViewHolder(View itemView) {
             super(itemView);
@@ -182,6 +238,14 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
                 layoutGiftMsg = (ViewGroup) itemView.findViewById(R.id.layoutGiftMsg);
             }
             return layoutGiftMsg;
+        }
+
+        public GiftMessageTextWatcher getGiftMessageTextWatcher() {
+            return giftMessageTextWatcher;
+        }
+
+        public void setGiftMessageTextWatcher(GiftMessageTextWatcher giftMessageTextWatcher) {
+            this.giftMessageTextWatcher = giftMessageTextWatcher;
         }
     }
 
@@ -226,6 +290,10 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
             }
             return txtQty;
         }
+    }
+
+    public boolean isShowCommonMsg() {
+        return showCommonMsg;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity.gift;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import com.bigbasket.mobileapp.fragment.gift.GiftItemListFragment;
 import com.bigbasket.mobileapp.fragment.gift.GiftMessageFragment;
 import com.bigbasket.mobileapp.interfaces.gift.GiftItemAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
+import com.bigbasket.mobileapp.model.product.gift.GiftItem;
+import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
@@ -60,7 +63,7 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
         bbTabs.add(new BBTab<>(getString(R.string.addMsgSnum),
                 GiftMessageFragment.class));
 
-        TabPagerAdapterWithFragmentRegistration tabPagerAdapter =
+        final TabPagerAdapterWithFragmentRegistration tabPagerAdapter =
                 new TabPagerAdapterWithFragmentRegistration(this, getSupportFragmentManager(), bbTabs);
         pager.setAdapter(tabPagerAdapter);
         tabLayout.setupWithViewPager(pager);
@@ -71,7 +74,16 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
             @Override
             public void onClick(View v) {
                 int currentPosition = pager.getCurrentItem();
-                pager.setCurrentItem(currentPosition == 0 ? 1 : 0, true);
+                if (currentPosition == 1) {
+                    Fragment fragment = tabPagerAdapter.getRegisteredFragment(1);
+                    if (fragment != null && fragment instanceof GiftMessageFragment) {
+                        postGift(((GiftMessageFragment) fragment).useCommonMsg());
+                    } else {
+                        postGift(true);
+                    }
+                } else {
+                    pager.setCurrentItem(1);
+                }
             }
         });
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -94,6 +106,19 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
 
             }
         });
+    }
+
+    private void postGift(boolean useCommonMsg) {
+        showProgressDialog(getString(R.string.please_wait));
+        if (useCommonMsg) {
+            for (GiftItem giftItem : gift.getGiftItems()) {
+                giftItem.setMessage(null);
+            }
+        } else {
+            gift.setCommonMsg(null);
+        }
+        String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
+        new PostGiftTask<>(this, potentialOrderId, gift, getCurrentNavigationContext()).startTask();
     }
 
     @Override

@@ -136,6 +136,7 @@ public class UIUtil {
     }
 
     public static String strJoin(List<String> stringList, String separator) {
+        if (stringList == null || stringList.size() == 0) return "";
         StringBuilder sbr = new StringBuilder();
         int len = stringList.size();
         for (int i = 0; i < len; i++) {
@@ -149,6 +150,7 @@ public class UIUtil {
 
 
     public static String strJoin(String[] stringArray, String separator) {
+        if (stringArray == null || stringArray.length == 0) return "";
         StringBuilder sbr = new StringBuilder();
         int len = stringArray.length;
         for (int i = 0; i < len; i++) {

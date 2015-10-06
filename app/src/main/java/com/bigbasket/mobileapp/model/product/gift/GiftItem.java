@@ -42,6 +42,6 @@ public class GiftItem extends BaseGiftItem {
     }
 
     public boolean isReadOnly() {
-        return false;
+        return isReadOnly;
     }
 }

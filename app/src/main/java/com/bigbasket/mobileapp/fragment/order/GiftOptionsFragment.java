@@ -73,13 +73,14 @@ public class GiftOptionsFragment extends BaseFragment {
         btnGiftOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openGiftSelection(gift);
+                openGiftSelection(gift, potentialOrderId);
             }
         });
     }
 
-    private void openGiftSelection(Gift gift) {
+    private void openGiftSelection(Gift gift, String potentialOrderId) {
         Intent intent = new Intent(getActivity(), GiftHomeActivity.class);
+        intent.putExtra(Constants.P_ORDER_ID, potentialOrderId);
         intent.putExtra(Constants.GIFTS, gift);
         startActivity(intent);
     }

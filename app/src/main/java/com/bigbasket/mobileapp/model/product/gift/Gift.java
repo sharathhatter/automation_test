@@ -69,7 +69,14 @@ public class Gift implements Parcelable {
     }
 
     public String getCommonMsg() {
-        return commonMsg;
+        return commonMsg == null ? "" : commonMsg;
+    }
+
+    public void setCommonMsg(String commonMsg) {
+        if (commonMsg == null) {
+            commonMsg = "";
+        }
+        this.commonMsg = commonMsg.trim();
     }
 
     public String getBaseImgUrl() {
