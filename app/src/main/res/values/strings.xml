@@ -400,4 +400,5 @@
     <string name="individualMsgDesc">Different messages can be added per product</string>
     <string name="typeInYourMsg">Type In your message (Optional) - Max</string>
     <string name="charsColon">chars:</string>
+    <string name="noProductsInCurrentCity">No product from this order are available in your current city.</string>
 </resources>
