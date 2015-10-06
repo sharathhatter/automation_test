@@ -375,4 +375,5 @@
     <string name="status">Status</string>
     <string name="retry">Retry</string>
     <string name="needMoreAddressInfo">We need more information to complete your address and help you checkout the items in Basket.</string>
+    <string name="noProductsInCurrentCity">No product from this order are available in your current city.</string>
 </resources>

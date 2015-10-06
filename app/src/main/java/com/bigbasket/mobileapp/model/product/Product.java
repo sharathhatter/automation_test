@@ -135,7 +135,8 @@ public class Product implements Parcelable {
         this.productCategoryName = productCategoryName;
     }
 
-    public static boolean areAllProductsOutOfStock(List<Product> productList) {
+    public static boolean areAllProductsOutOfStock(@Nullable List<Product> productList) {
+        if (productList == null || productList.size() == 0) return true;
         for (Product product : productList) {
             if (product != null) {
                 if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0) {
