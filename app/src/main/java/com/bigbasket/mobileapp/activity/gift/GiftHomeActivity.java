@@ -67,6 +67,13 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
 
         final Button btnFooter = (Button) findViewById(R.id.btnFooter);
         btnFooter.setTypeface(faceRobotoRegular);
+        btnFooter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentPosition = pager.getCurrentItem();
+                pager.setCurrentItem(currentPosition == 0 ? 1 : 0, true);
+            }
+        });
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -77,20 +84,8 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
             public void onPageSelected(int position) {
                 if (position == 0) {
                     btnFooter.setText(getString(R.string.addMsg));
-                    btnFooter.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            pager.setCurrentItem(1);
-                        }
-                    });
                 } else {
                     btnFooter.setText(getString(R.string.saveAndContinue));
-                    btnFooter.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showToast("Yet to plugin!");
-                        }
-                    });
                 }
             }
 

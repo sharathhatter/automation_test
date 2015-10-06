@@ -1,15 +1,22 @@
 package com.bigbasket.mobileapp.adapter.gift;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -19,6 +26,7 @@ import java.util.List;
 public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_GIFT = 0;
     private static final int VIEW_TYPE_GIFT_MSG = 1;
+    private static final int VIEW_TYPE_HEADER = 2;
 
     private T context;
     private List<GiftItem> giftItems;
@@ -42,49 +50,106 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
             case VIEW_TYPE_GIFT:
                 View row = inflater.inflate(R.layout.uiv3_gift_item_message_list_row, parent, false);
                 return new GiftItemViewHolder(row);
+            case VIEW_TYPE_HEADER:
+                row = inflater.inflate(R.layout.uiv3_gift_message_header, parent, false);
+                setUpHeaderView(row);
+                return new FixedLayoutViewHolder(row);
             default:
                 row = inflater.inflate(R.layout.uiv3_gift_item_message, parent, false);
                 return new GiftItemMsgViewHolder(row);
         }
     }
 
+    private void setUpHeaderView(View base) {
+        Context context = ((ActivityAware) this.context).getCurrentActivity();
+        RadioButton rbtnCommonMsg = (RadioButton) base.findViewById(R.id.rbtnCommonMsg);
+        RadioButton rbtnIndividualMsg = (RadioButton) base.findViewById(R.id.rbtnIndividualMsg);
+
+        int sp16 = (int) context.getResources().getDimension(R.dimen.primary_text_size);
+        int sp12 = (int) context.getResources().getDimension(R.dimen.small_text_size);
+
+        String commonMsg = context.getString(R.string.commonMsg) + "\n";
+        String commonMsgDesc = context.getString(R.string.commonMsgDesc);
+        SpannableString spannableStringCommonMsg = new SpannableString(commonMsg + commonMsgDesc);
+        spannableStringCommonMsg.setSpan(new AbsoluteSizeSpan(sp16), 0, commonMsg.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannableStringCommonMsg.setSpan(new AbsoluteSizeSpan(sp12), commonMsg.length(),
+                spannableStringCommonMsg.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        rbtnCommonMsg.setText(spannableStringCommonMsg);
+        rbtnCommonMsg.setChecked(true);
+        rbtnCommonMsg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                showCommonMsg = isChecked;
+                notifyDataSetChanged();
+            }
+        });
+
+        String individualMsg = context.getString(R.string.individualMsg) + "\n";
+        String individualMsgDesc = context.getString(R.string.commonMsgDesc);
+        SpannableString spannableStringIndividualMsg = new SpannableString(individualMsg + individualMsgDesc);
+        spannableStringIndividualMsg.setSpan(new AbsoluteSizeSpan(sp16), 0, individualMsg.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannableStringIndividualMsg.setSpan(new AbsoluteSizeSpan(sp12), individualMsg.length(),
+                spannableStringIndividualMsg.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        rbtnIndividualMsg.setText(spannableStringIndividualMsg);
+
+        TextView txtChooseYourMsgOption = (TextView) base.findViewById(R.id.txtChooseYourMsgOption);
+        txtChooseYourMsgOption.setTypeface(faceRobotoRegular);
+        txtChooseYourMsgOption.setText(context.getString(R.string.chooseYourMsg));
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        GiftItemMsgViewHolder giftItemMsgViewHolder = (GiftItemMsgViewHolder) holder;
-        TextView txtTypeYourMsg = giftItemMsgViewHolder.getTxtTypeYourMsg();
-        EditText editTextGiftMessage = giftItemMsgViewHolder.getEditTextGiftMessage();
-        ViewGroup layoutGiftMsg = giftItemMsgViewHolder.getLayoutGiftMsg();
+        int viewType = getItemViewType(position);
+        if (viewType == VIEW_TYPE_GIFT || viewType == VIEW_TYPE_GIFT_MSG) {
+            GiftItemMsgViewHolder giftItemMsgViewHolder = (GiftItemMsgViewHolder) holder;
+            TextView txtTypeYourMsg = giftItemMsgViewHolder.getTxtTypeYourMsg();
+            EditText editTextGiftMessage = giftItemMsgViewHolder.getEditTextGiftMessage();
+            ViewGroup layoutGiftMsg = giftItemMsgViewHolder.getLayoutGiftMsg();
 
-        editTextGiftMessage.setText("");
-        if (getItemViewType(position) == VIEW_TYPE_GIFT) {
-            GiftItem giftItem = giftItems.get(position);
-            if (showCommonMsg) {
-                layoutGiftMsg.setVisibility(View.GONE);
+            editTextGiftMessage.setText("");
+            if (viewType == VIEW_TYPE_GIFT) {
+                position = getActualPosition(position);
+                GiftItem giftItem = giftItems.get(position);
+                GiftItemViewHolder giftItemViewHolder = (GiftItemViewHolder) giftItemMsgViewHolder;
+                if (showCommonMsg || giftItem.getReservedQty() == 0) {
+                    layoutGiftMsg.setVisibility(View.GONE);
+                } else {
+                    layoutGiftMsg.setVisibility(View.VISIBLE);
+                    Activity activity = ((ActivityAware) context).getCurrentActivity();
+                    txtTypeYourMsg.setText(activity.getString(R.string.typeInYourMsg) + " " +
+                            giftItem.getMaxNumChars() + " " + activity.getString(R.string.charsColon));
+                }
+                TextView txtSnum = giftItemViewHolder.getTxtSnum();
+                TextView txtProductBrand = giftItemViewHolder.getTxtProductBrand();
+                TextView txtProductDesc = giftItemViewHolder.getTxtProductDesc();
+                TextView txtQty = giftItemViewHolder.getTxtQty();
+
+                txtSnum.setText(position + 1 + ".");
+                txtProductBrand.setText(giftItem.getBrand());
+                txtProductDesc.setText(giftItem.getDescription());
+                txtQty.setText("Qty: " + giftItem.getReservedQty());
             } else {
-                Activity activity = ((ActivityAware) context).getCurrentActivity();
-                txtTypeYourMsg.setText(activity.getString(R.string.typeInYourMsg) + " " +
-                        giftItem.getMaxNumChars() + " " + activity.getString(R.string.charsColon));
+                layoutGiftMsg.setVisibility(View.VISIBLE);
             }
-            GiftItemViewHolder giftItemViewHolder = (GiftItemViewHolder) giftItemMsgViewHolder;
-            TextView txtSnum = giftItemViewHolder.getTxtSnum();
-            TextView txtProductBrand = giftItemViewHolder.getTxtProductBrand();
-            TextView txtProductDesc = giftItemViewHolder.getTxtProductDesc();
-            TextView txtQty = giftItemViewHolder.getTxtQty();
-
-            txtSnum.setText(position + 1 + ".");
-            txtProductBrand.setText(giftItem.getBrand());
-            txtProductDesc.setText(giftItem.getDescription());
-            txtQty.setText("Qty: " + giftItem.getReservedQty());
-        } else {
-            layoutGiftMsg.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        return showCommonMsg && position == giftItems.size() ? VIEW_TYPE_GIFT_MSG :
+        if (position == 0) {
+            return VIEW_TYPE_HEADER;
+        }
+        return showCommonMsg && position == giftItems.size() + 1 ? VIEW_TYPE_GIFT_MSG :
                 VIEW_TYPE_GIFT;
+    }
+
+    public int getActualPosition(int position) {
+        return position - 1;
     }
 
     private class GiftItemMsgViewHolder extends RecyclerView.ViewHolder {
@@ -165,6 +230,6 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
 
     @Override
     public int getItemCount() {
-        return giftItems.size() + (showCommonMsg ? 1 : 0);
+        return giftItems.size() + (showCommonMsg ? 1 : 0) + 1;
     }
 }
