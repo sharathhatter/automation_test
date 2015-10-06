@@ -493,7 +493,7 @@ public class UIUtil {
 
         if (array_compPos != null) {
             for (Integer array_compPo : array_compPos) {
-                listImageViews.get(array_compPo).setBackgroundResource(R.drawable.promo_used);
+                listImageViews.get(array_compPo).setBackgroundResource(R.drawable.tick_circle_complete);
             }
         }
         Integer[] rem;
@@ -507,9 +507,9 @@ public class UIUtil {
         }
         for (Integer aRem : rem)
             if (aRem != selectedPos) {
-                listImageViews.get(aRem).setBackgroundResource(R.drawable.promo_unused);
+                listImageViews.get(aRem).setBackgroundResource(R.drawable.tick_circle_pending);
             }
-        listImageViews.get(selectedPos).setBackgroundResource(R.drawable.done_green_24dp);
+        listImageViews.get(selectedPos).setBackgroundResource(R.drawable.tick_circle_current);
 
         textViewAddress.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
         textViewSlots.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());

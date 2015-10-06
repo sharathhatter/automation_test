@@ -213,12 +213,24 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void renderCheckOutProgressView() {
-        LinearLayout layoutPaymentContainer = (LinearLayout) findViewById(R.id.layoutPaymentContainer);
-        String[] array_txtValues = new String[]{"Address", "Gift", "Slots", "Order"};
-        Integer[] array_compPos = new Integer[]{0, 1, 2};
-        int selectedPos = 3;
-        View giftView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
-        if (giftView != null) layoutPaymentContainer.addView(giftView, 0);
+        LinearLayout layoutPaymentContainer = (LinearLayout) findViewById(R.id.layoutCheckoutProgressContainer);
+        layoutPaymentContainer.removeAllViews();
+        boolean hasGifts = getIntent().getBooleanExtra(Constants.HAS_GIFTS, false);
+        View checkoutProgressView;
+        if (hasGifts) {
+            String[] array_txtValues = new String[]{getString(R.string.address),
+                    getString(R.string.gift), getString(R.string.slots), getString(R.string.order)};
+            Integer[] array_compPos = new Integer[]{0, 1, 2};
+            int selectedPos = 3;
+            checkoutProgressView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
+        } else {
+            String[] array_txtValues = new String[]{getString(R.string.address),
+                    getString(R.string.slots), getString(R.string.order)};
+            Integer[] array_compPos = new Integer[]{0, 1};
+            int selectedPos = 2;
+            checkoutProgressView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
+        }
+        if (checkoutProgressView != null) layoutPaymentContainer.addView(checkoutProgressView, 0);
     }
 
     private void renderFooter(boolean refresh) {

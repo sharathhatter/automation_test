@@ -21,10 +21,7 @@ public class GiftMessageFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.uiv3_giftitem_listfragment, container, false);
-        int dp16 = (int) getResources().getDimension(R.dimen.padding_normal);
-        view.setPadding(dp16, dp16, dp16, dp16);
-        return view;
+        return inflater.inflate(R.layout.uiv3_giftitem_listfragment, container, false);
     }
 
     @Override

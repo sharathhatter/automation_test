@@ -625,4 +625,5 @@ public class Constants {
     public static final String IS_CONVERTIBLE_TO_NORMAL = "is_convertible_to_normal";
     public static final String COMMON_MSG = "common_msg";
     public static final String NUM_GIFTS = "num_gifts";
+    public static final String HAS_GIFTS = "has_gifts";
 }

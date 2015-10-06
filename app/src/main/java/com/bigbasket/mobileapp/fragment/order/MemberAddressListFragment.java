@@ -214,9 +214,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         } else {
             layoutCheckoutFooter.setVisibility(View.GONE);
         }
-        if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
-            renderCheckOutProgressView(contentView);
-        }
         contentView.addView(addressView);
     }
 
@@ -345,13 +342,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         }
     }
 
-    private void renderCheckOutProgressView(ViewGroup contentView) {
-        String[] array_txtValues = new String[]{"Address", "Gift", "Slots", "Order"};
-        int selectedPos = 0;
-        View giftView = UIUtil.getCheckoutProgressView(getActivity(), null, array_txtValues, null, selectedPos);
-        if (giftView != null) contentView.addView(giftView, 0);
-    }
-
     @NonNull
     @Override
     public String getFragmentTxnTag() {
@@ -425,7 +415,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             Gift gift = createPotentialOrderResponseContent.gift;
             // Reserve all items as gift for now
             if (gift != null && gift.getCount() > 0 && gift.getGiftItems() != null) {
-                for (GiftItem giftItem: gift.getGiftItems()) {
+                for (GiftItem giftItem : gift.getGiftItems()) {
                     if (giftItem.isReadOnly() || (giftItem.getReservedQty() <= 0 && giftItem.getQuantity() > 0)) {
                         giftItem.setReservedQty(giftItem.getQuantity());
                     }

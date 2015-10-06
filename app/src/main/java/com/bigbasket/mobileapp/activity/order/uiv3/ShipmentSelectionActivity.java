@@ -129,12 +129,24 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     }
 
     private void renderCheckOutProgressView() {
-        LinearLayout layoutShipment = (LinearLayout) findViewById(R.id.layout_shipment);
-        String[] array_txtValues = new String[]{"Address", "Gift", "Slots", "Order"};
-        Integer[] array_compPos = new Integer[]{0, 1};
-        int selectedPos = 2;
-        View giftView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
-        if (giftView != null) layoutShipment.addView(giftView, 1);
+        LinearLayout layoutShipment = (LinearLayout) findViewById(R.id.layoutCheckoutProgressContainer);
+        layoutShipment.removeAllViews();
+        boolean hasGifts = getIntent().getBooleanExtra(Constants.HAS_GIFTS, false);
+        View checkoutProgressView;
+        if (hasGifts) {
+            String[] array_txtValues = new String[]{getString(R.string.address),
+                    getString(R.string.gift), getString(R.string.slots), getString(R.string.order)};
+            Integer[] array_compPos = new Integer[]{0, 1};
+            int selectedPos = 2;
+            checkoutProgressView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
+        } else {
+            String[] array_txtValues = new String[]{getString(R.string.address),
+                    getString(R.string.slots), getString(R.string.order)};
+            Integer[] array_compPos = new Integer[]{0};
+            int selectedPos = 1;
+            checkoutProgressView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
+        }
+        if (checkoutProgressView != null) layoutShipment.addView(checkoutProgressView, 0);
     }
 
     private void displayShipmentsBasedOnViewState(@Nullable HashMap<String, BaseShipmentAction> shipmentActionHashMap,

@@ -62,6 +62,9 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
                 return new FixedLayoutViewHolder(row);
             default:
                 row = inflater.inflate(R.layout.uiv3_gift_item_message, parent, false);
+                int dp16 = (int) ((ActivityAware) context).getCurrentActivity()
+                        .getResources().getDimension(R.dimen.padding_normal);
+                row.setPadding(dp16, dp16, dp16, dp16);
                 return new GiftItemMsgViewHolder(row);
         }
     }
@@ -71,13 +74,13 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
         RadioButton rbtnCommonMsg = (RadioButton) base.findViewById(R.id.rbtnCommonMsg);
         RadioButton rbtnIndividualMsg = (RadioButton) base.findViewById(R.id.rbtnIndividualMsg);
 
-        int sp16 = (int) context.getResources().getDimension(R.dimen.primary_text_size);
+        int sp14 = (int) context.getResources().getDimension(R.dimen.secondary_text_size);
         int sp12 = (int) context.getResources().getDimension(R.dimen.small_text_size);
 
         String commonMsg = context.getString(R.string.commonMsg) + "\n";
         String commonMsgDesc = context.getString(R.string.commonMsgDesc);
         SpannableString spannableStringCommonMsg = new SpannableString(commonMsg + commonMsgDesc);
-        spannableStringCommonMsg.setSpan(new AbsoluteSizeSpan(sp16), 0, commonMsg.length(),
+        spannableStringCommonMsg.setSpan(new AbsoluteSizeSpan(sp14), 0, commonMsg.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         spannableStringCommonMsg.setSpan(new AbsoluteSizeSpan(sp12), commonMsg.length(),
                 spannableStringCommonMsg.length(),
@@ -95,7 +98,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
         String individualMsg = context.getString(R.string.individualMsg) + "\n";
         String individualMsgDesc = context.getString(R.string.commonMsgDesc);
         SpannableString spannableStringIndividualMsg = new SpannableString(individualMsg + individualMsgDesc);
-        spannableStringIndividualMsg.setSpan(new AbsoluteSizeSpan(sp16), 0, individualMsg.length(),
+        spannableStringIndividualMsg.setSpan(new AbsoluteSizeSpan(sp14), 0, individualMsg.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         spannableStringIndividualMsg.setSpan(new AbsoluteSizeSpan(sp12), individualMsg.length(),
                 spannableStringIndividualMsg.length(),

@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txtChooseYourMsgOption"
         android:orientation="horizontal"
-        android:padding="@dimen/padding_normal">
+        android:padding="@dimen/padding_small">
 
         <RadioButton
             android:id="@+id/rbtnCommonMsg"
@@ -41,7 +41,7 @@
     <View
         android:id="@+id/viewSeparator"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
         android:layout_below="@id/rGroupChooseGiftOption"
         android:layout_marginBottom="@dimen/margin_normal"
         android:layout_marginTop="@dimen/margin_small"

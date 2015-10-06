@@ -46,7 +46,8 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
 
     private void renderCheckOutProgressView() {
         ViewGroup layoutGiftProgressView = (ViewGroup) findViewById(R.id.layoutGiftProgressView);
-        String[] array_txtValues = new String[]{"Address", "Gift", "Slots", "Order"};
+        String[] array_txtValues = new String[]{getString(R.string.address),
+                getString(R.string.gift), getString(R.string.slots), getString(R.string.order)};
         Integer[] array_compPos = new Integer[]{0};
         int selectedPos = 1;
         View giftView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);

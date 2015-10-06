@@ -88,6 +88,7 @@ public class PostGiftTask<T> {
             intent.putExtra(Constants.ON_TOGGLE_ACTIONS,
                     new Gson().toJson(postGiftItemsResponseContent.toggleShipmentActions));
         }
+        intent.putExtra(Constants.HAS_GIFTS, gift != null);
         ((ActivityAware) ctx).getCurrentActivity().setNextScreenNavigationContext(nc);
         ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent,
                 NavigationCodes.GO_TO_HOME);
