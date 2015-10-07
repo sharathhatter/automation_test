@@ -47,6 +47,27 @@
                 android:contentDescription="@string/giftCont"
                 android:src="@drawable/gift" />
 
+            <TextView
+                android:id="@+id/txtGiftMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_medium_large"
+                android:paddingLeft="@dimen/padding_large"
+                android:paddingRight="@dimen/padding_large"
+                android:text="@string/giftWrapMsg"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/secondary_text_size" />
+
+            <TextView
+                android:id="@+id/lblKnowMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:text="@string/know_more"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/secondary_text_size" />
+
         </LinearLayout>
     </ScrollView>
 

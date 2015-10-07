@@ -28,6 +28,10 @@ public class Gift implements Parcelable {
     private int count;
     @SerializedName(Constants.BASE_IMG_URL)
     private String baseImgUrl;
+    @SerializedName(Constants.GIFT_SUMMARY)
+    private ArrayList<String> giftSummaryMsg;
+    @SerializedName(Constants.GIFT_LINK)
+    private String giftLink;
 
     public Gift(Parcel source) {
         boolean isGiftNull = source.readByte() == (byte) 1;
@@ -40,6 +44,15 @@ public class Gift implements Parcelable {
         boolean isBaseImgUrlNull = source.readByte() == (byte) 1;
         if (!isBaseImgUrlNull) {
             this.baseImgUrl = source.readString();
+        }
+        boolean isGiftMsgNull = source.readByte() == (byte) 1;
+        if (!isGiftMsgNull) {
+            this.giftSummaryMsg = new ArrayList<>();
+            source.readStringList(this.giftSummaryMsg);
+        }
+        boolean isGiftLinkNull = source.readByte() == (byte) 1;
+        if (!isGiftLinkNull) {
+            this.giftLink = source.readString();
         }
     }
 
@@ -56,6 +69,16 @@ public class Gift implements Parcelable {
         dest.writeByte(isBaseImgUrlNull ? (byte) 1 : (byte) 0);
         if (!isBaseImgUrlNull) {
             dest.writeString(baseImgUrl);
+        }
+        boolean isGiftMsgNull = giftSummaryMsg == null;
+        dest.writeByte(isGiftMsgNull ? (byte) 1 : (byte) 0);
+        if (!isGiftMsgNull) {
+            dest.writeStringList(giftSummaryMsg);
+        }
+        boolean isGiftLinkNull = giftLink == null;
+        dest.writeByte(isGiftLinkNull ? (byte) 1 : (byte) 0);
+        if (!isGiftLinkNull) {
+            dest.writeString(giftLink);
         }
     }
 
@@ -85,5 +108,13 @@ public class Gift implements Parcelable {
 
     public int getCount() {
         return count;
+    }
+
+    public ArrayList<String> getGiftSummaryMsg() {
+        return giftSummaryMsg;
+    }
+
+    public String getGiftLink() {
+        return giftLink;
     }
 }

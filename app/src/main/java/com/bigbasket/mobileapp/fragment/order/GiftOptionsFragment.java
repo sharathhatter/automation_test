@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +16,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.gift.GiftHomeActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -53,10 +61,9 @@ public class GiftOptionsFragment extends BaseFragment {
         renderCheckOutProgressView(layout);
         TextView textViewCount = (TextView) contentView.findViewById(R.id.textViewNumGifts);
         final Gift gift = args.getParcelable(Constants.GIFTS);
-        if (gift != null) {
-            textViewCount.setText("You have " + gift.getCount() + " gift items in your basket!");
-            textViewCount.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoMedium());
-        }
+        if (gift == null) return;
+        textViewCount.setText("You have " + gift.getCount() + " gift items in your basket!");
+        textViewCount.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoMedium());
         final String potentialOrderId = args.getString(Constants.P_ORDER_ID);
         Button btnSkipAndProceed = (Button) contentView.findViewById(R.id.buttonSkipPro);
         btnSkipAndProceed.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +84,36 @@ public class GiftOptionsFragment extends BaseFragment {
                 openGiftSelection(gift, potentialOrderId);
             }
         });
+
+        TextView txtGiftMsg = (TextView) contentView.findViewById(R.id.txtGiftMsg);
+        String giftMsg = UIUtil.strJoin(gift.getGiftSummaryMsg(), "\n");
+        if (TextUtils.isEmpty(giftMsg)) {
+            txtGiftMsg.setVisibility(View.GONE);
+        } else {
+            txtGiftMsg.setTypeface(faceRobotoRegular);
+            txtGiftMsg.setText(giftMsg);
+        }
+
+        TextView lblKnowMore = (TextView) contentView.findViewById(R.id.lblKnowMore);
+        if (TextUtils.isEmpty(gift.getGiftLink())) {
+            lblKnowMore.setVisibility(View.GONE);
+        } else {
+            SpannableString spannableString = new SpannableString(lblKnowMore.getText());
+            spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            lblKnowMore.setText(spannableString);
+            lblKnowMore.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoBold());
+            lblKnowMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    trackEvent(TrackingAware.CHECKOUT_KNOW_MORE_LINK_CLICKED, null);
+                    Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
+                    intent.putExtra(Constants.WEBVIEW_URL, gift.getGiftLink());
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                }
+            });
+        }
     }
 
     private void openGiftSelection(Gift gift, String potentialOrderId) {
