@@ -55,6 +55,7 @@ public class GiftMessageFragment extends BaseFragment {
         RecyclerView recyclerViewGiftMsgs = (RecyclerView) base.findViewById(R.id.recyclerViewGifts);
         GiftItemMessageRecyclerAdapter adapter = (GiftItemMessageRecyclerAdapter) recyclerViewGiftMsgs.getAdapter();
         adapter.notifyItemChanged(position + 1); // Since position 0 is of header-view
+        adapter.notifyItemChanged(adapter.getItemCount() - 1); // Notify footer
     }
 
     public boolean useCommonMsg() {

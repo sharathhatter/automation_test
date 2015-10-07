@@ -25,27 +25,26 @@ import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-import java.util.List;
-
 public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_GIFT = 0;
     private static final int VIEW_TYPE_GIFT_MSG = 1;
     private static final int VIEW_TYPE_HEADER = 2;
+    private static final int VIEW_TYPE_FOOTER = 3;
 
     private T context;
     private Gift gift;
-    private List<GiftItem> giftItems;
     private boolean showCommonMsg;
     private Typeface faceRobotoRegular;
     private Typeface faceRobotoMedium;
+    private Typeface faceRobotoBold;
 
     public GiftItemMessageRecyclerAdapter(T context, Gift gift, boolean showCommonMsg) {
         this.context = context;
-        this.giftItems = gift.getGiftItems();
         this.showCommonMsg = showCommonMsg;
         Activity activity = ((ActivityAware) context).getCurrentActivity();
         this.faceRobotoRegular = FontHolder.getInstance(activity).getFaceRobotoRegular();
         this.faceRobotoMedium = FontHolder.getInstance(activity).getFaceRobotoMedium();
+        this.faceRobotoBold = FontHolder.getInstance(activity).getFaceRobotoBold();
         this.gift = gift;
     }
 
@@ -60,6 +59,9 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
                 row = inflater.inflate(R.layout.uiv3_gift_message_header, parent, false);
                 setUpHeaderView(row);
                 return new FixedLayoutViewHolder(row);
+            case VIEW_TYPE_FOOTER:
+                row = inflater.inflate(R.layout.uiv3_gift_list_footer, parent, false);
+                return new GiftItemListRecyclerAdapter.GiftItemFooterViewHolder(row, faceRobotoRegular, faceRobotoBold);
             default:
                 row = inflater.inflate(R.layout.uiv3_gift_item_message, parent, false);
                 int dp16 = (int) ((ActivityAware) context).getCurrentActivity()
@@ -123,7 +125,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
 
             if (viewType == VIEW_TYPE_GIFT) {
                 int itemPosition = getActualPosition(position);
-                GiftItem giftItem = giftItems.get(itemPosition);
+                GiftItem giftItem = gift.getGiftItems().get(itemPosition);
                 GiftItemViewHolder giftItemViewHolder = (GiftItemViewHolder) giftItemMsgViewHolder;
                 if (showCommonMsg || giftItem.getReservedQty() == 0) {
                     layoutGiftMsg.setVisibility(View.GONE);
@@ -150,6 +152,9 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
                 editTextGiftMessage.setText(gift.getCommonMsg());
                 layoutGiftMsg.setVisibility(View.VISIBLE);
             }
+        } else if (viewType == VIEW_TYPE_FOOTER) {
+            UIUtil.setUpGiftItemListFooter(gift, (GiftItemListRecyclerAdapter.GiftItemFooterViewHolder) holder,
+                    ((ActivityAware) context).getCurrentActivity());
         }
     }
 
@@ -186,7 +191,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
             if (viewType == VIEW_TYPE_GIFT_MSG) {
                 gift.setCommonMsg(s == null ? "" : s.toString());
             } else {
-                GiftItem giftItem = giftItems.get(getActualPosition(position));
+                GiftItem giftItem = gift.getGiftItems().get(getActualPosition(position));
                 giftItem.setMessage(s.toString());
             }
         }
@@ -202,8 +207,19 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
         if (position == 0) {
             return VIEW_TYPE_HEADER;
         }
-        return showCommonMsg && position == giftItems.size() + 1 ? VIEW_TYPE_GIFT_MSG :
-                VIEW_TYPE_GIFT;
+        int giftArrayLen = gift.getGiftItems().size();
+        if (showCommonMsg) {
+            if (position == giftArrayLen + 1) {
+                return VIEW_TYPE_GIFT_MSG;
+            } else if (position == giftArrayLen + 2) {
+                return VIEW_TYPE_FOOTER;
+            }
+            return VIEW_TYPE_GIFT;
+        }
+        if (position == giftArrayLen + 1) {
+            return VIEW_TYPE_FOOTER;
+        }
+        return VIEW_TYPE_GIFT;
     }
 
     public int getActualPosition(int position) {
@@ -301,6 +317,6 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
 
     @Override
     public int getItemCount() {
-        return giftItems.size() + (showCommonMsg ? 1 : 0) + 1;
+        return gift.getGiftItems().size() + (showCommonMsg ? 1 : 0) + 2;
     }
 }

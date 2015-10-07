@@ -28,6 +28,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
+import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
@@ -44,6 +45,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
@@ -52,6 +54,8 @@ import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.product.gift.Gift;
+import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -518,6 +522,36 @@ public class UIUtil {
         textViewOrder.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
         textViewGift.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
         return container;
+    }
+
+    public static void setUpGiftItemListFooter(Gift gift, GiftItemListRecyclerAdapter.GiftItemFooterViewHolder holder,
+                                               Context context) {
+        int numGiftItemsToWrap = 0;
+        double giftItemTotal = 0;
+        for (GiftItem giftItem : gift.getGiftItems()) {
+            if (giftItem.getReservedQty() > 0) {
+                numGiftItemsToWrap++;
+                giftItemTotal += giftItem.getReservedQty() * giftItem.getGiftWrapCharge();
+            }
+        }
+
+        TextView lblTotalGiftItems = holder.getLblTotalGiftItems();
+        TextView txtCountGiftItems = holder.getTxtCountGiftItems();
+        TextView lblGiftItemTotalPrice = holder.getLblGiftItemTotalPrice();
+        TextView txtGiftItemTotalPrice = holder.getTxtGiftItemTotalPrice();
+
+        lblTotalGiftItems.setText(context.getString(R.string.totalNumOfItemsToGiftWrap));
+        txtCountGiftItems.setText(numGiftItemsToWrap);
+
+        String start = context.getString(R.string.totalCostOfGiftWrapping) + " ";
+        String end = context.getString(R.string.willBeAddedToFinalAmount);
+        SpannableString spannableString = new SpannableString(start + end);
+
+        spannableString.setSpan(new StyleSpan(Typeface.ITALIC), start.length(),
+                spannableString.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        lblGiftItemTotalPrice.setText(spannableString);
+        txtGiftItemTotalPrice.setText(UIUtil.asRupeeSpannable(giftItemTotal,
+                FontHolder.getInstance(context).getFaceRupee()));
     }
 
     public static void setUpFooterButton(Context context, ViewGroup checkoutContainer,

@@ -44,7 +44,7 @@ public class GiftItemListFragment extends BaseFragment implements GiftOperationA
         Gift gift = ((GiftItemAware) getActivity()).getGifts();
 
         mGiftItemListRecyclerAdapter =
-                new GiftItemListRecyclerAdapter<>(this, gift.getGiftItems(),
+                new GiftItemListRecyclerAdapter<>(this, gift,
                         gift.getBaseImgUrl());
 
         RecyclerView giftRecyclerView = (RecyclerView) getView().findViewById(R.id.recyclerViewGifts);
@@ -90,6 +90,7 @@ public class GiftItemListFragment extends BaseFragment implements GiftOperationA
         }
         giftItem.setReservedQty(reservedQty);
         mGiftItemListRecyclerAdapter.notifyItemChanged(position);
+        mGiftItemListRecyclerAdapter.notifyItemChanged(mGiftItemListRecyclerAdapter.getItemCount() - 1); // Notify footer
 
         ViewPager pager = (ViewPager) getActivity().findViewById(R.id.viewPager);
         Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) pager.getAdapter()).getRegisteredFragment(1);
