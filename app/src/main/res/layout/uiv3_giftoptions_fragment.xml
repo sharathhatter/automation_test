@@ -17,21 +17,21 @@
 
             <TextView
                 android:id="@+id/textViewNumGifts"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="@dimen/margin_normal"
+                android:gravity="center"
                 android:paddingLeft="@dimen/padding_normal"
                 android:paddingRight="@dimen/padding_normal"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/secondary_text_size" />
+                android:textSize="@dimen/primary_text_size" />
 
             <TextView
                 android:id="@+id/textView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="@dimen/margin_normal"
+                android:gravity="center"
                 android:paddingLeft="@dimen/padding_normal"
                 android:paddingRight="@dimen/padding_normal"
                 android:text="@string/giftWrapMsg"
