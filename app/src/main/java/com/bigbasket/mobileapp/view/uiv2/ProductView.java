@@ -587,8 +587,8 @@ public final class ProductView {
 
             final ProductListSpinnerAdapter productListSpinnerAdapter =
                     new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
-                    childProducts, productViewDisplayDataHolder.getSerifTypeface(),
-                    productViewDisplayDataHolder.getRupeeTypeface(), product);
+                            childProducts, productViewDisplayDataHolder.getSerifTypeface(),
+                            productViewDisplayDataHolder.getRupeeTypeface(), product);
             productListSpinnerAdapter.setCurrentProduct(currentProduct);
             listView.setAdapter(productListSpinnerAdapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

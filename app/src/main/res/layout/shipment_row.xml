@@ -21,20 +21,37 @@
         android:textColor="@color/uiv3_secondary_text_color"
         android:textSize="@dimen/secondary_text_size" />
 
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/switchToggleDelivery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="@dimen/margin_small" />
+
     <TextView
         android:id="@+id/txtShipmentName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_toLeftOf="@id/txtShipmentCount"
+        android:layout_toRightOf="@id/switchToggleDelivery"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
+
+    <TextView
+        android:id="@+id/txtShipmentAnnotation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtShipmentName"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:text="@string/delivery_time"
+        android:textColor="@color/uiv3_primary_text_color" />
 
     <TextView
         android:id="@+id/lblDeliveryTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtShipmentName"
+        android:layout_below="@id/txtShipmentAnnotation"
         android:layout_marginTop="@dimen/margin_normal"
         android:text="@string/delivery_time"
         android:textColor="@color/uiv3_primary_text_color" />

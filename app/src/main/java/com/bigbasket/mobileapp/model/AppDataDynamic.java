@@ -117,13 +117,15 @@ public class AppDataDynamic {
         this.expressAvailability = preferences.getString(Constants.EXPRESS_AVAILABILITY, null);
         String addToBasketPostParamsJson = preferences.getString(Constants.ADD_TO_BASKET_POST_PARAMS, null);
         if (addToBasketPostParamsJson != null) {
-            Type collectionType = new TypeToken<Collection<String>>() {}.getType();
+            Type collectionType = new TypeToken<Collection<String>>() {
+            }.getType();
             this.addToBasketPostParams = gson.fromJson(addToBasketPostParamsJson, collectionType);
         }
         this.abModeName = preferences.getString(Constants.MODE_NAME, null);
         String storeJson = preferences.getString(Constants.STORE_AVAILABILITY_MAP, null);
         if (storeJson != null) {
-            Type collectionType = new TypeToken<HashMap<String, String>>() {}.getType();
+            Type collectionType = new TypeToken<HashMap<String, String>>() {
+            }.getType();
             this.storeAvailabilityMap = gson.fromJson(storeJson, collectionType);
         }
     }
@@ -162,7 +164,7 @@ public class AppDataDynamic {
 
     @NonNull
     public String getAbModeName() {
-        return abModeName == null ? "": abModeName;
+        return abModeName == null ? "" : abModeName;
     }
 
     @Nullable

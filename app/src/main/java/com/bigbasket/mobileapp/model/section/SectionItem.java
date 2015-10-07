@@ -217,7 +217,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
             dest.writeParcelable(helpDestinationInfo, flags);
         }
         boolean wasTitleTypeNull = titleType == null;
-        dest.writeByte(wasTitleTypeNull ? (byte) 1: (byte) 0);
+        dest.writeByte(wasTitleTypeNull ? (byte) 1 : (byte) 0);
         if (!wasTitleTypeNull) {
             dest.writeString(titleType);
         }

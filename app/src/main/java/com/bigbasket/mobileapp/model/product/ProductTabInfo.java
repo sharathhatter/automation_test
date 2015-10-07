@@ -6,13 +6,9 @@ import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.util.Constants;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ProductTabInfo implements Parcelable {
     @SerializedName(Constants.TAB_NAME)
