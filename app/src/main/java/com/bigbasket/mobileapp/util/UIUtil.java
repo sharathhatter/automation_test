@@ -541,7 +541,7 @@ public class UIUtil {
         TextView txtGiftItemTotalPrice = holder.getTxtGiftItemTotalPrice();
 
         lblTotalGiftItems.setText(context.getString(R.string.totalNumOfItemsToGiftWrap));
-        txtCountGiftItems.setText(numGiftItemsToWrap);
+        txtCountGiftItems.setText(String.valueOf(numGiftItemsToWrap));
 
         String start = context.getString(R.string.totalCostOfGiftWrapping) + " ";
         String end = context.getString(R.string.willBeAddedToFinalAmount);

@@ -394,8 +394,6 @@
     <string name="giftWrapChargeTotal">Gift Wrap Charge Total:</string>
     <string name="perItem">per item.</string>
     <string name="rupeeTerminator">/-</string>
-    <string name="plusSymbol">&#43;</string>
-    <string name="minusSymbol">&#8212;</string>
     <string name="chooseYourMsg">Choose your message option</string>
     <string name="commonMsg">Common Message</string>
     <string name="commonMsgDesc">A common message for all selected products/quantity</string>
@@ -403,8 +401,9 @@
     <string name="individualMsgDesc">Different messages can be added per product</string>
     <string name="typeInYourMsg">Type In your message (Optional) - Max</string>
     <string name="charsColon">chars:</string>
+    <string name="colon">:</string>
     <string name="noProductsInCurrentCity">No product from this order are available in your current city.</string>
-    <string name="totalNumOfItemsToGiftWrap">Total No. of Items to Gift Wrap:</string>
+    <string name="totalNumOfItemsToGiftWrap">Total No. of Items to Gift Wrap</string>
     <string name="totalCostOfGiftWrapping">Total Cost of Gift Wrapping</string>
-    <string name="willBeAddedToFinalAmount">(will be added to final amount):</string>
+    <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
 </resources>

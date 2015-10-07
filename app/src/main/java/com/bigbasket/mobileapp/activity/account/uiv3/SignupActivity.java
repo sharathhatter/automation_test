@@ -16,7 +16,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
+import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
@@ -83,11 +83,16 @@ public class SignupActivity extends BackButtonActivity {
         });
         btnSignUp.setTypeface(faceRobotoRegular);
 
-        mPasswordView.setOnTouchListener(new OnRightCompoundDrawableClicked() {
+        mPasswordView.setOnTouchListener(new OnCompoundDrawableClickListener(OnCompoundDrawableClickListener.DRAWABLE_RIGHT) {
             @Override
             public void onRightDrawableClicked() {
                 mIsPasswordVisible = !mIsPasswordVisible;
                 togglePasswordView(mPasswordView, mIsPasswordVisible);
+            }
+
+            @Override
+            public void onLeftDrawableClicked() {
+
             }
         });
 
@@ -108,10 +113,15 @@ public class SignupActivity extends BackButtonActivity {
         if (addressSummaries != null && addressSummaries.size() > 0) {
             editTextCurrentLocation.setText(addressSummaries.get(0).toStringSameLine());
             editTextCurrentLocation.setTypeface(faceRobotoRegular);
-            editTextCurrentLocation.setOnTouchListener(new OnRightCompoundDrawableClicked() {
+            editTextCurrentLocation.setOnTouchListener(new OnCompoundDrawableClickListener(OnCompoundDrawableClickListener.DRAWABLE_RIGHT) {
                 @Override
                 public void onRightDrawableClicked() {
                     showChangeCity(false, TrackEventkeys.NC_SIGNUP_SCREEN, true);
+                }
+
+                @Override
+                public void onLeftDrawableClicked() {
+
                 }
             });
             editTextCurrentLocation.setVisibility(View.VISIBLE);

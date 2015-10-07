@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.adapter.gift;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.gift.GiftOperationAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
@@ -72,8 +74,6 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
             TextView txtProductQuantity = holder.getTxtProductQty();
             TextView txtProductBrand = holder.getTxtProductBrand();
             TextView txtProductGiftWrapPrice = holder.getTxtProductGiftWrapPrice();
-            TextView txtDecreaseQuantity = holder.getTxtDecreaseQuantity();
-            TextView txtIncreaseQuantity = holder.getTxtIncreaseQuantity();
             TextView txtProductGiftWrapTotalPrice = holder.getTxtProductGiftWrapTotalPrice();
             TextView txtProductGiftWrapQuantityStatus = holder.getTxtProductGiftWrapQuantityStatus();
             GiftItem giftItem = gift.getGiftItems().get(position);
@@ -81,38 +81,40 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
             int allowedQty = giftItem.getQuantity();
 
             if (giftItem.isReadOnly()) {
-                txtIncreaseQuantity.setVisibility(View.GONE);
-                txtDecreaseQuantity.setVisibility(View.GONE);
+                txtProductGiftWrapQuantityStatus.setCompoundDrawablesWithIntrinsicBounds(
+                        null, null, null, null);
+                txtProductGiftWrapQuantityStatus.setOnTouchListener(null);
             } else {
                 if (reservedQty == allowedQty) {
-                    txtIncreaseQuantity.setVisibility(View.GONE);
-                    txtDecreaseQuantity.setVisibility(View.VISIBLE);
+                    txtProductGiftWrapQuantityStatus.setCompoundDrawablesWithIntrinsicBounds(
+                            ContextCompat.getDrawable(context, R.drawable.minus_red), null, null, null);
                 } else if (reservedQty == 0) {
-                    txtIncreaseQuantity.setVisibility(View.VISIBLE);
-                    txtDecreaseQuantity.setVisibility(View.GONE);
+                    txtProductGiftWrapQuantityStatus.setCompoundDrawablesWithIntrinsicBounds(
+                            null, null, ContextCompat.getDrawable(context, R.drawable.plus_red), null);
                 } else {
-                    txtIncreaseQuantity.setVisibility(View.VISIBLE);
-                    txtDecreaseQuantity.setVisibility(View.VISIBLE);
+                    txtProductGiftWrapQuantityStatus.setCompoundDrawablesWithIntrinsicBounds(
+                            ContextCompat.getDrawable(context, R.drawable.minus_red), null,
+                            ContextCompat.getDrawable(context, R.drawable.plus_red), null);
                 }
-                if (txtDecreaseQuantity.getVisibility() == View.VISIBLE) {
-                    txtDecreaseQuantity.setOnClickListener(new View.OnClickListener() {
+                Integer[] drawableTypes = new Integer[2];
+                if (txtProductGiftWrapQuantityStatus.getCompoundDrawables()[OnCompoundDrawableClickListener.DRAWABLE_LEFT] != null) {
+                    drawableTypes[0] = OnCompoundDrawableClickListener.DRAWABLE_LEFT;
+                }
+                if (txtProductGiftWrapQuantityStatus.getCompoundDrawables()[OnCompoundDrawableClickListener.DRAWABLE_RIGHT] != null) {
+                    drawableTypes[drawableTypes[0] != null ? 1 : 0] = OnCompoundDrawableClickListener.DRAWABLE_RIGHT;
+                }
+                if (drawableTypes[0] != null) {
+                    txtProductGiftWrapQuantityStatus.setOnTouchListener(new OnCompoundDrawableClickListener(drawableTypes) {
                         @Override
-                        public void onClick(View v) {
+                        public void onRightDrawableClicked() {
+                            GiftItemListRecyclerAdapter.this.context.updateGiftItemQty(position, reservedQty + 1);
+                        }
+
+                        @Override
+                        public void onLeftDrawableClicked() {
                             GiftItemListRecyclerAdapter.this.context.updateGiftItemQty(position, reservedQty - 1);
                         }
                     });
-                } else {
-                    txtDecreaseQuantity.setOnClickListener(null);
-                }
-                if (txtIncreaseQuantity.getVisibility() == View.VISIBLE) {
-                    txtIncreaseQuantity.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            GiftItemListRecyclerAdapter.this.context.updateGiftItemQty(position, reservedQty + 1);
-                        }
-                    });
-                } else {
-                    txtIncreaseQuantity.setOnClickListener(null);
                 }
             }
 
@@ -144,8 +146,6 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
         private TextView txtProductQuantity;
         private TextView txtProductBrand;
         private TextView txtProductGiftWrapPrice;
-        private TextView txtDecreaseQuantity;
-        private TextView txtIncreaseQuantity;
         private TextView txtProductGiftWrapTotalPrice;
         private TextView txtProductGiftWrapQuantityStatus;
         private Typeface typeface;
@@ -192,20 +192,6 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
                 txtProductGiftWrapPrice.setTypeface(typeface);
             }
             return txtProductGiftWrapPrice;
-        }
-
-        public TextView getTxtDecreaseQuantity() {
-            if (txtDecreaseQuantity == null) {
-                txtDecreaseQuantity = (TextView) itemView.findViewById(R.id.txtDecreaseQuantity);
-            }
-            return txtDecreaseQuantity;
-        }
-
-        public TextView getTxtIncreaseQuantity() {
-            if (txtIncreaseQuantity == null) {
-                txtIncreaseQuantity = (TextView) itemView.findViewById(R.id.txtIncreaseQuantity);
-            }
-            return txtIncreaseQuantity;
         }
 
         public TextView getTxtProductGiftWrapTotalPrice() {
