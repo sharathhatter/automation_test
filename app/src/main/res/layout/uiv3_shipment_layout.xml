@@ -37,33 +37,6 @@
                 android:textSize="@dimen/secondary_text_size" />
 
             <LinearLayout
-                android:id="@+id/layoutShipmentToggleContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_marginRight="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:gravity="right|center_vertical"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/txtShipmentAnnotation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/delivery_time"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/large_text_size" />
-
-                <android.support.v7.widget.SwitchCompat
-                    android:id="@+id/switchToggleDelivery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_normal" />
-
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/layoutShipmentContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

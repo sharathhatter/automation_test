@@ -45,7 +45,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,21 +91,21 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         trackCheckEventShown(mShipments);
     }
 
-    private void trackCheckEventShown(ArrayList<Shipment> mShipments){
-        if(mShipments == null || mShipments.size() == 0 ||
+    private void trackCheckEventShown(ArrayList<Shipment> mShipments) {
+        if (mShipments == null || mShipments.size() == 0 ||
                 TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
         HashMap<String, String> map = new HashMap<>();
-        if(originalShipmentMap==null) {
+        if (originalShipmentMap == null) {
             originalShipmentMap = new HashMap<>();
         }
-        for(Shipment shipment : mShipments){
+        for (Shipment shipment : mShipments) {
             map.put(TrackEventkeys.FIS, shipment.getFulfillmentType());
             originalShipmentMap.put(shipment.getShipmentId(), shipment.getFulfillmentType());
-            if(!TextUtils.isEmpty(String.valueOf(shipment.getCount()))) {
-                map.put(shipment.getFulfillmentType()+"_items", String.valueOf(shipment.getCount()));
+            if (!TextUtils.isEmpty(String.valueOf(shipment.getCount()))) {
+                map.put(shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
             }
         }
-        trackEvent("Checkout."+ AppDataDynamic.getInstance(this).getAbModeName() + ".Shown", map);
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Shown", map);
     }
 
 
@@ -135,14 +134,12 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         LinearLayout layoutShipmentContainer = (LinearLayout) findViewById(R.id.layoutShipmentContainer);
         layoutShipmentContainer.removeAllViews();
         int marginVertical = (int) getResources().getDimension(R.dimen.margin_normal);
-        SwitchCompat switchToggleDelivery = (SwitchCompat) findViewById(R.id.switchToggleDelivery);
-        TextView txtShipmentAnnotation = (TextView) findViewById(R.id.txtShipmentAnnotation);
-        ViewGroup layoutShipmentToggleContainer = (ViewGroup) findViewById(R.id.layoutShipmentToggleContainer);
-        boolean hasBeenMadeVisible = false;
         for (int i = 0; i < mShipments.size(); i++) {
             final Shipment shipment = mShipments.get(i);
             View shipmentView = getLayoutInflater().inflate(R.layout.shipment_row,
                     layoutShipmentContainer, false);
+
+            SwitchCompat switchToggleDelivery = (SwitchCompat) shipmentView.findViewById(R.id.switchToggleDelivery);
 
             BaseShipmentAction shipmentAction = shipmentActionHashMap != null ?
                     shipmentActionHashMap.get(shipment.getShipmentId()) : null;
@@ -167,47 +164,35 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                             break;
                     }
                 }
-
                 if (!TextUtils.isEmpty(shipmentAction.getActionMsg())) {
                     actionName = shipmentAction.getActionMsg();
                     if (TextUtils.isEmpty(shipmentAction.getActionState())) {
-                        if (!hasBeenMadeVisible) {
-                            switchToggleDelivery.setVisibility(View.GONE);
-                        }
+                        switchToggleDelivery.setVisibility(View.GONE);
                     } else {
                         switchToggleDelivery.setChecked(shipmentAction.getActionState().equalsIgnoreCase(Constants.ON));
                         switchToggleDelivery.setOnCheckedChangeListener(new OnShipmentToggleListener(shipment, cityMode));
-                        switchToggleDelivery.setVisibility(View.VISIBLE);
-                        layoutShipmentToggleContainer.setVisibility(View.VISIBLE);
-                        hasBeenMadeVisible = true;
                     }
                 } else {
-                    if (!hasBeenMadeVisible) {
-                        switchToggleDelivery.setVisibility(View.GONE);
-                    }
+                    switchToggleDelivery.setVisibility(View.GONE);
                 }
             } else {
                 if (isAdjacentShipmentDisabled(i, shipmentActionHashMap)) {
                     applyBottom = i != 0;
                 }
                 shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
-//                switchToggleDelivery.setVisibility(View.GONE);
+                switchToggleDelivery.setVisibility(View.GONE);
                 mSelectedShipmentIndx.add(i);
             }
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) shipmentView.getLayoutParams();
             marginLayoutParams.bottomMargin = applyBottom ? marginVertical : 0;
             shipmentView.setLayoutParams(marginLayoutParams);
 
+            TextView txtShipmentAction = (TextView) shipmentView.findViewById(R.id.txtShipmentAnnotation);
+            txtShipmentAction.setTypeface(faceRobotoRegular);
             if (!TextUtils.isEmpty(actionName)) {
-                hasBeenMadeVisible = true;
-                txtShipmentAnnotation.setTypeface(faceRobotoRegular);
-                txtShipmentAnnotation.setText(actionName);
-                txtShipmentAnnotation.setVisibility(View.VISIBLE);
-                layoutShipmentToggleContainer.setVisibility(View.VISIBLE);
+                txtShipmentAction.setText(actionName);
             } else {
-                if (!hasBeenMadeVisible) {
-                    txtShipmentAnnotation.setVisibility(View.GONE);
-                }
+                txtShipmentAction.setVisibility(View.GONE);
             }
 
             ((TextView) shipmentView.findViewById(R.id.lblDeliveryTime)).setTypeface(faceRobotoRegular);
@@ -350,7 +335,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             mHasUserToggledShipments = !mHasUserToggledShipments;
-            if(mHasUserToggledShipments) {
+            if (mHasUserToggledShipments) {
                 trackToggleEvent(cityMode);
                 mHasUserToggledShipmentsAtAll = true;
             }
@@ -364,8 +349,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         }
     }
 
-    private void trackToggleEvent(String cityMode){
-        if(TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+    private void trackToggleEvent(String cityMode) {
+        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.ACTION_NAME, cityMode);
         trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Toggle", map);
@@ -374,9 +359,11 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private class OnPostShipmentClickListener implements View.OnClickListener {
 
         private String cityMode;
-        public OnPostShipmentClickListener(String cityMode){
+
+        public OnPostShipmentClickListener(String cityMode) {
             this.cityMode = cityMode;
         }
+
         @Override
         public void onClick(View v) {
             HashMap<String, String> map = new HashMap<>();
@@ -406,14 +393,14 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         }
     }
 
-    private void trackFinalShipmentEvent(ArrayList<Shipment> shipments, String cityMode){
-        if(TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+    private void trackFinalShipmentEvent(ArrayList<Shipment> shipments, String cityMode) {
+        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.ACTION_NAME, !mHasUserToggledShipmentsAtAll ? "none" : cityMode);
-        for(Shipment shipment : shipments){
+        for (Shipment shipment : shipments) {
             map.put(TrackEventkeys.FINAL_FIS, shipment.getFulfillmentType());
             map.put(TrackEventkeys.ORIGINAL_FIS, originalShipmentMap.get(shipment.getShipmentId()));
-            map.put("Final_"+shipment.getFulfillmentType()+"_items", String.valueOf(shipment.getCount()));
+            map.put("Final_" + shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
         }
 
         trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".FinalStatus", map);

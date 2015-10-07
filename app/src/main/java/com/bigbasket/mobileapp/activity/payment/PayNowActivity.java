@@ -36,7 +36,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
-import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
 import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;

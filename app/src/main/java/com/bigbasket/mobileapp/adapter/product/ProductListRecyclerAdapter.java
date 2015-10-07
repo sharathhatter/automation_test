@@ -16,7 +16,6 @@ import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
-import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 
 import java.util.HashMap;
@@ -67,7 +66,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         this.cartInfo = cartInfo;
     }
 
-    public void setCartInfo(HashMap<String, Integer> cartInfo){
+    public void setCartInfo(HashMap<String, Integer> cartInfo) {
         this.cartInfo = cartInfo;
     }
 

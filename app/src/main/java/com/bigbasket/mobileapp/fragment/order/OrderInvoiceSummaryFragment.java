@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -21,7 +20,6 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActi
 import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
@@ -183,9 +181,9 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
             }
         });
 
-        if(orderInvoice.isCanPay()){
+        if (orderInvoice.isCanPay()) {
             btnPayNow.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             btnPayNow.setVisibility(View.GONE);
         }
 
