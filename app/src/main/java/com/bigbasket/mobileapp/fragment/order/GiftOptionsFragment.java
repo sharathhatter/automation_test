@@ -45,20 +45,19 @@ public class GiftOptionsFragment extends BaseFragment {
         }
     }
 
-    private void renderCheckOutProgressView(LinearLayout layout) {
+    private void renderCheckOutProgressView() {
         String[] array_txtValues = new String[]{getString(R.string.address),
                 getString(R.string.gift), getString(R.string.slots), getString(R.string.order)};
         Integer[] array_compPos = new Integer[]{0};
         int selectedPos = 1;
         View giftView = UIUtil.getCheckoutProgressView(getActivity(), null, array_txtValues, array_compPos, selectedPos);
-        if (giftView != null) layout.addView(giftView, 0);
+        if (giftView != null && getContentView() != null) getContentView().addView(giftView, 0);
     }
 
     private void renderGiftLayout(final Bundle args) {
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
-        LinearLayout layout = (LinearLayout) contentView.findViewById(R.id.layoutGiftScroll);
-        renderCheckOutProgressView(layout);
+        renderCheckOutProgressView();
         TextView textViewCount = (TextView) contentView.findViewById(R.id.textViewNumGifts);
         final Gift gift = args.getParcelable(Constants.GIFTS);
         if (gift == null) return;
@@ -131,7 +130,7 @@ public class GiftOptionsFragment extends BaseFragment {
     @Nullable
     @Override
     public ViewGroup getContentView() {
-        return getView() != null ? (ViewGroup) getView().findViewById(R.id.giftOptionsFragment) : null;
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.giftOptionsFragmentLayout) : null;
     }
 
     @Override
