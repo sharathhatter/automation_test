@@ -197,6 +197,18 @@ public class SignupActivity extends BackButtonActivity {
             return;
         }
 
+        if (!UIUtil.isAlphaString(firstName.trim())) {
+            cancel = true;
+            if (focusView == null) focusView = mFirstNameView;
+            UIUtil.reportFormInputFieldError(textInputFirstName, getString(R.string.error_field_name));
+        }
+
+        if (!UIUtil.isAlphaString(lastName.trim())) {
+            cancel = true;
+            if (focusView == null) focusView = mLastNameView;
+            UIUtil.reportFormInputFieldError(textInputLastName, getString(R.string.error_field_name));
+        }
+
         if (cancel) {
             // There was an error, don't sign-up
             focusView.requestFocus();
