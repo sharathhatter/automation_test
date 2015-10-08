@@ -160,6 +160,9 @@ public final class TrackEventkeys {
     public static final String FINAL_FIS = "final_fis";
     public static final String ORIGINAL_FIS = "original_fis";
 
+    public static final String GIFT_SELECTQTY = "gift_selectqty";
+    public static final String GIFT_ADDMESSAGE = "gift_addmessage";
+
     private TrackEventkeys() {
     }
 }

@@ -14,12 +14,16 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.gift.GiftItemAware;
 import com.bigbasket.mobileapp.interfaces.gift.GiftOperationAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.RecyclerViewDividerItemDecoration;
+
+import java.util.HashMap;
 
 
 public class GiftItemListFragment extends BaseFragment implements GiftOperationAware {
@@ -88,6 +92,9 @@ public class GiftItemListFragment extends BaseFragment implements GiftOperationA
         } else if (reservedQty < 0) {
             getCurrentActivity().showToast("Gift quantity can't be negative");
         }
+        HashMap<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.GIFT_SELECTQTY);
+        trackEvent(TrackingAware.GIFT_ITEM_INC_DEC, eventAttribs);
         giftItem.setReservedQty(reservedQty);
         mGiftItemListRecyclerAdapter.notifyItemChanged(position);
         mGiftItemListRecyclerAdapter.notifyItemChanged(mGiftItemListRecyclerAdapter.getItemCount() - 1); // Notify footer

@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.product.gift;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.util.Pair;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -25,6 +26,8 @@ public class Gift implements Parcelable {
     private ArrayList<GiftItem> giftItems;
     @SerializedName(Constants.COMMON_MSG)
     private String commonMsg;
+    @SerializedName(Constants.COMMON_MSG_NUM_CHARS)
+    private int commonMsgNumChars;
     private int count;
     @SerializedName(Constants.BASE_IMG_URL)
     private String baseImgUrl;
@@ -54,6 +57,7 @@ public class Gift implements Parcelable {
         if (!isGiftLinkNull) {
             this.giftLink = source.readString();
         }
+        this.commonMsgNumChars = source.readInt();
     }
 
     @Override
@@ -80,6 +84,7 @@ public class Gift implements Parcelable {
         if (!isGiftLinkNull) {
             dest.writeString(giftLink);
         }
+        dest.writeInt(commonMsgNumChars);
     }
 
     @Override
@@ -116,5 +121,24 @@ public class Gift implements Parcelable {
 
     public String getGiftLink() {
         return giftLink;
+    }
+
+    public int getCommonMsgNumChars() {
+        return commonMsgNumChars;
+    }
+
+    /**
+    Returns Count & Total Price of gift-items
+     */
+    public Pair<Integer, Double> getGiftItemSelectedCountAndTotalPrice() {
+        int numGiftItemsToWrap = 0;
+        double giftItemTotal = 0;
+        for (GiftItem giftItem : giftItems) {
+            if (giftItem.getReservedQty() > 0) {
+                numGiftItemsToWrap++;
+                giftItemTotal += giftItem.getReservedQty() * giftItem.getGiftWrapCharge();
+            }
+        }
+        return new Pair<>(numGiftItemsToWrap, giftItemTotal);
     }
 }

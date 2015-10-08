@@ -3,8 +3,10 @@ package com.bigbasket.mobileapp.adapter.gift;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextWatcher;
@@ -20,10 +22,15 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
+import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+
+import java.util.HashMap;
 
 public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_GIFT = 0;
@@ -93,6 +100,13 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 showCommonMsg = isChecked;
+                Pair<Integer, Double> data = gift.getGiftItemSelectedCountAndTotalPrice();
+                HashMap<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(Constants.TYPE, showCommonMsg ? Constants.COMMON_MSG : Constants.INDIVIDUAL_MSG);
+                eventAttribs.put(Constants.NO_OF_ITEMS, String.valueOf(data.first));
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.GIFT_ADDMESSAGE);
+                ((TrackingAware) GiftItemMessageRecyclerAdapter.this.context)
+                        .trackEvent(TrackingAware.GIFT_MESSAGE_OPT, eventAttribs);
                 notifyDataSetChanged();
             }
         });
@@ -117,6 +131,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         int viewType = getItemViewType(position);
         if (viewType == VIEW_TYPE_GIFT || viewType == VIEW_TYPE_GIFT_MSG) {
+            Activity activity = ((ActivityAware) context).getCurrentActivity();
             GiftItemMsgViewHolder giftItemMsgViewHolder = (GiftItemMsgViewHolder) holder;
             TextView txtTypeYourMsg = giftItemMsgViewHolder.getTxtTypeYourMsg();
             EditText editTextGiftMessage = giftItemMsgViewHolder.getEditTextGiftMessage();
@@ -133,8 +148,10 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
                 } else {
                     addTextWatcher(giftItemViewHolder, position);
                     layoutGiftMsg.setVisibility(View.VISIBLE);
-                    Activity activity = ((ActivityAware) context).getCurrentActivity();
                     editTextGiftMessage.setText(UIUtil.strJoin(giftItem.getMessages(), "\n"));
+                    if (giftItem.getMaxNumChars() > 0) {
+                        editTextGiftMessage.setFilters(new InputFilter[]{new InputFilter.LengthFilter(giftItem.getMaxNumChars())});
+                    }
                     txtTypeYourMsg.setText(activity.getString(R.string.typeInYourMsg) + " " +
                             giftItem.getMaxNumChars() + " " + activity.getString(R.string.charsColon));
                 }
@@ -150,6 +167,11 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
             } else {
                 addTextWatcher(giftItemMsgViewHolder, position);
                 editTextGiftMessage.setText(gift.getCommonMsg());
+                if (gift.getCommonMsgNumChars() > 0) {
+                    editTextGiftMessage.setFilters(new InputFilter[]{new InputFilter.LengthFilter(gift.getCommonMsgNumChars())});
+                }
+                txtTypeYourMsg.setText(activity.getString(R.string.typeInYourMsg) + " " +
+                        gift.getCommonMsgNumChars() + " " + activity.getString(R.string.charsColon));
                 layoutGiftMsg.setVisibility(View.VISIBLE);
             }
         } else if (viewType == VIEW_TYPE_FOOTER) {

@@ -20,6 +20,7 @@ public class Constants {
 
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
+    public static final String NO_OF_ITEMS = "no_of_items";
     public static final String PRODUCT_NO_ITEM_IN_CART = "p_no_items_in_cart";
     public static final String PRODUCT_ID = "sku";
     public static final String SKU_TYPE = "sku_type";
@@ -624,8 +625,9 @@ public class Constants {
     public static final String IS_PREWRAPPED = "is_prewrapped";
     public static final String IS_CONVERTIBLE_TO_NORMAL = "is_convertible_to_normal";
     public static final String COMMON_MSG = "common_msg";
+    public static final String COMMON_MSG_NUM_CHARS = "common_msg_num_chars";
     public static final String GIFT_SUMMARY = "gift_summary";
     public static final String GIFT_LINK = "gift_link";
-    public static final String NUM_GIFTS = "num_gifts";
     public static final String HAS_GIFTS = "has_gifts";
+    public static final String INDIVIDUAL_MSG = "individual_msg";
 }

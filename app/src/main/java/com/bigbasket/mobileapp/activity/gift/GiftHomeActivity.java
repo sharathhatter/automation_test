@@ -13,15 +13,18 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.fragment.gift.GiftItemListFragment;
 import com.bigbasket.mobileapp.fragment.gift.GiftMessageFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.gift.GiftItemAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class GiftHomeActivity extends BackButtonActivity implements GiftItemAware {
@@ -83,6 +86,9 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
                         postGift(true);
                     }
                 } else {
+                    HashMap<String, String> eventAttribs = new HashMap<>();
+                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.GIFT_SELECTQTY);
+                    trackEvent(TrackingAware.GIFT_OPTS_ADD_MSG, eventAttribs);
                     pager.setCurrentItem(1);
                 }
             }
@@ -118,6 +124,9 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
         } else {
             gift.setCommonMsg(null);
         }
+        HashMap<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.GIFT_ADDMESSAGE);
+        trackEvent(TrackingAware.GIFT_OPTS_SAVE_AND_CONTINUE, eventAttribs);
         String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
         new PostGiftTask<>(this, potentialOrderId, gift, getCurrentNavigationContext()).startTask();
     }

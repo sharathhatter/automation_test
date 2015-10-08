@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -72,6 +71,7 @@ public class GiftOptionsFragment extends BaseFragment {
                     handler.sendOfflineError();
                     return;
                 }
+                trackEvent(TrackingAware.GIFT_SKIP_AND_PROCEED, null);
                 new PostGiftTask<>(getCurrentActivity(), potentialOrderId, null,
                         TrackEventkeys.CO_DELIVERY_OPS).startTask();
             }
@@ -80,6 +80,7 @@ public class GiftOptionsFragment extends BaseFragment {
         btnGiftOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                trackEvent(TrackingAware.GIFT_VIEW_WRAP_OPTS, null);
                 openGiftSelection(gift, potentialOrderId);
             }
         });
@@ -105,7 +106,6 @@ public class GiftOptionsFragment extends BaseFragment {
             lblKnowMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    trackEvent(TrackingAware.CHECKOUT_KNOW_MORE_LINK_CLICKED, null);
                     Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                     intent.putExtra(Constants.WEBVIEW_URL, gift.getGiftLink());

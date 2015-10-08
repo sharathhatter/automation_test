@@ -17,6 +17,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -55,7 +56,6 @@ import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
-import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -526,14 +526,9 @@ public class UIUtil {
 
     public static void setUpGiftItemListFooter(Gift gift, GiftItemListRecyclerAdapter.GiftItemFooterViewHolder holder,
                                                Context context) {
-        int numGiftItemsToWrap = 0;
-        double giftItemTotal = 0;
-        for (GiftItem giftItem : gift.getGiftItems()) {
-            if (giftItem.getReservedQty() > 0) {
-                numGiftItemsToWrap++;
-                giftItemTotal += giftItem.getReservedQty() * giftItem.getGiftWrapCharge();
-            }
-        }
+        Pair<Integer, Double> data = gift.getGiftItemSelectedCountAndTotalPrice();
+        int numGiftItemsToWrap = data.first;
+        double giftItemTotal = data.second;
 
         TextView lblTotalGiftItems = holder.getLblTotalGiftItems();
         TextView txtCountGiftItems = holder.getTxtCountGiftItems();
