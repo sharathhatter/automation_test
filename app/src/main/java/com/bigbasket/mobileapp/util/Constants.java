@@ -616,4 +616,5 @@ public class Constants {
     public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
 
     public static final String APP_LAUNCH = "appLaunch";
+    public static final String FIRSE_TIME_USER = "fst_tm_user";
 }

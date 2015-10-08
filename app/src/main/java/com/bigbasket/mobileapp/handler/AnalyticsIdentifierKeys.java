@@ -11,5 +11,6 @@ public final class AnalyticsIdentifierKeys {
     public static final String CUSTOMER_EMAIL = "email";
     public static final String CUSTOMER_NAME = "Name";
     public static final String CUSTOMER_ID = "mid";
+    public static final String APP_VERSION = "App Version";
 
 }
