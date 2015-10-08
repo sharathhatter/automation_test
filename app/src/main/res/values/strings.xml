@@ -376,4 +376,5 @@
     <string name="retry">Retry</string>
     <string name="needMoreAddressInfo">We need more information to complete your address and help you checkout the items in Basket.</string>
     <string name="noProductsInCurrentCity">No product from this order are available in your current city.</string>
+    <string name="location_not_found">Unable to read your location. You must type-in your location to proceed.</string>
 </resources>

@@ -65,6 +65,7 @@ import com.bigbasket.mobileapp.util.MutableLong;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
 import com.payu.india.Payu.PayuConstants;
@@ -113,6 +114,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         setUpNewCheckoutFlowMsg();
         renderFooter(false);
         trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
+        MoEngageWrapper.suppressInAppMessageHere(moEHelper);
     }
 
     @Override
