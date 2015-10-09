@@ -275,7 +275,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 .setShowShoppingListBtn(true)
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
-                .disableAbMode(true)
                 .build();
     }
 

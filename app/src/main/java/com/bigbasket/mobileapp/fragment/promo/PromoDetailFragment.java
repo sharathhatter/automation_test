@@ -290,7 +290,6 @@ public class PromoDetailFragment extends BaseFragment {
                 .setShowShoppingListBtn(false)
                 .setShowBasketBtn(false)
                 .setShowShopListDeleteBtn(false)
-                .disableAbMode(true)
                 .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
         for (Product freeProduct : freeProducts) {

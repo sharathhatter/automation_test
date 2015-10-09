@@ -152,7 +152,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
                 .disableInBasketChildSwap(true)
-                .disableAbMode(true)
+                .useRadioButtonsForContextual(true)
                 .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
 
