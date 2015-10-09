@@ -407,4 +407,5 @@
     <string name="totalNumOfItemsToGiftWrap">Total No. of Items to Gift Wrap</string>
     <string name="totalCostOfGiftWrapping">Total Cost of Gift Wrapping</string>
     <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
+    <string name="noAddGiftWrap">No additional gift wrap required</string>
 </resources>
