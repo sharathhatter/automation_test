@@ -213,9 +213,9 @@ public class ShowCartActivity extends BackButtonActivity {
     }
 
     public final void setBasketNumItemsDisplay() {
+        markBasketDirty();
         if (getCartSummary() == null) return;
         updateUIForCartInfo();
-        markBasketDirty();
     }
 
     private void emptyCart() {
@@ -414,6 +414,7 @@ public class ShowCartActivity extends BackButtonActivity {
         coordinatorLayout.removeView(mViewPager);
         relativeLayout.removeView(linearLayout);
         frameLayout.addView(base);
+        markBasketChanged(null);
     }
 
     @Override
