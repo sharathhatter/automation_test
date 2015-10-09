@@ -238,6 +238,7 @@ public class ShowCartActivity extends BackButtonActivity {
                     showBasketEmptyMessage();
                     CartSummary cartSummary = new CartSummary(0, 0, 0);
                     setCartSummary(cartSummary);
+                    setBasketNumItemsDisplay();
                 } else if (cartEmptyApiResponseCallback.status == ApiErrorCodes.CART_NOT_EXISTS) {
                     showAlertDialog("Cart is already empty");
                 } else {
@@ -413,8 +414,7 @@ public class ShowCartActivity extends BackButtonActivity {
         coordinatorLayout.removeView(mViewPager);
         relativeLayout.removeView(linearLayout);
         frameLayout.addView(base);
-
-        setBasketNumItemsDisplay();
+        markBasketChanged(null);
     }
 
     @Override
