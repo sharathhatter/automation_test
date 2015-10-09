@@ -32,7 +32,6 @@
             android:screenOrientation="portrait">
         </activity>
         <activity android:name=".PayUStoredCardsActivity"
-            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait">
         </activity>
     </application>
