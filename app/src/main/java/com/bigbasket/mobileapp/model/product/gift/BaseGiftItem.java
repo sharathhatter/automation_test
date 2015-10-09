@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.product.BaseProduct;
 import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -25,16 +26,23 @@ public class BaseGiftItem extends BaseProduct {
     };
 
     @SerializedName("product_id")
+    @Expose
     private String productId;
+    @Expose
     private ArrayList<String> messages;
     @SerializedName(Constants.QC_RESERVED_QUANTITY)
+    @Expose
     private int reservedQty;
+    @Expose
     private int quantity;
     @SerializedName(Constants.IS_PREWRAPPED)
+    @Expose
     private boolean isPreWrapped;
     @SerializedName(Constants.IS_CONVERTIBLE_TO_NORMAL)
+    @Expose
     private boolean isConvertibleToNormal;
     @SerializedName(Constants.GIFT_WRAP_CHARGE)
+    @Expose
     private double giftWrapCharge;
 
     public BaseGiftItem(Parcel source) {

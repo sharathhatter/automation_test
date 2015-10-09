@@ -16,6 +16,7 @@ import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -39,7 +40,8 @@ public class PostGiftTask<T> {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(
                 ((ActivityAware) ctx).getCurrentActivity());
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        String giftsJson = gift != null ? new Gson().toJson(gift) : null;
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        String giftsJson = gift != null ? gson.toJson(gift) : null;
         bigBasketApiService.postGifts(potentialOrderId, giftsJson,
                 new Callback<ApiResponse<PostGiftItemsResponseContent>>() {
                     @Override
