@@ -3,9 +3,12 @@ package com.bigbasket.mobileapp.common;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -28,7 +31,9 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private TextView txtOutOfStockORNotForSale;
     private ImageView imgProductOverflowAction;
     private EditText editTextQty;
+    private RadioGroup radioGroupExpress;
     private TextView txtExpressMsg;
+    private ViewGroup layoutExpressMsg;
 
     public ProductViewHolder(View itemView) {
         super(itemView);
@@ -151,6 +156,22 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             editTextQty = (EditText) itemView.findViewById(R.id.editTextQty);
         }
         return editTextQty;
+    }
+
+
+    public ViewGroup getLayoutExpressMsg() {
+        if (layoutExpressMsg == null) {
+            layoutExpressMsg = (ViewGroup) itemView.findViewById(R.id.layoutExpressMsg);
+        }
+        return layoutExpressMsg;
+    }
+
+
+    public RadioGroup getRadioGroupExpress() {
+        if (radioGroupExpress == null) {
+            radioGroupExpress = (RadioGroup) itemView.findViewById(R.id.radioGroupExpress);
+        }
+        return radioGroupExpress;
     }
 
     public TextView getTxtExpressMsg() {

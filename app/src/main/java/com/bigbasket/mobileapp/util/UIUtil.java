@@ -610,10 +610,16 @@ public class UIUtil {
     }
 
     public static RadioButton getPaymentOptionRadioButton(ViewGroup parent, Context context, LayoutInflater inflater) {
+        return getPaymentOptionRadioButton(parent, context, inflater,
+                (int) context.getResources().getDimension(R.dimen.margin_small));
+    }
+
+    public static RadioButton getPaymentOptionRadioButton(ViewGroup parent, Context context, LayoutInflater inflater,
+                                                          int marginTop) {
         RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, parent, false);
         RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0, 0, 0, (int) context.getResources().getDimension(R.dimen.margin_small));
+        layoutParams.setMargins(0, 0, 0, marginTop);
         radioButton.setLayoutParams(layoutParams);
         radioButton.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
         return radioButton;
