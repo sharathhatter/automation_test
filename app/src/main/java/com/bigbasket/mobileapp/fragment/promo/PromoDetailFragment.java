@@ -290,7 +290,6 @@ public class PromoDetailFragment extends BaseFragment {
                 .setShowShoppingListBtn(false)
                 .setShowBasketBtn(false)
                 .setShowShopListDeleteBtn(false)
-                .disableAbMode(true)
                 .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
         for (Product freeProduct : freeProducts) {
@@ -301,7 +300,7 @@ public class PromoDetailFragment extends BaseFragment {
             productRowParams.setMargins(8, 8, 8, 0);
 
             ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
-                    null, productViewDisplayDataHolder, false, null, getNextScreenNavigationContext(), null, "none",
+                    null, productViewDisplayDataHolder, false, getCurrentActivity(), getNextScreenNavigationContext(), null, "none",
                     null);
             base.setLayoutParams(productRowParams);
             view.addView(base);

@@ -33,12 +33,14 @@ import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
@@ -376,6 +378,8 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 getActivity().setResult(NavigationCodes.ACCOUNT_UPDATED);
                 loadAddresses();
             }
+            // Forcefully calling get-app-data-dynamic, as user might have change location
+            AppDataDynamic.reset(getActivity());
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
             postDeliveryAddress();
         } else {

@@ -146,6 +146,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
         NewRelic.setInteractionName(getCurrentActivity().getClass().getName());
     }
 
+    public MoEHelper getMoEHelper() {
+        return moEHelper;
+    }
+
     @Override
     public boolean checkInternetConnection() {
         return DataUtil.isInternetAvailable(getCurrentActivity());
@@ -240,6 +244,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         isActivitySuspended = false;
+        MoEngageWrapper.onNewIntent(moEHelper, this, intent);
     }
 
     protected void onResume() {
