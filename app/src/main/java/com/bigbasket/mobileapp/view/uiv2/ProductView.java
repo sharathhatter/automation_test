@@ -197,6 +197,15 @@ public final class ProductView {
                 UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())), productViewDisplayDataHolder.getRupeeTypeface()));
     }
 
+    private static boolean hasText(ArrayList<HashMap<String, String>> storeAvailabilityArrayList,
+                            @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
+        for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
+            String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+            if (!TextUtils.isEmpty(msg)) return true;
+        }
+        return false;
+    }
+
     private static <T> void setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                           final T productDataAware,
@@ -223,7 +232,8 @@ public final class ProductView {
         boolean isContextualMode = AppDataDynamic.getInstance(context).isContextualMode();
 
         if (productViewDisplayDataHolder.useRadioButtonsForContextual() && isContextualMode
-                && storeAvailabilityArrayList.size() > 1) {
+                && storeAvailabilityArrayList.size() > 1
+                && hasText(storeAvailabilityArrayList, allStoreAvailabilityMsgMap)) {
             layoutExpressMsg.setVisibility(View.VISIBLE);
             txtExpressMsg.setVisibility(View.GONE);
             radioGroupExpress.removeAllViews();
@@ -287,9 +297,9 @@ public final class ProductView {
                 String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
                 if (!TextUtils.isEmpty(msg)) {
                     msgs.add(msg);
-                }
-                if (currentStoreMap == null) {
-                    currentStoreMap = particularStoreMap;
+                    if (currentStoreMap == null) {
+                        currentStoreMap = particularStoreMap;
+                    }
                 }
             }
             if (msgs.size() > 0) {
