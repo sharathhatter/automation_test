@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +29,7 @@ import com.payu.india.Payu.PayuConstants;
 
 import org.apache.http.util.EncodingUtils;
 
-public class PaymentsActivity extends AppCompatActivity{
+public class PaymentsActivity extends AppCompatActivity {
 
     Bundle bundle;
     WebView mWebView;
@@ -46,10 +45,10 @@ public class PaymentsActivity extends AppCompatActivity{
          * when the device runing out of memory we dont want the user to restart the payment. rather we close it and redirect them to previous activity.
          */
 
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             super.onCreate(null);
             finish();//call activity u want to as activity is being destroyed it is restarted
-        }else {
+        } else {
             super.onCreate(savedInstanceState);
         }
         setContentView(R.layout.activity_payments);
@@ -93,9 +92,13 @@ public class PaymentsActivity extends AppCompatActivity{
 
                 @Override
                 public void unregisterBroadcast(BroadcastReceiver broadcastReceiver) {
-                    if(mReceiver != null){
-                        unregisterReceiver(mReceiver);
-                        mReceiver = null;
+                    if (mReceiver != null) {
+                        try {
+                            unregisterReceiver(mReceiver);
+                            mReceiver = null;
+                        } catch (IllegalArgumentException e) {
+                            mReceiver = null;
+                        }
                     }
                 }
 
@@ -118,16 +121,16 @@ public class PaymentsActivity extends AppCompatActivity{
             };
             Bundle args = new Bundle();
             args.putInt("webView", R.id.webview);
-            args.putInt("tranLayout",R.id.trans_overlay);
-            args.putInt("mainLayout",R.id.r_layout);
+            args.putInt("tranLayout", R.id.trans_overlay);
+            args.putInt("mainLayout", R.id.r_layout);
 
-            String [] list =  payuConfig.getData().split("&");
+            String[] list = payuConfig.getData().split("&");
             String txnId = null;
             String merchantKey = null;
             for (String item : list) {
-                if(item.contains("txnid")){
+                if (item.contains("txnid")) {
                     txnId = item.split("=")[1];
-                }else if (item.contains("key")){
+                } else if (item.contains("key")) {
                     merchantKey = item.split("=")[1];
                 }
                 if (null != txnId && null != merchantKey) break;
@@ -136,7 +139,7 @@ public class PaymentsActivity extends AppCompatActivity{
             args.putString("merchant_key", null != merchantKey ? merchantKey : "could not find");
             PayUSdkDetails payUSdkDetails = new PayUSdkDetails();
             args.putString("sdk_details", "VersionCode: " + payUSdkDetails.getSdkVersionCode() + ", VersionName: " + payUSdkDetails.getSdkVersionName());
-            if(getIntent().getExtras().containsKey("showCustom")) {
+            if (getIntent().getExtras().containsKey("showCustom")) {
                 args.putBoolean("showCustom", getIntent().getBooleanExtra("showCustom", false));
             }
             args.putBoolean("showCustom", true);
@@ -144,8 +147,7 @@ public class PaymentsActivity extends AppCompatActivity{
             findViewById(R.id.parent).bringToFront();
             try {
                 getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.cb_face_out).add(R.id.parent, bank).commit();
-            }catch(Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
                 finish();
             }
@@ -203,7 +205,7 @@ public class PaymentsActivity extends AppCompatActivity{
 
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
-        url = payuConfig.getEnvironment() == PayuConstants.PRODUCTION_ENV?  PayuConstants.PRODUCTION_PAYMENT_URL : PayuConstants.MOBILE_TEST_PAYMENT_URL ;
+        url = payuConfig.getEnvironment() == PayuConstants.PRODUCTION_ENV ? PayuConstants.PRODUCTION_PAYMENT_URL : PayuConstants.MOBILE_TEST_PAYMENT_URL;
         mWebView.postUrl(url, EncodingUtils.getBytes(payuConfig.getData(), "base64"));
 
         /*******************setting status bar color**************/
@@ -239,18 +241,18 @@ public class PaymentsActivity extends AppCompatActivity{
     }
 
     @Override
-    public void onBackPressed(){
-        if(cancelTransaction){
+    public void onBackPressed() {
+        if (cancelTransaction) {
             cancelTransaction = false;
             Intent intent = new Intent();
             intent.putExtra("result", "Transaction canceled due to back pressed!");
-            intent.putExtra("transaction_status",false);
+            intent.putExtra("transaction_status", false);
             setResult(RESULT_CANCELED, intent);
             super.onBackPressed();
             return;
         }
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);;
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setCancelable(false);
         alertDialog.setMessage("Do you really want to cancel the transaction ?");
         alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -259,7 +261,6 @@ public class PaymentsActivity extends AppCompatActivity{
                 cancelTransaction = true;
                 dialog.dismiss();
                 onBackPressed();
-
 
 
             }
