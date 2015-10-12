@@ -201,9 +201,9 @@ public final class ProductView {
                             @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
         for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
             String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
-            if (!TextUtils.isEmpty(msg)) return true;
+            if (TextUtils.isEmpty(msg)) return false;
         }
-        return false;
+        return true;
     }
 
     private static <T> void setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
