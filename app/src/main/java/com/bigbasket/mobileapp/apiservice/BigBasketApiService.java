@@ -42,6 +42,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiRespons
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SetAddressResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SetAddressTransientResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.StoreListGetApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
@@ -53,6 +54,7 @@ import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.product.ProductTabData;
+import com.bigbasket.mobileapp.model.specialityshops.SpecialityShopsListData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -110,6 +112,10 @@ public interface BigBasketApiService {
     void productList(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                      @QueryMap Map<String, String> productQueryMap,
                      Callback<ApiResponse<ProductTabData>> productListApiCallback);
+
+    @GET("/store-list/")
+    void getSpecialityShops(@Query(Constants.CATEGORY) String categoryValue,
+            Callback<ApiResponse<StoreListGetApiResponse>> storeListApiCallback);
 
     @GET("/product-next-page/")
     void productNextPage(@QueryMap Map<String, String> productQueryMap, Callback<ApiResponse<ProductNextPageResponse>> productNextPageApi);

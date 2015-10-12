@@ -43,7 +43,10 @@
 
     <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <application
         android:name=".application.BaseApplication"
@@ -481,6 +484,11 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
+        <activity
+            android:name=".activity.specialityshops.BBSpecialityShopsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <provider
             android:name=".contentProvider.SearchSuggestionProvider"
             android:authorities="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
@@ -495,13 +503,12 @@
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
 
-
-
         <!-- PayTM-->
 
-        <activity android:name="com.paytm.pgsdk.PaytmPGActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation|keyboard"/>
+        <activity
+            android:name="com.paytm.pgsdk.PaytmPGActivity"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:screenOrientation="portrait" />
 
 
         <!-- MOEngage -->
@@ -598,7 +605,8 @@
             android:name=".service.GetAppDataDynamicIntentService"
             android:exported="false" />
 
-        <receiver android:name="com.google.ads.conversiontracking.InstallReceiver"
+        <receiver
+            android:name="com.google.ads.conversiontracking.InstallReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />

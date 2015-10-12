@@ -98,7 +98,7 @@ public class QcListAdapter extends BaseAdapter {
 
         public TextView getTxtProductDesc() {
             if (txtProductDesc == null) {
-                txtProductDesc = (TextView) itemView.findViewById(R.id.txtProductDesc);
+                txtProductDesc = (TextView) itemView.findViewById(R.id.txtStoreName);
                 txtProductDesc.setTypeface(typeface);
             }
             return txtProductDesc;
@@ -106,7 +106,7 @@ public class QcListAdapter extends BaseAdapter {
 
         public TextView getTxtProductBrand() {
             if (txtProductBrand == null) {
-                txtProductBrand = (TextView) itemView.findViewById(R.id.txtProductBrand);
+                txtProductBrand = (TextView) itemView.findViewById(R.id.txtStoreLoc);
                 txtProductBrand.setTypeface(typeface);
             }
             return txtProductBrand;

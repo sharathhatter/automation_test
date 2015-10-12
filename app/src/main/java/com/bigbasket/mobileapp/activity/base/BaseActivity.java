@@ -41,9 +41,9 @@ import com.bigbasket.mobileapp.activity.TutorialActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
+import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
@@ -388,7 +388,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void launchViewBasketScreen() {
-        Intent intent = new Intent(getCurrentActivity(), ShowCartActivity.class);
+        Intent intent = new Intent(getCurrentActivity(), BBSpecialityShopsActivity.class);
+        intent.putExtra(Constants.TITLE, "Meat And Fish");
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
