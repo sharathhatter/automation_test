@@ -1075,7 +1075,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
 
         if (mDynamicAppDataBroadcastReceiver != null) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mDynamicAppDataBroadcastReceiver);
+            try {
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(mDynamicAppDataBroadcastReceiver);
+            } catch (IllegalArgumentException e) {}
         }
     }
 
