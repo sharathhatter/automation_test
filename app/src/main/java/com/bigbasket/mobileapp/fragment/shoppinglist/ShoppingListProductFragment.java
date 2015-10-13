@@ -59,6 +59,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .setShoppingListName(shoppingListSummary.getShoppingListName())
                 .setRupeeTypeface(faceRupee)
                 .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
+                .useRadioButtonsForContextual(true)
                 .build();
     }
 

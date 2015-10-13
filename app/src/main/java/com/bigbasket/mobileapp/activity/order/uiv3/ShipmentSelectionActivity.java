@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.adapter.shipment.SlotListAdapter;
 import com.bigbasket.mobileapp.apiservice.models.request.SelectedShipment;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.shipments.BaseShipmentAction;
 import com.bigbasket.mobileapp.model.shipments.Shipment;
@@ -59,6 +60,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private ArrayList<Shipment> mShipments;
     private boolean mHasUserToggledShipments;
     private ArrayList<Integer> mSelectedShipmentIndx;
+    private HashMap<String, String> originalShipmentMap;
+    private boolean mHasUserToggledShipmentsAtAll;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         setNextScreenNavigationContext(TrackEventkeys.CO_DELIVERY_OPS);
         setTitle(getString(R.string.chooseSlot));
         mShipments = getIntent().getParcelableArrayListExtra(Constants.SHIPMENTS);
+        String cityMode = getIntent().getStringExtra(Constants.CITY_MODE); //= merge basket
 
         String defaultActionsStr = getIntent().getStringExtra(Constants.DEFAULT_ACTIONS);
         String toggleActionsStr = getIntent().getStringExtra(Constants.ON_TOGGLE_ACTIONS);
@@ -81,30 +85,50 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             mToggleShipmentActions = gson.fromJson(toggleActionsStr, type);
         }
         if (mShipments == null || mShipments.size() == 0) return;
-        renderFooter();
-        renderShipments();
+        renderFooter(cityMode);
+        renderShipments(cityMode);
         trackEvent(TrackingAware.CHECKOUT_DELIVERY_OPTION_SHOWN, null, null, null, false, true);
+        trackCheckEventShown(mShipments);
     }
+
+    private void trackCheckEventShown(ArrayList<Shipment> mShipments) {
+        if (mShipments == null || mShipments.size() == 0 ||
+                TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+        HashMap<String, String> map = new HashMap<>();
+        if (originalShipmentMap == null) {
+            originalShipmentMap = new HashMap<>();
+        }
+        for (Shipment shipment : mShipments) {
+            map.put(TrackEventkeys.FIS, shipment.getFulfillmentType());
+            originalShipmentMap.put(shipment.getShipmentId(), shipment.getFulfillmentType());
+            if (!TextUtils.isEmpty(String.valueOf(shipment.getCount()))) {
+                map.put(shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
+            }
+        }
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Shown", map);
+    }
+
 
     @Override
     public int getMainLayout() {
         return R.layout.uiv3_shipment_layout;
     }
 
-    private void renderFooter() {
+    private void renderFooter(String cityMode) {
         OrderDetails orderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
         if (orderDetails == null) return;
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, orderDetails.getFormattedFinalTotal(),
                 getString(R.string.continueCaps), true);
-        layoutCheckoutFooter.setOnClickListener(new OnPostShipmentClickListener());
+        layoutCheckoutFooter.setOnClickListener(new OnPostShipmentClickListener(cityMode));
     }
 
-    private void renderShipments() {
-        displayShipmentsBasedOnViewState(mDefaultShipmentActions);
+    private void renderShipments(String cityMode) {
+        displayShipmentsBasedOnViewState(mDefaultShipmentActions, cityMode);
     }
 
-    private void displayShipmentsBasedOnViewState(@Nullable HashMap<String, BaseShipmentAction> shipmentActionHashMap) {
+    private void displayShipmentsBasedOnViewState(@Nullable HashMap<String, BaseShipmentAction> shipmentActionHashMap,
+                                                  String cityMode) {
         mSelectedShipmentIndx = new ArrayList<>();
 
         LinearLayout layoutShipmentContainer = (LinearLayout) findViewById(R.id.layoutShipmentContainer);
@@ -146,7 +170,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                         switchToggleDelivery.setVisibility(View.GONE);
                     } else {
                         switchToggleDelivery.setChecked(shipmentAction.getActionState().equalsIgnoreCase(Constants.ON));
-                        switchToggleDelivery.setOnCheckedChangeListener(new OnShipmentToggleListener(shipment));
+                        switchToggleDelivery.setOnCheckedChangeListener(new OnShipmentToggleListener(shipment, cityMode));
                     }
                 } else {
                     switchToggleDelivery.setVisibility(View.GONE);
@@ -245,9 +269,12 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
     private void setShipmentHeaderMsg(int numVisibleShipments) {
         TextView txtDeliverablesHeading = (TextView) findViewById(R.id.txtDeliverablesHeading);
-        txtDeliverablesHeading.setTypeface(faceRobotoRegular);
-        txtDeliverablesHeading.setText(numVisibleShipments > 1 ? R.string.deliverableTextPlural :
-                R.string.deliverableTextSingular);
+        if (numVisibleShipments > 1) {
+            txtDeliverablesHeading.setTypeface(faceRobotoRegular);
+            txtDeliverablesHeading.setText(R.string.deliverableTextPlural);
+        } else {
+            txtDeliverablesHeading.setVisibility(View.GONE);
+        }
     }
 
     private class OnViewShipmentLinkedProductsListener implements View.OnClickListener {
@@ -298,24 +325,45 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
     private class OnShipmentToggleListener implements CompoundButton.OnCheckedChangeListener {
         private Shipment shipment;
+        private String cityMode;
 
-        public OnShipmentToggleListener(Shipment shipment) {
+        public OnShipmentToggleListener(Shipment shipment, String cityMode) {
             this.shipment = shipment;
+            this.cityMode = cityMode;
         }
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             mHasUserToggledShipments = !mHasUserToggledShipments;
             if (mHasUserToggledShipments) {
+                trackToggleEvent(cityMode);
+                mHasUserToggledShipmentsAtAll = true;
+            }
+            if (mHasUserToggledShipments) {
                 displayShipmentsBasedOnViewState(mToggleShipmentActions != null ?
-                        mToggleShipmentActions.get(shipment.getShipmentId()) : null);
+                        mToggleShipmentActions.get(shipment.getShipmentId()) : null, cityMode);
+
             } else {
-                renderShipments();
+                renderShipments(cityMode);
             }
         }
     }
 
+    private void trackToggleEvent(String cityMode) {
+        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.ACTION_NAME, cityMode);
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Toggle", map);
+    }
+
     private class OnPostShipmentClickListener implements View.OnClickListener {
+
+        private String cityMode;
+
+        public OnPostShipmentClickListener(String cityMode) {
+            this.cityMode = cityMode;
+        }
+
         @Override
         public void onClick(View v) {
             HashMap<String, String> map = new HashMap<>();
@@ -341,7 +389,21 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             if (potentialOrderId == null) return;
             new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId,
                     TrackEventkeys.CO_DELIVERY_OPS).startTask();
+            trackFinalShipmentEvent(mShipments, cityMode);
         }
+    }
+
+    private void trackFinalShipmentEvent(ArrayList<Shipment> shipments, String cityMode) {
+        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.ACTION_NAME, !mHasUserToggledShipmentsAtAll ? "none" : cityMode);
+        for (Shipment shipment : shipments) {
+            map.put(TrackEventkeys.FINAL_FIS, shipment.getFulfillmentType());
+            map.put(TrackEventkeys.ORIGINAL_FIS, originalShipmentMap.get(shipment.getShipmentId()));
+            map.put("Final_" + shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
+        }
+
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".FinalStatus", map);
     }
 
     private void displaySelectedSlot(View shipmentView, Shipment shipment) {

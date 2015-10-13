@@ -138,28 +138,45 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
             });
         }
 
+        ViewGroup layoutEmptyList = (ViewGroup) shopFromOrderLayout.findViewById(R.id.layoutEmptyList);
         RecyclerView productRecyclerView = (RecyclerView) shopFromOrderLayout.findViewById(R.id.recyclerView);
-        UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
 
-        // Set product-list data
-        AuthParameters authParameters = AuthParameters.getInstance(getActivity());
-        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
-                .setCommonTypeface(faceRobotoRegular)
-                .setSansSerifMediumTypeface(faceRobotoMedium)
-                .setRupeeTypeface(faceRupee)
-                .setHandler(handler)
-                .setLoggedInMember(!authParameters.isAuthTokenEmpty())
-                .setShowShoppingListBtn(true)
-                .setShowBasketBtn(true)
-                .setShowShopListDeleteBtn(false)
-                .showQtyInput(authParameters.isKirana())
-                .build();
+        if (mProducts == null || mProducts.size() == 0) {
+            productRecyclerView.setVisibility(View.GONE);
+            layoutEmptyList.setVisibility(View.VISIBLE);
+            shopFromOrderLayout.findViewById(R.id.btnBlankPage).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        } else {
+            productRecyclerView.setVisibility(View.VISIBLE);
+            layoutEmptyList.setVisibility(View.GONE);
 
-        productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
-                productViewDisplayDataHolder, this, mProducts.size(),
-                getNextScreenNavigationContext(), TrackEventkeys.SINGLE_TAB_NAME);
+            UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
 
-        productRecyclerView.setAdapter(productListRecyclerAdapter);
+            // Set product-list data
+            AuthParameters authParameters = AuthParameters.getInstance(getActivity());
+            ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                    .setCommonTypeface(faceRobotoRegular)
+                    .setSansSerifMediumTypeface(faceRobotoMedium)
+                    .setRupeeTypeface(faceRupee)
+                    .setHandler(handler)
+                    .setLoggedInMember(!authParameters.isAuthTokenEmpty())
+                    .setShowShoppingListBtn(true)
+                    .setShowBasketBtn(true)
+                    .setShowShopListDeleteBtn(false)
+                    .showQtyInput(authParameters.isKirana())
+                    .build();
+
+
+            productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
+                    productViewDisplayDataHolder, this, mProducts.size(),
+                    getNextScreenNavigationContext(), TrackEventkeys.SINGLE_TAB_NAME);
+
+            productRecyclerView.setAdapter(productListRecyclerAdapter);
+        }
         contentView.addView(shopFromOrderLayout);
         logShopFromOrderEvent();
     }

@@ -30,14 +30,17 @@
                 android:id="@+id/txtDeliverablesHeading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_normal"
-                android:textColor="@color/uiv3_primary_text_color"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:textColor="@color/uiv3_primary_btn_bkg"
                 android:textSize="@dimen/secondary_text_size" />
 
             <LinearLayout
                 android:id="@+id/layoutShipmentContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_normal"
                 android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>

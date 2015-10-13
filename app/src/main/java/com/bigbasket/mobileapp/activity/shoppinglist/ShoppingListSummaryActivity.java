@@ -264,6 +264,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
 
                     @Override
                     public void onPageSelected(int position) {
+                        setNextScreenNavigationContext(nc + "." + shoppingListSummaries.get(position).getFacetSlug());
                         HashMap<String, String> eventAttribs = new HashMap<>();
                         eventAttribs.put(Constants.TAB_NAME, shoppingListSummaries.get(position).getFacetSlug());
                         String tabName = !TextUtils.isEmpty(nc) && nc.equals(TrackEventkeys.SB)

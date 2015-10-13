@@ -20,7 +20,9 @@ public class Constants {
 
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
+    public static final String PRODUCT_NO_ITEM_IN_CART = "p_no_items_in_cart";
     public static final String PRODUCT_ID = "sku";
+    public static final String SKU_TYPE = "sku_type";
     public static final String IMAGE_URL = "p_img_url";
     public static final String MRP_PRICE = "mrp";
     public static final String SELL_PRICE = "sp";
@@ -107,6 +109,16 @@ public class Constants {
     public static final String FILTER_NAME = "filter_name";
     public static final String FILTER_VALUES = "values";
     public static final String FILTER_VALUES_SLUG = "filter_value_slug";
+
+    public static final String STORE_AVAILABILITY = "store_availability";
+    //public static final String STORE_ID = "store_id";
+    public static final String AVAILABILITY = "availability";
+    public static final String EXPRESS = "express";
+    public static final String AVAILABILITY_INFO_ID = "availability_info_id";
+
+    //update-app-data
+    public static final String ADD_TO_BASKET_POST_PARAMS = "add_to_basket_post_params";
+    public static final String MODE_NAME = "mode_name";
 
     //Error codes
     public static final String PRODUCT_ID_NOT_FOUND = "101";
@@ -214,6 +226,9 @@ public class Constants {
     public static final String PAYU = "payu";
     public static final String PAY_NOW = "pay_now";
     public static final String HDFC_POWER_PAY = "hdfc-power-pay";
+    public static final String PAYTM_WALLET = "paytm_wallet";
+    public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
+    public static final String PAYTM_HASH_GENERATION_URL = "GURL";
     public static final String SOURCE_PLACE_ORDER = "placeOrder";
     public static final String WALLET_USED = "wallet_used";
     public static final String AMT_PAYABLE = "amount_payable";
@@ -223,7 +238,10 @@ public class Constants {
     public static final String ADDRESSES = "addresses";
     public static final String ID = "id";
     public static final String ADDRESS_ID = "address_id";
-    public static final String MEMBER_ADDRESS_ID = "member_address_id";
+    public static final String LAT = "lat";
+    public static final String LNG = "lng";
+    public static final String IS_PARTIAL = "is_partial";
+    public static final String TRANSIENT = "transient";
     public static final String IS_DEFAULT = "is_default";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
@@ -234,10 +252,11 @@ public class Constants {
     public static final String CITY_NAME = "city_name";
     public static final String PIN = "pin";
     public static final String FIRSTNAME = "first_name";
+    public static final String IS_FIRST_TIME = "is_first_time";
     public static final String LASTNAME = "last_name";
     public static final String ADDR_NICK = "nick";
     public static final String UPDATE_ADDRESS = "update-address";
-    public static final String FROM_ACCOUNT_PAGE = "from_account_page";
+    public static final String ADDRESS_PAGE_MODE = "address_pg_mode";
     public static final String RATING = "rating";
     public static final String COMMENTS = "comments";
     public static final String CASE_ID = "case_id";
@@ -274,6 +293,7 @@ public class Constants {
     public static final String TC2 = "tc2";
     public static final String FULFILLMENT_INFOS = "fulfillment_infos";
     public static final String FULFILLMENT_ID = "fulfillment_id";
+    public static final String FULFILLMENT_TYPE = "fulfillment_type";
     public static final String FULFILLED_BY_INFO_PAGE = "fulfilled_by_info_page";
     public static final String TC1 = "tc1";
     public static final String TC = "tc";
@@ -330,6 +350,7 @@ public class Constants {
     public static final String DELIVERY_CHARGES = "delivery_charges";
     public static final String FINAL_TOTAL = "final_total";
     public static final String ORDER_DETAILS = "order_details";
+    public static final String CITY_MODE = "city_mode";
     public static final String CREDIT_DETAILS = "credit_details";
     public static final String DETAILS = "details";
     public static final String CREDIT_VALUE = "credit_value";
@@ -456,6 +477,7 @@ public class Constants {
     public static final String RENDERING_ID = "rendering_id";
     public static final String IMAGE_NAME = "image_name";
     public static final String IMAGE_PARAMS = "image_params";
+    public static final String TITLE_TYPE = "title_type";
     public static final String TEXT_COLOR = "text_color";
     public static final String BACKGROUND_COLOR = "background_color";
     public static final String PADDING = "padding";
@@ -464,13 +486,12 @@ public class Constants {
     public static final String RENDERERS = "renderers";
 
     //fb login and register
-    public static final String FB_GENDER = "gender";
-    public static final String FB_VERIFIED = "verified";
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
-    public static final String SOCIAL_LOGIN_PARAMS = "social_login_params";
+    public static final String AUTH_TOKEN = "auth_token";
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
     public static final String SOCIAL_LOGOUT = "social_logout";
     public static final int SOCIAL_ACCOUNT_NOT_LINKED = 1835;
+    public static final String REOPEN_LANDING_PAGE = "reopen_landing";
 
     //account type signin and register
     public static final String SIGN_IN_ACCOUNT_TYPE = "signIn";
@@ -483,6 +504,7 @@ public class Constants {
 
 
     public static final String LOCAL_RES_PREFIX = "app://";
+    public static final String LOCATION = "location";
     public static final String NAME = "name";
     public static final String PRODUCT_LIST = "product_list";
     public static final String CATEGORY_LANDING = "category_landing";
@@ -512,6 +534,7 @@ public class Constants {
     public static final String DATA_PICKUP_CODE = "data_pickup_code";
     public static final String SUPPORT_POWER_PAY = "support_pp";
     public static final String SUPPORT_MOBIKWIK = "support_mk";
+    public static final String SUPPORT_PAYTM = "support_pm";
     public static final String ERR_RES_CODE = "err_res_code";
     public static final String ERR_RES_DESC = "err_res_desc";
     public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";
@@ -525,6 +548,7 @@ public class Constants {
     public static final String HEADER_SEL = "header_sel";
     public static final String TAB_INFO = "tab_info";
     public static final String TAB_NAME = "tab_name";
+    public static final String TAB_IMG = "tab_img";
     public static final String CONTENT_SECTION = "content_section";
     public static final String CART_INFO = "cart_info";
 
@@ -546,6 +570,7 @@ public class Constants {
     public static final String SKU_LIST = "sku_list";
     public static final String DISPLAY = "display";
     public static final String HELP_PAGE = "help_page";
+    public static final String SHIPMENT_TYPE = "shipment_type";
     public static final String ACTION_MSG = "action_msg";
     public static final String ACTION_STATE = "action_state";
     public static final String ON = "on";
@@ -565,7 +590,6 @@ public class Constants {
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
 
-
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
     public static final String MOBIKWIKSDK = "MobikwikSDK";
@@ -580,4 +604,17 @@ public class Constants {
     public static final String MOBIKWIK_STATUS = "status";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
 
+    public static final String ADDRESS_SYNC_BROADCAST_ACTION = "com.bigbasket.mobileapp.broadcase.AddressSync";
+
+    // Sku Tabs
+    public static final String SKU_TYPE_EXPRESS = "express";
+    public static final String SKU_TYPE_JIT = "jit-express";
+    public static final String SKU_TYPE_KIRANA = "kirana-express";
+
+    public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
+    public static final String EXPRESS_AVAILABILITY = "express_availability";
+    public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
+
+    public static final String APP_LAUNCH = "appLaunch";
+    public static final String FIRSE_TIME_USER = "fst_tm_user";
 }

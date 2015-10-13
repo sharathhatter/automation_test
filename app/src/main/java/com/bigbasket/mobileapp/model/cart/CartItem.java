@@ -2,9 +2,15 @@ package com.bigbasket.mobileapp.model.cart;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
 
 public class CartItem extends BaseCartItem {
     public static final byte REGULAR_PRICE_AND_PROMO_NOT_APPLIED = 1;
@@ -50,6 +56,10 @@ public class CartItem extends BaseCartItem {
     private String packDesc;
     @SerializedName(Constants.PRODUCT_WEIGHT)
     private String productWeight;
+    @SerializedName(Constants.SKU_TYPE)
+    private String skuType;
+    @SerializedName(Constants.STORE_AVAILABILITY)
+    private HashMap<String, String> storeAvailability;
 
     CartItem(Parcel source) {
         super(source);
@@ -70,6 +80,15 @@ public class CartItem extends BaseCartItem {
         isExpress = source.readByte() == (byte) 1;
         packDesc = source.readString();
         productWeight = source.readString();
+        skuType = source.readString();
+        boolean isStoreAvailabilityNull = source.readByte() == (byte) 1;
+        if (!isStoreAvailabilityNull) {
+            String storeAvailabilityJson = source.readString();
+            Type type = new TypeToken<HashMap<String, String>>() {
+            }.getType();
+            storeAvailability = new Gson().fromJson(storeAvailabilityJson, type);
+        }
+
     }
 
     @Override
@@ -98,6 +117,12 @@ public class CartItem extends BaseCartItem {
         dest.writeByte(isExpress ? (byte) 1 : (byte) 0);
         dest.writeString(packDesc);
         dest.writeString(productWeight);
+        dest.writeString(skuType);
+        boolean isStoreAvailabilityNull = storeAvailability == null;
+        dest.writeByte(isStoreAvailabilityNull ? (byte) 1 : (byte) 0);
+        if (!isStoreAvailabilityNull) {
+            dest.writeString(new Gson().toJson(storeAvailability));
+        }
     }
 
     public String getAnnotationId() {
@@ -136,6 +161,11 @@ public class CartItem extends BaseCartItem {
         return getSalePrice() * this.totalQty;
     }
 
+    @Nullable
+    public HashMap<String, String> getStoreAvailability() {
+        return storeAvailability;
+    }
+
     public CartItemPromoInfo getCartItemPromoInfo() {
         return cartItemPromoInfo;
     }
@@ -158,5 +188,9 @@ public class CartItem extends BaseCartItem {
 
     public String getProductWeight() {
         return productWeight;
+    }
+
+    public String getSkuType() {
+        return skuType;
     }
 }

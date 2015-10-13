@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
+import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -169,6 +170,22 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
             }
         });
 
+        Button btnPayNow = (Button) base.findViewById(R.id.btnPayNow);
+        btnPayNow.setTypeface(faceRobotoRegular);
+        btnPayNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), PayNowActivity.class);
+                intent.putExtra(Constants.ORDER_ID, orderInvoice.getOrderId());
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            }
+        });
+
+        if (orderInvoice.isCanPay()) {
+            btnPayNow.setVisibility(View.VISIBLE);
+        } else {
+            btnPayNow.setVisibility(View.GONE);
+        }
 
         logOrderDetailSummaryEvent(orderInvoice.getOrderNumber());
     }

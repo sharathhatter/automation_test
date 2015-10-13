@@ -53,6 +53,9 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
+    dexOptions {
+        jumboMode true
+    }
 
 //    Uncomment at the time of deployment, but don't commit the uncommented version to VCS.
 //    This is because build time increases significantly, due to which development time becomes slow
@@ -106,6 +109,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-ads:7.0.0'
     compile 'com.google.android.gms:play-services-plus:7.0.0'
     compile 'com.google.android.gms:play-services-gcm:7.0.0'
+    compile 'com.google.android.gms:play-services-location:7.0.0'
     compile 'com.newrelic.agent.android:android-agent:5.+'
     compile 'com.facebook.android:facebook-android-sdk:4.4.0'
     provided 'com.squareup.okhttp:okhttp:2.3.0'
@@ -118,6 +122,8 @@ dependencies {
     compile files('libs/AF-Android-SDK-v2.3.1.17.jar')
     compile project(':moe-addon-ubox')
     compile 'com.moengage:moe-android-sdk:5.3.05'
-    compile project(':payuSdk')
     compile project(':mobikwik_Payment_Android_SDK')
+    compile files('libs/pgsdk.jar')
+    compile project(':payuSdkUi')
+    compile files('libs/GoogleConversionTrackingSdk-2.2.4.jar')
 }

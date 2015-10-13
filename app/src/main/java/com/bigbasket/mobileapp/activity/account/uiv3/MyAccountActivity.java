@@ -23,11 +23,12 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.account.SocialAccount;
+import com.bigbasket.mobileapp.model.account.SocialAccountType;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -200,7 +201,7 @@ public class MyAccountActivity extends BackButtonActivity {
     public void renderAddressActivity(View view) {
         Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
-        intent.putExtra(Constants.FROM_ACCOUNT_PAGE, true);
+        intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ACCOUNT);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
@@ -237,8 +238,9 @@ public class MyAccountActivity extends BackButtonActivity {
     }
 
     @Override
-    protected void onPlusClientSignIn(String email, Person person) {
-        loadGPlusImage(person);
+    protected void onPlusClientSignIn(String authToken) {
+        // TODO : Implement this
+        //loadGPlusImage(person);
     }
 
     private void loadProfileImage() {
@@ -246,14 +248,14 @@ public class MyAccountActivity extends BackButtonActivity {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, "");
-        if (!TextUtils.isEmpty(socialAccountType) && SocialAccount.getSocialLoginTypes().contains(socialAccountType)
+        if (!TextUtils.isEmpty(socialAccountType) && SocialAccountType.getSocialLoginTypes().contains(socialAccountType)
                 && checkInternetConnection()) {
             switch (socialAccountType) {
-                case SocialAccount.GP:
+                case SocialAccountType.GP:
                     initializeGooglePlusSignIn();
                     initiatePlusClientConnect();
                     break;
-                case SocialAccount.FB:
+                case SocialAccountType.FB:
                     onFacebookSignIn(AccessToken.getCurrentAccessToken());
                     break;
             }

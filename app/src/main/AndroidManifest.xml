@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bigbasket.mobileapp"
-    android:installLocation="auto" >
+    android:installLocation="auto">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -22,6 +22,10 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
 
+    <!-- Area -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <!-- MOEngage UBox -->
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -37,8 +41,10 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
+    <permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
     <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
 
     <application
         android:name=".application.BaseApplication"
@@ -56,7 +62,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -71,7 +77,7 @@
 
         <receiver
             android:name="com.appsflyer.MultipleInstallBroadcastReceiver"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
@@ -86,7 +92,7 @@
             android:name=".activity.DeepLinkDispatcherActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -281,7 +287,7 @@
         <activity
             android:name=".activity.base.uiv3.BBActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -294,7 +300,7 @@
             android:name=".activity.product.ProductListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -356,14 +362,24 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
+            android:name=".activity.account.uiv3.SocialLoginConfirmActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
-            android:name=".activity.account.uiv3.ChangeCityActivity"
+            android:name=".activity.account.uiv3.ChooseLocationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name=".activity.account.uiv3.PlacePickerApiActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.SignInActivity"
@@ -379,11 +395,6 @@
             android:name=".activity.account.uiv3.SignupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
-            android:name=".activity.account.uiv3.SocialLoginConfirmActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.ShipmentSelectionActivity"
@@ -476,10 +487,20 @@
             android:theme="@style/BaseAppTheme.SearchViewTheme"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
+
+
+
+        <!-- PayTM-->
+
+        <activity android:name="com.paytm.pgsdk.PaytmPGActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|keyboard"/>
+
+
         <!-- MOEngage -->
         <receiver
             android:name="com.moe.pushlibrary.PushGcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
@@ -489,12 +510,12 @@
         </receiver>
 
         <!-- MOENGAGE RECEIVER FOR RECEIVING INSTALLATION INTENT -->
-        <receiver android:name="com.moe.pushlibrary.InstallReceiver" >
+        <receiver android:name="com.moe.pushlibrary.InstallReceiver">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver" >
+        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
@@ -503,13 +524,6 @@
                     android:scheme="package" />
             </intent-filter>
         </receiver>
-
-        <activity
-            android:name="com.payu.sdk.PaymentOptionsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.payu.sdk.ProcessPaymentActivity"
-            android:screenOrientation="portrait" />
 
         <provider
             android:name="com.moe.pushlibrary.providers.MoEProvider"
@@ -520,7 +534,7 @@
         <activity
             android:name="com.moe.pushlibrary.activities.MoEActivity"
             android:parentActivityName=".activity.SplashActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.SplashActivity" />
@@ -541,9 +555,10 @@
             android:name="NOTIFICATION_ICON"
             android:value="notification_icon_large_bbw" />
 
-        <meta-data android:name="NOTIFICATION_LARGE_ICON"
+        <meta-data
+            android:name="NOTIFICATION_LARGE_ICON"
             android:value="notification_icon" />
-        
+
         <!-- moEngage UBox -->
         <activity
             android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
@@ -564,18 +579,24 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <meta-data
-            android:name="payu_merchant_id"
-            android:value="@string/payu_merchant_id" />
-        <meta-data
-            android:name="payu_merchant_salt"
-            android:value="@string/payu_merchant_salt" />
-        <!-- <meta-data android:name="payu_disable_back" android:value="true"/> -->
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_geo_api_key" />
 
         <service
             android:name=".service.AreaPinInfoIntentService"
-            android:exported="false" >
-        </service>
+            android:exported="false" />
+        <service
+            android:name=".service.GetAppDataDynamicIntentService"
+            android:exported="false" />
+
+        <receiver android:name="com.google.ads.conversiontracking.InstallReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

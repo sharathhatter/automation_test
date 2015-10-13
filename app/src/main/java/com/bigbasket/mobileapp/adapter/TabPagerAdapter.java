@@ -37,6 +37,15 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
         return bbTabs.size();
     }
 
+//    public View getTabView(int position) {
+//        View v = LayoutInflater.from(ctx).inflate(R.layout.custom_tab, null);
+//        TextView txtTitle = (TextView) v.findViewById(R.id.textView_title);
+//        txtTitle.setText(bbTabs.get(position).getTabTitle());
+//        ImageView imgIcon = (ImageView) v.findViewById(R.id.imageView_icon);
+//        imgIcon.setImageResource(bbTabs.get(position).getArgs().getInt(Constants.TAB_IMG));
+//        return v;
+//    }
+
     @Override
     public CharSequence getPageTitle(int position) {
         return bbTabs.get(position).getTabTitle();

@@ -1,10 +1,7 @@
 package com.bigbasket.mobileapp.model.account;
 
-import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 
 public class City implements Parcelable {
     public static final Parcelable.Creator<City> CREATOR = new Parcelable.Creator<City>() {
@@ -29,11 +26,6 @@ public class City implements Parcelable {
     public City(Parcel source) {
         name = source.readString();
         id = source.readInt();
-    }
-
-    public City(Cursor cursor) {
-        this.name = cursor.getString(cursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_CITY));
-        this.id = cursor.getInt(cursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_CITY_ID));
     }
 
     public String getName() {

@@ -12,19 +12,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.MyAccountActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
-import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -63,8 +59,6 @@ public class AccountView<T> {
                     ctx.getResources().getString(R.string.change_password),
                     ctx.getResources().getString(R.string.bbCommHub),
                     ctx.getResources().getString(R.string.wallet_activity),
-                    ctx.getResources().getString(R.string.shoppingList),
-                    ctx.getResources().getString(R.string.smartBasket),
                     ctx.getResources().getString(R.string.rateTheApp),
                     ctx.getResources().getString(R.string.signOut)};
 
@@ -109,22 +103,6 @@ public class AccountView<T> {
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 5:
-                    ctx.trackEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, map);
-                    intent = new Intent(ctx, ShoppingListActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
-                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
-                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    break;
-                case 6:
-                    ctx.trackEvent(TrackingAware.SMART_BASKET_ICON_CLICKED, map);
-                    ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
-                            Constants.SMART_BASKET_SLUG, true);
-                    intent = new Intent(ctx, ShoppingListSummaryActivity.class);
-                    intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
-                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
-                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    break;
-                case 7:
                     ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, map);
                     try {
                         ctx.startActivity(new Intent(Intent.ACTION_VIEW,
@@ -134,7 +112,7 @@ public class AccountView<T> {
                                 Uri.parse("https://play.google.com/store/apps/details?id=" + Constants.BASE_PKG_NAME)));
                     }
                     break;
-                case 8:
+                case 6:
                     ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, map);
                     if (ctx instanceof SocialLoginActivity) {
                         ((SocialLoginActivity) ctx).onLogoutRequested();
@@ -160,9 +138,7 @@ public class AccountView<T> {
                     break;
                 case 2:
                     ctx.trackEvent(TrackingAware.HOME_CHANGE_CITY, map);
-                    Intent intent = new Intent(ctx, ChangeCityActivity.class);
-                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
-                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    ctx.showChangeCity(false, TrackEventkeys.ACCOUNT_MENU, false);
                     break;
                 case 3:
                     ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, map);

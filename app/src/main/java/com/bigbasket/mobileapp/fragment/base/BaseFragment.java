@@ -49,6 +49,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
+import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,6 +84,22 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         }
         mNavigationContext = getArguments() != null ?
                 getArguments().getString(TrackEventkeys.NAVIGATION_CTX) : null;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(getCurrentActivity() != null)
+            MoEngageWrapper.onFragmentStart(getCurrentActivity().getMoEHelper(), getCurrentActivity(),
+                     this.getClass().getSimpleName());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(getCurrentActivity() != null)
+            MoEngageWrapper.onFragmentStop(getCurrentActivity().getMoEHelper(), getCurrentActivity(),
+                    this.getClass().getSimpleName());
     }
 
     @Override
@@ -140,6 +157,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
+        if (progressDialog != null && progressDialog.isShowing()) return;
         if (TextUtils.isEmpty(msg)) {
             msg = getResources().getString(R.string.please_wait);
         }

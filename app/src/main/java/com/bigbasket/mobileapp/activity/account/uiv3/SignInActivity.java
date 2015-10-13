@@ -228,7 +228,8 @@ public class SignInActivity extends BackButtonActivity {
     private void startLogin(String email, String password) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         bigBasketApiService.login(email, password,
-                new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked(), Constants.SIGN_IN_ACCOUNT_TYPE));
+                new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked(),
+                        Constants.SIGN_IN_ACCOUNT_TYPE, null));
     }
 
     @Override

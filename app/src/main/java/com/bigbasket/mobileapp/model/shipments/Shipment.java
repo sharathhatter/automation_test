@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.shipments;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -20,6 +21,8 @@ public class Shipment implements Parcelable {
     private String fulfillmentName;
     @SerializedName(Constants.FULFILLMENT_ID)
     private String fulfillmentId;
+    @SerializedName(Constants.FULFILLMENT_TYPE)
+    private String fulfillmentType;
     @SerializedName(Constants.DELIVERY_CHARGE)
     private String deliveryCharge;
     @SerializedName(Constants.LINKED_SHIPMENTS)
@@ -28,6 +31,8 @@ public class Shipment implements Parcelable {
     private Slot selectedSlot;
     @SerializedName(Constants.HELP_PAGE)
     private String helpPage;
+    @SerializedName(Constants.SHIPMENT_TYPE)
+    private String shipmentType;
 
     @Override
     public int describeContents() {
@@ -43,6 +48,7 @@ public class Shipment implements Parcelable {
         dest.writeString(shipmentName);
         dest.writeString(fulfillmentName);
         dest.writeString(fulfillmentId);
+        dest.writeString(fulfillmentType);
         dest.writeString(deliveryCharge);
         boolean wasHelpPageNull = helpPage == null;
         dest.writeByte(wasHelpPageNull ? (byte) 1 : (byte) 0);
@@ -56,6 +62,7 @@ public class Shipment implements Parcelable {
         if (!wasSelectedSlotNull) {
             dest.writeParcelable(selectedSlot, flags);
         }
+        dest.writeString(shipmentType);
     }
 
     public Shipment(Parcel source) {
@@ -66,6 +73,7 @@ public class Shipment implements Parcelable {
         shipmentName = source.readString();
         fulfillmentName = source.readString();
         fulfillmentId = source.readString();
+        fulfillmentType = source.readString();
         deliveryCharge = source.readString();
         boolean wasHelpPageNull = source.readByte() == (byte) 1;
         if (!wasHelpPageNull) {
@@ -78,6 +86,7 @@ public class Shipment implements Parcelable {
         if (!wasSelectedSlotNull) {
             selectedSlot = source.readParcelable(Shipment.class.getClassLoader());
         }
+        shipmentType = source.readString();
     }
 
     public static final Parcelable.Creator<Shipment> CREATOR = new Parcelable.Creator<Shipment>() {
@@ -142,5 +151,14 @@ public class Shipment implements Parcelable {
 
     public void setSelectedSlot(Slot selectedSlot) {
         this.selectedSlot = selectedSlot;
+    }
+
+    @Nullable
+    public String getShipmentType() {
+        return shipmentType;
+    }
+
+    public String getFulfillmentType() {
+        return fulfillmentType;
     }
 }

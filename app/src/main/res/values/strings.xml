@@ -93,7 +93,7 @@
     <string name="applyAllCaps">APPLY</string>
     <string name="apply">Apply</string>
     <string name="pleaseNote">Please Note:</string>
-    <string name="shopFromOrder">Shop from this order</string>
+    <string name="shopFromOrder">Shop from order</string>
 
     <style name="placeOrder">Place Order</style>
 
@@ -307,6 +307,10 @@
     <string name="save">SAVE</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
 
+    <!-- Show cart tabs -->
+    <string name="exp_delivery">Express Delivery</string>
+    <string name="stnd_delivery">Standard Delivery</string>
+
     <!-- order invoice -->
     <string name="multi_order_place_txt">You will receive the orders in multiple deliveries</string>
     <string name="continue_shopping">CONTINUE SHOPPING!</string>
@@ -320,8 +324,7 @@
     <string name="noProductsUnavailable">No Products available!</string>
     <string name="continueAnyway">Continue Anyway</string>
     <string name="help">Help</string>
-    <string name="deliverableTextSingular">Your purchase will arrive in the following delivery</string>
-    <string name="deliverableTextPlural">Your purchase will arrive in the following deliveries</string>
+    <string name="deliverableTextPlural">Based on the items in Basket, your deliveries will come in multiple shipments.</string>
     <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
     <string name="voucherApplicableSingular">Voucher Applicable</string>
     <string name="voucherApplicablePlural">Vouchers Applicable</string>
@@ -330,6 +333,7 @@
     <string name="error">Error!</string>
     <string name="emailBlank">Please enter an email address</string>
     <string name="payNow">Pay Now</string>
+    <string name="order_pay_now_amount">Amount :</string>
     <string name="payNowThankyou">Your payment was successful!</string>
     <string name="txnFailureMsg">Failed to process your transaction.\nPlease contact our customer care, in case you got charged.</string>
 
@@ -338,9 +342,39 @@
     <string name="invalidAmount">Please enter a valid amount</string>
     <string name="missingPaymentMethod">Please choose at least one payment method</string>
     <string name="fundWalletSuccess">You have successfully funded the wallet</string>
-
     <string name="reviewBasket">Review Basket</string>
+
+    <string name="chooseYourLocation">Choose your Location</string>
+    <string name="locateYourArea">Locate your area</string>
+    <string name="typeYourLocality">Type your locality eg: M.G. Road</string>
+    <string name="locationOrArea">Location/Area</string>
+    <string name="useMyLocation">Use My Location</string>
+    <string name="enableLocationHeading">Enable Location</string>
+    <string name="enableLocation">Enable location to get correct address</string>
+    <string name="enable">Enable</string>
+    <string name="locationSettingError">Unable to open location window.\nPlease enable it by going to settings.</string>
+
     <string name="newCheckoutFlowMsg">When you click on Place Order &amp; Pay - Your order will be placed first &amp; then you will be taken to complete the payment.</string>
     <string name="newStr">New</string>
     <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.\nPlease don\'t press back button.</string>
+
+    <string name="productListTransition">ProductListTransition</string>
+    <string name="pleaseChooseLocationToProceed">Please choose a location to proceed further</string>
+    <string name="yourCurrentLoc">Your Current Location</string>
+    <string name="toMyCurrentLocation">TO MY CURRENT LOCATION</string>
+    <string name="selectLocationManually">SELECT LOCATION MANUALLY</string>
+    <string name="readingYourCurrentLocation">Reading your current location...</string>
+    <string name="unableToReadLocation">Unable to read location. Please re-try!</string>
+    <string name="refresh">Refresh</string>
+    <string name="unknown">Unknown</string>
+    <string name="unknownError">An unknown error occurred</string>
+    <string name="saveThisLocation">SAVE THIS LOCATION</string>
+    <string name="changeMyLocation">CHANGE MY LOCATION</string>
+    <string name="changeMyAddress">CHANGE MY ADDRESS</string>
+    <string name="preparingBasket">Preparing basket</string>
+    <string name="status">Status</string>
+    <string name="retry">Retry</string>
+    <string name="needMoreAddressInfo">We need more information to complete your address and help you checkout the items in Basket.</string>
+    <string name="noProductsInCurrentCity">No product from this order are available in your current city.</string>
+    <string name="location_not_found">Unable to read your location. You must type-in your location to proceed.</string>
 </resources>

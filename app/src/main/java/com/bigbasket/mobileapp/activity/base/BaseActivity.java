@@ -38,7 +38,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.HomeActivity;
 import com.bigbasket.mobileapp.activity.SplashActivity;
 import com.bigbasket.mobileapp.activity.TutorialActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
@@ -58,8 +58,9 @@ import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.managers.SectionManager;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
@@ -145,6 +146,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
         NewRelic.setInteractionName(getCurrentActivity().getClass().getName());
     }
 
+    public MoEHelper getMoEHelper() {
+        return moEHelper;
+    }
+
     @Override
     public boolean checkInternetConnection() {
         return DataUtil.isInternetAvailable(getCurrentActivity());
@@ -168,6 +173,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
+        if (progressDialog != null && progressDialog.isShowing()) return;
         progressDialog = new ProgressDialog(this);
         if (isDeterminate) {
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -238,6 +244,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         isActivitySuspended = false;
+        MoEngageWrapper.onNewIntent(moEHelper, this, intent);
     }
 
     protected void onResume() {
@@ -551,6 +558,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    public void trackEventAppsFlyer(String eventName, HashMap<String, Object> eventAttr) {
+        try {
+            AppsFlyerLib.trackEvent(getApplicationContext(), eventName, eventAttr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
         try {
             AppsFlyerLib.sendTrackingWithEvent(getApplicationContext(), eventName, valueToSum);
@@ -783,16 +798,20 @@ public abstract class BaseActivity extends AppCompatActivity implements
         startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    public void changeCity(City city) {
+    public void changeCity(City city, boolean reopenLandingPage) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(Constants.CITY, city.getName());
-        editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
-        editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
-        editor.apply();
+        editor.putString(Constants.CITY, city.getName())
+                .putString(Constants.CITY_ID, String.valueOf(city.getId()))
+                .putBoolean(Constants.HAS_USER_CHOSEN_CITY, true)
+                .apply();
 
         SectionManager.clearAllSectionData(this);
-        goToHome(true);
+        AppDataDynamic.reset(this);
+
+        if (!reopenLandingPage) {
+            goToHome(true);
+        }
     }
 
     public void launchRegistrationPage() {
@@ -861,7 +880,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
                 break;
             case NavigationCodes.LAUNCH_CITY:
-                showChangeCity();
+                showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, false);
                 break;
             case NavigationCodes.LAUNCH_SIGNUP:
                 launchRegistrationPage();
@@ -869,8 +888,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    private void showChangeCity() {
-        Intent intent = new Intent(this, ChangeCityActivity.class);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    public void showChangeCity(boolean isFirstTime, String nc, boolean reopenLandingPage) {
+        Intent intent = new Intent(getCurrentActivity(), ChooseLocationActivity.class);
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, nc);
+        intent.putExtra(Constants.IS_FIRST_TIME, isFirstTime);
+        intent.putExtra(Constants.REOPEN_LANDING_PAGE, reopenLandingPage);
+        getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }

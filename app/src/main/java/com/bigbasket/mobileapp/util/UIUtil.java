@@ -49,8 +49,9 @@ import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
+import com.bigbasket.mobileapp.managers.SectionManager;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -216,6 +217,7 @@ public class UIUtil {
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
         SectionManager.clearAllSectionData(ctx);
         AppDataSyncHandler.reset(ctx);
+        AppDataDynamic.reset(ctx);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = preferences.edit();
@@ -234,6 +236,7 @@ public class UIUtil {
         if (userDetails.analytics != null) {
             editor.putString(Constants.CITY, userDetails.analytics.city);
             editor.putString(Constants.CITY_ID, String.valueOf(userDetails.analytics.cityId));
+            editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
 
             // Any key added here, must be cleared when user logs-out
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, mId);
@@ -242,6 +245,7 @@ public class UIUtil {
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, userDetails.analytics.mobileNumber);
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
+            LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
 
             MoEHelper moEHelper = MoEngageWrapper.getMoHelperObj(ctx);
@@ -254,6 +258,7 @@ public class UIUtil {
             MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, userDetails.fullName);
             MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
             MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
+            MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
             if (!TextUtils.isEmpty(userDetails.analytics.gender)) {
                 MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, userDetails.analytics.gender);
@@ -334,6 +339,21 @@ public class UIUtil {
         return new SimpleDateFormat(format, Locale.getDefault()).format(date);
     }
 
+    public static void displayProductImage(@Nullable String baseImgUrl, @Nullable String productImgUrl,
+                                           ImageView imgProduct) {
+        if (productImgUrl != null) {
+            String url;
+            if (TextUtils.isEmpty(baseImgUrl) || productImgUrl.startsWith("http")) {
+                url = productImgUrl;
+            } else {
+                url = baseImgUrl + productImgUrl;
+            }
+            UIUtil.displayAsyncImage(imgProduct, url);
+        } else {
+            imgProduct.setImageResource(R.drawable.noimage);
+        }
+    }
+
     public static void displayAsyncImage(ImageView imageView, String url) {
         displayAsyncImage(imageView, url, false, R.drawable.loading_small);
     }
@@ -357,11 +377,6 @@ public class UIUtil {
         } catch (OutOfMemoryError e) {
             System.gc();
         }
-    }
-
-    public static void preLoadImage(String url, Context context) {
-//        Log.i(context.getClass().getName(), "Pre loading image = " + url);
-//        Picasso.with(context).load(url).fetch();
     }
 
     public static void showEmptyProductsView(final Context context, ViewGroup parent, String msg,
@@ -433,7 +448,7 @@ public class UIUtil {
                                          @Nullable String total, String actionText,
                                          boolean showNextArrow) {
         TextView txtTotal = (TextView) checkoutContainer.findViewById(R.id.txtTotal);
-        txtTotal.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        txtTotal.setTypeface(FontHolder.getInstance(context).getFaceRobotoBold());
         TextView txtAction = (TextView) checkoutContainer.findViewById(R.id.txtAction);
 
         if (!showNextArrow) {
@@ -595,10 +610,16 @@ public class UIUtil {
     }
 
     public static RadioButton getPaymentOptionRadioButton(ViewGroup parent, Context context, LayoutInflater inflater) {
+        return getPaymentOptionRadioButton(parent, context, inflater,
+                (int) context.getResources().getDimension(R.dimen.margin_small));
+    }
+
+    public static RadioButton getPaymentOptionRadioButton(ViewGroup parent, Context context, LayoutInflater inflater,
+                                                          int marginTop) {
         RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, parent, false);
         RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0, 0, 0, (int) context.getResources().getDimension(R.dimen.margin_small));
+        layoutParams.setMargins(0, 0, 0, marginTop);
         radioButton.setLayoutParams(layoutParams);
         radioButton.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
         return radioButton;

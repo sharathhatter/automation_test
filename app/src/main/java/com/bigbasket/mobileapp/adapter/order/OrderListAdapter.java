@@ -2,6 +2,8 @@ package com.bigbasket.mobileapp.adapter.order;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +16,18 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
-public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class
+        OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     public static final int VIEW_TYPE_LOADING = 0;
@@ -155,6 +160,15 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
                 btnPayNow.setVisibility(View.GONE);
             }
 
+            TextView txtAmount = rowHolder.getTxtAmount();
+            String prefix = " `";
+            String orderValStr = UIUtil.formatAsMoney(Double.parseDouble(order.getOrderValue()));
+            int prefixLen = prefix.length();
+            SpannableString spannableMrp = new SpannableString(prefix + orderValStr);
+            spannableMrp.setSpan(new CustomTypefaceSpan("", BaseActivity.faceRupee), prefixLen - 1,
+                    prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            txtAmount.append(spannableMrp);
+
             if (orders.size() - 1 == position && currentPage != totalPages && totalPages != 0) {
                 ((OrderListActivity) context).getMoreOrders();
             }
@@ -185,6 +199,7 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
         private ImageView imgOrderType;
         private TextView txtOrderStatus;
         private Button btnPayNow;
+        private TextView txtAmount;
 
 
         private OrderListRowHolder(View itemView) {
@@ -241,6 +256,12 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
             if (btnPayNow == null)
                 btnPayNow = (Button) itemView.findViewById(R.id.btnPayNow);
             return btnPayNow;
+        }
+
+        public TextView getTxtAmount() {
+            if (txtAmount == null)
+                txtAmount = (TextView) itemView.findViewById(R.id.txtAmount);
+            return txtAmount;
         }
     }
 }

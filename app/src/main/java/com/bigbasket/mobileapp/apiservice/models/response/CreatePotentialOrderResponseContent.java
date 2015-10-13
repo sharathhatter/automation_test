@@ -24,4 +24,6 @@ public class CreatePotentialOrderResponseContent {
     public HashMap<String, HashMap<String, BaseShipmentAction>> toggleShipmentActions;
     @SerializedName(Constants.ORDER_DETAILS)
     public OrderDetails orderDetails;
+    @SerializedName(Constants.CITY_MODE)
+    public String cityMode;
 }
