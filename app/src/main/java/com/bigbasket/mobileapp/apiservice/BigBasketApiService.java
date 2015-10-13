@@ -86,16 +86,16 @@ public interface BigBasketApiService {
                         Callback<RegisterDeviceResponse> registerDeviceResponseCallback);
 
     @GET("/get-dynamic-page/")
-    void getDynamicPage(@Query(Constants.OS) String osName,
+    void getDynamicPage(@Query(Constants.OS) String osName, @Query(Constants.APP_VERSION) String version,
                         @Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
 
 
     @GET("/get-home-page/")
-    void getHomePage(@Query(Constants.OS) String osName,
+    void getHomePage(@Query(Constants.OS) String osName, @Query(Constants.APP_VERSION) String version,
                      Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
 
     @GET("/get-main-menu/")
-    void getMainMenu(@Query(Constants.OS) String osName,
+    void getMainMenu(@Query(Constants.OS) String osName, @Query(Constants.APP_VERSION) String version,
                      Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
 
     @GET("/c-get/")
