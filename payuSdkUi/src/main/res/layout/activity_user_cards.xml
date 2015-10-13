@@ -7,14 +7,24 @@
     <include
         android:id="@+id/toolbarMain"
         layout="@layout/layout_toolbar" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_below="@+id/toolbarMain">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
     <ImageView
         android:id="@+id/mbblogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bb_logo_transparent_bkg"
         android:layout_alignParentRight="true"
+
         android:layout_margin="20dp"
-        android:layout_below="@+id/toolbarMain"
+
         />
 
     <LinearLayout
@@ -53,16 +63,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
             android:gravity="center">
 
             <ListView
                 android:id="@+id/list_view_user_card"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="fill_parent"
+                android:descendantFocusability="afterDescendants"
                 android:layout_margin="10dp" />
         </LinearLayout>
     </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>
 
