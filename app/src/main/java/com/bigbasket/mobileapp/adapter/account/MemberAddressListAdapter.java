@@ -152,6 +152,10 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         return addressObjectList.size();
     }
 
+    public Address getSelectedAddress() {
+        return selectedAddress;
+    }
+
     public class AddAddressViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public AddAddressViewHolder(View itemView) {
@@ -231,12 +235,11 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
         @Override
         public void onClick(View v) {
+           /* int pos = getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {*/
             selectedAddress = (Address) addressObjectList.get(getPosition());
             ((AddressSelectionAware) context).onAddressSelected(selectedAddress);
+//            }
         }
-    }
-
-    public Address getSelectedAddress() {
-        return selectedAddress;
     }
 }

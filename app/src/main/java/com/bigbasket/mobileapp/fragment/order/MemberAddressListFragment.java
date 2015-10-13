@@ -40,7 +40,6 @@ import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
