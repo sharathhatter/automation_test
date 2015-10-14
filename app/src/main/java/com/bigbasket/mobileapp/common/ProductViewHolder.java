@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.common;
 
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private RadioGroup radioGroupExpress;
     private TextView txtExpressMsg;
     private ViewGroup layoutExpressMsg;
+    private TextView txtGiftMsg;
 
     public ProductViewHolder(View itemView) {
         super(itemView);
@@ -178,5 +180,13 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             txtExpressMsg = (TextView) itemView.findViewById(R.id.txtExpressMsg);
         }
         return txtExpressMsg;
+    }
+
+    @Nullable
+    public TextView getTxtGiftMsg() {
+        if (txtGiftMsg == null) {
+            txtGiftMsg = (TextView) itemView.findViewById(R.id.txtGiftMsg);
+        }
+        return txtGiftMsg;
     }
 }

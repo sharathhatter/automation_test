@@ -276,6 +276,14 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
             txtSalePrice.setText("Free!");
         }
 
+        TextView txtGiftMsg = rowHolder.getTxtGiftMsg();
+        if (TextUtils.isEmpty(cartItem.getGiftMsg())) {
+            txtGiftMsg.setVisibility(View.GONE);
+        } else {
+            txtGiftMsg.setText(cartItem.getGiftMsg());
+            txtGiftMsg.setVisibility(View.VISIBLE);
+        }
+
         /*
         TextView txtSaving = rowHolder.getTxtSaving();
         if (cartItem.getSaving() > 0 && (cartItem.getPromoAppliedType() >CartItem.REGULAR_PRICE_AND_PROMO_NOT_APPLIED &&
@@ -562,6 +570,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         private ImageView imgLiquorIcon;
         private TextView txtExpressAvailable;
         private TextView txtPackDesc;
+        private TextView txtGiftMsg;
 
         public RowHolder(View base) {
             super(base);
@@ -687,6 +696,13 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
             if (viewDecBasketQty == null)
                 viewDecBasketQty = itemView.findViewById(R.id.viewDecBasketQty);
             return viewDecBasketQty;
+        }
+
+        public TextView getTxtGiftMsg() {
+            if (txtGiftMsg == null) {
+                txtGiftMsg = (TextView) itemView.findViewById(R.id.txtGiftMsg);
+            }
+            return txtGiftMsg;
         }
     }
 

@@ -119,7 +119,7 @@ public class GiftOptionsFragment extends BaseFragment {
         Intent intent = new Intent(getActivity(), GiftHomeActivity.class);
         intent.putExtra(Constants.P_ORDER_ID, potentialOrderId);
         intent.putExtra(Constants.GIFTS, gift);
-        startActivity(intent);
+        startActivityForResult(intent, NavigationCodes.GO_TO_BASKET);
     }
 
     @Override

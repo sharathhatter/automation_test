@@ -64,11 +64,23 @@
         android:textColor="@color/uiv3_secondary_text_color"
         android:textSize="@dimen/secondary_text_size" />
 
+    <TextView
+        android:id="@+id/txtGiftMsg"
+        style="@style/BBTextStyle.Gift"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/txtProductBrand"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_mini"
+        android:layout_toLeftOf="@id/imgProductOverflowAction" />
+
     <LinearLayout
         android:id="@+id/layoutPackageDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtProductBrand"
+        android:layout_below="@id/txtGiftMsg"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"

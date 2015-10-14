@@ -60,6 +60,8 @@ public class CartItem extends BaseCartItem {
     private String skuType;
     @SerializedName(Constants.STORE_AVAILABILITY)
     private HashMap<String, String> storeAvailability;
+    @SerializedName(Constants.GIFT_MSG)
+    private String giftMsg;
 
     CartItem(Parcel source) {
         super(source);
@@ -89,6 +91,10 @@ public class CartItem extends BaseCartItem {
             storeAvailability = new Gson().fromJson(storeAvailabilityJson, type);
         }
 
+        boolean isGiftMsgNull = source.readByte() == (byte) 1;
+        if (!isGiftMsgNull) {
+            giftMsg = source.readString();
+        }
     }
 
     @Override
@@ -122,6 +128,12 @@ public class CartItem extends BaseCartItem {
         dest.writeByte(isStoreAvailabilityNull ? (byte) 1 : (byte) 0);
         if (!isStoreAvailabilityNull) {
             dest.writeString(new Gson().toJson(storeAvailability));
+        }
+
+        boolean isGiftMsgNull = giftMsg == null;
+        dest.writeByte(isGiftMsgNull ? (byte) 1 : (byte) 0);
+        if (!isGiftMsgNull) {
+            dest.writeString(giftMsg);
         }
     }
 
@@ -192,5 +204,9 @@ public class CartItem extends BaseCartItem {
 
     public String getSkuType() {
         return skuType;
+    }
+
+    public String getGiftMsg() {
+        return giftMsg;
     }
 }

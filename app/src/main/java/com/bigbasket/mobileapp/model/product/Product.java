@@ -63,6 +63,8 @@ public class Product extends BaseProduct {
     private String brandSlug;
     @SerializedName(Constants.STORE_AVAILABILITY)
     private ArrayList<HashMap<String, String>> storeAvailability;
+    @SerializedName(Constants.GIFT_MSG)
+    private String giftMsg;
 
     public Product(Parcel source) {
         super(source);
@@ -112,6 +114,11 @@ public class Product extends BaseProduct {
             Type type = new TypeToken<ArrayList<HashMap<String, String>>>() {
             }.getType();
             storeAvailability = new Gson().fromJson(storeAvailabilityJson, type);
+        }
+
+        boolean isGiftMsgNull = source.readByte() == (byte) 1;
+        if (!isGiftMsgNull) {
+            giftMsg = source.readString();
         }
     }
 
@@ -202,6 +209,12 @@ public class Product extends BaseProduct {
         if (!isStoreAvailabilityNull) {
             dest.writeString(new Gson().toJson(storeAvailability));
         }
+
+        boolean isGiftMsgNull = giftMsg == null;
+        dest.writeByte(isGiftMsgNull ? (byte) 1 : (byte) 0);
+        if (!isGiftMsgNull) {
+            dest.writeString(giftMsg);
+        }
     }
 
     public String getSellPrice() {
@@ -238,6 +251,10 @@ public class Product extends BaseProduct {
 
     public String getWeightAndPackDesc() {
         return weight + (TextUtils.isEmpty(packageDescription) ? "" : " - " + packageDescription);
+    }
+
+    public String getGiftMsg() {
+        return giftMsg;
     }
 
     public String getTopLevelCategorySlug() {
