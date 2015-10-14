@@ -20,7 +20,7 @@ public class SpecialityStore implements Parcelable {
         }
     };
 
-    @SerializedName(Constants.IMG_ANME)
+    @SerializedName(Constants.STORE_IMG)
     private String storeImg;
     @SerializedName(Constants.NAME)
     private String storeName;
@@ -28,15 +28,15 @@ public class SpecialityStore implements Parcelable {
     private String storeLocation;
     @SerializedName(Constants.DELIVERY_TIME)
     private String storeDeliveryTime;
-    @SerializedName(Constants.OP_TIME)
-    private String storeOpTime;
+    @SerializedName(Constants.STORE_TIMINGS)
+    private String storeTimings;
 
     public SpecialityStore(String storeImg, String storeName, String storeLocation, String storeDeliveryTime, String storeOpTime) {
         this.storeImg = storeImg;
         this.storeName = storeName;
         this.storeLocation = storeLocation;
         this.storeDeliveryTime = storeDeliveryTime;
-        this.storeOpTime = storeOpTime;
+        this.storeTimings = storeOpTime;
     }
 
     public SpecialityStore(Parcel source) {
@@ -44,7 +44,7 @@ public class SpecialityStore implements Parcelable {
         this.storeName = source.readString();
         this.storeLocation = source.readString();
         this.storeDeliveryTime = source.readString();
-        this.storeOpTime = source.readString();
+        this.storeTimings = source.readString();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SpecialityStore implements Parcelable {
         dest.writeString(storeName);
         dest.writeString(storeLocation);
         dest.writeString(storeDeliveryTime);
-        dest.writeString(storeOpTime);
+        dest.writeString(storeTimings);
     }
 
     public String getStoreName() {
@@ -73,8 +73,8 @@ public class SpecialityStore implements Parcelable {
         return storeDeliveryTime;
     }
 
-    public String getStoreOpTime() {
-        return storeOpTime;
+    public String getStoreTimings() {
+        return storeTimings;
     }
 
     public String getStoreImg() {

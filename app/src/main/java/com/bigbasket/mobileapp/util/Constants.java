@@ -633,10 +633,11 @@ public class Constants {
 
     // Speciality Stores
     public static final String CATEGORY = "category";
-    public static final String IMG_ANME = "img_name";
+    public static final String STORE_IMG = "store_img";
     public static final String DELIVERY_TIME = "delivery_time";
-    public static final String OP_TIME = "op_time";
+    public static final String STORE_TIMINGS = "store_timings";
     public static final String STORE_LIST = "store_list";
     public static final String STORE_LIST_RESP = "store_list-resp";
+    public static final String SPECIALITYSHOPS = "speciality-shop";
 
 }

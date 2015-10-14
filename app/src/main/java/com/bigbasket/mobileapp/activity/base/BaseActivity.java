@@ -389,7 +389,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public void launchViewBasketScreen() {
         Intent intent = new Intent(getCurrentActivity(), BBSpecialityShopsActivity.class);
-        intent.putExtra(Constants.TITLE, "Meat And Fish");
+        intent.putExtra(Constants.CATEGORY, "Meat And Fish");
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

@@ -26,6 +26,9 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.StoreListGetApiResponse;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityShopsListData;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityStore;
@@ -34,6 +37,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -42,7 +46,7 @@ import retrofit.client.Response;
 public class BBSpecialityShopsActivity extends BBActivity {
 
     private TextView mToolbarTextDropDown;
-    private String titleFromIntent;
+    private String category;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,20 +60,24 @@ public class BBSpecialityShopsActivity extends BBActivity {
     }
 
     private void getSpecialityShops() {
-        titleFromIntent = getIntent().getStringExtra(Constants.TITLE);
-        setTitle(titleFromIntent);
-//        loadSpecialityShops(mTitlePassedViaIntent);
-        loadDummyData(titleFromIntent, "Mahadevapura, Bangalore");
+        category = getIntent().getStringExtra(Constants.CATEGORY);
+        setTitle(category);
+//        loadSpecialityShops(category);
+        final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(BBSpecialityShopsActivity.this).getAddressSummaries();
+        if (addressSummaries != null && addressSummaries.size() > 0) {
+            loadDummyData(addressSummaries.get(0).getArea() + "," + addressSummaries.get(0).getCityName());
+        }
     }
 
     private void renderStoreList(String baseImgUrl, ArrayList<SpecialityStore> storeList) {
         RecyclerView recyclerViewStoreList = (RecyclerView) findViewById(R.id.store_list);
-        StoreListRecyclerAdapter storeListRecyclerAdapter = new StoreListRecyclerAdapter(this, baseImgUrl, storeList);
+        StoreListRecyclerAdapter storeListRecyclerAdapter = new StoreListRecyclerAdapter(BBSpecialityShopsActivity.this, baseImgUrl, storeList);
         recyclerViewStoreList.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewStoreList.setAdapter(storeListRecyclerAdapter);
+        logViewSpecialityShopsEvent(category);
     }
 
-    private void loadDummyData(String catValue, String location) {
+    private void loadDummyData(String location) {
         ArrayList<SpecialityStore> list = new ArrayList<SpecialityStore>();
         list.add(new SpecialityStore("img", "Fish Express", "Tubarhalli", "In 90 Minutes", "Opening Time: 07.30AM to 08.00PM"));
         list.add(new SpecialityStore("img", "Meat Mart", "Tubarhalli", "In 60 Minutes", "Opening Time: 07.30AM to 08.00PM"));
@@ -95,21 +103,22 @@ public class BBSpecialityShopsActivity extends BBActivity {
 
         TextView txtMsg = (TextView) base.findViewById(R.id.textView_empty_text);
 
-        String strMsg = getString(R.string.store_empty) + location + getString(R.string.adding_newStores);
+        String emptyMsg = getString(R.string.store_empty) + category + getString(R.string.available_in);
+        String strMsg = emptyMsg + location + getString(R.string.adding_newStores);
         Spannable spannable = new SpannableString(strMsg);
-        spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), 0, getString(R.string.store_empty).length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannable.setSpan(new CustomTypefaceSpan("", faceRobotoBold), getString(R.string.store_empty).length(), getString(R.string.store_empty).length() + location.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_status_bar_background)), getString(R.string.store_empty).length(), getString(R.string.store_empty).length() + location.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), getString(R.string.store_empty).length() + location.length(), spannable.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), 0, emptyMsg.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannable.setSpan(new CustomTypefaceSpan("", faceRobotoBold), emptyMsg.length(), emptyMsg.length() + location.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_status_bar_background)), emptyMsg.length(), emptyMsg.length() + location.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), emptyMsg.length() + location.length(), spannable.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         txtMsg.setText(spannable);
 
         layout.addView(base);
     }
 
-    private void loadSpecialityShops(String catValue) {
+    private void loadSpecialityShops(final String catVal) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getApplicationContext());
         showProgressView();
-        bigBasketApiService.getSpecialityShops(catValue, new Callback<ApiResponse<StoreListGetApiResponse>>() {
+        bigBasketApiService.getSpecialityShops(catVal, new Callback<ApiResponse<StoreListGetApiResponse>>() {
             @Override
             public void success(ApiResponse<StoreListGetApiResponse> specialityStoreListApiResponse, Response response) {
                 if (isSuspended()) return;
@@ -121,10 +130,15 @@ public class BBSpecialityShopsActivity extends BBActivity {
                 if (specialityStoreListApiResponse.status == 0) {
                     SpecialityShopsListData specialityShopsListData = specialityStoreListApiResponse.apiResponseContent.specialityShopsListData;
                     Section headerSection = specialityStoreListApiResponse.apiResponseContent.headerSection;
-                    renderHeaderDropDown(headerSection, specialityStoreListApiResponse.apiResponseContent.headerSelectedIndex, titleFromIntent);
-                    ArrayList<SpecialityStore> storeList = specialityStoreListApiResponse.apiResponseContent.storeList;
+                    renderHeaderDropDown(headerSection, specialityStoreListApiResponse.apiResponseContent.headerSelectedIndex, catVal);
+                    ArrayList<SpecialityStore> storeList = specialityShopsListData.getStoreList();
                     if (storeList != null && storeList.size() > 0) {
                         renderStoreList(specialityStoreListApiResponse.apiResponseContent.baseImageUrl, storeList);
+                    } else {
+                        final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(BBSpecialityShopsActivity.this).getAddressSummaries();
+                        if (addressSummaries != null && addressSummaries.size() > 0) {
+                            showStoreEmptyMsg(addressSummaries.get(0).getArea() + "," + addressSummaries.get(0).getCityName());
+                        }
                     }
                 } else {
                     handler.sendEmptyMessage(specialityStoreListApiResponse.status,
@@ -155,7 +169,7 @@ public class BBSpecialityShopsActivity extends BBActivity {
         new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
                 .withCtx(this)
                 .withDefaultSelectedIdx(mHeaderSelectedIdx)
-                .withFallbackHeaderTitle(!TextUtils.isEmpty(titleFromIntent) ? titleFromIntent : screenName)
+                .withFallbackHeaderTitle(!TextUtils.isEmpty(category) ? category : screenName)
                 .withHeadSection(headSection)
                 .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
                 .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
@@ -174,7 +188,11 @@ public class BBSpecialityShopsActivity extends BBActivity {
         return TrackEventkeys.SPECIALITYSHOPS_LISTING_PAGE;
     }
 
-    private void logViewSpecialityShopsEvent() {
-
+    private void logViewSpecialityShopsEvent(String categoryName) {
+        if (categoryName == null) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(Constants.CATEGORY, categoryName);
+        trackEvent(TrackingAware.SPECIALITYSHOPS_LIST_SHOWN, map);
+        trackEventAppsFlyer(TrackingAware.SPECIALITYSHOPS_LIST_SHOWN);
     }
 }

@@ -54,7 +54,6 @@ import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.product.ProductTabData;
-import com.bigbasket.mobileapp.model.specialityshops.SpecialityShopsListData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -115,7 +114,7 @@ public interface BigBasketApiService {
 
     @GET("/store-list/")
     void getSpecialityShops(@Query(Constants.CATEGORY) String categoryValue,
-            Callback<ApiResponse<StoreListGetApiResponse>> storeListApiCallback);
+                            Callback<ApiResponse<StoreListGetApiResponse>> storeListApiCallback);
 
     @GET("/product-next-page/")
     void productNextPage(@QueryMap Map<String, String> productQueryMap, Callback<ApiResponse<ProductNextPageResponse>> productNextPageApi);

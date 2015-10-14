@@ -13,6 +13,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActi
 import com.bigbasket.mobileapp.activity.product.DiscountActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
+import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
@@ -206,6 +207,15 @@ public class DeepLinkHandler {
             case Constants.HOME:
                 context.getCurrentActivity().goToHome(false);
                 return SUCCESS;
+            case Constants.SPECIALITYSHOPS:
+                String category = uri.getQueryParameter(Constants.CATEGORY);
+                if (!TextUtils.isEmpty(category)) {
+                    Intent intent_shops = new Intent(context.getCurrentActivity(), BBSpecialityShopsActivity.class);
+                    intent_shops.putExtra(Constants.CATEGORY, category);
+                    context.getCurrentActivity().startActivityForResult(intent_shops, NavigationCodes.GO_TO_HOME);
+                    return SUCCESS;
+                }
+                return FAILED;
             default:
                 return FAILED;
         }

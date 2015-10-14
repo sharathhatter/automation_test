@@ -407,6 +407,7 @@
     <string name="totalCostOfGiftWrapping">Total Cost of Gift Wrapping</string>
     <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
 
-    <string name="store_empty">Sorry, Currently we do not have any speciality stores for Flowers available \nin \n </string>
+    <string name="store_empty">Sorry, Currently we do not have any speciality stores for\u0020</string>
+    <string name="available_in">\u0020available \nin \n </string>
     <string name="adding_newStores">\n\nWe will be adding new stores in this location soon.Mean while, please checkout other categories.\nThanks!</string>
 </resources>

@@ -14,8 +14,6 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
-import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityStore;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -71,7 +69,7 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             String storeName = store.getStoreName();
             String storeLoc = store.getStoreLocation();
             String storeDelTime = store.getStoreDeliveryTime();
-            String storeOpTime = store.getStoreOpTime();
+            String storeOpTime = store.getStoreTimings();
             String strImgStore = store.getStoreImg();
 
             TextView txtStoreName = rowHolder.getTxtStoreName();
