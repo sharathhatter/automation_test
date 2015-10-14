@@ -587,11 +587,15 @@ public final class ProductView {
 
                 txtOutOfStockORNotForSale.setVisibility(View.VISIBLE);
                 txtOutOfStockORNotForSale.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+
+                ViewGroup viewGroup = productViewHolder.getLayoutExpressMsg();
                 if (getAvailability(product, storeAvailability).equalsIgnoreCase("0")
                         || getAvailability(product, storeAvailability).equalsIgnoreCase("O")) {  // zero not O
                     txtOutOfStockORNotForSale.setText("Out of Stock");
+                    viewGroup.setVisibility(View.GONE);
                 } else {
                     txtOutOfStockORNotForSale.setText("Not for sale");
+                    viewGroup.setVisibility(View.GONE);
                 }
                 //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
             }
