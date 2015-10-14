@@ -272,6 +272,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (numVisibleShipments > 1) {
             txtDeliverablesHeading.setTypeface(faceRobotoRegular);
             txtDeliverablesHeading.setText(R.string.deliverableTextPlural);
+            txtDeliverablesHeading.setVisibility(View.VISIBLE);
         } else {
             txtDeliverablesHeading.setVisibility(View.GONE);
         }
