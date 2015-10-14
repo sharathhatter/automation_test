@@ -9,7 +9,6 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -81,11 +80,11 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             } catch (ClassCastException e) {
 
             }
-            SharedPreferences preferences =  PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = preferences.edit();
-            if(preferences.contains(Constants.FIRSE_TIME_USER)){
+            if (preferences.contains(Constants.FIRSE_TIME_USER)) {
                 MoEngageWrapper.setExistingUser(moEHelper, true);
-            }else {
+            } else {
                 MoEngageWrapper.setExistingUser(moEHelper, false);
                 editor.putBoolean(Constants.FIRSE_TIME_USER, true);
             }

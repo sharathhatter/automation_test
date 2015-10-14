@@ -89,15 +89,15 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void onStart() {
         super.onStart();
-        if(getCurrentActivity() != null)
+        if (getCurrentActivity() != null)
             MoEngageWrapper.onFragmentStart(getCurrentActivity().getMoEHelper(), getCurrentActivity(),
-                     this.getClass().getSimpleName());
+                    this.getClass().getSimpleName());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if(getCurrentActivity() != null)
+        if (getCurrentActivity() != null)
             MoEngageWrapper.onFragmentStop(getCurrentActivity().getMoEHelper(), getCurrentActivity(),
                     this.getClass().getSimpleName());
     }

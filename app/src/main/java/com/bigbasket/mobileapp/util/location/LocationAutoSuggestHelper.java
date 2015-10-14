@@ -85,7 +85,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (placeAutoSuggestAdapter != null && position != AdapterView.INVALID_POSITION) {
                     AutoCompletePlace autoCompletePlace = placeAutoSuggestAdapter.getItem(position);
-                    if(autoCompleteTextViewWeakReference != null && autoCompleteTextViewWeakReference.get() !=null) {
+                    if (autoCompleteTextViewWeakReference != null && autoCompleteTextViewWeakReference.get() != null) {
                         BaseActivity.hideKeyboard((BaseActivity) ctx, autoCompleteTextViewWeakReference.get());
                     }
                     if (!TextUtils.isEmpty(autoCompletePlace.getPlaceId())) {

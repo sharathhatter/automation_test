@@ -198,7 +198,7 @@ public final class ProductView {
     }
 
     private static boolean hasText(ArrayList<HashMap<String, String>> storeAvailabilityArrayList,
-                            @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
+                                   @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
         for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
             String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
             if (TextUtils.isEmpty(msg)) return false;

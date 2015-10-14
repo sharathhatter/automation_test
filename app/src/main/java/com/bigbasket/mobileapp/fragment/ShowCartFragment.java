@@ -53,7 +53,7 @@ public class ShowCartFragment extends BaseFragment {
     }
 
     private void renderCartItemList(ArrayList<CartItemList> cartItemLists, String baseImageUrl, ArrayList<FulfillmentInfo> fulfillmentInfos, ArrayList<AnnotationInfo> annotationInfoArrayList) {
-
+        if (getContentView() == null) return;
         List<Object> cartItemHeaderList = new ArrayList<>();
         for (CartItemList cartItemInfoArray : cartItemLists) {
             CartItemHeader cartItemHeader = new CartItemHeader();

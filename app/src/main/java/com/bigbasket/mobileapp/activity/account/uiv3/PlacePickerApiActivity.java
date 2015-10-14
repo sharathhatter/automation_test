@@ -84,7 +84,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         txtAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mSelectedLatLng == null){
+                if (mSelectedLatLng == null) {
                     showAlertDialog(getString(R.string.location_not_found));
                     return;
                 }
