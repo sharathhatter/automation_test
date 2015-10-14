@@ -474,6 +474,7 @@ public final class ProductView {
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
         final View viewIncBasketQty = productViewHolder.getViewIncBasketQty();
         final EditText editTextQty = productViewHolder.getEditTextQty();
+        ViewGroup viewGroup = productViewHolder.getLayoutExpressMsg();
 
         TextView txtOutOfStockORNotForSale = productViewHolder.getTxtOutOfStockORNotForSale();
         txtInBasket.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
@@ -495,6 +496,7 @@ public final class ProductView {
         if (productViewDisplayDataHolder.isShowBasketBtn()) {
             if (getAvailability(product, storeAvailability).equalsIgnoreCase("A")) {
                 int noOfItemsInCart = getNoOfItemsInCart(product, cartInfo);
+                viewGroup.setVisibility(View.VISIBLE);
 
                 if (noOfItemsInCart > 0) {
                     txtInBasket.setText(String.valueOf(noOfItemsInCart));
@@ -584,9 +586,11 @@ public final class ProductView {
                 viewIncBasketQty.setVisibility(View.GONE);
                 editTextQty.setVisibility(View.GONE);
                 imgAddToBasket.setVisibility(View.GONE);
+                viewGroup.setVisibility(View.GONE);
 
                 txtOutOfStockORNotForSale.setVisibility(View.VISIBLE);
                 txtOutOfStockORNotForSale.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+
                 if (getAvailability(product, storeAvailability).equalsIgnoreCase("0")
                         || getAvailability(product, storeAvailability).equalsIgnoreCase("O")) {  // zero not O
                     txtOutOfStockORNotForSale.setText("Out of Stock");
@@ -601,6 +605,7 @@ public final class ProductView {
             viewIncBasketQty.setVisibility(View.GONE);
             imgAddToBasket.setVisibility(View.GONE);
             editTextQty.setVisibility(View.GONE);
+            viewGroup.setVisibility(View.GONE);
             //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
         }
     }
