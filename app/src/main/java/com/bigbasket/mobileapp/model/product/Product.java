@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Product implements Parcelable {
+public class Product extends BaseProduct {
 
     public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product>() {
         @Override
@@ -29,12 +29,8 @@ public class Product implements Parcelable {
             return new Product[size];
         }
     };
-    @SerializedName(Constants.PRODUCT_DESC)
-    private String description;
     @SerializedName(Constants.SELL_PRICE)
     private String sellPrice;
-    @SerializedName(Constants.PRODUCT_BRAND)
-    private String brand;
     @SerializedName(Constants.MRP_PRICE)
     private String mrp;
     @SerializedName(Constants.DISCOUNT_VALUE)
@@ -49,8 +45,6 @@ public class Product implements Parcelable {
     private String sku;
     @SerializedName(Constants.PRODUCT_WEIGHT)
     private String weight;
-    @SerializedName(Constants.IMAGE_URL)
-    private String imageUrl;
     @SerializedName(Constants.PRODUCT_TOP_LEVEL_CATEGORY_SLUG)
     private String topLevelCategorySlug;
     @SerializedName(Constants.PRODUCT_TOP_LEVEL_CATEGORY_NAME)
@@ -71,12 +65,11 @@ public class Product implements Parcelable {
     private ArrayList<HashMap<String, String>> storeAvailability;
 
     public Product(Parcel source) {
-        description = source.readString();
+        super(source);
         boolean isSellPriceNull = source.readByte() == (byte) 1;
         if (!isSellPriceNull) {
             sellPrice = source.readString();
         }
-        brand = source.readString();
         boolean isMrpNull = source.readByte() == (byte) 1;
         if (!isMrpNull) {
             mrp = source.readString();
@@ -90,7 +83,6 @@ public class Product implements Parcelable {
         noOfItemsInCart = source.readInt();
         sku = source.readString();
         weight = source.readString();
-        imageUrl = source.readString();
         topLevelCategorySlug = source.readString();
         productCategoryName = source.readString();
         topLevelCategoryName = source.readString();
@@ -128,8 +120,7 @@ public class Product implements Parcelable {
 
     public Product(String brand, String description, String sku, String topLevelCategoryName,
                    String productCategoryName) {
-        this.brand = brand;
-        this.description = description;
+        super(brand, description);
         this.sku = sku;
         this.topLevelCategoryName = topLevelCategoryName;
         this.productCategoryName = productCategoryName;
@@ -160,13 +151,12 @@ public class Product implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(description);
+        super.writeToParcel(dest, flags);
         boolean isSellPriceNull = sellPrice == null;
         dest.writeByte(isSellPriceNull ? (byte) 1 : (byte) 0);
         if (!isSellPriceNull) {
             dest.writeString(sellPrice);
         }
-        dest.writeString(brand);
         boolean isMrpNull = mrp == null;
         dest.writeByte(isMrpNull ? (byte) 1 : (byte) 0);
         if (!isMrpNull) {
@@ -182,7 +172,6 @@ public class Product implements Parcelable {
         dest.writeInt(noOfItemsInCart);
         dest.writeString(sku);
         dest.writeString(weight);
-        dest.writeString(imageUrl);
         dest.writeString(topLevelCategorySlug);
         dest.writeString(productCategoryName);
         dest.writeString(topLevelCategoryName);
@@ -215,20 +204,8 @@ public class Product implements Parcelable {
         }
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getSellPrice() {
         return sellPrice;
-    }
-
-    public String getBrand() {
-        return brand;
     }
 
     public String getMrp() {
@@ -261,10 +238,6 @@ public class Product implements Parcelable {
 
     public String getWeightAndPackDesc() {
         return weight + (TextUtils.isEmpty(packageDescription) ? "" : " - " + packageDescription);
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
     }
 
     public String getTopLevelCategorySlug() {
@@ -305,7 +278,7 @@ public class Product implements Parcelable {
 
     @Override
     public String toString() {
-        return brand + " " + description + " " + weight + "  Rs. " + sellPrice;
+        return getBrand() + " " + getDescription() + " " + weight + "  Rs. " + sellPrice;
     }
 
     public ArrayList<ProductAdditionalInfo> getProductAdditionalInfos() {

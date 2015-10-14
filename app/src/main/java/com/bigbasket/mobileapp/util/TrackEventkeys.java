@@ -85,6 +85,7 @@ public final class TrackEventkeys {
     public static final String CUSTOMER_FEEDBACK_SCREEN = "Customer FeedBack";
     public static final String DEEP_LINK_DISPATCHER_SCREEN = "Deep Link Dispatcher";
     public static final String SOCIAL_ACCOUNT_CONFIRMATION_SCREEN = "Social Account Confirmation";
+    public static final String GIFT_OPTIONS_SCREEN = "Gift Options";
     //PROMO
     public static final String PROMO_CATEGORY_SCREEN = "Promo Category";
     public static final String PROMO_DETAIL_SCREEN = "Promo Detail";
@@ -118,6 +119,7 @@ public final class TrackEventkeys {
     public static final String CO_ADDRESS = "co.address";
     public static final String CO_QC = "co.qc";
     public static final String CO_DELIVERY_OPS = "co.delivery-options";
+    public static final String CO_GIFT_OPS = "xo.gift-options";
     public static final String CO_PAYMENT = "co.payment";
     public static final String ACCOUNT_MENU = "account-menu";
     public static final String ORDER_HISTORY = "order-history";
@@ -157,6 +159,9 @@ public final class TrackEventkeys {
     public static final String ACTION_NAME = "action_name";
     public static final String FINAL_FIS = "final_fis";
     public static final String ORIGINAL_FIS = "original_fis";
+
+    public static final String GIFT_SELECTQTY = "gift_selectqty";
+    public static final String GIFT_ADDMESSAGE = "gift_addmessage";
 
     private TrackEventkeys() {
     }

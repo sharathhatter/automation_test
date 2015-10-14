@@ -20,6 +20,7 @@ public class Constants {
 
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
+    public static final String NO_OF_ITEMS = "no_of_items";
     public static final String PRODUCT_NO_ITEM_IN_CART = "p_no_items_in_cart";
     public static final String PRODUCT_ID = "sku";
     public static final String SKU_TYPE = "sku_type";
@@ -589,6 +590,7 @@ public class Constants {
     public static final String FORGOT_PASSWORD_DIALOG = "FPassDialog";
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
+    public static final String FIRSE_TIME_USER = "fst_tm_user";
 
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
@@ -614,7 +616,19 @@ public class Constants {
     public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
     public static final String EXPRESS_AVAILABILITY = "express_availability";
     public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
-
     public static final String APP_LAUNCH = "appLaunch";
-    public static final String FIRSE_TIME_USER = "fst_tm_user";
+
+    // Gift items
+    public static final String GIFTS = "gifts";
+    public static final String GIFT_WRAP_CHARGE = "gift_wrap_charge";
+    public static final String MAX_NUM_CHARS = "num_chars";
+    public static final String IS_READONLY = "is_readonly";
+    public static final String IS_PREWRAPPED = "is_prewrapped";
+    public static final String IS_CONVERTIBLE_TO_NORMAL = "is_convertible_to_normal";
+    public static final String COMMON_MSG = "common_msg";
+    public static final String COMMON_MSG_NUM_CHARS = "common_msg_num_chars";
+    public static final String GIFT_SUMMARY = "gift_summary";
+    public static final String GIFT_LINK = "gift_link";
+    public static final String HAS_GIFTS = "has_gifts";
+    public static final String INDIVIDUAL_MSG = "individual_msg";
 }

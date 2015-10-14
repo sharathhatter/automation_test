@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
-import com.bigbasket.mobileapp.adapter.ProductListPagerAdapter;
+import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -332,8 +332,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             }
         }
 
-        ProductListPagerAdapter statePagerAdapter =
-                new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
+        TabPagerAdapterWithFragmentRegistration statePagerAdapter =
+                new TabPagerAdapterWithFragmentRegistration(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
         ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
         setCurrentTabSortAndFilter(productTabInfo.getFilterOptionItems(), productTabInfo.getFilteredOn(),
@@ -353,7 +353,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             public void onPageSelected(int position) {
                 tabType = productTabInfos.get(position).getTabType();
 
-                Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(position);
+                Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(position);
                 if (fragment == null || fragment.getArguments() == null) return;
                 ProductListAwareFragment pFrag = (ProductListAwareFragment) fragment;
                 Bundle args = pFrag.getArguments();
@@ -453,7 +453,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                                                 String filterAndSortTabName, int currentTabIndex) {
         if (filterAndSortTabName == null || mViewPager == null || productTabInfo == null
                 || productTabInfo.getProductInfo() == null) return;
-        Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(currentTabIndex);
+        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(currentTabIndex);
         if (fragment != null) {
             ArrayList<Product> products = productTabInfo.getProductInfo().getProducts();
             if (products == null) {
@@ -560,7 +560,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private void setProductListForFragmentAtPosition(int position) {
         String tabType = mArrayTabTypeAndFragmentPosition.get(position);
         if (tabType == null || mViewPager == null) return;
-        Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(position);
+        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(position);
         if (fragment != null) {
             ArrayList<Product> products = mMapForTabWithNoProducts != null ?
                     mMapForTabWithNoProducts.get(tabType) : null;
@@ -575,7 +575,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private void notifyFragmentAtPositionAboutFailure(int position) {
         String tabType = mArrayTabTypeAndFragmentPosition.get(position);
         if (tabType == null || mViewPager == null) return;
-        Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(position);
+        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(position);
         if (fragment != null) {
             ((ProductListAwareFragment) fragment).setLazyProductLoadingFailure();
             ((ProductListAwareFragment) fragment).setProductListView();
@@ -586,7 +586,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private Fragment getCurrentFragment() {
         if (mViewPager == null) return null;
         int currentPosition = mViewPager.getCurrentItem();
-        return ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(currentPosition);
+        return ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(currentPosition);
     }
 
     @Override
@@ -945,7 +945,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private void redrawFragment(int position) {
         if (mViewPager == null) return;
-        Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(position);
+        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(position);
         if (fragment != null) {
             ((ProductListAwareFragment) fragment).redrawProductList(mCartInfo);
         }

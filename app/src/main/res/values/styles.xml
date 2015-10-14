@@ -33,10 +33,23 @@
         <item name="tabSelectedTextColor">@color/uiv3_action_bar_background</item>
     </style>
 
+    <style name="BaseAppTheme.GiftTabStyle" parent="BaseAppTheme.TabStyle">
+        <item name="tabIndicatorColor">@color/dark_green</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="tabTextAppearance">@style/BaseAppTheme.Tab.GiftTextStyle</item>
+        <item name="tabSelectedTextColor">@color/dark_green</item>
+    </style>
+
     <style name="BaseAppTheme.Tab.TextStyle" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/uiv3_secondary_text_color</item>
         <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="BaseAppTheme.Tab.GiftTextStyle" parent="BaseAppTheme.Tab.TextStyle">
+        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="textAllCaps">false</item>
     </style>
 
     <style name="LandingPageTheme.DialogTheme" parent="BaseAppTheme.AlertDialogStyle">
