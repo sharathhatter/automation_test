@@ -61,35 +61,35 @@ android {
 //    This is because build time increases significantly, due to which development time becomes slow
 //    (1.5 minutes on avg)
 
-//    splits {
-//        density {
-//            enable true
-//            exclude "ldpi", "tvdpi"
-//            compatibleScreens 'small', 'normal', 'large', 'xlarge'
-//        }
-//    }
-//
-//    productFlavors {
-//        flavourMdpi {
-//            versionCode calculateVersionCodeFromDpi(160)
-//        }
-//
-//        flavourHdpi {
-//            versionCode calculateVersionCodeFromDpi(240)
-//        }
-//
-//        flavourXHdpi {
-//            versionCode calculateVersionCodeFromDpi(320)
-//        }
-//
-//        flavourXXHdpi {
-//            versionCode calculateVersionCodeFromDpi(480)
-//        }
-//
-//        flavourXXXHdpi {
-//            versionCode calculateVersionCodeFromDpi(640)
-//        }
-//    }
+    splits {
+        density {
+            enable true
+            exclude "ldpi", "tvdpi"
+            compatibleScreens 'small', 'normal', 'large', 'xlarge'
+        }
+    }
+
+    productFlavors {
+        flavourMdpi {
+            versionCode calculateVersionCodeFromDpi(160)
+        }
+
+        flavourHdpi {
+            versionCode calculateVersionCodeFromDpi(240)
+        }
+
+        flavourXHdpi {
+            versionCode calculateVersionCodeFromDpi(320)
+        }
+
+        flavourXXHdpi {
+            versionCode calculateVersionCodeFromDpi(480)
+        }
+
+        flavourXXXHdpi {
+            versionCode calculateVersionCodeFromDpi(640)
+        }
+    }
 
 }
 

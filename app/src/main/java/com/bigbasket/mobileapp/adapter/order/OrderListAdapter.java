@@ -167,7 +167,7 @@ public class
             SpannableString spannableMrp = new SpannableString(prefix + orderValStr);
             spannableMrp.setSpan(new CustomTypefaceSpan("", BaseActivity.faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            txtAmount.append(spannableMrp);
+            txtAmount.setText(spannableMrp);
 
             if (orders.size() - 1 == position && currentPage != totalPages && totalPages != 0) {
                 ((OrderListActivity) context).getMoreOrders();
