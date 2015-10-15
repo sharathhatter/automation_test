@@ -326,6 +326,8 @@
     <string name="order_pay_now_amount">Amount :</string>
     <string name="payNowThankyou">Your payment was successful!</string>
     <string name="txnFailureMsg">Failed to process your transaction.\nPlease contact our customer care, in case you got charged.</string>
+    <string name="txnFailureMsgPrefix">Failed to process your transaction.\nPlease contact our customer care at</string>
+    <string name="txnFailureMsgSuffix">or email us at</string>
 
     <string name="fundWallet">Fund Wallet</string>
     <string name="fundWalletHint">Amount</string>
