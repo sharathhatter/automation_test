@@ -66,13 +66,15 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
     private Typeface faceRobotoRegular, faceRupee;
     private String navigationCtx;
     private T context;
+    private int currentTabIndex;
 
     public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
                                  Typeface faceRobotoRegular, @OrderItemDisplaySource.Type int orderItemDisplaySource,
                                  boolean isReadOnly,
                                  HashMap<String, String> fulfillmentInfoIdAndIconHashMap,
                                  HashMap<String, AnnotationInfo> annotationHashMap,
-                                 String baseImageUrl, String navigationCtx) {
+                                 String baseImageUrl, String navigationCtx,
+                                 int currentTabIndex) {
         this.context = context;
         this.orderList = orderList;
         this.faceRupee = faceRupee;
@@ -83,6 +85,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         this.isReadOnlyBasket = isReadOnly;
         this.baseImgUrl = baseImageUrl;
         this.navigationCtx = navigationCtx;
+        this.currentTabIndex = currentTabIndex;
         this.inflater = (LayoutInflater) ((ActivityAware) context).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -208,7 +211,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         showAnnotationInfo.showAnnotationInfo();
     }
 
-    private void renderBasicView(RowHolder rowHolder, final CartItem cartItem) {
+    private void renderBasicView(final RowHolder rowHolder, final CartItem cartItem) {
         ImageView imgProduct = rowHolder.getImgProduct();
         if (imgProduct != null && !TextUtils.isEmpty(cartItem.getProductImgUrl())) {
             UIUtil.displayAsyncImage(imgProduct, baseImgUrl != null ? baseImgUrl +
@@ -358,6 +361,12 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                     navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME,
                                     basketQueryMap);
                             basketOperationTask.startTask();
+
+                            if (context instanceof ShowCartActivity) {
+                                int scrollOffset = cartItem.getTotalQty() == 1 ? 1 : 0;
+                                ((ShowCartActivity) context).onBasketQtyChanged(rowHolder.getPosition() - scrollOffset,
+                                        currentTabIndex);
+                            }
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
@@ -379,8 +388,13 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                     basketQueryMap);
                             basketOperationTask.startTask();
 
+                            if (context instanceof ShowCartActivity) {
+                                ((ShowCartActivity) context).onBasketQtyChanged(rowHolder.getPosition(),
+                                    currentTabIndex);
+                            }
                         } else {
-                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(),
+                                    "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
                             toast.show();
                         }
@@ -399,6 +413,11 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                     TrackingAware.BASKET_REMOVE, navigationCtx, null, null, null,
                                     TrackEventkeys.SINGLE_TAB_NAME, basketQueryMap);
                             basketOperationTask.startTask();
+
+                            if (context instanceof ShowCartActivity) {
+                                ((ShowCartActivity) context).onBasketQtyChanged(rowHolder.getPosition() - 1,
+                                        currentTabIndex);
+                            }
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);

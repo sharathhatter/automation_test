@@ -70,7 +70,7 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
         RecyclerView recyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemConsolidatedList, this,
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.ORDER_DISPLAY, true,
-                null, null, orderInvoice.getBaseImgUrl(), null);
+                null, null, orderInvoice.getBaseImgUrl(), null, Constants.DEFAULT_TAB_INDEX);
         recyclerView.addItemDecoration(new RecyclerViewDividerItemDecoration(getActivity()));
         recyclerView.setAdapter(activeOrderRowAdapter);
         hideProgressView();
