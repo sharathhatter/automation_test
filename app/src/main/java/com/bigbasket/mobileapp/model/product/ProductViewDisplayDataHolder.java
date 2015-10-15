@@ -20,6 +20,7 @@ public class ProductViewDisplayDataHolder {
     private boolean disableInBasketChildSwap;
     private boolean showQtyInput;
     private boolean useRadioButtonsForContextual;
+    private boolean displayGiftMsg;
 
     public ProductViewDisplayDataHolder(Builder builder) {
         this.sanSerifLightTypeface = builder.sanSerifLightTypeface;
@@ -35,6 +36,7 @@ public class ProductViewDisplayDataHolder {
         this.disableInBasketChildSwap = builder.disableInBasketChildSwap;
         this.showQtyInput = builder.showQtyInput;
         this.useRadioButtonsForContextual = builder.useRadioButtonsForContextual;
+        this.displayGiftMsg = builder.displayGiftMsg;
     }
 
     public ShoppingListName getShoppingListName() {
@@ -81,6 +83,10 @@ public class ProductViewDisplayDataHolder {
         return useRadioButtonsForContextual;
     }
 
+    public boolean displayGiftMsg() {
+        return displayGiftMsg;
+    }
+
     public BigBasketMessageHandler getHandler() {
         return handler;
     }
@@ -99,6 +105,7 @@ public class ProductViewDisplayDataHolder {
         private boolean disableInBasketChildSwap;
         private boolean showQtyInput;
         private boolean useRadioButtonsForContextual;
+        private boolean displayGiftMsg;
 
         public Builder() {
             this.disableInBasketChildSwap = false;
@@ -164,6 +171,11 @@ public class ProductViewDisplayDataHolder {
 
         public Builder useRadioButtonsForContextual(boolean useRadioButtonsForContextual) {
             this.useRadioButtonsForContextual = useRadioButtonsForContextual;
+            return this;
+        }
+
+        public Builder displayGiftMsg(boolean displayGiftMsg) {
+            this.displayGiftMsg = displayGiftMsg;
             return this;
         }
 

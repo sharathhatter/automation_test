@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
-import com.bigbasket.mobileapp.adapter.ProductListPagerAdapter;
+import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.AddAllShoppingListItemResponse;
@@ -253,10 +253,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
             findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
 
             viewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
-            ProductListPagerAdapter productListPagerAdapter = new ProductListPagerAdapter(getCurrentActivity(),
+            TabPagerAdapterWithFragmentRegistration tabPagerAdapterWithFragmentRegistration = new TabPagerAdapterWithFragmentRegistration(getCurrentActivity(),
                     getSupportFragmentManager(), getTabs(shoppingListSummaries, shoppingListName, baseImgUrl));
             if (viewPager != null) {
-                viewPager.setAdapter(productListPagerAdapter);
+                viewPager.setAdapter(tabPagerAdapterWithFragmentRegistration);
                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -388,7 +388,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private Fragment getCurrentFragment() {
         if (viewPager == null) return null;
         int currentPosition = viewPager.getCurrentItem();
-        return ((ProductListPagerAdapter) viewPager.getAdapter()).getRegisteredFragment(currentPosition);
+        return ((TabPagerAdapterWithFragmentRegistration) viewPager.getAdapter()).getRegisteredFragment(currentPosition);
     }
 
     private void setProductCount(HashMap<String, Integer> cartInfo,

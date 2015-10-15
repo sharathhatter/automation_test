@@ -7,13 +7,16 @@
     </style>
 
     <style name="BBNavDrawerTheme.SpinnerDatePickerTheme" parent="BaseAppTheme">
-        <item name="android:dialogTheme">@style/BBNavDrawerTheme.SpinnerDatePicker.DialogTheme</item>
-        <item name="android:datePickerStyle">@style/BBNavDrawerTheme.SpinnerDatePicker.DatePickerTheme
+        <item name="android:dialogTheme">@style/BBNavDrawerTheme.SpinnerDatePicker.DialogTheme
+        </item>
+        <item name="android:datePickerStyle">
+            @style/BBNavDrawerTheme.SpinnerDatePicker.DatePickerTheme
         </item>
     </style>
 
     <style name="BBNavDrawerTheme.SpinnerDatePicker.DialogTheme" parent="android:Theme.Material.Light.Dialog">
-        <item name="android:datePickerStyle">@style/BBNavDrawerTheme.SpinnerDatePicker.DatePickerTheme
+        <item name="android:datePickerStyle">
+            @style/BBNavDrawerTheme.SpinnerDatePicker.DatePickerTheme
         </item>
     </style>
 

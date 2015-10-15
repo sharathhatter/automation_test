@@ -25,7 +25,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
-import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
+import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -75,11 +75,16 @@ public class SignInActivity extends BackButtonActivity {
                 return false;
             }
         });
-        mPasswordView.setOnTouchListener(new OnRightCompoundDrawableClicked() {
+        mPasswordView.setOnTouchListener(new OnCompoundDrawableClickListener(OnCompoundDrawableClickListener.DRAWABLE_RIGHT) {
             @Override
             public void onRightDrawableClicked() {
                 mIsPasswordVisible = !mIsPasswordVisible;
                 togglePasswordView(mPasswordView, mIsPasswordVisible);
+            }
+
+            @Override
+            public void onLeftDrawableClicked() {
+
             }
         });
 

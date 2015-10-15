@@ -25,16 +25,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by mrudula on 1/9/15.
- */
 public class ShowCartFragment extends BaseFragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.cart_fragment_list, container, false);
-        return view;
+        return inflater.inflate(R.layout.cart_fragment_list, container, false);
     }
 
     @Override
@@ -53,7 +49,7 @@ public class ShowCartFragment extends BaseFragment {
     }
 
     private void renderCartItemList(ArrayList<CartItemList> cartItemLists, String baseImageUrl, ArrayList<FulfillmentInfo> fulfillmentInfos, ArrayList<AnnotationInfo> annotationInfoArrayList) {
-
+        if (getContentView() == null) return;
         List<Object> cartItemHeaderList = new ArrayList<>();
         for (CartItemList cartItemInfoArray : cartItemLists) {
             CartItemHeader cartItemHeader = new CartItemHeader();

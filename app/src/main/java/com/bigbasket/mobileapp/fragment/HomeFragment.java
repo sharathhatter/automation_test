@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.fragment;
 
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -129,7 +128,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     private boolean isVisitorUpdateNeeded() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String storedVersionNumber = preferences.getString(Constants.VERSION_NAME, null);
-        String appVersionName = getAppVersion();
+        String appVersionName = DataUtil.getAppVersion(getActivity());
         return TextUtils.isEmpty(storedVersionNumber) ||
                 (!TextUtils.isEmpty(appVersionName) && !appVersionName.equals(storedVersionNumber));
     }
@@ -146,7 +145,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         showProgressDialog(getString(R.string.please_wait));
         String imei = UIUtil.getIMEI(getActivity());
         bigBasketApiService.updateVersionNumber(imei, preferences.getString(Constants.DEVICE_ID, null),
-                getAppVersion(), new Callback<ApiResponse<UpdateVersionInfoApiResponseContent>>() {
+                DataUtil.getAppVersion(getActivity()), new Callback<ApiResponse<UpdateVersionInfoApiResponseContent>>() {
                     @Override
                     public void success(ApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse, Response response) {
                         if (isSuspended()) return;
@@ -160,7 +159,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             case 0:
                                 SharedPreferences.Editor editor =
                                         PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-                                editor.putString(Constants.VERSION_NAME, getAppVersion());
+                                editor.putString(Constants.VERSION_NAME, DataUtil.getAppVersion(getActivity()));
                                 editor.apply();
                                 if (updateVersionInfoApiResponse.apiResponseContent.userDetails != null) {
                                     UIUtil.updateStoredUserDetails(getActivity(),
@@ -193,17 +192,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                         }
                     }
                 });
-    }
-
-    private String getAppVersion() {
-        String appVersionName;
-        try {
-            appVersionName = getActivity().getPackageManager().
-                    getPackageInfo(getActivity().getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            appVersionName = null;
-        }
-        return appVersionName;
     }
 
     private void requestHomePage() {

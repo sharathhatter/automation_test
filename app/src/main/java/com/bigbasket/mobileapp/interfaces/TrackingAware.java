@@ -71,10 +71,6 @@ public interface TrackingAware {
     String NEW_ADDRESS_FAILED = "New Address Add.Failed";
     String UPDATE_ADDRESS_FAILED = "Update Address.Failed";
 
-    //topnav and home page
-    String SHOPPING_LIST_ICON_CLICKED = "Shopping Lists.Clicked";
-    String SMART_BASKET_ICON_CLICKED = "Smart Basket.Clicked";
-
     //logout
     String LOG_OUT_ICON_CLICKED = "Logout.Clicked";
 
@@ -178,6 +174,14 @@ public interface TrackingAware {
 
     String FUND_WALLET_SHOWN = "Fund Wallet.Shown";
     String FUND_WALLET_DONE = "Fund Wallet.Done";
+
+    // Gifting
+    String GIFT_SKIP_AND_PROCEED = "Gift.SkipAndProceed";
+    String GIFT_VIEW_WRAP_OPTS = "Gift.ViewGiftWrapOptions";
+    String GIFT_ITEM_INC_DEC = "Gift.ItemIncrementOrDecrement";
+    String GIFT_OPTS_ADD_MSG = "Gift.AddMessage";
+    String GIFT_MESSAGE_OPT = "Gift.MessageOption";
+    String GIFT_OPTS_SAVE_AND_CONTINUE = "Gift.SaveAndContinue";
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease,

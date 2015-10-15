@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PostGiftItemsResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
@@ -85,16 +86,16 @@ public interface BigBasketApiService {
                         Callback<RegisterDeviceResponse> registerDeviceResponseCallback);
 
     @GET("/get-dynamic-page/")
-    void getDynamicPage(@Query(Constants.OS) String osName,
+    void getDynamicPage(@Query(Constants.OS) String osName, @Query(Constants.APP_VERSION) String version,
                         @Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
 
 
     @GET("/get-home-page/")
-    void getHomePage(@Query(Constants.OS) String osName,
+    void getHomePage(@Query(Constants.OS) String osName, @Query(Constants.APP_VERSION) String version,
                      Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
 
     @GET("/get-main-menu/")
-    void getMainMenu(@Query(Constants.OS) String osName,
+    void getMainMenu(@Query(Constants.OS) String osName, @Query(Constants.APP_VERSION) String version,
                      Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
 
     @GET("/c-get/")
@@ -357,6 +358,12 @@ public interface BigBasketApiService {
                               Callback<ApiResponse<CreatePotentialOrderResponseContent>> apiResponseCallback);
 
     @FormUrlEncoded
+    @POST("/co-post-gifts/")
+    void postGifts(@Field(Constants.P_ORDER_ID) String potentialOrderId,
+                   @Field(Constants.GIFTS) String gifts,
+                   Callback<ApiResponse<PostGiftItemsResponseContent>> apiResponseCallback);
+
+    @FormUrlEncoded
     @POST("/co-post-shipment/")
     void postShipment(@Field("shipments") String shipments,
                       @Field(Constants.P_ORDER_ID) String potentialOrderId,
@@ -434,4 +441,5 @@ public interface BigBasketApiService {
 
     @POST("/get-app-data-dynamic/")
     ApiResponse<GetAppDataDynamicResponse> getAppDataDynamic();
+
 }

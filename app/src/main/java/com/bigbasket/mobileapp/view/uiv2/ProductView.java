@@ -8,8 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.text.style.StrikethroughSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -149,9 +151,30 @@ public final class ProductView {
         TextView txtProductDesc = productViewHolder.getTxtProductDesc();
         TextView txtProductBrand = productViewHolder.getTxtProductBrand();
         txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-        //txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         if (!TextUtils.isEmpty(product.getDescription())) {
-            txtProductDesc.setText(product.getDescription());
+            if (!TextUtils.isEmpty(product.getGiftMsg())) {
+                if (productViewDisplayDataHolder.displayGiftMsg()) {
+                    txtProductDesc.setText(product.getDescription());
+                    TextView txtGiftMsg = productViewHolder.getTxtGiftMsg();
+                    if (txtGiftMsg != null) {
+                        txtGiftMsg.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+                        txtGiftMsg.setText(product.getGiftMsg());
+                    }
+                } else {
+                    // Not setting drawable-right as it'll look off for two line text
+                    String imgPlaceHolderTxt = " ";
+                    String desc = product.getDescription() + " ";
+                    SpannableStringBuilder spannableStringBuilder =
+                            new SpannableStringBuilder(desc + imgPlaceHolderTxt);
+                    spannableStringBuilder
+                            .setSpan(new ImageSpan(((ActivityAware) productDataAware).getCurrentActivity(),
+                                            R.drawable.ic_gift_grey600_18dp), desc.length(), desc.length() + 1,
+                                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+                    txtProductDesc.setText(spannableStringBuilder);
+                }
+            } else {
+                txtProductDesc.setText(product.getDescription());
+            }
             txtProductDesc.setVisibility(View.VISIBLE);
         } else {
             txtProductDesc.setVisibility(View.GONE);
@@ -198,7 +221,7 @@ public final class ProductView {
     }
 
     private static boolean hasText(ArrayList<HashMap<String, String>> storeAvailabilityArrayList,
-                            @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
+                                   @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
         for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
             String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
             if (TextUtils.isEmpty(msg)) return false;
@@ -474,6 +497,7 @@ public final class ProductView {
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
         final View viewIncBasketQty = productViewHolder.getViewIncBasketQty();
         final EditText editTextQty = productViewHolder.getEditTextQty();
+        ViewGroup viewGroup = productViewHolder.getLayoutExpressMsg();
 
         TextView txtOutOfStockORNotForSale = productViewHolder.getTxtOutOfStockORNotForSale();
         txtInBasket.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
@@ -495,6 +519,7 @@ public final class ProductView {
         if (productViewDisplayDataHolder.isShowBasketBtn()) {
             if (getAvailability(product, storeAvailability).equalsIgnoreCase("A")) {
                 int noOfItemsInCart = getNoOfItemsInCart(product, cartInfo);
+                viewGroup.setVisibility(View.VISIBLE);
 
                 if (noOfItemsInCart > 0) {
                     txtInBasket.setText(String.valueOf(noOfItemsInCart));
@@ -584,9 +609,11 @@ public final class ProductView {
                 viewIncBasketQty.setVisibility(View.GONE);
                 editTextQty.setVisibility(View.GONE);
                 imgAddToBasket.setVisibility(View.GONE);
+                viewGroup.setVisibility(View.GONE);
 
                 txtOutOfStockORNotForSale.setVisibility(View.VISIBLE);
                 txtOutOfStockORNotForSale.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+
                 if (getAvailability(product, storeAvailability).equalsIgnoreCase("0")
                         || getAvailability(product, storeAvailability).equalsIgnoreCase("O")) {  // zero not O
                     txtOutOfStockORNotForSale.setText("Out of Stock");
@@ -601,6 +628,7 @@ public final class ProductView {
             viewIncBasketQty.setVisibility(View.GONE);
             imgAddToBasket.setVisibility(View.GONE);
             editTextQty.setVisibility(View.GONE);
+            viewGroup.setVisibility(View.GONE);
             //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
         }
     }

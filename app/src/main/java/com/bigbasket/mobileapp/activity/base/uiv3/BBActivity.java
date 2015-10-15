@@ -50,6 +50,7 @@ import com.bigbasket.mobileapp.fragment.account.AccountView;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.fragment.order.GiftOptionsFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
@@ -115,8 +116,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         OnAddressChangeListener, BasketDeltaUserActionListener {
 
     protected BigBasketMessageHandler handler;
-    private ActionBarDrawerToggle mDrawerToggle;
     protected String mTitle;
+    @Nullable
+    protected DynamicAppDataBroadcastReceiver mDynamicAppDataBroadcastReceiver;
+    private ActionBarDrawerToggle mDrawerToggle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartSummary = new CartSummary();
     private BBDrawerLayout mDrawerLayout;
@@ -126,8 +129,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private FloatingBadgeCountView mBtnViewBasket;
     private RecyclerView mListSubNavigation;
     private boolean mSyncNeeded;
-    @Nullable
-    protected DynamicAppDataBroadcastReceiver mDynamicAppDataBroadcastReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -322,6 +323,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
+    //method for add bundle
+
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
         if (fragment == null) return;
         UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
@@ -340,8 +343,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mDrawerLayout.closeDrawers();
         }
     }
-
-    //method for add bundle
 
     public BBDrawerLayout getDrawerLayout() {
         return mDrawerLayout;
@@ -398,6 +399,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 break;
             case FragmentCodes.START_CHANGE_PASSWD:
                 addToMainLayout(new ChangePasswordFragment());
+                break;
+            case FragmentCodes.START_GIFTFRAGMENT:
+                GiftOptionsFragment giftOptionsFragment = new GiftOptionsFragment();
+                Bundle giftBundle = getIntent().getExtras();
+                giftOptionsFragment.setArguments(giftBundle);
+                addToMainLayout(giftOptionsFragment);
                 break;
             case FragmentCodes.START_VIEW_DELIVERY_ADDRESS:
                 MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
@@ -1077,7 +1084,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (mDynamicAppDataBroadcastReceiver != null) {
             try {
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(mDynamicAppDataBroadcastReceiver);
-            } catch (IllegalArgumentException e) {}
+            } catch (IllegalArgumentException e) {
+            }
         }
     }
 

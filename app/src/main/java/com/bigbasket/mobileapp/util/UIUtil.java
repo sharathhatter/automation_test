@@ -17,6 +17,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
+import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
@@ -44,6 +46,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
@@ -52,6 +55,7 @@ import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -65,10 +69,12 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeSet;
 
 public class UIUtil {
 
@@ -134,6 +140,8 @@ public class UIUtil {
     }
 
     public static String strJoin(List<String> stringList, String separator) {
+        if (stringList == null || stringList.size() == 0) return "";
+        if (stringList.size() == 1) return stringList.get(0);
         StringBuilder sbr = new StringBuilder();
         int len = stringList.size();
         for (int i = 0; i < len; i++) {
@@ -147,6 +155,8 @@ public class UIUtil {
 
 
     public static String strJoin(String[] stringArray, String separator) {
+        if (stringArray == null || stringArray.length == 0) return "";
+        if (stringArray.length == 1) return stringArray[0];
         StringBuilder sbr = new StringBuilder();
         int len = stringArray.length;
         for (int i = 0; i < len; i++) {
@@ -166,6 +176,15 @@ public class UIUtil {
         String rupeeSym = "`";
         SpannableString spannableString = new SpannableString(rupeeSym + amtTxt);
         spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0, rupeeSym.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        return spannableString;
+    }
+
+    public static SpannableString asRupeeSpannable(String prefix, String amtTxt, Typeface faceRupee) {
+        String rupeeSym = "`";
+        SpannableString spannableString = new SpannableString(prefix + rupeeSym + amtTxt);
+        spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), prefix.length(),
+                prefix.length() + rupeeSym.length(),
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         return spannableString;
     }
@@ -441,6 +460,104 @@ public class UIUtil {
                 return .66;
             default:
                 return 1;
+        }
+    }
+
+    public static View getCheckoutProgressView(Context context, @Nullable ViewGroup parent, String[] array_txtValues,
+                                               @Nullable Integer[] array_compPos, int selectedPos) {
+        View container = LayoutInflater.from(context).inflate(R.layout.uiv3_checkout_progress_view,
+                parent, false);
+        LinearLayout layoutGift = (LinearLayout) container.findViewById(R.id.layout_gift);
+        ImageView imageViewAddress = (ImageView) container.findViewById(R.id.imageView_address);
+        ImageView imageViewGift = (ImageView) container.findViewById(R.id.imageView_gifts);
+        ImageView imageViewSlots = (ImageView) container.findViewById(R.id.imageView_slots);
+        ImageView imageViewOrder = (ImageView) container.findViewById(R.id.imageView_order);
+        TextView textViewAddress = (TextView) container.findViewById(R.id.textView_address);
+        TextView textViewGift = (TextView) container.findViewById(R.id.textView_gifts);
+        TextView textViewSlots = (TextView) container.findViewById(R.id.textView_slots);
+        TextView textViewOrder = (TextView) container.findViewById(R.id.textView_order);
+
+        ArrayList<ImageView> listImageViews = new ArrayList<>();
+        listImageViews.add(imageViewAddress);
+        listImageViews.add(imageViewGift);
+        listImageViews.add(imageViewSlots);
+        listImageViews.add(imageViewOrder);
+
+        Integer[] tot;
+        if (array_txtValues.length == 4) {
+            textViewAddress.setText(array_txtValues[0]);
+            textViewGift.setText(array_txtValues[1]);
+            textViewSlots.setText(array_txtValues[2]);
+            textViewOrder.setText(array_txtValues[3]);
+            tot = new Integer[]{0, 1, 2, 3};
+        } else {
+            layoutGift.setVisibility(View.GONE);
+            listImageViews.remove(1);
+            textViewAddress.setText(array_txtValues[0]);
+            textViewSlots.setText(array_txtValues[1]);
+            textViewOrder.setText(array_txtValues[2]);
+            tot = new Integer[]{0, 1, 2};
+        }
+
+        if (array_compPos != null) {
+            for (Integer array_compPo : array_compPos) {
+                listImageViews.get(array_compPo).setBackgroundResource(R.drawable.tick_circle_complete);
+            }
+        }
+        Integer[] rem;
+        if (array_compPos != null) {
+            List<Integer> list = new ArrayList<>(Arrays.asList(tot));
+            TreeSet<Integer> set = new TreeSet<>(list);
+            set.removeAll(Arrays.asList(array_compPos));
+            rem = set.toArray(new Integer[set.size()]);
+        } else {
+            rem = tot;
+        }
+        for (Integer aRem : rem)
+            if (aRem != selectedPos) {
+                listImageViews.get(aRem).setBackgroundResource(R.drawable.tick_circle_pending);
+            }
+        listImageViews.get(selectedPos).setBackgroundResource(R.drawable.tick_circle_current);
+
+        textViewAddress.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewSlots.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewOrder.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewGift.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        return container;
+    }
+
+    public static void setUpGiftItemListFooter(Gift gift, GiftItemListRecyclerAdapter.GiftItemFooterViewHolder holder,
+                                               Context context) {
+        Pair<Integer, Double> data = gift.getGiftItemSelectedCountAndTotalPrice();
+        int numGiftItemsToWrap = data.first;
+        double giftItemTotal = data.second;
+
+        TextView lblTotalGiftItems = holder.getLblTotalGiftItems();
+        TextView txtCountGiftItems = holder.getTxtCountGiftItems();
+        TextView lblGiftItemTotalPrice = holder.getLblGiftItemTotalPrice();
+        TextView txtGiftItemTotalPrice = holder.getTxtGiftItemTotalPrice();
+        TextView lblGiftItemTotalPriceColon = holder.getLblGiftItemTotalPriceColon();
+
+        lblTotalGiftItems.setText(context.getString(R.string.totalNumOfItemsToGiftWrap));
+        txtCountGiftItems.setText(String.valueOf(numGiftItemsToWrap));
+
+        if (giftItemTotal > 0) {
+            String start = context.getString(R.string.totalCostOfGiftWrapping) + " ";
+            String end = context.getString(R.string.willBeAddedToFinalAmount);
+            SpannableString spannableString = new SpannableString(start + end);
+
+            spannableString.setSpan(new StyleSpan(Typeface.ITALIC), start.length(),
+                    spannableString.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            lblGiftItemTotalPrice.setText(spannableString);
+            txtGiftItemTotalPrice.setText(UIUtil.asRupeeSpannable(giftItemTotal,
+                    FontHolder.getInstance(context).getFaceRupee()));
+            lblGiftItemTotalPrice.setVisibility(View.VISIBLE);
+            txtGiftItemTotalPrice.setVisibility(View.VISIBLE);
+            lblGiftItemTotalPriceColon.setVisibility(View.VISIBLE);
+        } else {
+            lblGiftItemTotalPrice.setVisibility(View.GONE);
+            txtGiftItemTotalPrice.setVisibility(View.GONE);
+            lblGiftItemTotalPriceColon.setVisibility(View.GONE);
         }
     }
 

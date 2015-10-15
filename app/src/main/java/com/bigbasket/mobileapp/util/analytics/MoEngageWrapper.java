@@ -85,7 +85,7 @@ public class MoEngageWrapper {
 
     }
 
-    public static void onFragmentStart(MoEHelper moEHelper, Activity context, String fragmentName){
+    public static void onFragmentStart(MoEHelper moEHelper, Activity context, String fragmentName) {
         try {
             moEHelper.onFragmentStart(context, fragmentName);
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class MoEngageWrapper {
         }
     }
 
-    public static void onFragmentStop(MoEHelper moEHelper, Activity context, String fragmentName){
+    public static void onFragmentStop(MoEHelper moEHelper, Activity context, String fragmentName) {
         try {
             moEHelper.onFragmentStop(context, fragmentName);
         } catch (Exception e) {
@@ -101,7 +101,7 @@ public class MoEngageWrapper {
         }
     }
 
-    public static void suppressInAppMessageHere(MoEHelper moEHelper){
+    public static void suppressInAppMessageHere(MoEHelper moEHelper) {
         try {
             moEHelper.suppressInAppMessageHere(true);
         } catch (Exception e) {
@@ -109,7 +109,7 @@ public class MoEngageWrapper {
         }
     }
 
-    public static void setExistingUser(MoEHelper moEHelper, boolean isExistingUser){
+    public static void setExistingUser(MoEHelper moEHelper, boolean isExistingUser) {
         try {
             moEHelper.setExistingUser(isExistingUser);
         } catch (Exception e) {
