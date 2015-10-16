@@ -148,21 +148,20 @@ public final class ProductView {
                                            final T productDataAware) {
         TextView txtProductDesc = productViewHolder.getTxtProductDesc();
         TextView txtProductBrand = productViewHolder.getTxtProductBrand();
+        TextView txtGiftMsg = productViewHolder.getTxtGiftMsg();
         txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         if (!TextUtils.isEmpty(product.getDescription())) {
-            if (!TextUtils.isEmpty(product.getGiftMsg())) {
-                txtProductDesc.setText(product.getDescription());
-                TextView txtGiftMsg = productViewHolder.getTxtGiftMsg();
-                if (txtGiftMsg != null) {
-                    txtGiftMsg.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-                    txtGiftMsg.setText(product.getGiftMsg());
-                }
-            } else {
-                txtProductDesc.setText(product.getDescription());
-            }
+            txtProductDesc.setText(product.getDescription());
             txtProductDesc.setVisibility(View.VISIBLE);
         } else {
             txtProductDesc.setVisibility(View.GONE);
+        }
+        if (!TextUtils.isEmpty(product.getGiftMsg())) {
+            txtGiftMsg.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+            txtGiftMsg.setText(product.getGiftMsg());
+            txtGiftMsg.setVisibility(View.VISIBLE);
+        } else {
+            txtGiftMsg.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(product.getBrand())) {
             txtProductBrand.setText(product.getBrand());
