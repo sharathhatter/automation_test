@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:layout_gravity="top"
     android:layout_margin="@dimen/margin_normal"
-    android:background="@color/uiv3_large_list_item_bck"
     android:scrollbars="none">
 
 
