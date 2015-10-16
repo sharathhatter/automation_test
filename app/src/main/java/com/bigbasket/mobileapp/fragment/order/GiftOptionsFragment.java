@@ -123,6 +123,16 @@ public class GiftOptionsFragment extends BaseFragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
+            getActivity().setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
+            getActivity().finish();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     public String getTitle() {
         return getString(R.string.giftOptions);
     }

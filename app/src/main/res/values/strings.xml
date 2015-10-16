@@ -90,6 +90,7 @@
     <string name="applyAllCaps">APPLY</string>
     <string name="apply">Apply</string>
     <string name="pleaseNote">Please Note:</string>
+    <string name="note">Note:</string>
     <string name="shopFromOrder">Shop from order</string>
 
     <style name="placeOrder">Place Order</style>

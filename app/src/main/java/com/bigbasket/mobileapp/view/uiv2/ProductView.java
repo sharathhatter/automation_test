@@ -8,10 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.ImageSpan;
 import android.text.style.StrikethroughSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -153,24 +151,11 @@ public final class ProductView {
         txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         if (!TextUtils.isEmpty(product.getDescription())) {
             if (!TextUtils.isEmpty(product.getGiftMsg())) {
-                if (productViewDisplayDataHolder.displayGiftMsg()) {
-                    txtProductDesc.setText(product.getDescription());
-                    TextView txtGiftMsg = productViewHolder.getTxtGiftMsg();
-                    if (txtGiftMsg != null) {
-                        txtGiftMsg.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-                        txtGiftMsg.setText(product.getGiftMsg());
-                    }
-                } else {
-                    // Not setting drawable-right as it'll look off for two line text
-                    String imgPlaceHolderTxt = " ";
-                    String desc = product.getDescription() + " ";
-                    SpannableStringBuilder spannableStringBuilder =
-                            new SpannableStringBuilder(desc + imgPlaceHolderTxt);
-                    spannableStringBuilder
-                            .setSpan(new ImageSpan(((ActivityAware) productDataAware).getCurrentActivity(),
-                                            R.drawable.ic_gift_grey600_18dp), desc.length(), desc.length() + 1,
-                                    Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-                    txtProductDesc.setText(spannableStringBuilder);
+                txtProductDesc.setText(product.getDescription());
+                TextView txtGiftMsg = productViewHolder.getTxtGiftMsg();
+                if (txtGiftMsg != null) {
+                    txtGiftMsg.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+                    txtGiftMsg.setText(product.getGiftMsg());
                 }
             } else {
                 txtProductDesc.setText(product.getDescription());
