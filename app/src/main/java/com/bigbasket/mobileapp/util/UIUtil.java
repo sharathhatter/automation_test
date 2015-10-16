@@ -2,7 +2,9 @@ package com.bigbasket.mobileapp.util;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -19,6 +21,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -27,12 +30,15 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
+import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,9 +58,12 @@ import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
+import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.account.AddressSummary;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
@@ -745,5 +754,82 @@ public class UIUtil {
     public static String getIMEI(Context context) {
         TelephonyManager mngr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return mngr.getDeviceId();
+    }
+
+    public static void dialNumber(String number, Activity activity) {
+        try {
+            String uri = "tel:" + number;
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse(uri));
+            activity.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            // Do nothing
+        }
+    }
+
+    public static void invokeMailClient(String email, Activity activity) {
+        try {
+            StringBuilder builder = new StringBuilder()
+                    .append("mailto:")
+                    .append(email);
+            activity.startActivity(Intent.createChooser(new Intent(Intent.ACTION_SENDTO, Uri.parse(builder.toString())), "BigBasket Customer Service"));
+        } catch (ActivityNotFoundException e) {
+            // Do nothing
+        }
+    }
+
+    public static void showPaymentFailureDlg(final BaseActivity activity) {
+        ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(activity).getAddressSummaries();
+        String phone = null;
+        if (addressSummaries != null && addressSummaries.size() > 0) {
+            City city = CityManager.getCity(addressSummaries.get(0).getCityId(), activity);
+            if (city != null) {
+                phone = city.getPhone();
+            }
+        }
+        if (!TextUtils.isEmpty(phone)) {
+            View dlg = activity.getLayoutInflater().inflate(R.layout.uiv3_msg_text, null);
+            TextView txtMsg = (TextView) dlg.findViewById(R.id.txtMsg);
+            int dp16 = (int) activity.getResources().getDimension(R.dimen.padding_normal);
+            txtMsg.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            txtMsg.setTextColor(activity.getResources().getColor(android.R.color.black));
+            String prefix = activity.getString(R.string.txnFailureMsgPrefix) + " ";
+            String suffix = activity.getString(R.string.txnFailureMsgSuffix) + " ";
+            final String csEmail = "customerservice@bigbasket.com";
+            SpannableString spannableString = new SpannableString(prefix + phone + " " +
+                    suffix + csEmail);
+            final String passedPhoneNum = phone;
+            spannableString.setSpan(new ClickableSpan() {
+                                        @Override
+                                        public void onClick(View widget) {
+                                            UIUtil.dialNumber(passedPhoneNum, activity);
+                                        }
+                                    }, prefix.length(), prefix.length() + phone.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new ClickableSpan() {
+                                        @Override
+                                        public void onClick(View widget) {
+                                            UIUtil.invokeMailClient(csEmail, activity);
+                                        }
+                                    }, prefix.length() + phone.length() + 1 + suffix.length(),
+                    spannableString.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            txtMsg.setText(spannableString);
+            txtMsg.setMovementMethod(LinkMovementMethod.getInstance());
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity)
+                    .setTitle(activity.getString(R.string.transactionFailed))
+                    .setView(dlg, dp16, dp16, dp16, dp16)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setCancelable(false);
+            builder.create().show();
+        } else {
+            activity.showAlertDialog(activity.getString(R.string.transactionFailed),
+                    activity.getString(R.string.txnFailureMsg));
+        }
     }
 }

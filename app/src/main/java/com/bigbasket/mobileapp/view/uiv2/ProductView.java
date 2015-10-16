@@ -403,13 +403,15 @@ public final class ProductView {
     }
 
     private static String getAvailability(Product product, String storeAvailability) {
-        if (!TextUtils.isEmpty(storeAvailability)) {
+        if (!TextUtils.isEmpty(product.getProductStatus())) {
+            return product.getProductStatus();
+        } else if (!TextUtils.isEmpty(storeAvailability)) {
             return storeAvailability;
         } else if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0 &&
                 product.getStoreAvailability().get(0).containsKey(Constants.PRODUCT_STATUS)) {
             return product.getStoreAvailability().get(0).get(Constants.PRODUCT_STATUS);
         } else {
-            return product.getProductStatus();
+            return "A";
         }
     }
 

@@ -231,14 +231,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 break;
             case DestinationInfo.CALL:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
-                    try {
-                        String uri = "tel:" + destinationInfo.getDestinationSlug();
-                        intent = new Intent(Intent.ACTION_DIAL);
-                        intent.setData(Uri.parse(uri));
-                        ((ActivityAware) context).getCurrentActivity().startActivity(intent);
-                    } catch (ActivityNotFoundException e) {
-                        // Do nothing
-                    }
+                    UIUtil.dialNumber(destinationInfo.getDestinationSlug(),
+                            ((ActivityAware) context).getCurrentActivity());
                 }
                 break;
             case DestinationInfo.DYNAMIC_PAGE:
