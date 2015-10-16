@@ -280,15 +280,18 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @Override
         public void onClick(View v) {
-            SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(getPosition());
-            if (!sectionNavigationItem.isHeader()) {
-                if (sectionNavigationItem.getSectionItem() != null && sectionNavigationItem.getSectionItem().getSubSectionItems() != null
-                        && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
-                    ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
-                            sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
-                } else {
-                    new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
-                            sectionNavigationItem.getSectionItem(), screenName).onClick(v);
+            int pos = getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(pos);
+                if (!sectionNavigationItem.isHeader()) {
+                    if (sectionNavigationItem.getSectionItem() != null && sectionNavigationItem.getSectionItem().getSubSectionItems() != null
+                            && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
+                        ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
+                                sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
+                    } else {
+                        new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
+                                sectionNavigationItem.getSectionItem(), screenName).onClick(v);
+                    }
                 }
             }
         }
