@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
     android:paddingTop="@dimen/padding_normal">
 
     <!-- Min height has been intentionally set in PX don't change it -->
