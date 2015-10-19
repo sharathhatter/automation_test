@@ -5,6 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/uiv3LayoutListContainer"
-    >
+    android:background="@color/uiv3_list_bkg_color">
 
 </LinearLayout>
