@@ -66,7 +66,11 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
                 return new GiftItemViewHolder(row);
             case VIEW_TYPE_HEADER:
                 row = inflater.inflate(R.layout.uiv3_gift_message_header, parent, false);
-                setUpHeaderView(row);
+                if (gift.getGiftItems() != null && gift.getGiftItems().size() <= 1) {
+                    row.setVisibility(View.GONE);
+                } else {
+                    setUpHeaderView(row);
+                }
                 return new FixedLayoutViewHolder(row);
             case VIEW_TYPE_FOOTER:
                 row = inflater.inflate(R.layout.uiv3_gift_list_footer, parent, false);
