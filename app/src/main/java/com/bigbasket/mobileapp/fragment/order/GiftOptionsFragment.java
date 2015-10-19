@@ -119,7 +119,17 @@ public class GiftOptionsFragment extends BaseFragment {
         Intent intent = new Intent(getActivity(), GiftHomeActivity.class);
         intent.putExtra(Constants.P_ORDER_ID, potentialOrderId);
         intent.putExtra(Constants.GIFTS, gift);
-        startActivity(intent);
+        startActivityForResult(intent, NavigationCodes.GO_TO_BASKET);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
+            getActivity().setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
+            getActivity().finish();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override

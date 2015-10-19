@@ -11,6 +11,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -64,7 +66,11 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
                 return new GiftItemViewHolder(row);
             case VIEW_TYPE_HEADER:
                 row = inflater.inflate(R.layout.uiv3_gift_message_header, parent, false);
-                setUpHeaderView(row);
+                if (gift.getGiftItems() != null && gift.getGiftItems().size() <= 1) {
+                    row.setVisibility(View.GONE);
+                } else {
+                    setUpHeaderView(row);
+                }
                 return new FixedLayoutViewHolder(row);
             case VIEW_TYPE_FOOTER:
                 row = inflater.inflate(R.layout.uiv3_gift_list_footer, parent, false);
@@ -86,12 +92,25 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
         int sp14 = (int) context.getResources().getDimension(R.dimen.secondary_text_size);
         int sp12 = (int) context.getResources().getDimension(R.dimen.small_text_size);
 
+        CustomTypefaceSpan typefaceSpan = new CustomTypefaceSpan("", FontHolder.getInstance(context).getFaceRobotoLight());
+        AbsoluteSizeSpan ab14 = new AbsoluteSizeSpan(sp14);
+        AbsoluteSizeSpan ab12 = new AbsoluteSizeSpan(sp12);
+        ForegroundColorSpan colorSpan = new ForegroundColorSpan(context.getResources().getColor(R.color.uiv3_secondary_text_color));
+
         String commonMsg = context.getString(R.string.commonMsg) + "\n";
         String commonMsgDesc = context.getString(R.string.commonMsgDesc);
         SpannableString spannableStringCommonMsg = new SpannableString(commonMsg + commonMsgDesc);
-        spannableStringCommonMsg.setSpan(new AbsoluteSizeSpan(sp14), 0, commonMsg.length(),
+        spannableStringCommonMsg.setSpan(ab14, 0, commonMsg.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        spannableStringCommonMsg.setSpan(new AbsoluteSizeSpan(sp12), commonMsg.length(),
+        spannableStringCommonMsg.setSpan(ab12, commonMsg.length(),
+                spannableStringCommonMsg.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannableStringCommonMsg.setSpan(typefaceSpan,
+                commonMsg.length(),
+                spannableStringCommonMsg.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannableStringCommonMsg.setSpan(colorSpan,
+                commonMsg.length(),
                 spannableStringCommonMsg.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         rbtnCommonMsg.setText(spannableStringCommonMsg);
@@ -114,9 +133,18 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
         String individualMsg = context.getString(R.string.individualMsg) + "\n";
         String individualMsgDesc = context.getString(R.string.commonMsgDesc);
         SpannableString spannableStringIndividualMsg = new SpannableString(individualMsg + individualMsgDesc);
-        spannableStringIndividualMsg.setSpan(new AbsoluteSizeSpan(sp14), 0, individualMsg.length(),
+        spannableStringIndividualMsg.setSpan(ab14, 0, individualMsg.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        spannableStringIndividualMsg.setSpan(new AbsoluteSizeSpan(sp12), individualMsg.length(),
+        spannableStringIndividualMsg.setSpan(ab12, individualMsg.length(),
+                spannableStringIndividualMsg.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannableStringIndividualMsg.setSpan(typefaceSpan, individualMsg.length(),
+                spannableStringIndividualMsg.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannableStringIndividualMsg.setSpan(typefaceSpan, individualMsg.length(),
+                spannableStringIndividualMsg.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannableStringIndividualMsg.setSpan(colorSpan, individualMsg.length(),
                 spannableStringIndividualMsg.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         rbtnIndividualMsg.setText(spannableStringIndividualMsg);

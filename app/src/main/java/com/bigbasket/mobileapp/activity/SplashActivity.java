@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
@@ -79,12 +80,21 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             } catch (ClassCastException e) {
 
             }
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = preferences.edit();
+            if (preferences.contains(Constants.FIRSE_TIME_USER)) {
+                MoEngageWrapper.setExistingUser(moEHelper, true);
+            } else {
+                MoEngageWrapper.setExistingUser(moEHelper, false);
+                editor.putBoolean(Constants.FIRSE_TIME_USER, true);
+            }
             if (!BuildConfig.DEBUG) {
-                PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Constants.APP_LAUNCH, true).commit();
+                editor.putBoolean(Constants.APP_LAUNCH, true);
                 if (checkInternetConnection()) {
                     NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
                 }
             }
+            editor.commit(); //HomeActivity need APP_LAUNCH flag, so we don't want to write data in background
         }
     }
 

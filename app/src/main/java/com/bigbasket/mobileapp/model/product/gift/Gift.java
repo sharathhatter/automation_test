@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.support.v4.util.Pair;
 
 import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -23,11 +24,15 @@ public class Gift implements Parcelable {
     };
 
     @SerializedName(Constants.ITEMS)
+    @Expose
     private ArrayList<GiftItem> giftItems;
     @SerializedName(Constants.COMMON_MSG)
+    @Expose
     private String commonMsg;
     @SerializedName(Constants.COMMON_MSG_NUM_CHARS)
+    @Expose
     private int commonMsgNumChars;
+    @Expose
     private int count;
     @SerializedName(Constants.BASE_IMG_URL)
     private String baseImgUrl;

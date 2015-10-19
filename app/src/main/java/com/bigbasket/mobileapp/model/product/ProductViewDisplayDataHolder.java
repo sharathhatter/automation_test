@@ -19,7 +19,7 @@ public class ProductViewDisplayDataHolder {
     private ShoppingListName shoppingListName;
     private boolean disableInBasketChildSwap;
     private boolean showQtyInput;
-    private boolean disableAbMode;
+    private boolean useRadioButtonsForContextual;
 
     public ProductViewDisplayDataHolder(Builder builder) {
         this.sanSerifLightTypeface = builder.sanSerifLightTypeface;
@@ -34,7 +34,7 @@ public class ProductViewDisplayDataHolder {
         this.shoppingListName = builder.shoppingListName;
         this.disableInBasketChildSwap = builder.disableInBasketChildSwap;
         this.showQtyInput = builder.showQtyInput;
-        this.disableAbMode = builder.disableAbMode;
+        this.useRadioButtonsForContextual = builder.useRadioButtonsForContextual;
     }
 
     public ShoppingListName getShoppingListName() {
@@ -77,8 +77,8 @@ public class ProductViewDisplayDataHolder {
         return showQtyInput;
     }
 
-    public boolean disableAbMode() {
-        return disableAbMode;
+    public boolean useRadioButtonsForContextual() {
+        return useRadioButtonsForContextual;
     }
 
     public BigBasketMessageHandler getHandler() {
@@ -98,11 +98,11 @@ public class ProductViewDisplayDataHolder {
         private ShoppingListName shoppingListName;
         private boolean disableInBasketChildSwap;
         private boolean showQtyInput;
-        private boolean disableAbMode;
+        private boolean useRadioButtonsForContextual;
 
         public Builder() {
             this.disableInBasketChildSwap = false;
-            this.disableAbMode = false;
+            this.useRadioButtonsForContextual = false;
         }
 
         public Builder setCommonTypeface(Typeface commonTypeface) {
@@ -162,8 +162,8 @@ public class ProductViewDisplayDataHolder {
             return this;
         }
 
-        public Builder disableAbMode(boolean disableAbMode) {
-            this.disableAbMode = disableAbMode;
+        public Builder useRadioButtonsForContextual(boolean useRadioButtonsForContextual) {
+            this.useRadioButtonsForContextual = useRadioButtonsForContextual;
             return this;
         }
 

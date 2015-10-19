@@ -31,6 +31,7 @@ public class Constants {
     public static final String PRODUCT_WEIGHT = "w";
     public static final String PRODUCT_BRAND = "p_brand";
     public static final String BRAND_SLUG = "brand_slug";
+    public static final String GIFT_MSG = "gift_msg";
     public static final String PRODUCT_DESC = "p_desc";
     public static final String PACKAGE_DESC = "pack_desc";
     public static final String PRODUCT_STATUS = "pstat";
@@ -590,6 +591,7 @@ public class Constants {
     public static final String FORGOT_PASSWORD_DIALOG = "FPassDialog";
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
+    public static final String FIRSE_TIME_USER = "fst_tm_user";
 
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";

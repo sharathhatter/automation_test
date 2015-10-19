@@ -235,9 +235,9 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
         @Override
         public void onClick(View v) {
-            final int position = getAdapterPosition();
-            if (position != RecyclerView.NO_POSITION) {
-                selectedAddress = (Address) addressObjectList.get(getAdapterPosition());
+            int pos = getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                selectedAddress = (Address) addressObjectList.get(pos);
                 ((AddressSelectionAware) context).onAddressSelected(selectedAddress);
             }
         }

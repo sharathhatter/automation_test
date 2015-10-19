@@ -62,7 +62,7 @@ public class BasketDeltaDialog<T extends BasketDeltaUserActionListener> {
         }).setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                ctx.onNoBasketUpdate();
             }
         });
 

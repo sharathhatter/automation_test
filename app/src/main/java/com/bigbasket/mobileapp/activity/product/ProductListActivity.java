@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.activity.product;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -105,8 +106,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     @Override
     public void onResume() {
         super.onResume();
-        if (mNameValuePairs != null)
+        if (mNameValuePairs != null) {
             setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
+        }
     }
 
     @Override
@@ -170,10 +172,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     @Override
     public void setProductTabData(ProductTabData productTabData, int currentTabIndex,
                                   boolean isFilterOrSortApplied) {
+        if (currentTabIndex < 0) {
+            currentTabIndex = 0;
+        }
+
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawers();
         }
-
 
         SectionData sectionData = productTabData.getContentSectionData();
         View contentSectionView = null;
@@ -335,9 +340,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         TabPagerAdapterWithFragmentRegistration statePagerAdapter =
                 new TabPagerAdapterWithFragmentRegistration(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
-        ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
-        setCurrentTabSortAndFilter(productTabInfo.getFilterOptionItems(), productTabInfo.getFilteredOn(),
-                productTabInfo.getSortOptions(), productTabInfo.getSortedOn(), hasProducts);
+        ProductTabInfo productTabInfo = productTabData.getProductTabInfos() != null ?
+                productTabData.getProductTabInfos().get(currentTabIndex) : null;
+
+        if (productTabInfo != null) {
+            setCurrentTabSortAndFilter(productTabInfo.getFilterOptionItems(), productTabInfo.getFilteredOn(),
+                    productTabInfo.getSortOptions(), productTabInfo.getSortedOn(), hasProducts);
+        } else {
+            setCurrentTabSortAndFilter(null, null, null, null, hasProducts);
+        }
 
         TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
         pagerSlidingTabStrip.setupWithViewPager(mViewPager);
@@ -398,11 +409,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
         // Setup title
         if (productTabData.getProductTabInfos() != null &&
-                productTabData.getProductTabInfos().get(0) != null &&
-                productTabData.getProductTabInfos().get(0).getHeaderSection() != null) {
+                productTabInfo != null &&
+                productTabInfo.getHeaderSection() != null) {
             mTitlePassedViaIntent = "";
-            renderHeaderDropDown(productTabData.getProductTabInfos().get(0).getHeaderSection(),
-                    productTabData.getProductTabInfos().get(0).getHeaderSelectedIndex(),
+            renderHeaderDropDown(productTabInfo.getHeaderSection(),
+                    productTabInfo.getHeaderSelectedIndex(),
                     productTabData.getScreenName());
         } else if (!TextUtils.isEmpty(productTabData.getScreenName())) {
             mTitlePassedViaIntent = productTabData.getScreenName();

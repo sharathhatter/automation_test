@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.location.LocationAutoSuggestListener;
@@ -84,6 +85,9 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (placeAutoSuggestAdapter != null && position != AdapterView.INVALID_POSITION) {
                     AutoCompletePlace autoCompletePlace = placeAutoSuggestAdapter.getItem(position);
+                    if (autoCompleteTextViewWeakReference != null && autoCompleteTextViewWeakReference.get() != null) {
+                        BaseActivity.hideKeyboard((BaseActivity) ctx, autoCompleteTextViewWeakReference.get());
+                    }
                     if (!TextUtils.isEmpty(autoCompletePlace.getPlaceId())) {
                         setLocationFromId(autoCompletePlace.getPlaceId());
                     }

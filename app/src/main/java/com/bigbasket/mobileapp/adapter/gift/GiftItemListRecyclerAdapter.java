@@ -123,17 +123,23 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
             txtProductBrand.setText(giftItem.getBrand());
             txtProductQuantity.setText(context.getString(R.string.qtyInBasket) + " " + reservedQty);
 
-            SpannableString giftWrapChargeSpannable = UIUtil.asRupeeSpannable(context.getString(R.string.giftWrapCharge) + " ",
-                    UIUtil.formatAsMoney(giftItem.getGiftWrapCharge()) +
-                            context.getString(R.string.rupeeTerminator) + " " + context.getString(R.string.perItem),
-                    faceRupee);
-            txtProductGiftWrapPrice.setText(giftWrapChargeSpannable);
+            if (giftItem.getGiftWrapCharge() > 0) {
+                SpannableString giftWrapChargeSpannable = UIUtil.asRupeeSpannable(context.getString(R.string.giftWrapCharge) + " ",
+                        UIUtil.formatAsMoney(giftItem.getGiftWrapCharge()) +
+                                context.getString(R.string.rupeeTerminator) + " " + context.getString(R.string.perItem),
+                        faceRupee);
+                txtProductGiftWrapPrice.setText(giftWrapChargeSpannable);
+                txtProductGiftWrapPrice.setVisibility(View.VISIBLE);
 
+                SpannableString giftWrapTotalChargeSpannable = UIUtil.asRupeeSpannable(context.getString(R.string.giftWrapChargeTotal) + " ",
+                        UIUtil.formatAsMoney(giftItem.getGiftWrapCharge() * reservedQty) +
+                                context.getString(R.string.rupeeTerminator), faceRupee);
+                txtProductGiftWrapTotalPrice.setText(giftWrapTotalChargeSpannable);
+            } else {
+                txtProductGiftWrapPrice.setVisibility(View.GONE);
+                txtProductGiftWrapTotalPrice.setText(context.getString(R.string.noAddGiftWrap));
+            }
             txtProductGiftWrapQuantityStatus.setText(giftItem.getReservedQty() + " " + context.getString(R.string.qtyToGiftWrapOrMsg));
-            SpannableString giftWrapTotalChargeSpannable = UIUtil.asRupeeSpannable(context.getString(R.string.giftWrapChargeTotal) + " ",
-                    UIUtil.formatAsMoney(giftItem.getGiftWrapCharge() * reservedQty) +
-                            context.getString(R.string.rupeeTerminator), faceRupee);
-            txtProductGiftWrapTotalPrice.setText(giftWrapTotalChargeSpannable);
         } else {
             UIUtil.setUpGiftItemListFooter(gift, (GiftItemFooterViewHolder) vholder,
                     ((ActivityAware) context).getCurrentActivity());
@@ -221,6 +227,7 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
         private TextView txtCountGiftItems;
         private TextView lblGiftItemTotalPrice;
         private TextView txtGiftItemTotalPrice;
+        private TextView lblGiftItemTotalPriceColon;
         private Typeface typefaceText;
         private Typeface typefacePrice;
 
@@ -253,6 +260,13 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
                 lblGiftItemTotalPrice.setTypeface(typefaceText);
             }
             return lblGiftItemTotalPrice;
+        }
+
+        public TextView getLblGiftItemTotalPriceColon() {
+            if (lblGiftItemTotalPriceColon == null) {
+                lblGiftItemTotalPriceColon = (TextView) itemView.findViewById(R.id.lblGiftItemTotalPriceColon);
+            }
+            return lblGiftItemTotalPriceColon;
         }
 
         public TextView getTxtGiftItemTotalPrice() {

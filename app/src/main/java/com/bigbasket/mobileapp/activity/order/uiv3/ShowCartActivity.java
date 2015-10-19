@@ -213,9 +213,9 @@ public class ShowCartActivity extends BackButtonActivity {
     }
 
     public final void setBasketNumItemsDisplay() {
+        markBasketDirty();
         if (getCartSummary() == null) return;
         updateUIForCartInfo();
-        markBasketDirty();
     }
 
     private void emptyCart() {
@@ -313,39 +313,6 @@ public class ShowCartActivity extends BackButtonActivity {
                 });
     }
 
-    private Pair<ArrayList<CartItemList>, ArrayList<CartItemList>> getGroupedSkuTabs(ArrayList<CartItemList> totalList) {
-        ArrayList<CartItemList> expressTabList = new ArrayList<>();
-        ArrayList<CartItemList> standardTabList = new ArrayList<>();
-
-        for (CartItemList cartItemList : totalList) {
-
-            ArrayList<CartItem> listExpress = new ArrayList<>();
-            ArrayList<CartItem> listStandard = new ArrayList<>();
-            for (CartItem cartItem : cartItemList.getCartItems()) {
-                String sku_type = cartItem.getSkuType();
-                if (!TextUtils.isEmpty(sku_type) &&
-                        (sku_type.equals(Constants.SKU_TYPE_EXPRESS) ||
-                                sku_type.equals(Constants.SKU_TYPE_JIT) ||
-                                sku_type.equals(Constants.SKU_TYPE_KIRANA))) {
-                    listExpress.add(cartItem);
-                } else {
-                    listStandard.add(cartItem);
-                }
-            }
-            if (listExpress.size() > 0) {
-                CartItemList returnCartItemList = new CartItemList(listExpress, cartItemList.getTopCatName(),
-                        cartItemList.getTopCatTotal(), cartItemList.getTopCatItems());
-                expressTabList.add(returnCartItemList);
-            }
-            if (listStandard.size() > 0) {
-                CartItemList returnCartItemList = new CartItemList(listStandard, cartItemList.getTopCatName(),
-                        cartItemList.getTopCatTotal(), cartItemList.getTopCatItems());
-                standardTabList.add(returnCartItemList);
-            }
-        }
-        return new Pair<>(expressTabList, standardTabList);
-    }
-
     private void addTabsToPager(boolean showTabs, String baseImgUrl, ArrayList<FulfillmentInfo> fulfillmentInfos,
                                 ArrayList<AnnotationInfo> annotationInfoArrayList) {
         if (showTabs) {
@@ -413,6 +380,7 @@ public class ShowCartActivity extends BackButtonActivity {
         coordinatorLayout.removeView(mViewPager);
         relativeLayout.removeView(linearLayout);
         frameLayout.addView(base);
+        markBasketChanged(null);
     }
 
     @Override
@@ -486,6 +454,45 @@ public class ShowCartActivity extends BackButtonActivity {
             cartItemListsExp = expressStandardListPair.first;
             cartItemListsStnd = expressStandardListPair.second;
             return null;
+        }
+
+        private Pair<ArrayList<CartItemList>, ArrayList<CartItemList>> getGroupedSkuTabs(ArrayList<CartItemList> totalList) {
+            ArrayList<CartItemList> expressTabList = new ArrayList<>();
+            ArrayList<CartItemList> standardTabList = new ArrayList<>();
+
+            for (CartItemList cartItemList : totalList) {
+                double standardTotalPerCat = 0, expressTotalPerCat = 0;
+                int standardItemCountPerCat = 0, expressItemCountPerCat = 0;
+
+                ArrayList<CartItem> listExpress = new ArrayList<>();
+                ArrayList<CartItem> listStandard = new ArrayList<>();
+                for (CartItem cartItem : cartItemList.getCartItems()) {
+                    String sku_type = cartItem.getSkuType();
+                    if (!TextUtils.isEmpty(sku_type) &&
+                            (sku_type.equals(Constants.SKU_TYPE_EXPRESS) ||
+                                    sku_type.equals(Constants.SKU_TYPE_JIT) ||
+                                    sku_type.equals(Constants.SKU_TYPE_KIRANA))) {
+                        listExpress.add(cartItem);
+                        expressItemCountPerCat++;
+                        expressTotalPerCat += cartItem.getTotalPrice();
+                    } else {
+                        listStandard.add(cartItem);
+                        standardItemCountPerCat++;
+                        standardTotalPerCat += cartItem.getTotalPrice();
+                    }
+                }
+                if (listExpress.size() > 0) {
+                    CartItemList returnCartItemList = new CartItemList(listExpress, cartItemList.getTopCatName(),
+                            expressTotalPerCat, expressItemCountPerCat);
+                    expressTabList.add(returnCartItemList);
+                }
+                if (listStandard.size() > 0) {
+                    CartItemList returnCartItemList = new CartItemList(listStandard, cartItemList.getTopCatName(),
+                            standardTotalPerCat, standardItemCountPerCat);
+                    standardTabList.add(returnCartItemList);
+                }
+            }
+            return new Pair<>(expressTabList, standardTabList);
         }
 
         @Override

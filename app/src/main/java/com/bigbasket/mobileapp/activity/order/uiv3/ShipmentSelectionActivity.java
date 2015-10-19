@@ -11,6 +11,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -292,8 +293,18 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private void setShipmentHeaderMsg(int numVisibleShipments) {
         TextView txtDeliverablesHeading = (TextView) findViewById(R.id.txtDeliverablesHeading);
         if (numVisibleShipments > 1) {
-            txtDeliverablesHeading.setTypeface(faceRobotoRegular);
-            txtDeliverablesHeading.setText(R.string.deliverableTextPlural);
+            if (TextUtils.isEmpty(txtDeliverablesHeading.getText())) {
+                txtDeliverablesHeading.setTypeface(faceRobotoRegular);
+                String prefix = getString(R.string.note);
+                String msg = " " + getString(R.string.deliverableTextPlural);
+                SpannableString spannableString = new SpannableString(prefix + msg);
+                spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoMedium), 0, prefix.length(),
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_dialog_header_text_bkg)),
+                        0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                txtDeliverablesHeading.setText(spannableString);
+            }
+            txtDeliverablesHeading.setVisibility(View.VISIBLE);
         } else {
             txtDeliverablesHeading.setVisibility(View.GONE);
         }

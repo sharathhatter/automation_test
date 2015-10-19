@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.view.uiv2;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -10,13 +11,17 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StrikethroughSpan;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,15 +74,10 @@ public final class ProductView {
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
                 productDetailOnClickListener, productDataAware);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
-        HashMap<String, String> basketQueryMap =
-                setExpressMsg(productViewHolder, product, productViewDisplayDataHolder,
-                        productDataAware, tabName, appDataStoreAvailabilityMap);
+        setExpressMsg(productViewHolder, product, productViewDisplayDataHolder,
+                productDataAware, tabName, navigationCtx, appDataStoreAvailabilityMap,
+                cartInfo);
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
-        setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                productDataAware, null);
-        setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
-                productDataAware, navigationCtx, cartInfo, tabName, null,
-                basketQueryMap);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
                     productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap);
@@ -148,13 +148,20 @@ public final class ProductView {
                                            final T productDataAware) {
         TextView txtProductDesc = productViewHolder.getTxtProductDesc();
         TextView txtProductBrand = productViewHolder.getTxtProductBrand();
+        TextView txtGiftMsg = productViewHolder.getTxtGiftMsg();
         txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-        //txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         if (!TextUtils.isEmpty(product.getDescription())) {
             txtProductDesc.setText(product.getDescription());
             txtProductDesc.setVisibility(View.VISIBLE);
         } else {
             txtProductDesc.setVisibility(View.GONE);
+        }
+        if (!TextUtils.isEmpty(product.getGiftMsg())) {
+            txtGiftMsg.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+            txtGiftMsg.setText(product.getGiftMsg());
+            txtGiftMsg.setVisibility(View.VISIBLE);
+        } else {
+            txtGiftMsg.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(product.getBrand())) {
             txtProductBrand.setText(product.getBrand());
@@ -197,25 +204,86 @@ public final class ProductView {
                 UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())), productViewDisplayDataHolder.getRupeeTypeface()));
     }
 
-    @Nullable
-    private static <T> HashMap<String, String> setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
-                                                             final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                             final T productDataAware,
-                                                             final String tabName,
-                                                             @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
+    private static boolean hasText(ArrayList<HashMap<String, String>> storeAvailabilityArrayList,
+                                   @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
+        for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
+            String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+            if (TextUtils.isEmpty(msg)) return false;
+        }
+        return true;
+    }
+
+    private static <T> void setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
+                                          final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                          final T productDataAware,
+                                          final String tabName, final String navigationCtx,
+                                          @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap,
+                                          final @Nullable HashMap<String, Integer> cartInfo) {
 
         final ArrayList<HashMap<String, String>> storeAvailabilityArrayList = product.getStoreAvailability();
+        ViewGroup layoutExpressMsg = productViewHolder.getLayoutExpressMsg();
         TextView txtExpressMsg = productViewHolder.getTxtExpressMsg();
+        final RadioGroup radioGroupExpress = productViewHolder.getRadioGroupExpress();
         if (storeAvailabilityArrayList == null || storeAvailabilityArrayList.size() == 0
                 || allStoreAvailabilityMsgMap == null || !productViewDisplayDataHolder.isShowBasketBtn()) {
-            txtExpressMsg.setVisibility(View.GONE);
-            return null;
+            layoutExpressMsg.setVisibility(View.GONE);
+            txtExpressMsg.setText("");
+            radioGroupExpress.removeAllViews();
+            setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
+                    productDataAware, null);
+            setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
+                    productDataAware, navigationCtx, cartInfo, tabName, null, null);
+            return;
         }
-        HashMap<String, String> currentStoreMap = null;
+        Context context = ((ActivityAware) productDataAware).getCurrentActivity();
+        boolean isContextualMode = AppDataDynamic.getInstance(context).isContextualMode();
+
+        if (productViewDisplayDataHolder.useRadioButtonsForContextual() && isContextualMode
+                && storeAvailabilityArrayList.size() > 1
+                && hasText(storeAvailabilityArrayList, allStoreAvailabilityMsgMap)) {
+            layoutExpressMsg.setVisibility(View.VISIBLE);
+            txtExpressMsg.setVisibility(View.GONE);
+            radioGroupExpress.removeAllViews();
+            radioGroupExpress.setVisibility(View.VISIBLE);
+            for (int i = 0; i < storeAvailabilityArrayList.size(); i++) {
+                HashMap<String, String> particularStoreMap = storeAvailabilityArrayList.get(i);
+                String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+                RadioButton rbtnAvailabilityType = UIUtil.getPaymentOptionRadioButton(radioGroupExpress, context,
+                        LayoutInflater.from(context), (int) context.getResources().getDimension(R.dimen.margin_mini));
+                rbtnAvailabilityType.setText(msg);
+                radioGroupExpress.addView(rbtnAvailabilityType);
+                rbtnAvailabilityType.setId(i);
+                if (i == 0) {
+                    rbtnAvailabilityType.setChecked(true);
+                    setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
+                            productDataAware, particularStoreMap.get(Constants.PRODUCT_STATUS));
+                    setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
+                            productDataAware, navigationCtx, cartInfo, tabName,
+                            particularStoreMap.get(Constants.PRODUCT_STATUS), particularStoreMap);
+                }
+                radioGroupExpress.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        HashMap<String, String> selectedStore =
+                                storeAvailabilityArrayList.get(checkedId);
+                        String storeAvailability = selectedStore != null ?
+                                selectedStore.get(Constants.PRODUCT_STATUS) : null;
+                        setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
+                                productDataAware, storeAvailability);
+                        setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
+                                productDataAware, navigationCtx, cartInfo, tabName, storeAvailability,
+                                selectedStore);
+                    }
+                });
+            }
+            return;
+        }
+        layoutExpressMsg.setVisibility(View.VISIBLE);
         txtExpressMsg.setVisibility(View.VISIBLE);
-        if (!productViewDisplayDataHolder.disableAbMode()
-                && AppDataDynamic.getInstance(((ActivityAware) productDataAware).getCurrentActivity()).isContextualMode()
-                && storeAvailabilityArrayList.size() > 1 && !TextUtils.isEmpty(tabName)
+        radioGroupExpress.removeAllViews();
+        radioGroupExpress.setVisibility(View.GONE);
+        HashMap<String, String> currentStoreMap = null;
+        if (isContextualMode && storeAvailabilityArrayList.size() > 1 && !TextUtils.isEmpty(tabName)
                 && tabName.equals(Constants.EXPRESS)) {
             for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
                 if (particularStoreMap.containsKey(Constants.TAB_TYPE) &&
@@ -226,6 +294,7 @@ public final class ProductView {
                         currentStoreMap = particularStoreMap;
                     } else {
                         txtExpressMsg.setVisibility(View.GONE);
+                        layoutExpressMsg.setVisibility(View.GONE);
                     }
                 }
             }
@@ -235,18 +304,25 @@ public final class ProductView {
                 String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
                 if (!TextUtils.isEmpty(msg)) {
                     msgs.add(msg);
-                }
-                if (currentStoreMap == null) {
-                    currentStoreMap = particularStoreMap;
+                    if (currentStoreMap == null) {
+                        currentStoreMap = particularStoreMap;
+                    }
                 }
             }
             if (msgs.size() > 0) {
                 txtExpressMsg.setText(UIUtil.strJoin(msgs, "\n"));
             } else {
                 txtExpressMsg.setVisibility(View.GONE);
+                layoutExpressMsg.setVisibility(View.GONE);
             }
         }
-        return currentStoreMap;
+        String storeAvailability = currentStoreMap != null ?
+                currentStoreMap.get(Constants.PRODUCT_STATUS) : null;
+        setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
+                productDataAware, storeAvailability);
+        setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
+                productDataAware, navigationCtx, cartInfo, tabName, storeAvailability,
+                currentStoreMap);
     }
 
     @Nullable
@@ -311,13 +387,15 @@ public final class ProductView {
     }
 
     private static String getAvailability(Product product, String storeAvailability) {
-        if (!TextUtils.isEmpty(storeAvailability)) {
+        if (!TextUtils.isEmpty(product.getProductStatus())) {
+            return product.getProductStatus();
+        } else if (!TextUtils.isEmpty(storeAvailability)) {
             return storeAvailability;
         } else if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0 &&
                 product.getStoreAvailability().get(0).containsKey(Constants.PRODUCT_STATUS)) {
             return product.getStoreAvailability().get(0).get(Constants.PRODUCT_STATUS);
         } else {
-            return product.getProductStatus();
+            return "A";
         }
     }
 
@@ -405,6 +483,7 @@ public final class ProductView {
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
         final View viewIncBasketQty = productViewHolder.getViewIncBasketQty();
         final EditText editTextQty = productViewHolder.getEditTextQty();
+        ViewGroup viewGroup = productViewHolder.getLayoutExpressMsg();
 
         TextView txtOutOfStockORNotForSale = productViewHolder.getTxtOutOfStockORNotForSale();
         txtInBasket.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
@@ -426,13 +505,13 @@ public final class ProductView {
         if (productViewDisplayDataHolder.isShowBasketBtn()) {
             if (getAvailability(product, storeAvailability).equalsIgnoreCase("A")) {
                 int noOfItemsInCart = getNoOfItemsInCart(product, cartInfo);
+                viewGroup.setVisibility(View.VISIBLE);
 
                 if (noOfItemsInCart > 0) {
                     txtInBasket.setText(String.valueOf(noOfItemsInCart));
                     txtInBasket.setVisibility(View.VISIBLE);
                     viewDecBasketQty.setVisibility(View.VISIBLE);
                     viewIncBasketQty.setVisibility(View.VISIBLE);
-                    //productViewHolder.itemView.setBackgroundColor(Constants.IN_BASKET_COLOR);
                     if (productViewDisplayDataHolder.isShowQtyInput()) {
                         editTextQty.setVisibility(View.GONE);
                     }
@@ -447,7 +526,6 @@ public final class ProductView {
                     if (productViewDisplayDataHolder.isShowQtyInput()) {
                         editTextQty.setVisibility(View.VISIBLE);
                     }
-                    //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
                 }
 
                 viewIncBasketQty.setOnClickListener(new View.OnClickListener() {
@@ -460,7 +538,6 @@ public final class ProductView {
                                     TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView, cartInfo,
                                     editTextQty, tabName, basketQueryMap);
                             basketOperationTask.startTask();
-
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
                         }
@@ -518,9 +595,11 @@ public final class ProductView {
                 viewIncBasketQty.setVisibility(View.GONE);
                 editTextQty.setVisibility(View.GONE);
                 imgAddToBasket.setVisibility(View.GONE);
+                viewGroup.setVisibility(View.GONE);
 
                 txtOutOfStockORNotForSale.setVisibility(View.VISIBLE);
                 txtOutOfStockORNotForSale.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+
                 if (getAvailability(product, storeAvailability).equalsIgnoreCase("0")
                         || getAvailability(product, storeAvailability).equalsIgnoreCase("O")) {  // zero not O
                     txtOutOfStockORNotForSale.setText("Out of Stock");
@@ -535,6 +614,7 @@ public final class ProductView {
             viewIncBasketQty.setVisibility(View.GONE);
             imgAddToBasket.setVisibility(View.GONE);
             editTextQty.setVisibility(View.GONE);
+            viewGroup.setVisibility(View.GONE);
             //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
         }
     }

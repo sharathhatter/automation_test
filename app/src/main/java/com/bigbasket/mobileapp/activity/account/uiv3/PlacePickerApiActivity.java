@@ -11,6 +11,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.interfaces.location.LocationAutoSuggestListener;
 import com.bigbasket.mobileapp.util.Constants;
@@ -40,6 +41,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     private GoogleMap mGoogleMap;
     @Nullable
     private Marker mGoogleMapMarker;
+    private AutoCompleteTextView mEditTextChooseArea;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,9 +74,9 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
 
-        AutoCompleteTextView aEditTextChooseArea =
+        mEditTextChooseArea =
                 (AutoCompleteTextView) findViewById(R.id.aEditTextChooseArea);
-        new LocationAutoSuggestHelper<>(this, aEditTextChooseArea, mGoogleApiClient,
+        new LocationAutoSuggestHelper<>(this, mEditTextChooseArea, mGoogleApiClient,
                 new LatLngBounds(new LatLng(7.43231, 65.82658), new LatLng(36.93593, 99.04924)), false).init();
 
         TextView txtAction = (TextView) findViewById(R.id.txtAction);
@@ -82,6 +84,10 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         txtAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mSelectedLatLng == null) {
+                    showAlertDialog(getString(R.string.location_not_found));
+                    return;
+                }
                 Intent intent = new Intent();
                 intent.putExtra(Constants.LAT, mSelectedLatLng);
                 setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED,
@@ -117,6 +123,12 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BaseActivity.hideKeyboard(this, mEditTextChooseArea);
     }
 
     @Override

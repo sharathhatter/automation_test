@@ -71,7 +71,7 @@ public class PaytmTxnCallback<T> implements PaytmPaymentTransactionCallback {
 
         String txnId = paramsMap.get("ORDERID");
         if (TextUtils.isEmpty(txnId)) {
-            paramsMap.get("ORDER_ID");
+            txnId = paramsMap.get("ORDER_ID");
         }
         new PostPaymentHandler<>(ctx, potentialOrderId, Constants.PAYTM_WALLET, status, orderId)
                 .setPayNow(isPayNow)

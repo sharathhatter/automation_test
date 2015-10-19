@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
     android:paddingTop="@dimen/padding_normal">
 
     <!-- Min height has been intentionally set in PX don't change it -->
@@ -103,11 +102,23 @@
             android:textSize="@dimen/secondary_text_size" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/txtGiftMsg"
+        style="@style/BBTextStyle.Gift"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/layoutPackageDesc"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_toLeftOf="@id/imgProductOverflowAction" />
+
     <LinearLayout
         android:id="@+id/layoutProductPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layoutPackageDesc"
+        android:layout_below="@id/txtGiftMsg"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"
@@ -164,9 +175,8 @@
             android:visibility="gone" />
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/txtExpressMsg"
+    <LinearLayout
+        android:id="@+id/layoutExpressMsg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutProductPrice"
@@ -174,16 +184,30 @@
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"
-        android:lineSpacingExtra="@dimen/margin_mini"
-        android:textColor="@color/uiv3_status_bar_background"
-        android:textSize="@dimen/secondary_text_size"
-        android:visibility="gone" />
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <RadioGroup
+            android:id="@+id/radioGroupExpress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/txtExpressMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="@dimen/margin_mini"
+            android:textColor="@color/uiv3_status_bar_background"
+            android:textSize="@dimen/secondary_text_size"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/layoutPromoInfoBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtExpressMsg"
+        android:layout_below="@id/layoutExpressMsg"
         android:layout_marginTop="@dimen/margin_normal"
         android:background="@color/uiv3_list_bkg_color"
         android:paddingBottom="@dimen/padding_small"
