@@ -545,28 +545,22 @@ public class UIUtil {
         TextView txtCountGiftItems = holder.getTxtCountGiftItems();
         TextView lblGiftItemTotalPrice = holder.getLblGiftItemTotalPrice();
         TextView txtGiftItemTotalPrice = holder.getTxtGiftItemTotalPrice();
-        TextView lblGiftItemTotalPriceColon = holder.getLblGiftItemTotalPriceColon();
 
         lblTotalGiftItems.setText(context.getString(R.string.totalNumOfItemsToGiftWrap));
         txtCountGiftItems.setText(String.valueOf(numGiftItemsToWrap));
 
-        if (giftItemTotal > 0) {
-            String start = context.getString(R.string.totalCostOfGiftWrapping) + " ";
-            String end = context.getString(R.string.willBeAddedToFinalAmount);
-            SpannableString spannableString = new SpannableString(start + end);
+        String start = context.getString(R.string.totalCostOfGiftWrapping) + " ";
+        String end = context.getString(R.string.willBeAddedToFinalAmount);
+        SpannableString spannableString = new SpannableString(start + end);
 
-            spannableString.setSpan(new StyleSpan(Typeface.ITALIC), start.length(),
-                    spannableString.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            lblGiftItemTotalPrice.setText(spannableString);
+        spannableString.setSpan(new StyleSpan(Typeface.ITALIC), start.length(),
+                spannableString.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        lblGiftItemTotalPrice.setText(spannableString);
+        if (giftItemTotal > 0) {
             txtGiftItemTotalPrice.setText(UIUtil.asRupeeSpannable(giftItemTotal,
                     FontHolder.getInstance(context).getFaceRupee()));
-            lblGiftItemTotalPrice.setVisibility(View.VISIBLE);
-            txtGiftItemTotalPrice.setVisibility(View.VISIBLE);
-            lblGiftItemTotalPriceColon.setVisibility(View.VISIBLE);
         } else {
-            lblGiftItemTotalPrice.setVisibility(View.GONE);
-            txtGiftItemTotalPrice.setVisibility(View.GONE);
-            lblGiftItemTotalPriceColon.setVisibility(View.GONE);
+            txtGiftItemTotalPrice.setText("0");
         }
     }
 
