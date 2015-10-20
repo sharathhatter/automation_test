@@ -58,10 +58,15 @@ public class GiftOptionsFragment extends BaseFragment {
         if (contentView == null) return;
         renderCheckOutProgressView();
         TextView textViewCount = (TextView) contentView.findViewById(R.id.textViewNumGifts);
+        TextView txtWouldYouLike = (TextView) contentView.findViewById(R.id.txtWouldYouLike);
         final Gift gift = args.getParcelable(Constants.GIFTS);
         if (gift == null) return;
-        textViewCount.setText("You have " + gift.getCount() + " gift items in your basket!");
-        textViewCount.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoMedium());
+        String pluralSuffix = gift.getCount() > 1 ? "s" : "";
+        String pluralThemSuffix = gift.getCount() > 1 ? " them " : " it ";
+        textViewCount.setText("You have " + gift.getCount() + " gift item" + pluralSuffix + " in your basket!");
+        textViewCount.setTypeface(faceRobotoMedium);
+        txtWouldYouLike.setText(getString(R.string.giftWrapMsgPrefix) + pluralThemSuffix + getString(R.string.giftWrapMsgSuffix));
+        txtWouldYouLike.setTypeface(faceRobotoRegular);
         final String potentialOrderId = args.getString(Constants.P_ORDER_ID);
         Button btnSkipAndProceed = (Button) contentView.findViewById(R.id.buttonSkipPro);
         btnSkipAndProceed.setOnClickListener(new View.OnClickListener() {
