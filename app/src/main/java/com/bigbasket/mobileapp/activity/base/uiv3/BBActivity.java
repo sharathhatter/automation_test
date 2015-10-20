@@ -501,7 +501,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void setCurrentDeliveryAddress(String addressId) {
-        new ChangeAddressTask<>(this, addressId, null, null, true).startTask();
+        new ChangeAddressTask<>(this, addressId, null, null, null, true).startTask();
     }
 
     @Override
@@ -522,20 +522,21 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     @Override
     public void onBasketDelta(String addressId, String lat, String lng,
-                              String title, String msg, boolean hasQcError,
+                              String title, String msg, @Nullable String area,
+                              boolean hasQcError,
                               ArrayList<QCErrorData> qcErrorDatas) {
         new BasketDeltaDialog<>().show(this, title, msg, hasQcError, qcErrorDatas, addressId,
-                getString(R.string.change), lat, lng);
+                getString(R.string.change), lat, lng, area);
     }
 
     @Override
-    public void onNoBasketDelta(String addressId, String lat, String lng) {
-        new ChangeAddressTask<>(this, addressId, lat, lng, false).startTask();
+    public void onNoBasketDelta(String addressId, String lat, String lng, @Nullable String area) {
+        new ChangeAddressTask<>(this, addressId, lat, lng, area, false).startTask();
     }
 
     @Override
-    public void onUpdateBasket(String addressId, String lat, String lng) {
-        new ChangeAddressTask<>(this, addressId, lat, lng, false).startTask();
+    public void onUpdateBasket(String addressId, String lat, String lng, @Nullable String area) {
+        new ChangeAddressTask<>(this, addressId, lat, lng, area, false).startTask();
     }
 
     @Override

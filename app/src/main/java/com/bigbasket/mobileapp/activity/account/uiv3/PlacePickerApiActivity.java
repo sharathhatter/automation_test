@@ -37,6 +37,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
     private GoogleApiClient mGoogleApiClient;
     private LatLng mSelectedLatLng;
+    private String mAreaName;
     @Nullable
     private GoogleMap mGoogleMap;
     @Nullable
@@ -90,6 +91,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
                 }
                 Intent intent = new Intent();
                 intent.putExtra(Constants.LAT, mSelectedLatLng);
+                intent.putExtra(Constants.AREA, mAreaName);
                 setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED,
                         intent);
                 finish();
@@ -98,8 +100,9 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     }
 
     @Override
-    public void onLocationSelected(LatLng latLng) {
+    public void onLocationSelected(LatLng latLng, @Nullable String name) {
         mSelectedLatLng = latLng;
+        mAreaName = name;
         updateLastKnownLocationOnMap();
     }
 

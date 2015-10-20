@@ -416,6 +416,7 @@ public interface BigBasketApiService {
     void setCurrentAddress(@Field(Constants.ID) String id,
                            @Field(Constants.LAT) String latitude,
                            @Field(Constants.LNG) String longitude,
+                           @Field(Constants.AREA) String area,
                            Callback<ApiResponse<SetAddressResponse>> getAddressSummaryResponseCallback);
 
     @FormUrlEncoded
@@ -424,6 +425,7 @@ public interface BigBasketApiService {
                            @Field(Constants.LAT) String latitude,
                            @Field(Constants.LNG) String longitude,
                            @Field(Constants.TRANSIENT) String isTransient,
+                           @Field(Constants.AREA) String area,
                            Callback<ApiResponse<SetAddressTransientResponse>>
                                    getAddressSummaryResponseCallback);
 

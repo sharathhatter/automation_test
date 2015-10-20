@@ -119,7 +119,7 @@ public class HomeActivity extends BBActivity {
             lat = lng = null;
             isTransient = true;
         }
-        new ChangeAddressTask<>(this, addressId, lat, lng, isTransient).startTask();
+        new ChangeAddressTask<>(this, addressId, lat, lng, null, isTransient).startTask();
     }
 
     @Override
