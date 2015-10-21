@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:drawablePadding="@dimen/padding_small"
-    android:drawableRight="@drawable/ic_edit_white_24dp"
+    android:drawableRight="@drawable/ic_edit_white_18dp"
     android:padding="@dimen/padding_normal"
     android:textColor="@color/white"
     android:textSize="@dimen/secondary_text_size" />
