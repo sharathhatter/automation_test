@@ -336,11 +336,10 @@
     <string name="fundWalletSuccess">You have successfully funded the wallet</string>
     <string name="reviewBasket">Review Basket</string>
 
-    <string name="chooseYourDeliveryLocation">Choose your delivery location</string>
     <string name="chooseDeliveryLocation">Choose Delivery Location</string>
-    <string name="typeYourLocality">Type your locality eg: M.G. Road</string>
+    <string name="typeYourLocality">Type Area Name eg: M.G. Road</string>
     <string name="enableLocationHeading">Enable Location</string>
-    <string name="enableLocation">Enable location to get correct address</string>
+    <string name="enableLocation">Enable location to automatically find the delivery area!</string>
     <string name="enable">Enable</string>
     <string name="locationSettingError">Unable to open location window.\nPlease enable it by going to settings.</string>
 
