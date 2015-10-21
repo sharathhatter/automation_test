@@ -82,6 +82,7 @@ public class ShoppingListDoAddDeleteTask<T> {
                     switch (shoppingListOption) {
                         case ShoppingListOption.ADD_TO_LIST:
                             ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.ADD_TO_SHOPPINGLIST_OK, null);
+                            ((ShoppingListNamesAware) ctx).postAddToShoppingListOperation();
                             Log.d(TAG, "Sending message: MessageCode.ADD_TO_SHOPPINGLIST_OK");
                             break;
                         case ShoppingListOption.DELETE_ITEM:

@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -347,7 +348,9 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         bundle.putParcelableArrayList(Constants.FULFILLMENT_INFO, fulfillmentInfos);
         bundle.putParcelableArrayList(Constants.ANNOTATION_INFO, annotationInfoArrayList);
         bundle.putString(Constants.BASE_IMG_URL, baseUrl);
-        bundle.putInt(Constants.ITEM_SCROLL_POSITION, currentItemPosition);
+        if(this.currentTabIndex == currentTabIndex) {
+            bundle.putInt(Constants.ITEM_SCROLL_POSITION, currentItemPosition);
+        }
         bundle.putInt(Constants.CURRENT_TAB_INDEX, currentTabIndex);
         bbTabs.add(new BBTab<>(tab_name, ShowCartFragment.class, bundle));
         return bbTabs;
@@ -415,7 +418,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
     }
 
     private void renderTabsDataToView(ArrayList<CartItemList> cartItemListsStnd, ArrayList<CartItemList> cartItemListsExp, String baseImgUrl) {
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
+        final ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
         TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
         ArrayList<BBTab> bbTabs = new ArrayList<>();
 
@@ -440,11 +443,20 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
                 bbTabs);
         mViewPager.setAdapter(tabPagerAdapter);
         pageTitleStrip.getSelectedTabPosition();
-        mViewPager.setCurrentItem(currentTabIndex);
 
         if (pageTitleStrip.isShown()) {
             pageTitleStrip.setupWithViewPager(mViewPager);
+            mViewPager.setCurrentItem(currentTabIndex);
         }
+        /*
+        mViewPager.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                mViewPager.setCurrentItem(currentTabIndex);
+            }
+        }, 100);
+        */
     }
 
     private class GenerateTabDataAsync extends AsyncTask<Void, Void, Void> {

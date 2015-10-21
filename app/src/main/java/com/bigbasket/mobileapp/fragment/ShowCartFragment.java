@@ -109,7 +109,7 @@ public class ShowCartFragment extends BaseFragment {
     }
 
     private void onBasketProductAlterScrollHandler(RecyclerView listShowCart, List<Object> cartItemHeaderList) {
-        int listScrollPosition = getArguments().getInt(Constants.ITEM_SCROLL_POSITION);
+        int listScrollPosition = getArguments().getInt(Constants.ITEM_SCROLL_POSITION, 0);
         if (listScrollPosition > 2 && cartItemHeaderList.size() > 2) {
             listShowCart.scrollToPosition(listScrollPosition);
         }

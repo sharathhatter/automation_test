@@ -67,13 +67,24 @@ public class ShoppingListSummaryActivity extends BBActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadShoppingListSummary();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        loadShoppingListSummary();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if(resultCode == NavigationCodes.SHOPPING_LIST_MODIFIED){
+            loadShoppingListSummary();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
 
     @Override
     public int getMainLayout() {
