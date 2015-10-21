@@ -41,7 +41,10 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
-    <permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+    <permission
+        android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
@@ -293,7 +296,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="speciality-shop"
+                    android:host="store-list"
                     android:scheme="bigbasket" />
             </intent-filter>
         </activity>
@@ -497,8 +500,8 @@
 
         <activity
             android:name=".activity.specialityshops.BBSpecialityShopsActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <provider

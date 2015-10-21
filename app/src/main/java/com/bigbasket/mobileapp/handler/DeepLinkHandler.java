@@ -206,12 +206,9 @@ public class DeepLinkHandler {
             case Constants.HOME:
                 context.getCurrentActivity().goToHome(false);
                 return SUCCESS;
-            case Constants.SPECIALITYSHOPS:
+            case Constants.STORE_LIST:
                 String category = uri.getQueryParameter(Constants.CATEGORY);
-                if (!TextUtils.isEmpty(category)) {
-                  /*  Intent intent_shops = new Intent(context.getCurrentActivity(), BBSpecialityShopsActivity.class);
-                    intent_shops.putExtra(Constants.CATEGORY, category);
-                    context.getCurrentActivity().startActivityForResult(intent_shops, NavigationCodes.GO_TO_HOME);*/
+                if (!TextUtils.isEmpty(category) && !category.equalsIgnoreCase("null")) {
                     context.getCurrentActivity().launchStoreList(category);
                     return SUCCESS;
                 }

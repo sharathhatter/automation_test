@@ -273,9 +273,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void launchStoreList(DestinationInfo destinationInfo) {
-        if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
+        if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug()))
             ((LaunchStoreListAware) context).launchStoreList(destinationInfo.getDestinationSlug());
-        }
     }
 
     private void launchProductList(DestinationInfo destinationInfo) {

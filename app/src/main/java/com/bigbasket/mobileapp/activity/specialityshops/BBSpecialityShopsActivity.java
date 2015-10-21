@@ -81,13 +81,19 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
         View base = inflater.inflate(R.layout.uiv3_empty_store_list_data, layout, false);
 
         TextView txtMsg = (TextView) base.findViewById(R.id.textView_empty_text);
-
-        String emptyMsg = getString(R.string.store_empty) + category + getString(R.string.available_in);
+        String emptyMsg = getString(R.string.store_empty) + category + getString(R.string.available_in) + " \n";
+        if (TextUtils.isEmpty(location)) {
+            emptyMsg = getString(R.string.store_empty) + category + getString(R.string.available_in);
+            location = getString(R.string.your_loc);
+        }
         String strMsg = emptyMsg + location + getString(R.string.adding_newStores);
         Spannable spannable = new SpannableString(strMsg);
         spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), 0, emptyMsg.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannable.setSpan(new CustomTypefaceSpan("", faceRobotoBold), emptyMsg.length(), emptyMsg.length() + location.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_status_bar_background)), emptyMsg.length(), emptyMsg.length() + location.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (!location.equalsIgnoreCase(getString(R.string.your_loc))) {
+            spannable.setSpan(new CustomTypefaceSpan("", faceRobotoBold), emptyMsg.length(), emptyMsg.length() + location.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_status_bar_background)), emptyMsg.length(), emptyMsg.length() + location.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else
+            spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), emptyMsg.length(), emptyMsg.length() + location.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), emptyMsg.length() + location.length(), spannable.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         txtMsg.setText(spannable);
 
@@ -112,7 +118,9 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
                 }
                 if (specialityStoreListApiResponse.status == 0) {
                     Section headerSection = specialityStoreListApiResponse.apiResponseContent.getHeaderSection();
-                    renderHeaderDropDown(headerSection, specialityStoreListApiResponse.apiResponseContent.getHeaderSelectedIndex(), catVal);
+                    if (headerSection != null && headerSection.getSectionItems().size() > 0) {
+                        renderHeaderDropDown(headerSection, specialityStoreListApiResponse.apiResponseContent.getHeaderSelectedIndex(), catVal);
+                    }
                     ArrayList<SpecialityStore> storeList = specialityStoreListApiResponse.apiResponseContent.getStoreList();
                     if (storeList != null && storeList.size() > 0) {
                         renderStoreList(specialityStoreListApiResponse.apiResponseContent.getBaseImgUrl(), storeList);
@@ -120,7 +128,8 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
                         final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(BBSpecialityShopsActivity.this).getAddressSummaries();
                         if (addressSummaries != null && addressSummaries.size() > 0) {
                             showStoreEmptyMsg(addressSummaries.get(0).getArea() + "," + addressSummaries.get(0).getCityName());
-                        }
+                            renderHeaderDropDown(null, 0, category);
+                        } else showStoreEmptyMsg(null);
                     }
                 } else handler.sendEmptyMessage(specialityStoreListApiResponse.status,
                         specialityStoreListApiResponse.message, true);
