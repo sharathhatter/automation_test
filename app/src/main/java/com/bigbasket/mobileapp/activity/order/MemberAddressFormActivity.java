@@ -553,7 +553,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             @Override
             public void onReceive(Context context, Intent intent) {
                 final Bundle bundle = intent.getExtras();
-                try {
                     if (bundle != null) {
                         final Object[] pdusObj = (Object[]) bundle.get("pdus");
                         for (int i = 0; i < pdusObj.length; i++) {
@@ -566,8 +565,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                              * checking that the message received is from Bigbasket
                              * and it contains the word verification
                              */
-                            if(senderNum.toUpperCase().contains("BIG"))
-                            if (message.toLowerCase().contains("verification")) {
+                            if((senderNum.toUpperCase().contains("BIG")&& (message.toLowerCase().contains("verification")))) {
                                 final Pattern p = Pattern.compile("(\\d{4})");
                                 final Matcher m = p.matcher(message);
                                 if (m.find())
@@ -575,9 +573,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                             }
                         }
                     }
-                } catch (Exception e) {
-                    Log.e("SmsReceiver", "Exception smsReceiver" +e);
-                }
             }
         };
        registerReceiver(broadcastReceiver,smsOTPintentFilter);
