@@ -87,7 +87,7 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
         View convertView = LayoutInflater.from(getContext())
                 .inflate(R.layout.uiv3_change_city_spinner_row, parent, false);
         TextView txtChangeCity = (TextView) convertView;
-        txtChangeCity.setTypeface(faceRobotoRegular);
+        txtChangeCity.setTypeface(faceRobotLight);
         txtChangeCity.setText(changeAddressTxt);
         /************Setting different color for gingerbread and below******/
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
