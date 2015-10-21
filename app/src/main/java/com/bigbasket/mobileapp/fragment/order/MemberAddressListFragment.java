@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -279,15 +280,16 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             handler.sendOfflineError();
             return;
         }
-        new ChangeAddressTask<>(this, mSelectedAddress.getId(), null, null, true).startTask();
+        new ChangeAddressTask<>(this, mSelectedAddress.getId(), null, null, null, true).startTask();
     }
 
     @Override
     public void onBasketDelta(String addressId, String lat, String lng,
-                              String title, String msg, boolean hasQcError,
+                              String title, String msg, @Nullable String area,
+                              boolean hasQcError,
                               ArrayList<QCErrorData> qcErrorDatas) {
         new BasketDeltaDialog<>().show(this, title, msg, hasQcError, qcErrorDatas, addressId,
-                getString(R.string.reviewBasket), lat, lng);
+                getString(R.string.reviewBasket), lat, lng, area);
     }
 
     @Override
@@ -306,17 +308,17 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     @Override
-    public void onNoBasketDelta(String addressId, String lat, String lng) {
+    public void onNoBasketDelta(String addressId, String lat, String lng, @Nullable String area) {
         new CreatePotentialOrderTask<>(this, addressId).startTask();
     }
 
     @Override
-    public void onUpdateBasket(String addressId, String lat, String lng) {
+    public void onUpdateBasket(String addressId, String lat, String lng, @Nullable String area) {
         if (!checkInternetConnection()) {
             handler.sendOfflineError();
             return;
         }
-        new ChangeAddressTask<>(this, addressId, lat, lng, false).startTask();
+        new ChangeAddressTask<>(this, addressId, lat, lng, area, false).startTask();
     }
 
     @Override

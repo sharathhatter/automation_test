@@ -60,8 +60,9 @@ public class HomeActivity extends BBActivity {
             mSpinnerArea.setVisibility(View.VISIBLE);
             mProgressBarArea.setVisibility(View.GONE);
             final AddressSummaryDropdownAdapter adapter = new
-                    AddressSummaryDropdownAdapter(addressSummaries,
-                    isGuest ? getString(R.string.changeMyLocation) : getString(R.string.changeMyAddress), this);
+                    AddressSummaryDropdownAdapter<>(this, R.layout.uiv3_change_address_spinner_row,
+                    addressSummaries,
+                    isGuest ? getString(R.string.changeMyLocation) : getString(R.string.changeMyAddress));
             mSpinnerArea.setAdapter(adapter);
             mSpinnerArea.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -119,7 +120,7 @@ public class HomeActivity extends BBActivity {
             lat = lng = null;
             isTransient = true;
         }
-        new ChangeAddressTask<>(this, addressId, lat, lng, isTransient).startTask();
+        new ChangeAddressTask<>(this, addressId, lat, lng, null, isTransient).startTask();
     }
 
     @Override

@@ -24,7 +24,8 @@ public class BasketDeltaDialog<T extends BasketDeltaUserActionListener> {
                      @Nullable ArrayList<QCErrorData> qcErrorDatas,
                      @Nullable final String addressId, String positiveMsg,
                      @Nullable final String lat,
-                     @Nullable final String lng) {
+                     @Nullable final String lng,
+                     @Nullable final String area) {
         final BaseActivity activity = ((ActivityAware) ctx).getCurrentActivity();
 
         View baseView = null;
@@ -57,7 +58,7 @@ public class BasketDeltaDialog<T extends BasketDeltaUserActionListener> {
         builder.setPositiveButton(positiveMsg, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ctx.onUpdateBasket(addressId, lat, lng);
+                ctx.onUpdateBasket(addressId, lat, lng, area);
             }
         }).setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
             @Override

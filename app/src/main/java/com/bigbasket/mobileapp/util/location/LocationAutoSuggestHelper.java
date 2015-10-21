@@ -148,8 +148,9 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
                 if (places.getStatus().isSuccess()) {
                     Place place = places.get(0);
                     LatLng latLng = place.getLatLng();
+                    CharSequence name = place.getName();
                     places.release();
-                    ctx.onLocationSelected(latLng);
+                    ctx.onLocationSelected(latLng, TextUtils.isEmpty(name) ? null : name.toString());
                 } else {
                     places.release();
                 }

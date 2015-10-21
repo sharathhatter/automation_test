@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
@@ -37,6 +38,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
     private GoogleApiClient mGoogleApiClient;
     private LatLng mSelectedLatLng;
+    private String mAreaName;
     @Nullable
     private GoogleMap mGoogleMap;
     @Nullable
@@ -46,7 +48,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.locateYourArea));
+        setTitle(getString(R.string.chooseDeliveryLocation));
         int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
         switch (playServicesAvailable) {
             case ConnectionResult.SUCCESS:
@@ -70,7 +72,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.getUiSettings().setZoomControlsEnabled(true);
         map.setOnMyLocationButtonClickListener(this);
-        map.setPadding(0, 160, 0, 0);
+        //map.setPadding(0, 160, 0, 0);
         mapFragment.getMapAsync(this);
         buildGoogleApiClient();
 
@@ -90,16 +92,46 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
                 }
                 Intent intent = new Intent();
                 intent.putExtra(Constants.LAT, mSelectedLatLng);
+                intent.putExtra(Constants.AREA, mAreaName);
                 setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED,
                         intent);
                 finish();
             }
         });
+        boolean isAttached = mEditTextChooseArea.post(new Runnable() {
+            @Override
+            public void run() {
+                setUpMyLocationButtonUI(true);
+            }
+        });
+        if (!isAttached) {
+            setUpMyLocationButtonUI(false);
+        }
+    }
+
+    private void setUpMyLocationButtonUI(boolean isAttached) {
+        int myLocPaddingTop;
+        if (isAttached && mEditTextChooseArea.getLayoutParams() != null
+                && mEditTextChooseArea.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+
+            myLocPaddingTop = ((ViewGroup.MarginLayoutParams) mEditTextChooseArea.getLayoutParams()).topMargin;
+            myLocPaddingTop += mEditTextChooseArea.getHeight() + (int) getResources().getDimension(R.dimen.padding_normal);
+            if (myLocPaddingTop < 0) {
+                myLocPaddingTop = 160;
+            }
+        } else {
+            myLocPaddingTop = 160;
+        }
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        GoogleMap map = mapFragment.getMap();
+        map.setPadding(0, myLocPaddingTop, 0, 0);
     }
 
     @Override
-    public void onLocationSelected(LatLng latLng) {
+    public void onLocationSelected(LatLng latLng, @Nullable String name) {
         mSelectedLatLng = latLng;
+        mAreaName = name;
         updateLastKnownLocationOnMap();
     }
 

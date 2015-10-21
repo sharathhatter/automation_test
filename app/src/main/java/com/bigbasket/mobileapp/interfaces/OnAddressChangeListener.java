@@ -1,5 +1,7 @@
 package com.bigbasket.mobileapp.interfaces;
 
+import android.support.annotation.Nullable;
+
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 
@@ -12,7 +14,8 @@ public interface OnAddressChangeListener {
 
     void onBasketDelta(String addressId, String lat, String lng,
                        String title, String msg,
+                       @Nullable String area,
                        boolean hasQcError, ArrayList<QCErrorData> qcErrorDatas);
 
-    void onNoBasketDelta(String addressId, String lat, String lng);
+    void onNoBasketDelta(String addressId, String lat, String lng, @Nullable String area);
 }
