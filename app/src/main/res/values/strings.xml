@@ -336,7 +336,7 @@
     <string name="fundWalletSuccess">You have successfully funded the wallet</string>
     <string name="reviewBasket">Review Basket</string>
 
-    <string name="chooseYourDeliveryLocation">Choose Your Delivery Location</string>
+    <string name="chooseYourDeliveryLocation">Choose your delivery location</string>
     <string name="chooseDeliveryLocation">Choose Delivery Location</string>
     <string name="typeYourLocality">Type your locality eg: M.G. Road</string>
     <string name="enableLocationHeading">Enable Location</string>
