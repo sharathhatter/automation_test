@@ -52,7 +52,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.chooseYourLocation));
+        setTitle(getString(R.string.chooseYourDeliveryLocation));
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
     }
 
