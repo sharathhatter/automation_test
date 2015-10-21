@@ -139,14 +139,12 @@ public class Product implements Parcelable {
         if (productList == null || productList.size() == 0) return true;
         for (Product product : productList) {
             if (product != null) {
-                if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0) {
-                    for (HashMap<String, String> availabilityMap : product.getStoreAvailability())
-                        if (availabilityMap.get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A")) {
-                            return false;
-                        }
-                } else if (!TextUtils.isEmpty(product.getProductStatus())
-                        && product.getProductStatus().equals("A")) {
-                    return false;
+                if(product.getProductStatus() != null){
+                    if(product.getProductStatus().equals("A")) return false;
+                }else if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0) {
+                    if (product.getStoreAvailability().get(0).containsKey(Constants.PRODUCT_STATUS)
+                            && product.getStoreAvailability().get(0).get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A"))
+                        return false;
                 }
             }
         }
