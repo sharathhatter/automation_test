@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.payu.sdk.fragments.PaymentOptionsFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/selectPaymentMethodTextView"
+        android:text="@string/select_payment_method"
+        android:layout_margin="10dp"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/paymentOptionsListView"/>
+
+
+</LinearLayout>
+
+<!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/layout/fragment_payment_options.xml --><!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/bundles/debug/res/layout/fragment_payment_options.xml -->

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="blue">#FF1784C7</color>
+    <color name="button_gray">#cbcbcb</color>
+    <color name="button_green">#5fc73b</color>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <color name="cb_background">#f6f6f6</color>
+    <color name="cb_blue_button">#368ecd</color>
+    <color name="cb_border">#d4dee2</color>
+    <color name="cb_dark_blue_button">#094774</color>
+    <color name="cb_dark_grey">#464646</color>
+    <color name="cb_errorRed">#e40000</color>
+    <color name="cb_grey">#e9e7e7</color>
+    <color name="cb_input_gray">#FFDEE6E6</color>
+    <color name="cb_otpColor">#368ecd</color>
+    <color name="cb_otpDisabledColor">#7d88b3</color>
+    <color name="cb_otpDisabledTextColor">#bec4d9</color>
+    <color name="cb_otpReceivedColor">#769b12</color>
+    <color name="cb_textColor">#8f8d8d</color>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="input_gray">#FFDEE6E6</color>
+    <item name="white" type="color">#FFFFFFFF</item>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="date_picker_padding">24dp</dimen>
+    <dimen name="eight">8dp</dimen>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <dimen name="eighteen">18dp</dimen>
+    <dimen name="four">4dp</dimen>
+    <dimen name="fourteen">14dp</dimen>
+    <dimen name="fourteenScaled">14sp</dimen>
+    <dimen name="fourtytwo">48dp</dimen>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="sixteen">16dp</dimen>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <dimen name="sixteenScaled">16sp</dimen>
+    <dimen name="thirtysix">36dp</dimen>
+    <dimen name="thirtytwo">32dp</dimen>
+    <dimen name="twelve">12dp</dimen>
+    <dimen name="twelveScaled">12sp</dimen>
+    <dimen name="twentyfour">24dp</dimen>
+    <dimen name="two">2dp</dimen>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="amount"> Rs. %1$,.2f</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="analytics_waiting_for_otp">waiting_for_otp</string>
+    <string name="approve_otp">Approve</string>
+    <string name="approved_otp">approved OTP</string>
+    <string name="authenticate_with">Select an option for Faster Payment</string>
+    <string name="bank_page_loading">Please wait. Bank page is loading..</string>
+    <string name="btn_action">btn_action</string>
+    <string name="cancel">cancel</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="card_name">Card name</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="card_not_registered_with_pin">Your card has not been registered for PIN yet. Do you want to continue with PIN?</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="card_number">Card Number</string>
+    <string name="cashCardNote">Note: In the next step you will be redirected to your bank\'s website to verify yourself.</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="choose">choose</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="click_here">Click here</string>
+    <string name="credit_card">Credit card</string>
+    <string name="cvv">CVV</string>
+    <string name="debit_card">Debit card</string>
+    <string name="delete_card">Delete card</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="detect_bank">detectBank</string>
+    <string name="detect_otp">detectOtp</string>
+    <string name="detecting_bank">detecting bank</string>
+    <string name="detecting_page">detecting page</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="edit_card">Edit card</string>
+    <string name="eligible_for_discount">Congrats! You are eligible for a discount of Rs. %1$f</string>
+    <string name="enter_card_details">Enter card Details</string>
+    <string name="enter_credit_card_details">Please enter credit card details</string>
+    <string name="enter_debit_card_details">Please enter debit card details</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="enter_manually">Enter Manually</string>
+    <string name="enter_manually_log">enterManually</string>
+    <string name="enter_otp">enterOTP</string>
+    <string name="enter_pin">enterPIN</string>
+    <string name="error">error</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="expires">Expiry</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="failure">failure</string>
+    <string name="find_otp">findOtp</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="if_cvv_and_expiry_on_card">  if you have CVV and Expiry on your card</string>
+    <string name="if_dont_cvv_and_expiry_on_card">  if you don\'t have CVV and Expiry on your card</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="incorrect_OTP_2">incorrectOTP</string>
+    <string name="incorrect_otp">INCORRECT OTP ENTERED</string>
+    <string name="incorrect_password">Incorrect Password</string>
+    <string name="incorrect_pin">incorrectPIN</string>
+    <string name="init">init</string>
+    <string name="missing_txn_id">Missing Transaction ID</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="name_on_card">Name on Card</string>
+    <string name="netbankingNote">Note: In the next step you will be redirected to your bank\'s website to verify yourself.</string>
+    <string name="no_card_found">No card found!</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="otp">otp</string>
+    <string name="otp_received">OTP Received</string>
+    <string name="otp_wv">OTP_WV</string>
+    <string name="password">PASSWORD</string>
+    <string name="password_value">Password</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="pay_by_cash_card">Pay by Cash Card</string>
+    <string name="pay_by_emi">Pay by Emi</string>
+    <string name="pay_now">Pay Now</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="pin">pin</string>
+    <string name="pin_c">PIN</string>
+    <string name="pin_wv">PIN_WV</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="please_wait">Please Wait</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="populate_user_id">populate_user_id</string>
+    <string name="process_otp">process_otp</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="process_your_request">Processing Your Request</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="reg_otp">REGENERATE OTP</string>
+    <string name="regen_otp">regenerate_otp</string>
+    <string name="regenerate">regenerate</string>
+    <string name="regenerate_otp">Regenerate OTP</string>
+    <string name="regenerate_otp_text">It is taking long.You may...</string>
+    <string name="register">register</string>
+    <string name="register_for_pin">REGISTER FOR PIN</string>
+    <string name="register_option">registerOption</string>
+    <string name="registeration_detail">Enter your registration details</string>
+    <string name="result">result</string>
+    <string name="retry">retry...</string>
+    <string name="retry_otp">retryOTP</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="save_card">Save card</string>
+    <string name="select_payment_method">Select your preferred payment method</string>
+    <string name="select_save_card">Select a saved card or use a new one</string>
+    <string name="slow_connection">Slow Network.\nStill Connecting...</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="sms_otp">SMS OTP</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="status">Status</string>
+    <string name="store_card_check">Store this card</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="success">success</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="use_new_card">New card</string>
+    <!-- From: file:/home/manu/AndroidStudioProjects/BigBasketMobile/mobile-app/payuSdk/build/intermediates/exploded-aar/mobile-app/CustomBrowser-release/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="use_sms_otp">USE SMS OTP</string>
+    <string name="waiting_for_otp">Waiting for OTP</string>
+    <style name="ProgressDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:backgroundDimEnabled">true</item>
+
+    </style>
+    <style name="approve_otp" parent="android:Widget.Button">
+        <item name="android:padding">0dp</item>
+        <item name="android:textSize">@dimen/fourteenScaled</item>
+        <item name="android:textColor">#FFFFFF</item>
+
+    </style>
+    <style name="cb_edit_text" parent="android:Widget.EditText">
+        <item name="android:background">@drawable/cb_edit_text</item>
+
+    </style>
+</resources>

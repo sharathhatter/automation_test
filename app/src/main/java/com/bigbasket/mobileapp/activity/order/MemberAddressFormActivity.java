@@ -1,13 +1,17 @@
 package com.bigbasket.mobileapp.activity.order;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
+import android.telephony.SmsMessage;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,6 +37,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.service.OtpListenerService;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
@@ -46,6 +51,8 @@ import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -65,6 +72,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     private int mAddressPageMode;
     private ArrayList<City> mCities;
 
+    private IntentFilter smsOTPintentFilter;
+    BroadcastReceiver broadcastReceiver;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getActivityTitle());
@@ -80,6 +90,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             mChoosenCity = new City(cityName, cityId);
         }
         new GetCitiesTask<>(this).startTask();  // Sync the cities
+
+
+
     }
 
     @Override
@@ -455,6 +468,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (editTextPincode != null) {
             hideKeyboard(this, editTextPincode);
         }
+        /**
+         * unregistering the sms broadcast receiver
+         *
+         */
+        unregisterBroadcastForSMS();
     }
 
     class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
@@ -521,4 +539,54 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             handler.handleRetrofitError(error);
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerBroadcastForSMS();
+    }
+
+    public void registerBroadcastForSMS() {
+        smsOTPintentFilter=new IntentFilter();
+        smsOTPintentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        smsOTPintentFilter.setPriority(9999);
+        broadcastReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final Bundle bundle = intent.getExtras();
+                try {
+                    if (bundle != null) {
+                        final Object[] pdusObj = (Object[]) bundle.get("pdus");
+                        for (int i = 0; i < pdusObj.length; i++) {
+                            SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
+                            String phoneNumber = currentMessage.getDisplayOriginatingAddress();
+                            String senderNum = phoneNumber;
+                            String message = currentMessage.getDisplayMessageBody();
+
+                            /**
+                             * checking that the message received is from Bigbasket
+                             * and it contains the word verification
+                             */
+                            if(senderNum.toUpperCase().contains("BIG"))
+                            if (message.toLowerCase().contains("verification")) {
+                                final Pattern p = Pattern.compile("(\\d{4})");
+                                final Matcher m = p.matcher(message);
+                                if (m.find())
+                                otpValidationDialogFragment.resendOrConfirmOTP(m.group(0));
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e("SmsReceiver", "Exception smsReceiver" +e);
+                }
+            }
+        };
+       registerReceiver(broadcastReceiver,smsOTPintentFilter);
+    }
+
+    public void unregisterBroadcastForSMS(){
+        unregisterReceiver(broadcastReceiver);
+    }
+
+
 }
