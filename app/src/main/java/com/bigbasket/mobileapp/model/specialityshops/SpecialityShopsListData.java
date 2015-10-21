@@ -24,7 +24,7 @@ public class SpecialityShopsListData implements Parcelable {
         }
     };
 
-    @SerializedName(Constants.ITEMS)
+    @SerializedName(Constants.STORES)
     private ArrayList<SpecialityStore> storeList;
 
     @SerializedName(Constants.BASE_IMG_URL)

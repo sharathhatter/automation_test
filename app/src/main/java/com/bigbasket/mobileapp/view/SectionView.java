@@ -133,6 +133,7 @@ public class SectionView {
     @Nullable
     private View getViewToRender(Section section, LayoutInflater inflater, ViewGroup mainLayout,
                                  int position) {
+        Log.d("", "CLICKED>>>>" + section.getSectionType());
         switch (section.getSectionType()) {
             case Section.BANNER:
                 return getBannerView(section, inflater, mainLayout);
@@ -672,6 +673,11 @@ public class SectionView {
         view.setOnClickListener(new OnSectionItemClickListener<>(context, section, moreSectionItem, screenName));
     }
 
+    @Nullable
+    public ArrayList<Integer> getDynamicTiles() {
+        return dynamicTiles;
+    }
+
     private class SectionRowAdapter extends RecyclerView.Adapter<SectionRowHolder> {
 
         @Override
@@ -723,10 +729,5 @@ public class SectionView {
         public ViewGroup getRow() {
             return (ViewGroup) itemView;
         }
-    }
-
-    @Nullable
-    public ArrayList<Integer> getDynamicTiles() {
-        return dynamicTiles;
     }
 }

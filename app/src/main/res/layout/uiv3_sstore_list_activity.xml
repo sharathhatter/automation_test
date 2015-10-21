@@ -6,23 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/ssList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/ssList"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:orientation="vertical">
 
-        <include layout="@layout/uiv3_tool_layout" />
+        <include
+            android:id="@+id/toolbarMain"
+            layout="@layout/uiv3_tool_layout" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/store_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/toolbarMain" />
 
-    </LinearLayout>
+        <include layout="@layout/uiv3_header_dropdown_layout" />
+    </RelativeLayout>
 
     <include layout="@layout/uiv3_left_nav_layout" />
 </com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>

@@ -14,8 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -24,8 +24,8 @@ import com.bigbasket.mobileapp.adapter.specialityshops.StoreListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.StoreListGetApiResponse;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
@@ -43,7 +43,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class BBSpecialityShopsActivity extends BBActivity {
+public class BBSpecialityShopsActivity extends BBActivity implements LaunchStoreListAware {
 
     private TextView mToolbarTextDropDown;
     private String category;
@@ -62,42 +62,21 @@ public class BBSpecialityShopsActivity extends BBActivity {
     private void getSpecialityShops() {
         category = getIntent().getStringExtra(Constants.CATEGORY);
         setTitle(category);
-//        loadSpecialityShops(category);
-        final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(BBSpecialityShopsActivity.this).getAddressSummaries();
-        if (addressSummaries != null && addressSummaries.size() > 0) {
-            loadDummyData(addressSummaries.get(0).getArea() + "," + addressSummaries.get(0).getCityName());
-        }
+        loadSpecialityShops(category);
     }
 
     private void renderStoreList(String baseImgUrl, ArrayList<SpecialityStore> storeList) {
         RecyclerView recyclerViewStoreList = (RecyclerView) findViewById(R.id.store_list);
-        StoreListRecyclerAdapter storeListRecyclerAdapter = new StoreListRecyclerAdapter(BBSpecialityShopsActivity.this, baseImgUrl, storeList);
+        StoreListRecyclerAdapter<BBSpecialityShopsActivity> storeListRecyclerAdapter = new StoreListRecyclerAdapter<>(BBSpecialityShopsActivity.this, baseImgUrl, storeList);
         recyclerViewStoreList.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewStoreList.setAdapter(storeListRecyclerAdapter);
         logViewSpecialityShopsEvent(category);
     }
 
-    private void loadDummyData(String location) {
-        ArrayList<SpecialityStore> list = new ArrayList<SpecialityStore>();
-        list.add(new SpecialityStore("img", "Fish Express", "Tubarhalli", "In 90 Minutes", "Opening Time: 07.30AM to 08.00PM"));
-        list.add(new SpecialityStore("img", "Meat Mart", "Tubarhalli", "In 60 Minutes", "Opening Time: 07.30AM to 08.00PM"));
-        list.add(new SpecialityStore("img", "Fish Express", "Tubarhalli", "In 70 Minutes", "Opening Time: 07.30AM to 08.00PM"));
-        list.add(new SpecialityStore("img", "Fish Exp", "Tubarhalli", "In 80 Minutes", "Opening Time: 07.30AM to 08.00PM"));
-        list.add(new SpecialityStore("img", "Fish Mart", "Tubarhalli", "In 40 Minutes", "Opening Time: 07.30AM to 08.00PM"));
-        list.add(new SpecialityStore("img", "Fish Express", "Tubarhalli", "In 90 Minutes", "Opening Time: 07.30AM to 08.00PM"));
-        list.add(new SpecialityStore("img", "Meat Mart", "Tubarhalli", "In 20 Minutes", "Opening Time: 07.30AM to 08.00PM"));
-        list.add(new SpecialityStore("img", "Fish Express", "Tubarhalli", "In 10 Minutes", "Opening Time: 07.30AM to 08.00PM"));
-        if (list.size() > 0) {
-            renderStoreList("", list);
-        } else {
-            showStoreEmptyMsg(location);
-        }
-    }
-
     private void showStoreEmptyMsg(String location) {
         RecyclerView recyclerViewStoreList = (RecyclerView) findViewById(R.id.store_list);
         recyclerViewStoreList.setVisibility(View.GONE);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.ssList);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.ssList);
         LayoutInflater inflater = getLayoutInflater();
         View base = inflater.inflate(R.layout.uiv3_empty_store_list_data, layout, false);
 
@@ -112,15 +91,19 @@ public class BBSpecialityShopsActivity extends BBActivity {
         spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), emptyMsg.length() + location.length(), spannable.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         txtMsg.setText(spannable);
 
-        layout.addView(base);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        int dp = (int) getResources().getDimension(R.dimen.margin_medium_large);
+        params.setMargins(0, dp, 0, 0);
+        params.addRule(RelativeLayout.BELOW, getToolbar().getId());
+        layout.addView(base, params);
     }
 
     private void loadSpecialityShops(final String catVal) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getApplicationContext());
         showProgressView();
-        bigBasketApiService.getSpecialityShops(catVal, new Callback<ApiResponse<StoreListGetApiResponse>>() {
+        bigBasketApiService.getSpecialityShops(catVal, new Callback<ApiResponse<SpecialityShopsListData>>() {
             @Override
-            public void success(ApiResponse<StoreListGetApiResponse> specialityStoreListApiResponse, Response response) {
+            public void success(ApiResponse<SpecialityShopsListData> specialityStoreListApiResponse, Response response) {
                 if (isSuspended()) return;
                 try {
                     hideProgressView();
@@ -128,25 +111,21 @@ public class BBSpecialityShopsActivity extends BBActivity {
                     return;
                 }
                 if (specialityStoreListApiResponse.status == 0) {
-                    SpecialityShopsListData specialityShopsListData = specialityStoreListApiResponse.apiResponseContent.specialityShopsListData;
-                    Section headerSection = specialityStoreListApiResponse.apiResponseContent.headerSection;
-                    renderHeaderDropDown(headerSection, specialityStoreListApiResponse.apiResponseContent.headerSelectedIndex, catVal);
-                    ArrayList<SpecialityStore> storeList = specialityShopsListData.getStoreList();
+                    Section headerSection = specialityStoreListApiResponse.apiResponseContent.getHeaderSection();
+                    renderHeaderDropDown(headerSection, specialityStoreListApiResponse.apiResponseContent.getHeaderSelectedIndex(), catVal);
+                    ArrayList<SpecialityStore> storeList = specialityStoreListApiResponse.apiResponseContent.getStoreList();
                     if (storeList != null && storeList.size() > 0) {
-                        renderStoreList(specialityStoreListApiResponse.apiResponseContent.baseImageUrl, storeList);
+                        renderStoreList(specialityStoreListApiResponse.apiResponseContent.getBaseImgUrl(), storeList);
                     } else {
                         final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(BBSpecialityShopsActivity.this).getAddressSummaries();
                         if (addressSummaries != null && addressSummaries.size() > 0) {
                             showStoreEmptyMsg(addressSummaries.get(0).getArea() + "," + addressSummaries.get(0).getCityName());
                         }
                     }
-                } else {
-                    handler.sendEmptyMessage(specialityStoreListApiResponse.status,
-                            specialityStoreListApiResponse.message, true);
-                }
+                } else handler.sendEmptyMessage(specialityStoreListApiResponse.status,
+                        specialityStoreListApiResponse.message, true);
             }
 
-            @Override
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 try {
@@ -194,5 +173,11 @@ public class BBSpecialityShopsActivity extends BBActivity {
         map.put(Constants.CATEGORY, categoryName);
         trackEvent(TrackingAware.SPECIALITYSHOPS_LIST_SHOWN, map);
         trackEventAppsFlyer(TrackingAware.SPECIALITYSHOPS_LIST_SHOWN);
+    }
+
+    @Override
+    public void launchStoreList(String destinationSlug) {
+        category = destinationSlug;
+        loadSpecialityShops(category);
     }
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class StoreListGetApiResponse {
 
-    @SerializedName(Constants.STORE_LIST_RESP)
+    @SerializedName(Constants.RESPONSE)
     public SpecialityShopsListData specialityShopsListData;
 
     @SerializedName(Constants.HEADER_SECTION)
@@ -20,7 +20,7 @@ public class StoreListGetApiResponse {
     @SerializedName(Constants.BASE_IMG_URL)
     public String baseImageUrl;
 
-    @SerializedName(Constants.STORE_LIST)
+    @SerializedName(Constants.STORES)
     public ArrayList<SpecialityStore> storeList;
 
     @SerializedName(Constants.HEADER_SEL)

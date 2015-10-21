@@ -64,8 +64,8 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (getItemViewType(position) == VIEW_TYPE_DATA) {
             StoreListRowHolder rowHolder = (StoreListRowHolder) holder;
-            final SpecialityStore store = storeList.get(position);
 
+            SpecialityStore store = storeList.get(position);
             String storeName = store.getStoreName();
             String storeLoc = store.getStoreLocation();
             String storeDelTime = store.getStoreDeliveryTime();
