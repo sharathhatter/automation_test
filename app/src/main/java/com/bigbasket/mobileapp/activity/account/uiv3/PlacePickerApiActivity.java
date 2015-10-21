@@ -48,7 +48,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.chooseYourDeliveryLocation));
+        setTitle(getString(R.string.chooseDeliveryLocation));
         int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
         switch (playServicesAvailable) {
             case ConnectionResult.SUCCESS:
