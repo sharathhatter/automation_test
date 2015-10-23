@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity.product;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -205,7 +204,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         mCartInfo = productTabData.getCartInfo();
         if (hasProducts) {
             // Setup content
-            if (productTabData.getProductTabInfos().size() > 1) {
+            int numTabs = productTabData.getProductTabInfos().size();
+            if (currentTabIndex >= numTabs) {
+                currentTabIndex = 0;
+            }
+            if (numTabs > 1) {
                 findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
                 displayProductTabs(productTabData, contentFrame, currentTabIndex, true);
             } else if (isFilterOrSortApplied) {
@@ -363,7 +366,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             @Override
             public void onPageSelected(int position) {
                 tabType = productTabInfos.get(position).getTabType();
-
+                if (mViewPager == null || mViewPager.getAdapter() == null) return;
                 Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(position);
                 if (fragment == null || fragment.getArguments() == null) return;
                 ProductListAwareFragment pFrag = (ProductListAwareFragment) fragment;

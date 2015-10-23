@@ -277,7 +277,11 @@ public class PaymentsActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        unregisterReceiver(mReceiver);
+        try {
+            unregisterReceiver(mReceiver);
+        } catch (IllegalArgumentException e) {
+            
+        }
         super.onStop();
 
     }
