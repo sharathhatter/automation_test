@@ -28,6 +28,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.lang.ref.WeakReference;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 
 public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
@@ -38,6 +40,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
     private WeakReference<GoogleApiClient> googleApiClientWeakReference;
     private LatLngBounds bounds;
     private boolean showProgress;
+    private CharsetEncoder charsetEncoder;
 
     public LocationAutoSuggestHelper(T ctx,
                                      AutoCompleteTextView autoCompleteTextView,
@@ -49,6 +52,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
         this.googleApiClientWeakReference = new WeakReference<>(googleApiClient);
         this.bounds = latLngBounds;
         this.showProgress = showProgress;
+        this.charsetEncoder = Charset.forName("US-ASCII").newEncoder();
     }
 
     public void init() {
@@ -71,6 +75,11 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (!TextUtils.isEmpty(s) && s.length() > 2) {
+                    if (!charsetEncoder.canEncode(s)) {
+                        ((ActivityAware) ctx).getCurrentActivity().
+                                showToast("Only english alphabets are allowed!");
+                        return;
+                    }
                     displaySuggestion(s.toString());
                 }
             }
