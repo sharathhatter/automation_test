@@ -554,6 +554,7 @@
             </intent-filter>
         </receiver>
 
+
         <provider
             android:name="com.moe.pushlibrary.providers.MoEProvider"
             android:authorities="com.bigbasket.mobileapp.moengage.provider"

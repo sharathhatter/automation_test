@@ -29,17 +29,21 @@ public class ChangeAddressTask<T extends OnAddressChangeListener> {
     @Nullable
     private String lng;
     private boolean isTransient;
+    @Nullable
+    private String area;
 
     public ChangeAddressTask(T ctx,
                              @Nullable String addressId,
                              @Nullable String lat,
                              @Nullable String lng,
+                             @Nullable String area,
                              boolean isTransient) {
         this.ctx = ctx;
         this.addressId = addressId;
         this.lat = lat;
         this.lng = lng;
         this.isTransient = isTransient;
+        this.area = area;
     }
 
     public void startTask() {
@@ -51,7 +55,7 @@ public class ChangeAddressTask<T extends OnAddressChangeListener> {
                 .getApiService(((ActivityAware) ctx).getCurrentActivity());
         if (isTransient) {
             ((ProgressIndicationAware) ctx).showProgressDialog("Checking for changes in basket...");
-            bigBasketApiService.setCurrentAddress(addressId, lat, lng, isTransient ? "1" : "0",
+            bigBasketApiService.setCurrentAddress(addressId, lat, lng, isTransient ? "1" : "0", area,
                     new Callback<ApiResponse<SetAddressTransientResponse>>() {
                         @Override
                         public void success(ApiResponse<SetAddressTransientResponse> setAddressTransientResponse, Response response) {
@@ -71,10 +75,11 @@ public class ChangeAddressTask<T extends OnAddressChangeListener> {
                                         ctx.onBasketDelta(addressId, lat, lng,
                                                 setAddressTransientResponse.apiResponseContent.title,
                                                 setAddressTransientResponse.apiResponseContent.msg,
+                                                area,
                                                 setAddressTransientResponse.apiResponseContent.hasQcErrors,
                                                 setAddressTransientResponse.apiResponseContent.qcErrorDatas);
                                     } else {
-                                        ctx.onNoBasketDelta(addressId, lat, lng);
+                                        ctx.onNoBasketDelta(addressId, lat, lng, area);
                                     }
                                     break;
                                 default:
@@ -97,7 +102,7 @@ public class ChangeAddressTask<T extends OnAddressChangeListener> {
                     });
         } else {
             ((ProgressIndicationAware) ctx).showProgressDialog("Updating your address...");
-            bigBasketApiService.setCurrentAddress(addressId, lat, lng, new Callback<ApiResponse<SetAddressResponse>>() {
+            bigBasketApiService.setCurrentAddress(addressId, lat, lng, area, new Callback<ApiResponse<SetAddressResponse>>() {
                 @Override
                 public void success(ApiResponse<SetAddressResponse> getAddressSummaryApiResponse, Response response) {
                     if (((CancelableAware) ctx).isSuspended()) return;

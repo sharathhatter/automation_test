@@ -282,7 +282,12 @@ public abstract class PlusBaseActivity extends BaseActivity
             } catch (UserRecoverableAuthException e) {
                 startActivityForResult(e.getIntent(), RC_SIGN_IN);
             } catch (GoogleAuthException | IOException e) {
-                showToast(getString(R.string.unknownError));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showToast(getString(R.string.unknownError));
+                    }
+                });
             }
             return null;
         }

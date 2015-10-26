@@ -28,14 +28,13 @@
                 android:textSize="@dimen/primary_text_size" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/txtWouldYouLike"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:gravity="center"
                 android:paddingLeft="@dimen/padding_normal"
                 android:paddingRight="@dimen/padding_normal"
-                android:text="@string/giftWrapMsg"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/secondary_text_size" />
 
@@ -55,7 +54,6 @@
                 android:layout_marginTop="@dimen/margin_medium_large"
                 android:paddingLeft="@dimen/padding_large"
                 android:paddingRight="@dimen/padding_large"
-                android:text="@string/giftWrapMsg"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/secondary_text_size" />
 

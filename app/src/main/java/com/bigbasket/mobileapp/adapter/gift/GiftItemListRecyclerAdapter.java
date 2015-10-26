@@ -121,7 +121,7 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
             UIUtil.displayProductImage(baseImgUrl, giftItem.getImageUrl(), imgProduct);
             txtProductDesc.setText(giftItem.getDescription());
             txtProductBrand.setText(giftItem.getBrand());
-            txtProductQuantity.setText(context.getString(R.string.qtyInBasket) + " " + reservedQty);
+            txtProductQuantity.setText(context.getString(R.string.qtyInBasket) + " " + allowedQty);
 
             if (giftItem.getGiftWrapCharge() > 0) {
                 SpannableString giftWrapChargeSpannable = UIUtil.asRupeeSpannable(context.getString(R.string.giftWrapCharge) + " ",

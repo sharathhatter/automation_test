@@ -34,6 +34,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
@@ -283,8 +284,17 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     @Override
     public void postShoppingListItemDeleteOperation() {
-
+        if(getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
+
+
+    @Override
+    public void postAddToShoppingListOperation() {
+        if(getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
+    }
+
 
     private ProductListAwareFragment getFragment() {
         return this;
@@ -328,6 +338,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         Toast.makeText(getCurrentActivity(),
                 "List \"" + listName
                         + "\" was created successfully", Toast.LENGTH_LONG).show();
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
     @Override

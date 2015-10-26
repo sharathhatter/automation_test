@@ -66,11 +66,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
                 return new GiftItemViewHolder(row);
             case VIEW_TYPE_HEADER:
                 row = inflater.inflate(R.layout.uiv3_gift_message_header, parent, false);
-                if (gift.getGiftItems() != null && gift.getGiftItems().size() <= 1) {
-                    row.setVisibility(View.GONE);
-                } else {
-                    setUpHeaderView(row);
-                }
+                setUpHeaderView(row);
                 return new FixedLayoutViewHolder(row);
             case VIEW_TYPE_FOOTER:
                 row = inflater.inflate(R.layout.uiv3_gift_list_footer, parent, false);
@@ -254,26 +250,35 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-            return VIEW_TYPE_HEADER;
-        }
         int giftArrayLen = gift.getGiftItems().size();
-        if (showCommonMsg) {
+        if (hasMultipleGiftItems()) {
+            if (position == 0) {
+                return VIEW_TYPE_HEADER;
+            }
+            if (showCommonMsg) {
+                if (position == giftArrayLen + 1) {
+                    return VIEW_TYPE_GIFT_MSG;
+                } else if (position == giftArrayLen + 2) {
+                    return VIEW_TYPE_FOOTER;
+                }
+                return VIEW_TYPE_GIFT;
+            }
             if (position == giftArrayLen + 1) {
-                return VIEW_TYPE_GIFT_MSG;
-            } else if (position == giftArrayLen + 2) {
                 return VIEW_TYPE_FOOTER;
             }
-            return VIEW_TYPE_GIFT;
-        }
-        if (position == giftArrayLen + 1) {
-            return VIEW_TYPE_FOOTER;
+        } else {
+            if (position == giftArrayLen) {
+                return VIEW_TYPE_GIFT_MSG;
+            }
+            if (position == giftArrayLen + 1) {
+                return VIEW_TYPE_FOOTER;
+            }
         }
         return VIEW_TYPE_GIFT;
     }
 
     public int getActualPosition(int position) {
-        return position - 1;
+        return hasMultipleGiftItems() ? position - 1 : position;
     }
 
     private class GiftItemMsgViewHolder extends RecyclerView.ViewHolder {
@@ -365,8 +370,12 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
         return showCommonMsg;
     }
 
+    private boolean hasMultipleGiftItems() {
+        return gift.getGiftItems() != null && gift.getGiftItems().size() > 1;
+    }
+
     @Override
     public int getItemCount() {
-        return gift.getGiftItems().size() + (showCommonMsg ? 1 : 0) + 2;
+        return gift.getGiftItems().size() + (showCommonMsg && hasMultipleGiftItems() ? 1 : 0) + 2;
     }
 }

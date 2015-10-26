@@ -23,4 +23,6 @@ public interface NavigationCodes {
 
     int ADD_TO_SHOPPINGLIST_OK = 1221;
     int DELETE_FROM_SHOPPING_LIST_OK = 200;
+
+    int SHOPPING_LIST_MODIFIED = 1361;
 }
