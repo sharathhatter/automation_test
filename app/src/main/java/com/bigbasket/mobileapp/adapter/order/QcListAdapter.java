@@ -82,6 +82,11 @@ public class QcListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    @Override
+    public boolean isEnabled(int position) {
+        return false;
+    }
+
     public static class ViewHolder {
         private View itemView;
         private TextView txtProductDesc;
@@ -135,10 +140,5 @@ public class QcListAdapter extends BaseAdapter {
             }
             return txtSerialNum;
         }
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return false;
     }
 }

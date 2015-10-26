@@ -44,6 +44,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
+import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
@@ -55,6 +56,7 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
+import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -91,7 +93,7 @@ import java.util.Random;
 public abstract class BaseActivity extends AppCompatActivity implements
         CancelableAware, ProgressIndicationAware, ActivityAware,
         ConnectivityAware, TrackingAware, ApiErrorAware, HandlerAware,
-        LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware {
+        LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware, LaunchStoreListAware {
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
@@ -834,6 +836,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
             if (!TextUtils.isEmpty(title)) {
                 intent.putExtra(Constants.TITLE, title);
             }
+            getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        }
+    }
+
+    @Override
+    public void launchStoreList(String destinationSlug) {
+        if (!TextUtils.isEmpty(destinationSlug)) {
+            Intent intent = new Intent(getCurrentActivity(), BBSpecialityShopsActivity.class);
+            intent.putExtra(Constants.CATEGORY, destinationSlug);
             getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
