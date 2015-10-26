@@ -224,7 +224,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
 
     @Override
     public void postShoppingListItemDeleteOperation() {
-
+        if(getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
     @Override
@@ -241,6 +242,12 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     }
 
     @Override
+    public void postAddToShoppingListOperation(){
+        if(getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
+    }
+
+    @Override
     public void createNewShoppingList() {
         new CreateShoppingListTask<>(this).showDialog();
     }
@@ -251,6 +258,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         Toast.makeText(getCurrentActivity(),
                 "List \"" + listName
                         + "\" was created successfully", Toast.LENGTH_LONG).show();
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
     @Override

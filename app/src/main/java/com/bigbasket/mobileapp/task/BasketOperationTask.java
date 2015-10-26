@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.task;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -8,9 +9,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
+import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
@@ -161,9 +165,12 @@ public class BasketOperationTask<T> {
                     ((CartInfoAware) context).setCartSummary(cartOperationApiResponse.basketOperationResponse.getCartSummary());
                     ((CartInfoAware) context).updateUIForCartInfo();
                     ((CartInfoAware) context).markBasketDirty();
-                    if (!TextUtils.isEmpty(navigationCtx) && navigationCtx.equals(TrackEventkeys.CO_BASKET)
-                            && context instanceof OnBasketChangeListener) {
-                        ((OnBasketChangeListener) context).markBasketChanged(null);
+                    if (context instanceof OnBasketChangeListener && (context instanceof ShowCartActivity ||
+                            context instanceof ProductDetailFragment)) {
+                        Intent data = new Intent();
+                        data.putExtra(Constants.SKU_ID, product.getSku());
+                        data.putExtra(Constants.PRODUCT_NO_ITEM_IN_CART, product.getNoOfItemsInCart());
+                        ((OnBasketChangeListener) context).markBasketChanged(data);
                     }
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
                     ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,

@@ -67,6 +67,11 @@ public class BackButtonWithBasketButtonActivity extends BBActivity implements Sh
     }
 
     @Override
+    public void postAddToShoppingListOperation() {
+
+    }
+
+    @Override
     public void onNewShoppingListCreated(String listName) {
         if (getCurrentActivity() == null) return;
         Toast.makeText(getCurrentActivity(),

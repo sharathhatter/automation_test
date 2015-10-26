@@ -126,11 +126,12 @@ public class Product extends BaseProduct {
     }
 
     public Product(String brand, String description, String sku, String topLevelCategoryName,
-                   String productCategoryName) {
+                   String productCategoryName, int noOfItemsInCart) {
         super(brand, description);
         this.sku = sku;
         this.topLevelCategoryName = topLevelCategoryName;
         this.productCategoryName = productCategoryName;
+        this.noOfItemsInCart = noOfItemsInCart;
     }
 
     public static boolean areAllProductsOutOfStock(@Nullable List<Product> productList) {

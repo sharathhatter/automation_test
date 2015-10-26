@@ -16,6 +16,8 @@ public interface ShoppingListNamesAware {
 
     void addToShoppingList(List<ShoppingListName> selectedShoppingListNames);
 
+    void postAddToShoppingListOperation();
+
     void createNewShoppingList();
 
     void onNewShoppingListCreated(String listName);
