@@ -42,6 +42,8 @@ public class Address extends AddressSummary {
     private boolean isMapped;
     @SerializedName(Constants.IS_EXPRESS)
     private boolean isExpress;
+    @SerializedName(Constants.IS_SELECTED)
+    private boolean isSelected;
 
     public Address(Parcel source) {
         super(source);
@@ -56,6 +58,7 @@ public class Address extends AddressSummary {
         this.landmark = source.readString();
         this.isMapped = source.readByte() == (byte) 1;
         this.isExpress = source.readByte() == (byte) 1;
+        this.isSelected = source.readByte() == (byte) 1;
     }
 
     @Override
@@ -71,6 +74,7 @@ public class Address extends AddressSummary {
         dest.writeString(landmark);
         dest.writeByte(isMapped ? (byte) 1 : (byte) 0);
         dest.writeByte(isExpress ? (byte) 1 : (byte) 0);
+        dest.writeByte(isSelected ? (byte) 1 : (byte) 0);
     }
 
     @Override
@@ -120,6 +124,10 @@ public class Address extends AddressSummary {
 
     public boolean isExpress() {
         return isExpress;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
     }
 
     @Override

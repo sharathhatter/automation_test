@@ -61,7 +61,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private ArrayList<Shipment> mShipments;
     private boolean mHasUserToggledShipments;
     private ArrayList<Integer> mSelectedShipmentIndx;
-    private HashMap<String, String> originalShipmentMap;
+    @Nullable
+    private HashMap<String, String> mOriginalShipmentMap;
     private boolean mHasUserToggledShipmentsAtAll;
 
     @Override
@@ -96,12 +97,12 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (mShipments == null || mShipments.size() == 0 ||
                 TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
         HashMap<String, String> map = new HashMap<>();
-        if (originalShipmentMap == null) {
-            originalShipmentMap = new HashMap<>();
+        if (mOriginalShipmentMap == null) {
+            mOriginalShipmentMap = new HashMap<>();
         }
         for (Shipment shipment : mShipments) {
             map.put(TrackEventkeys.FIS, shipment.getFulfillmentType());
-            originalShipmentMap.put(shipment.getShipmentId(), shipment.getFulfillmentType());
+            mOriginalShipmentMap.put(shipment.getShipmentId(), shipment.getFulfillmentType());
             if (!TextUtils.isEmpty(String.valueOf(shipment.getCount()))) {
                 map.put(shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
             }
@@ -488,9 +489,12 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.ACTION_NAME, !mHasUserToggledShipmentsAtAll ? "none" : cityMode);
+        if (mOriginalShipmentMap == null) {
+            mOriginalShipmentMap = new HashMap<>();
+        }
         for (Shipment shipment : shipments) {
             map.put(TrackEventkeys.FINAL_FIS, shipment.getFulfillmentType());
-            map.put(TrackEventkeys.ORIGINAL_FIS, originalShipmentMap.get(shipment.getShipmentId()));
+            map.put(TrackEventkeys.ORIGINAL_FIS, mOriginalShipmentMap.get(shipment.getShipmentId()));
             map.put("Final_" + shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
         }
 

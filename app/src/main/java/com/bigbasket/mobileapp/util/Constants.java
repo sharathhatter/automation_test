@@ -271,6 +271,7 @@ public class Constants {
     public static final String VOUCHER = "voucher";
     public static final String IS_MAPPED = "is_mapped";
     public static final String IS_EXPRESS = "is_express";
+    public static final String IS_SELECTED = "is_selected";
     public static final String IS_LINK = "is_link";
 
     public static final String SLOT_ID = "slot_id";
@@ -632,4 +633,10 @@ public class Constants {
     public static final String GIFT_LINK = "gift_link";
     public static final String HAS_GIFTS = "has_gifts";
     public static final String INDIVIDUAL_MSG = "individual_msg";
+
+    public static final String ITEM_SCROLL_POSITION = "itemScrollPosition";
+    public static final String CURRENT_TAB_INDEX = "currentTabIndex";
+    public static final int STANDARD_TAB_INDEX = 0;
+    public static final int EXPRESS_TAB_INDEX = 1;
+    public static final int DEFAULT_TAB_INDEX = 0;
 }
