@@ -82,6 +82,11 @@ public class QcListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    @Override
+    public boolean isEnabled(int position) {
+        return false;
+    }
+
     public static class ViewHolder {
         private View itemView;
         private TextView txtProductDesc;
@@ -98,7 +103,7 @@ public class QcListAdapter extends BaseAdapter {
 
         public TextView getTxtProductDesc() {
             if (txtProductDesc == null) {
-                txtProductDesc = (TextView) itemView.findViewById(R.id.txtStoreName);
+                txtProductDesc = (TextView) itemView.findViewById(R.id.txtProductDesc);
                 txtProductDesc.setTypeface(typeface);
             }
             return txtProductDesc;
@@ -106,7 +111,7 @@ public class QcListAdapter extends BaseAdapter {
 
         public TextView getTxtProductBrand() {
             if (txtProductBrand == null) {
-                txtProductBrand = (TextView) itemView.findViewById(R.id.txtStoreLoc);
+                txtProductBrand = (TextView) itemView.findViewById(R.id.txtProductBrand);
                 txtProductBrand.setTypeface(typeface);
             }
             return txtProductBrand;
@@ -135,10 +140,5 @@ public class QcListAdapter extends BaseAdapter {
             }
             return txtSerialNum;
         }
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return false;
     }
 }

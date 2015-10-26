@@ -343,7 +343,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
 
         public TextView getTxtProductBrand() {
             if (txtProductBrand == null) {
-                txtProductBrand = (TextView) itemView.findViewById(R.id.txtStoreLoc);
+                txtProductBrand = (TextView) itemView.findViewById(R.id.txtProductBrand);
                 txtProductBrand.setTypeface(faceRobotoRegular);
             }
             return txtProductBrand;
@@ -351,7 +351,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
 
         public TextView getTxtProductDesc() {
             if (txtProductDesc == null) {
-                txtProductDesc = (TextView) itemView.findViewById(R.id.txtStoreName);
+                txtProductDesc = (TextView) itemView.findViewById(R.id.txtProductDesc);
                 txtProductDesc.setTypeface(faceRobotoRegular);
             }
             return txtProductDesc;

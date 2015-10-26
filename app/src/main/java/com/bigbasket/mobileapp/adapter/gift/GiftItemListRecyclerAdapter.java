@@ -175,7 +175,7 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
 
         public TextView getTxtProductDesc() {
             if (txtProductDesc == null) {
-                txtProductDesc = (TextView) itemView.findViewById(R.id.txtStoreName);
+                txtProductDesc = (TextView) itemView.findViewById(R.id.txtProductDesc);
                 txtProductDesc.setTypeface(typeface);
             }
             return txtProductDesc;
@@ -191,7 +191,7 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
 
         public TextView getTxtProductBrand() {
             if (txtProductBrand == null) {
-                txtProductBrand = (TextView) itemView.findViewById(R.id.txtStoreLoc);
+                txtProductBrand = (TextView) itemView.findViewById(R.id.txtProductBrand);
                 txtProductBrand.setTypeface(typeface);
             }
             return txtProductBrand;

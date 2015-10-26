@@ -42,7 +42,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiRespons
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SetAddressResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SetAddressTransientResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.StoreListGetApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
