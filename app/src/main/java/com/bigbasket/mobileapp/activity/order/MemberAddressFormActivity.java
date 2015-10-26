@@ -8,10 +8,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -70,9 +70,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     private OTPValidationDialogFragment otpValidationDialogFragment;
     private int mAddressPageMode;
     private ArrayList<City> mCities;
-
-    private IntentFilter smsOTPintentFilter;
-    BroadcastReceiver broadcastReceiver;
+    @Nullable
+    private BroadcastReceiver broadcastReceiver;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +88,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             mChoosenCity = new City(cityName, cityId);
         }
         new GetCitiesTask<>(this).startTask();  // Sync the cities
-
 
 
     }
@@ -546,41 +544,43 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     }
 
     public void registerBroadcastForSMS() {
-        smsOTPintentFilter=new IntentFilter();
+        IntentFilter smsOTPintentFilter = new IntentFilter();
         smsOTPintentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
         smsOTPintentFilter.setPriority(9999);
-        broadcastReceiver=new BroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 final Bundle bundle = intent.getExtras();
-                    if (bundle != null) {
-                        final Object[] pdusObj = (Object[]) bundle.get("pdus");
-                        for (int i = 0; i < pdusObj.length; i++) {
-                            SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
-                            String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-                            String senderNum = phoneNumber;
-                            String message = currentMessage.getDisplayMessageBody();
+                if (bundle != null) {
+                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
+                    if (pdusObj == null) return;
+                    for (Object aPduObj : pdusObj) {
+                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) aPduObj);
+                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
+                        String message = currentMessage.getDisplayMessageBody();
 
-                            /**
-                             * checking that the message received is from Bigbasket
-                             * and it contains the word verification
-                             */
-                            if((senderNum.toUpperCase().contains("BIG")&& (message.toLowerCase().contains("verification")))) {
-                                final Pattern p = Pattern.compile("(\\d{4})");
-                                final Matcher m = p.matcher(message);
-                                if (m.find())
+                        /**
+                         * checking that the message received is from BigBasket
+                         * and it contains the word verification
+                         */
+                        if ((phoneNumber.toUpperCase().contains("BIG") &&
+                                (message.toLowerCase().contains("verification")))) {
+                            final Pattern p = Pattern.compile("(\\d{4})");
+                            final Matcher m = p.matcher(message);
+                            if (m.find() && otpValidationDialogFragment != null
+                                    && otpValidationDialogFragment.isVisible()) {
                                 otpValidationDialogFragment.resendOrConfirmOTP(m.group(0));
                             }
                         }
                     }
+                }
             }
         };
-       registerReceiver(broadcastReceiver,smsOTPintentFilter);
+        registerReceiver(broadcastReceiver, smsOTPintentFilter);
     }
 
-    public void unregisterBroadcastForSMS(){
+    public void unregisterBroadcastForSMS() {
+        if (broadcastReceiver == null) return;
         unregisterReceiver(broadcastReceiver);
     }
-
-
 }
