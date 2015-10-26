@@ -90,6 +90,7 @@
     <string name="applyAllCaps">APPLY</string>
     <string name="apply">Apply</string>
     <string name="pleaseNote">Please Note:</string>
+    <string name="note">Note:</string>
     <string name="shopFromOrder">Shop from order</string>
 
     <style name="placeOrder">Place Order</style>
@@ -324,9 +325,11 @@
     <string name="error">Error!</string>
     <string name="emailBlank">Please enter an email address</string>
     <string name="payNow">Pay Now</string>
-    <string name="order_pay_now_amount">Amount :</string>
+    <string name="order_pay_now_amount">Amount:</string>
     <string name="payNowThankyou">Your payment was successful!</string>
     <string name="txnFailureMsg">Failed to process your transaction.\nPlease contact our customer care, in case you got charged.</string>
+    <string name="txnFailureMsgPrefix">Failed to process your transaction.\nPlease contact our customer care at</string>
+    <string name="txnFailureMsgSuffix">or email us at</string>
 
     <string name="fundWallet">Fund Wallet</string>
     <string name="fundWalletHint">Amount</string>
@@ -335,11 +338,10 @@
     <string name="fundWalletSuccess">You have successfully funded the wallet</string>
     <string name="reviewBasket">Review Basket</string>
 
-    <string name="chooseYourLocation">Choose your Location</string>
-    <string name="locateYourArea">Locate your area</string>
-    <string name="typeYourLocality">Type your locality eg: M.G. Road</string>
+    <string name="chooseDeliveryLocation">Choose Delivery Location</string>
+    <string name="typeYourLocality">Type Area Name eg: M.G. Road</string>
     <string name="enableLocationHeading">Enable Location</string>
-    <string name="enableLocation">Enable location to get correct address</string>
+    <string name="enableLocation">Enable location to automatically find the delivery area!</string>
     <string name="enable">Enable</string>
     <string name="locationSettingError">Unable to open location window.\nPlease enable it by going to settings.</string>
 
@@ -349,14 +351,14 @@
 
     <string name="pleaseChooseLocationToProceed">Please choose a location to proceed further</string>
     <string name="yourCurrentLoc">Your Current Location</string>
-    <string name="toMyCurrentLocation">TO MY CURRENT LOCATION</string>
+    <string name="toMyCurrentLocation">USE CURRENT LOCATION</string>
     <string name="selectLocationManually">SELECT LOCATION MANUALLY</string>
     <string name="readingYourCurrentLocation">Reading your current location...</string>
     <string name="unableToReadLocation">Unable to read location. Please re-try!</string>
     <string name="refresh">Refresh</string>
     <string name="unknown">Unknown</string>
     <string name="unknownError">An unknown error occurred</string>
-    <string name="saveThisLocation">SAVE THIS LOCATION</string>
+    <string name="saveThisLocation">USE THIS LOCATION</string>
     <string name="changeMyLocation">CHANGE MY LOCATION</string>
     <string name="changeMyAddress">CHANGE MY ADDRESS</string>
     <string name="preparingBasket">Preparing basket</string>
@@ -369,7 +371,8 @@
 
     <string name="gift">Gift</string>
     <string name="giftOptions">Gift Options</string>
-    <string name="giftWrapMsg">Would you like to personalize them with a gift wrap\u2215message?</string>
+    <string name="giftWrapMsgPrefix">Would you like to personalize</string>
+    <string name="giftWrapMsgSuffix">with a gift wrap/message?</string>
     <string name="giftWrapOptions">View Gift Wrap Options</string>
     <string name="skipAndPro">Skip and Proceed</string>
     <string name="giftCont">GiftImg</string>

@@ -11,6 +11,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -60,7 +61,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private ArrayList<Shipment> mShipments;
     private boolean mHasUserToggledShipments;
     private ArrayList<Integer> mSelectedShipmentIndx;
-    private HashMap<String, String> originalShipmentMap;
+    @Nullable
+    private HashMap<String, String> mOriginalShipmentMap;
     private boolean mHasUserToggledShipmentsAtAll;
 
     @Override
@@ -95,12 +97,12 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (mShipments == null || mShipments.size() == 0 ||
                 TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
         HashMap<String, String> map = new HashMap<>();
-        if (originalShipmentMap == null) {
-            originalShipmentMap = new HashMap<>();
+        if (mOriginalShipmentMap == null) {
+            mOriginalShipmentMap = new HashMap<>();
         }
         for (Shipment shipment : mShipments) {
             map.put(TrackEventkeys.FIS, shipment.getFulfillmentType());
-            originalShipmentMap.put(shipment.getShipmentId(), shipment.getFulfillmentType());
+            mOriginalShipmentMap.put(shipment.getShipmentId(), shipment.getFulfillmentType());
             if (!TextUtils.isEmpty(String.valueOf(shipment.getCount()))) {
                 map.put(shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
             }
@@ -292,8 +294,17 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private void setShipmentHeaderMsg(int numVisibleShipments) {
         TextView txtDeliverablesHeading = (TextView) findViewById(R.id.txtDeliverablesHeading);
         if (numVisibleShipments > 1) {
-            txtDeliverablesHeading.setTypeface(faceRobotoRegular);
-            txtDeliverablesHeading.setText(R.string.deliverableTextPlural);
+            if (TextUtils.isEmpty(txtDeliverablesHeading.getText())) {
+                txtDeliverablesHeading.setTypeface(faceRobotoRegular);
+                String prefix = getString(R.string.note);
+                String msg = " " + getString(R.string.deliverableTextPlural);
+                SpannableString spannableString = new SpannableString(prefix + msg);
+                spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoMedium), 0, prefix.length(),
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_dialog_header_text_bkg)),
+                        0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                txtDeliverablesHeading.setText(spannableString);
+            }
             txtDeliverablesHeading.setVisibility(View.VISIBLE);
         } else {
             txtDeliverablesHeading.setVisibility(View.GONE);
@@ -478,9 +489,12 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.ACTION_NAME, !mHasUserToggledShipmentsAtAll ? "none" : cityMode);
+        if (mOriginalShipmentMap == null) {
+            mOriginalShipmentMap = new HashMap<>();
+        }
         for (Shipment shipment : shipments) {
             map.put(TrackEventkeys.FINAL_FIS, shipment.getFulfillmentType());
-            map.put(TrackEventkeys.ORIGINAL_FIS, originalShipmentMap.get(shipment.getShipmentId()));
+            map.put(TrackEventkeys.ORIGINAL_FIS, mOriginalShipmentMap.get(shipment.getShipmentId()));
             map.put("Final_" + shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
         }
 

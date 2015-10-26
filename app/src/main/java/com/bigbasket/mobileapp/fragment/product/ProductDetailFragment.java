@@ -154,7 +154,6 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 .disableInBasketChildSwap(true)
                 .useRadioButtonsForContextual(true)
                 .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
-                .displayGiftMsg(true)
                 .build();
 
         LinearLayout layoutProductDetail = (LinearLayout) getView().findViewById(R.id.layoutProductDetail);

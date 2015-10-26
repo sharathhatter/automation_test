@@ -63,7 +63,7 @@ public class SearchableActivity extends BackButtonActivity
         FrameLayout contentLayout = getContentView();
         if (contentLayout == null) return;
         contentLayout.removeAllViews();
-        contentLayout.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
+//        contentLayout.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
 
         mSearchView = (SearchView) getLayoutInflater().inflate(R.layout.search_input_view, getToolbar(), false);
         getToolbar().addView(mSearchView);

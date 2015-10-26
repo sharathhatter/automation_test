@@ -18,7 +18,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class GetCitiesTask<T> {
+public class GetCitiesTask<T extends CityListDisplayAware> {
     private T context;
 
     public GetCitiesTask(T context) {
@@ -28,7 +28,7 @@ public class GetCitiesTask<T> {
     public void startTask() {
         ArrayList<City> cities = CityManager.getStoredCity(((ActivityAware) context).getCurrentActivity());
         if (cities != null && cities.size() > 0) {
-            ((CityListDisplayAware) context).onReadyToDisplayCity(cities);
+            context.onReadyToDisplayCity(cities);
             return;
         }
         if (!((ConnectivityAware) context).checkInternetConnection()) {
@@ -48,7 +48,7 @@ public class GetCitiesTask<T> {
                     return;
                 }
                 CityManager.storeCities(((ActivityAware) context).getCurrentActivity(), cities);
-                ((CityListDisplayAware) context).onReadyToDisplayCity(cities);
+                context.onReadyToDisplayCity(cities);
             }
 
             @Override

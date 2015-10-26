@@ -24,9 +24,9 @@ import java.util.List;
 
 public class SubCategoryListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private T ctx;
     private static final int VIEW_TYPE_SECTION = 0;
     private static final int VIEW_TYPE_CATEGORY = 1;
+    private T ctx;
     private List<Category> categoryList;
     private LayoutInflater layoutInflater;
     private View mSectionView;
@@ -100,22 +100,25 @@ public class SubCategoryListAdapter<T> extends RecyclerView.Adapter<RecyclerView
 
         @Override
         public void onClick(View v) {
-            int position = getActualPosition(getPosition());
-            Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), ProductListActivity.class);
-            ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
-            nameValuePairs.add(new NameValuePair(Constants.SLUG, categoryList.get(position).getSlug()));
-            if (categoryList.get(position).getFilter() != null) {
-                ArrayList<FilteredOn> filteredOns = new ArrayList<>();
-                filteredOns.add(new FilteredOn(categoryList.get(position).getFilter()));
-                nameValuePairs.add(new NameValuePair(Constants.FILTER_ON, new Gson().toJson(filteredOns)));
+            int pos = getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                int position = getActualPosition(pos);
+                Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), ProductListActivity.class);
+                ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
+                nameValuePairs.add(new NameValuePair(Constants.SLUG, categoryList.get(position).getSlug()));
+                if (categoryList.get(position).getFilter() != null) {
+                    ArrayList<FilteredOn> filteredOns = new ArrayList<>();
+                    filteredOns.add(new FilteredOn(categoryList.get(position).getFilter()));
+                    nameValuePairs.add(new NameValuePair(Constants.FILTER_ON, new Gson().toJson(filteredOns)));
+                }
+                if (categoryList.get(position).getSortBy() != null) {
+                    nameValuePairs.add(new NameValuePair(Constants.SORT_ON, categoryList.get(position).getSortBy()));
+                }
+                intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
+                intent.putExtra(Constants.TITLE, categoryList.get(position).getName());
+                ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
             }
-            if (categoryList.get(position).getSortBy() != null) {
-                nameValuePairs.add(new NameValuePair(Constants.SORT_ON, categoryList.get(position).getSortBy()));
-            }
-            intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-            intent.putExtra(Constants.TITLE, categoryList.get(position).getName());
-            ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 }

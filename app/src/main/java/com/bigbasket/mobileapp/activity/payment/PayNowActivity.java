@@ -27,10 +27,13 @@ import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
+import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.PayNowDetail;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -50,7 +53,8 @@ import retrofit.client.Response;
  * Don't do the mistake of moving this to Fragment. I've done all that, and these 3rd Party SDKs
  * don't handle fragments well.
  */
-public class PayNowActivity extends BackButtonActivity implements OnPostPaymentListener {
+public class PayNowActivity extends BackButtonActivity implements OnPostPaymentListener,
+        CityListDisplayAware {
 
     @Nullable
     private String mSelectedPaymentMethod;
@@ -68,6 +72,11 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         setTitle(getString(R.string.payNow));
 
         mOrderId = getIntent().getStringExtra(Constants.ORDER_ID);
+        new GetCitiesTask<>(this).startTask();
+    }
+
+    @Override
+    public void onReadyToDisplayCity(ArrayList<City> cities) {
         getPayNowParams();
     }
 
@@ -273,8 +282,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
             if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
                 onPayNowSuccess();
             } else {
-                showAlertDialog(getString(R.string.transactionFailed),
-                        getString(R.string.txnFailureMsg));
+                onPayNowFailure();
             }
 
             SharedPreferences.Editor editor = preferences.edit();
@@ -325,8 +333,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void onPayNowFailure() {
-        showAlertDialog(getString(R.string.transactionFailed),
-                getString(R.string.txnFailureMsg));
+        UIUtil.showPaymentFailureDlg(this);
     }
 
     private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {

@@ -161,9 +161,12 @@ public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
 
         @Override
         public void onClick(View v) {
-            Object possiblePromoObj = promoConsolidatedList.get(getPosition());
-            if (possiblePromoObj instanceof Promo) {
-                ((PromoDetailNavigationAware) context).loadPromoDetail((Promo) possiblePromoObj);
+            int pos = getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                Object possiblePromoObj = promoConsolidatedList.get(pos);
+                if (possiblePromoObj instanceof Promo) {
+                    ((PromoDetailNavigationAware) context).loadPromoDetail((Promo) possiblePromoObj);
+                }
             }
         }
     }

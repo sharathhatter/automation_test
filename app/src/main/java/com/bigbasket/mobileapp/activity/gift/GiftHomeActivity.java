@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.gift;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
@@ -129,6 +131,16 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
         trackEvent(TrackingAware.GIFT_OPTS_SAVE_AND_CONTINUE, eventAttribs);
         String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
         new PostGiftTask<>(this, potentialOrderId, gift, getCurrentNavigationContext()).startTask();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
+            setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
+            finish();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override

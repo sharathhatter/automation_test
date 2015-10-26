@@ -29,9 +29,12 @@ import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
+import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -46,7 +49,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class FundWalletActivity extends BackButtonActivity implements OnPostPaymentListener {
+public class FundWalletActivity extends BackButtonActivity implements OnPostPaymentListener,
+        CityListDisplayAware {
 
     @Nullable
     private String mSelectedPaymentMethod;
@@ -60,6 +64,11 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_FUND_WALLET);
         trackEvent(TrackingAware.FUND_WALLET_SHOWN, null);
         setTitle(getString(R.string.fundWallet));
+        new GetCitiesTask<>(this).startTask();
+    }
+
+    @Override
+    public void onReadyToDisplayCity(ArrayList<City> cities) {
         getPaymentTypes();
     }
 
@@ -105,8 +114,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
                 onFundWalletSuccess();
             } else {
-                showAlertDialog(getString(R.string.transactionFailed),
-                        getString(R.string.txnFailureMsg));
+                onFundWalletFailure();
             }
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.MOBIKWIK_ORDER_ID);
@@ -330,8 +338,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     private void onFundWalletFailure() {
-        showAlertDialog(getString(R.string.transactionFailed),
-                getString(R.string.txnFailureMsg));
+        UIUtil.showPaymentFailureDlg(this);
     }
 
     private void onFundWalletSuccess() {

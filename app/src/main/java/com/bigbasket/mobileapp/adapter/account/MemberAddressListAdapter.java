@@ -93,7 +93,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             } else {
                 Address selectedAddress = ((AddressSelectionAware) context).getSelectedAddress();
                 boolean isSelected = selectedAddress == null || TextUtils.isEmpty(selectedAddress.getId()) ?
-                        address.isDefault() : (selectedAddress.getId().equals(address.getId()));
+                        address.isSelected() : (selectedAddress.getId().equals(address.getId()));
                 if (isSelected && selectedAddress == null) {
                     this.selectedAddress = address;
                 }
@@ -150,6 +150,10 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
     @Override
     public int getItemCount() {
         return addressObjectList.size();
+    }
+
+    public Address getSelectedAddress() {
+        return selectedAddress;
     }
 
     public class AddAddressViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -231,12 +235,11 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
         @Override
         public void onClick(View v) {
-            selectedAddress = (Address) addressObjectList.get(getPosition());
-            ((AddressSelectionAware) context).onAddressSelected(selectedAddress);
+            int pos = getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                selectedAddress = (Address) addressObjectList.get(pos);
+                ((AddressSelectionAware) context).onAddressSelected(selectedAddress);
+            }
         }
-    }
-
-    public Address getSelectedAddress() {
-        return selectedAddress;
     }
 }

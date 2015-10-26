@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
     android:paddingTop="@dimen/padding_normal">
 
     <!-- Min height has been intentionally set in PX don't change it -->
@@ -64,23 +63,11 @@
         android:textColor="@color/uiv3_secondary_text_color"
         android:textSize="@dimen/secondary_text_size" />
 
-    <TextView
-        android:id="@+id/txtGiftMsg"
-        style="@style/BBTextStyle.Gift"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/txtProductBrand"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_mini"
-        android:layout_toLeftOf="@id/imgProductOverflowAction" />
-
     <LinearLayout
         android:id="@+id/layoutPackageDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtGiftMsg"
+        android:layout_below="@id/txtProductBrand"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"
@@ -115,11 +102,23 @@
             android:textSize="@dimen/secondary_text_size" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/txtGiftMsg"
+        style="@style/BBTextStyle.Gift"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/layoutPackageDesc"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_toLeftOf="@id/imgProductOverflowAction" />
+
     <LinearLayout
         android:id="@+id/layoutProductPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layoutPackageDesc"
+        android:layout_below="@id/txtGiftMsg"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"

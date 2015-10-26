@@ -182,7 +182,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return txtExpressMsg;
     }
 
-    @Nullable
     public TextView getTxtGiftMsg() {
         if (txtGiftMsg == null) {
             txtGiftMsg = (TextView) itemView.findViewById(R.id.txtGiftMsg);

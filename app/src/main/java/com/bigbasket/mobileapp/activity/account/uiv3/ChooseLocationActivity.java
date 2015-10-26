@@ -52,7 +52,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.chooseYourLocation));
+        setTitle(getString(R.string.chooseDeliveryLocation));
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
     }
 
@@ -147,7 +147,8 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         if (lastLocation != null) {
             LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
             if (setAsCurrentAddress) {
-                updateLocation(latLng);
+                updateLocation(latLng,
+                        mChosenAddressSummary != null ? mChosenAddressSummary.getArea() : null);
             } else {
                 getCurrentLocationDetail(latLng);
             }
@@ -204,11 +205,11 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                 });
     }
 
-    private void updateLocation(LatLng latLng) {
+    private void updateLocation(LatLng latLng, @Nullable String area) {
         boolean isTransientCall = !mIsFirstTime;
         new ChangeAddressTask<>(this,
                 null, String.valueOf(latLng.latitude),
-                String.valueOf(latLng.longitude), isTransientCall).startTask();
+                String.valueOf(latLng.longitude), area, isTransientCall).startTask();
     }
 
     @Override
@@ -298,7 +299,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
             mIsViaOnActivityResult = true;
             if (data != null && data.hasExtra(Constants.LAT)) {
                 LatLng latLng = data.getParcelableExtra(Constants.LAT);
-                updateLocation(latLng);
+                updateLocation(latLng, data.getStringExtra(Constants.AREA));
             } else {
                 buildGoogleApiClient();
             }
