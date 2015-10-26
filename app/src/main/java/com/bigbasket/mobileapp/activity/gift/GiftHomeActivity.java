@@ -32,6 +32,7 @@ import java.util.HashMap;
 public class GiftHomeActivity extends BackButtonActivity implements GiftItemAware {
 
     private Gift gift;
+    private ViewPager mViewPager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,8 +60,18 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
         if (giftView != null) layoutGiftProgressView.addView(giftView);
     }
 
+
+    @Override
+    public void onBackPressed() {
+        if(mViewPager != null && mViewPager.getCurrentItem() == 1){
+            mViewPager.setCurrentItem(0);
+        }else {
+            super.onBackPressed();
+        }
+    }
+
     private void renderViewPagerTabs() {
-        final ViewPager pager = (ViewPager) findViewById(R.id.viewPager);
+        mViewPager = (ViewPager) findViewById(R.id.viewPager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.slidingTabs);
 
         ArrayList<BBTab> bbTabs = new ArrayList<>();
@@ -71,15 +82,15 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
 
         final TabPagerAdapterWithFragmentRegistration tabPagerAdapter =
                 new TabPagerAdapterWithFragmentRegistration(this, getSupportFragmentManager(), bbTabs);
-        pager.setAdapter(tabPagerAdapter);
-        tabLayout.setupWithViewPager(pager);
+        mViewPager.setAdapter(tabPagerAdapter);
+        tabLayout.setupWithViewPager(mViewPager);
 
         final Button btnFooter = (Button) findViewById(R.id.btnFooter);
         btnFooter.setTypeface(faceRobotoRegular);
         btnFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentPosition = pager.getCurrentItem();
+                int currentPosition = mViewPager.getCurrentItem();
                 if (currentPosition == 1) {
                     Fragment fragment = tabPagerAdapter.getRegisteredFragment(1);
                     if (fragment != null && fragment instanceof GiftMessageFragment) {
@@ -91,11 +102,11 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
                     HashMap<String, String> eventAttribs = new HashMap<>();
                     eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.GIFT_SELECTQTY);
                     trackEvent(TrackingAware.GIFT_OPTS_ADD_MSG, eventAttribs);
-                    pager.setCurrentItem(1);
+                    mViewPager.setCurrentItem(1);
                 }
             }
         });
-        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
