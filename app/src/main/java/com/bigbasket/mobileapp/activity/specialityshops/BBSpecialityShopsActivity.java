@@ -60,9 +60,11 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
     }
 
     private void getSpecialityShops() {
-        category = getIntent().getStringExtra(Constants.CATEGORY);
-        setTitle(category);
-        loadSpecialityShops(category);
+        if (getIntent() != null) {
+            category = getIntent().getStringExtra(Constants.CATEGORY);
+            setTitle(category);
+            loadSpecialityShops(category);
+        }
     }
 
     private void renderStoreList(String baseImgUrl, ArrayList<SpecialityStore> storeList) {

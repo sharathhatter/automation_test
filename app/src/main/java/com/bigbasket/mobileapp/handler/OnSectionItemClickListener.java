@@ -262,11 +262,6 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 ((ActivityAware) context).getCurrentActivity().launchViewBasketScreen();
                 break;
             case DestinationInfo.STORE_LIST:
-               /* if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
-                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBSpecialityShopsActivity.class);
-                    intent.putExtra(Constants.CATEGORY, destinationInfo.getDestinationSlug());
-                    ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                }*/
                 launchStoreList(destinationInfo);
                 break;
         }
