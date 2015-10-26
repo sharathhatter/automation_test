@@ -176,8 +176,8 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
         else {
             if(data!=null) {
                 data.putExtra("transaction_status", false);
-                setResult(resultCode, data);
             }
+            setResult(resultCode, data);
             finish();
 
         }

@@ -142,8 +142,8 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
         else {
             if(data!=null) {
                 data.putExtra("transaction_status", false);
-                setResult(resultCode, data);
             }
+            setResult(resultCode, data);
             finish();
 
         }

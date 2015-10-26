@@ -158,8 +158,8 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
         else {
             if(data!=null) {
                 data.putExtra("transaction_status", false);
-                setResult(resultCode, data);
             }
+            setResult(resultCode, data);
             finish();
 
         }
