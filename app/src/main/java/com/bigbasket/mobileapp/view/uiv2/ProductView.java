@@ -245,6 +245,8 @@ public final class ProductView {
             txtExpressMsg.setVisibility(View.GONE);
             radioGroupExpress.removeAllViews();
             radioGroupExpress.setVisibility(View.VISIBLE);
+            radioGroupExpress.setOnCheckedChangeListener(null); // Reset onclick listener
+            radioGroupExpress.clearCheck();
             for (int i = 0; i < storeAvailabilityArrayList.size(); i++) {
                 HashMap<String, String> particularStoreMap = storeAvailabilityArrayList.get(i);
                 String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
@@ -264,6 +266,7 @@ public final class ProductView {
                 radioGroupExpress.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        if (checkedId < 0 || checkedId >= storeAvailabilityArrayList.size()) return;
                         HashMap<String, String> selectedStore =
                                 storeAvailabilityArrayList.get(checkedId);
                         String storeAvailability = selectedStore != null ?
