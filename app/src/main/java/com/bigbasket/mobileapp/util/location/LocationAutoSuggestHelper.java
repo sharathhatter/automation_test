@@ -154,7 +154,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
         Places.GeoDataApi.getPlaceById(googleApiClientWeakReference.get(), id).setResultCallback(new ResultCallback<PlaceBuffer>() {
             @Override
             public void onResult(PlaceBuffer places) {
-                if (places.getStatus().isSuccess()) {
+                if (places.getStatus().isSuccess() && places.getCount() > 0) {
                     Place place = places.get(0);
                     LatLng latLng = place.getLatLng();
                     CharSequence name = place.getName();
