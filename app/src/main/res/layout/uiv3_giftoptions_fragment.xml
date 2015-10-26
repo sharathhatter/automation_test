@@ -5,10 +5,43 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/layoutCheckoutProgressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <Button
+        android:id="@+id/buttonGiftWrapOpt"
+        style="@style/DefaultButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:background="@drawable/main_button_rounded_background"
+        android:text="@string/giftWrapOptions"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/buttonSkipPro"
+        style="@style/DefaultButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonGiftWrapOpt"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/margin_small"
+        android:background="@drawable/skip_and_proceed_rounded_background"
+        android:text="@string/skipAndPro"
+        android:textColor="@android:color/white" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_centerInParent="true"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutCheckoutProgressContainer"
+        android:layout_above="@id/buttonSkipPro">
 
         <LinearLayout
             android:id="@+id/layoutGiftScroll"
@@ -69,31 +102,5 @@
 
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/buttonGiftWrapOpt"
-        style="@style/DefaultButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/margin_small"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:background="@drawable/main_button_rounded_background"
-        android:text="@string/giftWrapOptions"
-        android:textColor="@android:color/white" />
-
-    <Button
-        android:id="@+id/buttonSkipPro"
-        style="@style/DefaultButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/buttonGiftWrapOpt"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/margin_small"
-        android:background="@drawable/skip_and_proceed_rounded_background"
-        android:text="@string/skipAndPro"
-        android:textColor="@android:color/white" />
 
 </RelativeLayout>
