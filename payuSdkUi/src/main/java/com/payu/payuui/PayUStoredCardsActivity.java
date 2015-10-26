@@ -172,7 +172,7 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
             finish();
         }
         else {
-
+            if(data!=null)
             data.putExtra("transaction_status",false);
             setResult(resultCode, data);
             finish();
