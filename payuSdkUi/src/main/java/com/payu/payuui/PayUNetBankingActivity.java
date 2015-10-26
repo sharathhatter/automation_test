@@ -171,10 +171,11 @@ public class PayUNetBankingActivity extends AppCompatActivity implements View.On
             finish();
         }
         else {
-            if(data!=null)
+            if(data!=null) {
                 data.putExtra("transaction_status", false);
-                setResult(resultCode, data);
-                finish();
+            }
+            setResult(resultCode, data);
+            finish();
 
         }
     }
