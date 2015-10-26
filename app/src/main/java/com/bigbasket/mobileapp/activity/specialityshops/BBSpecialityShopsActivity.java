@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.specialityshops;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -33,7 +32,9 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityShopsListData;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityStore;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 
 import java.util.ArrayList;
@@ -69,8 +70,8 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
 
     private void renderStoreList(String baseImgUrl, ArrayList<SpecialityStore> storeList) {
         RecyclerView recyclerViewStoreList = (RecyclerView) findViewById(R.id.store_list);
+        UIUtil.configureRecyclerView(recyclerViewStoreList, this, 1, 1);
         StoreListRecyclerAdapter<BBSpecialityShopsActivity> storeListRecyclerAdapter = new StoreListRecyclerAdapter<>(BBSpecialityShopsActivity.this, baseImgUrl, storeList);
-        recyclerViewStoreList.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewStoreList.setAdapter(storeListRecyclerAdapter);
         logViewSpecialityShopsEvent(category);
     }
@@ -107,6 +108,10 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
     }
 
     private void loadSpecialityShops(final String catVal) {
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
+            handler.sendOfflineError(true);
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getApplicationContext());
         showProgressView();
         bigBasketApiService.getSpecialityShops(catVal, new Callback<ApiResponse<SpecialityShopsListData>>() {

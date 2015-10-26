@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model.specialityshops;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -30,21 +31,34 @@ public class SpecialityStore implements Parcelable {
     private String storeDeliveryTime;
     @SerializedName(Constants.STORE_TIMINGS)
     private String storeTimings;
-
-    public SpecialityStore(String storeImg, String storeName, String storeLocation, String storeDeliveryTime, String storeOpTime) {
-        this.storeImg = storeImg;
-        this.storeName = storeName;
-        this.storeLocation = storeLocation;
-        this.storeDeliveryTime = storeDeliveryTime;
-        this.storeTimings = storeOpTime;
-    }
+    @SerializedName(Constants.DESTINATION)
+    private DestinationInfo destinationInfo;
 
     public SpecialityStore(Parcel source) {
-        this.storeImg = source.readString();
-        this.storeName = source.readString();
-        this.storeLocation = source.readString();
-        this.storeDeliveryTime = source.readString();
-        this.storeTimings = source.readString();
+        boolean _wasImgNull = source.readByte() == (byte) 1;
+        if (!_wasImgNull) {
+            this.storeImg = source.readString();
+        }
+        boolean _wasStoreNameNull = source.readByte() == (byte) 1;
+        if (!_wasStoreNameNull) {
+            this.storeName = source.readString();
+        }
+        boolean _wasStoreLocNull = source.readByte() == (byte) 1;
+        if (!_wasStoreLocNull) {
+            this.storeLocation = source.readString();
+        }
+        boolean _wasStoreDelTimeNull = source.readByte() == (byte) 1;
+        if (!_wasStoreDelTimeNull) {
+            this.storeDeliveryTime = source.readString();
+        }
+        boolean _wasStoreTimingsNull = source.readByte() == (byte) 1;
+        if (!_wasStoreTimingsNull) {
+            this.storeTimings = source.readString();
+        }
+        boolean wasDestNull = source.readByte() == (byte) 1;
+        if (!wasDestNull) {
+            destinationInfo = source.readParcelable(SpecialityStore.class.getClassLoader());
+        }
     }
 
     @Override
@@ -79,5 +93,9 @@ public class SpecialityStore implements Parcelable {
 
     public String getStoreImg() {
         return storeImg;
+    }
+
+    public DestinationInfo getDestinationInfo() {
+        return destinationInfo;
     }
 }
