@@ -14,8 +14,6 @@ import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -68,7 +66,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ShowCartActivity extends BackButtonActivity implements BasketChangeQtyAware{
+public class ShowCartActivity extends BackButtonActivity implements BasketChangeQtyAware {
 
     private ArrayList<CartItemList> cartItemLists;
     private ArrayList<FulfillmentInfo> fulfillmentInfos;
@@ -348,7 +346,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         bundle.putParcelableArrayList(Constants.FULFILLMENT_INFO, fulfillmentInfos);
         bundle.putParcelableArrayList(Constants.ANNOTATION_INFO, annotationInfoArrayList);
         bundle.putString(Constants.BASE_IMG_URL, baseUrl);
-        if(this.currentTabIndex == currentTabIndex) {
+        if (this.currentTabIndex == currentTabIndex) {
             bundle.putInt(Constants.ITEM_SCROLL_POSITION, currentItemPosition);
         }
         bundle.putInt(Constants.CURRENT_TAB_INDEX, currentTabIndex);
@@ -528,6 +526,11 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             renderTabsDataToView(cartItemListsStnd, cartItemListsExp, baseImgUrl);
             hideProgressDialog();
         }
+    }
+
+    @Override
+    public void markBasketChanged(@Nullable Intent data) {
+        super.markBasketChanged(null);
     }
 
 }

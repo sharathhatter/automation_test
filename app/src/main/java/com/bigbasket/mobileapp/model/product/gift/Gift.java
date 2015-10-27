@@ -139,7 +139,7 @@ public class Gift implements Parcelable {
         int numGiftItemsToWrap = 0;
         double giftItemTotal = 0;
         for (GiftItem giftItem : giftItems) {
-            if (giftItem.getReservedQty() > 0) {
+            if (giftItem.getReservedQty() > 0 && !giftItem.isReadOnly()) {
                 numGiftItemsToWrap++;
                 giftItemTotal += giftItem.getReservedQty() * giftItem.getGiftWrapCharge();
             }

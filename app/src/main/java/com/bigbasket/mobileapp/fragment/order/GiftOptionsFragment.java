@@ -45,12 +45,17 @@ public class GiftOptionsFragment extends BaseFragment {
     }
 
     private void renderCheckOutProgressView() {
+        View base = getContentView();
+        if (base == null) return;
+        ViewGroup layoutCheckoutProgressContainer = (ViewGroup) base.findViewById(R.id.layoutCheckoutProgressContainer);
+        layoutCheckoutProgressContainer.removeAllViews();
         String[] array_txtValues = new String[]{getString(R.string.address),
                 getString(R.string.gift), getString(R.string.slots), getString(R.string.order)};
         Integer[] array_compPos = new Integer[]{0};
         int selectedPos = 1;
-        View giftView = UIUtil.getCheckoutProgressView(getActivity(), null, array_txtValues, array_compPos, selectedPos);
-        if (giftView != null && getContentView() != null) getContentView().addView(giftView, 0);
+        View giftView = UIUtil.getCheckoutProgressView(getActivity(), null, array_txtValues,
+                array_compPos, selectedPos);
+        if (giftView != null) layoutCheckoutProgressContainer.addView(giftView);
     }
 
     private void renderGiftLayout(final Bundle args) {
@@ -91,7 +96,7 @@ public class GiftOptionsFragment extends BaseFragment {
         });
 
         TextView txtGiftMsg = (TextView) contentView.findViewById(R.id.txtGiftMsg);
-        String giftMsg = UIUtil.strJoin(gift.getGiftSummaryMsg(), "\n");
+        String giftMsg = UIUtil.strJoin(gift.getGiftSummaryMsg(), "\n\n");
         if (TextUtils.isEmpty(giftMsg)) {
             txtGiftMsg.setVisibility(View.GONE);
         } else {

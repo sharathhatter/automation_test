@@ -63,6 +63,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
     @Nullable
     private ViewPager viewPager;
     private TextView mTxtToolbarDropdown;
+    private int currentTabIndex;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if(resultCode == NavigationCodes.SHOPPING_LIST_MODIFIED){
+        if(resultCode == NavigationCodes.SHOPPING_LIST_MODIFIED ||
+                resultCode == NavigationCodes.BASKET_CHANGED){
             loadShoppingListSummary();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -270,6 +272,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
             TabPagerAdapterWithFragmentRegistration tabPagerAdapterWithFragmentRegistration = new TabPagerAdapterWithFragmentRegistration(getCurrentActivity(),
                     getSupportFragmentManager(), getTabs(shoppingListSummaries, shoppingListName, baseImgUrl));
             if (viewPager != null) {
+                int oldCurrentTabIndex = currentTabIndex;
                 viewPager.setAdapter(tabPagerAdapterWithFragmentRegistration);
                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
@@ -278,6 +281,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
 
                     @Override
                     public void onPageSelected(int position) {
+                        currentTabIndex = position;
                         ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(position);
                         if(Product.areAllProductsOutOfStock(shoppingListSummary.getProducts()) ||
                                 shoppingListName.isSystem() && !shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)){
@@ -303,6 +307,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 pagerSlidingTabStrip.setupWithViewPager(viewPager);
 
                 contentFrame.addView(viewPager);
+                viewPager.setCurrentItem(oldCurrentTabIndex);
             }
         }
 

@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.adapter.gift;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
@@ -30,6 +31,8 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
     private Typeface faceRupee;
     private Typeface faceRobotoRegular;
     private Typeface faceRobotoBold;
+    private Drawable drawablePlusRed;
+    private Drawable drawableMinusRed;
 
     public GiftItemListRecyclerAdapter(T context, Gift gift, String baseImgUrl) {
         this.context = context;
@@ -39,7 +42,8 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
         this.faceRupee = FontHolder.getInstance(ctx).getFaceRupee();
         this.faceRobotoBold = FontHolder.getInstance(ctx).getFaceRobotoBold();
         this.faceRobotoRegular = FontHolder.getInstance(ctx).getFaceRobotoRegular();
-
+        this.drawableMinusRed = ContextCompat.getDrawable(ctx, R.drawable.minus_red);
+        this.drawablePlusRed = ContextCompat.getDrawable(ctx, R.drawable.plus_red);
     }
 
     @Override
@@ -84,17 +88,17 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
                 txtProductGiftWrapQuantityStatus.setCompoundDrawablesWithIntrinsicBounds(
                         null, null, null, null);
                 txtProductGiftWrapQuantityStatus.setOnTouchListener(null);
+                txtProductGiftWrapQuantityStatus.setVisibility(View.GONE);
             } else {
                 if (reservedQty == allowedQty) {
                     txtProductGiftWrapQuantityStatus.setCompoundDrawablesWithIntrinsicBounds(
-                            ContextCompat.getDrawable(context, R.drawable.minus_red), null, null, null);
+                            drawableMinusRed, null, null, null);
                 } else if (reservedQty == 0) {
                     txtProductGiftWrapQuantityStatus.setCompoundDrawablesWithIntrinsicBounds(
-                            null, null, ContextCompat.getDrawable(context, R.drawable.plus_red), null);
+                            null, null, drawablePlusRed, null);
                 } else {
                     txtProductGiftWrapQuantityStatus.setCompoundDrawablesWithIntrinsicBounds(
-                            ContextCompat.getDrawable(context, R.drawable.minus_red), null,
-                            ContextCompat.getDrawable(context, R.drawable.plus_red), null);
+                            drawableMinusRed, null, drawablePlusRed, null);
                 }
                 Integer[] drawableTypes = new Integer[2];
                 if (txtProductGiftWrapQuantityStatus.getCompoundDrawables()[OnCompoundDrawableClickListener.DRAWABLE_LEFT] != null) {
@@ -104,6 +108,7 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
                     drawableTypes[drawableTypes[0] != null ? 1 : 0] = OnCompoundDrawableClickListener.DRAWABLE_RIGHT;
                 }
                 if (drawableTypes[0] != null) {
+                    txtProductGiftWrapQuantityStatus.setVisibility(View.VISIBLE);
                     txtProductGiftWrapQuantityStatus.setOnTouchListener(new OnCompoundDrawableClickListener(drawableTypes) {
                         @Override
                         public void onRightDrawableClicked() {

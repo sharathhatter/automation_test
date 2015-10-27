@@ -740,9 +740,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 filteredOns = data.getParcelableArrayListExtra(Constants.FILTERED_ON);
             }
             applyFilter(filteredOns);
-        }else if(resultCode == NavigationCodes.SHOPPING_LIST_MODIFIED){
+        } else if (resultCode == NavigationCodes.SHOPPING_LIST_MODIFIED) {
             getProducts(mViewPager != null ? mViewPager.getCurrentItem() : 0);
-        }else if (resultCode == NavigationCodes.BASKET_CHANGED) {
+        } else if (resultCode == NavigationCodes.BASKET_CHANGED) {
             if (data != null && !TextUtils.isEmpty(data.getStringExtra(Constants.SKU_ID)) &&
                     data.getIntExtra(Constants.PRODUCT_NO_ITEM_IN_CART, 0) > 0) {
                 mCartInfo.put(data.getStringExtra(Constants.SKU_ID),
