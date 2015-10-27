@@ -27,6 +27,7 @@ public class PostGiftTask<T> {
     private String potentialOrderId;
     private Gift gift;
     private String nc;
+    private boolean hasGift;
 
     public PostGiftTask(T ctx, String potentialOrderId, @Nullable Gift gift,
                         String nc) {
@@ -34,6 +35,7 @@ public class PostGiftTask<T> {
         this.potentialOrderId = potentialOrderId;
         this.nc = nc;
         this.gift = gift;
+        this.hasGift = gift != null;
     }
 
     public void startTask() {
@@ -76,6 +78,10 @@ public class PostGiftTask<T> {
                 });
     }
 
+    public void setHasGift(boolean hasGift) {
+        this.hasGift = hasGift;
+    }
+
     private void onPostGifts(PostGiftItemsResponseContent postGiftItemsResponseContent) {
         Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(),
                 ShipmentSelectionActivity.class);
@@ -90,7 +96,7 @@ public class PostGiftTask<T> {
             intent.putExtra(Constants.ON_TOGGLE_ACTIONS,
                     new Gson().toJson(postGiftItemsResponseContent.toggleShipmentActions));
         }
-        intent.putExtra(Constants.HAS_GIFTS, gift != null);
+        intent.putExtra(Constants.HAS_GIFTS, hasGift);
         ((ActivityAware) ctx).getCurrentActivity().setNextScreenNavigationContext(nc);
         ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent,
                 NavigationCodes.GO_TO_HOME);

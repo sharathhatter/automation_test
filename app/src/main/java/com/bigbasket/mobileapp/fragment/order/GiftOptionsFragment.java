@@ -82,8 +82,11 @@ public class GiftOptionsFragment extends BaseFragment {
                     return;
                 }
                 trackEvent(TrackingAware.GIFT_SKIP_AND_PROCEED, null);
-                new PostGiftTask<>(getCurrentActivity(), potentialOrderId, null,
-                        TrackEventkeys.CO_DELIVERY_OPS).startTask();
+                PostGiftTask task = new PostGiftTask<>(getCurrentActivity(), potentialOrderId, null,
+                        TrackEventkeys.CO_DELIVERY_OPS);
+                task.setHasGift(true); // For showing gift in progress-view on next page
+                task.startTask();
+
             }
         });
         Button btnGiftOptions = (Button) contentView.findViewById(R.id.buttonGiftWrapOpt);

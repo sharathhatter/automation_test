@@ -127,7 +127,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
         });
 
         String individualMsg = context.getString(R.string.individualMsg) + "\n";
-        String individualMsgDesc = context.getString(R.string.commonMsgDesc);
+        String individualMsgDesc = context.getString(R.string.individualMsgDesc);
         SpannableString spannableStringIndividualMsg = new SpannableString(individualMsg + individualMsgDesc);
         spannableStringIndividualMsg.setSpan(ab14, 0, individualMsg.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);

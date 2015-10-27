@@ -100,7 +100,10 @@
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
         android:layout_toLeftOf="@id/imgProductOverflowAction"
-        android:layout_toRightOf="@id/imgProduct" />
+        android:layout_toRightOf="@id/imgProduct"
+        android:drawableLeft="@drawable/ic_gift_grey600_18dp"
+        android:drawablePadding="@dimen/padding_mini"
+        android:gravity="left|center_vertical" />
 
     <LinearLayout
         android:id="@+id/layoutProductPrice"

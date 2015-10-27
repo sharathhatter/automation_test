@@ -102,17 +102,29 @@
             android:textSize="@dimen/secondary_text_size" />
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/imgGiftIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/layoutPackageDesc"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_small"
+        android:contentDescription="@string/gift"
+        android:src="@drawable/ic_gift_grey600_18dp"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/txtGiftMsg"
         style="@style/BBTextStyle.Gift"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/layoutPackageDesc"
-        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
-        android:layout_toLeftOf="@id/imgProductOverflowAction" />
+        android:layout_toLeftOf="@id/imgProductOverflowAction"
+        android:layout_toRightOf="@id/imgGiftIcon" />
 
     <LinearLayout
         android:id="@+id/layoutProductPrice"

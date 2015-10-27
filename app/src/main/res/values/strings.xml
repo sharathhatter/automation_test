@@ -380,16 +380,16 @@
     <string name="addMsgSnum">2. Add Message</string>
     <string name="addMsg">Add Message</string>
     <string name="qtyInBasket">Qty in basket:</string>
-    <string name="giftWrapCharge">Gift Wrap Charge:</string>
-    <string name="qtyToGiftWrapOrMsg">Qty to GiftWrap/Add message</string>
-    <string name="giftWrapChargeTotal">Gift Wrap Charge Total:</string>
-    <string name="perItem">per item.</string>
+    <string name="giftWrapCharge">Gift wrap charge:</string>
+    <string name="qtyToGiftWrapOrMsg">Qty to gift-wrap/add message</string>
+    <string name="giftWrapChargeTotal">Gift wrap charge total:</string>
+    <string name="perItem">per qty.</string>
     <string name="rupeeTerminator">/-</string>
-    <string name="chooseYourMsg">Choose your message option</string>
+    <string name="chooseYourMsg">Choose your message option:</string>
     <string name="commonMsg">Common Message</string>
-    <string name="commonMsgDesc">A common message for all selected products/quantity</string>
+    <string name="commonMsgDesc">A common message for all selected products.</string>
     <string name="individualMsg">Individual Message</string>
-    <string name="individualMsgDesc">Different messages can be added per product</string>
+    <string name="individualMsgDesc">Different messages can be added per product.</string>
     <string name="typeInYourMsg">Type In your message (Optional) - Max</string>
     <string name="charsColon">chars:</string>
     <string name="colon">:</string>
@@ -397,5 +397,5 @@
     <string name="totalNumOfItemsToGiftWrap">Total no# of items to gift wrap</string>
     <string name="totalCostOfGiftWrapping">Total cost of gift wrapping</string>
     <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
-    <string name="noAddGiftWrap">No additional gift wrap required</string>
+    <string name="noAddGiftWrap">No additional gift wrap required.</string>
 </resources>

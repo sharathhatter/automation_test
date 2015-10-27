@@ -40,14 +40,15 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layoutCheckoutProgressContainer"
-        android:layout_above="@id/buttonSkipPro">
+        android:layout_above="@id/buttonSkipPro"
+        android:layout_below="@id/layoutCheckoutProgressContainer">
 
         <LinearLayout
             android:id="@+id/layoutGiftScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/padding_small">
 
             <TextView
                 android:id="@+id/textViewNumGifts"

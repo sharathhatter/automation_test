@@ -157,6 +157,12 @@ public final class ProductView {
             txtProductDesc.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(product.getGiftMsg())) {
+            if (txtGiftMsg.getCompoundDrawables()[0] == null) {
+                // On PD page, not using drawable left, as when text is long icon will get center-vertical.
+                // Note: You don't need any hiding code, as this is only present on PD page.
+                ImageView imgGiftIcon = productViewHolder.getImgGiftIcon();
+                imgGiftIcon.setVisibility(View.VISIBLE);
+            }
             txtGiftMsg.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
             txtGiftMsg.setText(product.getGiftMsg());
             txtGiftMsg.setVisibility(View.VISIBLE);
