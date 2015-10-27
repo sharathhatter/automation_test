@@ -38,40 +38,29 @@
         android:textColor="@color/uiv3_secondary_text_color"
         android:textSize="@dimen/secondary_text_size" />
 
-    <LinearLayout
-        android:id="@+id/layoutDelivery"
+
+    <TextView
+        android:id="@+id/txtDeliveryTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtStoreLoc"
+        android:layout_gravity="center"
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_normal"
         android:layout_marginTop="@dimen/margin_normal"
         android:layout_toRightOf="@id/imgStore"
-        android:orientation="horizontal">
+        android:drawableLeft="@drawable/clock"
+        android:drawablePadding="@dimen/padding_small"
+        android:text="In 90 Minutes"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/tick_circle_complete" />
-
-        <TextView
-            android:id="@+id/txtDeliveryTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_gravity="center"
-            android:text="In 90 Minutes"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
-
-    </LinearLayout>
 
     <TextView
         android:id="@+id/txtTimings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layoutDelivery"
+        android:layout_below="@id/txtDeliveryTime"
         android:layout_marginBottom="@dimen/margin_small"
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_small"

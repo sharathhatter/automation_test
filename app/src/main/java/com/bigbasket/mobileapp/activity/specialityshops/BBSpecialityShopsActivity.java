@@ -108,7 +108,7 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
     }
 
     private void loadSpecialityShops(final String catVal) {
-        if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
+        if (!checkInternetConnection()) {
             handler.sendOfflineError(true);
             return;
         }

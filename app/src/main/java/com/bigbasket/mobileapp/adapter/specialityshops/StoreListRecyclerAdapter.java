@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -41,6 +40,7 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         StoreListRowHolder rowHolder = (StoreListRowHolder) holder;
 
@@ -55,7 +55,6 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         TextView txtStoreLoc = rowHolder.getTxtStoreLoc();
         TextView txtStoreDeliveryTime = rowHolder.getTxtStoreDeliveryTime();
         TextView txtStoreTimings = rowHolder.getTxtStoreTimings();
-        LinearLayout layoutDelivery = rowHolder.getLayoutDelivery();
         ImageView imgStore = rowHolder.getImgStoreImg();
 
         if (!TextUtils.isEmpty(storeName)) {
@@ -75,9 +74,9 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         if (!TextUtils.isEmpty(storeDelTime)) {
             txtStoreDeliveryTime.setText(storeDelTime);
             txtStoreDeliveryTime.setVisibility(View.VISIBLE);
-            layoutDelivery.setVisibility(View.VISIBLE);
+            txtStoreDeliveryTime.setVisibility(View.VISIBLE);
         } else {
-            layoutDelivery.setVisibility(View.INVISIBLE);
+            txtStoreDeliveryTime.setVisibility(View.INVISIBLE);
             txtStoreDeliveryTime.setVisibility(View.INVISIBLE);
         }
 
@@ -105,7 +104,6 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         private TextView txtStoreLoc;
         private TextView txtDeliveryTime;
         private TextView txtStoreTimings;
-        private LinearLayout layoutDelivery;
         private Typeface typefaceRobotoRegular, typefaceRobotoLight;
 
         private StoreListRowHolder(View itemView, Typeface typefaceRobotoRegular, Typeface typefaceRobotoLight) {
@@ -151,12 +149,6 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             if (storeImg == null)
                 storeImg = (ImageView) itemView.findViewById(R.id.imgStore);
             return storeImg;
-        }
-
-        public LinearLayout getLayoutDelivery() {
-            if (layoutDelivery == null)
-                layoutDelivery = (LinearLayout) itemView.findViewById(R.id.layoutDelivery);
-            return layoutDelivery;
         }
 
         @Override
