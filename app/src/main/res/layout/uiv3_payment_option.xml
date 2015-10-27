@@ -30,6 +30,12 @@
             android:layout_marginBottom="@dimen/margin_small"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:id="@+id/layoutCheckoutProgressContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
             <RelativeLayout
                 android:id="@+id/layoutKnowMore"
                 android:layout_width="match_parent"

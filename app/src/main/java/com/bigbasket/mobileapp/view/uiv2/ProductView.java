@@ -148,13 +148,26 @@ public final class ProductView {
                                            final T productDataAware) {
         TextView txtProductDesc = productViewHolder.getTxtProductDesc();
         TextView txtProductBrand = productViewHolder.getTxtProductBrand();
+        TextView txtGiftMsg = productViewHolder.getTxtGiftMsg();
         txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-        //txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         if (!TextUtils.isEmpty(product.getDescription())) {
             txtProductDesc.setText(product.getDescription());
             txtProductDesc.setVisibility(View.VISIBLE);
         } else {
             txtProductDesc.setVisibility(View.GONE);
+        }
+        if (!TextUtils.isEmpty(product.getGiftMsg())) {
+            if (txtGiftMsg.getCompoundDrawables()[0] == null) {
+                // On PD page, not using drawable left, as when text is long icon will get center-vertical.
+                // Note: You don't need any hiding code, as this is only present on PD page.
+                ImageView imgGiftIcon = productViewHolder.getImgGiftIcon();
+                imgGiftIcon.setVisibility(View.VISIBLE);
+            }
+            txtGiftMsg.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+            txtGiftMsg.setText(product.getGiftMsg());
+            txtGiftMsg.setVisibility(View.VISIBLE);
+        } else {
+            txtGiftMsg.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(product.getBrand())) {
             txtProductBrand.setText(product.getBrand());
@@ -199,11 +212,14 @@ public final class ProductView {
 
     private static boolean hasText(ArrayList<HashMap<String, String>> storeAvailabilityArrayList,
                                    @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
+        int elementsWithTextCount = 0;
         for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
             String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
-            if (TextUtils.isEmpty(msg)) return false;
+            if (!TextUtils.isEmpty(msg)) {
+                elementsWithTextCount++;
+            }
         }
-        return true;
+        return elementsWithTextCount > 1;
     }
 
     private static <T> void setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
@@ -238,15 +254,20 @@ public final class ProductView {
             txtExpressMsg.setVisibility(View.GONE);
             radioGroupExpress.removeAllViews();
             radioGroupExpress.setVisibility(View.VISIBLE);
+            radioGroupExpress.setOnCheckedChangeListener(null); // Reset onclick listener
+            radioGroupExpress.clearCheck();
+            boolean isFirst = true;
             for (int i = 0; i < storeAvailabilityArrayList.size(); i++) {
                 HashMap<String, String> particularStoreMap = storeAvailabilityArrayList.get(i);
                 String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+                if (TextUtils.isEmpty(msg)) continue;
                 RadioButton rbtnAvailabilityType = UIUtil.getPaymentOptionRadioButton(radioGroupExpress, context,
                         LayoutInflater.from(context), (int) context.getResources().getDimension(R.dimen.margin_mini));
                 rbtnAvailabilityType.setText(msg);
                 radioGroupExpress.addView(rbtnAvailabilityType);
                 rbtnAvailabilityType.setId(i);
-                if (i == 0) {
+                if (isFirst) {
+                    isFirst = false;
                     rbtnAvailabilityType.setChecked(true);
                     setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
                             productDataAware, particularStoreMap.get(Constants.PRODUCT_STATUS));
@@ -257,6 +278,7 @@ public final class ProductView {
                 radioGroupExpress.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        if (checkedId < 0 || checkedId >= storeAvailabilityArrayList.size()) return;
                         HashMap<String, String> selectedStore =
                                 storeAvailabilityArrayList.get(checkedId);
                         String storeAvailability = selectedStore != null ?
@@ -278,18 +300,23 @@ public final class ProductView {
         HashMap<String, String> currentStoreMap = null;
         if (isContextualMode && storeAvailabilityArrayList.size() > 1 && !TextUtils.isEmpty(tabName)
                 && tabName.equals(Constants.EXPRESS)) {
+            String msg = null;
             for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
                 if (particularStoreMap.containsKey(Constants.TAB_TYPE) &&
                         particularStoreMap.get(Constants.TAB_TYPE).equals(Constants.EXPRESS)) {
-                    String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+                    msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
                     if (!TextUtils.isEmpty(msg)) {
-                        txtExpressMsg.setText(msg);
-                        currentStoreMap = particularStoreMap;
-                    } else {
-                        txtExpressMsg.setVisibility(View.GONE);
-                        layoutExpressMsg.setVisibility(View.GONE);
+                        break;
                     }
                 }
+            }
+            if (!TextUtils.isEmpty(msg)) {
+                txtExpressMsg.setText(msg);
+                txtExpressMsg.setVisibility(View.VISIBLE);
+                layoutExpressMsg.setVisibility(View.VISIBLE);
+            } else {
+                txtExpressMsg.setVisibility(View.GONE);
+                layoutExpressMsg.setVisibility(View.GONE);
             }
         } else {
             ArrayList<String> msgs = new ArrayList<>();

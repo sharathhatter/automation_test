@@ -1,12 +1,16 @@
 package com.bigbasket.mobileapp.activity.order;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.telephony.SmsMessage;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +50,8 @@ import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -64,6 +70,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     private OTPValidationDialogFragment otpValidationDialogFragment;
     private int mAddressPageMode;
     private ArrayList<City> mCities;
+    @Nullable
+    private BroadcastReceiver broadcastReceiver;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +88,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             mChoosenCity = new City(cityName, cityId);
         }
         new GetCitiesTask<>(this).startTask();  // Sync the cities
+
+
     }
 
     @Override
@@ -455,6 +465,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (editTextPincode != null) {
             hideKeyboard(this, editTextPincode);
         }
+        /**
+         * unregistering the sms broadcast receiver
+         *
+         */
+        unregisterBroadcastForSMS();
     }
 
     class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
@@ -520,5 +535,52 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             }
             handler.handleRetrofitError(error);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerBroadcastForSMS();
+    }
+
+    public void registerBroadcastForSMS() {
+        IntentFilter smsOTPintentFilter = new IntentFilter();
+        smsOTPintentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        smsOTPintentFilter.setPriority(9999);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final Bundle bundle = intent.getExtras();
+                if (bundle != null) {
+                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
+                    if (pdusObj == null) return;
+                    for (Object aPduObj : pdusObj) {
+                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) aPduObj);
+                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
+                        String message = currentMessage.getDisplayMessageBody();
+
+                        /**
+                         * checking that the message received is from BigBasket
+                         * and it contains the word verification
+                         */
+                        if ((phoneNumber.toUpperCase().contains("BIG") &&
+                                (message.toLowerCase().contains("verification")))) {
+                            final Pattern p = Pattern.compile("(\\d{4})");
+                            final Matcher m = p.matcher(message);
+                            if (m.find() && otpValidationDialogFragment != null
+                                    && otpValidationDialogFragment.isVisible()) {
+                                otpValidationDialogFragment.resendOrConfirmOTP(m.group(0));
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        registerReceiver(broadcastReceiver, smsOTPintentFilter);
+    }
+
+    public void unregisterBroadcastForSMS() {
+        if (broadcastReceiver == null) return;
+        unregisterReceiver(broadcastReceiver);
     }
 }

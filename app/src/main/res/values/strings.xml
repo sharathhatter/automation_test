@@ -90,6 +90,7 @@
     <string name="applyAllCaps">APPLY</string>
     <string name="apply">Apply</string>
     <string name="pleaseNote">Please Note:</string>
+    <string name="note">Note:</string>
     <string name="shopFromOrder">Shop from order</string>
 
     <style name="placeOrder">Place Order</style>
@@ -295,6 +296,7 @@
     <string name="other_address">Other Addresses:</string>
     <string name="addAnAddress"> \u0020 Add an Address</string>
     <string name="save">SAVE</string>
+    <string name="saveAndContinue">Save and Continue</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
 
     <!-- Show cart tabs -->
@@ -314,7 +316,7 @@
     <string name="noProductsUnavailable">No Products available!</string>
     <string name="continueAnyway">Continue Anyway</string>
     <string name="help">Help</string>
-    <string name="deliverableTextPlural">Based on the items in Basket, your deliveries will come in multiple shipments.</string>
+    <string name="deliverableTextPlural">Based on the items in your basket, deliveries will come in multiple shipments.</string>
     <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
     <string name="voucherApplicableSingular">Voucher Applicable</string>
     <string name="voucherApplicablePlural">Vouchers Applicable</string>
@@ -363,6 +365,37 @@
     <string name="status">Status</string>
     <string name="retry">Retry</string>
     <string name="needMoreAddressInfo">We need more information to complete your address and help you checkout the items in Basket.</string>
-    <string name="noProductsInCurrentCity">No product from this order are available in your current city.</string>
+    <string name="slots">Slots</string>
+    <string name="order">Order</string>
     <string name="location_not_found">Unable to read your location. You must type-in your location to proceed.</string>
+
+    <string name="gift">Gift</string>
+    <string name="giftOptions">Gift Options</string>
+    <string name="giftWrapMsgPrefix">Would you like to personalize</string>
+    <string name="giftWrapMsgSuffix">with a gift wrap/message?</string>
+    <string name="giftWrapOptions">View Gift Wrap Options</string>
+    <string name="skipAndPro">Skip and Proceed</string>
+    <string name="giftCont">GiftImg</string>
+    <string name="selectQtySnum">1. Select Quantity</string>
+    <string name="addMsgSnum">2. Add Message</string>
+    <string name="addMsg">Add Message</string>
+    <string name="qtyInBasket">Qty in basket:</string>
+    <string name="giftWrapCharge">Gift wrap charge:</string>
+    <string name="qtyToGiftWrapOrMsg">Qty to gift-wrap/add message</string>
+    <string name="giftWrapChargeTotal">Gift wrap charge total:</string>
+    <string name="perItem">per qty.</string>
+    <string name="rupeeTerminator">/-</string>
+    <string name="chooseYourMsg">Choose your message option:</string>
+    <string name="commonMsg">Common Message</string>
+    <string name="commonMsgDesc">A common message for all selected products.</string>
+    <string name="individualMsg">Individual Message</string>
+    <string name="individualMsgDesc">Different messages can be added per product.</string>
+    <string name="typeInYourMsg">Type In your message (Optional) - Max</string>
+    <string name="charsColon">chars:</string>
+    <string name="colon">:</string>
+    <string name="noProductsInCurrentCity">No product from this order are available in your current city.</string>
+    <string name="totalNumOfItemsToGiftWrap">Total no# of items to gift wrap</string>
+    <string name="totalCostOfGiftWrapping">Total cost of gift wrapping</string>
+    <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
+    <string name="noAddGiftWrap">No additional gift wrap required.</string>
 </resources>
