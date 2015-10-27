@@ -25,16 +25,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by mrudula on 1/9/15.
- */
 public class ShowCartFragment extends BaseFragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.cart_fragment_list, container, false);
-        return view;
+        return inflater.inflate(R.layout.cart_fragment_list, container, false);
     }
 
     @Override
@@ -46,14 +42,19 @@ public class ShowCartFragment extends BaseFragment {
         String baseImageUrl = getArguments().getString(Constants.BASE_IMG_URL);
         ArrayList<FulfillmentInfo> fulfillmentInfos = getArguments().getParcelableArrayList(Constants.FULFILLMENT_INFO);
         ArrayList<AnnotationInfo> annotationInfoArrayList = getArguments().getParcelableArrayList(Constants.ANNOTATION_INFO);
+        int currentTabIndex = getArguments().getInt(Constants.CURRENT_TAB_INDEX);
 
         if (cartItemLists != null) {
-            renderCartItemList(cartItemLists, baseImageUrl, fulfillmentInfos, annotationInfoArrayList);
+            renderCartItemList(cartItemLists, baseImageUrl, fulfillmentInfos, annotationInfoArrayList, currentTabIndex);
         }
     }
 
-    private void renderCartItemList(ArrayList<CartItemList> cartItemLists, String baseImageUrl, ArrayList<FulfillmentInfo> fulfillmentInfos, ArrayList<AnnotationInfo> annotationInfoArrayList) {
+    private void renderCartItemList(ArrayList<CartItemList> cartItemLists, String baseImageUrl,
+                                    ArrayList<FulfillmentInfo> fulfillmentInfos,
+                                    ArrayList<AnnotationInfo> annotationInfoArrayList,
+                                    int currentTabIndex) {
         if (getContentView() == null) return;
+
         List<Object> cartItemHeaderList = new ArrayList<>();
         for (CartItemList cartItemInfoArray : cartItemLists) {
             CartItemHeader cartItemHeader = new CartItemHeader();
@@ -98,11 +99,20 @@ public class ShowCartFragment extends BaseFragment {
                 getActivity(),
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl,
-                getNextScreenNavigationContext());
-        RecyclerView list_show_cart = (RecyclerView) getContentView().findViewById(R.id.list_show_cart);
-        list_show_cart.setLayoutManager(new LinearLayoutManager(getActivity()));
-        list_show_cart.setAdapter(activeOrderRowAdapter);
+                getNextScreenNavigationContext(), currentTabIndex);
+        RecyclerView listShowCart = (RecyclerView) getContentView().findViewById(R.id.list_show_cart);
+        listShowCart.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listShowCart.setAdapter(activeOrderRowAdapter);
 
+        //scroll list to position
+        onBasketProductAlterScrollHandler(listShowCart, cartItemHeaderList);
+    }
+
+    private void onBasketProductAlterScrollHandler(RecyclerView listShowCart, List<Object> cartItemHeaderList) {
+        int listScrollPosition = getArguments().getInt(Constants.ITEM_SCROLL_POSITION, 0);
+        if (listScrollPosition > 2 && cartItemHeaderList.size() > 2) {
+            listShowCart.scrollToPosition(listScrollPosition);
+        }
     }
 
     @Override

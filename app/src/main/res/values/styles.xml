@@ -33,10 +33,23 @@
         <item name="tabSelectedTextColor">@color/uiv3_action_bar_background</item>
     </style>
 
+    <style name="BaseAppTheme.GiftTabStyle" parent="BaseAppTheme.TabStyle">
+        <item name="tabIndicatorColor">@color/dark_green</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="tabTextAppearance">@style/BaseAppTheme.Tab.GiftTextStyle</item>
+        <item name="tabSelectedTextColor">@color/dark_green</item>
+    </style>
+
     <style name="BaseAppTheme.Tab.TextStyle" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/uiv3_secondary_text_color</item>
         <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="BaseAppTheme.Tab.GiftTextStyle" parent="BaseAppTheme.Tab.TextStyle">
+        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="textAllCaps">false</item>
     </style>
 
     <style name="LandingPageTheme.DialogTheme" parent="BaseAppTheme.AlertDialogStyle">
@@ -84,6 +97,11 @@
     <style name="BBEditTextStyle" parent="android:Widget.EditText">
         <item name="android:background">@drawable/apptheme_edit_text_holo_light</item>
         <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="BBTextStyle.Gift" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/uiv3_secondary_text_color</item>
+        <item name="android:textSize">@dimen/secondary_text_size</item>
     </style>
 
     <style name="ReadOnlyEditText" parent="Widget.AppCompat.EditText">

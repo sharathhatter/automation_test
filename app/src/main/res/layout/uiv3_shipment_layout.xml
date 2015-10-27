@@ -22,9 +22,16 @@
         android:layout_below="@id/toolbarMain">
 
         <LinearLayout
+            android:id="@+id/layout_shipment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layoutCheckoutProgressContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
 
             <TextView
                 android:id="@+id/txtDeliverablesHeading"
@@ -33,7 +40,7 @@
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
-                android:textColor="@color/uiv3_primary_btn_bkg"
+                android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/secondary_text_size" />
 
             <LinearLayout

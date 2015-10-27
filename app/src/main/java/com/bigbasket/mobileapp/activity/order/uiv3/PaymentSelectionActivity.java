@@ -96,7 +96,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mAddMoreMsg;
     private MutableLong mElapsedTime;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -211,8 +210,29 @@ public class PaymentSelectionActivity extends BackButtonActivity
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.MOBIKWIK_ORDER_ID);
             editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.apply();
+            editor.commit();
         }
+    }
+
+    private void renderCheckOutProgressView() {
+        LinearLayout layoutPaymentContainer = (LinearLayout) findViewById(R.id.layoutCheckoutProgressContainer);
+        layoutPaymentContainer.removeAllViews();
+        boolean hasGifts = getIntent().getBooleanExtra(Constants.HAS_GIFTS, false);
+        View checkoutProgressView;
+        if (hasGifts) {
+            String[] array_txtValues = new String[]{getString(R.string.address),
+                    getString(R.string.gift), getString(R.string.slots), getString(R.string.order)};
+            Integer[] array_compPos = new Integer[]{0, 1, 2};
+            int selectedPos = 3;
+            checkoutProgressView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
+        } else {
+            String[] array_txtValues = new String[]{getString(R.string.address),
+                    getString(R.string.slots), getString(R.string.order)};
+            Integer[] array_compPos = new Integer[]{0, 1};
+            int selectedPos = 2;
+            checkoutProgressView = UIUtil.getCheckoutProgressView(this, null, array_txtValues, array_compPos, selectedPos);
+        }
+        if (checkoutProgressView != null) layoutPaymentContainer.addView(checkoutProgressView, 0);
     }
 
     private void renderFooter(boolean refresh) {
@@ -370,6 +390,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 i++;
             }
         }
+        renderCheckOutProgressView();
     }
 
     @Override
@@ -383,15 +404,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
         String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
         PayTMInitializer.initiate(paymentParams, this,
                 new PaytmTxnCallback<>(this, fullOrderId, mPotentialOrderId, false, false));
-    }
-
-    private class OnShowAvailableVouchersListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            Intent availableVoucherListActivity = new Intent(getCurrentActivity(), AvailableVoucherListActivity.class);
-            availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
-            startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
-        }
     }
 
     public void onVoucherApplied(String voucher, OrderDetails orderDetails,
@@ -793,5 +805,14 @@ public class PaymentSelectionActivity extends BackButtonActivity
     @Override
     public String getScreenTag() {
         return TrackEventkeys.PAYMENT_SELECTION_SCREEN;
+    }
+
+    private class OnShowAvailableVouchersListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Intent availableVoucherListActivity = new Intent(getCurrentActivity(), AvailableVoucherListActivity.class);
+            availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
+            startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
+        }
     }
 }

@@ -474,6 +474,14 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
+        <!-- Gift-->
+
+        <activity
+            android:name=".activity.gift.GiftHomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <provider
             android:name=".contentProvider.SearchSuggestionProvider"
             android:authorities="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
@@ -524,6 +532,7 @@
                     android:scheme="package" />
             </intent-filter>
         </receiver>
+
 
         <provider
             android:name="com.moe.pushlibrary.providers.MoEProvider"

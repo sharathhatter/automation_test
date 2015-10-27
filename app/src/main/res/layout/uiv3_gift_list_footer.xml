@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="right"
+    android:paddingBottom="@dimen/padding_normal"
+    android:paddingLeft="@dimen/padding_normal"
+    android:paddingRight="@dimen/padding_normal"
+    android:paddingTop="@dimen/padding_large">
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/lblTotalGiftItems"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:text="@string/colon"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <TextView
+            android:id="@+id/txtCountGiftItems"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/lblGiftItemTotalPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <TextView
+            android:id="@+id/lblGiftItemTotalPriceColon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:text="@string/colon"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <TextView
+            android:id="@+id/txtGiftItemTotalPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+    </TableRow>
+</TableLayout>

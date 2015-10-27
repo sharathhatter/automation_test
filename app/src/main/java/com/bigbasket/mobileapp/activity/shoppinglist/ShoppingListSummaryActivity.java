@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
-import com.bigbasket.mobileapp.adapter.ProductListPagerAdapter;
+import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.AddAllShoppingListItemResponse;
@@ -63,17 +63,30 @@ public class ShoppingListSummaryActivity extends BBActivity {
     @Nullable
     private ViewPager viewPager;
     private TextView mTxtToolbarDropdown;
+    private int currentTabIndex;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadShoppingListSummary();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        loadShoppingListSummary();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if(resultCode == NavigationCodes.SHOPPING_LIST_MODIFIED ||
+                resultCode == NavigationCodes.BASKET_CHANGED){
+            loadShoppingListSummary();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
 
     @Override
     public int getMainLayout() {
@@ -206,7 +219,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 .setView();
     }
 
-    private void renderShoppingListSummary(ShoppingListName shoppingListName,
+    private void renderShoppingListSummary(final ShoppingListName shoppingListName,
                                            final ArrayList<ShoppingListSummary> shoppingListSummaries,
                                            String baseImgUrl, @Nullable Section headerSection,
                                            int headerSelectedOn) {
@@ -241,6 +254,9 @@ public class ShoppingListSummaryActivity extends BBActivity {
 
         final String nc = getNc();
         setNextScreenNavigationContext(nc);
+
+
+        final View layoutAddAll = findViewById(R.id.layoutAddAll);
         if (numTabs == 1) {
             findViewById(R.id.slidingTabs).setVisibility(View.GONE);
             Bundle bundle = getBundleForShoppingListProductFragment(shoppingListSummaries.get(0),
@@ -253,10 +269,11 @@ public class ShoppingListSummaryActivity extends BBActivity {
             findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
 
             viewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
-            ProductListPagerAdapter productListPagerAdapter = new ProductListPagerAdapter(getCurrentActivity(),
+            TabPagerAdapterWithFragmentRegistration tabPagerAdapterWithFragmentRegistration = new TabPagerAdapterWithFragmentRegistration(getCurrentActivity(),
                     getSupportFragmentManager(), getTabs(shoppingListSummaries, shoppingListName, baseImgUrl));
             if (viewPager != null) {
-                viewPager.setAdapter(productListPagerAdapter);
+                int oldCurrentTabIndex = currentTabIndex;
+                viewPager.setAdapter(tabPagerAdapterWithFragmentRegistration);
                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -264,6 +281,14 @@ public class ShoppingListSummaryActivity extends BBActivity {
 
                     @Override
                     public void onPageSelected(int position) {
+                        currentTabIndex = position;
+                        ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(position);
+                        if(Product.areAllProductsOutOfStock(shoppingListSummary.getProducts()) ||
+                                shoppingListName.isSystem() && !shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)){
+                            layoutAddAll.setVisibility(View.GONE);
+                        } else {
+                            layoutAddAll.setVisibility(View.VISIBLE);
+                        }
                         setNextScreenNavigationContext(nc + "." + shoppingListSummaries.get(position).getFacetSlug());
                         HashMap<String, String> eventAttribs = new HashMap<>();
                         eventAttribs.put(Constants.TAB_NAME, shoppingListSummaries.get(position).getFacetSlug());
@@ -282,41 +307,43 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 pagerSlidingTabStrip.setupWithViewPager(viewPager);
 
                 contentFrame.addView(viewPager);
+                viewPager.setCurrentItem(oldCurrentTabIndex);
             }
         }
-        logShoppingListingEvent(shoppingListSummaries.get(0));
-        final ViewPager copyViewPagerIntoFinalForOnClick = viewPager;
-        View layoutAddAll = findViewById(R.id.layoutAddAll);
-        if (areAllProductsOutOfStock(shoppingListSummaries) || (shoppingListName.isSystem() &&
+
+        layoutAddAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int currentItemIdx = viewPager != null ? viewPager.getCurrentItem() : 0;
+                if (currentItemIdx >= shoppingListSummaries.size()) return;
+                ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(currentItemIdx);
+                if (Product.areAllProductsOutOfStock(shoppingListSummary.getProducts())) {
+                    String msg = numTabs > 1 ? getString(R.string.allAreOutOfStockForTabPrefix) + " "
+                            + shoppingListSummary.getFacetName() + " " + getString(R.string.allAreOutOfStockForTabSuffix)
+                            : getString(R.string.allAreOutOfStockForSingleTab);
+                    showAlertDialog(null, msg);
+                } else {
+                    String msg = getString(R.string.addAllProducts);
+                    msg += numTabs > 1 ? " from " + shoppingListSummary.getFacetName()
+                            + " " + getString(R.string.toBasket) : "?";
+                    msg += "\n" + getString(R.string.outOfStockExcluded);
+                    showAlertDialog(null, msg,
+                            DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
+                            shoppingListSummary,
+                            getString(R.string.yesTxt));
+                }
+            }
+        });
+
+
+        ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(0);
+        logShoppingListingEvent(shoppingListSummary);
+        if (Product.areAllProductsOutOfStock(shoppingListSummary.getProducts()) || (shoppingListName.isSystem() &&
                 !shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG))) {
             layoutAddAll.setVisibility(View.GONE);
         } else {
             layoutAddAll.setVisibility(View.VISIBLE);
             ((TextView) findViewById(R.id.txtAddAll)).setTypeface(faceRobotoRegular);
-            layoutAddAll.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int currentItemIdx = copyViewPagerIntoFinalForOnClick != null ?
-                            copyViewPagerIntoFinalForOnClick.getCurrentItem() : 0;
-                    if (currentItemIdx >= shoppingListSummaries.size()) return;
-                    ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(currentItemIdx);
-                    if (Product.areAllProductsOutOfStock(shoppingListSummary.getProducts())) {
-                        String msg = numTabs > 1 ? getString(R.string.allAreOutOfStockForTabPrefix) + " "
-                                + shoppingListSummary.getFacetName() + " " + getString(R.string.allAreOutOfStockForTabSuffix)
-                                : getString(R.string.allAreOutOfStockForSingleTab);
-                        showAlertDialog(null, msg);
-                    } else {
-                        String msg = getString(R.string.addAllProducts);
-                        msg += numTabs > 1 ? " from " + shoppingListSummary.getFacetName()
-                                + " " + getString(R.string.toBasket) : "?";
-                        msg += "\n" + getString(R.string.outOfStockExcluded);
-                        showAlertDialog(null, msg,
-                                DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
-                                shoppingListSummary,
-                                getString(R.string.yesTxt));
-                    }
-                }
-            });
         }
     }
 
@@ -335,15 +362,6 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 trackEvent(TrackingAware.SMART_BASKET_SUMMARY_SHOWN, eventAttribs);
             }
         }
-    }
-
-    private boolean areAllProductsOutOfStock(ArrayList<ShoppingListSummary> shoppingListSummaries) {
-        for (ShoppingListSummary shoppingListSummary : shoppingListSummaries) {
-            if (!Product.areAllProductsOutOfStock(shoppingListSummary.getProducts())) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private ArrayList<BBTab> getTabs(ArrayList<ShoppingListSummary> shoppingListSummaries,
@@ -388,7 +406,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private Fragment getCurrentFragment() {
         if (viewPager == null) return null;
         int currentPosition = viewPager.getCurrentItem();
-        return ((ProductListPagerAdapter) viewPager.getAdapter()).getRegisteredFragment(currentPosition);
+        return ((TabPagerAdapterWithFragmentRegistration) viewPager.getAdapter()).getRegisteredFragment(currentPosition);
     }
 
     private void setProductCount(HashMap<String, Integer> cartInfo,

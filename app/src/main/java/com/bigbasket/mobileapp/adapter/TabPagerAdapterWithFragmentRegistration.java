@@ -12,11 +12,11 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class ProductListPagerAdapter extends TabPagerAdapter {
+public class TabPagerAdapterWithFragmentRegistration extends TabPagerAdapter {
 
     private SparseArray<WeakReference<Fragment>> registeredfragments;
 
-    public ProductListPagerAdapter(Context ctx, FragmentManager fm, ArrayList<BBTab> bbTabs) {
+    public TabPagerAdapterWithFragmentRegistration(Context ctx, FragmentManager fm, ArrayList<BBTab> bbTabs) {
         super(ctx, fm, bbTabs);
         this.registeredfragments = new SparseArray<>();
     }

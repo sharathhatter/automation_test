@@ -110,6 +110,10 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     }
 
     private void setUpMyLocationButtonUI(boolean isAttached) {
+        if (isSuspended()) return;
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment == null) return;
         int myLocPaddingTop;
         if (isAttached && mEditTextChooseArea.getLayoutParams() != null
                 && mEditTextChooseArea.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
@@ -122,8 +126,6 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         } else {
             myLocPaddingTop = 160;
         }
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
         GoogleMap map = mapFragment.getMap();
         map.setPadding(0, myLocPaddingTop, 0, 0);
     }

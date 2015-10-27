@@ -33,6 +33,7 @@ import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
+import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
@@ -59,7 +60,7 @@ import java.util.Map;
 public abstract class BaseFragment extends AbstractFragment implements HandlerAware,
         CartInfoAware, BasketOperationAware, ProgressIndicationAware,
         ConnectivityAware, TrackingAware, ApiErrorAware, LaunchProductListAware,
-        AnalyticsNavigationContextAware {
+        AnalyticsNavigationContextAware, OnBasketChangeListener {
 
     protected BigBasketMessageHandler handler;
     private ProgressDialog progressDialog;
@@ -564,5 +565,17 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void startActivityForResult(Intent intent, int requestCode) {
         intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
         super.startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    public void onBasketChanged(@Nullable Intent data) {
+        if(getActivity() == null) return;
+        ((BaseActivity)getActivity()).onBasketChanged(data);
+    }
+
+    @Override
+    public void markBasketChanged(@Nullable Intent data) {
+        if(getActivity() == null) return;
+        ((BaseActivity)getActivity()).markBasketChanged(data);
     }
 }
