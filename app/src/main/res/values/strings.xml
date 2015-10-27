@@ -316,7 +316,7 @@
     <string name="noProductsUnavailable">No Products available!</string>
     <string name="continueAnyway">Continue Anyway</string>
     <string name="help">Help</string>
-    <string name="deliverableTextPlural">Based on the items in Basket, your deliveries will come in multiple shipments.</string>
+    <string name="deliverableTextPlural">Based on the items in your basket, deliveries will come in multiple shipments.</string>
     <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
     <string name="voucherApplicableSingular">Voucher Applicable</string>
     <string name="voucherApplicablePlural">Vouchers Applicable</string>
@@ -394,8 +394,8 @@
     <string name="charsColon">chars:</string>
     <string name="colon">:</string>
     <string name="noProductsInCurrentCity">No product from this order are available in your current city.</string>
-    <string name="totalNumOfItemsToGiftWrap">Total No. of Items to Gift Wrap</string>
-    <string name="totalCostOfGiftWrapping">Total Cost of Gift Wrapping</string>
+    <string name="totalNumOfItemsToGiftWrap">Total no# of items to gift wrap</string>
+    <string name="totalCostOfGiftWrapping">Total cost of gift wrapping</string>
     <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
     <string name="noAddGiftWrap">No additional gift wrap required</string>
 </resources>
