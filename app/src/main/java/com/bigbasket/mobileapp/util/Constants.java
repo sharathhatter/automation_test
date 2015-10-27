@@ -6,6 +6,7 @@ public class Constants {
     public static final String APP_FLYER_ID = "5uD68XCLk3KJXJQkW24KrK";
     public static final String DEEP_LINK = "deepLink";
     public static final String HAS_PARENT = "hasParent";
+    public static final String HAS_MSG = "has_message";
     public static final String IS_LOGGED_IN = "is_logged_in";
 
     public static final String CURRENT_PAGE = "page";

@@ -44,6 +44,9 @@ public class BaseGiftItem extends BaseProduct {
     @SerializedName(Constants.GIFT_WRAP_CHARGE)
     @Expose
     private double giftWrapCharge;
+    @Expose
+    @SerializedName(Constants.HAS_MSG)
+    private boolean hasMsg;
 
     public BaseGiftItem(Parcel source) {
         super(source);
@@ -58,6 +61,7 @@ public class BaseGiftItem extends BaseProduct {
         this.isPreWrapped = source.readByte() == (byte) 1;
         this.isConvertibleToNormal = source.readByte() == (byte) 1;
         this.giftWrapCharge = source.readDouble();
+        this.hasMsg = source.readByte() == (byte) 1;
     }
 
     @Override
@@ -73,7 +77,8 @@ public class BaseGiftItem extends BaseProduct {
         dest.writeInt(quantity);
         dest.writeByte(isPreWrapped ? (byte) 1 : (byte) 0);
         dest.writeByte(isConvertibleToNormal ? (byte) 1 : (byte) 0);
-        dest.writeDouble(this.giftWrapCharge);
+        dest.writeDouble(giftWrapCharge);
+        dest.writeByte(hasMsg ? (byte) 1 : (byte) 0);
     }
 
     public String getProductId() {
