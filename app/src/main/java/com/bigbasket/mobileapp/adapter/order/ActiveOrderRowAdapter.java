@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.adapter.order;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -95,6 +96,9 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         switch (viewType) {
             case VIEW_TYPE_CART_ITEM:
                 View row = inflater.inflate(R.layout.uiv3_cart_item_row, parent, false);
+                if (orderItemDisplaySource == OrderItemDisplaySource.ORDER_DISPLAY) {
+                    row.setBackgroundColor(Color.WHITE);
+                }
                 return new RowHolder(row);
             case VIEW_TYPE_FULFILLMENT_INFO:
                 row = inflater.inflate(R.layout.fulfillment_info, parent, false);
@@ -353,6 +357,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                     @Override
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
+                            if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
@@ -366,7 +371,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
 
                             if (context instanceof BasketChangeQtyAware) {
                                 int scrollOffset = cartItem.getTotalQty() == 1 ? 1 : 0;
-                                ((BasketChangeQtyAware) context).onBasketQtyChanged(rowHolder.getPosition() - scrollOffset,
+                                ((BasketChangeQtyAware) context).onBasketQtyChanged(rowHolder.getAdapterPosition() - scrollOffset,
                                         currentTabIndex);
                             }
                         } else {
@@ -380,6 +385,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                     @Override
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
+                            if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
@@ -392,7 +398,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                             basketOperationTask.startTask();
 
                             if (context instanceof BasketChangeQtyAware) {
-                                ((BasketChangeQtyAware) context).onBasketQtyChanged(rowHolder.getPosition(),
+                                ((BasketChangeQtyAware) context).onBasketQtyChanged(rowHolder.getAdapterPosition(),
                                         currentTabIndex);
                             }
                         } else {
@@ -407,6 +413,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                     @Override
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
+                            if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
@@ -419,7 +426,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                             basketOperationTask.startTask();
 
                             if (context instanceof BasketChangeQtyAware) {
-                                ((BasketChangeQtyAware) context).onBasketQtyChanged(rowHolder.getPosition() - 1,
+                                ((BasketChangeQtyAware) context).onBasketQtyChanged(rowHolder.getAdapterPosition() - 1,
                                         currentTabIndex);
                             }
                         } else {
