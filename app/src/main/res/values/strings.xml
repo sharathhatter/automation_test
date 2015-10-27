@@ -268,7 +268,6 @@
     <string name="next">Next</string>
     <string name="startShopping">Start Shopping</string>
     <string name="loginToContinue">Please login to continue</string>
-    <string name="citiesWhereWeServe">Cities where we currently serve</string>
     <string name="bbShoppingLists">BigBasket Shopping List</string>
     <string name="removeAllProducts">Remove all the products from basket?</string>
     <string name="emptyBasket">Empty Basket</string>
@@ -394,7 +393,8 @@
     <string name="charsColon">chars:</string>
     <string name="colon">:</string>
     <string name="noProductsInCurrentCity">No product from this order are available in your current city.</string>
-    <string name="totalNumOfItemsToGiftWrap">Total no# of items to gift wrap</string>
+    <string name="totalNumOfItemsToGiftWrapSingular">Total no. of item to gift wrap</string>
+    <string name="totalNumOfItemsToGiftWrapPlural">Total no. of items to gift wrap</string>
     <string name="totalCostOfGiftWrapping">Total cost of gift wrapping</string>
     <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
     <string name="noAddGiftWrap">No additional gift wrap required.</string>

@@ -66,7 +66,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
     }
 
 
-    public void initiateUpdateProfileActivity(UpdateProfileModel updateProfileModel) {
+    private void initiateUpdateProfileActivity(UpdateProfileModel updateProfileModel) {
         final View view = getContentView();
         if (view == null) return;
         editTextEmail = (EditText) view.findViewById(R.id.editTextEmail);
@@ -119,7 +119,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         trackEvent(TrackingAware.UPDATE_PROFILE_SHOWN, null);
     }
 
-    public void showDatePickerDialog(View view) {
+    private void showDatePickerDialog(View view) {
         DialogFragment newFragment = new DatePickerFragment(view);
         newFragment.show(getFragmentManager(), Constants.DATE_PICKER);
     }
@@ -181,7 +181,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         btnUpdateAfterSuccessNumberValidation(otpCode);
     }
 
-    public void btnUpdateAfterSuccessNumberValidation(String otpCode) {
+    private void btnUpdateAfterSuccessNumberValidation(String otpCode) {
         final View view = getContentView();
         if (view == null) return;
 

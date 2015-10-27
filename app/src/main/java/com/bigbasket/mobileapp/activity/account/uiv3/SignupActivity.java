@@ -53,7 +53,7 @@ public class SignupActivity extends BackButtonActivity {
         return R.layout.uiv3_signup;
     }
 
-    public void renderSignUp() {
+    private void renderSignUp() {
         ((TextView) findViewById(R.id.txtOrSeparator)).setTypeface(faceRobotoRegular);
         ((TextView) findViewById(R.id.lblConnectUsing)).setTypeface(faceRobotoLight);
         mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
@@ -140,7 +140,7 @@ public class SignupActivity extends BackButtonActivity {
         }
     }
 
-    public void onRegisterButtonClicked() {
+    private void onRegisterButtonClicked() {
         trackEvent(TrackingAware.REGISTER_BTN_CLICK, null);
 
 

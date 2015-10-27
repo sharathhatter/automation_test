@@ -12,5 +12,5 @@ public abstract class AbstractDialogFragment extends DialogFragment {
         LocalyticsWrapper.tagScreen(getScreenTag());
     }
 
-    public abstract String getScreenTag();
+    protected abstract String getScreenTag();
 }

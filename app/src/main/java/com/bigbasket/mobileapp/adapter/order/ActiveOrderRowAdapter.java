@@ -361,7 +361,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
-                                    (int)cartItem.getTotalQty() -1);
+                                    (int) cartItem.getTotalQty() - 1);
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.DEC, product,
                                     null, null, null, null, null, TrackingAware.BASKET_DECREMENT,
@@ -389,7 +389,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
-                                    (int)cartItem.getTotalQty() + 1);
+                                    (int) cartItem.getTotalQty() + 1);
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.INC, product,
                                     null, null, null, null, null, TrackingAware.BASKET_INCREMENT,

@@ -24,11 +24,11 @@ import java.util.HashMap;
 
 public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int VIEW_TYPE_SECTION_ITEM = 0;
-    public static final int VIEW_TYPE_HEADER = 1;
-    public static final int VIEW_TYPE_SECTION_ITEM_VERTICAL = 2;
-    public static final int VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_VERTICAL = 3;
-    public static final int VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_HORIZONTAL = 4;
+    private static final int VIEW_TYPE_SECTION_ITEM = 0;
+    private static final int VIEW_TYPE_HEADER = 1;
+    private static final int VIEW_TYPE_SECTION_ITEM_VERTICAL = 2;
+    private static final int VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_VERTICAL = 3;
+    private static final int VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_HORIZONTAL = 4;
 
     private Context context;
     private Typeface typeface;

@@ -63,9 +63,9 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
 
     @Override
     public void onBackPressed() {
-        if(mViewPager != null && mViewPager.getCurrentItem() == 1){
+        if (mViewPager != null && mViewPager.getCurrentItem() == 1) {
             mViewPager.setCurrentItem(0);
-        }else {
+        } else {
             super.onBackPressed();
         }
     }

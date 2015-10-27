@@ -177,13 +177,13 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
     @Override
     public void addToShoppingList(List<ShoppingListName> selectedShoppingListNames) {
-        if(getCurrentActivity() == null) return;
+        if (getCurrentActivity() == null) return;
         getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
     @Override
     public void postAddToShoppingListOperation() {
-        if(getCurrentActivity() == null) return;
+        if (getCurrentActivity() == null) return;
         getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
@@ -195,7 +195,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     @Override
     public void onNewShoppingListCreated(String listName) {
         loadShoppingLists();
-        if(getCurrentActivity() == null) return;
+        if (getCurrentActivity() == null) return;
         getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 

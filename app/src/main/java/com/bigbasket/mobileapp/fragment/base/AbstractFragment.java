@@ -16,9 +16,9 @@ import com.newrelic.agent.android.NewRelic;
 
 public abstract class AbstractFragment extends Fragment implements CancelableAware, ActivityAware {
 
-    public static Typeface faceRupee;
-    public static Typeface faceRobotoRegular;
-    public static Typeface faceRobotoMedium;
+    protected static Typeface faceRupee;
+    protected static Typeface faceRobotoRegular;
+    protected static Typeface faceRobotoMedium;
 
     private boolean mAlreadyLoaded = false;
     private boolean isFragmentSuspended;
@@ -47,7 +47,7 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
         }
     }
 
-    public void onBackResume() {
+    protected void onBackResume() {
         isFragmentSuspended = false;
     }
 
@@ -89,7 +89,7 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
         return (BaseActivity) getActivity();
     }
 
-    public void finish() {
+    protected void finish() {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager().popBackStack();
         }

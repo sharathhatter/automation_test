@@ -79,8 +79,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if(resultCode == NavigationCodes.SHOPPING_LIST_MODIFIED ||
-                resultCode == NavigationCodes.BASKET_CHANGED){
+        if (resultCode == NavigationCodes.SHOPPING_LIST_MODIFIED ||
+                resultCode == NavigationCodes.BASKET_CHANGED) {
             loadShoppingListSummary();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -283,8 +283,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     public void onPageSelected(int position) {
                         currentTabIndex = position;
                         ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(position);
-                        if(Product.areAllProductsOutOfStock(shoppingListSummary.getProducts()) ||
-                                shoppingListName.isSystem() && !shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)){
+                        if (Product.areAllProductsOutOfStock(shoppingListSummary.getProducts()) ||
+                                shoppingListName.isSystem() && !shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
                             layoutAddAll.setVisibility(View.GONE);
                         } else {
                             layoutAddAll.setVisibility(View.VISIBLE);
@@ -347,7 +347,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
         }
     }
 
-    public void logShoppingListingEvent(ShoppingListSummary shoppingListSummary) {
+    private void logShoppingListingEvent(ShoppingListSummary shoppingListSummary) {
         ShoppingListName shoppingListName = shoppingListSummary.getShoppingListName();
         HashMap<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(Constants.TAB_NAME, shoppingListSummary.getFacetSlug());
@@ -553,7 +553,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
         alertDialog.show();
     }
 
-    public void editShoppingListName(ShoppingListName shoppingListName, String newName) {
+    private void editShoppingListName(ShoppingListName shoppingListName, String newName) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.editShoppingList(shoppingListName.getSlug(), newName, new Callback<OldBaseApiResponse>() {
@@ -592,7 +592,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
         });
     }
 
-    public void deleteShoppingList(final ShoppingListName shoppingListName) {
+    private void deleteShoppingList(final ShoppingListName shoppingListName) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.deleteShoppingList(shoppingListName.getSlug(), new Callback<OldBaseApiResponse>() {

@@ -173,7 +173,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     }
 
     @Override
-    public void handleTutorialResponse(int resultCode) {
+    protected void handleTutorialResponse(int resultCode) {
         if (resultCode == FragmentCodes.START_HOME) {
             Intent homePageIntent = new Intent(this, HomeActivity.class);
             homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
@@ -296,7 +296,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         }
     }
 
-    protected void handleResults(boolean reloadApp) {
+    private void handleResults(boolean reloadApp) {
         removePendingGoToHome();
         if (reloadApp) {
             loadNavigation();

@@ -87,7 +87,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     @Override
-    public void onBackResume() {
+    protected void onBackResume() {
         super.onBackResume();
         // removed home event from here
         setNextScreenNavigationContext(TrackEventkeys.HOME);

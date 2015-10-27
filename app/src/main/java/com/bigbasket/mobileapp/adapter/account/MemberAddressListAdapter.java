@@ -10,18 +10,18 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.model.account.Address;
+import com.bigbasket.mobileapp.util.FontHolder;
 
 import java.util.ArrayList;
 
 public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int VIEW_TYPE_ADDRESS = 0;
-    public static final int VIEW_TYPE_LABEL = 1;
-    public static final int VIEW_TYPE_ADD_ADDRESS = 2;
+    private static final int VIEW_TYPE_ADDRESS = 0;
+    private static final int VIEW_TYPE_LABEL = 1;
+    private static final int VIEW_TYPE_ADD_ADDRESS = 2;
 
     private ArrayList<Object> addressObjectList;
     private T context;
@@ -59,7 +59,8 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 return new MemberAddressViewHolder(view);
             case VIEW_TYPE_ADD_ADDRESS:
                 view = inflater.inflate(R.layout.uiv3_add_address_layout, viewGroup, false);
-                ((TextView) view.findViewById(R.id.txtAddNewAddress)).setTypeface(BaseActivity.faceRobotoMedium);
+                ((TextView) view.findViewById(R.id.txtAddNewAddress))
+                        .setTypeface(FontHolder.getInstance(((ActivityAware) context).getCurrentActivity()).getFaceRobotoMedium());
                 return new AddAddressViewHolder(view);
         }
         return null;
@@ -180,7 +181,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         public TextView getTxtAddressLabel() {
             if (txtAddressLabel == null) {
                 txtAddressLabel = (TextView) itemView.findViewById(R.id.txtAddressLabel);
-                txtAddressLabel.setTypeface(BaseActivity.faceRobotoRegular);
+                txtAddressLabel.setTypeface(FontHolder.getInstance(((ActivityAware) context).getCurrentActivity()).getFaceRobotoRegular());
             }
             return txtAddressLabel;
         }
@@ -219,7 +220,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         public TextView getTxtAddress() {
             if (txtAddress == null) {
                 txtAddress = (TextView) itemView.findViewById(R.id.txtAddress);
-                txtAddress.setTypeface(BaseActivity.faceRobotoMedium);
+                txtAddress.setTypeface(FontHolder.getInstance(((ActivityAware) context).getCurrentActivity()).getFaceRobotoMedium());
             }
 
             return txtAddress;
@@ -228,7 +229,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         public TextView getTxtExpressDelivery() {
             if (txtExpressDelivery == null) {
                 txtExpressDelivery = (TextView) itemView.findViewById(R.id.txtExpressDelivery);
-                txtExpressDelivery.setTypeface(BaseActivity.faceRobotoRegular);
+                txtExpressDelivery.setTypeface(FontHolder.getInstance(((ActivityAware) context).getCurrentActivity()).getFaceRobotoRegular());
             }
             return txtExpressDelivery;
         }

@@ -227,7 +227,6 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
         private TextView txtCountGiftItems;
         private TextView lblGiftItemTotalPrice;
         private TextView txtGiftItemTotalPrice;
-        private TextView lblGiftItemTotalPriceColon;
         private Typeface typefaceText;
         private Typeface typefacePrice;
 
@@ -260,13 +259,6 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
                 lblGiftItemTotalPrice.setTypeface(typefaceText);
             }
             return lblGiftItemTotalPrice;
-        }
-
-        public TextView getLblGiftItemTotalPriceColon() {
-            if (lblGiftItemTotalPriceColon == null) {
-                lblGiftItemTotalPriceColon = (TextView) itemView.findViewById(R.id.lblGiftItemTotalPriceColon);
-            }
-            return lblGiftItemTotalPriceColon;
         }
 
         public TextView getTxtGiftItemTotalPrice() {

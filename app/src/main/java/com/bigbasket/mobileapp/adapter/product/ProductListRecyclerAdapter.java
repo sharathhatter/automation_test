@@ -30,9 +30,8 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private static final int VIEW_TYPE_PRODUCT_LOADING_FAILED = 4;
 
     private static final int DELTA_FOR_NEXT_PAGE_LOAD = 5;
-    private static final int DELTA_FOR_PRELOADING_IMG = 3;
 
-    protected int serverListSize = -1;
+    private int serverListSize = -1;
     private String baseImgUrl;
     private ProductViewDisplayDataHolder productViewDisplayDataHolder;
     private ActivityAware activityAware;

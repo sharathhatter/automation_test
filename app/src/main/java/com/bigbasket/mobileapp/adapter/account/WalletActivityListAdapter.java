@@ -16,8 +16,8 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
+import com.bigbasket.mobileapp.util.UIUtil;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 
@@ -85,7 +85,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
         String primaryReason = walletDataItems.get(position).getPrimary_reason();
 
         String prefixEndBal = (((ActivityAware) ctx)).getCurrentActivity().getString(R.string.endingBal) + " `";
-        String mrpStrEndBal = getDecimalAmount(endingBal) + "";
+        String mrpStrEndBal = UIUtil.formatAsMoney(endingBal) + "";
         int prefixEndBalLen = prefixEndBal.length();
         SpannableString spannableEndingBal = new SpannableString(prefixEndBal + mrpStrEndBal);
 
@@ -96,7 +96,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
         SpannableString spannableCredit;
         if (walletDataItems.get(position).getType().equals("credit")) {
             String prefix = ((ActivityAware) ctx).getCurrentActivity().getString(R.string.credited) + " `";
-            String mrpStr = getDecimalAmount(amount) + " ";
+            String mrpStr = UIUtil.formatAsMoney(amount) + " ";
             int prefixLen = prefix.length();
             spannableCredit = new SpannableString(prefix + mrpStr);
             holder.creditedHolder.setBackgroundColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.dark_green));
@@ -105,7 +105,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
         } else {
 
             String prefix = ((ActivityAware) ctx).getCurrentActivity().getString(R.string.debited) + " `";
-            String mrpStr = getDecimalAmount(amount) + " ";
+            String mrpStr = UIUtil.formatAsMoney(amount) + " ";
             int prefixLen = prefix.length();
             holder.creditedHolder.setBackgroundColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.red_color));
             spannableCredit = new SpannableString(prefix + mrpStr);
@@ -131,17 +131,6 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
         holder.creditCreatedHolder.setText(secondaryReason);
 
         return convertView;
-    }
-
-    public String getDecimalAmount(Double amount) {
-        int amountInt = amount.intValue();
-        if (amountInt == amount)
-            return String.valueOf(amountInt);
-        final NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(2);
-        nf.setMaximumFractionDigits(2);
-        nf.setGroupingUsed(false);
-        return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
     }
 
     static class ViewHolder {

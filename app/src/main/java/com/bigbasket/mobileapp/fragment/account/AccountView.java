@@ -40,7 +40,7 @@ public class AccountView<T> {
         setListView();
     }
 
-    public void setListView() {
+    private void setListView() {
         final BaseActivity ctx = ((ActivityAware) context).getCurrentActivity();
         if (AuthParameters.getInstance(ctx).isAuthTokenEmpty()) {
             // Not logged in

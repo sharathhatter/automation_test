@@ -215,7 +215,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         }
     }
 
-    public final void setBasketNumItemsDisplay() {
+    private void setBasketNumItemsDisplay() {
         markBasketDirty();
         if (getCartSummary() == null) return;
         updateUIForCartInfo();

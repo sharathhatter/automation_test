@@ -406,8 +406,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 new PaytmTxnCallback<>(this, fullOrderId, mPotentialOrderId, false, false));
     }
 
-    public void onVoucherApplied(String voucher, OrderDetails orderDetails,
-                                 ArrayList<CreditDetails> creditDetails) {
+    private void onVoucherApplied(String voucher, OrderDetails orderDetails,
+                                  ArrayList<CreditDetails> creditDetails) {
         if (!TextUtils.isEmpty(voucher)) {
             showVoucherAppliedText(voucher);
             mOrderDetails = orderDetails;
@@ -426,7 +426,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mAppliedVoucherCode = voucher;
     }
 
-    public void applyVoucher(final String voucherCode) {
+    private void applyVoucher(final String voucherCode) {
         if (TextUtils.isEmpty(voucherCode)) {
             return;
         }
@@ -474,7 +474,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
-    public void removeVoucher() {
+    private void removeVoucher() {
         if (!checkInternetConnection()) {
             handler.sendOfflineError();
             return;

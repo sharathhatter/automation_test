@@ -50,7 +50,7 @@ public class ChangePasswordFragment extends BaseFragment {
         setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
     }
 
-    public void initiateChangePassword(View base) {
+    private void initiateChangePassword(View base) {
 
         oldEditText = (EditText) base.findViewById(R.id.oldPwdEditTxt);
         oldEditText.setTypeface(faceRobotoRegular);

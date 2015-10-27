@@ -65,7 +65,7 @@ import retrofit.client.Response;
 public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware,
         CreatePotentialOrderAware, BasketDeltaUserActionListener, OnAddressChangeListener {
 
-    protected ArrayList<Address> mAddressArrayList;
+    private ArrayList<Address> mAddressArrayList;
     private MemberAddressListAdapter memberAddressListAdapter;
     private int mAddressPageMode;
     private Address mSelectedAddress;
@@ -224,7 +224,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         showCreateAddressForm();
     }
 
-    protected void showCreateAddressForm() {
+    private void showCreateAddressForm() {
         showAddressForm(null);
         HashMap<String, String> map = new HashMap<>();
         if (mAddressPageMode != MemberAddressPageMode.CHECKOUT) {
@@ -241,7 +241,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         showAddressForm(address);
     }
 
-    protected void showAddressForm(Address address) {
+    private void showAddressForm(Address address) {
         if (getActivity() == null) return;
         Intent memberAddressFormIntent = new Intent(getActivity(), MemberAddressFormActivity.class);
         memberAddressFormIntent.putExtra(Constants.ADDRESS_PAGE_MODE, mAddressPageMode);

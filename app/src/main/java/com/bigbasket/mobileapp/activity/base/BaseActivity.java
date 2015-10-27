@@ -94,11 +94,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
         LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware {
 
     public static Typeface faceRupee;
-    public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
+    protected static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
             faceRobotoBold;
     protected BigBasketMessageHandler handler;
-    protected boolean isActivitySuspended;
-    protected ProgressDialog progressDialog = null;
+    private boolean isActivitySuspended;
+    private ProgressDialog progressDialog = null;
     protected MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
     private String mNavigationContext;
@@ -433,7 +433,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         toast.show();
     }
 
-    public String getValueOrBlank(String val) {
+    protected String getValueOrBlank(String val) {
         return !TextUtils.isEmpty(val) ? val : "";
     }
 
@@ -466,16 +466,16 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode,
-                               String cityName) {
+    private void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode,
+                                String cityName) {
         if (!TextUtils.isEmpty(areaName)) {
             String pinCode = areaPinInfoAdapter.getAreaPin(areaName, cityName);
             editTextPincode.setText(pinCode);
         }
     }
 
-    public void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode,
-                               final String cityName) {
+    protected void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode,
+                                  final String cityName) {
         final AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(getCurrentActivity());
         ArrayList<String> areaPinArrayList = areaPinInfoAdapter.getPinList(cityName);
         ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(getCurrentActivity(),
@@ -560,7 +560,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void trackEventAppsFlyer(String eventName, HashMap<String, Object> eventAttr) {
+    protected void trackEventAppsFlyer(String eventName, HashMap<String, Object> eventAttr) {
         try {
             AppsFlyerLib.trackEvent(getApplicationContext(), eventName, eventAttr);
         } catch (Exception e) {
@@ -568,7 +568,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
+    protected void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
         try {
             AppsFlyerLib.sendTrackingWithEvent(getApplicationContext(), eventName, valueToSum);
             if (mapAttr != null && mapAttr.size() > 0) {
@@ -730,12 +730,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return preferences.getBoolean(Constants.IS_BASKET_COUNT_DIRTY, false);
     }
 
-    public boolean isPendingGoToHome() {
+    protected boolean isPendingGoToHome() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         return preferences.getBoolean(Constants.IS_PENDING_GO_TO_HOME, false);
     }
 
-    public void removePendingGoToHome() {
+    protected void removePendingGoToHome() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.remove(Constants.IS_PENDING_GO_TO_HOME);
         editor.remove(Constants.RELOAD_APP);
@@ -750,12 +750,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
         removePendingGoToHome();
     }
 
-    public boolean isPendingReloadApp() {
+    protected boolean isPendingReloadApp() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         return preferences.getBoolean(Constants.RELOAD_APP, false);
     }
 
-    public void togglePasswordView(EditText passwordEditText, boolean show) {
+    protected void togglePasswordView(EditText passwordEditText, boolean show) {
         Drawable rightDrawable;
         if (!show) {
             rightDrawable = ContextCompat.getDrawable(getCurrentActivity(),
@@ -800,7 +800,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    public void changeCity(City city, boolean reopenLandingPage) {
+    protected void changeCity(City city, boolean reopenLandingPage) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.CITY, city.getName())
@@ -816,7 +816,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void launchRegistrationPage() {
+    protected void launchRegistrationPage() {
         //trackEvent(TrackingAware.NEW_USER_REGISTER_CLICKED, null);
         Intent intent = new Intent(this, SignupActivity.class);
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
@@ -861,7 +861,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         super.startActivityForResult(intent, requestCode);
     }
 
-    public void launchTutorial(int resultCode) {
+    protected void launchTutorial(int resultCode) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isTutorialShown = preferences.getBoolean(Constants.TUTORIAL_SEEN, false);
         if (isTutorialShown) {
@@ -876,7 +876,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleTutorialResponse(int resultCode) {
+    protected void handleTutorialResponse(int resultCode) {
         switch (resultCode) {
             case NavigationCodes.LAUNCH_LOGIN:
                 launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);

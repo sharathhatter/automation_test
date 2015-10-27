@@ -400,7 +400,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         return this;
     }
 
-    public String getActivityTitle() {
+    private String getActivityTitle() {
         if (mAddress == null) {
             mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         }
@@ -472,7 +472,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         unregisterBroadcastForSMS();
     }
 
-    class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
+    private class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
 
         @Override
         public void success(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse, Response response) {
@@ -543,7 +543,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         registerBroadcastForSMS();
     }
 
-    public void registerBroadcastForSMS() {
+    private void registerBroadcastForSMS() {
         IntentFilter smsOTPintentFilter = new IntentFilter();
         smsOTPintentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
         smsOTPintentFilter.setPriority(9999);
@@ -579,7 +579,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         registerReceiver(broadcastReceiver, smsOTPintentFilter);
     }
 
-    public void unregisterBroadcastForSMS() {
+    private void unregisterBroadcastForSMS() {
         if (broadcastReceiver == null) return;
         unregisterReceiver(broadcastReceiver);
     }

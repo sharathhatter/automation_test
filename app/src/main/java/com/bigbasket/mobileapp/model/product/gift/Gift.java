@@ -133,7 +133,7 @@ public class Gift implements Parcelable {
     }
 
     /**
-    Returns Count & Total Price of gift-items
+     * Returns Count & Total Price of gift-items
      */
     public Pair<Integer, Double> getGiftItemSelectedCountAndTotalPrice() {
         int numGiftItemsToWrap = 0;

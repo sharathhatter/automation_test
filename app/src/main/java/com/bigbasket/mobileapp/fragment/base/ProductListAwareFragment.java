@@ -284,14 +284,14 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     @Override
     public void postShoppingListItemDeleteOperation() {
-        if(getCurrentActivity() == null) return;
+        if (getCurrentActivity() == null) return;
         getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
 
     @Override
     public void postAddToShoppingListOperation() {
-        if(getCurrentActivity() == null) return;
+        if (getCurrentActivity() == null) return;
         getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 

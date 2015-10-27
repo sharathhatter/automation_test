@@ -224,7 +224,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
 
     @Override
     public void postShoppingListItemDeleteOperation() {
-        if(getCurrentActivity() == null) return;
+        if (getCurrentActivity() == null) return;
         getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
@@ -242,8 +242,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     }
 
     @Override
-    public void postAddToShoppingListOperation(){
-        if(getCurrentActivity() == null) return;
+    public void postAddToShoppingListOperation() {
+        if (getCurrentActivity() == null) return;
         getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 

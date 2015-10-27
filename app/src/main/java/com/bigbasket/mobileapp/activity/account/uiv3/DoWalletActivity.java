@@ -40,7 +40,7 @@ import retrofit.client.Response;
 
 public class DoWalletActivity extends BackButtonActivity {
 
-    boolean oneYearBack1 = false, oneYearBack2 = false, oneYearBack3 = false;
+    private boolean oneYearBack1 = false, oneYearBack2 = false, oneYearBack3 = false;
     private int numMonth1, numMonth2, numMonth3, maxDays1, maxDays2, maxDays3;
     private int[] maxDayOfMonth = {
             31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
@@ -125,7 +125,7 @@ public class DoWalletActivity extends BackButtonActivity {
     }
 
 
-    public void renderIntent(ArrayList<WalletDataItem> walletDataItemArrayList) {
+    private void renderIntent(ArrayList<WalletDataItem> walletDataItemArrayList) {
         Intent intent = new Intent(getCurrentActivity(), WalletActivity.class);
         intent.putParcelableArrayListExtra(Constants.WALLET_ACTIVITY_DATA, walletDataItemArrayList);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -372,7 +372,7 @@ public class DoWalletActivity extends BackButtonActivity {
         startActivityForResult(intent, NavigationCodes.FUND_WALLET);
     }
 
-    public void onWalletFunded() {
+    private void onWalletFunded() {
         getCurrentMemberWalletBalance(true);
     }
 

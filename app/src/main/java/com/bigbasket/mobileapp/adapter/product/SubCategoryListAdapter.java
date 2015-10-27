@@ -71,7 +71,7 @@ public class SubCategoryListAdapter<T> extends RecyclerView.Adapter<RecyclerView
         return VIEW_TYPE_CATEGORY;
     }
 
-    public int getActualPosition(int position) {
+    private int getActualPosition(int position) {
         if (mSectionView != null) {
             return position - 1;
         }

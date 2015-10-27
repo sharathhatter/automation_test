@@ -49,6 +49,7 @@ public class DataUtil {
             }
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
         } else {
+            // Using deprecated API for older version :(
             return !TextUtils.isEmpty(Settings.Secure.getString(context.getContentResolver(),
                     Settings.Secure.LOCATION_PROVIDERS_ALLOWED));
         }

@@ -370,7 +370,6 @@ public class Constants {
 
     //otp
     //public static final String IMAGE_URLS = "image_urls/";
-    public static final String PRESCRIPTION_IMAGE_URLS = "image_urls";
 
     public static final String FRAGMENT_CODE = "fragmentCode";
     public static final String FRAGMENT_TAG = "fragmentTag";

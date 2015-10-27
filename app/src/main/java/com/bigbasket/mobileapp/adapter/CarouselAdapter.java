@@ -23,12 +23,12 @@ import java.util.HashMap;
 
 public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    protected Section section;
-    protected ArrayList<SectionItem> sectionItems;
-    protected HashMap<Integer, Renderer> rendererHashMap;
-    protected Typeface typeface;
-    protected T context;
-    protected String screenName;
+    private Section section;
+    private ArrayList<SectionItem> sectionItems;
+    private HashMap<Integer, Renderer> rendererHashMap;
+    private Typeface typeface;
+    private T context;
+    private String screenName;
     private int numItems;
     private int fourDp;
     private int eightDp;

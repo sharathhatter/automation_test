@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.adapter.order;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -21,6 +22,7 @@ import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -30,19 +32,24 @@ public class
         OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-    public static final int VIEW_TYPE_LOADING = 0;
-    public static final int VIEW_TYPE_DATA = 1;
-    public static final int VIEW_TYPE_EMPTY = 2;
+    private static final int VIEW_TYPE_LOADING = 0;
+    private static final int VIEW_TYPE_DATA = 1;
+    private static final int VIEW_TYPE_EMPTY = 2;
 
     private T context;
     private ArrayList<Order> orders;
     private int totalPages, currentPage;
+    private Typeface faceRobotoRegular, faceRobotoBold;
 
     public OrderListAdapter(T context, ArrayList<Order> orders, int
             totalPages) {
         this.context = context;
         this.orders = orders;
         this.totalPages = totalPages;
+        this.faceRobotoRegular = FontHolder.getInstance(((ActivityAware) context)
+                .getCurrentActivity()).getFaceRobotoRegular();
+        this.faceRobotoBold = FontHolder.getInstance(((ActivityAware) context)
+                .getCurrentActivity()).getFaceRobotoBold();
     }
 
     public void setCurrentPage(int currentPage) {
@@ -90,7 +97,7 @@ public class
 
             if (!TextUtils.isEmpty(date)) {
                 txtSlotDate.setText(date);
-                txtSlotDate.setTypeface(BaseActivity.faceRobotoBold);
+                txtSlotDate.setTypeface(faceRobotoBold);
                 txtSlotDate.setVisibility(View.VISIBLE);
             } else {
                 txtSlotDate.setVisibility(View.INVISIBLE);
@@ -100,7 +107,7 @@ public class
             TextView txtSlotTime = rowHolder.getTxtSlotTime();
             if (!TextUtils.isEmpty(time)) {
                 txtSlotTime.setText(time);
-                txtSlotTime.setTypeface(BaseActivity.faceRobotoRegular);
+                txtSlotTime.setTypeface(faceRobotoRegular);
                 txtSlotTime.setVisibility(View.VISIBLE);
             } else {
                 txtSlotTime.setVisibility(View.INVISIBLE);
@@ -108,12 +115,12 @@ public class
 
 
             TextView txtOrderId = rowHolder.getTxtOrderId();
-            txtOrderId.setTypeface(BaseActivity.faceRobotoRegular);
+            txtOrderId.setTypeface(faceRobotoRegular);
             txtOrderId.setText(order.getOrderNumber());
 
 
             TextView txtNumItems = rowHolder.getTxtNumItems();
-            txtNumItems.setTypeface(BaseActivity.faceRobotoRegular);
+            txtNumItems.setTypeface(faceRobotoRegular);
             int numItems = order.getItemsCount();
             String numItemsStr = numItems + " Item";
             if (numItems > 1) {

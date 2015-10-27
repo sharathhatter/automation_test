@@ -34,7 +34,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.text.style.ClickableSpan;
-import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
@@ -546,15 +545,14 @@ public class UIUtil {
         TextView lblGiftItemTotalPrice = holder.getLblGiftItemTotalPrice();
         TextView txtGiftItemTotalPrice = holder.getTxtGiftItemTotalPrice();
 
-        lblTotalGiftItems.setText(context.getString(R.string.totalNumOfItemsToGiftWrap));
+        lblTotalGiftItems.setText(context.getString(numGiftItemsToWrap > 1 ?
+                R.string.totalNumOfItemsToGiftWrapPlural : R.string.totalNumOfItemsToGiftWrapSingular));
         txtCountGiftItems.setText(String.valueOf(numGiftItemsToWrap));
 
         String start = context.getString(R.string.totalCostOfGiftWrapping) + " ";
         String end = context.getString(R.string.willBeAddedToFinalAmount);
         SpannableString spannableString = new SpannableString(start + end);
 
-        spannableString.setSpan(new StyleSpan(Typeface.ITALIC), start.length(),
-                spannableString.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         lblGiftItemTotalPrice.setText(spannableString);
         if (giftItemTotal > 0) {
             txtGiftItemTotalPrice.setText(UIUtil.asRupeeSpannable(giftItemTotal,
@@ -763,10 +761,8 @@ public class UIUtil {
 
     public static void invokeMailClient(String email, Activity activity) {
         try {
-            StringBuilder builder = new StringBuilder()
-                    .append("mailto:")
-                    .append(email);
-            activity.startActivity(Intent.createChooser(new Intent(Intent.ACTION_SENDTO, Uri.parse(builder.toString())), "BigBasket Customer Service"));
+            activity.startActivity(Intent.createChooser(new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email)),
+                    "BigBasket Customer Service"));
         } catch (ActivityNotFoundException e) {
             // Do nothing
         }

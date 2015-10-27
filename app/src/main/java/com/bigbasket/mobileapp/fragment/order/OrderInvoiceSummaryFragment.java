@@ -190,8 +190,8 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         logOrderDetailSummaryEvent(orderInvoice.getOrderNumber());
     }
 
-    public View getOrderMaxPayableByVoucher(LayoutInflater inflater, String label,
-                                            double foodValue, int labelColor) {
+    private View getOrderMaxPayableByVoucher(LayoutInflater inflater, String label,
+                                             double foodValue, int labelColor) {
         View row = inflater.inflate(R.layout.uiv3_label_value_table_row, null);
 
         TextView txtLabel = (TextView) row.findViewById(R.id.txtLabel);
@@ -208,8 +208,8 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         return row;
     }
 
-    public void renderSlotInfoRow(View row, @Nullable String slotDate, @Nullable String slotTime,
-                                  String fulfilledBy, boolean hasMultipleSlots) {
+    private void renderSlotInfoRow(View row, @Nullable String slotDate, @Nullable String slotTime,
+                                   String fulfilledBy, boolean hasMultipleSlots) {
         TextView txtNumItems = (TextView) row.findViewById(R.id.txtNumItems);
         TextView txtBasketVal = (TextView) row.findViewById(R.id.txtBasketVal);
         TextView txtSlotDate = (TextView) row.findViewById(R.id.txtSlotDate);
@@ -262,7 +262,7 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         return OrderInvoiceSummaryFragment.class.getName();
     }
 
-    public void onShopFromThisOrder(String orderNumber) {
+    private void onShopFromThisOrder(String orderNumber) {
         Intent intent = new Intent(getActivity(), BackButtonWithBasketButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
         intent.putExtra(Constants.ORDER_ID, orderNumber);

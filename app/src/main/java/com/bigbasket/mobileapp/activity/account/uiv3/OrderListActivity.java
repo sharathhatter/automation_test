@@ -196,7 +196,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    public void onShopFromThisOrder(String orderNumber) {
+    private void onShopFromThisOrder(String orderNumber) {
         Intent intent = new Intent(this, BackButtonWithBasketButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
         intent.putExtra(Constants.ORDER_ID, orderNumber);

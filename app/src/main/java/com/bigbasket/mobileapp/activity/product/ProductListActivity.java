@@ -488,7 +488,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
 
-    public void logProductListingShownEvent(String mTabType) {
+    private void logProductListingShownEvent(String mTabType) {
         if (mTabType == null) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(Constants.TAB_NAME, mTabType);

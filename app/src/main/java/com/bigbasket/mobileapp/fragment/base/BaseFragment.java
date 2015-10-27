@@ -104,7 +104,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
-    public void onBackResume() {
+    protected void onBackResume() {
         super.onBackResume();
         setTitle();
         if (getCurrentActivity() != null && getCurrentActivity().isBasketDirty()) {
@@ -194,7 +194,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         return handler;
     }
 
-    public void changeFragment(AbstractFragment newFragment) {
+    protected void changeFragment(AbstractFragment newFragment) {
         if (getCurrentActivity() == null) return;
         setSuspended(true);
         getCurrentActivity().onChangeFragment(newFragment);
@@ -206,16 +206,16 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         }
     }
 
-    public void setTitle() {
+    protected void setTitle() {
         changeTitle(getTitle());
     }
 
     /**
      * Return null if you don't want the title to be changed
      */
-    public abstract String getTitle();
+    protected abstract String getTitle();
 
-    public void setTitle(String title) {
+    protected void setTitle(String title) {
         changeTitle(title);
     }
 
@@ -233,11 +233,11 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         return getActivity() != null ? (BaseActivity) getActivity() : null;
     }
 
-    public Spannable asRupeeSpannable(double amt) {
+    protected Spannable asRupeeSpannable(double amt) {
         return UIUtil.asRupeeSpannable(amt, faceRupee);
     }
 
-    public Spannable asRupeeSpannable(String amtTxt) {
+    protected Spannable asRupeeSpannable(String amtTxt) {
         return UIUtil.asRupeeSpannable(amtTxt, faceRupee);
     }
 
@@ -569,13 +569,13 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void onBasketChanged(@Nullable Intent data) {
-        if(getActivity() == null) return;
-        ((BaseActivity)getActivity()).onBasketChanged(data);
+        if (getActivity() == null) return;
+        ((BaseActivity) getActivity()).onBasketChanged(data);
     }
 
     @Override
     public void markBasketChanged(@Nullable Intent data) {
-        if(getActivity() == null) return;
-        ((BaseActivity)getActivity()).markBasketChanged(data);
+        if (getActivity() == null) return;
+        ((BaseActivity) getActivity()).markBasketChanged(data);
     }
 }

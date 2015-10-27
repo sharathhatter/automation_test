@@ -68,7 +68,7 @@ public final class CityManager {
     public static City getCity(int cityId, Context context) {
         ArrayList<City> cities = getStoredCity(context);
         if (cities != null && cities.size() > 0) {
-            for (City city: cities) {
+            for (City city : cities) {
                 if (city.getId() == cityId) {
                     return city;
                 }

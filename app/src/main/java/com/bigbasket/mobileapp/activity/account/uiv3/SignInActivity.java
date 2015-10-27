@@ -173,7 +173,7 @@ public class SignInActivity extends BackButtonActivity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    public void attemptLogin() {
+    private void attemptLogin() {
         // Reset errors.
 
         TextInputLayout textInputEmail = (TextInputLayout) findViewById(R.id.textInputEmail);
