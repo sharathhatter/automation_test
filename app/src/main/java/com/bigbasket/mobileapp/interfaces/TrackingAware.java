@@ -183,6 +183,9 @@ public interface TrackingAware {
     String GIFT_MESSAGE_OPT = "Gift.MessageOption";
     String GIFT_OPTS_SAVE_AND_CONTINUE = "Gift.SaveAndContinue";
 
+    // SpecialityShops
+    String SPECIALITYSHOPS_LIST_SHOWN = "SpecialityShops.Shown";
+
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease,
                     boolean sendToFacebook);

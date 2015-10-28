@@ -206,6 +206,13 @@ public class DeepLinkHandler {
             case Constants.HOME:
                 context.getCurrentActivity().goToHome(false);
                 return SUCCESS;
+            case Constants.STORE_LIST:
+                String category = uri.getQueryParameter(Constants.CATEGORY);
+                if (!TextUtils.isEmpty(category) && !category.equalsIgnoreCase("null")) {
+                    context.getCurrentActivity().launchStoreList(category);
+                    return SUCCESS;
+                }
+                return FAILED;
             default:
                 return FAILED;
         }

@@ -1,5 +1,8 @@
 package com.bigbasket.mobileapp.task;
 
+import android.content.Intent;
+
+import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -15,6 +18,7 @@ import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -127,6 +131,11 @@ public class GetDynamicPageTask<T> {
                         sectionManager.storeSectionData(sectionData, getDynamicPageApiResponse.apiResponseContent.cacheDuration);
                     } else {
                         sectionManager.storeSectionData(null, 0);
+                       /* if (screenName.equals("blr-speciality-store")) {
+                            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBSpecialityShopsActivity.class);
+                            intent.putExtra(Constants.CATEGORY, "Cakes");
+                            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        }*/
                     }
                     break;
                 default:
