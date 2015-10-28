@@ -289,6 +289,16 @@
                     android:host="home"
                     android:scheme="bigbasket" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="store-list"
+                    android:scheme="bigbasket" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.base.uiv3.BBActivity"
@@ -486,6 +496,12 @@
             android:name=".activity.gift.GiftHomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.specialityshops.BBSpecialityShopsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <provider

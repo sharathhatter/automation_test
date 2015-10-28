@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
+import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionHelpManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
@@ -50,12 +51,20 @@ import java.util.HashMap;
 
 public class OnSectionItemClickListener<T> implements View.OnClickListener, BaseSliderView.OnSliderClickListener {
     private T context;
+    @Nullable
     private Section section;
+    @Nullable
     private SectionItem sectionItem;
+    @Nullable
     private String screenName;
 
-    public OnSectionItemClickListener(T context, Section section, SectionItem sectionItem,
-                                      String screenName) {
+    public OnSectionItemClickListener(T context) {
+        this.context = context;
+    }
+
+    public OnSectionItemClickListener(T context, @Nullable Section section,
+                                      @Nullable SectionItem sectionItem,
+                                      @Nullable String screenName) {
         this.context = context;
         this.section = section;
         this.sectionItem = sectionItem;
@@ -76,43 +85,48 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (context == null || ((CancelableAware) context).isSuspended()) return;
 
         logClickEvent();
-        if (sectionItem.getHelpDestinationInfo() != null &&
-                sectionItem.getHelpDestinationInfo().getDestinationType() != null &&
-                !SectionHelpManager.isRead(((ActivityAware) context).getCurrentActivity(),
-                        sectionItem.getHelpDestinationInfo().getHelpKey())) {
-            HelpDestinationInfo helpDestinationInfo = sectionItem.getHelpDestinationInfo();
-            SectionHelpManager.markAsRead(((ActivityAware) context).getCurrentActivity(),
-                    helpDestinationInfo.getHelpKey());
-            handleDestinationClick(helpDestinationInfo);
-            return;
-        }
-        if (sectionItem.getDestinationInfo() != null &&
-                sectionItem.getDestinationInfo().getDestinationType() != null) {
-            DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
-            handleDestinationClick(destinationInfo);
+        if (sectionItem != null) {
+            if (sectionItem.getHelpDestinationInfo() != null &&
+                    sectionItem.getHelpDestinationInfo().getDestinationType() != null &&
+                    !SectionHelpManager.isRead(((ActivityAware) context).getCurrentActivity(),
+                            sectionItem.getHelpDestinationInfo().getHelpKey())) {
+                HelpDestinationInfo helpDestinationInfo = sectionItem.getHelpDestinationInfo();
+                SectionHelpManager.markAsRead(((ActivityAware) context).getCurrentActivity(),
+                        helpDestinationInfo.getHelpKey());
+                handleDestinationClick(helpDestinationInfo);
+                return;
+            }
+            if (sectionItem.getDestinationInfo() != null &&
+                    sectionItem.getDestinationInfo().getDestinationType() != null) {
+                DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
+                handleDestinationClick(destinationInfo);
+            }
         }
     }
 
-    private void handleDestinationClick(DestinationInfo destinationInfo) {
+    public void handleDestinationClick(DestinationInfo destinationInfo) {
+        if (context == null || ((CancelableAware) context).isSuspended()) return;
         switch (destinationInfo.getDestinationType()) {
             case DestinationInfo.CATEGORY_LANDING:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
-                    String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : "";
-                    if (hasMainMenu()) {
-                        CategoryLandingFragment categoryLandingFragment = new CategoryLandingFragment();
-                        Bundle subCatBundle = new Bundle();
-                        subCatBundle.putString(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
-                        subCatBundle.putString(Constants.TOP_CATEGORY_NAME, title);
-                        subCatBundle.putString(Constants.TOP_CATEGORY_VERSION, destinationInfo.getCacheVersion());
-                        categoryLandingFragment.setArguments(subCatBundle);
-                        ((BBActivity) context).onChangeFragment(categoryLandingFragment);
-                    } else {
-                        Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
-                        intent.putExtra(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
-                        intent.putExtra(Constants.TOP_CATEGORY_NAME, title);
-                        intent.putExtra(Constants.TOP_CATEGORY_VERSION, destinationInfo.getCacheVersion());
-                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    if (sectionItem != null) {
+                        String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : "";
+                        if (hasMainMenu()) {
+                            CategoryLandingFragment categoryLandingFragment = new CategoryLandingFragment();
+                            Bundle subCatBundle = new Bundle();
+                            subCatBundle.putString(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
+                            subCatBundle.putString(Constants.TOP_CATEGORY_NAME, title);
+                            subCatBundle.putString(Constants.TOP_CATEGORY_VERSION, destinationInfo.getCacheVersion());
+                            categoryLandingFragment.setArguments(subCatBundle);
+                            ((BBActivity) context).onChangeFragment(categoryLandingFragment);
+                        } else {
+                            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
+                            intent.putExtra(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
+                            intent.putExtra(Constants.TOP_CATEGORY_NAME, title);
+                            intent.putExtra(Constants.TOP_CATEGORY_VERSION, destinationInfo.getCacheVersion());
+                            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        }
                     }
                 }
                 break;
@@ -128,8 +142,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                         intent.putExtra(Constants.WEBVIEW_URL, destinationInfo.getDestinationSlug());
                     }
-                    intent.putExtra(Constants.WEBVIEW_TITLE, sectionItem.getTitle() != null ?
-                            sectionItem.getTitle().getText() : null);
+                    if (sectionItem != null) {
+                        intent.putExtra(Constants.WEBVIEW_TITLE, sectionItem.getTitle() != null ?
+                                sectionItem.getTitle().getText() : null);
+                    }
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
                 break;
@@ -167,11 +183,13 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             case DestinationInfo.SHOPPING_LIST_SUMMARY:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                     boolean isSmartBasket = destinationInfo.getDestinationSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG);
-                    String title;
+                    String title = "";
                     if (isSmartBasket) {
                         title = Constants.SMART_BASKET;
                     } else {
-                        title = section.getTitle() != null ? section.getTitle().getText() : "";
+                        if (section != null) {
+                            title = section.getTitle() != null ? section.getTitle().getText() : "";
+                        }
                     }
                     ShoppingListName shoppingListName = new ShoppingListName(title, destinationInfo.getDestinationSlug(),
                             isSmartBasket);
@@ -260,7 +278,15 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             case DestinationInfo.BASKET:
                 ((ActivityAware) context).getCurrentActivity().launchViewBasketScreen();
                 break;
+            case DestinationInfo.STORE_LIST:
+                launchStoreList(destinationInfo);
+                break;
         }
+    }
+
+    private void launchStoreList(DestinationInfo destinationInfo) {
+        if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug()))
+            ((LaunchStoreListAware) context).launchStoreList(destinationInfo.getDestinationSlug());
     }
 
     private void launchProductList(DestinationInfo destinationInfo) {
@@ -367,9 +393,11 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     private void logBannerEvent() {
         if (sectionItem == null || sectionItem.getDestinationInfo() == null) return;
         int index = 0;
-        for (int i = 0; i < section.getSectionItems().size(); i++) {
-            if (section.getSectionItems().get(i) == sectionItem)
-                index = i;
+        if (section != null) {
+            for (int i = 0; i < section.getSectionItems().size(); i++) {
+                if (section.getSectionItems().get(i) == sectionItem)
+                    index = i;
+            }
         }
 
         String bannerName = "";

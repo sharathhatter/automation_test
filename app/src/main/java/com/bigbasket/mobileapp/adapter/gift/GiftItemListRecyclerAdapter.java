@@ -151,6 +151,11 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
         }
     }
 
+    @Override
+    public int getItemCount() {
+        return gift.getGiftItems().size() + 1;
+    }
+
     public static class GiftItemViewHolder extends RecyclerView.ViewHolder {
         private ImageView imgProduct;
         private TextView txtProductDesc;
@@ -268,10 +273,5 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
             }
             return txtGiftItemTotalPrice;
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return gift.getGiftItems().size() + 1;
     }
 }
