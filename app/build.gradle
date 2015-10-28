@@ -26,10 +26,29 @@ repositories {
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'newrelic'
+import com.android.build.OutputFile
 
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+
+    signingConfigs {
+        dev {
+            storeFile file("keystore/dev.keystore")
+            storePassword "bigbasket"
+            keyAlias "dev"
+            keyPassword "bigbasket"
+        }
+
+        prod {
+            //update the values here for the deployment
+            storeFile file("keystore/dev.keystore")
+            storePassword "bigbasket"
+            keyAlias "dev"
+            keyPassword "bigbasket"
+        }
+    }
+
     defaultConfig {
         applicationId "com.bigbasket.mobileapp"
         minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
@@ -37,12 +56,16 @@ android {
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
         manifestPlaceholders = [crashlytics_id: "d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827"]
+        //Does not work on gradle build tool version 1.3.0 https://code.google.com/p/android/issues/detail?id=182016
+        setProperty("archivesBaseName", "Bigbasket-" + versionName);
+        signingConfig signingConfigs.dev
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
+            signingConfig signingConfigs.prod
         }
     }
     compileOptions {
@@ -60,7 +83,6 @@ android {
 //    Uncomment at the time of deployment, but don't commit the uncommented version to VCS.
 //    This is because build time increases significantly, due to which development time becomes slow
 //    (1.5 minutes on avg)
-
 //    splits {
 //        density {
 //            enable true
@@ -68,34 +90,28 @@ android {
 //            compatibleScreens 'small', 'normal', 'large', 'xlarge'
 //        }
 //    }
-//
-//    productFlavors {
-//        flavourMdpi {
-//            versionCode calculateVersionCodeFromDpi(160)
-//        }
-//
-//        flavourHdpi {
-//            versionCode calculateVersionCodeFromDpi(240)
-//        }
-//
-//        flavourXHdpi {
-//            versionCode calculateVersionCodeFromDpi(320)
-//        }
-//
-//        flavourXXHdpi {
-//            versionCode calculateVersionCodeFromDpi(480)
-//        }
-//
-//        flavourXXXHdpi {
-//            versionCode calculateVersionCodeFromDpi(640)
-//        }
-//    }
+
 
 }
 
-int calculateVersionCodeFromDpi(int dpi) {
+ext.versionCodes =[mdpi: calculateVersionCodeFromDpi(160, 0),
+                   hdpi: calculateVersionCodeFromDpi(240, 0),
+                   xhdpi: calculateVersionCodeFromDpi(320, 0),
+                   xxhdpi: calculateVersionCodeFromDpi(480, 0),
+                   xxxhdpi: calculateVersionCodeFromDpi(640, 0),
+                   all: calculateVersionCodeFromDpi(160, -1)]
+
+android.applicationVariants.all { variant ->
+    // assign different version code for each output
+    variant.outputs.each { output ->
+        def key = output.getFilter(OutputFile.DENSITY) == null ? "all" : output.getFilter(OutputFile.DENSITY)
+        output.versionCodeOverride = project.ext.versionCodes.get(key)
+    }
+}
+
+int calculateVersionCodeFromDpi(int dpi, int delta) {
     int minSdk = Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
-    int versionCode = Integer.parseInt(project.VERSION_CODE)
+    int versionCode = Integer.parseInt(project.VERSION_CODE) + delta
     return ("" + minSdk + (dpi / 10) + versionCode).toInteger()
 }
 
