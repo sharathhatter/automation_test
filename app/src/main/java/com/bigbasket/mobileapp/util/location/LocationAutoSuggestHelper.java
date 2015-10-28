@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.location.LocationAutoSuggestListener;
@@ -27,6 +28,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.lang.ref.WeakReference;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 
 public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
@@ -37,6 +40,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
     private WeakReference<GoogleApiClient> googleApiClientWeakReference;
     private LatLngBounds bounds;
     private boolean showProgress;
+    private CharsetEncoder charsetEncoder;
 
     public LocationAutoSuggestHelper(T ctx,
                                      AutoCompleteTextView autoCompleteTextView,
@@ -48,6 +52,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
         this.googleApiClientWeakReference = new WeakReference<>(googleApiClient);
         this.bounds = latLngBounds;
         this.showProgress = showProgress;
+        this.charsetEncoder = Charset.forName("US-ASCII").newEncoder();
     }
 
     public void init() {
@@ -70,6 +75,11 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (!TextUtils.isEmpty(s) && s.length() > 2) {
+                    if (!charsetEncoder.canEncode(s)) {
+                        ((ActivityAware) ctx).getCurrentActivity().
+                                showToast("Only english alphabets are allowed!");
+                        return;
+                    }
                     displaySuggestion(s.toString());
                 }
             }
@@ -84,6 +94,9 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (placeAutoSuggestAdapter != null && position != AdapterView.INVALID_POSITION) {
                     AutoCompletePlace autoCompletePlace = placeAutoSuggestAdapter.getItem(position);
+                    if (autoCompleteTextViewWeakReference != null && autoCompleteTextViewWeakReference.get() != null) {
+                        BaseActivity.hideKeyboard((BaseActivity) ctx, autoCompleteTextViewWeakReference.get());
+                    }
                     if (!TextUtils.isEmpty(autoCompletePlace.getPlaceId())) {
                         setLocationFromId(autoCompletePlace.getPlaceId());
                     }
@@ -141,11 +154,12 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
         Places.GeoDataApi.getPlaceById(googleApiClientWeakReference.get(), id).setResultCallback(new ResultCallback<PlaceBuffer>() {
             @Override
             public void onResult(PlaceBuffer places) {
-                if (places.getStatus().isSuccess()) {
+                if (places.getStatus().isSuccess() && places.getCount() > 0) {
                     Place place = places.get(0);
                     LatLng latLng = place.getLatLng();
+                    CharSequence name = place.getName();
                     places.release();
-                    ctx.onLocationSelected(latLng);
+                    ctx.onLocationSelected(latLng, TextUtils.isEmpty(name) ? null : name.toString());
                 } else {
                     places.release();
                 }

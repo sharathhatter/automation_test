@@ -16,11 +16,16 @@ public class ProductListTask<T> {
     protected T ctx;
     private String navigationCtx;
     private HashMap<String, String> paramMap;
+    private int currentTabIndex;
+    private boolean isFilterOrSortApplied;
 
-    public ProductListTask(T ctx, HashMap<String, String> paramMap, String navigationCtx) {
+    public ProductListTask(T ctx, HashMap<String, String> paramMap, String navigationCtx,
+                           int currentTabIndex, boolean isFilterOrSortApplied) {
         this.ctx = ctx;
         this.paramMap = paramMap;
         this.navigationCtx = navigationCtx;
+        this.currentTabIndex = currentTabIndex;
+        this.isFilterOrSortApplied = isFilterOrSortApplied;
     }
 
 
@@ -34,6 +39,7 @@ public class ProductListTask<T> {
 
         if (((CancelableAware) ctx).isSuspended()) return;
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        bigBasketApiService.productList(navigationCtx, paramMap, new ProductListApiResponseCallback<>(ctx, false));
+        bigBasketApiService.productList(navigationCtx, paramMap,
+                new ProductListApiResponseCallback<>(ctx, false, currentTabIndex, isFilterOrSortApplied));
     }
 }

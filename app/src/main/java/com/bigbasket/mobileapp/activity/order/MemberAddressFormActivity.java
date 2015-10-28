@@ -1,12 +1,16 @@
 package com.bigbasket.mobileapp.activity.order;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.telephony.SmsMessage;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +40,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -45,6 +50,8 @@ import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -61,13 +68,16 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     private InstantAutoCompleteTextView editTextArea;
     private String mErrorMsg;
     private OTPValidationDialogFragment otpValidationDialogFragment;
-    private boolean mFromAccountPage = false;
+    private int mAddressPageMode;
     private ArrayList<City> mCities;
+    @Nullable
+    private BroadcastReceiver broadcastReceiver;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getActivityTitle());
-        mFromAccountPage = getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false);
+        mAddressPageMode = getIntent().getIntExtra(Constants.ADDRESS_PAGE_MODE,
+                MemberAddressPageMode.CHECKOUT);
         mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         if (mAddress != null) {
             mChoosenCity = new City(mAddress.getCityName(), mAddress.getCityId());
@@ -78,6 +88,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             mChoosenCity = new City(cityName, cityId);
         }
         new GetCitiesTask<>(this).startTask();  // Sync the cities
+
+
     }
 
     @Override
@@ -142,6 +154,15 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (mAddress != null) {
             populateUiFields();
         }
+
+        TextView lblNeedMoreAddressInfo = (TextView) base.findViewById(R.id.lblNeedMoreAddressInfo);
+        if (mAddress != null && mAddress.isPartial() && mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
+            lblNeedMoreAddressInfo.setTypeface(faceRobotoRegular);
+            lblNeedMoreAddressInfo.setVisibility(View.VISIBLE);
+        } else {
+            lblNeedMoreAddressInfo.setVisibility(View.GONE);
+        }
+
         setAdapterArea(editTextArea, editTextPincode, mChoosenCity.getName());
         contentLayout.addView(base);
     }
@@ -358,9 +379,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         uploadAddress(otpCode);
     }
 
-    private void addressCreatedModified(String addressId) {
+    private void addressCreatedModified(Address address) {
         Intent result = new Intent();
-        result.putExtra(Constants.MEMBER_ADDRESS_ID, addressId);
+        result.putExtra(Constants.UPDATE_ADDRESS, address);
         setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED, result);
         finish();
     }
@@ -379,7 +400,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         return this;
     }
 
-    public String getActivityTitle() {
+    private String getActivityTitle() {
         if (mAddress == null) {
             mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         }
@@ -444,9 +465,14 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (editTextPincode != null) {
             hideKeyboard(this, editTextPincode);
         }
+        /**
+         * unregistering the sms broadcast receiver
+         *
+         */
+        unregisterBroadcastForSMS();
     }
 
-    class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
+    private class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
 
         @Override
         public void success(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse, Response response) {
@@ -465,12 +491,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                             otpValidationDialogFragment.dismiss();
                     }
 
-                    if (!mFromAccountPage) {
+                    if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
                         trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, null);
                     }
                     if (mAddress == null) {
                         Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.addressId);
+                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.address);
                     } else {
                         Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
                         addressCreatedModified();
@@ -509,5 +535,52 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             }
             handler.handleRetrofitError(error);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerBroadcastForSMS();
+    }
+
+    private void registerBroadcastForSMS() {
+        IntentFilter smsOTPintentFilter = new IntentFilter();
+        smsOTPintentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        smsOTPintentFilter.setPriority(9999);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final Bundle bundle = intent.getExtras();
+                if (bundle != null) {
+                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
+                    if (pdusObj == null) return;
+                    for (Object aPduObj : pdusObj) {
+                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) aPduObj);
+                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
+                        String message = currentMessage.getDisplayMessageBody();
+
+                        /**
+                         * checking that the message received is from BigBasket
+                         * and it contains the word verification
+                         */
+                        if ((phoneNumber.toUpperCase().contains("BIG") &&
+                                (message.toLowerCase().contains("verification")))) {
+                            final Pattern p = Pattern.compile("(\\d{4})");
+                            final Matcher m = p.matcher(message);
+                            if (m.find() && otpValidationDialogFragment != null
+                                    && otpValidationDialogFragment.isVisible()) {
+                                otpValidationDialogFragment.resendOrConfirmOTP(m.group(0));
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        registerReceiver(broadcastReceiver, smsOTPintentFilter);
+    }
+
+    private void unregisterBroadcastForSMS() {
+        if (broadcastReceiver == null) return;
+        unregisterReceiver(broadcastReceiver);
     }
 }

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,20 +22,25 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsRespons
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
+import com.bigbasket.mobileapp.handler.payment.PayTMInitializer;
+import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
+import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.PayNowDetail;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
-import com.payu.sdk.PayU;
+import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,10 +53,14 @@ import retrofit.client.Response;
  * Don't do the mistake of moving this to Fragment. I've done all that, and these 3rd Party SDKs
  * don't handle fragments well.
  */
-public class PayNowActivity extends BackButtonActivity implements OnPostPaymentListener {
+public class PayNowActivity extends BackButtonActivity implements OnPostPaymentListener,
+        CityListDisplayAware {
 
+    @Nullable
     private String mSelectedPaymentMethod;
+    @Nullable
     private String mOrderId;
+    @Nullable
     private String mHDFCPayzappTxnId;
     private double mFinalTotal;
 
@@ -61,7 +72,40 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         setTitle(getString(R.string.payNow));
 
         mOrderId = getIntent().getStringExtra(Constants.ORDER_ID);
+        new GetCitiesTask<>(this).startTask();
+    }
+
+    @Override
+    public void onReadyToDisplayCity(ArrayList<City> cities) {
         getPayNowParams();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mHDFCPayzappTxnId != null) {
+            outState.putString(Constants.TXN_ID, mHDFCPayzappTxnId);
+        }
+        if (mSelectedPaymentMethod != null) {
+            outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
+        }
+        if (mFinalTotal != 0) {
+            outState.putDouble(Constants.FINAL_TOTAL, mFinalTotal);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (mHDFCPayzappTxnId == null) {
+            mHDFCPayzappTxnId = savedInstanceState.getString(Constants.TXN_ID);
+        }
+        if (mSelectedPaymentMethod == null) {
+            mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
+        }
+        if (mFinalTotal == 0) {
+            mFinalTotal = savedInstanceState.getDouble(Constants.FINAL_TOTAL);
+        }
     }
 
     private void getPayNowParams() {
@@ -71,7 +115,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes",
+        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes",
                 new Callback<ApiResponse<GetPayNowParamsResponse>>() {
                     @Override
                     public void success(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse, Response response) {
@@ -192,6 +236,11 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                                         MobikwikInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
                                                 getCurrentActivity());
                                         break;
+                                    case Constants.PAYTM_WALLET:
+                                        PayTMInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
+                                                getCurrentActivity(),
+                                                new PaytmTxnCallback<>(getCurrentActivity(), mOrderId, null, true, false));
+                                        break;
                                     default:
                                         onPayNowSuccess();
                                         break;
@@ -233,8 +282,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
             if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
                 onPayNowSuccess();
             } else {
-                showAlertDialog(getString(R.string.transactionFailed),
-                        getString(R.string.txnFailureMsg));
+                onPayNowFailure();
             }
 
             SharedPreferences.Editor editor = preferences.edit();
@@ -263,14 +311,15 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                     communicateHdfcPayzappResponseFailure(null, null);
                 }
             }
-        } else if (requestCode == PayU.RESULT) {
+        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 onPayNowSuccess();
             } else {
                 onPayNowFailure();
             }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void onPayNowSuccess() {
@@ -284,14 +333,15 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void onPayNowFailure() {
-        showAlertDialog(getString(R.string.transactionFailed),
-                getString(R.string.txnFailureMsg));
+        UIUtil.showPaymentFailureDlg(this);
     }
 
     private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {
-        new PostPaymentHandler<>(this, null, mSelectedPaymentMethod, txnId,
-                true, UIUtil.formatAsMoney(mFinalTotal), mOrderId)
+        new PostPaymentHandler<>(this, null, mSelectedPaymentMethod,
+                true, mOrderId)
                 .setPayNow(true)
+                .setTxnId(txnId)
+                .setAmount(UIUtil.formatAsMoney(mFinalTotal))
                 .setDataPickupCode(dataPickupCode)
                 .setPgTxnId(pgTxnId)
                 .start();
@@ -299,20 +349,22 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
 
     private void communicateHdfcPayzappResponseFailure(String resCode, String resDesc) {
         new PostPaymentHandler<>(this, null, mSelectedPaymentMethod,
-                mHDFCPayzappTxnId, false, UIUtil.formatAsMoney(mFinalTotal), mOrderId)
+                false, mOrderId)
                 .setPayNow(true)
+                .setTxnId(mHDFCPayzappTxnId)
+                .setAmount(UIUtil.formatAsMoney(mFinalTotal))
                 .setErrResCode(resCode)
                 .setErrResDesc(resDesc)
                 .start();
     }
 
     @Override
-    public void onPostPaymentFailure(String txnId) {
+    public void onPostPaymentFailure(String txnId, String paymentType) {
         onPayNowFailure();
     }
 
     @Override
-    public void onPostPaymentSuccess(String txnId) {
+    public void onPostPaymentSuccess(String txnId, String paymentType) {
         onPayNowSuccess();
     }
 

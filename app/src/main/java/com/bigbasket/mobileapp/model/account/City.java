@@ -17,6 +17,7 @@ public class City implements Parcelable {
     };
     private String name;
     private int id;
+    private String phone;
 
     public City(String name, int id) {
         this.name = name;
@@ -26,6 +27,10 @@ public class City implements Parcelable {
     public City(Parcel source) {
         name = source.readString();
         id = source.readInt();
+        boolean isPhoneNull = source.readByte() == (byte) 1;
+        if (!isPhoneNull) {
+            phone = source.readString();
+        }
     }
 
     public String getName() {
@@ -34,6 +39,10 @@ public class City implements Parcelable {
 
     public int getId() {
         return id;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 
     @Override
@@ -50,5 +59,11 @@ public class City implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeInt(id);
+
+        boolean isPhoneNull = phone == null;
+        dest.writeByte(isPhoneNull ? (byte) 1 : (byte) 0);
+        if (!isPhoneNull) {
+            dest.writeString(phone);
+        }
     }
 }

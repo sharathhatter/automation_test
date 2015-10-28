@@ -1,12 +1,12 @@
 package com.bigbasket.mobileapp.fragment;
 
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -54,6 +54,10 @@ import retrofit.client.Response;
 public class HomeFragment extends BaseSectionFragment implements DynamicScreenAware {
 
     private boolean mSyncChanges;
+    @Nullable
+    private RecyclerView mRecyclerView;
+    @Nullable
+    private ArrayList<Integer> mDynamicTiles;
 
     @Nullable
     @Override
@@ -83,7 +87,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     @Override
-    public void onBackResume() {
+    protected void onBackResume() {
         super.onBackResume();
         // removed home event from here
         setNextScreenNavigationContext(TrackEventkeys.HOME);
@@ -124,7 +128,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     private boolean isVisitorUpdateNeeded() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String storedVersionNumber = preferences.getString(Constants.VERSION_NAME, null);
-        String appVersionName = getAppVersion();
+        String appVersionName = DataUtil.getAppVersion(getActivity());
         return TextUtils.isEmpty(storedVersionNumber) ||
                 (!TextUtils.isEmpty(appVersionName) && !appVersionName.equals(storedVersionNumber));
     }
@@ -141,7 +145,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         showProgressDialog(getString(R.string.please_wait));
         String imei = UIUtil.getIMEI(getActivity());
         bigBasketApiService.updateVersionNumber(imei, preferences.getString(Constants.DEVICE_ID, null),
-                getAppVersion(), new Callback<ApiResponse<UpdateVersionInfoApiResponseContent>>() {
+                DataUtil.getAppVersion(getActivity()), new Callback<ApiResponse<UpdateVersionInfoApiResponseContent>>() {
                     @Override
                     public void success(ApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse, Response response) {
                         if (isSuspended()) return;
@@ -155,7 +159,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             case 0:
                                 SharedPreferences.Editor editor =
                                         PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-                                editor.putString(Constants.VERSION_NAME, getAppVersion());
+                                editor.putString(Constants.VERSION_NAME, DataUtil.getAppVersion(getActivity()));
                                 editor.apply();
                                 if (updateVersionInfoApiResponse.apiResponseContent.userDetails != null) {
                                     UIUtil.updateStoredUserDetails(getActivity(),
@@ -188,17 +192,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                         }
                     }
                 });
-    }
-
-    private String getAppVersion() {
-        String appVersionName;
-        try {
-            appVersionName = getActivity().getPackageManager().
-                    getPackageInfo(getActivity().getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            appVersionName = null;
-        }
-        return appVersionName;
     }
 
     private void requestHomePage() {
@@ -238,16 +231,25 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         showProgressView();
 
         contentView.removeAllViews();
-        //Trace.beginSection("Home page section rendering begin");
-        RecyclerView recyclerView = getSectionRecylerView(contentView);
-        if (recyclerView != null) {
-            contentView.addView(recyclerView);
-        }
-        //Trace.beginSection("Home page section rendering end");
 
+        Pair<RecyclerView, ArrayList<Integer>> pair = getSectionRecylerView(contentView);
+        mRecyclerView = pair.first;
+        if (mRecyclerView != null) {
+            contentView.addView(mRecyclerView);
+        }
+        mDynamicTiles = pair.second;
 
         // Check if any deep-link needs to be opened
         processPendingDeepLink();
+    }
+
+    public void syncDynamicTiles() {
+        if (isSuspended() || isDetached()) return;
+        if (mDynamicTiles != null && mDynamicTiles.size() > 0 && mRecyclerView != null) {
+            for (Integer i : mDynamicTiles) {
+                mRecyclerView.getAdapter().notifyItemChanged(i);
+            }
+        }
     }
 
     private void processPendingDeepLink() {
@@ -332,7 +334,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         AuthParameters.getInstance(getCurrentActivity()).setAppCapability(appCapability.isMoEngageEnabled(),
                 appCapability.isAnalyticsEnabled(),
                 appCapability.isFBLoggerEnabled(),
-                appCapability.isMultiCityEnabled(), getCurrentActivity());
+                appCapability.isMultiCityEnabled(),
+                getCurrentActivity());
         AuthParameters.reset();
     }
 

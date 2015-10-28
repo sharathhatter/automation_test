@@ -71,6 +71,8 @@ public class HeaderSpinnerView<T> {
                 txtToolbarDropdown.setTypeface(typeface);
                 toolbar.addView(txtToolbarDropdown);
             }
+            toolbar.setTitle("");
+            ((ActivityAware) ctx).getCurrentActivity().setTitle("");
             txtToolbarDropdown.setOnClickListener(onChildDropdownRequested);
             imgCloseChildDropdown.setOnClickListener(onChildDropdownRequested);
 

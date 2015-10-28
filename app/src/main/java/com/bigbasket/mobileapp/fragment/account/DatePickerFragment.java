@@ -17,7 +17,7 @@ import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-    View view;
+    private View view;
 
     public DatePickerFragment() {
     }

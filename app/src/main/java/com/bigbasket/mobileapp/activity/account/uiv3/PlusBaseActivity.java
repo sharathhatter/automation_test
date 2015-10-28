@@ -2,15 +2,24 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
+
+import java.io.IOException;
 
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
@@ -43,7 +52,7 @@ public abstract class PlusBaseActivity extends BaseActivity
     /**
      * Called when the PlusClient is successfully connected.
      */
-    protected abstract void onPlusClientSignIn(String email, Person person);
+    protected abstract void onPlusClientSignIn(String authToken);
 
     /**
      * Called when the PlusClient is disconnected.
@@ -106,8 +115,12 @@ public abstract class PlusBaseActivity extends BaseActivity
      */
     public void initiatePlusClientConnect() {
         if (mGoogleApiClient == null) return;
-        if (!mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting()) {
-            mGoogleApiClient.connect();
+        if (!mGoogleApiClient.isConnecting()) {
+            if (!mGoogleApiClient.isConnected()) {
+                mGoogleApiClient.connect();
+            } else {
+                onConnected(null);
+            }
         }
     }
 
@@ -156,7 +169,7 @@ public abstract class PlusBaseActivity extends BaseActivity
                     // Revoke access to this entire application. This will call back to
                     // onAccessRevoked when it is complete, as it needs to reach the Google
                     // authentication servers to revoke all tokens.
-                    updatePlusConnectedButtonState();
+                    hideProgressDialog();
                     onPlusClientRevokeAccess();
                 }
             });
@@ -235,7 +248,7 @@ public abstract class PlusBaseActivity extends BaseActivity
      * Successfully connected (called by PlusClient)
      */
     @Override
-    public void onConnected(Bundle connectionHint) {
+    public void onConnected(@Nullable Bundle connectionHint) {
         if (mGoogleApiClient == null) return;
 
         if (mRevokeAccess) {
@@ -247,11 +260,43 @@ public abstract class PlusBaseActivity extends BaseActivity
         updatePlusConnectedButtonState();
         setProgressBarVisible(false);
         try {
-            onPlusClientSignIn(Plus.AccountApi.getAccountName(mGoogleApiClient),
-                    Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
+            new GplusAuthTokenFetcher().execute(Plus.AccountApi.getAccountName(mGoogleApiClient));
         } catch (Exception e) {
             e.printStackTrace();
-            showToast("Sorry! An error occurred.\n Please try again");
+            showToast(getString(R.string.unknownError));
+        }
+    }
+
+    private class GplusAuthTokenFetcher extends AsyncTask<String, Void, String> {
+        @Override
+        protected void onPreExecute() {
+//            setProgressBarVisible(true);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                return GoogleAuthUtil.getToken(getCurrentActivity(), params[0],
+                        "oauth2:" + Scopes.PLUS_LOGIN
+                                + " https://www.googleapis.com/auth/userinfo.email");
+            } catch (UserRecoverableAuthException e) {
+                startActivityForResult(e.getIntent(), RC_SIGN_IN);
+            } catch (GoogleAuthException | IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showToast(getString(R.string.unknownError));
+                    }
+                });
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (isCancelled() || isSuspended() || TextUtils.isEmpty(s)) return;
+//            setProgressBarVisible(false);
+            onPlusClientSignIn(s);
         }
     }
 

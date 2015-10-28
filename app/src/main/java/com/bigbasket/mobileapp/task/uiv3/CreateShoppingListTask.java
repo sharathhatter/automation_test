@@ -48,7 +48,7 @@ public class CreateShoppingListTask<T> {
         }.show();
     }
 
-    public void startTask(final String shoppingListName) {
+    private void startTask(final String shoppingListName) {
         if (TextUtils.isEmpty(shoppingListName)) {
             Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),
                     "Please enter a valid name", Toast.LENGTH_SHORT).show();

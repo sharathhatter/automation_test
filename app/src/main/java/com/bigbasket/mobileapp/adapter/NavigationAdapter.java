@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +19,17 @@ import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
-import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int VIEW_TYPE_SECTION_ITEM = 0;
-    public static final int VIEW_TYPE_HEADER = 1;
-    public static final int VIEW_TYPE_SECTION_ITEM_VERTICAL = 2;
-    public static final int VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_VERTICAL = 3;
-    public static final int VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_HORIZONTAL = 4;
+    private static final int VIEW_TYPE_SECTION_ITEM = 0;
+    private static final int VIEW_TYPE_HEADER = 1;
+    private static final int VIEW_TYPE_SECTION_ITEM_VERTICAL = 2;
+    private static final int VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_VERTICAL = 3;
+    private static final int VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_HORIZONTAL = 4;
 
     private Context context;
     private Typeface typeface;
@@ -123,15 +123,6 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 imgNavItemExpand.setVisibility(View.VISIBLE);
             } else {
                 imgNavItemExpand.setVisibility(View.GONE);
-            }
-            if (sectionItem.getSubSectionItems() != null && sectionItem.getSubSectionItems().size() > 0) {
-                // Preload images
-                SectionItem subSectionItem = sectionItem.getSubSectionItems().get(0);
-                if (subSectionItem.hasImage()) {
-                    UIUtil.preLoadImage(TextUtils.isEmpty(subSectionItem.getImage()) ?
-                                    subSectionItem.constructImageUrl(context, baseImgUrl) : subSectionItem.getImage(),
-                            context);
-                }
             }
         } else if (viewType == VIEW_TYPE_HEADER) {
             TextView txtNavListRowHeader = ((NavViewHeaderHolder) holder).getTxtNavListRowHeader();
@@ -290,15 +281,18 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @Override
         public void onClick(View v) {
-            SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(getPosition());
-            if (!sectionNavigationItem.isHeader()) {
-                if (sectionNavigationItem.getSectionItem() != null && sectionNavigationItem.getSectionItem().getSubSectionItems() != null
-                        && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
-                    ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
-                            sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
-                } else {
-                    new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
-                            sectionNavigationItem.getSectionItem(), screenName).onClick(v);
+            int pos = getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(pos);
+                if (!sectionNavigationItem.isHeader()) {
+                    if (sectionNavigationItem.getSectionItem() != null && sectionNavigationItem.getSectionItem().getSubSectionItems() != null
+                            && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
+                        ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
+                                sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
+                    } else {
+                        new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
+                                sectionNavigationItem.getSectionItem(), screenName).onClick(v);
+                    }
                 }
             }
         }

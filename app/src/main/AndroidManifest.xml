@@ -41,8 +41,16 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
+    <permission
+        android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <application
         android:name=".application.BaseApplication"
@@ -288,8 +296,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="bigbasket"
-                    android:scheme="bigbasket-app" />
+                    android:host="store-list"
+                    android:scheme="bigbasket" />
             </intent-filter>
         </activity>
         <activity
@@ -370,15 +378,15 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
+            android:name=".activity.account.uiv3.SocialLoginConfirmActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity
-            android:name=".activity.account.uiv3.ChangeCityActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BackButtonTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.ChooseLocationActivity"
             android:screenOrientation="portrait"
@@ -403,11 +411,6 @@
             android:name=".activity.account.uiv3.SignupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
-            android:name=".activity.account.uiv3.SocialLoginConfirmActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.ShipmentSelectionActivity"
@@ -487,6 +490,20 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
+        <!-- Gift-->
+
+        <activity
+            android:name=".activity.gift.GiftHomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.specialityshops.BBSpecialityShopsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <provider
             android:name=".contentProvider.SearchSuggestionProvider"
             android:authorities="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
@@ -499,6 +516,15 @@
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.SearchViewTheme"
             android:windowSoftInputMode="stateVisible|adjustResize" />
+
+
+        <!-- PayTM-->
+
+        <activity
+            android:name="com.paytm.pgsdk.PaytmPGActivity"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:screenOrientation="portrait" />
+
 
         <!-- MOEngage -->
         <receiver
@@ -528,12 +554,6 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name="com.payu.sdk.PaymentOptionsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.payu.sdk.ProcessPaymentActivity"
-            android:screenOrientation="portrait" />
 
         <provider
             android:name="com.moe.pushlibrary.providers.MoEProvider"
@@ -589,17 +609,10 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="payu_merchant_id"
-            android:value="@string/payu_merchant_id" />
-        <meta-data
-            android:name="payu_merchant_salt"
-            android:value="@string/payu_merchant_salt" />
-        <!-- <meta-data android:name="payu_disable_back" android:value="true"/> -->
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAcAYm_JguAF9LmBnNW1YC0Hmz6_UuO3Cw" />
+            android:value="@string/google_geo_api_key" />
 
         <service
             android:name=".service.AreaPinInfoIntentService"
@@ -607,6 +620,14 @@
         <service
             android:name=".service.GetAppDataDynamicIntentService"
             android:exported="false" />
+
+        <receiver
+            android:name="com.google.ads.conversiontracking.InstallReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

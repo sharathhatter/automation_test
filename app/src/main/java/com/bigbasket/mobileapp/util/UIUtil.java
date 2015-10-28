@@ -2,7 +2,9 @@ package com.bigbasket.mobileapp.util;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -17,7 +19,9 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -26,11 +30,14 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
+import android.text.style.ClickableSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,14 +51,19 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
-import com.bigbasket.mobileapp.managers.AddressManager;
-import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.account.AddressSummary;
+import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -65,10 +77,12 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeSet;
 
 public class UIUtil {
 
@@ -134,6 +148,8 @@ public class UIUtil {
     }
 
     public static String strJoin(List<String> stringList, String separator) {
+        if (stringList == null || stringList.size() == 0) return "";
+        if (stringList.size() == 1) return stringList.get(0);
         StringBuilder sbr = new StringBuilder();
         int len = stringList.size();
         for (int i = 0; i < len; i++) {
@@ -147,6 +163,8 @@ public class UIUtil {
 
 
     public static String strJoin(String[] stringArray, String separator) {
+        if (stringArray == null || stringArray.length == 0) return "";
+        if (stringArray.length == 1) return stringArray[0];
         StringBuilder sbr = new StringBuilder();
         int len = stringArray.length;
         for (int i = 0; i < len; i++) {
@@ -166,6 +184,15 @@ public class UIUtil {
         String rupeeSym = "`";
         SpannableString spannableString = new SpannableString(rupeeSym + amtTxt);
         spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0, rupeeSym.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        return spannableString;
+    }
+
+    public static SpannableString asRupeeSpannable(String prefix, String amtTxt, Typeface faceRupee) {
+        String rupeeSym = "`";
+        SpannableString spannableString = new SpannableString(prefix + rupeeSym + amtTxt);
+        spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), prefix.length(),
+                prefix.length() + rupeeSym.length(),
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         return spannableString;
     }
@@ -217,7 +244,7 @@ public class UIUtil {
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
         SectionManager.clearAllSectionData(ctx);
         AppDataSyncHandler.reset(ctx);
-        AddressManager.reset(ctx);
+        AppDataDynamic.reset(ctx);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = preferences.edit();
@@ -236,6 +263,7 @@ public class UIUtil {
         if (userDetails.analytics != null) {
             editor.putString(Constants.CITY, userDetails.analytics.city);
             editor.putString(Constants.CITY_ID, String.valueOf(userDetails.analytics.cityId));
+            editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
 
             // Any key added here, must be cleared when user logs-out
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, mId);
@@ -244,6 +272,7 @@ public class UIUtil {
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, userDetails.analytics.mobileNumber);
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
+            LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
 
             MoEHelper moEHelper = MoEngageWrapper.getMoHelperObj(ctx);
@@ -256,6 +285,7 @@ public class UIUtil {
             MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, userDetails.fullName);
             MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
             MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
+            MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
             if (!TextUtils.isEmpty(userDetails.analytics.gender)) {
                 MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, userDetails.analytics.gender);
@@ -336,6 +366,21 @@ public class UIUtil {
         return new SimpleDateFormat(format, Locale.getDefault()).format(date);
     }
 
+    public static void displayProductImage(@Nullable String baseImgUrl, @Nullable String productImgUrl,
+                                           ImageView imgProduct) {
+        if (productImgUrl != null) {
+            String url;
+            if (TextUtils.isEmpty(baseImgUrl) || productImgUrl.startsWith("http")) {
+                url = productImgUrl;
+            } else {
+                url = baseImgUrl + productImgUrl;
+            }
+            UIUtil.displayAsyncImage(imgProduct, url);
+        } else {
+            imgProduct.setImageResource(R.drawable.noimage);
+        }
+    }
+
     public static void displayAsyncImage(ImageView imageView, String url) {
         displayAsyncImage(imageView, url, false, R.drawable.loading_small);
     }
@@ -359,11 +404,6 @@ public class UIUtil {
         } catch (OutOfMemoryError e) {
             System.gc();
         }
-    }
-
-    public static void preLoadImage(String url, Context context) {
-//        Log.i(context.getClass().getName(), "Pre loading image = " + url);
-//        Picasso.with(context).load(url).fetch();
     }
 
     public static void showEmptyProductsView(final Context context, ViewGroup parent, String msg,
@@ -428,6 +468,97 @@ public class UIUtil {
                 return .66;
             default:
                 return 1;
+        }
+    }
+
+    public static View getCheckoutProgressView(Context context, @Nullable ViewGroup parent, String[] array_txtValues,
+                                               @Nullable Integer[] array_compPos, int selectedPos) {
+        View container = LayoutInflater.from(context).inflate(R.layout.uiv3_checkout_progress_view,
+                parent, false);
+        LinearLayout layoutGift = (LinearLayout) container.findViewById(R.id.layout_gift);
+        ImageView imageViewAddress = (ImageView) container.findViewById(R.id.imageView_address);
+        ImageView imageViewGift = (ImageView) container.findViewById(R.id.imageView_gifts);
+        ImageView imageViewSlots = (ImageView) container.findViewById(R.id.imageView_slots);
+        ImageView imageViewOrder = (ImageView) container.findViewById(R.id.imageView_order);
+        TextView textViewAddress = (TextView) container.findViewById(R.id.textView_address);
+        TextView textViewGift = (TextView) container.findViewById(R.id.textView_gifts);
+        TextView textViewSlots = (TextView) container.findViewById(R.id.textView_slots);
+        TextView textViewOrder = (TextView) container.findViewById(R.id.textView_order);
+
+        ArrayList<ImageView> listImageViews = new ArrayList<>();
+        listImageViews.add(imageViewAddress);
+        listImageViews.add(imageViewGift);
+        listImageViews.add(imageViewSlots);
+        listImageViews.add(imageViewOrder);
+
+        Integer[] tot;
+        if (array_txtValues.length == 4) {
+            textViewAddress.setText(array_txtValues[0]);
+            textViewGift.setText(array_txtValues[1]);
+            textViewSlots.setText(array_txtValues[2]);
+            textViewOrder.setText(array_txtValues[3]);
+            tot = new Integer[]{0, 1, 2, 3};
+        } else {
+            layoutGift.setVisibility(View.GONE);
+            listImageViews.remove(1);
+            textViewAddress.setText(array_txtValues[0]);
+            textViewSlots.setText(array_txtValues[1]);
+            textViewOrder.setText(array_txtValues[2]);
+            tot = new Integer[]{0, 1, 2};
+        }
+
+        if (array_compPos != null) {
+            for (Integer array_compPo : array_compPos) {
+                listImageViews.get(array_compPo).setBackgroundResource(R.drawable.tick_circle_complete);
+            }
+        }
+        Integer[] rem;
+        if (array_compPos != null) {
+            List<Integer> list = new ArrayList<>(Arrays.asList(tot));
+            TreeSet<Integer> set = new TreeSet<>(list);
+            set.removeAll(Arrays.asList(array_compPos));
+            rem = set.toArray(new Integer[set.size()]);
+        } else {
+            rem = tot;
+        }
+        for (Integer aRem : rem)
+            if (aRem != selectedPos) {
+                listImageViews.get(aRem).setBackgroundResource(R.drawable.tick_circle_pending);
+            }
+        listImageViews.get(selectedPos).setBackgroundResource(R.drawable.tick_circle_current);
+
+        textViewAddress.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewSlots.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewOrder.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        textViewGift.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        return container;
+    }
+
+    public static void setUpGiftItemListFooter(Gift gift, GiftItemListRecyclerAdapter.GiftItemFooterViewHolder holder,
+                                               Context context) {
+        Pair<Integer, Double> data = gift.getGiftItemSelectedCountAndTotalPrice();
+        int numGiftItemsToWrap = data.first;
+        double giftItemTotal = data.second;
+
+        TextView lblTotalGiftItems = holder.getLblTotalGiftItems();
+        TextView txtCountGiftItems = holder.getTxtCountGiftItems();
+        TextView lblGiftItemTotalPrice = holder.getLblGiftItemTotalPrice();
+        TextView txtGiftItemTotalPrice = holder.getTxtGiftItemTotalPrice();
+
+        lblTotalGiftItems.setText(context.getString(numGiftItemsToWrap > 1 ?
+                R.string.totalNumOfItemsToGiftWrapPlural : R.string.totalNumOfItemsToGiftWrapSingular));
+        txtCountGiftItems.setText(String.valueOf(numGiftItemsToWrap));
+
+        String start = context.getString(R.string.totalCostOfGiftWrapping) + " ";
+        String end = context.getString(R.string.willBeAddedToFinalAmount);
+        SpannableString spannableString = new SpannableString(start + end);
+
+        lblGiftItemTotalPrice.setText(spannableString);
+        if (giftItemTotal > 0) {
+            txtGiftItemTotalPrice.setText(UIUtil.asRupeeSpannable(giftItemTotal,
+                    FontHolder.getInstance(context).getFaceRupee()));
+        } else {
+            txtGiftItemTotalPrice.setText("0");
         }
     }
 
@@ -597,10 +728,16 @@ public class UIUtil {
     }
 
     public static RadioButton getPaymentOptionRadioButton(ViewGroup parent, Context context, LayoutInflater inflater) {
+        return getPaymentOptionRadioButton(parent, context, inflater,
+                (int) context.getResources().getDimension(R.dimen.margin_small));
+    }
+
+    public static RadioButton getPaymentOptionRadioButton(ViewGroup parent, Context context, LayoutInflater inflater,
+                                                          int marginTop) {
         RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, parent, false);
         RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0, 0, 0, (int) context.getResources().getDimension(R.dimen.margin_small));
+        layoutParams.setMargins(0, 0, 0, marginTop);
         radioButton.setLayoutParams(layoutParams);
         radioButton.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
         return radioButton;
@@ -609,5 +746,80 @@ public class UIUtil {
     public static String getIMEI(Context context) {
         TelephonyManager mngr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return mngr.getDeviceId();
+    }
+
+    public static void dialNumber(String number, Activity activity) {
+        try {
+            String uri = "tel:" + number;
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse(uri));
+            activity.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            // Do nothing
+        }
+    }
+
+    public static void invokeMailClient(String email, Activity activity) {
+        try {
+            activity.startActivity(Intent.createChooser(new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email)),
+                    "BigBasket Customer Service"));
+        } catch (ActivityNotFoundException e) {
+            // Do nothing
+        }
+    }
+
+    public static void showPaymentFailureDlg(final BaseActivity activity) {
+        ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(activity).getAddressSummaries();
+        String phone = null;
+        if (addressSummaries != null && addressSummaries.size() > 0) {
+            City city = CityManager.getCity(addressSummaries.get(0).getCityId(), activity);
+            if (city != null) {
+                phone = city.getPhone();
+            }
+        }
+        if (!TextUtils.isEmpty(phone)) {
+            View dlg = activity.getLayoutInflater().inflate(R.layout.uiv3_msg_text, null);
+            TextView txtMsg = (TextView) dlg.findViewById(R.id.txtMsg);
+            int dp16 = (int) activity.getResources().getDimension(R.dimen.padding_normal);
+            txtMsg.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            txtMsg.setTextColor(activity.getResources().getColor(android.R.color.black));
+            String prefix = activity.getString(R.string.txnFailureMsgPrefix) + " ";
+            String suffix = activity.getString(R.string.txnFailureMsgSuffix) + " ";
+            final String csEmail = "customerservice@bigbasket.com";
+            SpannableString spannableString = new SpannableString(prefix + phone + " " +
+                    suffix + csEmail);
+            final String passedPhoneNum = phone;
+            spannableString.setSpan(new ClickableSpan() {
+                                        @Override
+                                        public void onClick(View widget) {
+                                            UIUtil.dialNumber(passedPhoneNum, activity);
+                                        }
+                                    }, prefix.length(), prefix.length() + phone.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new ClickableSpan() {
+                                        @Override
+                                        public void onClick(View widget) {
+                                            UIUtil.invokeMailClient(csEmail, activity);
+                                        }
+                                    }, prefix.length() + phone.length() + 1 + suffix.length(),
+                    spannableString.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            txtMsg.setText(spannableString);
+            txtMsg.setMovementMethod(LinkMovementMethod.getInstance());
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity)
+                    .setTitle(activity.getString(R.string.transactionFailed))
+                    .setView(dlg, dp16, dp16, dp16, dp16)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setCancelable(false);
+            builder.create().show();
+        } else {
+            activity.showAlertDialog(activity.getString(R.string.transactionFailed),
+                    activity.getString(R.string.txnFailureMsg));
+        }
     }
 }

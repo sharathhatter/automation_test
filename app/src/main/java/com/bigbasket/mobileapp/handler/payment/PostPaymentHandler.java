@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.handler.payment;
 
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -12,6 +13,10 @@ import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
+import com.bigbasket.mobileapp.util.Constants;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -34,14 +39,15 @@ public class PostPaymentHandler<T> {
     private String amount;
     private String orderId;
 
-    public PostPaymentHandler(T ctx, @Nullable String potentialOrderId, String paymentType, String txnId,
-                              boolean status, String amount, @Nullable String orderId) {
+    // For PAYTM
+    private HashMap<String, String> paytmParams;
+
+    public PostPaymentHandler(T ctx, @Nullable String potentialOrderId, String paymentType,
+                              boolean status, @Nullable String orderId) {
         this.ctx = ctx;
         this.potentialOrderId = potentialOrderId;
         this.paymentType = paymentType;
-        this.txnId = txnId;
         this.status = status;
-        this.amount = amount;
         this.orderId = orderId;
     }
 
@@ -75,6 +81,21 @@ public class PostPaymentHandler<T> {
         return this;
     }
 
+    public PostPaymentHandler setTxnId(String txnId) {
+        this.txnId = txnId;
+        return this;
+    }
+
+    public PostPaymentHandler setAmount(String amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public PostPaymentHandler setPayTmParams(HashMap<String, String> paytmParams) {
+        this.paytmParams = paytmParams;
+        return this;
+    }
+
     public void start() {
         if (!((ConnectivityAware) ctx).checkInternetConnection()) {
             ((HandlerAware) ctx).getHandler().sendOfflineError();
@@ -82,16 +103,38 @@ public class PostPaymentHandler<T> {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        if (status) {
-            bigBasketApiService.postPrepaidPayment(txnId, potentialOrderId, paymentType, "1",
-                    pgTxnId, dataPickupCode, amount, orderId, isPayNow, isWallet,
-                    new PostPrepaidParamsCallback());
-        } else {
-            bigBasketApiService.postPrepaidPayment(txnId,
-                    potentialOrderId, paymentType, "0",
-                    errResCode, errResDesc, orderId, isPayNow, isWallet,
-                    new PostPrepaidParamsCallback());
+
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put(Constants.PAYMENT_TYPE, paymentType);
+        queryMap.put(Constants.STATUS, status ? "1" : "0");
+        queryMap.put(Constants.PAY_NOW, isPayNow);
+        queryMap.put(Constants.WALLET, isWallet);
+        if (!TextUtils.isEmpty(potentialOrderId)) {
+            queryMap.put(Constants.P_ORDER_ID, potentialOrderId);
         }
+        if (!TextUtils.isEmpty(Constants.ORDER_ID)) {
+            queryMap.put(Constants.ORDER_ID, orderId);
+        }
+
+        switch (paymentType) {
+            case Constants.HDFC_POWER_PAY:
+                queryMap.put(Constants.TXN_ID, txnId);
+                if (!TextUtils.isEmpty(amount)) {
+                    queryMap.put(Constants.AMOUNT, amount);
+                }
+                if (status) {
+                    queryMap.put(Constants.PG_TXN_ID, pgTxnId);
+                    queryMap.put(Constants.DATA_PICKUP_CODE, dataPickupCode);
+                } else {
+                    queryMap.put(Constants.ERR_RES_CODE, errResCode);
+                    queryMap.put(Constants.ERR_RES_DESC, errResDesc);
+                }
+                break;
+            case Constants.PAYTM_WALLET:
+                queryMap.putAll(paytmParams);
+                break;
+        }
+        bigBasketApiService.postPrepaidPayment(queryMap, new PostPrepaidParamsCallback());
     }
 
     private class PostPrepaidParamsCallback implements Callback<ApiResponse<PostPrepaidPaymentResponse>> {
@@ -106,9 +149,9 @@ public class PostPaymentHandler<T> {
             switch (postPrepaidPaymentApiResponse.status) {
                 case 0:
                     if (postPrepaidPaymentApiResponse.apiResponseContent.paymentStatus) {
-                        ((OnPostPaymentListener) ctx).onPostPaymentSuccess(txnId);
+                        ((OnPostPaymentListener) ctx).onPostPaymentSuccess(txnId, paymentType);
                     } else {
-                        ((OnPostPaymentListener) ctx).onPostPaymentFailure(txnId);
+                        ((OnPostPaymentListener) ctx).onPostPaymentFailure(txnId, paymentType);
                     }
                     break;
                 default:

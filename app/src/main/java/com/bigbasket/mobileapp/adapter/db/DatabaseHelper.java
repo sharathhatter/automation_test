@@ -15,16 +15,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "bigbasket.db";
     protected static final int DATABASE_VERSION = 15;
     public static SQLiteDatabase db = null;
-    private static DatabaseHelper dbAdapter = null;
+    private static volatile DatabaseHelper dbAdapter = null;
     private static boolean isConnectionOpen = false;
+    private static final Object lock = new Object();
 
     private DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
     public static DatabaseHelper getInstance(Context context) {
-        if (dbAdapter == null)
-            dbAdapter = new DatabaseHelper(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
+        DatabaseHelper helper = dbAdapter;
+        if (helper == null) {
+            synchronized (lock) {
+                helper = dbAdapter;
+                if (helper == null) {
+                    helper = new DatabaseHelper(context.getApplicationContext(),
+                            DATABASE_NAME, null, DATABASE_VERSION);
+                    dbAdapter = helper;
+                }
+            }
+        }
         return dbAdapter;
     }
 

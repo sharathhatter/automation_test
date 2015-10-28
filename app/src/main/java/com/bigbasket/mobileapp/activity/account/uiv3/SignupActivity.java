@@ -1,14 +1,13 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
 
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,37 +16,36 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
-import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
+import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.account.City;
-import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.account.AddressSummary;
+import com.bigbasket.mobileapp.receivers.DynamicAppDataBroadcastReceiver;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
-public class SignupActivity extends BackButtonActivity implements CityListDisplayAware {
+public class SignupActivity extends BackButtonActivity {
 
     // UI References
-    private ArrayList<City> mCities;
     private EditText mPasswordView;
     private EditText mFirstNameView;
     private EditText mLastNameView;
-    private int mSelectedCityIndx;
-    private EditText mCityView;
     private EditText mEmailView;
     private boolean mIsPasswordVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_SINGUP_SCREEN);
+        setNextScreenNavigationContext(TrackEventkeys.NC_SIGNUP_SCREEN);
         setTitle(getString(R.string.signUpCapsVerb));
 
-        new GetCitiesTask<>(this).startTask();
+        renderSignUp();
+        mDynamicAppDataBroadcastReceiver = new DynamicAppDataBroadcastReceiver<>(this);
     }
 
     @Override
@@ -55,18 +53,26 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         return R.layout.uiv3_signup;
     }
 
-    public void onReadyToDisplayCity(ArrayList<City> cities) {
-        mCities = cities;
-
+    private void renderSignUp() {
         ((TextView) findViewById(R.id.txtOrSeparator)).setTypeface(faceRobotoRegular);
         ((TextView) findViewById(R.id.lblConnectUsing)).setTypeface(faceRobotoLight);
         mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (((keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                        actionId == EditorInfo.IME_ACTION_DONE) {
+                    onRegisterButtonClicked();
+                    hideKeyboard(getCurrentActivity(), mPasswordView);
+                }
+                return false;
+            }
+        });
         mFirstNameView = (EditText) findViewById(R.id.editTextFirstName);
         mFirstNameView.setNextFocusDownId(R.id.editTextLastName);
         mLastNameView = (EditText) findViewById(R.id.editTextLastName);
 //        mRefCodeView = (EditText) base.findViewById(R.id.editTextRefCode);
         mEmailView = (EditText) findViewById(R.id.emailInput);
-        mCityView = (EditText) findViewById(R.id.editTextChooseCity);
 
         Button btnSignUp = (Button) findViewById(R.id.btnRegister);
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -77,61 +83,64 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         });
         btnSignUp.setTypeface(faceRobotoRegular);
 
-        mPasswordView.setOnTouchListener(new OnRightCompoundDrawableClicked() {
+        mPasswordView.setOnTouchListener(new OnCompoundDrawableClickListener(OnCompoundDrawableClickListener.DRAWABLE_RIGHT) {
             @Override
             public void onRightDrawableClicked() {
                 mIsPasswordVisible = !mIsPasswordVisible;
                 togglePasswordView(mPasswordView, mIsPasswordVisible);
             }
-        });
 
-        mCityView.setTypeface(faceRobotoRegular);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String currentCityName = preferences.getString(Constants.CITY, cities.get(0).getName());
-        String cityIdStr = preferences.getString(Constants.CITY_ID, String.valueOf(cities.get(0).getId()));
-        if (TextUtils.isEmpty(cityIdStr) || !TextUtils.isDigitsOnly(cityIdStr)) {
-            cityIdStr = "1";
-        }
-        int cityId = Integer.parseInt(cityIdStr);
-        for (int i = 0; i < mCities.size(); i++) {
-            City city = mCities.get(i);
-            if (cityId == city.getId()) {
-                mSelectedCityIndx = i;
-                break;
-            }
-        }
-        mCityView.setText(currentCityName);
-        mCityView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                showChooseCityDialog();
+            public void onLeftDrawableClicked() {
+
             }
         });
+
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
                 findViewById(R.id.btnFBLogin));
 
+
+        showLocationView();
         trackEvent(TrackingAware.REGISTRATION_PAGE_SHOWN, null);
     }
 
-    private void showChooseCityDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String[] cityNames = new String[mCities.size()];
-        for (int i = 0; i < mCities.size(); i++) {
-            cityNames[i] = mCities.get(i).getName();
+    private void showLocationView() {
+        EditText editTextCurrentLocation = (EditText) findViewById(R.id.editTextCurrentLocation);
+        TextView txtChooseLocation = (TextView) findViewById(R.id.txtChooseLocation);
+        TextInputLayout textInputCurrentLocation = (TextInputLayout) findViewById(R.id.textInputCurrentLocation);
+
+        final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
+        if (addressSummaries != null && addressSummaries.size() > 0) {
+            editTextCurrentLocation.setText(addressSummaries.get(0).toStringSameLine());
+            editTextCurrentLocation.setTypeface(faceRobotoRegular);
+            editTextCurrentLocation.setOnTouchListener(new OnCompoundDrawableClickListener(OnCompoundDrawableClickListener.DRAWABLE_RIGHT) {
+                @Override
+                public void onRightDrawableClicked() {
+                    showChangeCity(false, TrackEventkeys.NC_SIGNUP_SCREEN, true);
+                }
+
+                @Override
+                public void onLeftDrawableClicked() {
+
+                }
+            });
+            editTextCurrentLocation.setVisibility(View.VISIBLE);
+            textInputCurrentLocation.setVisibility(View.VISIBLE);
+            txtChooseLocation.setVisibility(View.GONE);
+        } else {
+            textInputCurrentLocation.setVisibility(View.GONE);
+            editTextCurrentLocation.setVisibility(View.GONE);
+            txtChooseLocation.setVisibility(View.VISIBLE);
+            txtChooseLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showChangeCity(true, TrackEventkeys.NC_SIGNUP_SCREEN, true);
+                }
+            });
         }
-        builder.setTitle(getString(R.string.chooseCity))
-                .setItems(cityNames, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mSelectedCityIndx = which;
-                        mCityView.setText(mCities.get(mSelectedCityIndx).getName());
-                    }
-                });
-        builder.create().show();
     }
 
-    public void onRegisterButtonClicked() {
+    private void onRegisterButtonClicked() {
         trackEvent(TrackingAware.REGISTER_BTN_CLICK, null);
 
 
@@ -192,6 +201,24 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
             cancel = true;
         }
 
+        final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
+        if (addressSummaries == null || addressSummaries.size() == 0) {
+            showAlertDialog("Please choose a location!");
+            return;
+        }
+
+        if (!UIUtil.isAlphaString(firstName.trim())) {
+            cancel = true;
+            if (focusView == null) focusView = mFirstNameView;
+            UIUtil.reportFormInputFieldError(textInputFirstName, getString(R.string.error_field_name));
+        }
+
+        if (!UIUtil.isAlphaString(lastName.trim())) {
+            cancel = true;
+            if (focusView == null) focusView = mLastNameView;
+            UIUtil.reportFormInputFieldError(textInputLastName, getString(R.string.error_field_name));
+        }
+
         if (cancel) {
             // There was an error, don't sign-up
             focusView.requestFocus();
@@ -208,17 +235,41 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         userDetailsJsonObj.addProperty(Constants.FIRSTNAME, firstName);
         userDetailsJsonObj.addProperty(Constants.LASTNAME, lastName);
         userDetailsJsonObj.addProperty(Constants.PASSWORD, passwd);
-        userDetailsJsonObj.addProperty(Constants.CITY_ID, mCities.get(mSelectedCityIndx).getId());
         userDetailsJsonObj.addProperty(Constants.NEWSLETTER_SUBSCRIPTION, true);
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         bigBasketApiService.registerMember(userDetailsJsonObj.toString(),
-                new LoginApiResponseCallback(email, passwd, true, Constants.REGISTER_ACCOUNT_TYPE));
+                new LoginApiResponseCallback(email, passwd, true,
+                        Constants.REGISTER_ACCOUNT_TYPE, null));
     }
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
+    @Override
+    public void onDataSynced(boolean isManuallyTriggered) {
+        super.onDataSynced(isManuallyTriggered);
+        if (!isManuallyTriggered) {
+            showLocationView();
+            hideProgressDialog();
+        }
+    }
+
+    @Override
+    public void onDataSyncFailure() {
+        super.onDataSyncFailure();
+        showLocationView();
+        hideProgressDialog();
+        showAlertDialog(getString(R.string.headingServerError), getString(R.string.server_error));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.LOCATION_CHOSEN) {
+            showProgressDialog(getString(R.string.please_wait));
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     public void showProgress(final boolean show) {
         if (show) {
             showProgressDialog(getString(R.string.please_wait));

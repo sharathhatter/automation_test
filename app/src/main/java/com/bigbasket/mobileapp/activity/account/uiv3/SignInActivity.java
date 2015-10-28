@@ -25,7 +25,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
-import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
+import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -75,11 +75,16 @@ public class SignInActivity extends BackButtonActivity {
                 return false;
             }
         });
-        mPasswordView.setOnTouchListener(new OnRightCompoundDrawableClicked() {
+        mPasswordView.setOnTouchListener(new OnCompoundDrawableClickListener(OnCompoundDrawableClickListener.DRAWABLE_RIGHT) {
             @Override
             public void onRightDrawableClicked() {
                 mIsPasswordVisible = !mIsPasswordVisible;
                 togglePasswordView(mPasswordView, mIsPasswordVisible);
+            }
+
+            @Override
+            public void onLeftDrawableClicked() {
+
             }
         });
 
@@ -168,7 +173,7 @@ public class SignInActivity extends BackButtonActivity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    public void attemptLogin() {
+    private void attemptLogin() {
         // Reset errors.
 
         TextInputLayout textInputEmail = (TextInputLayout) findViewById(R.id.textInputEmail);
@@ -228,7 +233,8 @@ public class SignInActivity extends BackButtonActivity {
     private void startLogin(String email, String password) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         bigBasketApiService.login(email, password,
-                new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked(), Constants.SIGN_IN_ACCOUNT_TYPE));
+                new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked(),
+                        Constants.SIGN_IN_ACCOUNT_TYPE, null));
     }
 
     @Override

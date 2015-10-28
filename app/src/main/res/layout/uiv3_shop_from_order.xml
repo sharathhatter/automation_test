@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -31,10 +32,54 @@
             android:textSize="@dimen/secondary_text_size" />
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/layoutEmptyList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/layoutAddAll"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/padding_normal"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imgEmptyPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/margin_large"
+            android:contentDescription="@string/empty"
+            android:src="@drawable/empty_basket" />
+
+        <TextView
+            android:id="@+id/txtEmptyMsg1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imgEmptyPage"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_small"
+            android:gravity="center"
+            android:text="@string/noProductsInCurrentCity"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/primary_text_size" />
+
+        <Button
+            android:id="@+id/btnBlankPage"
+            style="@style/EmptyPageButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/txtEmptyMsg1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:text="Continue"
+            tools:ignore="HardcodedText" />
+
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/layoutAddAll"
-        android:background="@color/white" />
+        android:background="@color/white"
+        android:visibility="gone" />
 </RelativeLayout>

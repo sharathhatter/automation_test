@@ -90,7 +90,7 @@ public class TutorialActivity extends BaseActivity {
         });
     }
 
-    public void slideNext() {
+    private void slideNext() {
         int currentPosition = mViewPager.getCurrentItem();
         int total = mViewPager.getAdapter().getCount();
         if (currentPosition == total - 1) {
@@ -100,7 +100,7 @@ public class TutorialActivity extends BaseActivity {
         }
     }
 
-    public void skip() {
+    private void skip() {
         finish();
     }
 

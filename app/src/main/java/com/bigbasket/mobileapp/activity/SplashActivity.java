@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.appsflyer.AppsFlyerLib;
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -24,7 +25,6 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
@@ -37,7 +37,7 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.daimajia.slider.library.BuildConfig;
+import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
@@ -80,12 +80,21 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             } catch (ClassCastException e) {
 
             }
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = preferences.edit();
+            if (preferences.contains(Constants.FIRSE_TIME_USER)) {
+                MoEngageWrapper.setExistingUser(moEHelper, true);
+            } else {
+                MoEngageWrapper.setExistingUser(moEHelper, false);
+                editor.putBoolean(Constants.FIRSE_TIME_USER, true);
+            }
             if (!BuildConfig.DEBUG) {
-                trackEventAppsFlyer(TrackingAware.APP_OPEN);
+                editor.putBoolean(Constants.APP_LAUNCH, true);
                 if (checkInternetConnection()) {
                     NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
                 }
             }
+            editor.commit(); //HomeActivity need APP_LAUNCH flag, so we don't want to write data in background
         }
     }
 
@@ -164,7 +173,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     }
 
     @Override
-    public void handleTutorialResponse(int resultCode) {
+    protected void handleTutorialResponse(int resultCode) {
         if (resultCode == FragmentCodes.START_HOME) {
             Intent homePageIntent = new Intent(this, HomeActivity.class);
             homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
@@ -287,7 +296,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         }
     }
 
-    protected void handleResults(boolean reloadApp) {
+    private void handleResults(boolean reloadApp) {
         removePendingGoToHome();
         if (reloadApp) {
             loadNavigation();

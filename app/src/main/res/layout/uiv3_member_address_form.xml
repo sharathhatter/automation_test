@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:layout_gravity="top"
     android:layout_margin="@dimen/margin_normal"
-    android:background="@color/uiv3_large_list_item_bck"
     android:scrollbars="none">
 
 
@@ -13,11 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/lblNeedMoreAddressInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/needMoreAddressInfo"
+            android:textColor="@color/uiv3_dialog_header_text_bkg"
+            android:textSize="@dimen/secondary_text_size"
+            android:visibility="gone" />
+
         <Spinner
             android:id="@+id/spinnerCity"
             style="@style/Base.Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/lblNeedMoreAddressInfo"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_small" />
@@ -56,8 +68,8 @@
             android:layout_marginTop="@dimen/margin_small">
 
             <com.bigbasket.mobileapp.view.InstantAutoCompleteTextView
-                style="@style/BBEditTextStyle"
                 android:id="@+id/editTextArea"
+                style="@style/BBEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"

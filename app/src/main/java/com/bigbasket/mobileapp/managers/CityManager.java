@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.managers;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.account.City;
@@ -21,7 +22,9 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public final class CityManager {
-    private CityManager() {}
+    private CityManager() {
+    }
+
     private static final int TIMEOUT_IN_MINUTES = 60;
     private static final String preferenceKey = "stored_city";
 
@@ -56,6 +59,19 @@ public final class CityManager {
                 Type collectionType = new TypeToken<Collection<City>>() {
                 }.getType();
                 return new Gson().fromJson(storedCitiesJson, collectionType);
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static City getCity(int cityId, Context context) {
+        ArrayList<City> cities = getStoredCity(context);
+        if (cities != null && cities.size() > 0) {
+            for (City city : cities) {
+                if (city.getId() == cityId) {
+                    return city;
+                }
             }
         }
         return null;

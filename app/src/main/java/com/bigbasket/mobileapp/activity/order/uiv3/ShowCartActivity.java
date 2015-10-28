@@ -6,15 +6,14 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,7 +37,9 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.fragment.ShowCartFragment;
+import com.bigbasket.mobileapp.interfaces.BasketChangeQtyAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.CartItem;
@@ -65,17 +66,20 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ShowCartActivity extends BackButtonActivity {
+public class ShowCartActivity extends BackButtonActivity implements BasketChangeQtyAware {
 
     private ArrayList<CartItemList> cartItemLists;
     private ArrayList<FulfillmentInfo> fulfillmentInfos;
     private ArrayList<AnnotationInfo> annotationInfoArrayList;
     @Nullable
     private MenuItem basketMenuItem;
+    private int currentItemPosition;
+    private int currentTabIndex;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(getString(R.string.my_basket_header));
         setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
     }
 
@@ -154,6 +158,9 @@ public class ShowCartActivity extends BackButtonActivity {
 
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, cartTotal,
                 getString(R.string.checkOut), true);
+        int dp16 = (int) getResources().getDimension(R.dimen.margin_normal);
+        int dp8 = (int) getResources().getDimension(R.dimen.margin_small);
+        layoutCheckoutFooter.setPadding(dp16, dp8, dp16, dp8);
 
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,10 +215,10 @@ public class ShowCartActivity extends BackButtonActivity {
         }
     }
 
-    public final void setBasketNumItemsDisplay() {
+    private void setBasketNumItemsDisplay() {
+        markBasketDirty();
         if (getCartSummary() == null) return;
         updateUIForCartInfo();
-        markBasketDirty();
     }
 
     private void emptyCart() {
@@ -248,7 +255,7 @@ public class ShowCartActivity extends BackButtonActivity {
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 hideProgressView();
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }
@@ -278,25 +285,24 @@ public class ShowCartActivity extends BackButtonActivity {
                             fulfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
                             annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
 
-                            if (cartGetApiResponseContentApiResponse.apiResponseContent.
-                                    cartGetApiCartItemsContent != null
+                            if (cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent != null
                                     && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
                                     && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
                                 cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
                                         cartGetApiCartItemsContent.cartItemLists;
 
-                                addTabsToPager(true, cartGetApiResponseContentApiResponse
-                                        .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl, fulfillmentInfos, annotationInfoArrayList);
+                                addTabsToPager(AppDataDynamic.getInstance(getCurrentActivity()).isContextualMode(),
+                                        cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.baseImgUrl,
+                                        fulfillmentInfos, annotationInfoArrayList);
 
                                 renderCheckoutLayout(cartSummary, isCurrentPageRequest);
-
                             } else {
                                 showBasketEmptyMessage();
                                 editor.putString(Constants.GET_CART, "0");
                             }
                         } else {
                             handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
-                                    cartGetApiResponseContentApiResponse.message);
+                                    cartGetApiResponseContentApiResponse.message, true);
                         }
                         editor.apply();
                     }
@@ -310,37 +316,6 @@ public class ShowCartActivity extends BackButtonActivity {
                 });
     }
 
-    private ArrayList<CartItemList> getSkuForTabs(ArrayList<CartItemList> totalList, int tabType) {
-        ArrayList<CartItemList> tabList = new ArrayList<>();
-
-        for (CartItemList cartItemList : totalList) {
-            ArrayList<CartItem> lists = new ArrayList<>();
-            for (CartItem cartItem : cartItemList.getCartItems()) {
-                String sku_type = cartItem.getSkuType();
-                if (tabType == Constants.TAB_TYPE_EXPRESS) {
-                    if (!TextUtils.isEmpty(sku_type) &&
-                            (sku_type.equals(Constants.SKU_TYPE_EXPRESS) ||
-                                    sku_type.equals(Constants.SKU_TYPE_JIT) ||
-                                    sku_type.equals(Constants.SKU_TYPE_KIRANA))) {
-                        Log.d("", "EXP IN");
-                        lists.add(cartItem);
-                    }
-                } else if (tabType == Constants.TAB_TYPE_STANDARD) {
-                    if (TextUtils.isEmpty(sku_type) || sku_type.equals(Constants.SKU_TYPE_STANDARD)) {
-                        Log.d("", "STND IN");
-                        lists.add(cartItem);
-                    }
-                }
-            }
-            if (lists.size() > 0) {
-                CartItemList returnCartItemList = new CartItemList(lists, cartItemList.getTopCatName(),
-                        cartItemList.getTopCatTotal(), cartItemList.getTopCatItems());
-                tabList.add(returnCartItemList);
-            }
-        }
-        return tabList;
-    }
-
     private void addTabsToPager(boolean showTabs, String baseImgUrl, ArrayList<FulfillmentInfo> fulfillmentInfos,
                                 ArrayList<AnnotationInfo> annotationInfoArrayList) {
         if (showTabs) {
@@ -352,26 +327,38 @@ public class ShowCartActivity extends BackButtonActivity {
             pageTitleStrip.setVisibility(View.GONE);
             ArrayList<BBTab> bbTabs = new ArrayList<>();
 
-            createTabFragment(getString(R.string.stnd_delivery), R.drawable.promo_used, baseImgUrl,
-                    cartItemLists, fulfillmentInfos, annotationInfoArrayList, bbTabs);
+            createTabFragment(getString(R.string.stnd_delivery), baseImgUrl,
+                    cartItemLists, fulfillmentInfos, annotationInfoArrayList, bbTabs, Constants.DEFAULT_TAB_INDEX);
 
             TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
                     bbTabs);
             mViewPager.setAdapter(tabPagerAdapter);
+            mViewPager.setCurrentItem(currentTabIndex);
         }
     }
 
-    private ArrayList<BBTab> createTabFragment(String tab_name, @DrawableRes int tabImgId, String baseUrl, ArrayList<CartItemList>
+    private ArrayList<BBTab> createTabFragment(String tab_name, String baseUrl, ArrayList<CartItemList>
             cartItemList, ArrayList<FulfillmentInfo> fulfillmentInfos, ArrayList<AnnotationInfo>
-                                                       annotationInfoArrayList, ArrayList<BBTab> bbTabs) {
+                                                       annotationInfoArrayList, ArrayList<BBTab> bbTabs,
+                                               int currentTabIndex) {
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(Constants.CART_ITEMS, cartItemList);
         bundle.putParcelableArrayList(Constants.FULFILLMENT_INFO, fulfillmentInfos);
         bundle.putParcelableArrayList(Constants.ANNOTATION_INFO, annotationInfoArrayList);
         bundle.putString(Constants.BASE_IMG_URL, baseUrl);
-        bundle.putInt(Constants.TAB_IMG, tabImgId);
+        if (this.currentTabIndex == currentTabIndex) {
+            bundle.putInt(Constants.ITEM_SCROLL_POSITION, currentItemPosition);
+        }
+        bundle.putInt(Constants.CURRENT_TAB_INDEX, currentTabIndex);
         bbTabs.add(new BBTab<>(tab_name, ShowCartFragment.class, bundle));
         return bbTabs;
+    }
+
+
+    @Override
+    public void onBasketQtyChanged(int itemPosition, int currentTabIndex) {
+        this.currentItemPosition = itemPosition;
+        this.currentTabIndex = currentTabIndex;
     }
 
     private void showBasketEmptyMessage() {
@@ -409,6 +396,7 @@ public class ShowCartActivity extends BackButtonActivity {
         coordinatorLayout.removeView(mViewPager);
         relativeLayout.removeView(linearLayout);
         frameLayout.addView(base);
+        markBasketChanged(null);
     }
 
     @Override
@@ -428,23 +416,23 @@ public class ShowCartActivity extends BackButtonActivity {
     }
 
     private void renderTabsDataToView(ArrayList<CartItemList> cartItemListsStnd, ArrayList<CartItemList> cartItemListsExp, String baseImgUrl) {
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
+        final ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
         TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
         ArrayList<BBTab> bbTabs = new ArrayList<>();
 
         if (cartItemListsStnd.size() > 0 && cartItemListsExp.size() > 0) {
             pageTitleStrip.setVisibility(View.VISIBLE);
-            createTabFragment(getString(R.string.stnd_delivery), R.drawable.tab_icon_states_standard, baseImgUrl,
-                    cartItemListsStnd, fulfillmentInfos, annotationInfoArrayList, bbTabs);
-            createTabFragment(getString(R.string.exp_delivery), R.drawable.tab_icon_state, baseImgUrl,
-                    cartItemListsExp, fulfillmentInfos, annotationInfoArrayList, bbTabs);
+            createTabFragment(getString(R.string.stnd_delivery), baseImgUrl,
+                    cartItemListsStnd, fulfillmentInfos, annotationInfoArrayList, bbTabs, Constants.STANDARD_TAB_INDEX);
+            createTabFragment(getString(R.string.exp_delivery), baseImgUrl,
+                    cartItemListsExp, fulfillmentInfos, annotationInfoArrayList, bbTabs, Constants.EXPRESS_TAB_INDEX);
         } else if (cartItemListsStnd.size() > 0 || cartItemListsExp.size() > 0) {
             pageTitleStrip.setVisibility(View.GONE);
             cartItemListsExp = cartItemListsExp.size() > 0 ? cartItemListsExp : cartItemListsStnd;
             String title = cartItemListsExp.size() > 0 ? getString(R.string.exp_delivery) :
                     getString(R.string.stnd_delivery);
-            createTabFragment(title, R.drawable.promo_used, baseImgUrl,
-                    cartItemListsExp, fulfillmentInfos, annotationInfoArrayList, bbTabs);
+            createTabFragment(title, baseImgUrl,
+                    cartItemListsExp, fulfillmentInfos, annotationInfoArrayList, bbTabs, Constants.DEFAULT_TAB_INDEX);
         } else {
             throw new AssertionError("Both Standard and Express can't be Empty");
         }
@@ -452,16 +440,21 @@ public class ShowCartActivity extends BackButtonActivity {
         TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
                 bbTabs);
         mViewPager.setAdapter(tabPagerAdapter);
+        pageTitleStrip.getSelectedTabPosition();
 
         if (pageTitleStrip.isShown()) {
             pageTitleStrip.setupWithViewPager(mViewPager);
-            for (int i = 0; i < pageTitleStrip.getTabCount(); i++) {
-                TabLayout.Tab tab = pageTitleStrip.getTabAt(i);
-                if (tab != null) {
-                    tab.setCustomView(tabPagerAdapter.getTabView(i));
-                }
-            }
+            mViewPager.setCurrentItem(currentTabIndex);
         }
+        /*
+        mViewPager.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                mViewPager.setCurrentItem(currentTabIndex);
+            }
+        }, 100);
+        */
     }
 
     private class GenerateTabDataAsync extends AsyncTask<Void, Void, Void> {
@@ -476,14 +469,55 @@ public class ShowCartActivity extends BackButtonActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgressDialog("Preparing basket");
+            showProgressDialog(getString(R.string.preparingBasket));
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            cartItemListsExp = getSkuForTabs(cartItemLists, Constants.TAB_TYPE_EXPRESS);
-            cartItemListsStnd = getSkuForTabs(cartItemLists, Constants.TAB_TYPE_STANDARD);
+            Pair<ArrayList<CartItemList>, ArrayList<CartItemList>> expressStandardListPair =
+                    getGroupedSkuTabs(cartItemLists);
+            cartItemListsExp = expressStandardListPair.first;
+            cartItemListsStnd = expressStandardListPair.second;
             return null;
+        }
+
+        private Pair<ArrayList<CartItemList>, ArrayList<CartItemList>> getGroupedSkuTabs(ArrayList<CartItemList> totalList) {
+            ArrayList<CartItemList> expressTabList = new ArrayList<>();
+            ArrayList<CartItemList> standardTabList = new ArrayList<>();
+
+            for (CartItemList cartItemList : totalList) {
+                double standardTotalPerCat = 0, expressTotalPerCat = 0;
+                int standardItemCountPerCat = 0, expressItemCountPerCat = 0;
+
+                ArrayList<CartItem> listExpress = new ArrayList<>();
+                ArrayList<CartItem> listStandard = new ArrayList<>();
+                for (CartItem cartItem : cartItemList.getCartItems()) {
+                    String sku_type = cartItem.getSkuType();
+                    if (!TextUtils.isEmpty(sku_type) &&
+                            (sku_type.equals(Constants.SKU_TYPE_EXPRESS) ||
+                                    sku_type.equals(Constants.SKU_TYPE_JIT) ||
+                                    sku_type.equals(Constants.SKU_TYPE_KIRANA))) {
+                        listExpress.add(cartItem);
+                        expressItemCountPerCat++;
+                        expressTotalPerCat += cartItem.getTotalPrice();
+                    } else {
+                        listStandard.add(cartItem);
+                        standardItemCountPerCat++;
+                        standardTotalPerCat += cartItem.getTotalPrice();
+                    }
+                }
+                if (listExpress.size() > 0) {
+                    CartItemList returnCartItemList = new CartItemList(listExpress, cartItemList.getTopCatName(),
+                            expressTotalPerCat, expressItemCountPerCat);
+                    expressTabList.add(returnCartItemList);
+                }
+                if (listStandard.size() > 0) {
+                    CartItemList returnCartItemList = new CartItemList(listStandard, cartItemList.getTopCatName(),
+                            standardTotalPerCat, standardItemCountPerCat);
+                    standardTabList.add(returnCartItemList);
+                }
+            }
+            return new Pair<>(expressTabList, standardTabList);
         }
 
         @Override
@@ -492,6 +526,11 @@ public class ShowCartActivity extends BackButtonActivity {
             renderTabsDataToView(cartItemListsStnd, cartItemListsExp, baseImgUrl);
             hideProgressDialog();
         }
+    }
+
+    @Override
+    public void markBasketChanged(@Nullable Intent data) {
+        super.markBasketChanged(null);
     }
 
 }

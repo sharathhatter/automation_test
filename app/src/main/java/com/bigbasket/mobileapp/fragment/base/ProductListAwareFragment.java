@@ -1,7 +1,9 @@
 package com.bigbasket.mobileapp.fragment.base;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +34,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
@@ -149,6 +152,15 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         setProductListView();
     }
 
+    public void updateProductInfo(@NonNull ProductInfo productInfo, ArrayList<NameValuePair> nameValuePairs) {
+        hideProgressView();
+        mProductInfo = productInfo;
+        mProductInfo.setCurrentPage(productInfo.getCurrentPage());
+        mProductInfo.setProducts(productInfo.getProducts());
+        mNameValuePairs = NameValuePair.toMap(nameValuePairs);
+        setProductListView();
+    }
+
     public void setLazyProductLoadingFailure() {
         mHasProductLoadingFailed = true;
     }
@@ -162,8 +174,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         HashMap<String, Integer> cartInfo = getActivity() instanceof ProductListDataAware ?
                 ((ProductListDataAware) getActivity()).getCartInfo() : null;
         ArrayList<Product> products = mProductInfo != null ? mProductInfo.getProducts() : null;
-        if (products == null || products.size() == 0) {
-            products = ((LazyProductListAware) getActivity()).provideProductsIfAvailable(mTabType);
+        if (products == null || products.size() == 0 && !mHasProductLoadingFailed) {
+            Pair<ArrayList<Product>, Integer> pair = ((LazyProductListAware) getActivity()).provideProductsIfAvailable(mTabType);
+            if (pair != null) {
+                products = pair.first;
+                mProductInfo.setCurrentPage(pair.second);
+            }
         }
         if (products != null && products.size() > 0) {
             RecyclerView productRecyclerView = (RecyclerView) getActivity().
@@ -194,6 +210,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             if (mHasProductLoadingFailed) {
                 UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.productTabErrorMsg),
                         R.drawable.ic_error_red_36dp);
+
+                ((ProductListDataAware) getActivity()).setTabNameWithEmptyProductView(mTabType);
             } else {
                 if (mProductInfo != null) {
                     if (mProductInfo.getCurrentPage() == -1) {
@@ -201,17 +219,20 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     } else {
                         UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.noProducts),
                                 R.drawable.empty_smart_basket);
+                        ((ProductListDataAware) getActivity()).setTabNameWithEmptyProductView(mTabType);
                     }
                 } else {
                     UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.noProducts),
                             R.drawable.empty_smart_basket);
+                    ((ProductListDataAware) getActivity()).setTabNameWithEmptyProductView(mTabType);
                 }
             }
         }
     }
 
-    public void redrawProductList() {
+    public void redrawProductList(HashMap<String, Integer> cartInfo) {
         if (mProductListRecyclerAdapter != null) {
+            mProductListRecyclerAdapter.setCartInfo(cartInfo);
             mProductListRecyclerAdapter.notifyDataSetChanged();
         }
     }
@@ -263,8 +284,17 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     @Override
     public void postShoppingListItemDeleteOperation() {
-
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
+
+
+    @Override
+    public void postAddToShoppingListOperation() {
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
+    }
+
 
     private ProductListAwareFragment getFragment() {
         return this;
@@ -308,6 +338,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         Toast.makeText(getCurrentActivity(),
                 "List \"" + listName
                         + "\" was created successfully", Toast.LENGTH_LONG).show();
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
     @Override

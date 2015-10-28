@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -22,18 +24,23 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
+import com.bigbasket.mobileapp.handler.payment.PayTMInitializer;
+import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
+import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
-import com.payu.sdk.PayU;
+import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,11 +49,14 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class FundWalletActivity extends BackButtonActivity implements OnPostPaymentListener {
+public class FundWalletActivity extends BackButtonActivity implements OnPostPaymentListener,
+        CityListDisplayAware {
 
+    @Nullable
     private String mSelectedPaymentMethod;
+    @Nullable
     private String mHDFCPayzappTxnId;
-    private Double mFinalTotal;
+    private double mFinalTotal;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,9 +64,41 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_FUND_WALLET);
         trackEvent(TrackingAware.FUND_WALLET_SHOWN, null);
         setTitle(getString(R.string.fundWallet));
+        new GetCitiesTask<>(this).startTask();
+    }
+
+    @Override
+    public void onReadyToDisplayCity(ArrayList<City> cities) {
         getPaymentTypes();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mHDFCPayzappTxnId != null) {
+            outState.putString(Constants.TXN_ID, mHDFCPayzappTxnId);
+        }
+        if (mSelectedPaymentMethod != null) {
+            outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
+        }
+        if (mFinalTotal != 0) {
+            outState.putDouble(Constants.FINAL_TOTAL, mFinalTotal);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (mHDFCPayzappTxnId == null) {
+            mHDFCPayzappTxnId = savedInstanceState.getString(Constants.TXN_ID);
+        }
+        if (mSelectedPaymentMethod == null) {
+            mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
+        }
+        if (mFinalTotal == 0) {
+            mFinalTotal = savedInstanceState.getDouble(Constants.FINAL_TOTAL);
+        }
+    }
 
     @Override
     public void onResume() {
@@ -72,8 +114,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
                 onFundWalletSuccess();
             } else {
-                showAlertDialog(getString(R.string.transactionFailed),
-                        getString(R.string.txnFailureMsg));
+                onFundWalletFailure();
             }
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.MOBIKWIK_ORDER_ID);
@@ -89,37 +130,38 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getFundWalletPayments("yes", "yes", "yes", new Callback<ApiResponse<GetPaymentTypes>>() {
-            @Override
-            public void success(ApiResponse<GetPaymentTypes> getPaymentTypesApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                switch (getPaymentTypesApiResponse.status) {
-                    case 0:
-                        renderFundWallet(getPaymentTypesApiResponse.apiResponseContent.paymentTypes);
-                        break;
-                    default:
-                        handler.sendEmptyMessage(getPaymentTypesApiResponse.status,
-                                getPaymentTypesApiResponse.message, true);
-                        break;
-                }
-            }
+        bigBasketApiService.getFundWalletPayments("yes", "yes", "yes", "yes",
+                new Callback<ApiResponse<GetPaymentTypes>>() {
+                    @Override
+                    public void success(ApiResponse<GetPaymentTypes> getPaymentTypesApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (getPaymentTypesApiResponse.status) {
+                            case 0:
+                                renderFundWallet(getPaymentTypesApiResponse.apiResponseContent.paymentTypes);
+                                break;
+                            default:
+                                handler.sendEmptyMessage(getPaymentTypesApiResponse.status,
+                                        getPaymentTypesApiResponse.message, true);
+                                break;
+                        }
+                    }
 
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error, false);
-            }
-        });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error, false);
+                    }
+                });
     }
 
     private void renderFundWallet(ArrayList<PaymentType> paymentTypes) {
@@ -183,108 +225,87 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        switch (mSelectedPaymentMethod) {
-            case Constants.PAYU:
-                bigBasketApiService.postFundWallet(mSelectedPaymentMethod, amount, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (getPrepaidPaymentApiResponse.status) {
-                            case 0:
-                                PayuInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
-                                        getCurrentActivity());
-                                break;
-                            default:
-                                handler.sendEmptyMessage(getPrepaidPaymentApiResponse.status,
-                                        getPrepaidPaymentApiResponse.message);
-                        }
+        if (mSelectedPaymentMethod.equals(Constants.PAYU) ||
+                mSelectedPaymentMethod.equals(Constants.MOBIKWIK_PAYMENT) ||
+                mSelectedPaymentMethod.equals(Constants.PAYTM_WALLET)) {
+            bigBasketApiService.postFundWallet(mSelectedPaymentMethod, amount, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
+                @Override
+                public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
+                    if (isSuspended()) return;
+                    try {
+                        hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
                     }
+                    switch (getPrepaidPaymentApiResponse.status) {
+                        case 0:
+                            switch (mSelectedPaymentMethod) {
+                                case Constants.PAYU:
+                                    PayuInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
+                                            getCurrentActivity());
+                                    break;
+                                case Constants.MOBIKWIK_PAYMENT:
+                                    MobikwikInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
+                                            getCurrentActivity());
+                                    break;
+                                case Constants.PAYTM_WALLET:
+                                    PayTMInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
+                                            getCurrentActivity(),
+                                            new PaytmTxnCallback<>(getCurrentActivity(), null, null, false, true));
+                                    break;
+                            }
+                            break;
+                        default:
+                            handler.sendEmptyMessage(getPrepaidPaymentApiResponse.status,
+                                    getPrepaidPaymentApiResponse.message);
+                    }
+                }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
+                @Override
+                public void failure(RetrofitError error) {
+                    if (isSuspended()) return;
+                    try {
+                        hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
                     }
-                });
-                break;
-            case Constants.MOBIKWIK_PAYMENT:
-                bigBasketApiService.postFundWallet(mSelectedPaymentMethod, amount, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (getPrepaidPaymentApiResponse.status) {
-                            case 0:
-                                MobikwikInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
-                                        getCurrentActivity());
-                                break;
-                            default:
-                                handler.sendEmptyMessage(getPrepaidPaymentApiResponse.status,
-                                        getPrepaidPaymentApiResponse.message);
-                        }
+                    handler.handleRetrofitError(error);
+                }
+            });
+        } else if (mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY)) {
+            bigBasketApiService.postPayzappFundWallet(mSelectedPaymentMethod, amount, new Callback<ApiResponse<GetPayzappPaymentParamsResponse>>() {
+                @Override
+                public void success(ApiResponse<GetPayzappPaymentParamsResponse> getPayzappPaymentParamsApiResponse, Response response) {
+                    if (isSuspended()) return;
+                    try {
+                        hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
                     }
+                    switch (getPayzappPaymentParamsApiResponse.status) {
+                        case 0:
+                            mHDFCPayzappTxnId = getPayzappPaymentParamsApiResponse.apiResponseContent.payzappPostParams.getTxnId();
+                            PayzappInitializer.initiate(getCurrentActivity(),
+                                    getPayzappPaymentParamsApiResponse.apiResponseContent.payzappPostParams);
+                            break;
+                        default:
+                            handler.sendEmptyMessage(getPayzappPaymentParamsApiResponse.status,
+                                    getPayzappPaymentParamsApiResponse.message);
+                            break;
+                    }
+                }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
+                @Override
+                public void failure(RetrofitError error) {
+                    if (isSuspended()) return;
+                    try {
+                        hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
                     }
-                });
-                break;
-            case Constants.HDFC_POWER_PAY:
-                bigBasketApiService.postPayzappFundWallet(mSelectedPaymentMethod, amount, new Callback<ApiResponse<GetPayzappPaymentParamsResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetPayzappPaymentParamsResponse> getPayzappPaymentParamsApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (getPayzappPaymentParamsApiResponse.status) {
-                            case 0:
-                                mHDFCPayzappTxnId = getPayzappPaymentParamsApiResponse.apiResponseContent.payzappPostParams.getTxnId();
-                                PayzappInitializer.initiate(getCurrentActivity(),
-                                        getPayzappPaymentParamsApiResponse.apiResponseContent.payzappPostParams);
-                                break;
-                            default:
-                                handler.sendEmptyMessage(getPayzappPaymentParamsApiResponse.status,
-                                        getPayzappPaymentParamsApiResponse.message);
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
-                break;
+                    handler.handleRetrofitError(error);
+                }
+            });
         }
     }
 
@@ -306,7 +327,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                     communicateHdfcPayzappResponseFailure(null, null);
                 }
             }
-        } else if (requestCode == PayU.RESULT) {
+        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 onFundWalletSuccess();
             } else {
@@ -317,8 +338,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     private void onFundWalletFailure() {
-        showAlertDialog(getString(R.string.transactionFailed),
-                getString(R.string.txnFailureMsg));
+        UIUtil.showPaymentFailureDlg(this);
     }
 
     private void onFundWalletSuccess() {
@@ -331,9 +351,11 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {
-        new PostPaymentHandler<>(this, null, mSelectedPaymentMethod, txnId,
-                true, UIUtil.formatAsMoney(mFinalTotal), null)
+        new PostPaymentHandler<>(this, null, mSelectedPaymentMethod,
+                true, null)
                 .isWallet(true)
+                .setTxnId(txnId)
+                .setAmount(UIUtil.formatAsMoney(mFinalTotal))
                 .setDataPickupCode(dataPickupCode)
                 .setPgTxnId(pgTxnId)
                 .start();
@@ -341,20 +363,22 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
 
     private void communicateHdfcPayzappResponseFailure(String resCode, String resDesc) {
         new PostPaymentHandler<>(this, null, mSelectedPaymentMethod,
-                mHDFCPayzappTxnId, false, UIUtil.formatAsMoney(mFinalTotal), null)
+                false, null)
                 .isWallet(true)
+                .setTxnId(mHDFCPayzappTxnId)
+                .setAmount(UIUtil.formatAsMoney(mFinalTotal))
                 .setErrResCode(resCode)
                 .setErrResDesc(resDesc)
                 .start();
     }
 
     @Override
-    public void onPostPaymentFailure(String txnId) {
+    public void onPostPaymentFailure(String txnId, String paymentType) {
         onFundWalletFailure();
     }
 
     @Override
-    public void onPostPaymentSuccess(String txnId) {
+    public void onPostPaymentSuccess(String txnId, String paymentType) {
         onFundWalletSuccess();
     }
 

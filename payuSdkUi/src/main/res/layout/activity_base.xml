@@ -1,0 +1,231 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".BaseActivity">
+
+
+    <include
+        android:id="@+id/toolbarMain"
+        layout="@layout/layout_toolbar" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <ImageView
+                android:id="@+id/mbblogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bb_logo_transparent_bkg"
+                android:layout_alignParentRight="true"
+                android:layout_margin="20dp"/>
+            <TextView
+                android:id="@+id/mOptionSelectionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/selectoptionforpayment"
+                android:layout_below="@+id/mbblogo"
+                android:gravity="center"
+                android:textSize="17sp"
+                android:layout_marginTop="40dp"/>
+        
+        
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_below="@+id/mOptionSelectionTextView"
+            android:background="@drawable/layout_background">
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:visibility="visible" />
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_stored_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:visibility="gone"
+                    >
+
+                    <Button
+                        android:id="@+id/button_stored_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Stored card"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/button_background"
+                        android:textSize="17sp"
+                        android:textStyle="bold"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_netbanking"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/button_netbanking"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/net_banking"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/button_background"
+                        android:textSize="17sp"
+                        android:textStyle="bold"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_credit_debit_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/button_credit_debit_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Credit / Debit card"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/button_background"
+                        android:textSize="17sp"
+                        android:textStyle="bold"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_cash_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/button_cash_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cash Card"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/button_background"
+                        android:textSize="17sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_emi"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/button_emi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="EMI"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/button_background"
+                        android:textSize="17sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_payumoney"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/button_payumoney"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="PayU Money"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/button_background"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_merchant_payment"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/button_merchant_payment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Merchant Payment"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/button_background"
+                        android:textSize="17sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_verify_api"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/button_verify_api"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Verify Api"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/button_background"
+                        android:textSize="17sp"
+                        android:textStyle="bold"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+</LinearLayout>

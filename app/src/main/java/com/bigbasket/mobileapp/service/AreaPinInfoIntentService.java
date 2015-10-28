@@ -44,7 +44,7 @@ public class AreaPinInfoIntentService extends IntentService {
         }
     }
 
-    public void fetchPinCodes(ArrayList<City> cities) {
+    private void fetchPinCodes(ArrayList<City> cities) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         boolean success = true;
 

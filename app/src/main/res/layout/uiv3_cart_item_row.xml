@@ -2,21 +2,20 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/margin_normal"
         android:id="@+id/layoutProductDetail"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_normal">
 
 
         <ImageView
             android:id="@+id/imgProduct"
-            android:layout_centerVertical="true"
             android:layout_width="@dimen/product_image_width"
             android:layout_height="@dimen/product_image_height"
+            android:layout_centerVertical="true"
             android:contentDescription="@string/product_image"
             android:padding="2dp"
             android:scaleType="fitCenter"
@@ -27,11 +26,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:paddingRight="@dimen/margin_small"
-            android:paddingBottom="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_small"
             android:layout_marginTop="2dp"
             android:contentDescription="@string/remove"
+            android:paddingBottom="@dimen/margin_small"
+            android:paddingRight="@dimen/margin_small"
             android:src="@drawable/delete_product" />
 
         <ImageView
@@ -49,8 +48,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_marginTop="2dp"
             android:layout_marginRight="@dimen/margin_mini"
+            android:layout_marginTop="2dp"
             android:layout_toLeftOf="@id/imgRemove"
             android:layout_toRightOf="@id/imgLiquorIcon"
             android:text="Delux Prestige - test test test test test test test test"
@@ -72,37 +71,51 @@
 
         <TextView
             android:id="@+id/txtPackDesc"
-            android:layout_below="@+id/txtProductBrand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_toRightOf="@id/imgProduct"
+            android:layout_below="@+id/txtProductBrand"
             android:layout_gravity="center_vertical"
-            android:text="5 lt"
+            android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginRight="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_toRightOf="@id/imgProduct"
+            android:text="5 lt"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
         <TextView
             android:id="@+id/txtExpressAvailable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@id/txtPackDesc"
-            android:layout_marginTop="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
             android:layout_toRightOf="@id/imgProduct"
             android:drawableLeft="@drawable/express_delivery"
             android:text="@string/expressDelAvailable"
-            android:layout_width="wrap_content"
             android:textColor="@color/uiv3_secondary_text_color"
-            android:textSize="@dimen/small_text_size"
-            android:layout_height="wrap_content" />
+            android:textSize="@dimen/small_text_size" />
 
+        <TextView
+            android:id="@+id/txtGiftMsg"
+            style="@style/BBTextStyle.Gift"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtExpressAvailable"
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_toRightOf="@id/imgProduct"
+            android:drawableLeft="@drawable/ic_gift_grey600_18dp"
+            android:drawablePadding="@dimen/padding_mini"
+            android:gravity="left|center_vertical" />
 
         <RelativeLayout
             android:id="@+id/layoutProductPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txtExpressAvailable"
+            android:layout_below="@id/txtGiftMsg"
             android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginRight="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_small"
@@ -113,18 +126,18 @@
                 layout="@layout/uiv3_basket_operation_control"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true" />
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true" />
 
             <TextView
                 android:id="@+id/txtSalePrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123456 (save: 1234)"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/layoutInBasket"
-                android:layout_marginRight="@dimen/margin_small"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/margin_small"
+                android:layout_toLeftOf="@id/layoutInBasket"
+                android:text="123456 (save: 1234)"
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/primary_text_size" />
 
@@ -152,10 +165,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutProductDetail"
         android:layout_marginLeft="@dimen/margin_small"
-        android:paddingLeft="@dimen/padding_mini"
         android:layout_marginTop="@dimen/margin_normal"
         android:layout_toRightOf="@id/imgRegularImg"
         android:paddingBottom="@dimen/padding_mini"
+        android:paddingLeft="@dimen/padding_mini"
         android:text="promo test"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/small_text_size" />

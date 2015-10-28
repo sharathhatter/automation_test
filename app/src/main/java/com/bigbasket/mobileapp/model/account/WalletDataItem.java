@@ -21,9 +21,9 @@ public class WalletDataItem implements Parcelable {
             return new WalletDataItem[size];
         }
     };
-    String type;
+    private String type;
     @SerializedName(Constants.ORDER_NUMBER)
-    String orderNumber;
+    private String orderNumber;
 
     @SerializedName(Constants.ORDER_ID)
     private String orderId;

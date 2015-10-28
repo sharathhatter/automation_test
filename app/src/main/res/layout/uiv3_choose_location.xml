@@ -23,10 +23,19 @@
             android:padding="@dimen/padding_normal"
             tools:ignore="UselessParent">
 
+            <ImageView
+                android:id="@+id/imgLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/yourCurrentLoc"
+                android:src="@drawable/location_filled" />
+
             <TextView
                 android:id="@+id/lblCurrentLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/imgLocation"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:text="@string/yourCurrentLoc"
@@ -51,56 +60,64 @@
                 android:layout_below="@id/txtDetectedArea"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginBottom="@dimen/margin_small"
                 android:textColor="@color/uiv3_ok_label_color"
                 android:textSize="@dimen/small_text_size"
                 android:textStyle="italic" />
 
-            <Button
-                android:id="@+id/btnToCurrentLocation"
-                style="@style/FormButtonStyle"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/txtNotServedMsg"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/margin_large"
-                android:background="@drawable/red_primary_btn"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
-                android:onClick="onLocationButtonClicked"
-                android:text="@string/toMyCurrentLocation"
-                android:textSize="@dimen/secondary_text_size" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/lblOr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/btnToCurrentLocation"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:text="@string/OR"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/primary_text_size" />
+                <Button
+                    android:id="@+id/btnToCurrentLocation"
+                    style="@style/FormButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="@drawable/red_primary_btn"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:onClick="onLocationButtonClicked"
+                    android:text="@string/toMyCurrentLocation"
+                    android:textSize="@dimen/secondary_text_size" />
 
-            <Button
-                android:id="@+id/btnChooseLocation"
-                style="@style/FormButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/lblOr"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/margin_mini"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:background="@drawable/cancel_btn"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
-                android:onClick="onLocationButtonClicked"
-                android:paddingBottom="@dimen/padding_small"
-                android:paddingLeft="@dimen/padding_normal"
-                android:paddingRight="@dimen/padding_normal"
-                android:paddingTop="@dimen/padding_small"
-                android:text="@string/selectLocationManually"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/secondary_text_size" />
+                <TextView
+                    android:id="@+id/lblOr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:text="@string/OR"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/primary_text_size" />
+
+                <Button
+                    android:id="@+id/btnChooseLocation"
+                    style="@style/FormButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_mini"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="@drawable/cancel_btn"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:onClick="onLocationButtonClicked"
+                    android:paddingBottom="@dimen/padding_small"
+                    android:paddingLeft="@dimen/padding_normal"
+                    android:paddingRight="@dimen/padding_normal"
+                    android:paddingTop="@dimen/padding_small"
+                    android:text="@string/selectLocationManually"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/secondary_text_size" />
+
+
+            </LinearLayout>
+
+
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

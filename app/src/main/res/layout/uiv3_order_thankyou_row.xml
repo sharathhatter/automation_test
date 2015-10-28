@@ -22,14 +22,23 @@
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/txtAmount"
+        android:text="@string/order_pay_now_amount"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:layout_below="@id/txtOrderNum"
+        android:textSize="@dimen/primary_text_size"
+        android:layout_height="wrap_content" />
+
+
     <Button
         android:id="@+id/btnPayNow"
         style="@style/FormButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/txtOrderNum"
-        android:layout_marginTop="@dimen/margin_small"
+        android:layout_below="@id/txtAmount"
         android:background="@drawable/red_rounded_btn_bkg"
         android:minHeight="0dp"
         android:minWidth="0dp"

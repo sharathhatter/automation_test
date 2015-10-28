@@ -21,10 +21,15 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
 
     private T ctx;
     private boolean isInlineProgressBar;
+    private int currentTabIndex;
+    private boolean isFilterOrSortApplied;
 
-    public ProductListApiResponseCallback(T ctx, boolean isInlineProgressBar) {
+    public ProductListApiResponseCallback(T ctx, boolean isInlineProgressBar, int currentTabIndex,
+                                          boolean isFilterOrSortApplied) {
         this.ctx = ctx;
         this.isInlineProgressBar = isInlineProgressBar;
+        this.currentTabIndex = currentTabIndex;
+        this.isFilterOrSortApplied = isFilterOrSortApplied;
     }
 
     @Override
@@ -41,28 +46,28 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
         }
         if (productListDataApiResponse.status == 0) {
             ProductTabData productTabData = productListDataApiResponse.apiResponseContent;
-            if (productTabData != null && productTabData.getProductTabInfos() !=null) {
+            if (productTabData != null && productTabData.getProductTabInfos() != null) {
                 for (ProductTabInfo productTabInfo : productTabData.getProductTabInfos()) {
                     if (productTabInfo.getFilteredOn() == null) {
                         productTabInfo.setFilteredOn(new ArrayList<FilteredOn>());
                     }
                 }
-            }
 
-            for(ProductTabInfo productTabInfo : productTabData.getProductTabInfos()){
-                ArrayList<FilterOptionCategory> filterOptionCategories = productTabInfo.getFilterOptionItems();
-                ArrayList<FilteredOn> filteredOns = productTabInfo.getFilteredOn();
-                if (filteredOns != null && filteredOns.size() > 0 && filterOptionCategories != null) {
-                    for (FilterOptionCategory filterOptionCategory : filterOptionCategories) {
-                        for (FilteredOn filteredOn : filteredOns) {
-                            if (filteredOn.getFilterSlug() != null &&
-                                    filteredOn.getFilterSlug().equals(filterOptionCategory.getFilterSlug())
-                                    && filterOptionCategory.getFilterOptionItems() != null) {
-                                for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
-                                    if (filterOptionItem.getFilterValueSlug() != null &&
-                                            filteredOn.getFilterValues() != null &&
-                                            filteredOn.getFilterValues().contains(filterOptionItem.getFilterValueSlug())) {
-                                        filterOptionItem.setSelected(true);
+                for (ProductTabInfo productTabInfo : productTabData.getProductTabInfos()) {
+                    ArrayList<FilterOptionCategory> filterOptionCategories = productTabInfo.getFilterOptionItems();
+                    ArrayList<FilteredOn> filteredOns = productTabInfo.getFilteredOn();
+                    if (filteredOns != null && filteredOns.size() > 0 && filterOptionCategories != null) {
+                        for (FilterOptionCategory filterOptionCategory : filterOptionCategories) {
+                            for (FilteredOn filteredOn : filteredOns) {
+                                if (filteredOn.getFilterSlug() != null &&
+                                        filteredOn.getFilterSlug().equals(filterOptionCategory.getFilterSlug())
+                                        && filterOptionCategory.getFilterOptionItems() != null) {
+                                    for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
+                                        if (filterOptionItem.getFilterValueSlug() != null &&
+                                                filteredOn.getFilterValues() != null &&
+                                                filteredOn.getFilterValues().contains(filterOptionItem.getFilterValueSlug())) {
+                                            filterOptionItem.setSelected(true);
+                                        }
                                     }
                                 }
                             }
@@ -70,7 +75,8 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                     }
                 }
             }
-            ((ProductListDataAware) ctx).setProductTabData(productTabData);
+            ((ProductListDataAware) ctx).setProductTabData(productTabData, currentTabIndex,
+                    isFilterOrSortApplied);
 
         } else {
             ((HandlerAware) ctx).getHandler().sendEmptyMessage(productListDataApiResponse.status,

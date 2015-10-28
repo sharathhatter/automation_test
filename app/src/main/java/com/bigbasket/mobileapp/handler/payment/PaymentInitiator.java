@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.payment.MobikwikAware;
+import com.bigbasket.mobileapp.interfaces.payment.PayTMPaymentAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayzappPaymentAware;
 import com.bigbasket.mobileapp.util.Constants;
@@ -35,76 +36,62 @@ public class PaymentInitiator<T> {
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
-        switch (paymentMethod) {
-            case Constants.PAYU:
-                bigBasketApiService.getOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
-                        if (((CancelableAware) ctx).isSuspended()) return;
-                        switch (getPrepaidPaymentApiResponse.status) {
-                            case 0:
-                                ((PayuPaymentAware) ctx).initializePayu(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
-                                break;
-                            default:
-                                ((HandlerAware) ctx).getHandler()
-                                        .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
-                                break;
-                        }
+        if (paymentMethod.equals(Constants.PAYU)
+                || paymentMethod.equals(Constants.MOBIKWIK_PAYMENT)
+                || paymentMethod.equals(Constants.PAYTM_WALLET)) {
+            bigBasketApiService.getOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
+                @Override
+                public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
+                    if (((CancelableAware) ctx).isSuspended()) return;
+                    switch (getPrepaidPaymentApiResponse.status) {
+                        case 0:
+                            switch (paymentMethod) {
+                                case Constants.PAYU:
+                                    ((PayuPaymentAware) ctx).initializePayu(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
+                                    break;
+                                case Constants.MOBIKWIK_PAYMENT:
+                                    ((MobikwikAware) ctx).initializeMobikwik(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
+                                    break;
+                                case Constants.PAYTM_WALLET:
+                                    ((PayTMPaymentAware) ctx).initializePayTm(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
+                                    break;
+                            }
+                            break;
+                        default:
+                            ((HandlerAware) ctx).getHandler()
+                                    .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
+                            break;
                     }
+                }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (((CancelableAware) ctx).isSuspended()) return;
-                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                @Override
+                public void failure(RetrofitError error) {
+                    if (((CancelableAware) ctx).isSuspended()) return;
+                    ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                }
+            });
+        } else if (paymentMethod.equals(Constants.HDFC_POWER_PAY)) {
+            bigBasketApiService.getPayzappOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPayzappPaymentParamsResponse>>() {
+                @Override
+                public void success(ApiResponse<GetPayzappPaymentParamsResponse> getPrepaidPaymentApiResponse, Response response) {
+                    if (((CancelableAware) ctx).isSuspended()) return;
+                    switch (getPrepaidPaymentApiResponse.status) {
+                        case 0:
+                            ((PayzappPaymentAware) ctx).initializeHDFCPayzapp(getPrepaidPaymentApiResponse.apiResponseContent.payzappPostParams);
+                            break;
+                        default:
+                            ((HandlerAware) ctx).getHandler()
+                                    .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
+                            break;
                     }
-                });
-                break;
-            case Constants.HDFC_POWER_PAY:
-                bigBasketApiService.getPayzappOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPayzappPaymentParamsResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetPayzappPaymentParamsResponse> getPrepaidPaymentApiResponse, Response response) {
-                        if (((CancelableAware) ctx).isSuspended()) return;
-                        switch (getPrepaidPaymentApiResponse.status) {
-                            case 0:
-                                ((PayzappPaymentAware) ctx).initializeHDFCPayzapp(getPrepaidPaymentApiResponse.apiResponseContent.payzappPostParams);
-                                break;
-                            default:
-                                ((HandlerAware) ctx).getHandler()
-                                        .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
-                                break;
-                        }
-                    }
+                }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (((CancelableAware) ctx).isSuspended()) return;
-                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
-                    }
-                });
-                break;
-            case Constants.MOBIKWIK_PAYMENT:
-                bigBasketApiService.getOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
-                        if (((CancelableAware) ctx).isSuspended()) return;
-                        switch (getPrepaidPaymentApiResponse.status) {
-                            case 0:
-                                ((MobikwikAware) ctx).initializeMobikwik(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
-                                break;
-                            default:
-                                ((HandlerAware) ctx).getHandler()
-                                        .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (((CancelableAware) ctx).isSuspended()) return;
-                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
-                    }
-                });
-                break;
+                @Override
+                public void failure(RetrofitError error) {
+                    if (((CancelableAware) ctx).isSuspended()) return;
+                    ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                }
+            });
         }
     }
 }

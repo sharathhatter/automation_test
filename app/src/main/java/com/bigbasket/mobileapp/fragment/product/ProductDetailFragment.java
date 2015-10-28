@@ -22,6 +22,7 @@ import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
@@ -151,6 +152,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
                 .disableInBasketChildSwap(true)
+                .useRadioButtonsForContextual(true)
                 .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
 
@@ -161,7 +163,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                false, this, getNextScreenNavigationContext(), null, "none");
+                false, this, getNextScreenNavigationContext(), null, "none",
+                AppDataDynamic.getInstance(getActivity()).getStoreAvailabilityMap());
 
         if (mProduct.getProductPromoInfo() == null ||
                 !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {
@@ -221,7 +224,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
 
     @Override
     public void postShoppingListItemDeleteOperation() {
-
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
     @Override
@@ -238,6 +242,12 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     }
 
     @Override
+    public void postAddToShoppingListOperation() {
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
+    }
+
+    @Override
     public void createNewShoppingList() {
         new CreateShoppingListTask<>(this).showDialog();
     }
@@ -248,6 +258,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         Toast.makeText(getCurrentActivity(),
                 "List \"" + listName
                         + "\" was created successfully", Toast.LENGTH_LONG).show();
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
     @Override
@@ -284,6 +295,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             Intent data = new Intent();
             data.putExtra(Constants.SKU_ID, product.getSku());
             data.putExtra(Constants.NO_ITEM_IN_CART, productQtyInBasket);
+            data.putExtra(Constants.PRODUCT_NO_ITEM_IN_CART, product.getNoOfItemsInCart());
             getActivity().setResult(NavigationCodes.BASKET_CHANGED, data);
         }
     }

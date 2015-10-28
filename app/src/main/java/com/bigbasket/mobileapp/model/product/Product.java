@@ -2,16 +2,21 @@ package com.bigbasket.mobileapp.model.product;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.promo.ProductPromoInfo;
 import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class Product implements Parcelable {
+public class Product extends BaseProduct {
 
     public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product>() {
         @Override
@@ -24,12 +29,8 @@ public class Product implements Parcelable {
             return new Product[size];
         }
     };
-    @SerializedName(Constants.PRODUCT_DESC)
-    private String description;
     @SerializedName(Constants.SELL_PRICE)
     private String sellPrice;
-    @SerializedName(Constants.PRODUCT_BRAND)
-    private String brand;
     @SerializedName(Constants.MRP_PRICE)
     private String mrp;
     @SerializedName(Constants.DISCOUNT_VALUE)
@@ -44,8 +45,6 @@ public class Product implements Parcelable {
     private String sku;
     @SerializedName(Constants.PRODUCT_WEIGHT)
     private String weight;
-    @SerializedName(Constants.IMAGE_URL)
-    private String imageUrl;
     @SerializedName(Constants.PRODUCT_TOP_LEVEL_CATEGORY_SLUG)
     private String topLevelCategorySlug;
     @SerializedName(Constants.PRODUCT_TOP_LEVEL_CATEGORY_NAME)
@@ -62,14 +61,17 @@ public class Product implements Parcelable {
     private String productCategoryName;
     @SerializedName(Constants.BRAND_SLUG)
     private String brandSlug;
+    @SerializedName(Constants.STORE_AVAILABILITY)
+    private ArrayList<HashMap<String, String>> storeAvailability;
+    @SerializedName(Constants.GIFT_MSG)
+    private String giftMsg;
 
     public Product(Parcel source) {
-        description = source.readString();
+        super(source);
         boolean isSellPriceNull = source.readByte() == (byte) 1;
         if (!isSellPriceNull) {
             sellPrice = source.readString();
         }
-        brand = source.readString();
         boolean isMrpNull = source.readByte() == (byte) 1;
         if (!isMrpNull) {
             mrp = source.readString();
@@ -83,7 +85,6 @@ public class Product implements Parcelable {
         noOfItemsInCart = source.readInt();
         sku = source.readString();
         weight = source.readString();
-        imageUrl = source.readString();
         topLevelCategorySlug = source.readString();
         productCategoryName = source.readString();
         topLevelCategoryName = source.readString();
@@ -106,24 +107,46 @@ public class Product implements Parcelable {
         if (!isBrandSlugNull) {
             brandSlug = source.readString();
         }
+
+        boolean isStoreAvailabilityNull = source.readByte() == (byte) 1;
+        if (!isStoreAvailabilityNull) {
+            String storeAvailabilityJson = source.readString();
+            Type type = new TypeToken<ArrayList<HashMap<String, String>>>() {
+            }.getType();
+            storeAvailability = new Gson().fromJson(storeAvailabilityJson, type);
+        }
+
+        boolean isGiftMsgNull = source.readByte() == (byte) 1;
+        if (!isGiftMsgNull) {
+            giftMsg = source.readString();
+        }
     }
 
     public Product() {
     }
 
     public Product(String brand, String description, String sku, String topLevelCategoryName,
-                   String productCategoryName) {
-        this.brand = brand;
-        this.description = description;
+                   String productCategoryName, int noOfItemsInCart) {
+        super(brand, description);
         this.sku = sku;
         this.topLevelCategoryName = topLevelCategoryName;
         this.productCategoryName = productCategoryName;
+        this.noOfItemsInCart = noOfItemsInCart;
     }
 
-    public static boolean areAllProductsOutOfStock(List<Product> productList) {
+    public static boolean areAllProductsOutOfStock(@Nullable List<Product> productList) {
+        if (productList == null || productList.size() == 0) return true;
         for (Product product : productList) {
-            if (product != null && product.getProductStatus().equalsIgnoreCase("A")) {
-                return false;
+            if (product != null) {
+                if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0) {
+                    for (HashMap<String, String> availabilityMap : product.getStoreAvailability())
+                        if (availabilityMap.get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A")) {
+                            return false;
+                        }
+                } else if (!TextUtils.isEmpty(product.getProductStatus())
+                        && product.getProductStatus().equals("A")) {
+                    return false;
+                }
             }
         }
         return true;
@@ -136,13 +159,12 @@ public class Product implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(description);
+        super.writeToParcel(dest, flags);
         boolean isSellPriceNull = sellPrice == null;
         dest.writeByte(isSellPriceNull ? (byte) 1 : (byte) 0);
         if (!isSellPriceNull) {
             dest.writeString(sellPrice);
         }
-        dest.writeString(brand);
         boolean isMrpNull = mrp == null;
         dest.writeByte(isMrpNull ? (byte) 1 : (byte) 0);
         if (!isMrpNull) {
@@ -158,7 +180,6 @@ public class Product implements Parcelable {
         dest.writeInt(noOfItemsInCart);
         dest.writeString(sku);
         dest.writeString(weight);
-        dest.writeString(imageUrl);
         dest.writeString(topLevelCategorySlug);
         dest.writeString(productCategoryName);
         dest.writeString(topLevelCategoryName);
@@ -183,22 +204,22 @@ public class Product implements Parcelable {
         if (!isBrandSlugNull) {
             dest.writeString(brandSlug);
         }
-    }
 
-    public String getDescription() {
-        return description;
-    }
+        boolean isStoreAvailabilityNull = storeAvailability == null;
+        dest.writeByte(isStoreAvailabilityNull ? (byte) 1 : (byte) 0);
+        if (!isStoreAvailabilityNull) {
+            dest.writeString(new Gson().toJson(storeAvailability));
+        }
 
-    public void setDescription(String description) {
-        this.description = description;
+        boolean isGiftMsgNull = giftMsg == null;
+        dest.writeByte(isGiftMsgNull ? (byte) 1 : (byte) 0);
+        if (!isGiftMsgNull) {
+            dest.writeString(giftMsg);
+        }
     }
 
     public String getSellPrice() {
         return sellPrice;
-    }
-
-    public String getBrand() {
-        return brand;
     }
 
     public String getMrp() {
@@ -233,8 +254,8 @@ public class Product implements Parcelable {
         return weight + (TextUtils.isEmpty(packageDescription) ? "" : " - " + packageDescription);
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getGiftMsg() {
+        return giftMsg;
     }
 
     public String getTopLevelCategorySlug() {
@@ -275,7 +296,7 @@ public class Product implements Parcelable {
 
     @Override
     public String toString() {
-        return brand + " " + description + " " + weight + "  Rs. " + sellPrice;
+        return getBrand() + " " + getDescription() + " " + weight + "  Rs. " + sellPrice;
     }
 
     public ArrayList<ProductAdditionalInfo> getProductAdditionalInfos() {
@@ -284,5 +305,10 @@ public class Product implements Parcelable {
 
     public String getBrandSlug() {
         return brandSlug;
+    }
+
+    @Nullable
+    public ArrayList<HashMap<String, String>> getStoreAvailability() {
+        return storeAvailability;
     }
 }

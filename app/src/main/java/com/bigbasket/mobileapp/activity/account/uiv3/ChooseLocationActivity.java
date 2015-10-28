@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,15 +17,20 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
@@ -32,17 +38,44 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 public class ChooseLocationActivity extends BackButtonActivity implements OnAddressChangeListener {
 
     private GoogleApiClient mGoogleApiClient;
     private AddressSummary mChosenAddressSummary;
+    private boolean mIsFirstTime;
+    private boolean mIsViaOnActivityResult;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.chooseYourLocation));
+        setTitle(getString(R.string.chooseDeliveryLocation));
+        mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
+    }
 
-        renderLocation();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mIsViaOnActivityResult) return;
+        triggerLocationFetching();
+    }
+
+    private void triggerLocationFetching() {
+        int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
+        switch (playServicesAvailable) {
+            case ConnectionResult.SUCCESS:
+                renderLocation();
+                break;
+            default:
+                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(playServicesAvailable,
+                        getCurrentActivity(), NavigationCodes.GO_TO_HOME);
+                dialog.setCancelable(false);
+                dialog.show();
+                break;
+        }
     }
 
     private void renderLocation() {
@@ -54,7 +87,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         } else {
             showProgressDialog(getString(R.string.readingYourCurrentLocation));
             if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                updateLastKnownLocation();
+                updateLastKnownLocation(false, false);
             } else {
                 buildGoogleApiClient();
             }
@@ -105,36 +138,85 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        updateLastKnownLocation();
+        updateLastKnownLocation(false, false);
     }
 
-    private void updateLastKnownLocation() {
+    private void updateLastKnownLocation(boolean setAsCurrentAddress, boolean autoMode) {
+        if (mGoogleApiClient == null) return;
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (lastLocation != null) {
             LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-            updateLocation(true, latLng);
+            if (setAsCurrentAddress) {
+                updateLocation(latLng,
+                        mChosenAddressSummary != null ? mChosenAddressSummary.getArea() : null);
+            } else {
+                getCurrentLocationDetail(latLng);
+            }
         } else {
-            hideProgressDialog();
-            onLocationReadFailure();
+            if (autoMode) {
+                triggerLocationFetching();
+            } else {
+                hideProgressDialog();
+                onLocationReadFailure();
+            }
         }
     }
 
-    private void updateLocation(final boolean isSomeoneAlreadyShowingProgressBar, LatLng latLng) {
-        new ChangeAddressTask<>(this, isSomeoneAlreadyShowingProgressBar,
+    private void getCurrentLocationDetail(LatLng latLng) {
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError();
+        }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        bigBasketApiService.getLocationDetail(String.valueOf(latLng.latitude),
+                String.valueOf(latLng.longitude), new Callback<ApiResponse<AddressSummary>>() {
+                    @Override
+                    public void success(ApiResponse<AddressSummary> addressSummaryApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (addressSummaryApiResponse.status) {
+                            case 0:
+                                mChosenAddressSummary = addressSummaryApiResponse.apiResponseContent;
+                                showSelectedLocation(null);
+                                break;
+                            case ApiErrorCodes.ADDRESS_NOT_SERVED:
+                                showSelectedLocation(addressSummaryApiResponse.message);
+                                break;
+                            default:
+                                handler.sendEmptyMessage(addressSummaryApiResponse.status,
+                                        addressSummaryApiResponse.message);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error);
+                    }
+                });
+    }
+
+    private void updateLocation(LatLng latLng, @Nullable String area) {
+        boolean isTransientCall = !mIsFirstTime;
+        new ChangeAddressTask<>(this,
                 null, String.valueOf(latLng.latitude),
-                String.valueOf(latLng.longitude)).startTask();
+                String.valueOf(latLng.longitude), area, isTransientCall).startTask();
     }
 
     @Override
-    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries,
-                                 boolean isSomeoneAlreadyShowingProgressBar) {
+    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries) {
         if (addressSummaries != null && addressSummaries.size() > 0) {
             mChosenAddressSummary = addressSummaries.get(0);
-            if (isSomeoneAlreadyShowingProgressBar) {
-                showSelectedLocation(null);
-            } else {
-                onLocationChanged();
-            }
+            onLocationChanged();
         } else {
             showToast(getString(R.string.unknownError));
         }
@@ -171,7 +253,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     public void onLocationButtonClicked(View v) {
         switch (v.getId()) {
             case R.id.btnToCurrentLocation:
-                onLocationChanged();
+                updateLastKnownLocation(true, true);
                 break;
             case R.id.btnChooseLocation:
                 Intent intent = new Intent(this, PlacePickerApiActivity.class);
@@ -188,24 +270,39 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         }
         City newCity = new City(mChosenAddressSummary.getCityName(),
                 mChosenAddressSummary.getCityId());
-        changeCity(newCity);
+        requestCityChange(newCity);
+    }
+
+    public void requestCityChange(City newCity) {
+        boolean reopenLandingPage = getIntent().getBooleanExtra(Constants.REOPEN_LANDING_PAGE, false);
+        changeCity(newCity, reopenLandingPage);
+        if (reopenLandingPage) {
+            setResult(NavigationCodes.LOCATION_CHOSEN);
+            finish();
+        }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         hideProgressDialog();
+        onLocationReadFailure();
     }
 
     private void onLocationReadFailure() {
-        showToast(getString(R.string.unableToReadLocation));
+        Snackbar.make(findViewById(R.id.layoutChooseLocation),
+                R.string.unableToReadLocation, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED && data != null
-                && data.getParcelableExtra(Constants.LAT) != null) {
-            LatLng latLng = data.getParcelableExtra(Constants.LAT);
-            updateLocation(false, latLng);
+        if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED) {
+            mIsViaOnActivityResult = true;
+            if (data != null && data.hasExtra(Constants.LAT)) {
+                LatLng latLng = data.getParcelableExtra(Constants.LAT);
+                updateLocation(latLng, data.getStringExtra(Constants.AREA));
+            } else {
+                buildGoogleApiClient();
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -218,7 +315,8 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                 Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(myIntent);
             } catch (ActivityNotFoundException e) {
-                showToast(getString(R.string.locationSettingError));
+                Snackbar.make(findViewById(R.id.layoutChooseLocation),
+                        R.string.locationSettingError, Snackbar.LENGTH_SHORT).show();
             }
         } else {
             super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);

@@ -44,6 +44,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
+import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
@@ -55,12 +56,13 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
+import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.managers.AddressManager;
-import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.managers.SectionManager;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
@@ -91,14 +93,14 @@ import java.util.Random;
 public abstract class BaseActivity extends AppCompatActivity implements
         CancelableAware, ProgressIndicationAware, ActivityAware,
         ConnectivityAware, TrackingAware, ApiErrorAware, HandlerAware,
-        LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware {
+        LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware, LaunchStoreListAware {
 
     public static Typeface faceRupee;
-    public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
+    protected static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
             faceRobotoBold;
     protected BigBasketMessageHandler handler;
-    protected boolean isActivitySuspended;
-    protected ProgressDialog progressDialog = null;
+    private boolean isActivitySuspended;
+    private ProgressDialog progressDialog = null;
     protected MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
     private String mNavigationContext;
@@ -124,6 +126,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public static void hideKeyboard(BaseActivity context, View view) {
+        if (context == null || context.isSuspended()) return;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -144,6 +147,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
         fbLogger = AppEventsLogger.newLogger(getApplicationContext());
         mNavigationContext = getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX);
         NewRelic.setInteractionName(getCurrentActivity().getClass().getName());
+    }
+
+    public MoEHelper getMoEHelper() {
+        return moEHelper;
     }
 
     @Override
@@ -169,6 +176,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
+        if (progressDialog != null && progressDialog.isShowing()) return;
         progressDialog = new ProgressDialog(this);
         if (isDeterminate) {
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -181,6 +189,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         progressDialog.setCancelable(cancelable);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMessage(msg);
+        if (isSuspended()) return;
         progressDialog.show();
     }
 
@@ -239,6 +248,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         isActivitySuspended = false;
+        MoEngageWrapper.onNewIntent(moEHelper, this, intent);
     }
 
     protected void onResume() {
@@ -425,7 +435,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         toast.show();
     }
 
-    public String getValueOrBlank(String val) {
+    protected String getValueOrBlank(String val) {
         return !TextUtils.isEmpty(val) ? val : "";
     }
 
@@ -458,16 +468,16 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode,
-                               String cityName) {
+    private void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode,
+                                String cityName) {
         if (!TextUtils.isEmpty(areaName)) {
             String pinCode = areaPinInfoAdapter.getAreaPin(areaName, cityName);
             editTextPincode.setText(pinCode);
         }
     }
 
-    public void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode,
-                               final String cityName) {
+    protected void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode,
+                                  final String cityName) {
         final AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(getCurrentActivity());
         ArrayList<String> areaPinArrayList = areaPinInfoAdapter.getPinList(cityName);
         ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(getCurrentActivity(),
@@ -552,7 +562,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
+    protected void trackEventAppsFlyer(String eventName, HashMap<String, Object> eventAttr) {
+        try {
+            AppsFlyerLib.trackEvent(getApplicationContext(), eventName, eventAttr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
         try {
             AppsFlyerLib.sendTrackingWithEvent(getApplicationContext(), eventName, valueToSum);
             if (mapAttr != null && mapAttr.size() > 0) {
@@ -714,12 +732,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return preferences.getBoolean(Constants.IS_BASKET_COUNT_DIRTY, false);
     }
 
-    public boolean isPendingGoToHome() {
+    protected boolean isPendingGoToHome() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         return preferences.getBoolean(Constants.IS_PENDING_GO_TO_HOME, false);
     }
 
-    public void removePendingGoToHome() {
+    protected void removePendingGoToHome() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.remove(Constants.IS_PENDING_GO_TO_HOME);
         editor.remove(Constants.RELOAD_APP);
@@ -734,12 +752,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
         removePendingGoToHome();
     }
 
-    public boolean isPendingReloadApp() {
+    protected boolean isPendingReloadApp() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         return preferences.getBoolean(Constants.RELOAD_APP, false);
     }
 
-    public void togglePasswordView(EditText passwordEditText, boolean show) {
+    protected void togglePasswordView(EditText passwordEditText, boolean show) {
         Drawable rightDrawable;
         if (!show) {
             rightDrawable = ContextCompat.getDrawable(getCurrentActivity(),
@@ -784,20 +802,23 @@ public abstract class BaseActivity extends AppCompatActivity implements
         startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    public void changeCity(City city) {
+    protected void changeCity(City city, boolean reopenLandingPage) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(Constants.CITY, city.getName());
-        editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
-        editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
-        editor.apply();
+        editor.putString(Constants.CITY, city.getName())
+                .putString(Constants.CITY_ID, String.valueOf(city.getId()))
+                .putBoolean(Constants.HAS_USER_CHOSEN_CITY, true)
+                .apply();
 
         SectionManager.clearAllSectionData(this);
-        AddressManager.reset(this);
-        goToHome(true);
+        AppDataDynamic.reset(this);
+
+        if (!reopenLandingPage) {
+            goToHome(true);
+        }
     }
 
-    public void launchRegistrationPage() {
+    protected void launchRegistrationPage() {
         //trackEvent(TrackingAware.NEW_USER_REGISTER_CLICKED, null);
         Intent intent = new Intent(this, SignupActivity.class);
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
@@ -815,6 +836,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
             if (!TextUtils.isEmpty(title)) {
                 intent.putExtra(Constants.TITLE, title);
             }
+            getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        }
+    }
+
+    @Override
+    public void launchStoreList(String destinationSlug) {
+        if (!TextUtils.isEmpty(destinationSlug)) {
+            Intent intent = new Intent(getCurrentActivity(), BBSpecialityShopsActivity.class);
+            intent.putExtra(Constants.CATEGORY, destinationSlug);
             getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
@@ -842,7 +872,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         super.startActivityForResult(intent, requestCode);
     }
 
-    public void launchTutorial(int resultCode) {
+    protected void launchTutorial(int resultCode) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isTutorialShown = preferences.getBoolean(Constants.TUTORIAL_SEEN, false);
         if (isTutorialShown) {
@@ -857,13 +887,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void handleTutorialResponse(int resultCode) {
+    protected void handleTutorialResponse(int resultCode) {
         switch (resultCode) {
             case NavigationCodes.LAUNCH_LOGIN:
                 launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
                 break;
             case NavigationCodes.LAUNCH_CITY:
-                showChangeCity();
+                showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, false);
                 break;
             case NavigationCodes.LAUNCH_SIGNUP:
                 launchRegistrationPage();
@@ -871,8 +901,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    private void showChangeCity() {
-        Intent intent = new Intent(this, ChooseLocationActivity.class);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    public void showChangeCity(boolean isFirstTime, String nc, boolean reopenLandingPage) {
+        Intent intent = new Intent(getCurrentActivity(), ChooseLocationActivity.class);
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, nc);
+        intent.putExtra(Constants.IS_FIRST_TIME, isFirstTime);
+        intent.putExtra(Constants.REOPEN_LANDING_PAGE, reopenLandingPage);
+        getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }

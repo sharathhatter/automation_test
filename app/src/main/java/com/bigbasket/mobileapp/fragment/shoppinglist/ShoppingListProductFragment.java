@@ -59,6 +59,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .setShoppingListName(shoppingListSummary.getShoppingListName())
                 .setRupeeTypeface(faceRupee)
                 .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
+                .useRadioButtonsForContextual(true)
                 .build();
     }
 
@@ -128,6 +129,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                     cartInfo = new HashMap<>();
                 }
                 cartInfo.put(productId, productInQty);
+                productListAdapter.setCartInfo(cartInfo);
                 productListAdapter.notifyDataSetChanged();
             } else if (getCurrentActivity() != null) {
                 getCurrentActivity().triggerActivityResult(requestCode, resultCode, data);

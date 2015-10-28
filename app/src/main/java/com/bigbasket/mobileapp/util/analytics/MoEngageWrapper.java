@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.util.analytics;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import com.moe.pushlibrary.MoEHelper;
 
@@ -45,7 +46,7 @@ public class MoEngageWrapper {
 
     public static void onStop(MoEHelper moEHelper, Activity context) {
         try {
-            moEHelper.onStart(context);
+            moEHelper.onStop(context);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,6 +68,14 @@ public class MoEngageWrapper {
         }
     }
 
+    public static void onNewIntent(MoEHelper moEHelper, Activity context, Intent intent) {
+        try {
+            moEHelper.onNewIntent(context, intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void trackEvent(MoEHelper moEHelper, String eventName, JSONObject analyticsJsonObj) {
         try {
             moEHelper.trackEvent(eventName, analyticsJsonObj);
@@ -74,5 +83,37 @@ public class MoEngageWrapper {
             e.printStackTrace();
         }
 
+    }
+
+    public static void onFragmentStart(MoEHelper moEHelper, Activity context, String fragmentName) {
+        try {
+            moEHelper.onFragmentStart(context, fragmentName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void onFragmentStop(MoEHelper moEHelper, Activity context, String fragmentName) {
+        try {
+            moEHelper.onFragmentStop(context, fragmentName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void suppressInAppMessageHere(MoEHelper moEHelper) {
+        try {
+            moEHelper.suppressInAppMessageHere(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setExistingUser(MoEHelper moEHelper, boolean isExistingUser) {
+        try {
+            moEHelper.setExistingUser(isExistingUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

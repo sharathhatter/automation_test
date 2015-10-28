@@ -177,7 +177,14 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
     @Override
     public void addToShoppingList(List<ShoppingListName> selectedShoppingListNames) {
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
+    }
 
+    @Override
+    public void postAddToShoppingListOperation() {
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
     @Override
@@ -188,6 +195,8 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     @Override
     public void onNewShoppingListCreated(String listName) {
         loadShoppingLists();
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().setResult(NavigationCodes.SHOPPING_LIST_MODIFIED);
     }
 
     @Override
@@ -212,6 +221,39 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     @Override
     public String getScreenTag() {
         return TrackEventkeys.SHOPPING_LIST_SCREEN;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.SHOPPING_LIST_CHANGED) {
+            loadShoppingLists();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        markBasketDirty();
+    }
+
+    public static class ShoppingListHeaderViewHolder {
+        private TextView txtHeaderMsg;
+        private View base;
+
+        public ShoppingListHeaderViewHolder(View base) {
+            this.base = base;
+        }
+
+        public TextView getTxtHeaderMsg() {
+            if (txtHeaderMsg == null) {
+                txtHeaderMsg = (TextView) base.findViewById(R.id.txtHeaderMsg);
+                txtHeaderMsg.setTypeface(faceRobotoRegular);
+            }
+            return txtHeaderMsg;
+        }
     }
 
     private class ShoppingListAdapter extends BaseAdapter {
@@ -328,38 +370,5 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 return txtShopLstDesc;
             }
         }
-    }
-
-    public static class ShoppingListHeaderViewHolder {
-        private TextView txtHeaderMsg;
-        private View base;
-
-        public ShoppingListHeaderViewHolder(View base) {
-            this.base = base;
-        }
-
-        public TextView getTxtHeaderMsg() {
-            if (txtHeaderMsg == null) {
-                txtHeaderMsg = (TextView) base.findViewById(R.id.txtHeaderMsg);
-                txtHeaderMsg.setTypeface(faceRobotoRegular);
-            }
-            return txtHeaderMsg;
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setSuspended(false);
-        if (resultCode == NavigationCodes.SHOPPING_LIST_CHANGED) {
-            loadShoppingLists();
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        markBasketDirty();
     }
 }

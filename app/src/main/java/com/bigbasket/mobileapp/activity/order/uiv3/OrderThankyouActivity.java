@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -103,6 +104,17 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         for (final Order order : orders) {
             View base = inflater.inflate(R.layout.uiv3_order_thankyou_row, layoutOrderNumber, false);
             TextView txtOrderNum = (TextView) base.findViewById(R.id.txtOrderNum);
+
+            TextView txtAmount = (TextView) base.findViewById(R.id.txtAmount);
+            txtAmount.setTypeface(faceRobotoRegular);
+            String orderPrefix = " `";
+            String orderValStr = UIUtil.formatAsMoney(Double.parseDouble(order.getOrderValue()));
+            int prefixLen = orderPrefix.length();
+            SpannableString spannableMrp = new SpannableString(orderPrefix + orderValStr);
+            spannableMrp.setSpan(new CustomTypefaceSpan("", BaseActivity.faceRupee), prefixLen - 1,
+                    prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            txtAmount.append(spannableMrp);
+
             String prefix = getString(R.string.ordernumber) + "\n";
             SpannableString orderNumSpannable = new SpannableString(prefix + order.getOrderNumber());
             orderNumSpannable.setSpan(new UnderlineSpan(), prefix.length(), orderNumSpannable.length(),

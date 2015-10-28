@@ -13,5 +13,5 @@ public interface AddressSelectionAware {
     void onEditAddressClicked(Address address);
 
     @Nullable
-    String getSelectedAddressId();
+    Address getSelectedAddress();
 }

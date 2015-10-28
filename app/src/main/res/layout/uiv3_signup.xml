@@ -112,7 +112,7 @@
                     android:drawableRight="@drawable/ic_visibility_white_18dp"
                     android:ems="10"
                     android:hint="@string/password"
-                    android:imeActionLabel="@string/action_sign_in_short"
+                    android:imeActionLabel="@string/action_sign_up_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:paddingBottom="@dimen/padding_normal"
@@ -124,21 +124,44 @@
                     android:textSize="@dimen/secondary_text_size" />
             </android.support.design.widget.TextInputLayout>
 
-            <EditText
-                android:id="@+id/editTextChooseCity"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/textInputCurrentLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawablePadding="@dimen/padding_mini"
-                android:drawableRight="@drawable/ic_arrow_drop_down_white_24dp"
-                android:ems="10"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:hint="@string/location"
-                android:longClickable="false"
+                android:layout_marginBottom="@dimen/margin_small">
+
+                <EditText
+                    android:id="@+id/editTextCurrentLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:drawableRight="@drawable/ic_edit_white_24dp"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="@string/location"
+                    android:longClickable="false"
+                    android:padding="@dimen/padding_normal"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/translucent_white"
+                    android:textSize="@dimen/secondary_text_size" />
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/txtChooseLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_mini"
+                android:layout_marginRight="@dimen/margin_mini"
+                android:layout_marginTop="@dimen/margin_small"
+                android:background="@drawable/border_top_bottom"
+                android:drawableRight="@drawable/ic_my_location_white_24dp"
+                android:gravity="center"
                 android:padding="@dimen/padding_normal"
-                android:singleLine="true"
+                android:text="@string/chooseDeliveryLocation"
                 android:textColor="@color/white"
-                android:textColorHint="@color/translucent_white"
                 android:textSize="@dimen/secondary_text_size" />
 
             <Button

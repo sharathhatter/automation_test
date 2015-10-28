@@ -68,7 +68,6 @@ public final class TrackEventkeys {
     //REGISTER
     public static final String REGISTER_MEMBER_SCREEN = "Registration Page";
     public static final String SIGN_IN_SCREEN = "Login or Register";
-    public static final String SOCIAL_ACCOUNT_CONFIRMATION_SCREEN = "Social Account Confirmation";
     //ACCOUNT
     public static final String ACCOUNT_SCREEN = "My Account";
     public static final String ACCOUNT_CHANGE_PASSWORD_SCREEN = "Change Password";
@@ -77,7 +76,6 @@ public final class TrackEventkeys {
     public static final String ACCOUNT_WALLET_SCREEN = "Wallet Summary";
     public static final String ACCOUNT_WALLET_ACTIVITY_SCREEN = "Wallet Activity";
     public static final String VIEW_DELIVERY_ADDRESS_SCREEN = "Delivery Address";
-    public static final String ACCOUNT_EDIT_PIN_SCREEN = "Change Pin";
     //ORDER AND PRODUCT OTHER PAGE
     public static final String ORDER_DETAILS_SUMMARY_SCREEN = "Order Details";
     public static final String ORDER_DETAILS_ITEMS_SCREEN = null;
@@ -86,6 +84,8 @@ public final class TrackEventkeys {
     public static final String FLAT_PAGE_SCREEN = "Flat Page";
     public static final String CUSTOMER_FEEDBACK_SCREEN = "Customer FeedBack";
     public static final String DEEP_LINK_DISPATCHER_SCREEN = "Deep Link Dispatcher";
+    public static final String SOCIAL_ACCOUNT_CONFIRMATION_SCREEN = "Social Account Confirmation";
+    public static final String GIFT_OPTIONS_SCREEN = "Gift Options";
     //PROMO
     public static final String PROMO_CATEGORY_SCREEN = "Promo Category";
     public static final String PROMO_DETAIL_SCREEN = "Promo Detail";
@@ -119,6 +119,7 @@ public final class TrackEventkeys {
     public static final String CO_ADDRESS = "co.address";
     public static final String CO_QC = "co.qc";
     public static final String CO_DELIVERY_OPS = "co.delivery-options";
+    public static final String CO_GIFT_OPS = "xo.gift-options";
     public static final String CO_PAYMENT = "co.payment";
     public static final String ACCOUNT_MENU = "account-menu";
     public static final String ORDER_HISTORY = "order-history";
@@ -129,7 +130,7 @@ public final class TrackEventkeys {
     public static final String NC_TUTORIAL_SCREEN = "tutorial";
     public static final String NC_LOGIN_SCREEN = "login";
     public static final String NC_CITY_SELECTION_SCREEN = "city-selection";
-    public static final String NC_SINGUP_SCREEN = "signup";
+    public static final String NC_SIGNUP_SCREEN = "signup";
     public static final String NC_DISCOUNT_SCREEN = "discount";
     public static final String NC_PROMO_CAT_LISTING = "promo-listing";
     public static final String NC_PROMO_DETAIL = "promo-detail";
@@ -153,6 +154,16 @@ public final class TrackEventkeys {
     public static final String SINGLE_TAB_NAME = "none";
     public static final String FILTER_APPLIED = "filter_applied";
     public static final String IS_EXPRESS = "is_express";
+
+    public static final String FIS = "fis";
+    public static final String ACTION_NAME = "action_name";
+    public static final String FINAL_FIS = "final_fis";
+    public static final String ORIGINAL_FIS = "original_fis";
+
+    public static final String GIFT_SELECTQTY = "gift_selectqty";
+    public static final String GIFT_ADDMESSAGE = "gift_addmessage";
+
+    public static final String SPECIALITYSHOPS_LISTING_PAGE = "Speciality Shops Screen";
 
     private TrackEventkeys() {
     }

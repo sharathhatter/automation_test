@@ -72,6 +72,9 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     @SerializedName(Constants.IMAGE_PARAMS)
     private ImageParams imageParams;
 
+    @SerializedName(Constants.TITLE_TYPE)
+    private String titleType;
+
     public SectionItem(SectionTextItem title, SectionTextItem description, String image,
                        int renderingId, DestinationInfo destinationInfo) {
         super(title, description);
@@ -107,6 +110,10 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         boolean wasHelpDestNull = source.readByte() == (byte) 1;
         if (!wasHelpDestNull) {
             helpDestinationInfo = source.readParcelable(SectionItem.class.getClassLoader());
+        }
+        boolean wasTitleTypeNull = source.readByte() == (byte) 1;
+        if (!wasTitleTypeNull) {
+            titleType = source.readString();
         }
     }
 
@@ -208,6 +215,11 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         dest.writeByte(wasHelpDestNull ? (byte) 1 : (byte) 0);
         if (!wasHelpDestNull) {
             dest.writeParcelable(helpDestinationInfo, flags);
+        }
+        boolean wasTitleTypeNull = titleType == null;
+        dest.writeByte(wasTitleTypeNull ? (byte) 1 : (byte) 0);
+        if (!wasTitleTypeNull) {
+            dest.writeString(titleType);
         }
     }
 
@@ -397,5 +409,9 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
             }
         }
         return queryMap;
+    }
+
+    public boolean isExpressDynamicTitle() {
+        return !TextUtils.isEmpty(titleType) && titleType.equals("express_dynamic");
     }
 }
