@@ -362,11 +362,14 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
                                     (int) cartItem.getTotalQty() - 1);
-                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
-                                    BasketOperation.DEC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT,
-                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME,
-                                    basketQueryMap);
+
+                            BasketOperationTask basketOperationTask =
+                                    new BasketOperationTask.Builder<>(context, BasketOperation.DEC, product)
+                                            .withEventName(TrackingAware.BASKET_DECREMENT)
+                                            .withNavigationCtx(navigationCtx)
+                                            .withTabName(TrackEventkeys.SINGLE_TAB_NAME)
+                                            .withBasketQueryMap(basketQueryMap)
+                                            .build();
                             basketOperationTask.startTask();
 
                             if (context instanceof BasketChangeQtyAware) {
@@ -390,11 +393,14 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
                                     (int) cartItem.getTotalQty() + 1);
-                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
-                                    BasketOperation.INC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT,
-                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME,
-                                    basketQueryMap);
+
+                            BasketOperationTask basketOperationTask =
+                                    new BasketOperationTask.Builder<>(context, BasketOperation.INC, product)
+                                            .withEventName(TrackingAware.BASKET_INCREMENT)
+                                            .withNavigationCtx(navigationCtx)
+                                            .withTabName(TrackEventkeys.SINGLE_TAB_NAME)
+                                            .withBasketQueryMap(basketQueryMap)
+                                            .build();
                             basketOperationTask.startTask();
 
                             if (context instanceof BasketChangeQtyAware) {
@@ -418,11 +424,16 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
                                     0);
-                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
-                                    BasketOperation.EMPTY,
-                                    product, txtInBasket, null, null, null, "0",
-                                    TrackingAware.BASKET_REMOVE, navigationCtx, null, null, null,
-                                    TrackEventkeys.SINGLE_TAB_NAME, basketQueryMap);
+
+                            BasketOperationTask basketOperationTask =
+                                    new BasketOperationTask.Builder<>(context, BasketOperation.EMPTY, product)
+                                            .withBasketCountTextView(txtInBasket)
+                                            .withQty("0")
+                                            .withEventName(TrackingAware.BASKET_REMOVE)
+                                            .withNavigationCtx(navigationCtx)
+                                            .withTabName(TrackEventkeys.SINGLE_TAB_NAME)
+                                            .withBasketQueryMap(basketQueryMap)
+                                            .build();
                             basketOperationTask.startTask();
 
                             if (context instanceof BasketChangeQtyAware) {

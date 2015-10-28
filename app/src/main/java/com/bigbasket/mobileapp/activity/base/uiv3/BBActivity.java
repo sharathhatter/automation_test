@@ -106,6 +106,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.bigbasket.mobileapp.view.uiv3.BasketDeltaDialog;
 import com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -597,23 +598,29 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                   View viewDecQty, View viewIncQty, View btnAddToBasket,
-                                                   Product product, String qty,
-                                                   String errorType, @Nullable View productView,
-                                                   @Nullable EditText editTextQty) {
+    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation,
+                                                   @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                   @Nullable WeakReference<View> viewDecQtyRef,
+                                                   @Nullable WeakReference<View> viewIncQtyRef,
+                                                   @Nullable WeakReference<View> btnAddToBasketRef,
+                                                   Product product, String qty, String errorType,
+                                                   @Nullable WeakReference<View> productViewRef,
+                                                   @Nullable WeakReference<EditText> editTextQtyRef) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
                                                     Product product, String qty,
-                                                    @Nullable View productView,
-                                                    @Nullable HashMap<String, Integer> cartInfoMap,
-                                                    @Nullable EditText editTextQty) {
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
 
         Log.d("BB", "BB ACTIVITY updateUIAfterBasketOperationSuccess");
 
@@ -624,45 +631,47 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
         if (productQtyInBasket == 0) {
-            if (viewDecQty != null) {
-                viewDecQty.setVisibility(View.GONE);
+            if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
+                viewDecQtyRef.get().setVisibility(View.GONE);
             }
-            if (viewIncQty != null) {
-                viewIncQty.setVisibility(View.GONE);
+            if (viewIncQtyRef != null && viewIncQtyRef.get() != null) {
+                viewIncQtyRef.get().setVisibility(View.GONE);
             }
-            if (btnAddToBasket != null) {
-                btnAddToBasket.setVisibility(View.VISIBLE);
+            if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
+                btnAddToBasketRef.get().setVisibility(View.VISIBLE);
             }
-            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
-                editTextQty.setText("1");
-                editTextQty.setVisibility(View.VISIBLE);
+            if (editTextQtyRef != null && editTextQtyRef.get() != null
+                    && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQtyRef.get().setText("1");
+                editTextQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (basketCountTextView != null) {
-                basketCountTextView.setVisibility(View.GONE);
+            if (basketCountTextViewRef != null && basketCountTextViewRef.get() != null) {
+                basketCountTextViewRef.get().setVisibility(View.GONE);
             }
         } else {
-            if (viewDecQty != null) {
-                viewDecQty.setVisibility(View.VISIBLE);
+            if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
+                viewDecQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (viewIncQty != null) {
-                viewIncQty.setVisibility(View.VISIBLE);
+            if (viewIncQtyRef != null && viewIncQtyRef.get() != null) {
+                viewIncQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (btnAddToBasket != null) {
-                btnAddToBasket.setVisibility(View.GONE);
+            if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
+                btnAddToBasketRef.get().setVisibility(View.GONE);
             }
-            if (basketCountTextView != null) {
-                basketCountTextView.setText(String.valueOf(productQtyInBasket));
-                basketCountTextView.setVisibility(View.VISIBLE);
+            if (basketCountTextViewRef != null && basketCountTextViewRef.get() != null) {
+                basketCountTextViewRef.get().setText(String.valueOf(productQtyInBasket));
+                basketCountTextViewRef.get().setVisibility(View.VISIBLE);
             }
-            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
-                editTextQty.setVisibility(View.GONE);
+            if (editTextQtyRef != null && editTextQtyRef.get() != null
+                    && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQtyRef.get().setVisibility(View.GONE);
             }
         }
 
         if (product != null) {
             product.setNoOfItemsInCart(productQtyInBasket);
-            if (cartInfoMap != null) {
-                cartInfoMap.put(product.getSku(), productQtyInBasket);
+            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
+                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
             }
         }
 

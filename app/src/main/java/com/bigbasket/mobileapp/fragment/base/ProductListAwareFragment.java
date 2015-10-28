@@ -40,6 +40,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -347,17 +348,22 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView, View viewDecQty,
-                                                    View viewIncQty, View btnAddToBasket, Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
-                                                    @Nullable EditText editTextQty) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
-        if (cartInfoMap != null) {
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
+                                                    Product product, String qty,
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextViewRef, viewDecQtyRef, viewIncQtyRef,
+                btnAddToBasketRef, product, qty, productViewRef, cartInfoMapRef, editTextQtyRef);
+        if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
             if (getActivity() instanceof BasketOperationAware) {
                 ((BasketOperationAware) getActivity()).setBasketOperationResponse(basketOperationResponse);
                 ((BasketOperationAware) getActivity()).updateUIAfterBasketOperationSuccess(basketOperation,
-                        null, null, null, null, product, qty, null, cartInfoMap, editTextQty);
+                        null, null, null, null, product, qty, null, cartInfoMapRef, editTextQtyRef);
             }
         }
     }
