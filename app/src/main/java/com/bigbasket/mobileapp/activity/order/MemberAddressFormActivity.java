@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.telephony.SmsMessage;
+import android.telephony.SubscriptionManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -541,12 +542,13 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     protected void onResume() {
         super.onResume();
         registerBroadcastForSMS();
+
     }
 
     private void registerBroadcastForSMS() {
         IntentFilter smsOTPintentFilter = new IntentFilter();
         smsOTPintentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
-        smsOTPintentFilter.setPriority(9999);
+        smsOTPintentFilter.setPriority(2147483647);//setting high priority for dual sim support
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
