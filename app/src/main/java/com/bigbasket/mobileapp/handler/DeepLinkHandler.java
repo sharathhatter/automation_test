@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
@@ -49,11 +50,6 @@ public class DeepLinkHandler {
         }
         UtmHandler.postUtm(context.getCurrentActivity(), uri);
         switch (uri.getHost()) {
-
-           /* case Constants.HOST_URL:
-                String path = uri.getPath();
-
-                return SUCCESS;*/
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
@@ -128,14 +124,10 @@ public class DeepLinkHandler {
                 }
                 return FAILED;
             case Constants.ALL_SL:
-                id = uri.getQueryParameter(Constants.ID);
-                if (!TextUtils.isEmpty(id)) {
-                    intent = new Intent(context.getCurrentActivity(), ShoppingListActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
-                    context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    return SUCCESS;
-                }
-                return FAILED;
+                intent = new Intent(context.getCurrentActivity(), ShoppingListActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
+                context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                return SUCCESS;
             case Constants.SL_SUMMARY:
                 slug = uri.getQueryParameter(Constants.SLUG);
                 name = uri.getQueryParameter(Constants.NAME);
@@ -215,6 +207,13 @@ public class DeepLinkHandler {
             case Constants.HOME:
                 context.getCurrentActivity().goToHome(false);
                 return SUCCESS;
+            case Constants.STORE_LIST:
+                String category = uri.getQueryParameter(Constants.CATEGORY);
+                if (!TextUtils.isEmpty(category) && !category.equalsIgnoreCase("null")) {
+                    context.getCurrentActivity().launchStoreList(category);
+                    return SUCCESS;
+                }
+                return FAILED;
             default:
                 return FAILED;
         }
