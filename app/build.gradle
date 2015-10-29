@@ -33,19 +33,11 @@ android {
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     signingConfigs {
-        dev {
-            storeFile file("keystore/dev.keystore")
-            storePassword "bigbasket"
-            keyAlias "dev"
-            keyPassword "bigbasket"
-        }
-
-        prod {
-            //update the values here for the deployment
-            storeFile file("keystore/dev.keystore")
-            storePassword "bigbasket"
-            keyAlias "dev"
-            keyPassword "bigbasket"
+        bigbasket {
+            storeFile file(project.KEY_STORE_FILE)
+            storePassword project.STORE_PASSWD
+            keyAlias project.KEY_ALIAS
+            keyPassword project.KEY_PASSWD
         }
     }
 
@@ -58,14 +50,16 @@ android {
         manifestPlaceholders = [crashlytics_id: "d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827"]
         //Does not work on gradle build tool version 1.3.0 https://code.google.com/p/android/issues/detail?id=182016
         setProperty("archivesBaseName", "Bigbasket-" + versionName);
-        signingConfig signingConfigs.dev
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
-            signingConfig signingConfigs.prod
+            signingConfig signingConfigs.bigbasket
+        }
+        debug {
+            signingConfig signingConfigs.bigbasket
         }
     }
     compileOptions {
@@ -78,6 +72,10 @@ android {
     }
     dexOptions {
         jumboMode true
+    }
+
+    lintOptions {
+        abortOnError false
     }
 
 //    Uncomment at the time of deployment, but don't commit the uncommented version to VCS.
@@ -94,12 +92,12 @@ android {
 
 }
 
-ext.versionCodes =[mdpi: calculateVersionCodeFromDpi(160, 0),
-                   hdpi: calculateVersionCodeFromDpi(240, 0),
-                   xhdpi: calculateVersionCodeFromDpi(320, 0),
-                   xxhdpi: calculateVersionCodeFromDpi(480, 0),
-                   xxxhdpi: calculateVersionCodeFromDpi(640, 0),
-                   all: calculateVersionCodeFromDpi(160, -1)]
+ext.versionCodes = [mdpi   : calculateVersionCodeFromDpi(160, 0),
+                    hdpi   : calculateVersionCodeFromDpi(240, 0),
+                    xhdpi  : calculateVersionCodeFromDpi(320, 0),
+                    xxhdpi : calculateVersionCodeFromDpi(480, 0),
+                    xxxhdpi: calculateVersionCodeFromDpi(640, 0),
+                    all    : calculateVersionCodeFromDpi(160, -1)]
 
 android.applicationVariants.all { variant ->
     // assign different version code for each output
@@ -118,6 +116,17 @@ int calculateVersionCodeFromDpi(int dpi, int delta) {
 dependencies {
     compile files('libs/localytics.jar')
     compile project(':androidImageSlider')
+    provided 'com.squareup.okhttp:okhttp:2.3.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.1@aar') {
+        transitive = true;
+    }
+    compile project(':wibmoSDK')
+    compile files('libs/AF-Android-SDK-v2.3.1.17.jar')
+    compile project(':moe-addon-ubox')
+    compile project(':mobikwik_Payment_Android_SDK')
+    compile files('libs/pgsdk.jar')
+    compile project(':payuSdkUi')
+    compile files('libs/GoogleConversionTrackingSdk-2.2.4.jar')
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:design:22.2.1'
     compile 'com.android.support:recyclerview-v7:22.2.1'
@@ -128,18 +137,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:7.0.0'
     compile 'com.newrelic.agent.android:android-agent:5.+'
     compile 'com.facebook.android:facebook-android-sdk:4.4.0'
-    provided 'com.squareup.okhttp:okhttp:2.3.0'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.1@aar') {
-        transitive = true;
-    }
     compile 'com.journeyapps:zxing-android-embedded:3.0.1@aar'
     compile 'com.google.zxing:core:3.2.0'
-    compile project(':wibmoSDK')
-    compile files('libs/AF-Android-SDK-v2.3.1.17.jar')
-    compile project(':moe-addon-ubox')
     compile 'com.moengage:moe-android-sdk:5.3.05'
-    compile project(':mobikwik_Payment_Android_SDK')
-    compile files('libs/pgsdk.jar')
-    compile project(':payuSdkUi')
-    compile files('libs/GoogleConversionTrackingSdk-2.2.4.jar')
+    compile 'com.android.support:support-v4:22.2.1'
 }
