@@ -1,4 +1,4 @@
-package com.bigbasket.mobileapp.handler.payment;
+package com.bigbasket.mobileapp.factory.payment.impl;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,12 +10,9 @@ import com.bigbasket.mobileapp.util.Constants;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by jugal on 19/8/15.
- */
-public class MobikwikInitializer {
+public class MobikwikPayment {
 
-    public static void initiate(HashMap<String, String> paymentParams, Activity ctx) {
+    public void startPaymentGateway(HashMap<String, String> paymentParams, Activity ctx) {
         Intent walletIntent = new Intent(Constants.MOBIKWIKSDK);
         walletIntent.setPackage(ctx.getPackageName());
         walletIntent.setType("text/plain");
