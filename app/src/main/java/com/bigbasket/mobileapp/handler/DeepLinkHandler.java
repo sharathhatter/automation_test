@@ -50,6 +50,14 @@ public class DeepLinkHandler {
         }
         UtmHandler.postUtm(context.getCurrentActivity(), uri);
         switch (uri.getHost()) {
+            case Constants.HOST_BIGBASKET:
+                String path = uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
+                if (!TextUtils.isEmpty(path)) {
+                    Log.e("", "PATH" + path);
+                    return SUCCESS;
+                }
+                return FAILED;
+
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
