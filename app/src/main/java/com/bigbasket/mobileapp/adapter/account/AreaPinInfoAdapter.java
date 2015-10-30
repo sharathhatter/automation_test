@@ -4,8 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.bigbasket.mobileapp.adapter.db.DatabaseContentProvider;
 import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 
 import java.util.ArrayList;
@@ -43,6 +45,8 @@ public class AreaPinInfoAdapter {
             cv.put(COLUMN_CITY, cityName);
             cv.put(COLUMN_CITY_ID, cityId);
             DatabaseHelper.db.insert(tableName, null, cv);
+            Uri uri=context.getContentResolver().insert(DatabaseContentProvider.CONTENT_URI,cv);
+            System.out.println("manu-----in area infor adapter...."+uri);
         } catch (Exception e) {
             e.getStackTrace();
         }

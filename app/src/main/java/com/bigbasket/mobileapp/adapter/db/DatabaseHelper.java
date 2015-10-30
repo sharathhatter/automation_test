@@ -71,10 +71,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE " + AreaPinInfoAdapter.tableName);
     }
 
-    @Override
-    public void onOpen(SQLiteDatabase db) {
-        createTable(db);
-    }
+//    @Override
+//    public void onOpen(SQLiteDatabase db) {
+//        createTable(db);
+//    }
 
     private void createTable(SQLiteDatabase db) {
         db.execSQL(CategoryAdapter.createTable);
