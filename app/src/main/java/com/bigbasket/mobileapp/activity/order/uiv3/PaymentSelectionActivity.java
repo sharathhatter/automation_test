@@ -193,7 +193,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
         if (!TextUtils.isEmpty(txnId)) {
-            new PostPaymentProcessor<>(this, mTxnId)
+            new PostPaymentProcessor<>(this, txnId)
                     .withPotentialOrderId(mPotentialOrderId)
                     .withOrderId(mOrdersCreated.get(0).getOrderNumber())
                     .processPayment();

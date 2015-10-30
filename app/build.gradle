@@ -12,12 +12,13 @@ buildscript {
 
 repositories {
     mavenCentral()
-    maven { url 'https://maven.fabric.io/public' }
+    maven {
+        url 'https://maven.fabric.io/public'
+    }
 }
 
 repositories {
     mavenCentral()
-
     maven {
         url "http://dl.bintray.com/journeyapps/maven"
     }
