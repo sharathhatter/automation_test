@@ -625,7 +625,7 @@
             android:name=".adapter.db.DatabaseContentProvider"
             android:authorities="com.bigbasket.mobileapp.adapter.db.DatabaseContentProvider"
             android:enabled="true"
-            android:exported="true"></provider>
+            android:exported="false"></provider>
     </application>
 
 </manifest>

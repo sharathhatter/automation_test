@@ -25,6 +25,14 @@ public class AreaPinInfoAdapter {
                     "%3$s TEXT , %4$s TEXT , %5$s TEXT , " +
                     "%6$s INTEGER);", tableName, COLUMN_ID, COLUMN_PIN, COLUMN_AREA,
             COLUMN_CITY, COLUMN_CITY_ID);
+
+    /**
+     * Content URI for the content provider to manipulate this table(areaPinInfo)
+     */
+    public static final Uri CONTENT_URI = Uri.parse(DatabaseContentProvider.CONTENT_URI_PREFIX
+            + "/" + tableName);
+
+
     private Context context;
 
     public AreaPinInfoAdapter(Context context) {
@@ -44,15 +52,19 @@ public class AreaPinInfoAdapter {
             cv.put(COLUMN_AREA, areaName);
             cv.put(COLUMN_CITY, cityName);
             cv.put(COLUMN_CITY_ID, cityId);
-            DatabaseHelper.db.insert(tableName, null, cv);
-            Uri uri=context.getContentResolver().insert(DatabaseContentProvider.CONTENT_URI,cv);
-            System.out.println("manu-----in area infor adapter...."+uri);
+//            DatabaseHelper.db.insert(tableName, null, cv);
+            /**
+             * inserting values uing content provider
+             */
+            context.getContentResolver().insert(CONTENT_URI,cv);
+
         } catch (Exception e) {
             e.getStackTrace();
         }
     }
 
     public String getAreaPin(String areaName, String cityName) {
+
         Cursor areaPinCursor = null;
         String pinCode = null;
         try {
@@ -61,7 +73,6 @@ public class AreaPinInfoAdapter {
                     COLUMN_CITY + " = \"" + cityName + "\"", null, null, null, null);
             if (areaPinCursor != null && areaPinCursor.moveToFirst()) {
                 pinCode = areaPinCursor.getString(areaPinCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_PIN));
-
             }
         } catch (SQLiteException ex) {
             ex.getStackTrace();

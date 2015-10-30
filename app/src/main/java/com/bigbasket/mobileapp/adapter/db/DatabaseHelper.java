@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
+import com.crashlytics.android.Crashlytics;
+import com.newrelic.agent.android.NewRelic;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -63,13 +65,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DELETE FROM " + CategoryAdapter.tableName);
-        db.execSQL("DROP TABLE " + CategoryAdapter.tableName);
-        db.execSQL("DELETE FROM " + SubCategoryAdapter.tableName);
-        db.execSQL("DROP TABLE " + SubCategoryAdapter.tableName);
-        db.execSQL("DELETE FROM " + AreaPinInfoAdapter.tableName);
-        db.execSQL("DROP TABLE " + AreaPinInfoAdapter.tableName);
+        if (newVersion>=DATABASE_VERSION)
+        try {
+            db.execSQL("DELETE FROM " + CategoryAdapter.tableName);
+            db.execSQL("DROP TABLE " + CategoryAdapter.tableName);
+        }
+        catch (Exception e){
+            Crashlytics.logException(e);
+        }
+        try {
+            db.execSQL("DELETE FROM " + SubCategoryAdapter.tableName);
+            db.execSQL("DROP TABLE " + SubCategoryAdapter.tableName);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+
+        }
+        try {
+            db.execSQL("DELETE FROM " + AreaPinInfoAdapter.tableName);
+            db.execSQL("DROP TABLE " + AreaPinInfoAdapter.tableName);
+        }
+        catch (Exception e){
+            Crashlytics.logException(e);
+
+        }
     }
+
 
 //    @Override
 //    public void onOpen(SQLiteDatabase db) {
@@ -77,6 +97,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //    }
 
     private void createTable(SQLiteDatabase db) {
+
+        System.out.println();
         db.execSQL(CategoryAdapter.createTable);
         db.execSQL(SubCategoryAdapter.createTable);
         db.execSQL(AreaPinInfoAdapter.createTable);
