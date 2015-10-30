@@ -53,6 +53,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -396,13 +397,18 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
                                                     Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo,
-                                                    @Nullable EditText editTextQty) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, product, qty, productView, cartInfo, editTextQty);
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextViewRef,
+                viewDecQtyRef, viewIncQtyRef,
+                btnAddToBasketRef, product, qty, productViewRef, cartInfoMapRef, editTextQtyRef);
         getCartItems(null, true);
     }
 

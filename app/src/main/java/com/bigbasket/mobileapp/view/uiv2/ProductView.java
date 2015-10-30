@@ -352,7 +352,8 @@ public final class ProductView {
         return !TextUtils.isEmpty(availabilityInfoId) ? allStoreAvailabilityMap.get(availabilityInfoId) : null;
     }
 
-    private static <T> void setPromo(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
+    private static <T> void setPromo(ProductViewHolder productViewHolder, Product product,
+                                     ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                      final T activityAware) {
         ImageView imgPromoStar = productViewHolder.getImgPromoStar();
         TextView txtPromoDesc = productViewHolder.getTxtPromoDesc();
@@ -448,7 +449,8 @@ public final class ProductView {
                                             List<ShoppingListName> shoppingListNames = new ArrayList<>();
                                             shoppingListNames.add(productViewDisplayDataHolder.getShoppingListName());
                                             ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
-                                                    new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware, shoppingListNames, ShoppingListOption.DELETE_ITEM);
+                                                    new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware,
+                                                            shoppingListNames, ShoppingListOption.DELETE_ITEM);
                                             ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
                                             shoppingListDoAddDeleteTask.startTask();
                                         } else {
@@ -552,11 +554,20 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (((ConnectivityAware) basketOperationAware).checkInternetConnection()) {
-                            BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
-                                    BasketOperation.INC, product,
-                                    txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
-                                    TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView, cartInfo,
-                                    editTextQty, tabName, basketQueryMap);
+                            BasketOperationTask basketOperationTask =
+                                    new BasketOperationTask.Builder<>(basketOperationAware, BasketOperation.INC, product)
+                                            .withBasketCountTextView(txtInBasket)
+                                            .withViewDecQty(viewDecBasketQty)
+                                            .withViewIncQty(viewIncBasketQty)
+                                            .withViewAddToBasket(imgAddToBasket)
+                                            .withEventName(TrackingAware.BASKET_INCREMENT)
+                                            .withNavigationCtx(navigationCtx)
+                                            .withProductView(productViewHolder.itemView)
+                                            .withCartInfo(cartInfo)
+                                            .withEditTextQty(editTextQty)
+                                            .withTabName(tabName)
+                                            .withBasketQueryMap(basketQueryMap)
+                                            .build();
                             basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -568,13 +579,21 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (((ConnectivityAware) basketOperationAware).checkInternetConnection()) {
-                            BasketOperationTask<T> myTask = new BasketOperationTask<>(basketOperationAware,
-                                    BasketOperation.DEC,
-                                    product, txtInBasket, viewDecBasketQty, viewIncBasketQty,
-                                    imgAddToBasket, TrackingAware.BASKET_DECREMENT,
-                                    navigationCtx, productViewHolder.itemView, cartInfo, editTextQty,
-                                    tabName, basketQueryMap);
-                            myTask.startTask();
+                            BasketOperationTask basketOperationTask =
+                                    new BasketOperationTask.Builder<>(basketOperationAware, BasketOperation.DEC, product)
+                                            .withBasketCountTextView(txtInBasket)
+                                            .withViewDecQty(viewDecBasketQty)
+                                            .withViewIncQty(viewIncBasketQty)
+                                            .withViewAddToBasket(imgAddToBasket)
+                                            .withEventName(TrackingAware.BASKET_DECREMENT)
+                                            .withNavigationCtx(navigationCtx)
+                                            .withProductView(productViewHolder.itemView)
+                                            .withCartInfo(cartInfo)
+                                            .withEditTextQty(editTextQty)
+                                            .withTabName(tabName)
+                                            .withBasketQueryMap(basketQueryMap)
+                                            .build();
+                            basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
                         }
@@ -590,18 +609,29 @@ public final class ProductView {
                             if (productViewDisplayDataHolder.isShowQtyInput()) {
                                 String txt = editTextQty.getText().toString();
                                 if (TextUtils.isEmpty(txt)) {
-                                    Toast.makeText(((ActivityAware) basketOperationAware).getCurrentActivity(), "Quantity shouldn\'t be blank", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(((ActivityAware) basketOperationAware).getCurrentActivity(),
+                                            "Quantity shouldn\'t be blank", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                                 BaseActivity.hideKeyboard(((ActivityAware) basketOperationAware).getCurrentActivity(),
                                         editTextQty);
                                 qty = txt;
                             }
-                            BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
-                                    BasketOperation.INC, product,
-                                    txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
-                                    qty, TrackingAware.BASKET_ADD, navigationCtx, productViewHolder.itemView,
-                                    cartInfo, editTextQty, tabName, basketQueryMap);
+                            BasketOperationTask basketOperationTask =
+                                    new BasketOperationTask.Builder<>(basketOperationAware, BasketOperation.INC, product)
+                                            .withBasketCountTextView(txtInBasket)
+                                            .withViewDecQty(viewDecBasketQty)
+                                            .withViewIncQty(viewIncBasketQty)
+                                            .withViewAddToBasket(imgAddToBasket)
+                                            .withEventName(TrackingAware.BASKET_ADD)
+                                            .withNavigationCtx(navigationCtx)
+                                            .withProductView(productViewHolder.itemView)
+                                            .withCartInfo(cartInfo)
+                                            .withEditTextQty(editTextQty)
+                                            .withTabName(tabName)
+                                            .withBasketQueryMap(basketQueryMap)
+                                            .withQty(qty)
+                                            .build();
                             basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
