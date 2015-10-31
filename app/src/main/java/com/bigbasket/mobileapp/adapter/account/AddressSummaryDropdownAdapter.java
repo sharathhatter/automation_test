@@ -117,12 +117,15 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
             txtAddress.setTextColor(getContext().getResources().getColor(R.color.dark_black));
         }
 
+        String area = TextUtils.isEmpty(addressSummary.getArea()) ? "" :
+                addressSummary.getArea() + "\n";
+
         String nick = addressSummary.getAddressNickName();
         if (TextUtils.isEmpty(nick)) {
             nick = "";
+        } else {
+            area = " - " + area;
         }
-        String area = TextUtils.isEmpty(addressSummary.getArea()) ? "" :
-                " - " + addressSummary.getArea() + "\n";
         String cityName = addressSummary.getCityName();
         String slot = !showSlotTime || TextUtils.isEmpty(addressSummary.getSlot()) ? "" :
                 "\n" + addressSummary.getSlot();
@@ -138,6 +141,11 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
         spannableString.setSpan(new AbsoluteSizeSpan(12, true),
                 nick.length() + area.length(), spannableString.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        if (!TextUtils.isEmpty(cityName)) {
+            spannableString.setSpan(new CustomTypefaceSpan("", faceRobotLight),
+                    nick.length() + area.length(), nick.length() + area.length() + cityName.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
         if (!TextUtils.isEmpty(slot)) {
             spannableString.setSpan(new StyleSpan(Typeface.ITALIC),
                     nick.length() + area.length() + cityName.length(),
