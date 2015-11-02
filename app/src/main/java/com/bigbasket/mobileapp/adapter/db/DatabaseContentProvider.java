@@ -15,7 +15,6 @@ import com.bigbasket.mobileapp.application.BaseApplication;
 public class DatabaseContentProvider extends ContentProvider {
 
     DatabaseHelper databaseHelper;
-//    private static final String AUTHORITY = "com.bigbasket.mobileapp.adapter.db.DatabaseContentProvider";
     private static final String AUTHORITY = BaseApplication.getsContext().getPackageName()+".DatabaseContentProvider";
 
     public static final Uri CONTENT_URI_PREFIX = Uri.parse("content://" + AUTHORITY);
