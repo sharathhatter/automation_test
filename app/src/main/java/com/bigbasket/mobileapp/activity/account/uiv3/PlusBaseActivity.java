@@ -1,53 +1,135 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.annotation.IntDef;
+import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.google.android.gms.auth.GoogleAuthException;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 
-import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
  */
-public abstract class PlusBaseActivity extends BaseActivity
-        implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public abstract class PlusBaseActivity extends BaseActivity {
 
-    // A magic number we will use to know that our sign-in error resolution activity has completed
-    private static final int RC_SIGN_IN = 49404;
-    // A flag to track when a connection is already in progress
-    public boolean mPlusClientIsConnecting = false;
-    protected boolean mIsInLogoutMode;
-    // A flag to stop multiple dialogues appearing for the user
-    private boolean mAutoResolveOnFail;
-    // This is the helper object that connects to Google Play Services.
+    private static final String TAG = "PlusBaseActivity";
+
+    /* RequestCode for resolutions involving sign-in */
+    private static final int RC_RESOLVE_CONNECT_ERROR = 49404;
+    private static final int RC_RESOLVE_AUTH_ERROR = 49405;
+
+    // An integer error argument for play services error dialog
+    private static final String DIALOG_ERROR = "dialog_error";
+
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({NONE, SIGN_IN, SIGN_OUT, REVOKE})
+    private  @interface ConnectionMode {
+    }
+    private static final int NONE = 0;
+    private static final int SIGN_IN = 1;
+    private static final int REVOKE = 2;
+    private static final int SIGN_OUT = 3;
+
+    private  @ConnectionMode int mConnectionMode = NONE;
+
+    /* Keys for persisting instance variables in savedInstanceState */
+    private static final String KEY_IS_RESOLVING = "is_resolving";
+    private static final String KEY_CONNECTION_MODE = "connection_mode";
+
+    /* Client for accessing Google APIs */
     private GoogleApiClient mGoogleApiClient;
-    // The saved result from {@link #onConnectionFailed(ConnectionResult)}.  If a connection
-    // attempt has been made, this is non-null.
-    // If this IS null, then the connect method is still running.
-    private ConnectionResult mConnectionResult;
-    // A flag to track if connection is being established to revoke access
-    private boolean mRevokeAccess;
+
+    // [START resolution_variables]
+    /* Is there a ConnectionResult resolution in progress? */
+    private boolean mIsResolving = false;
+    // [END resolution_variables]
+
+    /**
+     * Email scope for Google APIs,
+     * replace this with Scopes.EMAIL after updating play services lib version to 8.x.x
+     */
+    private static final String SCOPE_EMAIL = "https://www.googleapis.com/auth/userinfo.email";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Restore from saved instance state
+        // [START restore_saved_instance_state]
+        if (savedInstanceState != null) {
+            mIsResolving = savedInstanceState.getBoolean(KEY_IS_RESOLVING);
+            @ConnectionMode int mode = savedInstanceState.getInt(KEY_CONNECTION_MODE, NONE);
+            mConnectionMode = mode;
+            if(mConnectionMode != NONE){
+                initializeGoogleApiClient();
+            }
+        }
+        // [END restore_saved_instance_state]
+    }
+
+    // [START on_start_on_stop]
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(mConnectionMode != NONE && mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+    // [END on_start_on_stop]
+
+    // [START on_save_instance_state]
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_IS_RESOLVING, mIsResolving);
+        outState.putInt(KEY_CONNECTION_MODE, mConnectionMode);
+    }
+    // [END on_save_instance_state]
 
     /**
      * Called when the PlusClient revokes access to this app.
      */
-    protected abstract void onPlusClientRevokeAccess();
+    protected void onPlusClientRevokeAccess(){
+        hideProgressView();
+    }
+
+    /**
+     * Failed to revoke the client
+     */
+    protected void onPlusClientRevokeFailed(){
+        hideProgressView();
+    }
 
     /**
      * Called when the PlusClient is successfully connected.
@@ -55,274 +137,229 @@ public abstract class PlusBaseActivity extends BaseActivity
     protected abstract void onPlusClientSignIn(String authToken);
 
     /**
+     * Called when failed to obtain auth token
+     */
+    protected void onPlusClientSignInFailed(){
+        hideProgressView();
+    }
+
+    /**
      * Called when the PlusClient is disconnected.
      */
     protected abstract void onPlusClientSignOut();
 
     /**
-     * Called when the PlusClient is blocking the UI.  If you have a progress bar widget,
-     * this tells you when to show or hide it.
+     * Called when failed to signout
      */
-    protected abstract void onPlusClientBlockingUI(boolean show);
+    protected void onPlusClientSignOutFailed(){
+        hideProgressView();
+    }
 
-    /**
-     * Called when there is a change in connection state.  If you have "Sign in"/ "Connect",
-     * "Sign out"/ "Disconnect", or "Revoke access" buttons, this lets you know when their states
-     * need to be updated.
-     */
-    protected abstract void updatePlusConnectedButtonState();
+    protected void onPlusClientConnected(){
 
-    public void initializeGooglePlusSignIn() {
-        // Initialize the PlusClient connection.
-        // Scopes indicate the information about the user your application will be able to access.
+    }
+    protected void onPlusClientConnectFailed(){
+        hideProgressView();
+
+    }
+
+    private void initializeGoogleApiClient() {
+        // [START create_google_api_client]
+        // Build GoogleApiClient with access to basic profile
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .addScope(new Scope(Scopes.PROFILE))
+                .addScope(new Scope(SCOPE_EMAIL))
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle bundle) {
+                        if (!isFinishing() && !isSuspended()) {
+                            onGoogleClientConnected(bundle);
+                        }
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int cause) {
+                        // The connection to Google Play services was lost.
+                        // The GoogleApiClient will automatically attempt to re-connect.
+                        // Any UI elements that depend on connection to Google APIs should
+                        // be hidden or disabled until onConnected is called again.
+                        Log.w(TAG, "onConnectionSuspended:" + cause);
+                    }
+                })
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(ConnectionResult connectionResult) {
+                        // Could not connect to Google Play Services.
+                        // The user needs to select an account, grant permissions or resolve
+                        // an error in order to sign in. Refer to the javadoc for
+                        // ConnectionResult to see possible error codes.
+                        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+                        if (mIsResolving) {
+                            // Already attempting to resolve an error.
+                            return;
+                        } else if (connectionResult.hasResolution()) {
+                            try {
+                                mIsResolving = true;
+                                connectionResult.startResolutionForResult(PlusBaseActivity.this,
+                                        RC_RESOLVE_CONNECT_ERROR);
+                            } catch (IntentSender.SendIntentException e) {
+                                // There was an error with the resolution intent. Try again.
+                                mGoogleApiClient.connect();
+                            }
+                        } else {
+                            showGoogleClientConnectionErrorDialog(connectionResult.getErrorCode());
+                            mIsResolving = false;
+                        }
+                    }
+                })
                 .build();
+        // [END create_google_api_client]
     }
 
     /**
-     * Try to sign in the user.
+     * Try to sign in the user. Automatically resolve any errors and display erros
      */
-    public void signInViaGPlus() {
-        if (mGoogleApiClient == null) return;
-        if (!mGoogleApiClient.isConnected()) {
-            // Show the dialog as we are now signing in.
-            setProgressBarVisible(true);
-            // Make sure that we will start the resolution (e.g. fire the intent and pop up a
-            // dialog for the user) for any errors that come in.
-            mAutoResolveOnFail = true;
-            // We should always have a connection result ready to resolve,
-            // so we can start that process.
-            if (mConnectionResult != null) {
-                startResolution();
-            } else {
-                // If we don't have one though, we can start connect in
-                // order to retrieve one.
-                initiatePlusClientConnect();
-            }
-        }
-
-        updatePlusConnectedButtonState();
-    }
-
-    /**
-     * Connect the PlusClient only if a connection isn't already in progress.  This will
-     * call back to {@link #onConnected(android.os.Bundle)} or
-     * {@link #onConnectionFailed(com.google.android.gms.common.ConnectionResult)}.
-     */
-    public void initiatePlusClientConnect() {
-        if (mGoogleApiClient == null) return;
-        if (!mGoogleApiClient.isConnecting()) {
-            if (!mGoogleApiClient.isConnected()) {
-                mGoogleApiClient.connect();
-            } else {
-                onConnected(null);
-            }
-        }
-    }
-
-    public void initiatePlusClientDisconnect() {
-        if (mGoogleApiClient == null) return;
-        if (mGoogleApiClient.isConnected()) {
+    protected void signInViaGPlus() {
+        // User clicked the sign-in button, so begin the sign-in process and automatically
+        // attempt to resolve any errors that occur.
+        Log.d(TAG, "signInViaGPlus");
+        mConnectionMode = SIGN_IN;
+        if(mGoogleApiClient != null){
             mGoogleApiClient.disconnect();
         }
+        //Always start with a fresh client for signin
+        initializeGoogleApiClient();
+        mGoogleApiClient.connect();
     }
 
     /**
      * Sign out the user (so they can switch to another account).
      */
-    public void signOutFromGplus() {
-        if (mGoogleApiClient == null) return;
+    protected void signOutFromGplus() {
+        Log.d(TAG, "signOutFromGplus");
+        mConnectionMode = SIGN_OUT;
+        if(mGoogleApiClient == null) {
+            initializeGoogleApiClient();
+        }
 
         // We only want to sign out if we're connected.
         if (mGoogleApiClient.isConnected()) {
-            // Clear the default account in order to allow the user to potentially choose a
-            // different account from the account chooser.
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-            mGoogleApiClient.disconnect();
-
-            // Disconnect from Google Play Services, then reconnect in order to restart the
-            // process from scratch.
-            initiatePlusClientDisconnect();
-            onPlusClientSignOut();
-        }
-
-        updatePlusConnectedButtonState();
-    }
-
-    /**
-     * Revoke Google+ authorization completely.
-     */
-    public void revokeGPlusAccess() {
-        if (mGoogleApiClient == null) return;
-
-        if (mGoogleApiClient.isConnected()) {
-            // Clear the default account as in the Sign Out.
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-            Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
-                @Override
-                public void onResult(Status status) {
-
-                    // Revoke access to this entire application. This will call back to
-                    // onAccessRevoked when it is complete, as it needs to reach the Google
-                    // authentication servers to revoke all tokens.
-                    hideProgressDialog();
-                    onPlusClientRevokeAccess();
-                }
-            });
+            signOut();
         } else {
-            mRevokeAccess = true;
-            initiatePlusClientConnect();
+            mGoogleApiClient.connect();
         }
-
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        initiatePlusClientDisconnect();
-    }
-
-    private void setProgressBarVisible(boolean flag) {
-        mPlusClientIsConnecting = flag;
-        onPlusClientBlockingUI(flag);
-    }
-
-    /**
-     * A helper method to flip the mResolveOnFail flag and start the resolution
-     * of the ConnectionResult from the failed connect() call.
-     */
-    private void startResolution() {
-        if (mGoogleApiClient == null) return;
+    private void signIn() {
         try {
-            // Don't start another resolution now until we have a result from the activity we're
-            // about to start.
-            mAutoResolveOnFail = false;
-            // If we can resolve the error, then call start resolution and pass it an integer tag
-            // we can use to track.
-            // This means that when we get the onActivityResult callback we'll know it's from
-            // being started here.
-            mConnectionResult.startResolutionForResult(this, RC_SIGN_IN);
-        } catch (IntentSender.SendIntentException e) {
-            // Any problems, just try to connect() again so we get a new ConnectionResult.
-            mConnectionResult = null;
-            initiatePlusClientConnect();
-        }
-    }
-
-    /**
-     * An earlier connection failed, and we're now receiving the result of the resolution attempt
-     * by PlusClient.
-     *
-     * @see #onConnectionFailed(ConnectionResult)
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-        setSuspended(false);
-        if (mGoogleApiClient != null) {
-            updatePlusConnectedButtonState();
-        }
-        if (requestCode == RC_SIGN_IN) {
-            if (responseCode == RESULT_OK) {
-                // If we have a successful result, we will want to be able to resolve any further
-                // errors, so turn on resolution with our flag.
-                mAutoResolveOnFail = true;
-                // If we have a successful result, let's call connect() again. If there are any more
-                // errors to resolve we'll get our onConnectionFailed, but if not,
-                // we'll get onConnected.
-                initiatePlusClientConnect();
-            } else {
-                // If we've got an error we can't resolve, we're no longer in the midst of signing
-                // in, so we can stop the progress spinner.
-                setProgressBarVisible(false);
-            }
-        } else {
-            super.onActivityResult(requestCode, responseCode, intent);
-        }
-    }
-
-    /**
-     * Successfully connected (called by PlusClient)
-     */
-    @Override
-    public void onConnected(@Nullable Bundle connectionHint) {
-        if (mGoogleApiClient == null) return;
-
-        if (mRevokeAccess) {
-            mRevokeAccess = false;
-            revokeGPlusAccess();
-            return;
-        }
-
-        updatePlusConnectedButtonState();
-        setProgressBarVisible(false);
-        try {
-            new GplusAuthTokenFetcher().execute(Plus.AccountApi.getAccountName(mGoogleApiClient));
+            //TODO: Requires GET_ACCOUNTS permission, Resolve this permission on "M"
+            String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
+            fetchAuthToken(accountName);
         } catch (Exception e) {
-            e.printStackTrace();
+            Crashlytics.logException(e);
             showToast(getString(R.string.unknownError));
         }
     }
 
-    private class GplusAuthTokenFetcher extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPreExecute() {
-//            setProgressBarVisible(true);
-        }
+    private void signOut(){
+        clearAndRevokeAccount();
+        mGoogleApiClient.disconnect();
+        mGoogleApiClient = null;
+        onPlusClientSignOut();
+    }
 
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                return GoogleAuthUtil.getToken(getCurrentActivity(), params[0],
-                        "oauth2:" + Scopes.PLUS_LOGIN
-                                + " https://www.googleapis.com/auth/userinfo.email");
-            } catch (UserRecoverableAuthException e) {
-                startActivityForResult(e.getIntent(), RC_SIGN_IN);
-            } catch (GoogleAuthException | IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        showToast(getString(R.string.unknownError));
-                    }
-                });
+    private void fetchAuthToken(String accountName){
+        new GplusAuthTokenFetcher(this).execute(accountName);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
+
+        if (requestCode == RC_RESOLVE_CONNECT_ERROR) {
+            mIsResolving = false;
+            if (resultCode == RESULT_OK) {
+                // Make sure the app is not already connected or attempting to connect
+                if (!mGoogleApiClient.isConnecting() &&
+                        !mGoogleApiClient.isConnected()) {
+                    mGoogleApiClient.connect();
+                }
+            } else {
+                //User cancelled
+                try {
+                    //Clear the selected account
+                    mGoogleApiClient.clearDefaultAccountAndReconnect();
+                } catch (IllegalStateException ex) {
+                    //Will throw exception as client not connected,
+                    //but there is no other API to clear the selected account, ignore the exception
+                }
+                onGoogleClientConnectCancelled();
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            if (isCancelled() || isSuspended() || TextUtils.isEmpty(s)) return;
-//            setProgressBarVisible(false);
-            onPlusClientSignIn(s);
+        } else if(requestCode == RC_RESOLVE_AUTH_ERROR) {
+            if (resultCode == RESULT_OK) {
+                String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                if(!TextUtils.isEmpty(accountName)){
+                    fetchAuthToken(accountName);
+                } else {
+                    if(mGoogleApiClient.isConnected()) {
+                        onGoogleClientConnected(null);
+                    } else if(!mGoogleApiClient.isConnecting()){
+                        mConnectionMode = SIGN_IN;
+                        mGoogleApiClient.connect();
+                    }
+                }
+            } else {
+                //User cancelled
+                onAuthCancelled();
+            }
+        }else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    /**
-     * Connection failed for some reason (called by PlusClient)
-     * Try and resolve the result.  Failure here is usually not an indication of a serious error,
-     * just that the user's input is needed.
-     *
-     * @see #onActivityResult(int, int, Intent)
-     */
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        if (mGoogleApiClient == null) return;
+    private void onGoogleClientConnected(Bundle bundle) {
+        if (mGoogleApiClient == null || isSuspended()) return;
+        onPlusClientConnected();
+        switch (mConnectionMode){
+            case SIGN_IN:
+                signIn();
+                break;
+            case SIGN_OUT:
+                signOut();
+                break;
+            case REVOKE:
+                clearAndRevokeAccount();
+                break;
+        }
+        resetConnectionMode();
 
-        updatePlusConnectedButtonState();
+    }
 
-        // Most of the time, the connection will fail with a user resolvable result. We can store
-        // that in our mConnectionResult property ready to be used when the user clicks the
-        // sign-in button.
-        if (result.hasResolution()) {
-            mConnectionResult = result;
-            if (mAutoResolveOnFail) {
-                // This is a local helper function that starts the resolution of the problem,
-                // which may be showing the user an account chooser or similar.
-                startResolution();
-            }
+    private void onGoogleClientConnectFailed() {
+        onPlusClientConnectFailed();
+        invokeFailedCallBack();
+        resetConnectionMode();
+    }
+    private void onGoogleClientConnectCancelled() {
+        onPlusClientConnectFailed();
+        invokeFailedCallBack();
+        resetConnectionMode();
+    }
+
+    private void invokeFailedCallBack(){
+        switch (mConnectionMode){
+            case SIGN_IN:
+                //TODO: Pass the error code
+                onPlusClientSignInFailed();
+                break;
+            case SIGN_OUT:
+                onPlusClientSignOutFailed();
+                break;
+            case REVOKE:
+                onPlusClientRevokeFailed();
+                break;
         }
     }
 
@@ -330,10 +367,164 @@ public abstract class PlusBaseActivity extends BaseActivity
         return mGoogleApiClient;
     }
 
-    @Override
-    public void onConnectionSuspended(int cause) {
-        if (mGoogleApiClient == null) return;
-
-        mGoogleApiClient.connect();
+    private void clearAndRevokeAccount(){
+        try {
+            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+        } catch (IllegalStateException ex){
+            //Ignore, google client is not connected
+        }
+        try {
+            PendingResult<Status> pr = Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
+            pr.setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    onPlusClientRevokeAccess();
+                }
+            });
+            //TODO: wait for pr to complete
+        } catch (IllegalStateException ex){
+            //Ignore for now
+        }
     }
+
+    private void onAuthFailed(Exception authException) {
+        if(authException != null){
+            if(authException instanceof UserRecoverableAuthException) {
+                startActivityForResult(((UserRecoverableAuthException)authException).getIntent(),
+                        RC_RESOLVE_AUTH_ERROR);
+            } else {
+                //TODO: Show error and retry if is IOException
+                onPlusClientSignInFailed();
+                clearAndRevokeAccount();
+                hideProgressView();
+            }
+        }
+    }
+
+    private void onAuthCancelled(){
+        clearAndRevokeAccount();
+        onPlusClientSignInFailed();
+    }
+
+
+    private void onAuthComplete(String authToken) {
+        mGoogleApiClient.disconnect();
+        mGoogleApiClient = null;
+        onPlusClientSignIn(authToken);
+    }
+
+    /* Creates a dialog for an error message */
+    private void showGoogleClientConnectionErrorDialog(int errorCode) {
+        // Create a fragment for the error dialog
+        GooglePlayServicesErrorDialogFragment dialogFragment = new GooglePlayServicesErrorDialogFragment();
+        // Pass the error that should be displayed
+        Bundle args = new Bundle();
+        args.putInt(DIALOG_ERROR, errorCode);
+        dialogFragment.setArguments(args);
+        dialogFragment.show(getSupportFragmentManager(), "errordialog");
+    }
+
+    /* Called from GooglePlayServicesErrorDialogFragment when the dialog is dismissed. */
+    private void onDialogDismissed() {
+        mIsResolving = false;
+        onGoogleClientConnectFailed();
+    }
+
+    private void resetConnectionMode(){
+        mConnectionMode = NONE;
+    }
+
+
+    protected void revokeGPlusAccess() {
+        Log.d(TAG, "revokeGPlusAccess");
+        mConnectionMode = REVOKE;
+        if(mGoogleApiClient == null) {
+            initializeGoogleApiClient();
+        }
+
+        // We only want to revoke if we're connected.
+        if (mGoogleApiClient.isConnected()) {
+            clearAndRevokeAccount();
+            mGoogleApiClient = null;
+        } else {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    /* A fragment to display an error dialog */
+    public static class GooglePlayServicesErrorDialogFragment extends DialogFragment {
+        public GooglePlayServicesErrorDialogFragment() { }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Get the error code and retrieve the appropriate dialog
+            int errorCode = this.getArguments().getInt(DIALOG_ERROR);
+            return GooglePlayServicesUtil.getErrorDialog(errorCode, this.getActivity(),
+                    RC_RESOLVE_CONNECT_ERROR);
+
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            if(getActivity() instanceof  PlusBaseActivity) {
+                ((PlusBaseActivity) getActivity()).onDialogDismissed();
+            }
+        }
+    }
+
+    private class GplusAuthTokenFetcher extends AsyncTask<String, Void, AuthTokenResult> {
+
+        private final Activity activity;
+
+        public GplusAuthTokenFetcher(Activity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        protected AuthTokenResult doInBackground(String... params) {
+            AuthTokenResult result = new AuthTokenResult();
+            try {
+                result.setAuthToken(GoogleAuthUtil.getToken(activity, params[0],
+                        "oauth2:" + Scopes.PROFILE + " " + SCOPE_EMAIL));
+            } catch (Exception e) {
+                result.setAuthException(e);
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(AuthTokenResult result) {
+            if (isCancelled()) {
+                onAuthCancelled();
+                return;
+            }
+            if(TextUtils.isEmpty(result.getAuthToken())) {
+                onAuthFailed(result.getAuthException());
+            } else {
+                onAuthComplete(result.getAuthToken());
+            }
+        }
+    }
+
+    private static class AuthTokenResult {
+        String authToken;
+        Exception authException;
+
+        public String getAuthToken() {
+            return authToken;
+        }
+
+        public void setAuthToken(String authToken) {
+            this.authToken = authToken;
+        }
+
+        public Exception getAuthException() {
+            return authException;
+        }
+
+        public void setAuthException(Exception authException) {
+            this.authException = authException;
+        }
+    }
+
 }

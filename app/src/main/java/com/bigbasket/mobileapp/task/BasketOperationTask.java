@@ -136,9 +136,7 @@ public class BasketOperationTask<T> {
 
     private T context;
     private Product product;
-    private
-    @BasketOperation.Mode
-    int basketOperation;
+    private @BasketOperation.Mode int basketOperation;
     private String qty;
     private WeakReference<TextView> basketCountTextView;
     private WeakReference<View> viewIncQty;

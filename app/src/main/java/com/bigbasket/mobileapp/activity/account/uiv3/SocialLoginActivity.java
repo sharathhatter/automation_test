@@ -43,6 +43,8 @@ import retrofit.RetrofitError;
 
 public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActivity {
 
+    private boolean mIsInLogoutMode;
+
     public void setUpSocialButtons(View btnGoogleLogin, View btnFacebookLoginButton) {
         btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,8 +58,9 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
                 switch (playServicesAvailable) {
                     case ConnectionResult.SUCCESS:
-                        initializeGooglePlusSignIn();
+                        //initializeGoogleApiClient();
                         logSignInBtnClickEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE);
+                        showProgressDialog(getString(R.string.please_wait));
                         signInViaGPlus();
                         break;
                     default:
@@ -89,16 +92,20 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     @Override
     protected void onPlusClientSignIn(String authToken) {
-        if (mIsInLogoutMode) {
-            hideProgressDialog();
-            signOutFromGplus();
-            return;
-        }
         startSocialLogin(SocialAccountType.GP, authToken);
     }
 
+    @Override
+    protected void onPlusClientSignInFailed() {
+        hideProgressView();
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError();
+        } else {
+            showToast(getString(R.string.common_google_play_services_sign_in_failed_title));
+        }
+    }
+
     private void startSocialLogin(String loginType, String authToken) {
-        showProgressDialog(getString(R.string.please_wait));
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         bigBasketApiService.socialLogin(loginType, authToken,
                 new LoginApiResponseCallback(null,
@@ -115,34 +122,8 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     }
 
     @Override
-    protected void onPlusClientRevokeAccess() {
-        initializeGooglePlusSignIn();
-    }
-
-    @Override
-    protected void onPlusClientBlockingUI(boolean show) {
-        if (show) {
-            showProgressDialog(getString(R.string.please_wait));
-        } else {
-            hideProgressDialog();
-        }
-    }
-
-    @Override
     protected void onPlusClientSignOut() {
         doLogout();
-    }
-
-    @Override
-    protected void updatePlusConnectedButtonState() {
-        if (getPlusClient() == null || isSuspended()) return;
-
-        boolean connected = getPlusClient().isConnected();
-        if (connected) {
-            showProgressDialog(getString(R.string.please_wait));
-        } else {
-            hideProgressDialog();
-        }
     }
 
     @Override
@@ -178,6 +159,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 case Constants.SOCIAL_LOGOUT:
                     if (valuePassed != null) {
                         if (valuePassed.equals(SocialAccountType.GP)) {
+                            showProgressDialog(getString(R.string.please_wait));
                             signOutFromGplus();
                         } else if (valuePassed.equals(SocialAccountType.FB)) {
                             revokeFbAccess();
@@ -189,7 +171,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     }
 
     @Override
-    public void revokeGPlusAccess() {
+    protected void revokeGPlusAccess() {
         showProgressDialog(getString(R.string.please_wait));
         super.revokeGPlusAccess();
     }
@@ -211,9 +193,8 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 case SocialAccountType.GP:
                     mIsInLogoutMode = true;
                     if (UIUtil.isPhoneWithGoogleAccount(this)) {
-                        initializeGooglePlusSignIn();
                         showProgressDialog(getString(R.string.please_wait));
-                        initiatePlusClientConnect();
+                        signOutFromGplus();
                     } else {
                         doLogout();
                     }
