@@ -639,7 +639,7 @@ public class Constants {
     public static final String STORE_IMG = "image_name";
     public static final String DELIVERY_TIME = "delivery_time";
     public static final String STORE_TIMINGS = "op_time";
-    public static final String STORE_LIST = "store-list";
+    public static final String STORE_LIST = "store_list";
     public static final String STORES = "stores";
 
     // Basket page
