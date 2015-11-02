@@ -114,6 +114,7 @@ int calculateVersionCodeFromDpi(int dpi, int delta) {
     return ("" + minSdk + (dpi / 10) + versionCode).toInteger()
 }
 
+
 dependencies {
     compile files('libs/localytics.jar')
     compile project(':androidImageSlider')
