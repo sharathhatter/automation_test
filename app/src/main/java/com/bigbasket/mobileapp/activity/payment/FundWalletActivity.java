@@ -1,9 +1,9 @@
 package com.bigbasket.mobileapp.activity.payment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -101,7 +101,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.mobikwikPrefName),
+                Context.MODE_PRIVATE);
         String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
         if (!TextUtils.isEmpty(txnId)) {
             String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);

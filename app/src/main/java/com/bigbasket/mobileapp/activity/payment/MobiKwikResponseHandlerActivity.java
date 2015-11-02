@@ -1,9 +1,9 @@
 package com.bigbasket.mobileapp.activity.payment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -19,10 +19,11 @@ public class MobiKwikResponseHandlerActivity extends BackButtonActivity {
         String txnId = intent.getStringExtra(Constants.MOBIKWIK_ORDER_ID);
         String statusCode = intent.getStringExtra(Constants.MOBIKWIK_STATUS_CODE);
 
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.putString(Constants.MOBIKWIK_ORDER_ID, txnId);
-        editor.putString(Constants.MOBIKWIK_STATUS, statusCode);
-        editor.apply();
+        SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.mobikwikPrefName),
+                Context.MODE_PRIVATE).edit();
+        editor.putString(Constants.MOBIKWIK_ORDER_ID, txnId)
+                .putString(Constants.MOBIKWIK_STATUS, statusCode)
+                .apply();
         finish();
     }
 }

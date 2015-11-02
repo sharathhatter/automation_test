@@ -403,4 +403,5 @@
     <string name="store_empty">Sorry, Currently we do not have any speciality stores for\u0020</string>
     <string name="available_in">\u0020available \nin </string>
     <string name="adding_newStores">\n\nWe will be adding new stores in this location soon.Mean while, please checkout other categories.\nThanks!</string>
+    <string name="mobikwikPrefName">com.bigbasket.mobileapp.MOBIKWIK_RESP</string>
 </resources>
