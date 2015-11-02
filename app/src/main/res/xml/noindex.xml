@@ -1,34 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search-engine>
-
-    <!-- // individual URIs
-     <noindex uri="http://bigbasket.com/promo" />
-
-     // http
-     <noindex uriPrefix="http://bigbasket.com/promo" />
-     <noindex uriPrefix="http://bigbasket.com/feedback" />
-     <noindex uriPrefix="http://bigbasket.com/order" />
-     <noindex uriPrefix="http://bigbasket.com/wallet" />
-     <noindex uriPrefix="http://bigbasket.com/order_items" />
-     <noindex uriPrefix="http://bigbasket.com/sl" />
-     <noindex uriPrefix="http://bigbasket.com/sl_summary" />
-     <noindex uriPrefix="http://bigbasket.com/basket" />
-     <noindex uriPrefix="http://bigbasket.com/inbox" />
-     <noindex uriPrefix="http://bigbasket.com/home" />
-
-     // https
-     <noindex uriPrefix="https://bigbasket.com/promo" />
-     <noindex uriPrefix="https://bigbasket.com/feedback" />
-     <noindex uriPrefix="https://bigbasket.com/order" />
-     <noindex uriPrefix="https://bigbasket.com/wallet" />
-     <noindex uriPrefix="https://bigbasket.com/order_items" />
-     <noindex uriPrefix="https://bigbasket.com/sl" />
-     <noindex uriPrefix="https://bigbasket.com/sl_summary" />
-     <noindex uriPrefix="https://bigbasket.com/basket" />
-     <noindex uriPrefix="https://bigbasket.com/inbox" />
-     <noindex uriPrefix="https://bigbasket.com/home" />-->
-
-    // custom URI scheme
+    <!-- custom URI scheme-->
     <noindex uriPrefix="bigbasket://promo" />
     <noindex uriPrefix="bigbasket://feedback" />
     <noindex uriPrefix="bigbasket://order" />
