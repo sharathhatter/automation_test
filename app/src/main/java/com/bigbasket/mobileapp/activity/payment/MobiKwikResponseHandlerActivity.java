@@ -19,7 +19,7 @@ public class MobiKwikResponseHandlerActivity extends BackButtonActivity {
         String txnId = intent.getStringExtra(Constants.MOBIKWIK_ORDER_ID);
         String statusCode = intent.getStringExtra(Constants.MOBIKWIK_STATUS_CODE);
 
-        SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.mobikwikPrefName),
+        SharedPreferences.Editor editor = getSharedPreferences(Constants.MOBIKWIK_PREFERENCE_NAME,
                 Context.MODE_PRIVATE).edit();
         editor.putString(Constants.MOBIKWIK_ORDER_ID, txnId)
                 .putString(Constants.MOBIKWIK_STATUS, statusCode)

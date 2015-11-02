@@ -101,7 +101,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = getSharedPreferences(getString(R.string.mobikwikPrefName),
+        SharedPreferences preferences = getSharedPreferences(Constants.MOBIKWIK_PREFERENCE_NAME,
                 Context.MODE_PRIVATE);
         String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
         if (!TextUtils.isEmpty(txnId)) {

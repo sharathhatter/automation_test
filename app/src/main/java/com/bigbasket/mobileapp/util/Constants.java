@@ -648,4 +648,7 @@ public class Constants {
     public static final int STANDARD_TAB_INDEX = 0;
     public static final int EXPRESS_TAB_INDEX = 1;
     public static final int DEFAULT_TAB_INDEX = 0;
+
+    // Mobikwik Preference name
+    public static final String MOBIKWIK_PREFERENCE_NAME = "mobi_kwik_resp_pref";
 }
