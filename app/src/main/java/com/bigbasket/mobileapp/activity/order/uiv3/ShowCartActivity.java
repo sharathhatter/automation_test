@@ -7,14 +7,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,10 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -326,6 +321,12 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
             TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
             pageTitleStrip.setVisibility(View.GONE);
+            if (!mViewPager.isShown()) {
+                mViewPager.setVisibility(View.VISIBLE);
+            }
+            ViewGroup base = (ViewGroup) findViewById(R.id.empty_cart);
+            if (base.isShown()) base.setVisibility(View.GONE);
+
             ArrayList<BBTab> bbTabs = new ArrayList<>();
 
             createTabFragment(getString(R.string.stnd_delivery), baseImgUrl,
@@ -363,17 +364,11 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
     }
 
     private void showBasketEmptyMessage() {
-
-        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.realative_show_cart);
-        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
         TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
-        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_show_cart);
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layoutCheckoutFooter);
         ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
 
-        LayoutInflater inflater = getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_empty_data_text, relativeLayout, false);
+        ViewGroup base = (ViewGroup) findViewById(R.id.empty_cart);
 
         ImageView imgEmptyPage = (ImageView) base.findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setImageResource(R.drawable.empty_basket);
@@ -393,10 +388,11 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         toolbar.setTitle(getString(R.string.my_basket_header));
         if (basketMenuItem != null) basketMenuItem.setVisible(false);
 
-        appBarLayout.removeView(pageTitleStrip);
-        coordinatorLayout.removeView(mViewPager);
-        relativeLayout.removeView(linearLayout);
-        frameLayout.addView(base);
+        pageTitleStrip.setVisibility(View.GONE);
+        mViewPager.setVisibility(View.GONE);
+        linearLayout.setVisibility(View.GONE);
+        base.setVisibility(View.VISIBLE);
+
         markBasketChanged(null);
     }
 
@@ -423,11 +419,15 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
 
     private void renderTabsDataToView(ArrayList<CartItemList> cartItemListsStnd, ArrayList<CartItemList> cartItemListsExp, String baseImgUrl) {
         final ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
+        if (!mViewPager.isShown()) mViewPager.setVisibility(View.VISIBLE);
         TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
+        ViewGroup base = (ViewGroup) findViewById(R.id.empty_cart);
+        if (base.isShown()) base.setVisibility(View.GONE);
+
         ArrayList<BBTab> bbTabs = new ArrayList<>();
 
         if (cartItemListsStnd.size() > 0 && cartItemListsExp.size() > 0) {
-            pageTitleStrip.setVisibility(View.VISIBLE);
+            if (!pageTitleStrip.isShown()) pageTitleStrip.setVisibility(View.VISIBLE);
             createTabFragment(getString(R.string.stnd_delivery), baseImgUrl,
                     cartItemListsStnd, fulfillmentInfos, annotationInfoArrayList, bbTabs, Constants.STANDARD_TAB_INDEX);
             createTabFragment(getString(R.string.exp_delivery), baseImgUrl,
@@ -446,11 +446,11 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
                 bbTabs);
         mViewPager.setAdapter(tabPagerAdapter);
-        pageTitleStrip.getSelectedTabPosition();
 
         if (pageTitleStrip.isShown()) {
             pageTitleStrip.setupWithViewPager(mViewPager);
             mViewPager.setCurrentItem(currentTabIndex);
+            pageTitleStrip.getSelectedTabPosition();
         }
         /*
         mViewPager.postDelayed(new Runnable() {
@@ -461,6 +461,11 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             }
         }, 100);
         */
+    }
+
+    @Override
+    public void markBasketChanged(@Nullable Intent data) {
+        super.markBasketChanged(null);
     }
 
     private class GenerateTabDataAsync extends AsyncTask<Void, Void, Void> {
@@ -532,11 +537,6 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             renderTabsDataToView(cartItemListsStnd, cartItemListsExp, baseImgUrl);
             hideProgressDialog();
         }
-    }
-
-    @Override
-    public void markBasketChanged(@Nullable Intent data) {
-        super.markBasketChanged(null);
     }
 
 }
