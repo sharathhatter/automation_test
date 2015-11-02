@@ -359,6 +359,7 @@
     <string name="unknownError">An unknown error occurred</string>
     <string name="saveThisLocation">USE THIS LOCATION</string>
     <string name="changeMyLocation">CHANGE MY LOCATION</string>
+
     <string name="changeMyAddress">CHANGE MY ADDRESS</string>
     <string name="preparingBasket">Preparing basket</string>
     <string name="status">Status</string>

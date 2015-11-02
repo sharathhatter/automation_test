@@ -325,6 +325,11 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="search-engine"
+            android:resource="@xml/noindex" />
+
         <activity
             android:name=".activity.product.FilterActivity"
             android:screenOrientation="portrait"
