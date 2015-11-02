@@ -55,6 +55,9 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            // FIXME: Causes crash in some samsung devices,
+            // Enable shrinkResources once gradle tool version 1.4.0 is released
+            //shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
             signingConfig signingConfigs.bigbasket
@@ -79,16 +82,13 @@ android {
         abortOnError false
     }
 
-//    Uncomment at the time of deployment, but don't commit the uncommented version to VCS.
-//    This is because build time increases significantly, due to which development time becomes slow
-//    (1.5 minutes on avg)
-//    splits {
-//        density {
-//            enable true
-//            exclude "ldpi", "tvdpi"
-//            compatibleScreens 'small', 'normal', 'large', 'xlarge'
-//        }
-//    }
+    splits {
+        density {
+            enable project.ENABLE_SPLITS != null ? project.ENABLE_SPLITS.toBoolean() : false;
+            exclude "ldpi", "tvdpi"
+            compatibleScreens 'small', 'normal', 'large', 'xlarge'
+        }
+    }
 
 
 }
