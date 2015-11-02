@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
@@ -50,13 +49,13 @@ public class DeepLinkHandler {
         }
         UtmHandler.postUtm(context.getCurrentActivity(), uri);
         switch (uri.getHost()) {
-            case Constants.HOST_BIGBASKET:
+           /* case Constants.HOST_BIGBASKET:
                 String path = uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
                 if (!TextUtils.isEmpty(path)) {
                     Log.e("", "PATH" + path);
                     return SUCCESS;
                 }
-                return FAILED;
+                return FAILED;*/
 
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);

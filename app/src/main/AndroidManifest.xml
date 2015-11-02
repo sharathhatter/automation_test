@@ -324,6 +324,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+            <!--  http schemes-->
             <!-- <intent-filter>
                  <action android:name="android.intent.action.VIEW" />
 
