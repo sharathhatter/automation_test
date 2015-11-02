@@ -42,7 +42,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ChooseLocationActivity extends BackButtonActivity implements OnAddressChangeListener {
+public class ChooseLocationActivity extends BackButtonActivity implements OnAddressChangeListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
     private AddressSummary mChosenAddressSummary;
@@ -139,6 +140,11 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     public void onConnected(Bundle connectionHint) {
         updateLastKnownLocation(false, false);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 
     private void updateLastKnownLocation(boolean setAsCurrentAddress, boolean autoMode) {

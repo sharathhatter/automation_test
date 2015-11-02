@@ -63,6 +63,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -744,7 +745,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             getProducts(mViewPager != null ? mViewPager.getCurrentItem() : 0);
         } else if (resultCode == NavigationCodes.BASKET_CHANGED) {
             if (data != null && !TextUtils.isEmpty(data.getStringExtra(Constants.SKU_ID)) &&
-                    data.getIntExtra(Constants.PRODUCT_NO_ITEM_IN_CART, 0) > 0) {
+                    data.getIntExtra(Constants.PRODUCT_NO_ITEM_IN_CART, 0) > 0 && mCartInfo != null) {
                 mCartInfo.put(data.getStringExtra(Constants.SKU_ID),
                         data.getIntExtra(Constants.PRODUCT_NO_ITEM_IN_CART, 0));
                 setCartInfo(mCartInfo);
@@ -906,16 +907,21 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, View btnAddToBasket, Product product,
-                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
-                                                    @Nullable EditText editTextQty) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
-                viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
-        if (cartInfoMap != null) {
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
+                                                    Product product, String qty,
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextViewRef, viewDecQtyRef,
+                viewIncQtyRef, btnAddToBasketRef, product, qty, productViewRef, cartInfoMapRef, editTextQtyRef);
+        if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
             // Sync local cartInfoMap with this one
             //mCartInfo = cartInfoMap;
-            setCartInfo(cartInfoMap);
+            setCartInfo(cartInfoMapRef.get());
             // Update in-memory fragments
 //            if (mViewPager != null) { // if list page don't have tabs
 //                if(mViewPager.getCurrentItem() == 1){

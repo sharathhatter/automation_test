@@ -1,10 +1,11 @@
-package com.bigbasket.mobileapp.handler.payment;
+package com.bigbasket.mobileapp.factory.payment.impl;
 
 import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.WibmoSDKConfig;
@@ -13,14 +14,17 @@ import com.enstage.wibmo.sdk.inapp.pojo.MerchantInfo;
 import com.enstage.wibmo.sdk.inapp.pojo.TransactionInfo;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 
-public class PayzappInitializer {
+public class HDFCPayzappPayment {
 
-    public static void initiate(Activity activity, PayzappPostParams payzappPostParams) {
-        new PayzappTriggerAsyncTask(activity).execute(payzappPostParams);
+    public void startPaymentGateway(PayzappPostParams payzappPostParams, Activity ctx) {
+        new PayzappTriggerAsyncTask(ctx).execute(payzappPostParams);
     }
 
     private static void startHDFCPayzapp(PayzappPostParams payzappPostParams,
                                          Activity activity) {
+        if (activity instanceof PaymentTxnInfoAware) {
+            ((PaymentTxnInfoAware) activity).setTxnId(payzappPostParams.getTxnId());
+        }
         WPayInitRequest wPayInitRequest = new WPayInitRequest();
 
         TransactionInfo transactionInfo = new TransactionInfo();
@@ -83,5 +87,4 @@ public class PayzappInitializer {
             startHDFCPayzapp(payzappPostParams, activity);
         }
     }
-
 }

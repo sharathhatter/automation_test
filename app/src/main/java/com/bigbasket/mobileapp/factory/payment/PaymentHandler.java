@@ -1,33 +1,43 @@
-package com.bigbasket.mobileapp.handler.payment;
+package com.bigbasket.mobileapp.factory.payment;
 
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
+import com.bigbasket.mobileapp.factory.payment.impl.HDFCPayzappPayment;
+import com.bigbasket.mobileapp.factory.payment.impl.MobikwikPayment;
+import com.bigbasket.mobileapp.factory.payment.impl.PaytmPayment;
+import com.bigbasket.mobileapp.factory.payment.impl.PayuPayment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.payment.MobikwikAware;
-import com.bigbasket.mobileapp.interfaces.payment.PayTMPaymentAware;
-import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
-import com.bigbasket.mobileapp.interfaces.payment.PayzappPaymentAware;
+import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
+
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class PaymentInitiator<T> {
-    private T ctx;
-    private String potentialOrderId;
-    private String paymentMethod;
+public class PaymentHandler<T> {
+    protected T ctx;
+    protected String potentialOrderId;
+    protected String paymentMethod;
+    protected String orderId;
+    private boolean isPayNow;
+    private boolean isFundWallet;
 
-    public PaymentInitiator(T ctx, String potentialOrderId, String paymentMethod) {
+    public PaymentHandler(T ctx, String potentialOrderId, String orderId,
+                          String paymentMethod, boolean isPayNow, boolean isFundWallet) {
         this.ctx = ctx;
         this.potentialOrderId = potentialOrderId;
         this.paymentMethod = paymentMethod;
+        this.orderId = orderId;
+        this.isFundWallet = isFundWallet;
+        this.isPayNow = isPayNow;
     }
 
     public void initiate() {
@@ -45,17 +55,7 @@ public class PaymentInitiator<T> {
                     if (((CancelableAware) ctx).isSuspended()) return;
                     switch (getPrepaidPaymentApiResponse.status) {
                         case 0:
-                            switch (paymentMethod) {
-                                case Constants.PAYU:
-                                    ((PayuPaymentAware) ctx).initializePayu(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
-                                    break;
-                                case Constants.MOBIKWIK_PAYMENT:
-                                    ((MobikwikAware) ctx).initializeMobikwik(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
-                                    break;
-                                case Constants.PAYTM_WALLET:
-                                    ((PayTMPaymentAware) ctx).initializePayTm(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
-                                    break;
-                            }
+                            openGateway(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
                             break;
                         default:
                             ((HandlerAware) ctx).getHandler()
@@ -77,7 +77,7 @@ public class PaymentInitiator<T> {
                     if (((CancelableAware) ctx).isSuspended()) return;
                     switch (getPrepaidPaymentApiResponse.status) {
                         case 0:
-                            ((PayzappPaymentAware) ctx).initializeHDFCPayzapp(getPrepaidPaymentApiResponse.apiResponseContent.payzappPostParams);
+                            openPayzappGateway(getPrepaidPaymentApiResponse.apiResponseContent.payzappPostParams);
                             break;
                         default:
                             ((HandlerAware) ctx).getHandler()
@@ -93,5 +93,25 @@ public class PaymentInitiator<T> {
                 }
             });
         }
+    }
+
+    protected void openGateway(HashMap<String, String> paymentParams) {
+
+        switch (paymentMethod) {
+            case Constants.PAYU:
+                new PayuPayment().startPaymentGateway(paymentParams, ((ActivityAware) ctx).getCurrentActivity());
+                break;
+            case Constants.MOBIKWIK_PAYMENT:
+                new MobikwikPayment().startPaymentGateway(paymentParams, ((ActivityAware) ctx).getCurrentActivity());
+                break;
+            case Constants.PAYTM_WALLET:
+                new PaytmPayment().startPaymentGateway(paymentParams, ((ActivityAware) ctx).getCurrentActivity(),
+                        potentialOrderId, orderId, isPayNow, isFundWallet);
+                break;
+        }
+    }
+
+    protected void openPayzappGateway(PayzappPostParams payzappPostParams) {
+        new HDFCPayzappPayment().startPaymentGateway(payzappPostParams, ((ActivityAware) ctx).getCurrentActivity());
     }
 }

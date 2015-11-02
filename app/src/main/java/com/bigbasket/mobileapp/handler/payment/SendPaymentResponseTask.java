@@ -22,7 +22,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class PostPaymentHandler<T> {
+public class SendPaymentResponseTask<T> {
     private T ctx;
     private String potentialOrderId;
     private String paymentType;
@@ -42,8 +42,8 @@ public class PostPaymentHandler<T> {
     // For PAYTM
     private HashMap<String, String> paytmParams;
 
-    public PostPaymentHandler(T ctx, @Nullable String potentialOrderId, String paymentType,
-                              boolean status, @Nullable String orderId) {
+    public SendPaymentResponseTask(T ctx, @Nullable String potentialOrderId, String paymentType,
+                                   boolean status, @Nullable String orderId) {
         this.ctx = ctx;
         this.potentialOrderId = potentialOrderId;
         this.paymentType = paymentType;
@@ -51,47 +51,47 @@ public class PostPaymentHandler<T> {
         this.orderId = orderId;
     }
 
-    public PostPaymentHandler setPayNow(boolean payNow) {
+    public SendPaymentResponseTask setPayNow(boolean payNow) {
         this.isPayNow = payNow ? "1" : "0";
         return this;
     }
 
-    public PostPaymentHandler isWallet(boolean isWallet) {
+    public SendPaymentResponseTask isWallet(boolean isWallet) {
         this.isWallet = isWallet ? "1" : "0";
         return this;
     }
 
-    public PostPaymentHandler setPgTxnId(String pgTxnId) {
+    public SendPaymentResponseTask setPgTxnId(String pgTxnId) {
         this.pgTxnId = pgTxnId;
         return this;
     }
 
-    public PostPaymentHandler setDataPickupCode(String dataPickupCode) {
+    public SendPaymentResponseTask setDataPickupCode(String dataPickupCode) {
         this.dataPickupCode = dataPickupCode;
         return this;
     }
 
-    public PostPaymentHandler setErrResCode(String errResCode) {
+    public SendPaymentResponseTask setErrResCode(String errResCode) {
         this.errResCode = errResCode;
         return this;
     }
 
-    public PostPaymentHandler setErrResDesc(String errResDesc) {
+    public SendPaymentResponseTask setErrResDesc(String errResDesc) {
         this.errResDesc = errResDesc;
         return this;
     }
 
-    public PostPaymentHandler setTxnId(String txnId) {
+    public SendPaymentResponseTask setTxnId(String txnId) {
         this.txnId = txnId;
         return this;
     }
 
-    public PostPaymentHandler setAmount(String amount) {
+    public SendPaymentResponseTask setAmount(String amount) {
         this.amount = amount;
         return this;
     }
 
-    public PostPaymentHandler setPayTmParams(HashMap<String, String> paytmParams) {
+    public SendPaymentResponseTask setPayTmParams(HashMap<String, String> paytmParams) {
         this.paytmParams = paytmParams;
         return this;
     }
@@ -155,7 +155,8 @@ public class PostPaymentHandler<T> {
                     }
                     break;
                 default:
-                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(postPrepaidPaymentApiResponse.status, postPrepaidPaymentApiResponse.message);
+                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(postPrepaidPaymentApiResponse.status,
+                            postPrepaidPaymentApiResponse.message);
                     break;
             }
         }
