@@ -623,7 +623,7 @@
 
         <provider
             android:name=".adapter.db.DatabaseContentProvider"
-            android:authorities="com.bigbasket.mobileapp.adapter.db.DatabaseContentProvider"
+            android:authorities="${applicationId}.DatabaseContentProvider"
             android:enabled="true"
             android:exported="false"></provider>
     </application>
