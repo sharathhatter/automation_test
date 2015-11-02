@@ -34,30 +34,21 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
+import com.bigbasket.mobileapp.factory.payment.PaymentHandler;
+import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
-import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
-import com.bigbasket.mobileapp.handler.payment.PayTMInitializer;
-import com.bigbasket.mobileapp.handler.payment.PaymentInitiator;
-import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
-import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
-import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
-import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
 import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.interfaces.payment.MobikwikAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
-import com.bigbasket.mobileapp.interfaces.payment.PayTMPaymentAware;
-import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
-import com.bigbasket.mobileapp.interfaces.payment.PayzappPaymentAware;
+import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
-import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -67,7 +58,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.enstage.wibmo.sdk.WibmoSDK;
-import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
 import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
@@ -78,8 +68,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class PaymentSelectionActivity extends BackButtonActivity
-        implements PayzappPaymentAware, PayuPaymentAware,
-        OnPostPaymentListener, OnPaymentValidationListener, MobikwikAware, PayTMPaymentAware {
+        implements OnPostPaymentListener, OnPaymentValidationListener, PaymentTxnInfoAware {
 
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private ArrayList<PaymentType> mPaymentTypeList;
@@ -204,13 +193,15 @@ public class PaymentSelectionActivity extends BackButtonActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
         if (!TextUtils.isEmpty(txnId)) {
-            String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-            new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
+            new PostPaymentProcessor<>(this, txnId)
+                    .withPotentialOrderId(mPotentialOrderId)
+                    .withOrderId(mOrdersCreated.get(0).getOrderNumber())
+                    .processPayment();
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.MOBIKWIK_ORDER_ID);
             editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -393,19 +384,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
         renderCheckOutProgressView();
     }
 
-    @Override
-    public void initializeMobikwik(HashMap<String, String> paymentParams) {
-        MobikwikInitializer.initiate(paymentParams, this);
-    }
-
-    @Override
-    public void initializePayTm(HashMap<String, String> paymentParams) {
-        mTxnId = paymentParams.get("ORDER_ID");
-        String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-        PayTMInitializer.initiate(paymentParams, this,
-                new PaytmTxnCallback<>(this, fullOrderId, mPotentialOrderId, false, false));
-    }
-
     private void onVoucherApplied(String voucher, OrderDetails orderDetails,
                                   ArrayList<CreditDetails> creditDetails) {
         if (!TextUtils.isEmpty(voucher)) {
@@ -554,27 +532,14 @@ public class PaymentSelectionActivity extends BackButtonActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            if (resultCode == RESULT_OK) {
-                WPayResponse res = WibmoSDK.processInAppResponseWPay(data);
-                String pgTxnId = res.getWibmoTxnId();
-                String dataPickupCode = res.getDataPickUpCode();
-                validateHdfcPayzappResponse(pgTxnId, dataPickupCode, mTxnId);
-            } else {
-                if (data != null) {
-                    String resCode = data.getStringExtra("ResCode");
-                    String resDesc = data.getStringExtra("ResDesc");
-                    communicateHdfcPayzappResponseFailure(resCode, resDesc);
-                } else {
-                    communicateHdfcPayzappResponseFailure(null, null);
-                }
-            }
+            new PostPaymentProcessor<>(this, mTxnId)
+                    .withPotentialOrderId(mPotentialOrderId)
+                    .processPayzapp(data, resultCode, mOrderDetails.getFormattedFinalTotal());
         } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
-            String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-            if (resultCode == RESULT_OK) {
-                new ValidatePaymentHandler<>(this, mPotentialOrderId, mTxnId, fullOrderId).start();
-            } else {
-                new ValidatePaymentHandler<>(this, mPotentialOrderId, mTxnId, fullOrderId).start();
-            }
+            new PostPaymentProcessor<>(this, mTxnId)
+                    .withPotentialOrderId(mPotentialOrderId)
+                    .withOrderId(mOrdersCreated.get(0).getOrderNumber())
+                    .processPayment();
         } else {
             switch (resultCode) {
                 case NavigationCodes.VOUCHER_APPLIED:
@@ -717,40 +682,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void getPaymentParams() {
-        new PaymentInitiator<>(this, mPotentialOrderId, mSelectedPaymentMethod)
-                .initiate();
+        new PaymentHandler<>(this, mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
+                mSelectedPaymentMethod, false, false).initiate();
     }
 
     @Override
-    public void initializeHDFCPayzapp(PayzappPostParams payzappPostParams) {
-        mTxnId = payzappPostParams.getTxnId();
-        PayzappInitializer.initiate(this, payzappPostParams);
-    }
-
-    @Override
-    public void initializePayu(HashMap<String, String> paymentParams) {
-        mTxnId = paymentParams.get(PayuConstants.TXNID);
-        PayuInitializer.initiate(paymentParams, this);
-    }
-
-    private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {
-        new PostPaymentHandler<>(this, mPotentialOrderId, mSelectedPaymentMethod,
-                true, null)
-                .setDataPickupCode(dataPickupCode)
-                .setPgTxnId(pgTxnId)
-                .setTxnId(txnId)
-                .setAmount(mOrderDetails.getFormattedFinalTotal())
-                .start();
-    }
-
-    private void communicateHdfcPayzappResponseFailure(String resCode, String resDesc) {
-        new PostPaymentHandler<>(this, mPotentialOrderId, mSelectedPaymentMethod,
-                false, null)
-                .setErrResCode(resCode)
-                .setErrResDesc(resDesc)
-                .setTxnId(mTxnId)
-                .setAmount(mOrderDetails.getFormattedFinalTotal())
-                .start();
+    public void setTxnId(String txnId) {
+        mTxnId = txnId;
     }
 
     @Override

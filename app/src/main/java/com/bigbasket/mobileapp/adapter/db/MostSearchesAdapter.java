@@ -89,14 +89,15 @@ public class MostSearchesAdapter {
         contentValues.put(COLUMN_COUNT, currentCount + 1);
         if (currentCount > 0) {
             DatabaseHelper.db.update(tableName, contentValues,
-                    COLUMN_QUERY + " = \"" + DatabaseUtils.sqlEscapeString(query) + "\"", null);
+                    COLUMN_QUERY + " = " + DatabaseUtils.sqlEscapeString(query), null);
         } else {
             DatabaseHelper.db.insert(tableName, null, contentValues);
         }
     }
 
     public void deleteTerm(String term) {
-        DatabaseHelper.db.delete(tableName, COLUMN_QUERY + " = \"" + term + "\"", null);
+        DatabaseHelper.db.delete(tableName, COLUMN_QUERY + " = " +
+                DatabaseUtils.sqlEscapeString(term), null);
     }
 
     public void deleteFirstRow() {
