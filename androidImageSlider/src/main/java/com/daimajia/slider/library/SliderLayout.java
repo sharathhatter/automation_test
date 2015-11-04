@@ -95,7 +95,7 @@ public class SliderLayout extends RelativeLayout {
     /**
      * the duration between animation.
      */
-    private long mSliderDuration = 4000;
+    private long mSliderDuration = 1000;
 
     /**
      * Visibility of {@link com.daimajia.slider.library.Indicators.PagerIndicator}
