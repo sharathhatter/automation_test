@@ -2,8 +2,10 @@ package com.daimajia.slider.library;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -95,12 +97,13 @@ public class SliderLayout extends RelativeLayout {
     /**
      * the duration between animation.
      */
-    private long mSliderDuration = 4000;
+    private long mSliderDuration = 1000;
 
     /**
      * Visibility of {@link com.daimajia.slider.library.Indicators.PagerIndicator}
      */
     private PagerIndicator.IndicatorVisibility mIndicatorVisibility = PagerIndicator.IndicatorVisibility.Visible;
+
 
     public SliderLayout(Context context) {
         this(context, null);
@@ -240,6 +243,7 @@ public class SliderLayout extends RelativeLayout {
      * stop the auto circle
      */
     public void stopAutoCycle() {
+
         if (mCycleTask != null) {
             mCycleTask.cancel();
         }

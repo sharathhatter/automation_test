@@ -73,6 +73,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         getAppData(savedInstanceState);
         trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
         setNextScreenNavigationContext(TrackEventkeys.HOME);
+
     }
 
     private void homePageGetter(Bundle savedInstanceState) {

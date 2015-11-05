@@ -152,4 +152,5 @@ public class HomeActivity extends BBActivity {
         super.onResume();
         setNextScreenNavigationContext(TrackEventkeys.HOME);
     }
+
 }
