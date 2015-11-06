@@ -36,71 +36,72 @@ public class FundWalletPaymentHandler<T> extends PaymentHandler<T> {
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
         ((ProgressIndicationAware) ctx).showProgressDialog(((ActivityAware) ctx).getCurrentActivity().getString(R.string.please_wait));
-        if (paymentMethod.equals(Constants.PAYU) ||
-                paymentMethod.equals(Constants.MOBIKWIK_PAYMENT) ||
-                paymentMethod.equals(Constants.PAYTM_WALLET)) {
-            bigBasketApiService.postFundWallet(paymentMethod, amount, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
-                @Override
-                public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
-                    if (((CancelableAware) ctx).isSuspended()) return;
-                    try {
-                        ((ProgressIndicationAware) ctx).hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
+        switch (paymentMethod) {
+            case Constants.HDFC_POWER_PAY:
+                bigBasketApiService.postPayzappFundWallet(paymentMethod, amount, new Callback<ApiResponse<GetPayzappPaymentParamsResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetPayzappPaymentParamsResponse> getPayzappPaymentParamsApiResponse, Response response) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        try {
+                            ((ProgressIndicationAware) ctx).hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (getPayzappPaymentParamsApiResponse.status) {
+                            case 0:
+                                openPayzappGateway(getPayzappPaymentParamsApiResponse.apiResponseContent.payzappPostParams);
+                                break;
+                            default:
+                                ((HandlerAware) ctx).getHandler().sendEmptyMessage(getPayzappPaymentParamsApiResponse.status,
+                                        getPayzappPaymentParamsApiResponse.message);
+                                break;
+                        }
                     }
-                    switch (getPrepaidPaymentApiResponse.status) {
-                        case 0:
-                            openGateway(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
-                            break;
-                        default:
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(getPrepaidPaymentApiResponse.status,
-                                    getPrepaidPaymentApiResponse.message);
-                    }
-                }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    if (((CancelableAware) ctx).isSuspended()) return;
-                    try {
-                        ((ProgressIndicationAware) ctx).hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        try {
+                            ((ProgressIndicationAware) ctx).hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
                     }
-                    ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
-                }
-            });
-        } else if (paymentMethod.equals(Constants.HDFC_POWER_PAY)) {
-            bigBasketApiService.postPayzappFundWallet(paymentMethod, amount, new Callback<ApiResponse<GetPayzappPaymentParamsResponse>>() {
-                @Override
-                public void success(ApiResponse<GetPayzappPaymentParamsResponse> getPayzappPaymentParamsApiResponse, Response response) {
-                    if (((CancelableAware) ctx).isSuspended()) return;
-                    try {
-                        ((ProgressIndicationAware) ctx).hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
+                });
+                break;
+            default:
+                bigBasketApiService.postFundWallet(paymentMethod, amount, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        try {
+                            ((ProgressIndicationAware) ctx).hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (getPrepaidPaymentApiResponse.status) {
+                            case 0:
+                                openGateway(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
+                                break;
+                            default:
+                                ((HandlerAware) ctx).getHandler().sendEmptyMessage(getPrepaidPaymentApiResponse.status,
+                                        getPrepaidPaymentApiResponse.message);
+                        }
                     }
-                    switch (getPayzappPaymentParamsApiResponse.status) {
-                        case 0:
-                            openPayzappGateway(getPayzappPaymentParamsApiResponse.apiResponseContent.payzappPostParams);
-                            break;
-                        default:
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(getPayzappPaymentParamsApiResponse.status,
-                                    getPayzappPaymentParamsApiResponse.message);
-                            break;
-                    }
-                }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    if (((CancelableAware) ctx).isSuspended()) return;
-                    try {
-                        ((ProgressIndicationAware) ctx).hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        try {
+                            ((ProgressIndicationAware) ctx).hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
                     }
-                    ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
-                }
-            });
+                });
+                break;
         }
     }
 }

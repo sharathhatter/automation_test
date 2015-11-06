@@ -2,8 +2,10 @@ package com.bigbasket.mobileapp.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.BuildConfig;
+import com.bigbasket.mobileapp.model.holders.InMemMobikwikResponseHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
@@ -18,11 +20,22 @@ public class BaseApplication extends Application {
     private static Context sContext;
 
     public BaseApplication() {
-        this.sContext = this;
+        sContext = this;
     }
 
     public static Context getsContext() {
         return sContext;
+    }
+
+    private InMemMobikwikResponseHolder inMemMobikwikResponseHolder;
+
+    public void setInMemMobikwikResponseHolder(InMemMobikwikResponseHolder inMemMobikwikResponseHolder) {
+        this.inMemMobikwikResponseHolder = inMemMobikwikResponseHolder;
+    }
+
+    @Nullable
+    public InMemMobikwikResponseHolder getInMemMobikwikResponseHolder() {
+        return inMemMobikwikResponseHolder;
     }
 
     @Override

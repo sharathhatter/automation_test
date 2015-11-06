@@ -40,7 +40,7 @@ public class PostShipmentTask<T> {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(
                 ((ActivityAware) ctx).getCurrentActivity());
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        bigBasketApiService.postShipment(new Gson().toJson(selectedShipments), potentialOrderId, "yes", "yes", "yes", "yes",
+        bigBasketApiService.postShipment(new Gson().toJson(selectedShipments), potentialOrderId, "yes", "yes", "yes", "yes", "yes",
                 new Callback<ApiResponse<PostShipmentResponseContent>>() {
                     @Override
                     public void success(ApiResponse<PostShipmentResponseContent> postShipmentResponse, Response response) {

@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.factory.payment.FundWalletPaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
@@ -28,6 +29,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.holders.InMemMobikwikResponseHolder;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -101,20 +103,17 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = getSharedPreferences(Constants.MOBIKWIK_PREFERENCE_NAME,
-                Context.MODE_PRIVATE);
-        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
-        if (!TextUtils.isEmpty(txnId)) {
-            String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
-            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
+        BaseApplication application = (BaseApplication) getApplication();
+        InMemMobikwikResponseHolder inMemMobikwikResponseHolder = application.getInMemMobikwikResponseHolder();
+        if (inMemMobikwikResponseHolder != null
+                && !TextUtils.isEmpty(inMemMobikwikResponseHolder.getMobikwikTxnId())) {
+            if (!TextUtils.isEmpty(inMemMobikwikResponseHolder.getMobikwikOrderStatus())
+                    && Integer.parseInt(inMemMobikwikResponseHolder.getMobikwikOrderStatus()) == 0) {
                 onFundWalletSuccess();
             } else {
                 onFundWalletFailure();
             }
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(Constants.MOBIKWIK_ORDER_ID);
-            editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.apply();
+            application.setInMemMobikwikResponseHolder(null);
         }
     }
 
@@ -125,7 +124,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getFundWalletPayments("yes", "yes", "yes", "yes",
+        bigBasketApiService.getFundWalletPayments("yes", "yes", "yes", "yes", "yes",
                 new Callback<ApiResponse<GetPaymentTypes>>() {
                     @Override
                     public void success(ApiResponse<GetPaymentTypes> getPaymentTypesApiResponse, Response response) {

@@ -1,8 +1,6 @@
 package com.bigbasket.mobileapp.activity.payment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +17,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.factory.payment.PayNowPaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
@@ -26,6 +25,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.holders.InMemMobikwikResponseHolder;
 import com.bigbasket.mobileapp.model.order.PayNowDetail;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
@@ -109,7 +109,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes",
+        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes", "yes",
                 new Callback<ApiResponse<GetPayNowParamsResponse>>() {
                     @Override
                     public void success(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse, Response response) {
@@ -172,21 +172,17 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = getSharedPreferences(Constants.MOBIKWIK_PREFERENCE_NAME,
-                Context.MODE_PRIVATE);
-        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
-        if (!TextUtils.isEmpty(txnId)) {
-            String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
-            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
+        BaseApplication application = (BaseApplication) getApplication();
+        InMemMobikwikResponseHolder inMemMobikwikResponseHolder = application.getInMemMobikwikResponseHolder();
+        if (inMemMobikwikResponseHolder != null
+                && !TextUtils.isEmpty(inMemMobikwikResponseHolder.getMobikwikTxnId())) {
+            if (!TextUtils.isEmpty(inMemMobikwikResponseHolder.getMobikwikOrderStatus())
+                    && Integer.parseInt(inMemMobikwikResponseHolder.getMobikwikOrderStatus()) == 0) {
                 onPayNowSuccess();
             } else {
                 onPayNowFailure();
             }
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(Constants.MOBIKWIK_ORDER_ID);
-            editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.apply();
+            application.setInMemMobikwikResponseHolder(null);
         }
     }
 

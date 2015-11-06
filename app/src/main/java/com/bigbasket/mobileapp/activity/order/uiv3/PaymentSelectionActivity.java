@@ -1,9 +1,7 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -34,6 +32,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.factory.payment.PaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
@@ -44,6 +43,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
+import com.bigbasket.mobileapp.model.holders.InMemMobikwikResponseHolder;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
@@ -190,19 +190,16 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = getSharedPreferences(Constants.MOBIKWIK_PREFERENCE_NAME,
-                Context.MODE_PRIVATE);
-        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
-        if (!TextUtils.isEmpty(txnId)) {
-            new PostPaymentProcessor<>(this, txnId)
+        BaseApplication application = (BaseApplication) getApplication();
+        InMemMobikwikResponseHolder inMemMobikwikResponseHolder = application.getInMemMobikwikResponseHolder();
+        if (inMemMobikwikResponseHolder != null
+                && !TextUtils.isEmpty(inMemMobikwikResponseHolder.getMobikwikTxnId())
+                && mOrdersCreated != null) {
+            new PostPaymentProcessor<>(this, inMemMobikwikResponseHolder.getMobikwikTxnId())
                     .withPotentialOrderId(mPotentialOrderId)
                     .withOrderId(mOrdersCreated.get(0).getOrderNumber())
                     .processPayment();
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(Constants.MOBIKWIK_ORDER_ID);
-            editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.apply();
+            application.setInMemMobikwikResponseHolder(null);
         }
     }
 
@@ -526,7 +523,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 (mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY) ||
                         mSelectedPaymentMethod.equals(Constants.PAYU) ||
                         mSelectedPaymentMethod.equals(Constants.MOBIKWIK_WALLET) ||
-                        mSelectedPaymentMethod.equals(Constants.PAYTM_WALLET));
+                        mSelectedPaymentMethod.equals(Constants.PAYTM_WALLET) ||
+                        mSelectedPaymentMethod.equals(Constants.PAYUMONEY_WALLET));
     }
 
     @Override
