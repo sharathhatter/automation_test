@@ -1,8 +1,6 @@
 package com.bigbasket.mobileapp.activity.payment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +19,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
 import com.bigbasket.mobileapp.factory.payment.PayNowPaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
@@ -109,7 +108,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes",
+        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes", "yes",
                 new Callback<ApiResponse<GetPayNowParamsResponse>>() {
                     @Override
                     public void success(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse, Response response) {
@@ -172,21 +171,14 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = getSharedPreferences(Constants.MOBIKWIK_PREFERENCE_NAME,
-                Context.MODE_PRIVATE);
-        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
+        String txnId = MobikwikResponseHandler.getLastTransactionID();
         if (!TextUtils.isEmpty(txnId)) {
-            String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
-            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
+            if (MobikwikResponseHandler.wasTransactionSuccessful()) {
                 onPayNowSuccess();
             } else {
                 onPayNowFailure();
             }
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(Constants.MOBIKWIK_ORDER_ID);
-            editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.apply();
+            MobikwikResponseHandler.clear();
         }
     }
 

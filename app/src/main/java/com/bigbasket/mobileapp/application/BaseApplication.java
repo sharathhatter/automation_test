@@ -18,7 +18,7 @@ public class BaseApplication extends Application {
     private static Context sContext;
 
     public BaseApplication() {
-        this.sContext = this;
+        sContext = this;
     }
 
     public static Context getsContext() {

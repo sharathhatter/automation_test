@@ -1,9 +1,7 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -38,6 +36,7 @@ import com.bigbasket.mobileapp.factory.payment.PaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
+import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -190,19 +189,15 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = getSharedPreferences(Constants.MOBIKWIK_PREFERENCE_NAME,
-                Context.MODE_PRIVATE);
-        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
+        String txnId = MobikwikResponseHandler.getLastTransactionID();
         if (!TextUtils.isEmpty(txnId)) {
-            new PostPaymentProcessor<>(this, txnId)
-                    .withPotentialOrderId(mPotentialOrderId)
-                    .withOrderId(mOrdersCreated.get(0).getOrderNumber())
-                    .processPayment();
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(Constants.MOBIKWIK_ORDER_ID);
-            editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.apply();
+            if (mOrdersCreated != null) {
+                new PostPaymentProcessor<>(this, txnId)
+                        .withPotentialOrderId(mPotentialOrderId)
+                        .withOrderId(mOrdersCreated.get(0).getOrderNumber())
+                        .processPayment();
+            }
+            MobikwikResponseHandler.clear();
         }
     }
 
@@ -526,7 +521,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 (mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY) ||
                         mSelectedPaymentMethod.equals(Constants.PAYU) ||
                         mSelectedPaymentMethod.equals(Constants.MOBIKWIK_WALLET) ||
-                        mSelectedPaymentMethod.equals(Constants.PAYTM_WALLET));
+                        mSelectedPaymentMethod.equals(Constants.PAYTM_WALLET) ||
+                        mSelectedPaymentMethod.equals(Constants.PAYUMONEY_WALLET));
     }
 
     @Override

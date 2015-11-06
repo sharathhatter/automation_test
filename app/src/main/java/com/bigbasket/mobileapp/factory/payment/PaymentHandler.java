@@ -46,52 +46,53 @@ public class PaymentHandler<T> {
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
-        if (paymentMethod.equals(Constants.PAYU)
-                || paymentMethod.equals(Constants.MOBIKWIK_PAYMENT)
-                || paymentMethod.equals(Constants.PAYTM_WALLET)) {
-            bigBasketApiService.getOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
-                @Override
-                public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
-                    if (((CancelableAware) ctx).isSuspended()) return;
-                    switch (getPrepaidPaymentApiResponse.status) {
-                        case 0:
-                            openGateway(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
-                            break;
-                        default:
-                            ((HandlerAware) ctx).getHandler()
-                                    .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
-                            break;
+        switch (paymentMethod) {
+            case Constants.HDFC_POWER_PAY:
+                bigBasketApiService.getPayzappOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPayzappPaymentParamsResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetPayzappPaymentParamsResponse> getPrepaidPaymentApiResponse, Response response) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        switch (getPrepaidPaymentApiResponse.status) {
+                            case 0:
+                                openPayzappGateway(getPrepaidPaymentApiResponse.apiResponseContent.payzappPostParams);
+                                break;
+                            default:
+                                ((HandlerAware) ctx).getHandler()
+                                        .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
+                                break;
+                        }
                     }
-                }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    if (((CancelableAware) ctx).isSuspended()) return;
-                    ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
-                }
-            });
-        } else if (paymentMethod.equals(Constants.HDFC_POWER_PAY)) {
-            bigBasketApiService.getPayzappOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPayzappPaymentParamsResponse>>() {
-                @Override
-                public void success(ApiResponse<GetPayzappPaymentParamsResponse> getPrepaidPaymentApiResponse, Response response) {
-                    if (((CancelableAware) ctx).isSuspended()) return;
-                    switch (getPrepaidPaymentApiResponse.status) {
-                        case 0:
-                            openPayzappGateway(getPrepaidPaymentApiResponse.apiResponseContent.payzappPostParams);
-                            break;
-                        default:
-                            ((HandlerAware) ctx).getHandler()
-                                    .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
-                            break;
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
                     }
-                }
+                });
+                break;
+            default:
+                bigBasketApiService.getOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        switch (getPrepaidPaymentApiResponse.status) {
+                            case 0:
+                                openGateway(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
+                                break;
+                            default:
+                                ((HandlerAware) ctx).getHandler()
+                                        .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
+                                break;
+                        }
+                    }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    if (((CancelableAware) ctx).isSuspended()) return;
-                    ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
-                }
-            });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                    }
+                });
+                break;
         }
     }
 
@@ -99,6 +100,7 @@ public class PaymentHandler<T> {
 
         switch (paymentMethod) {
             case Constants.PAYU:
+            case Constants.PAYUMONEY_WALLET:
                 new PayuPayment().startPaymentGateway(paymentParams, ((ActivityAware) ctx).getCurrentActivity());
                 break;
             case Constants.MOBIKWIK_PAYMENT:

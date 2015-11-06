@@ -81,6 +81,11 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
         return VIEW_TYPE_ITEM;
     }
 
+    @Override
+    public boolean isEnabled(int position) {
+        return getItemViewType(position) == VIEW_TYPE_ITEM;
+    }
+
     public String getItemRightIcon(Cursor cursor) {
         return cursor.getString(6);
     }

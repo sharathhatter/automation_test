@@ -296,7 +296,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="store-list"
+                    android:host="store_list"
                     android:scheme="bigbasket" />
             </intent-filter>
         </activity>

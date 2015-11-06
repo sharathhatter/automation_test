@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -131,10 +132,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public static void hideKeyboard(BaseActivity context, View view) {
-        if (context == null || context.isSuspended()) return;
+        if (context == null || view == null) return;
+        IBinder token = view.getWindowToken();
+        if (token == null) return;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(token, 0);
     }
 
     @Override
@@ -892,7 +895,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        if (intent != null) {
+            intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        }
         super.startActivityForResult(intent, requestCode);
     }
 

@@ -1,8 +1,6 @@
 package com.bigbasket.mobileapp.activity.payment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +21,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
 import com.bigbasket.mobileapp.factory.payment.FundWalletPaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
@@ -101,20 +100,14 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = getSharedPreferences(Constants.MOBIKWIK_PREFERENCE_NAME,
-                Context.MODE_PRIVATE);
-        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
+        String txnId = MobikwikResponseHandler.getLastTransactionID();
         if (!TextUtils.isEmpty(txnId)) {
-            String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
-            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
+            if (MobikwikResponseHandler.wasTransactionSuccessful()) {
                 onFundWalletSuccess();
             } else {
                 onFundWalletFailure();
             }
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(Constants.MOBIKWIK_ORDER_ID);
-            editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.apply();
+            MobikwikResponseHandler.clear();
         }
     }
 
@@ -125,7 +118,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getFundWalletPayments("yes", "yes", "yes", "yes",
+        bigBasketApiService.getFundWalletPayments("yes", "yes", "yes", "yes", "yes",
                 new Callback<ApiResponse<GetPaymentTypes>>() {
                     @Override
                     public void success(ApiResponse<GetPaymentTypes> getPaymentTypesApiResponse, Response response) {
