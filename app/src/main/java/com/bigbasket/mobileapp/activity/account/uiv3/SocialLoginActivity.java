@@ -181,6 +181,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, "");
         if (!checkInternetConnection()) {
             handler.sendOfflineError();
+            onLogoutComplete(false);
             return;
         }
         if (!TextUtils.isEmpty(socialAccountType) && SocialAccountType.getSocialLoginTypes().contains(socialAccountType)) {
@@ -203,6 +204,15 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         } else {
             doLogout();
         }
+    }
+
+    /**
+     * Return true to consume logout event and block defaut post logout operation
+     * @param success
+     * @return
+     */
+    protected boolean onLogoutComplete(boolean success) {
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -251,7 +261,9 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         }
         moEHelper.logoutUser();
         mIsInLogoutMode = false;
-        goToHome(true);
+        if(!onLogoutComplete(true)) {
+            goToHome(true);
+        }
     }
 
     public void saveLoginUserDetailInPreference(LoginApiResponse loginApiResponse, String socialAccountType,

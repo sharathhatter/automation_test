@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
+import com.bigbasket.mobileapp.devconfig.DevConfigViewHandler;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
@@ -122,6 +123,9 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
         ImageView imgEmptyPage = (ImageView) findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setImageResource(R.drawable.empty_no_internet);
+        if(BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+            DevConfigViewHandler.setView(imgEmptyPage);
+        }
 
         TextView txtEmptyMsg1 = (TextView) findViewById(R.id.txtEmptyMsg1);
         txtEmptyMsg1.setText(msg);

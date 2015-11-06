@@ -38,7 +38,7 @@ public class BigBasketApiAdapter {
     }
 
     public static void reset() {
-        bigBasketApiService = null;
+        synchronized (lock) {bigBasketApiService = null; }
     }
 
     private static BigBasketApiService refreshBigBasketApiService(final Context context) {
@@ -77,7 +77,7 @@ public class BigBasketApiAdapter {
         okHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
 
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(MobileApiUrl.URL)
+                .setEndpoint(MobileApiUrl.getMobileApiUrl(context))
                 .setRequestInterceptor(requestInterceptor)
                 .setClient(new OkClient(okHttpClient))
                 .build();
