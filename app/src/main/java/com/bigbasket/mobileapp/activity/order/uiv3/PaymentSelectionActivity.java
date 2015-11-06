@@ -32,18 +32,17 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
-import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.factory.payment.PaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
+import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
-import com.bigbasket.mobileapp.model.holders.InMemMobikwikResponseHolder;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
@@ -190,16 +189,15 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void processMobikWikResponse() {
-        BaseApplication application = (BaseApplication) getApplication();
-        InMemMobikwikResponseHolder inMemMobikwikResponseHolder = application.getInMemMobikwikResponseHolder();
-        if (inMemMobikwikResponseHolder != null
-                && !TextUtils.isEmpty(inMemMobikwikResponseHolder.getMobikwikTxnId())
-                && mOrdersCreated != null) {
-            new PostPaymentProcessor<>(this, inMemMobikwikResponseHolder.getMobikwikTxnId())
-                    .withPotentialOrderId(mPotentialOrderId)
-                    .withOrderId(mOrdersCreated.get(0).getOrderNumber())
-                    .processPayment();
-            application.setInMemMobikwikResponseHolder(null);
+        String txnId = MobikwikResponseHandler.getLastTransactionID();
+        if (!TextUtils.isEmpty(txnId)) {
+            if (mOrdersCreated != null) {
+                new PostPaymentProcessor<>(this, txnId)
+                        .withPotentialOrderId(mPotentialOrderId)
+                        .withOrderId(mOrdersCreated.get(0).getOrderNumber())
+                        .processPayment();
+            }
+            MobikwikResponseHandler.clear();
         }
     }
 

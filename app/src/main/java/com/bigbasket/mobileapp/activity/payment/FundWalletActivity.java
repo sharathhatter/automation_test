@@ -1,8 +1,6 @@
 package com.bigbasket.mobileapp.activity.payment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,15 +19,14 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
-import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.factory.payment.FundWalletPaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.account.City;
-import com.bigbasket.mobileapp.model.holders.InMemMobikwikResponseHolder;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -103,17 +100,14 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     private void processMobikWikResponse() {
-        BaseApplication application = (BaseApplication) getApplication();
-        InMemMobikwikResponseHolder inMemMobikwikResponseHolder = application.getInMemMobikwikResponseHolder();
-        if (inMemMobikwikResponseHolder != null
-                && !TextUtils.isEmpty(inMemMobikwikResponseHolder.getMobikwikTxnId())) {
-            if (!TextUtils.isEmpty(inMemMobikwikResponseHolder.getMobikwikOrderStatus())
-                    && Integer.parseInt(inMemMobikwikResponseHolder.getMobikwikOrderStatus()) == 0) {
+        String txnId = MobikwikResponseHandler.getLastTransactionID();
+        if (!TextUtils.isEmpty(txnId)) {
+            if (MobikwikResponseHandler.wasTransactionSuccessful()) {
                 onFundWalletSuccess();
             } else {
                 onFundWalletFailure();
             }
-            application.setInMemMobikwikResponseHolder(null);
+            MobikwikResponseHandler.clear();
         }
     }
 
