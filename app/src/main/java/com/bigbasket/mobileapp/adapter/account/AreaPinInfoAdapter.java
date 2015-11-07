@@ -56,7 +56,7 @@ public class AreaPinInfoAdapter {
             /**
              * inserting values using content provider
              */
-            context.getContentResolver().insert(CONTENT_URI,cv);
+            context.getContentResolver().insert(CONTENT_URI, cv);
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -71,23 +71,22 @@ public class AreaPinInfoAdapter {
         /**
          * name of the columns required.
          */
-        String[] projection = {COLUMN_PIN };
+        String[] projection = {COLUMN_PIN};
         try {
             areaPinCursor = context.getContentResolver().query(CONTENT_URI, projection, COLUMN_AREA + " = " + "\"" + areaName + "\" AND " +
-                            COLUMN_CITY + " = \"" + cityName + "\"", null, null);
+                    COLUMN_CITY + " = \"" + cityName + "\"", null, null);
             if (areaPinCursor != null && areaPinCursor.moveToFirst()) {
                 pinCode = areaPinCursor.getString(areaPinCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_PIN));
             }
 
-        }
-        catch (SQLiteException ex){
+        } catch (SQLiteException ex) {
             ex.getStackTrace();
         } finally {
             if (areaPinCursor != null && !areaPinCursor.isClosed()) {
                 areaPinCursor.close();
             }
         }
-            return pinCode;
+        return pinCode;
     }
 
     @NonNull
@@ -99,10 +98,10 @@ public class AreaPinInfoAdapter {
         /**
          * name of the columns required.
          */
-        String[] projection = {COLUMN_AREA };
+        String[] projection = {COLUMN_AREA};
 
         try {
-            areaNameCursor = context.getContentResolver().query(CONTENT_URI,projection, COLUMN_CITY + " = \"" + cityName + "\"", null, COLUMN_AREA + " ASC");
+            areaNameCursor = context.getContentResolver().query(CONTENT_URI, projection, COLUMN_CITY + " = \"" + cityName + "\"", null, COLUMN_AREA + " ASC");
             if (areaNameCursor != null && areaNameCursor.moveToFirst()) {
                 do {
                     areaNameStr = areaNameCursor.getString(areaNameCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_AREA));
@@ -128,7 +127,7 @@ public class AreaPinInfoAdapter {
          * name of the columns required.
          * using Distinct to get the unique values from database
          */
-        String[] projection = {"Distinct "+COLUMN_PIN };
+        String[] projection = {"Distinct " + COLUMN_PIN};
 
         try {
             areaPinCursor = context.getContentResolver().query(CONTENT_URI, projection, COLUMN_CITY + " = \"" + cityName + "\"", null, COLUMN_PIN + " ASC");
@@ -156,7 +155,7 @@ public class AreaPinInfoAdapter {
         /**
          * name of the columns required.
          */
-        String[] projection = {COLUMN_AREA };
+        String[] projection = {COLUMN_AREA};
         try {
             areaNameCursor = context.getContentResolver().query(CONTENT_URI, projection, COLUMN_PIN + " = " + "\"" + pinCode + "\" AND " +
                     COLUMN_CITY + " = \"" + cityName + "\"", null, null);

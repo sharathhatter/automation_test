@@ -35,7 +35,8 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -68,9 +69,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class ProductListActivity extends BBActivity implements ProductListDataAware, LazyProductListAware {
@@ -427,31 +426,41 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
             newNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(tabTypeWithNoProducts)));
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-            bigBasketApiService.productNextPage(NameValuePair.toMap(newNameValuePairs),
-                    new Callback<ApiResponse<ProductNextPageResponse>>() {
-                        @Override
-                        public void success(ApiResponse<ProductNextPageResponse> productNextPageApiResponse, Response response) {
-                            if (isSuspended()) return;
-                            if (productNextPageApiResponse.status == 0) {
-                                if (mMapForTabWithNoProducts != null) {
-                                    if (productNextPageApiResponse.apiResponseContent.productListMap != null) {
-                                        mMapForTabWithNoProducts.putAll(productNextPageApiResponse.apiResponseContent.productListMap);
-                                    }
-                                } else {
-                                    mMapForTabWithNoProducts = productNextPageApiResponse.apiResponseContent.productListMap;
-                                }
-                                setUpProductsInEmptyFragments();
-                            } else {
-                                notifyEmptyFragmentAboutFailure();
+            Call<ApiResponse<ProductNextPageResponse>> call = bigBasketApiService.productNextPage(NameValuePair.toMap(newNameValuePairs));
+            call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
+                @Override
+                public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {
+                    if (productNextPageApiResponse.status == 0) {
+                        if (mMapForTabWithNoProducts != null) {
+                            if (productNextPageApiResponse.apiResponseContent.productListMap != null) {
+                                mMapForTabWithNoProducts.putAll(productNextPageApiResponse.apiResponseContent.productListMap);
                             }
+                        } else {
+                            mMapForTabWithNoProducts = productNextPageApiResponse.apiResponseContent.productListMap;
                         }
+                        setUpProductsInEmptyFragments();
+                    } else {
+                        notifyEmptyFragmentAboutFailure();
+                    }
+                }
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (isSuspended()) return;
-                            notifyEmptyFragmentAboutFailure();
-                        }
-                    });
+                @Override
+                public boolean updateProgress() {
+                    return true;
+                }
+
+                @Override
+                public void onFailure(int httpErrorCode, String msg) {
+                    super.onFailure(httpErrorCode, msg);
+                    notifyEmptyFragmentAboutFailure();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    super.onFailure(t);
+                    notifyEmptyFragmentAboutFailure();
+                }
+            });
         }
     }
 
@@ -875,7 +884,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         @Override
         protected void onPostExecute(Map<String, String> map) {
             super.onPostExecute(map);
-            ((ActivityAware) context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
+            ((AppOperationAware) context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
                     null, null, false);
         }
     }

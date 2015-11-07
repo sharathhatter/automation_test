@@ -96,7 +96,7 @@ public class ShowCartFragment extends BaseFragment {
         }
 
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemHeaderList,
-                getActivity(),
+                getCurrentActivity(),
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl,
                 getNextScreenNavigationContext(), currentTabIndex);

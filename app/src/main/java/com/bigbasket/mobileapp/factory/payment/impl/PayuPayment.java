@@ -79,7 +79,7 @@ public class PayuPayment {
 
         // Setup any remaining param that server is passing using reflection
         Class<?> pClass = paymentParams.getClass();
-        for (Map.Entry<String, String> entry: paymentParamsMap.entrySet()) {
+        for (Map.Entry<String, String> entry : paymentParamsMap.entrySet()) {
             try {
                 Field field = pClass.getDeclaredField(getUnderscoreFieldNameAsCamelCase(entry.getKey()));
                 field.setAccessible(true);

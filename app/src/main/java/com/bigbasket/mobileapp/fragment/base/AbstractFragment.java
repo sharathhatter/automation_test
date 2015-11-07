@@ -7,14 +7,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.newrelic.agent.android.NewRelic;
 
 
-public abstract class AbstractFragment extends Fragment implements CancelableAware, ActivityAware {
+public abstract class AbstractFragment extends Fragment implements AppOperationAware {
 
     protected static Typeface faceRupee;
     protected static Typeface faceRobotoRegular;

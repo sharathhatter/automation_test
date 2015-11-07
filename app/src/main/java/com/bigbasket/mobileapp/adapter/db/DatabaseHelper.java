@@ -10,7 +10,6 @@ import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 import com.crashlytics.android.Crashlytics;
-import com.newrelic.agent.android.NewRelic;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -65,26 +64,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (newVersion>=DATABASE_VERSION)
-        try {
-            db.execSQL("DELETE FROM " + CategoryAdapter.tableName);
-            db.execSQL("DROP TABLE " + CategoryAdapter.tableName);
-        }
-        catch (Exception e){
-            Crashlytics.logException(e);
-        }
+        if (newVersion >= DATABASE_VERSION)
+            try {
+                db.execSQL("DELETE FROM " + CategoryAdapter.tableName);
+                db.execSQL("DROP TABLE " + CategoryAdapter.tableName);
+            } catch (Exception e) {
+                Crashlytics.logException(e);
+            }
         try {
             db.execSQL("DELETE FROM " + SubCategoryAdapter.tableName);
             db.execSQL("DROP TABLE " + SubCategoryAdapter.tableName);
-        }catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
 
         }
         try {
             db.execSQL("DELETE FROM " + AreaPinInfoAdapter.tableName);
             db.execSQL("DROP TABLE " + AreaPinInfoAdapter.tableName);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
 
         }

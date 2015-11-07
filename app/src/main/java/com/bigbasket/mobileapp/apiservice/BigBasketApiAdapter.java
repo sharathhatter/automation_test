@@ -7,13 +7,16 @@ import android.text.TextUtils;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 
 public class BigBasketApiAdapter {
 
@@ -38,20 +41,20 @@ public class BigBasketApiAdapter {
     }
 
     public static void reset() {
-        synchronized (lock) {bigBasketApiService = null; }
+        synchronized (lock) {
+            bigBasketApiService = null;
+        }
     }
 
     private static BigBasketApiService refreshBigBasketApiService(final Context context) {
         final AuthParameters authParameters = AuthParameters.getInstance(context);
 
-        RequestInterceptor requestInterceptor = new RequestInterceptor() {
+        Interceptor interceptor = new Interceptor() {
             @Override
-            public void intercept(RequestFacade request) {
-
+            public Response intercept(Chain chain) throws IOException {
+                Request originalRequest = chain.request();
                 String appVersion = DataUtil.getAppVersion(context);
                 String userAgentPrefix = "BB Android/" + "v" + appVersion + "/os ";
-                request.addHeader("User-Agent", userAgentPrefix + Build.VERSION.RELEASE);
-
                 String bbVisitorId = authParameters.getVisitorId();
                 String bbAuthToken = authParameters.getBbAuthToken();
                 String requestCookieVal = null;
@@ -66,20 +69,26 @@ public class BigBasketApiAdapter {
                     }
                     requestCookieVal += "BBAUTHTOKEN=\"" + bbAuthToken + "\"";
                 }
+
+                Request.Builder newRequestBuilder = originalRequest.newBuilder()
+                        .removeHeader("User-Agent");
+                newRequestBuilder.addHeader("User-Agent", userAgentPrefix + Build.VERSION.RELEASE);
                 if (!TextUtils.isEmpty(requestCookieVal)) {
-                    request.addHeader("Cookie", requestCookieVal);
+                    newRequestBuilder.addHeader("Cookie", requestCookieVal);
                 }
+                return chain.proceed(newRequestBuilder.build());
             }
         };
 
         OkHttpClient okHttpClient = new OkHttpClient();
         okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
         okHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
+        okHttpClient.interceptors().add(interceptor);
 
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(MobileApiUrl.getMobileApiUrl(context))
-                .setRequestInterceptor(requestInterceptor)
-                .setClient(new OkClient(okHttpClient))
+        Retrofit restAdapter = new Retrofit.Builder()
+                .baseUrl(MobileApiUrl.getMobileApiUrl(context))
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
                 .build();
 
         return restAdapter.create(BigBasketApiService.class);

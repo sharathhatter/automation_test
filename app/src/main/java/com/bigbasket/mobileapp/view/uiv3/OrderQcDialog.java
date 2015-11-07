@@ -10,14 +10,14 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.order.QcListAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 import com.bigbasket.mobileapp.util.FontHolder;
 
 public class OrderQcDialog<T> {
     public void show(final T ctx,
                      final CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
-        final BaseActivity activity = ((ActivityAware) ctx).getCurrentActivity();
+        final BaseActivity activity = ((AppOperationAware) ctx).getCurrentActivity();
         View baseView = activity.getLayoutInflater().inflate(R.layout.uiv3_qc_dialog, null);
         ListView listView = (ListView) baseView.findViewById(R.id.lstQc);
 

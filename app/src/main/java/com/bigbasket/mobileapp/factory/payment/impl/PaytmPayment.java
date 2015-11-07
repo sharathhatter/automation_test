@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.paytm.pgsdk.PaytmMerchant;
@@ -32,6 +33,7 @@ public class PaytmPayment {
         PaytmOrder order = new PaytmOrder(paymentParams);
         paytmPGService.initialize(order, merchant, null);
         paytmPGService.startPaymentTransaction(ctx, false, false,
-                new PaytmTxnCallback<>(ctx, fullOrderId, potentialOrderId, isPayNow, isFundWallet));
+                new PaytmTxnCallback<>((AppOperationAware) ctx, fullOrderId, potentialOrderId,
+                        isPayNow, isFundWallet));
     }
 }

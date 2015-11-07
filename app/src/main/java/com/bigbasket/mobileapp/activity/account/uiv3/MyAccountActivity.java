@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccountType;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
@@ -45,9 +46,7 @@ import com.google.android.gms.plus.model.people.Person;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 public class MyAccountActivity extends BackButtonActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -69,7 +68,7 @@ public class MyAccountActivity extends BackButtonActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if(mGoogleApiClient != null){
+        if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
     }
@@ -77,7 +76,7 @@ public class MyAccountActivity extends BackButtonActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        if(mGoogleApiClient != null){
+        if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
     }
@@ -89,9 +88,10 @@ public class MyAccountActivity extends BackButtonActivity implements
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getMemberProfileData(new Callback<ApiResponse<UpdateProfileApiResponse>>() {
+        Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.getMemberProfileData();
+        call.enqueue(new BBNetworkCallback<ApiResponse<UpdateProfileApiResponse>>(this) {
             @Override
-            public void success(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback, Response response) {
+            public void onSuccess(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback) {
                 hideProgressDialog();
                 if (memberProfileDataCallback.status == 0) {
                     updateProfileModel = memberProfileDataCallback.apiResponseContent.memberDetails;
@@ -105,12 +105,13 @@ public class MyAccountActivity extends BackButtonActivity implements
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                handler.handleRetrofitError(error, true);
-                Map<String, String> eventAttribs = new HashMap<>();
-                eventAttribs.put(TrackEventkeys.FAILURE_REASON, error.toString());
-                trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
             }
         });
     }
@@ -296,7 +297,7 @@ public class MyAccountActivity extends BackButtonActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        if(mGoogleApiClient != null) {
+        if (mGoogleApiClient != null) {
             try {
                 loadGPlusImage(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
             } catch (Exception ex) {
@@ -325,7 +326,7 @@ public class MyAccountActivity extends BackButtonActivity implements
     /**
      * This is called only once to find the image URL, once the image URL is found this will not invoked
      */
-    private void loadGPlusImage(){
+    private void loadGPlusImage() {
         /**
          * This is called only once to find the image URL, once the image URL is found
          * this will not invoked
@@ -333,7 +334,7 @@ public class MyAccountActivity extends BackButtonActivity implements
          * Invoking SignInViaGplus will try to resolve errors may ask for account chooser.
          * To avoid automatic error resolutions and error display use local client here
          */
-        if(mGoogleApiClient == null) {
+        if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(Plus.API)
                     .addScope(new Scope(Scopes.PROFILE))
@@ -343,6 +344,7 @@ public class MyAccountActivity extends BackButtonActivity implements
         }
         mGoogleApiClient.connect();
     }
+
     private void loadGPlusImage(Person person) {
         if (person != null && person.getImage() != null &&
                 person.getImage().hasUrl()) {

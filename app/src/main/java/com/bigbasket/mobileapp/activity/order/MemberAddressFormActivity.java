@@ -11,7 +11,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.telephony.SmsMessage;
-import android.telephony.SubscriptionManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +31,8 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -54,9 +55,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class MemberAddressFormActivity extends BackButtonActivity implements OtpDialogAware,
@@ -368,10 +367,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (mAddress != null) {
             payload.put(Constants.ID, mAddress.getId());
             showProgressDialog(getString(R.string.please_wait));
-            bigBasketApiService.updateAddress(payload, new CreateUpdateAddressApiCallback());
+            Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call = bigBasketApiService.updateAddress(payload);
+            call.enqueue(new CreateUpdateAddressApiCallback(this));
         } else {
             showProgressDialog(getString(R.string.please_wait));
-            bigBasketApiService.createAddress(payload, new CreateUpdateAddressApiCallback());
+            Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call = bigBasketApiService.createAddress(payload);
+            call.enqueue(new CreateUpdateAddressApiCallback(this));
         }
     }
 
@@ -473,16 +474,14 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         unregisterBroadcastForSMS();
     }
 
-    private class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
+    private class CreateUpdateAddressApiCallback extends BBNetworkCallback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
+
+        public CreateUpdateAddressApiCallback(AppOperationAware ctx) {
+            super(ctx);
+        }
 
         @Override
-        public void success(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse, Response response) {
-            if (isSuspended() || getCurrentActivity() == null) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
+        public void onSuccess(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse) {
             switch (createUpdateAddressApiResponse.status) {
                 case 0:
                     if (otpValidationDialogFragment != null) {
@@ -527,14 +526,13 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         }
 
         @Override
-        public void failure(RetrofitError error) {
-            if (isSuspended()) return;
+        public boolean updateProgress() {
             try {
                 hideProgressDialog();
+                return true;
             } catch (IllegalArgumentException e) {
-                return;
+                return false;
             }
-            handler.handleRetrofitError(error);
         }
     }
 

@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.SearchUtil;
 
@@ -34,9 +34,9 @@ public class SearchViewAdapter<T> extends CursorAdapter {
     private FontHolder fontHolder;
 
     public SearchViewAdapter(T context, Cursor contactCursor) {
-        super(((ActivityAware) context).getCurrentActivity(), contactCursor, false);
-        this.inflater = LayoutInflater.from(((ActivityAware) context).getCurrentActivity());
-        this.fontHolder = FontHolder.getInstance(((ActivityAware) context).getCurrentActivity());
+        super(((AppOperationAware) context).getCurrentActivity(), contactCursor, false);
+        this.inflater = LayoutInflater.from(((AppOperationAware) context).getCurrentActivity());
+        this.fontHolder = FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity());
     }
 
     @Override

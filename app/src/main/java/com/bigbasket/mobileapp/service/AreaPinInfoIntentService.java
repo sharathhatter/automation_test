@@ -13,11 +13,13 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetAreaInfoResponse;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.account.City;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.RetrofitError;
+import retrofit.Call;
+import retrofit.Response;
 
 
 /**
@@ -36,10 +38,12 @@ public class AreaPinInfoIntentService extends IntentService {
         if (intent == null) return;
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         try {
-            ArrayList<City> cities = bigBasketApiService.listCitySynchronously();
+            Call<ArrayList<City>> call = bigBasketApiService.listCities();
+            Response<ArrayList<City>> response = call.execute();
+            ArrayList<City> cities = response.body();
             CityManager.storeCities(AreaPinInfoIntentService.this, cities);
             fetchPinCodes(cities);
-        } catch (RetrofitError e) {
+        } catch (IOException e) {
             Log.d(TAG, "Oops! An error occurred while fetching pin-codes");
         }
     }
@@ -51,11 +55,18 @@ public class AreaPinInfoIntentService extends IntentService {
         HashMap<City, HashMap<String, ArrayList<String>>> downloadedDataMap = new HashMap<>();
         for (City city : cities) {
             try {
-                ApiResponse<GetAreaInfoResponse> response = bigBasketApiService.getAreaInfo(String.valueOf(city.getId()));
-                if (response.status == 0) {
-                    downloadedDataMap.put(city, response.apiResponseContent.pinCodeMaps);
+                Call<ApiResponse<GetAreaInfoResponse>> call = bigBasketApiService.getAreaInfo(String.valueOf(city.getId()));
+                Response<ApiResponse<GetAreaInfoResponse>> apiResponse = call.execute();
+                if (apiResponse.isSuccess()) {
+                    ApiResponse<GetAreaInfoResponse> response = apiResponse.body();
+                    if (response.status == 0) {
+                        downloadedDataMap.put(city, response.apiResponseContent.pinCodeMaps);
+                    }
+                } else {
+                    success = false;
+                    Log.d(TAG, "Oops! An error occurred while fetching pin-codes");
                 }
-            } catch (RetrofitError r) {
+            } catch (IOException r) {
                 success = false;
                 Log.d(TAG, "Oops! An error occurred while fetching pin-codes");
                 break;

@@ -62,11 +62,11 @@ import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -116,7 +116,7 @@ import java.util.Map;
 
 
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
-        CartInfoAware, HandlerAware, SubNavigationAware, FloatingBasketUIAware,
+        CartInfoAware, AppOperationAware, SubNavigationAware, FloatingBasketUIAware,
         OnAddressChangeListener, BasketDeltaUserActionListener {
 
     protected BigBasketMessageHandler handler;
@@ -839,7 +839,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         } else {
             txtNavSalutation.setText(getString(R.string.bigbasketeer));
         }
-        if(BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             DevConfigViewHandler.setView(lblWelCome);
         }
 

@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
@@ -65,14 +65,14 @@ public class HeaderSpinnerView<T> {
                 && headSection.getSectionItems().size() > 0) {
             final OnChildDropdownRequested onChildDropdownRequested =
                     new OnChildDropdownRequested(layoutChildToolbarContainer,
-                            ((ActivityAware) ctx).getCurrentActivity());
+                            ((AppOperationAware) ctx).getCurrentActivity());
 
             if (toolbar.findViewById(txtToolbarDropdown.getId()) == null) {
                 txtToolbarDropdown.setTypeface(typeface);
                 toolbar.addView(txtToolbarDropdown);
             }
             toolbar.setTitle("");
-            ((ActivityAware) ctx).getCurrentActivity().setTitle("");
+            ((AppOperationAware) ctx).getCurrentActivity().setTitle("");
             txtToolbarDropdown.setOnClickListener(onChildDropdownRequested);
             imgCloseChildDropdown.setOnClickListener(onChildDropdownRequested);
 
@@ -87,9 +87,9 @@ public class HeaderSpinnerView<T> {
             txtChildDropdownTitle.setText(title != null ? title.getText() : "");
             txtChildDropdownTitle.setOnClickListener(onChildDropdownRequested);
 
-            BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(((ActivityAware) ctx).getCurrentActivity(),
+            BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(((AppOperationAware) ctx).getCurrentActivity(),
                     R.layout.uiv3_product_header_list_item, headSection.getSectionItems(),
-                    typeface, ((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_primary_text_color), Color.WHITE);
+                    typeface, ((AppOperationAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_primary_text_color), Color.WHITE);
             bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             listHeaderDropdown.setAdapter(bbArrayAdapter);
 
@@ -98,7 +98,7 @@ public class HeaderSpinnerView<T> {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if (position != Spinner.INVALID_POSITION) {
                         if (position != defaultSelectedIdx) {
-                            new OnSectionItemClickListener<>(((ActivityAware) ctx).getCurrentActivity(), headSection,
+                            new OnSectionItemClickListener<>(((AppOperationAware) ctx).getCurrentActivity(), headSection,
                                     headSection.getSectionItems().get(position),
                                     TrackingAware.PRODUCT_LIST_HEADER).onClick(view);
                         }

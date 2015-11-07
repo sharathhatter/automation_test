@@ -19,6 +19,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
 import com.bigbasket.mobileapp.factory.payment.PayNowPaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -38,9 +39,7 @@ import com.payu.india.Payu.PayuConstants;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 /**
  * Don't do the mistake of moving this to Fragment. I've done all that, and these 3rd Party SDKs
@@ -108,40 +107,33 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes", "yes",
-                new Callback<ApiResponse<GetPayNowParamsResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (payNowParamsApiResponse.status) {
-                            case 0:
-                                displayPayNowSummary(payNowParamsApiResponse.apiResponseContent.amount,
-                                        payNowParamsApiResponse.apiResponseContent.payNowDetailList,
-                                        payNowParamsApiResponse.apiResponseContent.paymentTypes);
-                                break;
-                            default:
-                                handler.sendEmptyMessage(payNowParamsApiResponse.status,
-                                        payNowParamsApiResponse.message, true);
-                                break;
-                        }
-                    }
+        Call<ApiResponse<GetPayNowParamsResponse>> call = bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes", "yes");
+        call.enqueue(new BBNetworkCallback<ApiResponse<GetPayNowParamsResponse>>(this, true) {
+            @Override
+            public void onSuccess(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse) {
+                switch (payNowParamsApiResponse.status) {
+                    case 0:
+                        displayPayNowSummary(payNowParamsApiResponse.apiResponseContent.amount,
+                                payNowParamsApiResponse.apiResponseContent.payNowDetailList,
+                                payNowParamsApiResponse.apiResponseContent.paymentTypes);
+                        break;
+                    default:
+                        handler.sendEmptyMessage(payNowParamsApiResponse.status,
+                                payNowParamsApiResponse.message, true);
+                        break;
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
     }
 
     private void displayPayNowSummary(final String amount, ArrayList<PayNowDetail> payNowDetailList,

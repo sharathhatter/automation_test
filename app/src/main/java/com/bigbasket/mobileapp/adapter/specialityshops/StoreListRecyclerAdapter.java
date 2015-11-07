@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityStore;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -33,7 +33,7 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = ((ActivityAware) this.context).getCurrentActivity();
+        Context context = ((AppOperationAware) this.context).getCurrentActivity();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.uiv3_sshops_row, parent, false);
         return new StoreListRowHolder(row, FontHolder.getInstance(context).getFaceRobotoRegular(), FontHolder.getInstance(context).getFaceRobotoLight());

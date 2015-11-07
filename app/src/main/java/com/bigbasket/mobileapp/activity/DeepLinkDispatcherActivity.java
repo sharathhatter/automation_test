@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -12,7 +11,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.DeepLinkHandler;
 import com.bigbasket.mobileapp.handler.SilentDeepLinkHandler;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
@@ -21,7 +20,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
-        HandlerAware {
+        AppOperationAware {
 
     protected BigBasketMessageHandler handler;
 

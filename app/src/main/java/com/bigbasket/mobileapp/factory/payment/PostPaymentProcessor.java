@@ -6,13 +6,14 @@ import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.handler.payment.SendPaymentResponseTask;
 import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
 
 import java.util.HashMap;
 
-public class PostPaymentProcessor<T> {
+public class PostPaymentProcessor<T extends AppOperationAware> {
     private T ctx;
     private String txnId;
     @Nullable

@@ -11,7 +11,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -34,7 +34,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private int serverListSize = -1;
     private String baseImgUrl;
     private ProductViewDisplayDataHolder productViewDisplayDataHolder;
-    private ActivityAware activityAware;
+    private AppOperationAware activityAware;
     private List<Product> products;
     private String navigationCtx;
     private HashMap<String, Integer> cartInfo;
@@ -44,7 +44,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                      ActivityAware activityAware, int productCount, String navigationCtx,
+                                      AppOperationAware activityAware, int productCount, String navigationCtx,
                                       String mTabType) {
         this.baseImgUrl = baseImgUrl;
         this.productViewDisplayDataHolder = productViewDisplayDataHolder;
@@ -58,7 +58,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                      ActivityAware activityAware, int productCount, String navigationCtx,
+                                      AppOperationAware activityAware, int productCount, String navigationCtx,
                                       HashMap<String, Integer> cartInfo, String mTabType) {
         this(products, baseImgUrl, productViewDisplayDataHolder, activityAware, productCount,
                 navigationCtx, mTabType);

@@ -24,8 +24,11 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -37,8 +40,7 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
+import retrofit.Call;
 
 public class SignInActivity extends BackButtonActivity {
 
@@ -232,9 +234,9 @@ public class SignInActivity extends BackButtonActivity {
      */
     private void startLogin(String email, String password) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        bigBasketApiService.login(email, password,
-                new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked(),
-                        Constants.SIGN_IN_ACCOUNT_TYPE, null));
+        Call<ApiResponse<LoginApiResponse>> call = bigBasketApiService.login(email, password);
+        call.enqueue(new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked(),
+                Constants.SIGN_IN_ACCOUNT_TYPE, null));
     }
 
     @Override
@@ -279,15 +281,10 @@ public class SignInActivity extends BackButtonActivity {
     private void requestNewPassword(String email) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.forgotPassword(email, new Callback<OldBaseApiResponse>() {
+        Call<OldBaseApiResponse> call = bigBasketApiService.forgotPassword(email);
+        call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(this) {
             @Override
-            public void success(OldBaseApiResponse forgotPasswordApiResponse, retrofit.client.Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(OldBaseApiResponse forgotPasswordApiResponse) {
                 switch (forgotPasswordApiResponse.status) {
                     case Constants.OK:
                         showToast(getString(R.string.newPasswordSent));
@@ -300,15 +297,19 @@ public class SignInActivity extends BackButtonActivity {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public void onFailure(int httpErrorCode, String msg) {
+                super.onFailure(httpErrorCode, msg);
+                logForgotPasswordFailure(msg);
+            }
+
+            @Override
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
-                logForgotPasswordFailure(error.toString());
             }
         });
     }

@@ -4,14 +4,12 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.net.HttpURLConnection;
-
-import retrofit.RetrofitError;
 
 public class BigBasketMessageHandler<T> {
 
@@ -112,14 +110,14 @@ public class BigBasketMessageHandler<T> {
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.server_error), finish);
                 break;
             case NavigationCodes.ADD_TO_SHOPPINGLIST_OK:
-                if (((ActivityAware) ctx).getCurrentActivity() != null) {
-                    Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),
+                if (((AppOperationAware) ctx).getCurrentActivity() != null) {
+                    Toast.makeText(((AppOperationAware) ctx).getCurrentActivity(),
                             "Added successfully", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case NavigationCodes.DELETE_FROM_SHOPPING_LIST_OK:
-                if (((ActivityAware) ctx).getCurrentActivity() != null) {
-                    Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),
+                if (((AppOperationAware) ctx).getCurrentActivity() != null) {
+                    Toast.makeText(((AppOperationAware) ctx).getCurrentActivity(),
                             "Successfully deleted!", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -135,60 +133,34 @@ public class BigBasketMessageHandler<T> {
     }
 
     private String getString(int resId) {
-        return ((ActivityAware) ctx).getCurrentActivity().getString(resId);
+        return ((AppOperationAware) ctx).getCurrentActivity().getString(resId);
     }
 
-    public void handleRetrofitError(RetrofitError error, String sourceName) {
-        handleRetrofitError(error, sourceName, false);
+    public void handleRetrofitError(Throwable t, boolean finish) {
+        ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingNetworkError),
+                getString(R.string.msgNetworkError), finish);
     }
 
-    public void handleRetrofitError(RetrofitError error, boolean finish) {
-        handleRetrofitError(error, null, finish);
-    }
-
-    public void handleRetrofitError(RetrofitError error, String sourceName, boolean finish) {
-        if (((ActivityAware) ctx).getCurrentActivity() == null) return;
-        switch (error.getKind()) {
-            case NETWORK:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingNetworkError),
-                        getString(R.string.msgNetworkError), finish);
-                break;
-            case HTTP:
-                if (error.getResponse() == null) {
-                    ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingNetworkError),
-                            getString(R.string.msgNetworkError), finish);
-                } else {
-                    handleHttpError(error.getResponse().getStatus(), error.getResponse().getReason(), sourceName, finish);
-                }
-                break;
-            case CONVERSION:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingServerError),
-                        getString(R.string.server_error), finish);
-                break;
-            case UNEXPECTED:
-                throw error;
+    public void handleHttpError(int errorCode, String reasonPhrase, boolean finish) {
+        if (reasonPhrase == null) {
+            ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingNetworkError),
+                    getString(R.string.msgNetworkError), finish);
+            return;
         }
-    }
-
-    public void handleRetrofitError(RetrofitError error) {
-        handleRetrofitError(error, null);
-    }
-
-    public void handleHttpError(int errorCode, String reasonPhrase, String sourceName, boolean finish) {
         if (errorCode == HttpURLConnection.HTTP_UNAVAILABLE) {
             if (!finish) {
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.weAreDown),
-                        getString(R.string.serviceUnavailable), sourceName, null);
+                        getString(R.string.serviceUnavailable), null, null);
             } else {
-                ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreDown),
+                ((AppOperationAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreDown),
                         getString(R.string.serviceUnavailable));
             }
         } else if (errorCode == HttpURLConnection.HTTP_BAD_GATEWAY || errorCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
             if (!finish) {
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingServerError),
-                        getString(R.string.server_error), sourceName, null);
+                        getString(R.string.server_error), null, null);
             } else {
-                ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.headingServerError),
+                ((AppOperationAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.headingServerError),
                         getString(R.string.server_error));
             }
         } else if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
@@ -196,7 +168,7 @@ public class BigBasketMessageHandler<T> {
         } else {
             String msg = "HTTP " + errorCode + " : " + reasonPhrase;
             if (!finish) {
-                ((ApiErrorAware) ctx).showApiErrorDialog(null, msg, sourceName, null);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, msg, null, null);
             } else {
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, msg, true);
             }

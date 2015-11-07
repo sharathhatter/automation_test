@@ -14,14 +14,11 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -33,19 +30,19 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class BasketOperationTask<T> {
+public class BasketOperationTask<T extends AppOperationAware> {
 
     /**
      * Builder class to create a basket add/remove operation
      */
-    public static class Builder<T> {
+    public static class Builder<T extends AppOperationAware> {
         private T context;
         private Product product;
-        private @BasketOperation.Mode int basketOperation;
+        private
+        @BasketOperation.Mode
+        int basketOperation;
         private String qty;
         private WeakReference<TextView> basketCountTextView;
         private WeakReference<View> viewIncQty;
@@ -136,7 +133,9 @@ public class BasketOperationTask<T> {
 
     private T context;
     private Product product;
-    private @BasketOperation.Mode int basketOperation;
+    private
+    @BasketOperation.Mode
+    int basketOperation;
     private String qty;
     private WeakReference<TextView> basketCountTextView;
     private WeakReference<View> viewIncQty;
@@ -198,33 +197,33 @@ public class BasketOperationTask<T> {
      * Trigger network request to update the basket
      */
     public void startTask() {
-        if (!((ConnectivityAware) context).checkInternetConnection()) {
-            ((HandlerAware) context).getHandler().sendOfflineError();
+        if (!context.checkInternetConnection()) {
+            context.getHandler().sendOfflineError();
             return;
         }
         logBasketEvent(eventName, product, navigationCtx);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
-                getApiService(((ActivityAware) context).getCurrentActivity());
-        ((ProgressIndicationAware) context).showProgressDialog(((ActivityAware) context).getCurrentActivity()
+                getApiService(context.getCurrentActivity());
+        context.showProgressDialog(context.getCurrentActivity()
                 .getString(R.string.please_wait));
         String reqProdId = product.getSku();
+        Call<CartOperationApiResponse> call = null;
         switch (basketOperation) {
             case BasketOperation.INC:
-                bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get(),
-                        new CartOperationApiResponseCallback());
+                call = bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get());
                 break;
             case BasketOperation.DEC:
-                bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get(),
-                        new CartOperationApiResponseCallback());
+                call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get());
                 break;
             case BasketOperation.SET:
-                bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get(),
-                        new CartOperationApiResponseCallback());
+                call = bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get());
                 break;
             case BasketOperation.EMPTY:
-                bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", basketQueryMap.get(),
-                        new CartOperationApiResponseCallback());
+                call = bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", basketQueryMap.get());
                 break;
+        }
+        if (call != null) {
+            call.enqueue(new CartOperationApiResponseCallback(context));
         }
     }
 
@@ -254,16 +253,13 @@ public class BasketOperationTask<T> {
     /**
      * Callback class that implements the Retrofit's response
      */
-    private class CartOperationApiResponseCallback implements Callback<CartOperationApiResponse> {
+    private class CartOperationApiResponseCallback extends BBNetworkCallback<CartOperationApiResponse> {
+        public CartOperationApiResponseCallback(AppOperationAware ctx) {
+            super(ctx);
+        }
 
         @Override
-        public void success(CartOperationApiResponse cartOperationApiResponse, Response response) {
-            if (((CancelableAware) context).isSuspended()) {
-                // User has cancelled by pressing back button, so do nothing.
-                return;
-            } else {
-                ((ProgressIndicationAware) context).hideProgressDialog();
-            }
+        public void onSuccess(CartOperationApiResponse cartOperationApiResponse) {
             switch (cartOperationApiResponse.status) {
                 case Constants.OK:
                     // Update the product view and also update the FAB basket button
@@ -285,12 +281,12 @@ public class BasketOperationTask<T> {
                 case Constants.ERROR:
                     switch (cartOperationApiResponse.errorType) {
                         case Constants.PRODUCT_ID_NOT_FOUND:
-                            ((HandlerAware) context).getHandler().
+                            context.getHandler().
                                     sendEmptyMessage(ApiErrorCodes.BASKET_EMPTY, null);
                             break;
                         default:
                             // Pass to generic error handler
-                            ((HandlerAware) context).getHandler().sendEmptyMessage(cartOperationApiResponse.getErrorTypeAsInt(),
+                            context.getHandler().sendEmptyMessage(cartOperationApiResponse.getErrorTypeAsInt(),
                                     cartOperationApiResponse.message);
                             break;
                     }
@@ -302,15 +298,10 @@ public class BasketOperationTask<T> {
         }
 
         @Override
-        public void failure(RetrofitError error) {
+        public boolean updateProgress() {
             // Due to some n/w error things went bad
-            if (((CancelableAware) context).isSuspended()) {
-                return;
-            } else {
-                ((ProgressIndicationAware) context).hideProgressDialog();
-            }
-            // Pass to generic error handler
-            ((HandlerAware) context).getHandler().handleRetrofitError(error);
+            context.hideProgressDialog();
+            return true;
         }
     }
 

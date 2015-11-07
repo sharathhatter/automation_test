@@ -24,8 +24,9 @@ import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse
 import com.bigbasket.mobileapp.devconfig.DevConfigViewHandler;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
@@ -44,12 +45,10 @@ import com.newrelic.agent.android.NewRelic;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
-public class SplashActivity extends SocialLoginActivity implements DynamicScreenAware, HandlerAware {
+public class SplashActivity extends SocialLoginActivity implements DynamicScreenAware, AppOperationAware {
 
     private boolean mIsFromActivityResult;
 
@@ -123,7 +122,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
         ImageView imgEmptyPage = (ImageView) findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setImageResource(R.drawable.empty_no_internet);
-        if(BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             DevConfigViewHandler.setView(imgEmptyPage);
         }
 
@@ -222,52 +221,39 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         }
 
         String imei = UIUtil.getIMEI(this);
-        bigBasketApiService.registerDevice(imei, deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
-                new Callback<RegisterDeviceResponse>() {
-                    @Override
-                    public void success(RegisterDeviceResponse registerDeviceResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-                        SharedPreferences.Editor editor = preferences.edit();
+        Call<RegisterDeviceResponse> call = bigBasketApiService.registerDevice(imei, deviceID,
+                String.valueOf(city.getId()), devicePropertiesJsonObj.toString());
+        call.enqueue(new BBNetworkCallback<RegisterDeviceResponse>(this) {
+            @Override
+            public void onSuccess(RegisterDeviceResponse registerDeviceResponse) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+                SharedPreferences.Editor editor = preferences.edit();
 
-                        String deviceID = Settings.Secure.getString(getCurrentActivity().getContentResolver(),
-                                Settings.Secure.ANDROID_ID);
-                        editor.putString(Constants.CITY, city.getName());
-                        editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
-                        editor.putString(Constants.DEVICE_ID, deviceID);
-                        editor.putString(Constants.VISITOR_ID_KEY, registerDeviceResponse.visitorId);
-                        editor.putString(Constants.MID_KEY, null);
-                        editor.putString(Constants.MEMBER_EMAIL_KEY, null);
-                        editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
-                        editor.commit();
-                        AuthParameters.reset();
+                String deviceID = Settings.Secure.getString(getCurrentActivity().getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+                editor.putString(Constants.CITY, city.getName());
+                editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
+                editor.putString(Constants.DEVICE_ID, deviceID);
+                editor.putString(Constants.VISITOR_ID_KEY, registerDeviceResponse.visitorId);
+                editor.putString(Constants.MID_KEY, null);
+                editor.putString(Constants.MEMBER_EMAIL_KEY, null);
+                editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
+                editor.commit();
+                AuthParameters.reset();
 
-                        startLandingPage();
-                    }
+                startLandingPage();
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (error.getKind()) {
-                            case NETWORK:
-                                showNoInternetConnectionView(getString(R.string.networkError));
-                                break;
-                            default:
-                                handler.handleRetrofitError(error, true);
-                                break;
-                        }
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
     }
 
     private void startLandingPage() {
@@ -330,8 +316,8 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     }
 
     @Override
-    public void onDynamicScreenFailure(RetrofitError error) {
-        handler.handleRetrofitError(error, true);
+    public void onDynamicScreenFailure(Throwable t) {
+        handler.handleRetrofitError(t, true);
     }
 
     @Override

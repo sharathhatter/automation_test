@@ -47,14 +47,17 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({NONE, SIGN_IN, SIGN_OUT, REVOKE})
-    private  @interface ConnectionMode {
+    private @interface ConnectionMode {
     }
+
     private static final int NONE = 0;
     private static final int SIGN_IN = 1;
     private static final int REVOKE = 2;
     private static final int SIGN_OUT = 3;
 
-    private  @ConnectionMode int mConnectionMode = NONE;
+    private
+    @ConnectionMode
+    int mConnectionMode = NONE;
 
     /* Keys for persisting instance variables in savedInstanceState */
     private static final String KEY_IS_RESOLVING = "is_resolving";
@@ -83,7 +86,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
             mIsResolving = savedInstanceState.getBoolean(KEY_IS_RESOLVING);
             @ConnectionMode int mode = savedInstanceState.getInt(KEY_CONNECTION_MODE, NONE);
             mConnectionMode = mode;
-            if(mConnectionMode != NONE){
+            if (mConnectionMode != NONE) {
                 initializeGoogleApiClient();
             }
         }
@@ -94,7 +97,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(mConnectionMode != NONE && mGoogleApiClient != null) {
+        if (mConnectionMode != NONE && mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
     }
@@ -102,7 +105,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(mGoogleApiClient != null) {
+        if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
     }
@@ -120,14 +123,14 @@ public abstract class PlusBaseActivity extends BaseActivity {
     /**
      * Called when the PlusClient revokes access to this app.
      */
-    protected void onPlusClientRevokeAccess(){
+    protected void onPlusClientRevokeAccess() {
         hideProgressView();
     }
 
     /**
      * Failed to revoke the client
      */
-    protected void onPlusClientRevokeFailed(){
+    protected void onPlusClientRevokeFailed() {
         hideProgressView();
     }
 
@@ -139,7 +142,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
     /**
      * Called when failed to obtain auth token
      */
-    protected void onPlusClientSignInFailed(){
+    protected void onPlusClientSignInFailed() {
         hideProgressView();
     }
 
@@ -151,14 +154,15 @@ public abstract class PlusBaseActivity extends BaseActivity {
     /**
      * Called when failed to signout
      */
-    protected void onPlusClientSignOutFailed(){
+    protected void onPlusClientSignOutFailed() {
         hideProgressView();
     }
 
-    protected void onPlusClientConnected(){
+    protected void onPlusClientConnected() {
 
     }
-    protected void onPlusClientConnectFailed(){
+
+    protected void onPlusClientConnectFailed() {
         hideProgressView();
 
     }
@@ -225,7 +229,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         // attempt to resolve any errors that occur.
         Log.d(TAG, "signInViaGPlus");
         mConnectionMode = SIGN_IN;
-        if(mGoogleApiClient != null){
+        if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
         //Always start with a fresh client for signin
@@ -239,7 +243,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
     protected void signOutFromGplus() {
         Log.d(TAG, "signOutFromGplus");
         mConnectionMode = SIGN_OUT;
-        if(mGoogleApiClient == null) {
+        if (mGoogleApiClient == null) {
             initializeGoogleApiClient();
         }
 
@@ -262,14 +266,14 @@ public abstract class PlusBaseActivity extends BaseActivity {
         }
     }
 
-    private void signOut(){
+    private void signOut() {
         clearAndRevokeAccount();
         mGoogleApiClient.disconnect();
         mGoogleApiClient = null;
         onPlusClientSignOut();
     }
 
-    private void fetchAuthToken(String accountName){
+    private void fetchAuthToken(String accountName) {
         new GplusAuthTokenFetcher(this).execute(accountName);
     }
 
@@ -297,15 +301,15 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 }
                 onGoogleClientConnectCancelled();
             }
-        } else if(requestCode == RC_RESOLVE_AUTH_ERROR) {
+        } else if (requestCode == RC_RESOLVE_AUTH_ERROR) {
             if (resultCode == RESULT_OK) {
                 String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                if(!TextUtils.isEmpty(accountName)){
+                if (!TextUtils.isEmpty(accountName)) {
                     fetchAuthToken(accountName);
                 } else {
-                    if(mGoogleApiClient.isConnected()) {
+                    if (mGoogleApiClient.isConnected()) {
                         onGoogleClientConnected(null);
-                    } else if(!mGoogleApiClient.isConnecting()){
+                    } else if (!mGoogleApiClient.isConnecting()) {
                         mConnectionMode = SIGN_IN;
                         mGoogleApiClient.connect();
                     }
@@ -314,7 +318,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 //User cancelled
                 onAuthCancelled();
             }
-        }else {
+        } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -322,7 +326,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
     private void onGoogleClientConnected(Bundle bundle) {
         if (mGoogleApiClient == null || isSuspended()) return;
         onPlusClientConnected();
-        switch (mConnectionMode){
+        switch (mConnectionMode) {
             case SIGN_IN:
                 signIn();
                 break;
@@ -342,14 +346,15 @@ public abstract class PlusBaseActivity extends BaseActivity {
         invokeFailedCallBack();
         resetConnectionMode();
     }
+
     private void onGoogleClientConnectCancelled() {
         onPlusClientConnectFailed();
         invokeFailedCallBack();
         resetConnectionMode();
     }
 
-    private void invokeFailedCallBack(){
-        switch (mConnectionMode){
+    private void invokeFailedCallBack() {
+        switch (mConnectionMode) {
             case SIGN_IN:
                 //TODO: Pass the error code
                 onPlusClientSignInFailed();
@@ -367,10 +372,10 @@ public abstract class PlusBaseActivity extends BaseActivity {
         return mGoogleApiClient;
     }
 
-    private void clearAndRevokeAccount(){
+    private void clearAndRevokeAccount() {
         try {
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-        } catch (IllegalStateException ex){
+        } catch (IllegalStateException ex) {
             //Ignore, google client is not connected
         }
         try {
@@ -382,15 +387,15 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 }
             });
             //TODO: wait for pr to complete
-        } catch (IllegalStateException ex){
+        } catch (IllegalStateException ex) {
             //Ignore for now
         }
     }
 
     private void onAuthFailed(Exception authException) {
-        if(authException != null){
-            if(authException instanceof UserRecoverableAuthException) {
-                startActivityForResult(((UserRecoverableAuthException)authException).getIntent(),
+        if (authException != null) {
+            if (authException instanceof UserRecoverableAuthException) {
+                startActivityForResult(((UserRecoverableAuthException) authException).getIntent(),
                         RC_RESOLVE_AUTH_ERROR);
             } else {
                 //TODO: Show error and retry if is IOException
@@ -401,7 +406,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         }
     }
 
-    private void onAuthCancelled(){
+    private void onAuthCancelled() {
         clearAndRevokeAccount();
         onPlusClientSignInFailed();
     }
@@ -430,7 +435,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         onGoogleClientConnectFailed();
     }
 
-    private void resetConnectionMode(){
+    private void resetConnectionMode() {
         mConnectionMode = NONE;
     }
 
@@ -438,7 +443,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
     protected void revokeGPlusAccess() {
         Log.d(TAG, "revokeGPlusAccess");
         mConnectionMode = REVOKE;
-        if(mGoogleApiClient == null) {
+        if (mGoogleApiClient == null) {
             initializeGoogleApiClient();
         }
 
@@ -453,7 +458,8 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
     /* A fragment to display an error dialog */
     public static class GooglePlayServicesErrorDialogFragment extends DialogFragment {
-        public GooglePlayServicesErrorDialogFragment() { }
+        public GooglePlayServicesErrorDialogFragment() {
+        }
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -466,7 +472,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
         @Override
         public void onDismiss(DialogInterface dialog) {
-            if(getActivity() instanceof  PlusBaseActivity) {
+            if (getActivity() instanceof PlusBaseActivity) {
                 ((PlusBaseActivity) getActivity()).onDialogDismissed();
             }
         }
@@ -498,7 +504,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 onAuthCancelled();
                 return;
             }
-            if(TextUtils.isEmpty(result.getAuthToken())) {
+            if (TextUtils.isEmpty(result.getAuthToken())) {
                 onAuthFailed(result.getAuthException());
             } else {
                 onAuthComplete(result.getAuthToken());

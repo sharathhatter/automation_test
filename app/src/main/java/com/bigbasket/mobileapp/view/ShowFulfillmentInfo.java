@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -59,7 +59,7 @@ public class ShowFulfillmentInfo<T> {
                 if (!TextUtils.isEmpty(fulfillmentInfo.getFulfilledByInfoPage())) {
                     SpannableString content = new SpannableString(prefix + postFix);
                     int prefixLen = prefix.length();
-                    content.setSpan(new ForegroundColorSpan(((ActivityAware) ctx).getCurrentActivity()
+                    content.setSpan(new ForegroundColorSpan(((AppOperationAware) ctx).getCurrentActivity()
                                     .getResources().getColor(R.color.link_color)),
                             prefixLen - 1, content.length(), 0);
                     txtFulfilledBy.setVisibility(View.VISIBLE);
@@ -111,9 +111,9 @@ public class ShowFulfillmentInfo<T> {
     }
 
     public void showFulfillmentInfoPage(String fulfillmentInfoPageUrl) {
-        Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), BackButtonActivity.class);
+        Intent intent = new Intent(((AppOperationAware) ctx).getCurrentActivity(), BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
         intent.putExtra(Constants.WEBVIEW_URL, fulfillmentInfoPageUrl);
-        ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        ((AppOperationAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }
