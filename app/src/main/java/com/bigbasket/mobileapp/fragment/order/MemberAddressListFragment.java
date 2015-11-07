@@ -106,7 +106,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
         Call<ApiResponse<GetDeliveryAddressApiResponseContent>> call = bigBasketApiService.getDeliveryAddresses();
-        call.enqueue(new BBNetworkCallback<ApiResponse<GetDeliveryAddressApiResponseContent>>(this) {
+        call.enqueue(new BBNetworkCallback<ApiResponse<GetDeliveryAddressApiResponseContent>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<GetDeliveryAddressApiResponseContent> getDeliveryAddressApiResponse) {
                 switch (getDeliveryAddressApiResponse.status) {

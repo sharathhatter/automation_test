@@ -147,7 +147,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         Call<ApiResponse<UpdateVersionInfoApiResponseContent>> call =
                 bigBasketApiService.updateVersionNumber(imei, preferences.getString(Constants.DEVICE_ID, null),
                         DataUtil.getAppVersion(getActivity()));
-        call.enqueue(new BBNetworkCallback<ApiResponse<UpdateVersionInfoApiResponseContent>>(this) {
+        call.enqueue(new BBNetworkCallback<ApiResponse<UpdateVersionInfoApiResponseContent>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse) {
                 switch (updateVersionInfoApiResponse.status) {

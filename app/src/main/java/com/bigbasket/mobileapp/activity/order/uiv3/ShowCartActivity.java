@@ -226,7 +226,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
         Call<BaseApiResponse> call = bigBasketApiService.emptyCart();
-        call.enqueue(new BBNetworkCallback<BaseApiResponse>(this) {
+        call.enqueue(new BBNetworkCallback<BaseApiResponse>(this, true) {
             @Override
             public void onSuccess(BaseApiResponse cartEmptyApiResponseCallback) {
                 markBasketChanged(null);

@@ -223,7 +223,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         String imei = UIUtil.getIMEI(this);
         Call<RegisterDeviceResponse> call = bigBasketApiService.registerDevice(imei, deviceID,
                 String.valueOf(city.getId()), devicePropertiesJsonObj.toString());
-        call.enqueue(new BBNetworkCallback<RegisterDeviceResponse>(this) {
+        call.enqueue(new BBNetworkCallback<RegisterDeviceResponse>(this, true) {
             @Override
             public void onSuccess(RegisterDeviceResponse registerDeviceResponse) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
@@ -242,6 +242,11 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
                 AuthParameters.reset();
 
                 startLandingPage();
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                showNoInternetConnectionView(getString(R.string.networkError));
             }
 
             @Override

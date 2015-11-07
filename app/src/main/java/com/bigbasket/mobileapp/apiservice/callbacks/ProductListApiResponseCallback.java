@@ -20,7 +20,7 @@ public class ProductListApiResponseCallback<T extends AppOperationAware> extends
 
     public ProductListApiResponseCallback(T ctx, boolean isInlineProgressBar,
                                           boolean isFilterOrSortApplied) {
-        super(ctx);
+        super(ctx, true);
         this.ctx = ctx;
         this.isInlineProgressBar = isInlineProgressBar;
         this.isFilterOrSortApplied = isFilterOrSortApplied;

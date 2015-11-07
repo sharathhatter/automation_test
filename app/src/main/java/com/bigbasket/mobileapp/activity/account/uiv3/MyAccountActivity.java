@@ -89,7 +89,7 @@ public class MyAccountActivity extends BackButtonActivity implements
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
         Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.getMemberProfileData();
-        call.enqueue(new BBNetworkCallback<ApiResponse<UpdateProfileApiResponse>>(this) {
+        call.enqueue(new BBNetworkCallback<ApiResponse<UpdateProfileApiResponse>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback) {
                 hideProgressDialog();

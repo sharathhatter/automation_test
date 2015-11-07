@@ -77,7 +77,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         if (page == 1)
             showProgressView();
         Call<ApiResponse<OrderListApiResponse>> call = bigBasketApiService.getOrders(mOrderType, String.valueOf(page));
-        call.enqueue(new BBNetworkCallback<ApiResponse<OrderListApiResponse>>(this) {
+        call.enqueue(new BBNetworkCallback<ApiResponse<OrderListApiResponse>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<OrderListApiResponse> orderListApiResponse) {
                 if (orderListApiResponse.status == 0) {

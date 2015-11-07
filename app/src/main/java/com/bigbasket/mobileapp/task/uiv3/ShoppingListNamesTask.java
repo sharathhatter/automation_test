@@ -28,7 +28,7 @@ public class ShoppingListNamesTask<T extends AppOperationAware> {
                 getApiService(ctx.getCurrentActivity());
         ctx.showProgressDialog("Please wait...");
         Call<GetShoppingListsApiResponse> call = bigBasketApiService.getShoppingLists(showSystem ? "1" : "0");
-        call.enqueue(new BBNetworkCallback<GetShoppingListsApiResponse>(ctx) {
+        call.enqueue(new BBNetworkCallback<GetShoppingListsApiResponse>(ctx, true) {
                          @Override
                          public void onSuccess(GetShoppingListsApiResponse getShoppingListsApiResponse) {
                              switch (getShoppingListsApiResponse.status) {

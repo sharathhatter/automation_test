@@ -40,9 +40,13 @@ public class AreaPinInfoIntentService extends IntentService {
         try {
             Call<ArrayList<City>> call = bigBasketApiService.listCities();
             Response<ArrayList<City>> response = call.execute();
-            ArrayList<City> cities = response.body();
-            CityManager.storeCities(AreaPinInfoIntentService.this, cities);
-            fetchPinCodes(cities);
+            if (response.isSuccess()) {
+                ArrayList<City> cities = response.body();
+                CityManager.storeCities(AreaPinInfoIntentService.this, cities);
+                fetchPinCodes(cities);
+            } else {
+                Log.d(TAG, "Oops! An error occurred while fetching pin-codes");
+            }
         } catch (IOException e) {
             Log.d(TAG, "Oops! An error occurred while fetching pin-codes");
         }
