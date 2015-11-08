@@ -401,6 +401,10 @@
     <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
     <string name="noAddGiftWrap">No additional gift wrap required.</string>
 
+    <string name="createNewAddress">Create new address</string>
+    <string name="addressAdded">Address added successfully</string>
+    <string name="addressUpdated">Address updated successfully</string>
+    <string name="newAddressNotAllowed">We will create another address with city that you\'ve chosen, as we don\'t support modifying city of an existing address.</string>
     <string name="your_loc">\u0020your location</string>
     <string name="store_empty">Sorry, Currently we do not have any speciality stores for\u0020</string>
     <string name="available_in">\u0020available \nin </string>

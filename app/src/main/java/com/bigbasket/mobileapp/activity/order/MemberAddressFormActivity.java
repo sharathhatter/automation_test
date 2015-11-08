@@ -44,6 +44,7 @@ import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -193,7 +194,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             }
             spinnerCity.setSelection(selectedPosition);
         }
-        spinnerCity.setEnabled(false); // Disallow user to change city for an existing address
 
         editTextAddressNick.setText(getValueOrBlank(mAddress.getAddressNickName()));
         editTextFirstName.setText(getValueOrBlank(mAddress.getFirstName()));
@@ -204,10 +204,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         editTextResidentialComplex.setText(getValueOrBlank(mAddress.getResidentialComplex()));
         editTextLandmark.setText(getValueOrBlank(mAddress.getLandmark()));
         editTextArea.setText(getValueOrBlank(mAddress.getArea()));
-
-        //editTextCity.setText(getValueOrBlank(mAddress.getCityName()));
         editTextPincode.setText(getValueOrBlank(mAddress.getPincode()));
-        //chkIsAddrDefault.setChecked(mAddress.isDefault()); // Don't remove since during request, this is read
         chkIsAddrDefault.setVisibility(mAddress.isDefault() ? View.GONE : View.VISIBLE);
     }
 
@@ -309,7 +306,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
 
         // Sending request
 
-        HashMap<String, String> payload = new HashMap<String, String>() {
+        final HashMap<String, String> payload = new HashMap<String, String>() {
             {
                 put(Constants.ADDR_NICK, editTextAddressNick.getText().toString());
             }
@@ -362,21 +359,38 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             payload.put(Constants.OTP_CODE, otpCode);
         }
 
+        if (mAddress != null && mChoosenCity.getId() != mAddress.getCityId()) {
+            if (TextUtils.isEmpty(otpCode)) {
+                // User is trying to change the city, show an alert
+                showAlertDialog(getString(R.string.createNewAddress),
+                        getString(R.string.newAddressNotAllowed),
+                        DialogButton.OK, DialogButton.CANCEL,
+                        Constants.UPDATE_ADDRESS,
+                        payload, getString(R.string.createNewAddress));
+            } else {
+                uploadAddress(payload, true);
+            }
+        } else {
+            uploadAddress(payload, false);
+        }
+    }
+
+    private void uploadAddress(Map<String, String> payload, boolean forceCreate) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.ENABLED, chkIsAddrDefault.isChecked() ? TrackEventkeys.YES : TrackEventkeys.NO);
         trackEvent(TrackingAware.ENABLE_DEFAULT_ADDRESS, eventAttribs);
-        if (mAddress != null) {
+        if (mAddress != null && !forceCreate) {
             payload.put(Constants.ID, mAddress.getId());
             showProgressDialog(getString(R.string.please_wait));
             Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
                     bigBasketApiService.updateAddress(BBUrlEncodeUtils.urlEncode(payload));
-            call.enqueue(new CreateUpdateAddressApiCallback(this));
+            call.enqueue(new CreateUpdateAddressApiCallback(this, false));
         } else {
+            payload.remove(Constants.ID); // Defensive check
             showProgressDialog(getString(R.string.please_wait));
             Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
                     bigBasketApiService.createAddress(BBUrlEncodeUtils.urlEncode(payload));
-            call.enqueue(new CreateUpdateAddressApiCallback(this));
+            call.enqueue(new CreateUpdateAddressApiCallback(this, forceCreate));
         }
     }
 
@@ -428,9 +442,17 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null && sourceName.equalsIgnoreCase(Constants.ERROR)) {
-            finish();
+        if (sourceName != null) {
+            switch (sourceName) {
+                case Constants.ERROR:
+                    finish();
+                    break;
+                case Constants.UPDATE_ADDRESS:
+                    uploadAddress((HashMap<String, String>) valuePassed, true);
+                    break;
+            }
         }
         super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
     }
@@ -528,8 +550,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
 
     private class CreateUpdateAddressApiCallback extends BBNetworkCallback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
 
-        public CreateUpdateAddressApiCallback(AppOperationAware ctx) {
+        private boolean forceCreate;
+
+        public CreateUpdateAddressApiCallback(AppOperationAware ctx, boolean forceCreate) {
             super(ctx);
+            this.forceCreate = forceCreate;
         }
 
         @Override
@@ -546,11 +571,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                     if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
                         trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, null);
                     }
-                    if (mAddress == null) {
-                        Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
+                    if (mAddress == null || forceCreate) {
+                        Toast.makeText(getCurrentActivity(), R.string.addressAdded, Toast.LENGTH_LONG).show();
                         addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.address);
                     } else {
-                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getCurrentActivity(), R.string.addressUpdated, Toast.LENGTH_LONG).show();
                         addressCreatedModified();
                     }
                     break;
