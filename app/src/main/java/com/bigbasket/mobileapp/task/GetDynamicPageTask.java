@@ -143,13 +143,11 @@ public class GetDynamicPageTask<T extends AppOperationAware> {
 
         @Override
         public void onFailure(int httpErrorCode, String msg) {
-            super.onFailure(httpErrorCode, msg);
             ((DynamicScreenAware) context).onDynamicScreenFailure(httpErrorCode, msg);
         }
 
         @Override
         public void onFailure(Throwable t) {
-            super.onFailure(t);
             ((DynamicScreenAware) context).onDynamicScreenFailure(t);
         }
     }
