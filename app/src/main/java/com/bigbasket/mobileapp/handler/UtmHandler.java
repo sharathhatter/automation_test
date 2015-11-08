@@ -7,6 +7,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -45,7 +46,8 @@ public class UtmHandler {
             @Override
             public void run() {
                 try {
-                    Call<BaseApiResponse> call = bigBasketApiService.postUtmParams(utmQueryMapHolder);
+                    Call<BaseApiResponse> call =
+                            bigBasketApiService.postUtmParams(BBUrlEncodeUtils.urlEncode(utmQueryMapHolder));
                     call.execute();
                 } catch (IOException e) {
                     // Fail silently

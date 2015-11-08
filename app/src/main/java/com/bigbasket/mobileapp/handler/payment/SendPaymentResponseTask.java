@@ -11,6 +11,7 @@ import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -129,7 +130,8 @@ public class SendPaymentResponseTask<T extends AppOperationAware> {
                 queryMap.putAll(paytmParams);
                 break;
         }
-        Call<ApiResponse<PostPrepaidPaymentResponse>> call = bigBasketApiService.postPrepaidPayment(queryMap);
+        Call<ApiResponse<PostPrepaidPaymentResponse>> call =
+                bigBasketApiService.postPrepaidPayment(BBUrlEncodeUtils.urlEncode(queryMap));
         call.enqueue(new PostPrepaidParamsCallback(ctx));
     }
 

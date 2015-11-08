@@ -105,13 +105,13 @@ public interface BigBasketApiService {
 
     @GET("product-list/")
     Call<ApiResponse<ProductTabData>> productList(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
-                                                  @QueryMap Map<String, String> productQueryMap);
+                                                  @QueryMap(encoded = true) Map<String, String> productQueryMap);
 
     @GET("store-list/")
     Call<ApiResponse<SpecialityShopsListData>> getSpecialityShops(@Query(Constants.CATEGORY) String categoryValue);
 
     @GET("product-next-page/")
-    Call<ApiResponse<ProductNextPageResponse>> productNextPage(@QueryMap Map<String, String> productQueryMap);
+    Call<ApiResponse<ProductNextPageResponse>> productNextPage(@QueryMap(encoded = true) Map<String, String> productQueryMap);
 
     @GET("browse-promo-cat/")
     Call<ApiResponse<BrowsePromoCategoryApiResponseContent>> browsePromoCategory();
@@ -174,19 +174,19 @@ public interface BigBasketApiService {
     @POST("c-incr-i/")
     Call<CartOperationApiResponse> incrementCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                      @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
-                                                     @FieldMap Map<String, String> basketQueryMap);
+                                                     @FieldMap(encoded = true) Map<String, String> basketQueryMap);
 
     @FormUrlEncoded
     @POST("c-decr-i/")
     Call<CartOperationApiResponse> decrementCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                      @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
-                                                     @FieldMap Map<String, String> basketQueryMap);
+                                                     @FieldMap(encoded = true) Map<String, String> basketQueryMap);
 
     @FormUrlEncoded
     @POST("c-set-i/")
     Call<CartOperationApiResponse> setCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
-                                               @FieldMap Map<String, String> basketQueryMap);
+                                               @FieldMap(encoded = true) Map<String, String> basketQueryMap);
 
     @FormUrlEncoded
     @POST("change-password/")
@@ -222,12 +222,14 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("create-address/")
-    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> createAddress(@FieldMap HashMap<String, String> params);
+    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> createAddress(@FieldMap(encoded = true)
+                                                                           HashMap<String, String> params);
 
 
     @FormUrlEncoded
     @POST("update-address/")
-    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> updateAddress(@FieldMap HashMap<String, String> params);
+    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> updateAddress(@FieldMap(encoded = true)
+                                                                           HashMap<String, String> params);
 
     @GET("get-orders/")
     Call<ApiResponse<OrderListApiResponse>> getOrders(@Query(Constants.ORDER_TYPE) String orderType,
@@ -310,7 +312,7 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("post-order-payment/")
-    Call<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPayment(@FieldMap Map<String, String> paymentParams);
+    Call<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPayment(@FieldMap(encoded = true) Map<String, String> paymentParams);
 
     @GET("validate-order-payment/")
     Call<ApiResponse<ValidateOrderPaymentApiResponse>> validateOrderPayment(@Query(Constants.TXN_ID) String txnId,

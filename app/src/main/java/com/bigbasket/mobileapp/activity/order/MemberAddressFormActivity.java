@@ -46,6 +46,7 @@ import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.view.InstantAutoCompleteTextView;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 
@@ -367,11 +368,13 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (mAddress != null) {
             payload.put(Constants.ID, mAddress.getId());
             showProgressDialog(getString(R.string.please_wait));
-            Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call = bigBasketApiService.updateAddress(payload);
+            Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
+                    bigBasketApiService.updateAddress(BBUrlEncodeUtils.urlEncode(payload));
             call.enqueue(new CreateUpdateAddressApiCallback(this));
         } else {
             showProgressDialog(getString(R.string.please_wait));
-            Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call = bigBasketApiService.createAddress(payload);
+            Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
+                    bigBasketApiService.createAddress(BBUrlEncodeUtils.urlEncode(payload));
             call.enqueue(new CreateUpdateAddressApiCallback(this));
         }
     }

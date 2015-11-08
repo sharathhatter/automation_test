@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -208,18 +209,19 @@ public class BasketOperationTask<T extends AppOperationAware> {
                 .getString(R.string.please_wait));
         String reqProdId = product.getSku();
         Call<CartOperationApiResponse> call = null;
+        HashMap<String, String> urlEncodedBasketQueryMap = BBUrlEncodeUtils.urlEncode(basketQueryMap.get());
         switch (basketOperation) {
             case BasketOperation.INC:
-                call = bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get());
+                call = bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, urlEncodedBasketQueryMap);
                 break;
             case BasketOperation.DEC:
-                call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get());
+                call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, urlEncodedBasketQueryMap);
                 break;
             case BasketOperation.SET:
-                call = bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get());
+                call = bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, urlEncodedBasketQueryMap);
                 break;
             case BasketOperation.EMPTY:
-                call = bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", basketQueryMap.get());
+                call = bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", urlEncodedBasketQueryMap);
                 break;
         }
         if (call != null) {

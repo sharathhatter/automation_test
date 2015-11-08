@@ -38,6 +38,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.google.gson.Gson;
 
@@ -109,7 +110,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             mNameValuePairs.put(Constants.TAB_TYPE, new Gson().toJson(new String[]{mTabType}));
 
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
-            Call<ApiResponse<ProductNextPageResponse>> call = bigBasketApiService.productNextPage(mNameValuePairs);
+            Call<ApiResponse<ProductNextPageResponse>> call =
+                    bigBasketApiService.productNextPage(BBUrlEncodeUtils.urlEncode(mNameValuePairs));
             call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
                 @Override
                 public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {
