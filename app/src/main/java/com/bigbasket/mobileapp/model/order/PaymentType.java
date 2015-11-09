@@ -23,10 +23,13 @@ public class PaymentType implements Parcelable {
     private String displayName;
     @SerializedName(Constants.VALUE)
     private String value;
+    @SerializedName(Constants.IS_SELECTED)
+    private boolean isSelected;
 
     public PaymentType(Parcel source) {
         this.displayName = source.readString();
         this.value = source.readString();
+        this.isSelected = source.readByte() == (byte) 1;
     }
 
     public String getDisplayName() {
@@ -35,6 +38,10 @@ public class PaymentType implements Parcelable {
 
     public String getValue() {
         return value;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
     }
 
     @Override
@@ -46,5 +53,6 @@ public class PaymentType implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(displayName);
         dest.writeString(value);
+        dest.writeByte(isSelected ? (byte) 1 : (byte) 0);
     }
 }

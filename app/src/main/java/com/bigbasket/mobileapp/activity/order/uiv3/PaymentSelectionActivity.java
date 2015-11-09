@@ -355,7 +355,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                         getPaymentOptionRadioButton(layoutPaymentOptions, this, inflater);
                 rbtnPaymentType.setText(paymentType.getDisplayName());
                 rbtnPaymentType.setId(i);
-                boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? i == 0 :
+                boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? paymentType.isSelected() :
                         mSelectedPaymentMethod.equals(paymentType.getValue());
                 if (isSelected) {
                     rbtnPaymentType.setChecked(true);
@@ -557,6 +557,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void placeOrder() {
+        if (TextUtils.isEmpty(mSelectedPaymentMethod)) {
+            showToast(getString(R.string.missingPaymentMethod));
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
                 false);

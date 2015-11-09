@@ -9,21 +9,20 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
-import android.preference.PreferenceFragment;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.HomeActivity;
 import com.bigbasket.mobileapp.activity.SplashActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.FragmentCodes;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -37,16 +36,17 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class BBDevConfigActivity extends SocialLoginActivity
-        implements OnServerChangeListener{
+        implements OnServerChangeListener {
     String mNewServerName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dev_options);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbarMain);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         setupActionBar();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             showServerPreferencesFragment(savedInstanceState);
         } else {
             finish();
@@ -86,8 +86,8 @@ public class BBDevConfigActivity extends SocialLoginActivity
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private  void showServerPreferencesFragment(Bundle savedInstanceState) {
-        if(savedInstanceState == null) {
+    private void showServerPreferencesFragment(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
             ServerPreferencesFragment fragment = new ServerPreferencesFragment();
             getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
         }
@@ -100,8 +100,23 @@ public class BBDevConfigActivity extends SocialLoginActivity
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(false);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.close, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_close) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -110,14 +125,10 @@ public class BBDevConfigActivity extends SocialLoginActivity
         onLogoutRequested();
     }
 
-    /**
-     *
-     * @param success
-     * @return
-     */
     @Override
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected boolean onLogoutComplete(boolean success) {
-        if(success){
+        if (success) {
             PreferenceManager.getDefaultSharedPreferences(this).edit()
                     .remove(Constants.VISITOR_ID_KEY).commit();
             CityManager.clearChosenCity(this);
@@ -162,7 +173,7 @@ public class BBDevConfigActivity extends SocialLoginActivity
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                if(getActivity() != null){
+                if (getActivity() != null) {
                     getActivity().finish();
                 }
                 return true;
@@ -176,7 +187,6 @@ public class BBDevConfigActivity extends SocialLoginActivity
          * preference title) is updated to reflect the value. The summary is also
          * immediately updated upon calling this method. The exact display format is
          * dependent on the type of preference.
-         *
          */
         private void bindPreferenceSummaryToValue(Preference preference) {
             // Set the listener to watch for value changes.
@@ -195,7 +205,7 @@ public class BBDevConfigActivity extends SocialLoginActivity
          */
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
-                String stringValue = newValue.toString();
+            String stringValue = newValue.toString();
 
             if (preference instanceof ListPreference) {
                 // For list preferences, look up the correct display value in
@@ -214,13 +224,13 @@ public class BBDevConfigActivity extends SocialLoginActivity
                 // simple string representation.
                 preference.setSummary(stringValue);
             }
-            if(preference.getKey() != null &&
+            if (preference.getKey() != null &&
                     DeveloperConfigs.MAPI_SERVER_ADDRESS.equals(preference.getKey())) {
                 //Logout and reload application
-                if(getActivity() instanceof OnServerChangeListener
+                if (getActivity() instanceof OnServerChangeListener
                         && (mSavedServerAddress == null ||
                         !mSavedServerAddress.equalsIgnoreCase(stringValue))) {
-                    ((OnServerChangeListener)getActivity()).onServerChanged(stringValue);
+                    ((OnServerChangeListener) getActivity()).onServerChanged(stringValue);
                 }
                 return false;
             }
