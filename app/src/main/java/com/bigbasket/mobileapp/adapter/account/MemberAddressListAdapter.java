@@ -120,10 +120,6 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                     ((AddressSelectionAware) context).onEditAddressClicked(address);
                 }
             });
-            if (!fromAccount)
-                imgEditIcon.setVisibility(View.INVISIBLE);
-            else
-                imgEditIcon.setVisibility(View.VISIBLE);
 
             TextView txtExpressDelivery = memberAddressViewHolder.getTxtExpressDelivery();
             if (address.isExpress()) {
