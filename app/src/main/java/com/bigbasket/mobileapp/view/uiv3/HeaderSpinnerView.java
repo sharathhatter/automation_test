@@ -137,12 +137,8 @@ public class HeaderSpinnerView<T> {
                 if (activity.getSupportActionBar() != null) {
                     activity.getSupportActionBar().show();
                 }
-              /*  UIUtil.changeStatusBarColor(activity,
-                        R.color.uiv3_status_bar_background);*/
             } else {
                 layoutChildToolbarContainer.setVisibility(View.VISIBLE);
-                /*UIUtil.changeStatusBarColor(activity,
-                        R.color.uiv3_grey_status_bar_color);*/
                 if (activity.getSupportActionBar() != null) {
                     activity.getSupportActionBar().hide();
                 }
