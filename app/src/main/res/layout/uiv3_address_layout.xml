@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/margin_normal"
     android:layout_marginRight="@dimen/margin_normal"
-    android:background="@color/uiv3_large_list_item_bck"
+    android:background="@color/white"
     android:paddingBottom="@dimen/padding_12"
     android:paddingLeft="@dimen/padding_normal"
     android:paddingRight="@dimen/padding_12"

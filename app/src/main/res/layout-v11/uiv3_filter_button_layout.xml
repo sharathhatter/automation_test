@@ -29,7 +29,7 @@
         android:layout_below="@id/viewSeparator"
         android:layout_toLeftOf="@id/btnApply"
         android:text="@string/clear"
-        android:textColor="@color/uiv3_secondary_text_color"
+        android:textColor="@color/dark_black"
         android:textSize="@dimen/primary_text_size" />
 
 </RelativeLayout>

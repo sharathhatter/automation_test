@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -144,7 +145,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         citySpinner.setSelection(selectedPosition);
         citySpinner.setEnabled(AuthParameters.getInstance(this).isMultiCityEnabled());
 
-        TextView txtSaveAddress = (TextView) base.findViewById(R.id.txtSaveAddress);
+        Button txtSaveAddress = (Button) base.findViewById(R.id.txtSaveAddress);
         txtSaveAddress.setTypeface(faceRobotoMedium);
         txtSaveAddress.setOnClickListener(new View.OnClickListener() {
             @Override

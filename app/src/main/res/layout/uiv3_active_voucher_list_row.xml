@@ -6,7 +6,7 @@
     android:layout_marginBottom="@dimen/margin_small"
     android:layout_marginLeft="@dimen/margin_small"
     android:layout_marginTop="@dimen/margin_small"
-    android:background="@color/uiv3_product_list_footer_bkg"
+    android:background="@color/white"
     android:paddingBottom="@dimen/padding_normal">
 
     <RelativeLayout
@@ -18,6 +18,7 @@
             android:id="@+id/lblApply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/RippleStyle"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"

@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.view.uiv3;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,6 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.HashMap;
 
@@ -137,12 +137,12 @@ public class HeaderSpinnerView<T> {
                 if (activity.getSupportActionBar() != null) {
                     activity.getSupportActionBar().show();
                 }
-                UIUtil.changeStatusBarColor(activity,
-                        R.color.uiv3_status_bar_background);
+              /*  UIUtil.changeStatusBarColor(activity,
+                        R.color.uiv3_status_bar_background);*/
             } else {
                 layoutChildToolbarContainer.setVisibility(View.VISIBLE);
-                UIUtil.changeStatusBarColor(activity,
-                        R.color.uiv3_grey_status_bar_color);
+                /*UIUtil.changeStatusBarColor(activity,
+                        R.color.uiv3_grey_status_bar_color);*/
                 if (activity.getSupportActionBar() != null) {
                     activity.getSupportActionBar().hide();
                 }

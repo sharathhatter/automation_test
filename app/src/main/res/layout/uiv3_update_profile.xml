@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="top"
-    android:background="@color/white"
+    android:background="@color/uiv3_large_list_item_bck"
     android:padding="@dimen/padding_normal"
     android:paddingBottom="@dimen/padding_small"
     android:scrollbars="none">
@@ -13,7 +13,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/uiv3_large_list_item_bck"
+        android:background="@color/white"
         android:orientation="vertical"
         android:paddingLeft="@dimen/padding_small"
         android:paddingRight="@dimen/padding_small"
@@ -207,6 +207,7 @@
             android:layout_marginTop="@dimen/margin_small"
             android:paddingBottom="@dimen/padding_normal"
             android:paddingLeft="@dimen/padding_normal"
+            style="@style/RippleStyle"
             android:paddingRight="@dimen/padding_mini"
             android:paddingTop="@dimen/padding_normal"
             android:text="@string/save"

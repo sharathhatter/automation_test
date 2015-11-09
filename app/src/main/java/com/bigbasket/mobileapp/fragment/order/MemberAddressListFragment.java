@@ -213,6 +213,19 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         showCreateAddressForm();
     }
 
+    /* public boolean onContextItemSelected(MenuItem item) {
+         switch (item.getItemId()) {
+             case R.id.editAddress:
+                 AdapterViewCompat.AdapterContextMenuInfo info = (AdapterViewCompat.AdapterContextMenuInfo) item.getMenuInfo();
+                 break;
+             case R.id.makeDefault:
+
+                 break;
+         }
+         return super.onContextItemSelected(item);
+     }
+ */
+
     private void showCreateAddressForm() {
         showAddressForm(null);
         HashMap<String, String> map = new HashMap<>();

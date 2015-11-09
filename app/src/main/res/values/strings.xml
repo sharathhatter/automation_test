@@ -294,6 +294,7 @@
     <string name="delivery_add">Delivery Address:</string>
     <string name="other_address">Other Addresses:</string>
     <string name="addAnAddress"> \u0020 Add an Address</string>
+    <string name="addNewAddress">ADD NEW ADDRESS</string>
     <string name="save">SAVE</string>
     <string name="saveAndContinue">Save and Continue</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>

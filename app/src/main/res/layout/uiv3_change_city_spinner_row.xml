@@ -8,5 +8,5 @@
     android:drawablePadding="@dimen/padding_small"
     android:drawableRight="@drawable/ic_edit_white_14dp"
     android:padding="@dimen/padding_normal"
-    android:textColor="@color/white"
+    android:textColor="@color/dark_black"
     android:textSize="@dimen/small_text_size" />

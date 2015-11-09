@@ -134,6 +134,23 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private RecyclerView mListSubNavigation;
     private boolean mSyncNeeded;
 
+    private static <T extends SectionItem> void
+    setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
+                                 ArrayList<T> sectionItems,
+                                 Section section) {
+        for (int i = 0; i < sectionItems.size(); i++) {
+            SectionItem sectionItem = sectionItems.get(i);
+            if ((sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText()))
+                    || (sectionItem instanceof SubSectionItem && ((SubSectionItem) sectionItem).isLink())) {
+                if (i == 0 && ((sectionItem instanceof SubSectionItem) && !((SubSectionItem) sectionItem).isLink())) {
+                    // Duplicate the first element as it'll be used to display the back arrow
+                    sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
+                }
+                sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
+            }
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -308,6 +325,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         addToMainLayout(fragment, tag, false);
     }
 
+    //method for add bundle
+
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
         if (frameLayout == null) return;
@@ -326,8 +345,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mDrawerLayout.closeDrawers();
         }
     }
-
-    //method for add bundle
 
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
         if (fragment == null) return;
@@ -935,23 +952,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
         return new Object[]{sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null,
                 sectionData != null ? sectionData.getRenderersMap() : null};
-    }
-
-    private static <T extends SectionItem> void
-    setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
-                                 ArrayList<T> sectionItems,
-                                 Section section) {
-        for (int i = 0; i < sectionItems.size(); i++) {
-            SectionItem sectionItem = sectionItems.get(i);
-            if ((sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText()))
-                    || (sectionItem instanceof SubSectionItem && ((SubSectionItem) sectionItem).isLink())) {
-                if (i == 0 && ((sectionItem instanceof SubSectionItem) && !((SubSectionItem) sectionItem).isLink())) {
-                    // Duplicate the first element as it'll be used to display the back arrow
-                    sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
-                }
-                sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
-            }
-        }
     }
 
     private ArrayList<SectionNavigationItem> getPreBakedNavigationItems() {
