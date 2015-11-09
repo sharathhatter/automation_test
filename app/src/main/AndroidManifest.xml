@@ -333,7 +333,7 @@
         <activity
             android:name=".activity.product.FilterActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FilterTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.LandingPageActivity"
@@ -405,7 +405,7 @@
         <activity
             android:name=".activity.account.uiv3.SignInActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/LandingPageTheme"
+            android:theme="@style/LoginScreenTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.TutorialActivity"
@@ -415,7 +415,7 @@
         <activity
             android:name=".activity.account.uiv3.SignupActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/LandingPageTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.ShipmentSelectionActivity"

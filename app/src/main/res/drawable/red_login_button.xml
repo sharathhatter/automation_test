@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true" android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/uiv3_action_bar_background_pressed" />
+            <corners android:radius="125dp" />
+        </shape>
+    </item>
+
+    <item android:state_focused="true" android:state_pressed="false">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="@color/uiv3_action_bar_background" />
+            <corners android:radius="125dp" />
+        </shape>
+    </item>
+
+    <item android:state_focused="false" android:state_pressed="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="@color/uiv3_action_bar_background_pressed" />
+            <corners android:radius="125dp" />
+        </shape>
+    </item>
+
+    <item android:state_pressed="false">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="@color/uiv3_rounded_btn_bkg" />
+            <corners android:radius="125dp" />
+        </shape>
+    </item>
+</selector>

@@ -31,7 +31,7 @@
             android:paddingLeft="@dimen/padding_large"
             android:paddingRight="@dimen/padding_normal"
             android:paddingTop="@dimen/padding_normal"
-            android:textColor="@color/uiv3_primary_text_color"
+            android:textColor="@color/white"
             android:textSize="@dimen/primary_text_size" />
     </LinearLayout>
 

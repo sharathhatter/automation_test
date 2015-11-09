@@ -105,7 +105,6 @@
         android:layout_alignBottom="@id/layoutOrderData"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/margin_normal"
-
         android:paddingBottom="@dimen/padding_small"
         android:paddingRight="@dimen/padding_normal"
         android:text="Status"

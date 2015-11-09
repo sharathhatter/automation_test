@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -41,12 +42,12 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.view.InstantAutoCompleteTextView;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 
@@ -144,7 +145,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         citySpinner.setSelection(selectedPosition);
         citySpinner.setEnabled(AuthParameters.getInstance(this).isMultiCityEnabled());
 
-        TextView txtSaveAddress = (TextView) base.findViewById(R.id.txtSaveAddress);
+        Button txtSaveAddress = (Button) base.findViewById(R.id.txtSaveAddress);
         txtSaveAddress.setTypeface(faceRobotoMedium);
         txtSaveAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -477,6 +478,54 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         unregisterBroadcastForSMS();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerBroadcastForSMS();
+
+    }
+
+    private void registerBroadcastForSMS() {
+        IntentFilter smsOTPintentFilter = new IntentFilter();
+        smsOTPintentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        smsOTPintentFilter.setPriority(2147483647);//setting high priority for dual sim support
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final Bundle bundle = intent.getExtras();
+                if (bundle != null) {
+                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
+                    if (pdusObj == null) return;
+                    for (Object aPduObj : pdusObj) {
+                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) aPduObj);
+                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
+                        String message = currentMessage.getDisplayMessageBody();
+
+                        /**
+                         * checking that the message received is from BigBasket
+                         * and it contains the word verification
+                         */
+                        if ((phoneNumber.toUpperCase().contains("BIG") &&
+                                (message.toLowerCase().contains("verification")))) {
+                            final Pattern p = Pattern.compile("(\\d{4})");
+                            final Matcher m = p.matcher(message);
+                            if (m.find() && otpValidationDialogFragment != null
+                                    && otpValidationDialogFragment.isVisible()) {
+                                otpValidationDialogFragment.resendOrConfirmOTP(m.group(0));
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        registerReceiver(broadcastReceiver, smsOTPintentFilter);
+    }
+
+    private void unregisterBroadcastForSMS() {
+        if (broadcastReceiver == null) return;
+        unregisterReceiver(broadcastReceiver);
+    }
+
     private class CreateUpdateAddressApiCallback extends BBNetworkCallback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
 
         public CreateUpdateAddressApiCallback(AppOperationAware ctx) {
@@ -537,53 +586,5 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                 return false;
             }
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        registerBroadcastForSMS();
-
-    }
-
-    private void registerBroadcastForSMS() {
-        IntentFilter smsOTPintentFilter = new IntentFilter();
-        smsOTPintentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
-        smsOTPintentFilter.setPriority(2147483647);//setting high priority for dual sim support
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                final Bundle bundle = intent.getExtras();
-                if (bundle != null) {
-                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
-                    if (pdusObj == null) return;
-                    for (Object aPduObj : pdusObj) {
-                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) aPduObj);
-                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-                        String message = currentMessage.getDisplayMessageBody();
-
-                        /**
-                         * checking that the message received is from BigBasket
-                         * and it contains the word verification
-                         */
-                        if ((phoneNumber.toUpperCase().contains("BIG") &&
-                                (message.toLowerCase().contains("verification")))) {
-                            final Pattern p = Pattern.compile("(\\d{4})");
-                            final Matcher m = p.matcher(message);
-                            if (m.find() && otpValidationDialogFragment != null
-                                    && otpValidationDialogFragment.isVisible()) {
-                                otpValidationDialogFragment.resendOrConfirmOTP(m.group(0));
-                            }
-                        }
-                    }
-                }
-            }
-        };
-        registerReceiver(broadcastReceiver, smsOTPintentFilter);
-    }
-
-    private void unregisterBroadcastForSMS() {
-        if (broadcastReceiver == null) return;
-        unregisterReceiver(broadcastReceiver);
     }
 }

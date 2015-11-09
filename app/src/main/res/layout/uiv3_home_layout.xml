@@ -22,7 +22,7 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <ProgressBar
@@ -34,9 +34,10 @@
 
             <Spinner
                 android:id="@+id/spinnerArea"
-                android:background="@null"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:popupBackground="@color/uiv3_large_list_item_bck" />
         </android.support.v7.widget.Toolbar>
 
         <FrameLayout
@@ -47,6 +48,7 @@
 
         <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
             android:id="@+id/btnViewBasket"
+            style="@style/RippleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

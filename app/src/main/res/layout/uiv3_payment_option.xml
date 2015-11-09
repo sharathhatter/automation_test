@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/layoutCheckoutFooter"
         android:layout_below="@id/toolbarMain"
-        android:background="@color/white">
+        android:background="@color/uiv3_list_bkg_color">
 
         <LinearLayout
             android:id="@+id/layoutPaymentContainer"
@@ -76,7 +76,7 @@
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
-                android:background="@color/uiv3_list_bkg_color"
+                android:background="@color/white"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/padding_normal"
                 android:paddingLeft="@dimen/padding_normal"
@@ -108,7 +108,7 @@
                 android:layout_marginBottom="@dimen/margin_small"
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
-                android:background="@color/uiv3_list_bkg_color"
+                android:background="@color/white"
                 android:gravity="center_vertical"
                 android:paddingBottom="@dimen/padding_normal"
                 android:paddingLeft="@dimen/margin_22"
@@ -122,6 +122,7 @@
                     android:clickable="true"
                     android:drawablePadding="@dimen/padding_normal"
                     android:text="@string/applyVoucher"
+                    style="@style/RippleStyle"
                     android:textColor="@color/uiv3_dialog_header_text_bkg"
                     android:textSize="@dimen/secondary_text_size" />
 
@@ -139,6 +140,7 @@
                     android:id="@+id/txtRemoveVoucher"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    style="@style/RippleStyle"
                     android:clickable="true"
                     android:drawablePadding="@dimen/padding_normal"
                     android:drawableRight="@drawable/ic_highlight_remove_grey600_24dp"

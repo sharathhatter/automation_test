@@ -68,7 +68,7 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
     @SuppressWarnings("unchecked")
     public View getView(int position, View convertView, ViewGroup parent) {
         if (getSpinnerViewType(position) == VIEW_TYPE_ADDRESS) {
-            convertView = getAddressRow(false, position, convertView, parent);
+            convertView = getAddressRow(false, position, convertView, parent, R.color.white);
         } else {
             convertView = getChangeAddressRow(parent);
         }
@@ -78,7 +78,7 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         if (getSpinnerViewType(position) == VIEW_TYPE_ADDRESS) {
-            convertView = getAddressRow(true, position, convertView, parent);
+            convertView = getAddressRow(true, position, convertView, parent, R.color.dark_black);
         } else {
             convertView = getChangeAddressRow(parent);
         }
@@ -100,7 +100,7 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
 
     @SuppressWarnings("unchecked")
     private View getAddressRow(boolean showSlotTime, int position, View convertView,
-                               ViewGroup parent) {
+                               ViewGroup parent, int color) {
         AddressSummary addressSummary = addressSummaries.get(position);
         AddressViewHolder addressViewHolder;
         if (convertView == null || convertView.getTag() == null) {
@@ -113,6 +113,7 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
         }
         /************Setting different color for gingerbread and below******/
         TextView txtAddress = addressViewHolder.getTxtAddress();
+        txtAddress.setTextColor(getContext().getResources().getColor(color));
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
             txtAddress.setTextColor(getContext().getResources().getColor(R.color.dark_black));
         }
