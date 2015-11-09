@@ -15,13 +15,14 @@ import com.bigbasket.mobileapp.application.BaseApplication;
 public class DatabaseContentProvider extends ContentProvider {
 
     DatabaseHelper databaseHelper;
-    private static final String AUTHORITY = BaseApplication.getsContext().getPackageName()+".DatabaseContentProvider";
+    private static final String AUTHORITY = BaseApplication.getsContext().getPackageName() + ".DatabaseContentProvider";
 
     public static final Uri CONTENT_URI_PREFIX = Uri.parse("content://" + AUTHORITY);
 
     public static final int AREA_PIN_INFO = 100;
     private static final UriMatcher sURIMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
+
     static {
         sURIMatcher.addURI(AUTHORITY, AreaPinInfoAdapter.tableName, AREA_PIN_INFO);
     }
@@ -62,7 +63,7 @@ public class DatabaseContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        databaseHelper=DatabaseHelper.getInstance(getContext());
+        databaseHelper = DatabaseHelper.getInstance(getContext());
         return true;
     }
 
@@ -70,7 +71,6 @@ public class DatabaseContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-
 
 
         int uriType = sURIMatcher.match(uri);

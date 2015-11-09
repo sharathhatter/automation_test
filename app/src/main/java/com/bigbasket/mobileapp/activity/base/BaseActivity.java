@@ -53,16 +53,12 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProgressDialogFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -95,8 +91,7 @@ import java.util.Map;
 import java.util.Random;
 
 public abstract class BaseActivity extends AppCompatActivity implements
-        CancelableAware, ProgressIndicationAware, ActivityAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware, HandlerAware,
+        AppOperationAware, TrackingAware, ApiErrorAware,
         LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware, LaunchStoreListAware {
 
     public static Typeface faceRupee;
@@ -110,7 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
 
-    private static String PROGRESS_DIALOG_TAG ;
+    private static String PROGRESS_DIALOG_TAG;
 
     public static void showKeyboard(final View view) {
         (new Handler()).postDelayed(new Runnable() {
@@ -166,12 +161,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return DataUtil.isInternetAvailable(getCurrentActivity());
     }
 
-    @Nullable
-    @Override
-    public ProgressDialog getProgressDialog() {
-        return progressDialog;
-    }
-
     @Override
     public void showProgressDialog(String msg) {
         showProgressDialog(msg, true);
@@ -189,7 +178,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(progressDialogTag);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         try {
-            if(fragment != null) {
+            if (fragment != null) {
                 ft.remove(fragment);
             }
             fragment = ProgressDialogFragment.newInstance(msg, cancelable, isDeterminate);
@@ -205,7 +194,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void hideProgressDialog() {
         String progressDialogTag = getProgressDialogTag();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(progressDialogTag);
-        if(fragment != null){
+        if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             try {
                 ft.remove(fragment);
@@ -217,10 +206,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    private String getProgressDialogTag(){
-        if(PROGRESS_DIALOG_TAG == null) {
-            synchronized (this){
-                if(PROGRESS_DIALOG_TAG == null){
+    private String getProgressDialogTag() {
+        if (PROGRESS_DIALOG_TAG == null) {
+            synchronized (this) {
+                if (PROGRESS_DIALOG_TAG == null) {
                     PROGRESS_DIALOG_TAG = getScreenTag() + "#ProgressDilog";
                 }
             }

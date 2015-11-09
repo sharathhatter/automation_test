@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.PromoDetailNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
@@ -27,9 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class PromoCategoryFragment extends BaseSectionFragment implements PromoDetailNavigationAware {
@@ -58,11 +57,10 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
     private void getPromoCategories() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.browsePromoCategory(new Callback<ApiResponse<BrowsePromoCategoryApiResponseContent>>() {
+        Call<ApiResponse<BrowsePromoCategoryApiResponseContent>> call = bigBasketApiService.browsePromoCategory();
+        call.enqueue(new BBNetworkCallback<ApiResponse<BrowsePromoCategoryApiResponseContent>>(this) {
             @Override
-            public void success(ApiResponse<BrowsePromoCategoryApiResponseContent> browsePromoCategoryApiResponse, Response response) {
-                if (isSuspended()) return;
-                hideProgressView();
+            public void onSuccess(ApiResponse<BrowsePromoCategoryApiResponseContent> browsePromoCategoryApiResponse) {
                 switch (browsePromoCategoryApiResponse.status) {
                     case 0:
                         if (browsePromoCategoryApiResponse.apiResponseContent.promoCategories != null
@@ -85,9 +83,9 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 hideProgressView();
+                return true;
             }
         });
     }

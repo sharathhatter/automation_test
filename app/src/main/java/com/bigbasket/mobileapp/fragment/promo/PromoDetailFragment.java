@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponse
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -50,9 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class PromoDetailFragment extends BaseFragment {
@@ -95,11 +94,10 @@ public class PromoDetailFragment extends BaseFragment {
         if (promoId > -1) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
             showProgressView();
-            bigBasketApiService.getPromoDetail(String.valueOf(promoId), new Callback<ApiResponse<PromoDetailApiResponseContent>>() {
+            Call<ApiResponse<PromoDetailApiResponseContent>> call = bigBasketApiService.getPromoDetail(String.valueOf(promoId));
+            call.enqueue(new BBNetworkCallback<ApiResponse<PromoDetailApiResponseContent>>(this, true) {
                 @Override
-                public void success(ApiResponse<PromoDetailApiResponseContent> promoDetailApiResponseContentApiResponse, Response response) {
-                    if (isSuspended()) return;
-                    hideProgressView();
+                public void onSuccess(ApiResponse<PromoDetailApiResponseContent> promoDetailApiResponseContentApiResponse) {
                     int status = promoDetailApiResponseContentApiResponse.status;
                     if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
                             || status == ApiErrorCodes.INVALID_INPUT) {
@@ -124,10 +122,9 @@ public class PromoDetailFragment extends BaseFragment {
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
-                    if (isSuspended()) return;
+                public boolean updateProgress() {
                     hideProgressView();
-                    handler.handleRetrofitError(error, true);
+                    return true;
                 }
             });
         }

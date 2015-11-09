@@ -5,17 +5,13 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class CreatePotentialOrderTask<T> {
+public class CreatePotentialOrderTask<T extends AppOperationAware> {
     private T ctx;
     private String addressId;
 
@@ -26,38 +22,32 @@ public class CreatePotentialOrderTask<T> {
 
     public void startTask() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
-                getApiService(((ActivityAware) ctx).getCurrentActivity());
-        ((ProgressIndicationAware) ctx).showProgressDialog(((ActivityAware) ctx).getCurrentActivity().getString(R.string.checkingAvailability),
+                getApiService(ctx.getCurrentActivity());
+        ctx.showProgressDialog(ctx.getCurrentActivity().getString(R.string.checkingAvailability),
                 false);
-        bigBasketApiService.createPotentialOrder(addressId, new Callback<ApiResponse<CreatePotentialOrderResponseContent>>() {
+        Call<ApiResponse<CreatePotentialOrderResponseContent>> call = bigBasketApiService.createPotentialOrder(addressId);
+        call.enqueue(new BBNetworkCallback<ApiResponse<CreatePotentialOrderResponseContent>>(ctx, true) {
             @Override
-            public void success(ApiResponse<CreatePotentialOrderResponseContent> createPotentialOrderApiResponse, Response response) {
-                if (((CancelableAware) ctx).isSuspended()) return;
-                try {
-                    ((ProgressIndicationAware) ctx).hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<CreatePotentialOrderResponseContent> createPotentialOrderApiResponse) {
                 switch (createPotentialOrderApiResponse.status) {
                     case 0:
                         ((CreatePotentialOrderAware) ctx).onPotentialOrderCreated(createPotentialOrderApiResponse.apiResponseContent);
                         break;
                     default:
-                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(createPotentialOrderApiResponse.status,
+                        ctx.getHandler().sendEmptyMessage(createPotentialOrderApiResponse.status,
                                 createPotentialOrderApiResponse.message, true);
                         break;
                 }
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (((CancelableAware) ctx).isSuspended()) return;
+            public boolean updateProgress() {
                 try {
-                    ((ProgressIndicationAware) ctx).hideProgressDialog();
+                    ctx.hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                ((HandlerAware) ctx).getHandler().handleRetrofitError(error, true);
             }
         });
 

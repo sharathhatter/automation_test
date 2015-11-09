@@ -5,11 +5,8 @@ import android.util.Log;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
@@ -20,11 +17,9 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class ShoppingListDoAddDeleteTask<T> {
+public class ShoppingListDoAddDeleteTask<T extends AppOperationAware> {
     private static final String TAG = ShoppingListDoAddDeleteTask.class.getName();
     private List<ShoppingListName> selectedShoppingListNames;
     private T ctx;
@@ -40,77 +35,70 @@ public class ShoppingListDoAddDeleteTask<T> {
     }
 
     public void startTask() {
-        if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendOfflineError();
+        if (!ctx.checkInternetConnection()) {
+            ctx.getHandler().sendOfflineError();
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
-                getApiService(((ActivityAware) ctx).getCurrentActivity());
+                getApiService(ctx.getCurrentActivity());
         String selectedProductId = ((ShoppingListNamesAware) ctx).getSelectedProductId();
-        ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
+        ctx.showProgressDialog("Please wait...");
+        Call<OldBaseApiResponse> call = null;
         switch (shoppingListOption) {
             case ShoppingListOption.ADD_TO_LIST:
                 List<String> slugList = new ArrayList<>();
                 for (ShoppingListName shoppingListName : selectedShoppingListNames) {
                     slugList.add(shoppingListName.getSlug());
                 }
-                bigBasketApiService.addItemToShoppingList(selectedProductId, new Gson().toJson(slugList),
-                        new ShoppingListOperationApiResponseCallback());
+                call = bigBasketApiService.addItemToShoppingList(selectedProductId, new Gson().toJson(slugList));
                 break;
             case ShoppingListOption.DELETE_ITEM:
-                bigBasketApiService.deleteItemFromShoppingList(selectedProductId, selectedShoppingListNames.get(0).getSlug(),
-                        new ShoppingListOperationApiResponseCallback());
+                call = bigBasketApiService.deleteItemFromShoppingList(selectedProductId, selectedShoppingListNames.get(0).getSlug());
                 break;
+        }
+        if (call != null) {
+            call.enqueue(new ShoppingListOperationApiResponseCallback(ctx));
         }
     }
 
-    private class ShoppingListOperationApiResponseCallback implements Callback<OldBaseApiResponse> {
+    private class ShoppingListOperationApiResponseCallback extends BBNetworkCallback<OldBaseApiResponse> {
+        public ShoppingListOperationApiResponseCallback(AppOperationAware ctx) {
+            super(ctx);
+        }
 
         @Override
-        public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-            if (((CancelableAware) ctx).isSuspended()) {
-                return;
-            } else {
-                try {
-                    ((ProgressIndicationAware) ctx).hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-            }
+        public void onSuccess(OldBaseApiResponse oldBaseApiResponse) {
             switch (oldBaseApiResponse.status) {
                 case Constants.OK:
                     switch (shoppingListOption) {
                         case ShoppingListOption.ADD_TO_LIST:
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.ADD_TO_SHOPPINGLIST_OK, null);
+                            ctx.getHandler().sendEmptyMessage(NavigationCodes.ADD_TO_SHOPPINGLIST_OK, null);
                             ((ShoppingListNamesAware) ctx).postAddToShoppingListOperation();
                             Log.d(TAG, "Sending message: MessageCode.ADD_TO_SHOPPINGLIST_OK");
                             break;
                         case ShoppingListOption.DELETE_ITEM:
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.DELETE_FROM_SHOPPING_LIST_OK, null);
+                            ctx.getHandler().sendEmptyMessage(NavigationCodes.DELETE_FROM_SHOPPING_LIST_OK, null);
                             ((ShoppingListNamesAware) ctx).postShoppingListItemDeleteOperation();
                             Log.d(TAG, "Sending message: MessageCode.DELETE_FROM_SHOPPING_LIST_OK");
                             break;
                     }
                     break;
                 default:
-                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
+                    ctx.getHandler().sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
                             oldBaseApiResponse.message);
                     break;
             }
         }
 
         @Override
-        public void failure(RetrofitError error) {
-            if (((CancelableAware) ctx).isSuspended()) {
-                return;
-            } else {
-                try {
-                    ((ProgressIndicationAware) ctx).hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+        public boolean updateProgress() {
+            try {
+                ctx.hideProgressDialog();
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
             }
-            ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
         }
+
     }
 }

@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
@@ -39,9 +40,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class UpdateProfileFragment extends BaseFragment implements OtpDialogAware {
@@ -302,15 +301,10 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.setUserDetailsData(userDetails, new Callback<ApiResponse<UpdateProfileApiResponse>>() {
+        Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.setUserDetailsData(userDetails);
+        call.enqueue(new BBNetworkCallback<ApiResponse<UpdateProfileApiResponse>>(this) {
             @Override
-            public void success(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback) {
                 if (memberProfileDataCallback.status == 0) {
                     if (otpValidationDialogFragment != null) {
                         if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode() != null)
@@ -342,15 +336,25 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
-                logUpdateProfileEvent(error.toString(), TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
+            }
+
+            @Override
+            public void onFailure(int httpErrorCode, String msg) {
+                super.onFailure(httpErrorCode, msg);
+                logUpdateProfileEvent(msg, TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                super.onFailure(t);
+                logUpdateProfileEvent("Network Error", TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
             }
         });
     }

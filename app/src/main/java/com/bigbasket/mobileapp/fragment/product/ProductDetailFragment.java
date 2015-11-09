@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -44,9 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class ProductDetailFragment extends BaseFragment implements ShoppingListNamesAware {
@@ -100,15 +99,10 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         setNextScreenNavigationContext("pd." + (productId != null ? productId : eanCode));
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.productDetails(productId, eanCode, new Callback<ProductDetailApiResponse>() {
+        Call<ProductDetailApiResponse> call = bigBasketApiService.productDetails(productId, eanCode);
+        call.enqueue(new BBNetworkCallback<ProductDetailApiResponse>(this, true) {
             @Override
-            public void success(ProductDetailApiResponse productDetailApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ProductDetailApiResponse productDetailApiResponse) {
                 switch (productDetailApiResponse.status) {
                     case Constants.OK:
                         mProduct = productDetailApiResponse.product;
@@ -122,14 +116,13 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error, true);
             }
         });
     }

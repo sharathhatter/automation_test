@@ -8,21 +8,17 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.request.SelectedShipment;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class PostShipmentTask<T> {
+public class PostShipmentTask<T extends AppOperationAware> {
     private T ctx;
     private ArrayList<SelectedShipment> selectedShipments;
     private String potentialOrderId;
@@ -38,44 +34,40 @@ public class PostShipmentTask<T> {
 
     public void startTask() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(
-                ((ActivityAware) ctx).getCurrentActivity());
-        ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        bigBasketApiService.postShipment(new Gson().toJson(selectedShipments), potentialOrderId, "yes", "yes", "yes", "yes", "yes",
-                new Callback<ApiResponse<PostShipmentResponseContent>>() {
-                    @Override
-                    public void success(ApiResponse<PostShipmentResponseContent> postShipmentResponse, Response response) {
-                        if (((CancelableAware) ctx).isSuspended()) return;
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (postShipmentResponse.status) {
-                            case 0:
-                                onPostShipment(postShipmentResponse.apiResponseContent);
-                                break;
-                            default:
-                                ((HandlerAware) ctx).getHandler().sendEmptyMessage(postShipmentResponse.status,
-                                        postShipmentResponse.message, true);
-                                break;
-                        }
-                    }
+                ctx.getCurrentActivity());
+        ctx.showProgressDialog("Please wait...");
+        Call<ApiResponse<PostShipmentResponseContent>> call =
+                bigBasketApiService.postShipment(new Gson().toJson(selectedShipments),
+                        potentialOrderId, "yes", "yes", "yes", "yes", "yes");
+        call.enqueue(new BBNetworkCallback<ApiResponse<PostShipmentResponseContent>>(ctx, true) {
+            @Override
+            public void onSuccess(ApiResponse<PostShipmentResponseContent> postShipmentResponse) {
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (((CancelableAware) ctx).isSuspended()) return;
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error, true);
-                    }
-                });
+                switch (postShipmentResponse.status) {
+                    case 0:
+                        onPostShipment(postShipmentResponse.apiResponseContent);
+                        break;
+                    default:
+                        ctx.getHandler().sendEmptyMessage(postShipmentResponse.status,
+                                postShipmentResponse.message, true);
+                        break;
+                }
+            }
+
+            @Override
+            public boolean updateProgress() {
+                try {
+                    ctx.hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
     }
 
     private void onPostShipment(PostShipmentResponseContent postShipmentResponseContent) {
-        Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(),
+        Intent intent = new Intent(ctx.getCurrentActivity(),
                 PaymentSelectionActivity.class);
         intent.putExtra(Constants.P_ORDER_ID, potentialOrderId);
         intent.putParcelableArrayListExtra(Constants.PAYMENT_TYPES,
@@ -83,14 +75,14 @@ public class PostShipmentTask<T> {
         intent.putParcelableArrayListExtra(Constants.CREDIT_DETAILS,
                 postShipmentResponseContent.creditDetails);
         intent.putExtra(Constants.HAS_GIFTS,
-                ((ActivityAware) ctx).getCurrentActivity().getIntent().getBooleanExtra(Constants.HAS_GIFTS, false));
+                ctx.getCurrentActivity().getIntent().getBooleanExtra(Constants.HAS_GIFTS, false));
         intent.putExtra(Constants.ORDER_DETAILS, postShipmentResponseContent.orderDetails);
         intent.putExtra(Constants.EVOUCHER_CODE, postShipmentResponseContent.evoucherCode);
         intent.putExtra(Constants.NEW_FLOW_URL, postShipmentResponseContent.newFlowUrl);
         intent.putParcelableArrayListExtra(Constants.VOUCHERS,
                 postShipmentResponseContent.activeVouchersArrayList);
-        ((ActivityAware) ctx).getCurrentActivity().setNextScreenNavigationContext(nc);
-        ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent,
+        ctx.getCurrentActivity().setNextScreenNavigationContext(nc);
+        ctx.getCurrentActivity().startActivityForResult(intent,
                 NavigationCodes.GO_TO_HOME);
     }
 }

@@ -1,30 +1,21 @@
 package com.bigbasket.mobileapp.task;
 
-import android.content.Intent;
-
-import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.NavigationCodes;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class GetDynamicPageTask<T> {
+public class GetDynamicPageTask<T extends AppOperationAware> {
     private T context;
     private String screenName;
     private boolean inlineProgress;
@@ -54,69 +45,56 @@ public class GetDynamicPageTask<T> {
     }
 
     public void startTask() {
-        final SectionManager sectionManager = new SectionManager(((ActivityAware) context).
+        final SectionManager sectionManager = new SectionManager(context.
                 getCurrentActivity(), screenName);
         SectionData sectionData = sectionManager.getStoredSectionData();
         if (sectionData != null && sectionData.getSections() != null && sectionData.getSections().size() > 0) {
             ((DynamicScreenAware) context).onDynamicScreenSuccess(screenName, sectionData);
             return;
         }
-        if (!((ConnectivityAware) context).checkInternetConnection()) {
-            ((HandlerAware) context).getHandler().sendOfflineError(finishOnError);
+        if (!context.checkInternetConnection()) {
+            context.getHandler().sendOfflineError(finishOnError);
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
-                getApiService(((ActivityAware) context).getCurrentActivity());
+                getApiService(context.getCurrentActivity());
         if (!silentMode) {
             if (inlineProgress) {
-                ((ProgressIndicationAware) context).showProgressView();
+                context.showProgressView();
             } else {
-                ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
+                context.showProgressDialog("Please wait...");
             }
         }
+        Call<ApiResponse<GetDynamicPageApiResponse>> call;
         switch (screenName) {
             case SectionManager.HOME_PAGE:
-                bigBasketApiService.getHomePage(Constants.ANDROID,
-                        DataUtil.getAppVersion(((ActivityAware) context).getCurrentActivity()),
-                        new DynamicPageCallback(sectionManager));
+                call = bigBasketApiService.getHomePage(Constants.ANDROID,
+                        DataUtil.getAppVersion(context.getCurrentActivity()));
                 break;
             case SectionManager.MAIN_MENU:
-                bigBasketApiService.getMainMenu(Constants.ANDROID,
-                        DataUtil.getAppVersion(((ActivityAware) context).getCurrentActivity()),
-                        new DynamicPageCallback(sectionManager));
+                call = bigBasketApiService.getMainMenu(Constants.ANDROID,
+                        DataUtil.getAppVersion(context.getCurrentActivity()));
                 break;
             default:
-                bigBasketApiService.getDynamicPage(Constants.ANDROID,
-                        DataUtil.getAppVersion(((ActivityAware) context).getCurrentActivity()),
-                        screenName, new DynamicPageCallback(sectionManager));
+                call = bigBasketApiService.getDynamicPage(Constants.ANDROID,
+                        DataUtil.getAppVersion(context.getCurrentActivity()),
+                        screenName);
                 break;
         }
+        call.enqueue(new DynamicPageCallback(context, sectionManager));
     }
 
-    private class DynamicPageCallback implements Callback<ApiResponse<GetDynamicPageApiResponse>> {
+    private class DynamicPageCallback extends BBNetworkCallback<ApiResponse<GetDynamicPageApiResponse>> {
 
         private SectionManager sectionManager;
 
-        private DynamicPageCallback(SectionManager sectionManager) {
+        private DynamicPageCallback(T ctx, SectionManager sectionManager) {
+            super(ctx);
             this.sectionManager = sectionManager;
         }
 
         @Override
-        public void success(ApiResponse<GetDynamicPageApiResponse> getDynamicPageApiResponse, Response response) {
-            if (((CancelableAware) context).isSuspended()) {
-                return;
-            }
-            if (!hideProgress && !silentMode) {
-                try {
-                    if (inlineProgress) {
-                        ((ProgressIndicationAware) context).hideProgressView();
-                    } else {
-                        ((ProgressIndicationAware) context).hideProgressDialog();
-                    }
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-            }
+        public void onSuccess(ApiResponse<GetDynamicPageApiResponse> getDynamicPageApiResponse) {
             switch (getDynamicPageApiResponse.status) {
                 case 0:
                     SectionData sectionData = getDynamicPageApiResponse.apiResponseContent.sectionData;
@@ -132,9 +110,9 @@ public class GetDynamicPageTask<T> {
                     } else {
                         sectionManager.storeSectionData(null, 0);
                        /* if (screenName.equals("blr-speciality-store")) {
-                            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBSpecialityShopsActivity.class);
+                            Intent intent = new Intent(context.getCurrentActivity(), BBSpecialityShopsActivity.class);
                             intent.putExtra(Constants.CATEGORY, "Cakes");
-                            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }*/
                     }
                     break;
@@ -148,21 +126,31 @@ public class GetDynamicPageTask<T> {
         }
 
         @Override
-        public void failure(RetrofitError error) {
-            if (silentMode) return;
-            if (((CancelableAware) context).isSuspended()) {
-                return;
-            }
-            try {
-                if (inlineProgress) {
-                    ((ProgressIndicationAware) context).hideProgressView();
-                } else {
-                    ((ProgressIndicationAware) context).hideProgressView();
+        public boolean updateProgress() {
+            if (!hideProgress && !silentMode) {
+                try {
+                    if (inlineProgress) {
+                        context.hideProgressView();
+                    } else {
+                        context.hideProgressDialog();
+                    }
+                } catch (IllegalArgumentException e) {
+                    return false;
                 }
-            } catch (IllegalArgumentException e) {
-                return;
             }
-            ((DynamicScreenAware) context).onDynamicScreenFailure(error);
+            return true;
+        }
+
+        @Override
+        public void onFailure(int httpErrorCode, String msg) {
+            super.onFailure(httpErrorCode, msg);
+            ((DynamicScreenAware) context).onDynamicScreenFailure(httpErrorCode, msg);
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            super.onFailure(t);
+            ((DynamicScreenAware) context).onDynamicScreenFailure(t);
         }
     }
 }

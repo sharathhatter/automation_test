@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
@@ -34,7 +34,7 @@ public class SubCategoryListAdapter<T> extends RecyclerView.Adapter<RecyclerView
     public SubCategoryListAdapter(T ctx, List<Category> categoryList, View sectionView) {
         this.ctx = ctx;
         this.categoryList = categoryList;
-        this.layoutInflater = LayoutInflater.from(((ActivityAware) ctx).getCurrentActivity());
+        this.layoutInflater = LayoutInflater.from(((AppOperationAware) ctx).getCurrentActivity());
         this.mSectionView = sectionView;
     }
 
@@ -103,7 +103,7 @@ public class SubCategoryListAdapter<T> extends RecyclerView.Adapter<RecyclerView
             int pos = getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 int position = getActualPosition(pos);
-                Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), ProductListActivity.class);
+                Intent intent = new Intent(((AppOperationAware) ctx).getCurrentActivity(), ProductListActivity.class);
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
                 nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
                 nameValuePairs.add(new NameValuePair(Constants.SLUG, categoryList.get(position).getSlug()));
@@ -117,7 +117,7 @@ public class SubCategoryListAdapter<T> extends RecyclerView.Adapter<RecyclerView
                 }
                 intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
                 intent.putExtra(Constants.TITLE, categoryList.get(position).getName());
-                ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                ((AppOperationAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
             }
         }
     }

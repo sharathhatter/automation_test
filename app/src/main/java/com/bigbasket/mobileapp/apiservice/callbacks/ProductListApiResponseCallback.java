@@ -1,10 +1,9 @@
 package com.bigbasket.mobileapp.apiservice.callbacks;
 
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
@@ -13,11 +12,7 @@ import com.bigbasket.mobileapp.model.product.ProductTabInfo;
 
 import java.util.ArrayList;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
-public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<ProductTabData>> {
+public class ProductListApiResponseCallback<T extends AppOperationAware> extends BBNetworkCallback<ApiResponse<ProductTabData>> {
 
     private T ctx;
     private boolean isInlineProgressBar;
@@ -25,23 +20,14 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
 
     public ProductListApiResponseCallback(T ctx, boolean isInlineProgressBar,
                                           boolean isFilterOrSortApplied) {
+        super(ctx, true);
         this.ctx = ctx;
         this.isInlineProgressBar = isInlineProgressBar;
         this.isFilterOrSortApplied = isFilterOrSortApplied;
     }
 
     @Override
-    public void success(ApiResponse<ProductTabData> productListDataApiResponse, Response response) {
-        if (((CancelableAware) ctx).isSuspended()) return;
-        try {
-            if (isInlineProgressBar) {
-                ((ProgressIndicationAware) ctx).hideProgressView();
-            } else {
-                ((ProgressIndicationAware) ctx).hideProgressDialog();
-            }
-        } catch (IllegalArgumentException e) {
-            return;
-        }
+    public void onSuccess(ApiResponse<ProductTabData> productListDataApiResponse) {
         if (productListDataApiResponse.status == 0) {
             ProductTabData productTabData = productListDataApiResponse.apiResponseContent;
             if (productTabData != null && productTabData.getProductTabInfos() != null) {
@@ -77,23 +63,22 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                     isFilterOrSortApplied);
 
         } else {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(productListDataApiResponse.status,
+            ctx.getHandler().sendEmptyMessage(productListDataApiResponse.status,
                     productListDataApiResponse.message, true);
         }
     }
 
     @Override
-    public void failure(RetrofitError error) {
-        if (((CancelableAware) ctx).isSuspended()) return;
+    public boolean updateProgress() {
         try {
             if (isInlineProgressBar) {
-                ((ProgressIndicationAware) ctx).hideProgressView();
+                ctx.hideProgressView();
             } else {
-                ((ProgressIndicationAware) ctx).hideProgressDialog();
+                ctx.hideProgressDialog();
             }
+            return true;
         } catch (IllegalArgumentException e) {
-            return;
+            return false;
         }
-        ((HandlerAware) ctx).getHandler().handleRetrofitError(error, true);
     }
 }

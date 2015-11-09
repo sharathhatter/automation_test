@@ -22,7 +22,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.RetrofitError;
 
 public class DynamicScreenFragment extends BaseSectionFragment implements DynamicScreenAware {
 
@@ -98,8 +97,8 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
     }
 
     @Override
-    public void onDynamicScreenFailure(RetrofitError error) {
-        handler.handleRetrofitError(error, true);
+    public void onDynamicScreenFailure(Throwable t) {
+        handler.handleRetrofitError(t, true);
     }
 
     @Override

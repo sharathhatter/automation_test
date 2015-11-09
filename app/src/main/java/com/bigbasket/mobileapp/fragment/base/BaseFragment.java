@@ -30,11 +30,8 @@ import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -58,9 +55,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public abstract class BaseFragment extends AbstractFragment implements HandlerAware,
-        CartInfoAware, BasketOperationAware, ProgressIndicationAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware, LaunchProductListAware,
+public abstract class BaseFragment extends AbstractFragment implements
+        CartInfoAware, BasketOperationAware, TrackingAware, ApiErrorAware, LaunchProductListAware,
         AnalyticsNavigationContextAware, OnBasketChangeListener {
 
     protected BigBasketMessageHandler handler;
@@ -122,13 +118,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-
-    @Nullable
-    @Override
-    public ProgressDialog getProgressDialog() {
-        return progressDialog;
     }
 
     public void showProgressView() {

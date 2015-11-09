@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
@@ -38,9 +39,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 public class ChooseLocationActivity extends BackButtonActivity implements OnAddressChangeListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -173,42 +172,36 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
             handler.sendOfflineError();
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        bigBasketApiService.getLocationDetail(String.valueOf(latLng.latitude),
-                String.valueOf(latLng.longitude), new Callback<ApiResponse<AddressSummary>>() {
-                    @Override
-                    public void success(ApiResponse<AddressSummary> addressSummaryApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (addressSummaryApiResponse.status) {
-                            case 0:
-                                mChosenAddressSummary = addressSummaryApiResponse.apiResponseContent;
-                                showSelectedLocation(null);
-                                break;
-                            case ApiErrorCodes.ADDRESS_NOT_SERVED:
-                                showSelectedLocation(addressSummaryApiResponse.message);
-                                break;
-                            default:
-                                handler.sendEmptyMessage(addressSummaryApiResponse.status,
-                                        addressSummaryApiResponse.message);
-                                break;
-                        }
-                    }
+        Call<ApiResponse<AddressSummary>> call = bigBasketApiService.getLocationDetail(String.valueOf(latLng.latitude),
+                String.valueOf(latLng.longitude));
+        call.enqueue(new BBNetworkCallback<ApiResponse<AddressSummary>>(this) {
+            @Override
+            public void onSuccess(ApiResponse<AddressSummary> addressSummaryApiResponse) {
+                switch (addressSummaryApiResponse.status) {
+                    case 0:
+                        mChosenAddressSummary = addressSummaryApiResponse.apiResponseContent;
+                        showSelectedLocation(null);
+                        break;
+                    case ApiErrorCodes.ADDRESS_NOT_SERVED:
+                        showSelectedLocation(addressSummaryApiResponse.message);
+                        break;
+                    default:
+                        handler.sendEmptyMessage(addressSummaryApiResponse.status,
+                                addressSummaryApiResponse.message);
+                        break;
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
     }
 
     private void updateLocation(LatLng latLng, @Nullable String area) {

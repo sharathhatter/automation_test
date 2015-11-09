@@ -9,7 +9,6 @@ import android.support.v4.app.DialogFragment;
 
 /**
  * Fragment the displays progress dialog
- *
  */
 public class ProgressDialogFragment extends DialogFragment {
 

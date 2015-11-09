@@ -5,16 +5,16 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 
 public class ProductDetailOnClickListener implements View.OnClickListener {
     private String skuId;
-    private ActivityAware ctx;
+    private AppOperationAware ctx;
 
-    public ProductDetailOnClickListener(String skuId, ActivityAware context) {
+    public ProductDetailOnClickListener(String skuId, AppOperationAware context) {
         this.skuId = skuId;
         this.ctx = context;
     }

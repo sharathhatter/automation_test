@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.WalletRule;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
@@ -33,9 +34,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class DoWalletActivity extends BackButtonActivity {
@@ -63,15 +62,10 @@ public class DoWalletActivity extends BackButtonActivity {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
-        bigBasketApiService.getCurrentWalletBalance(new Callback<ApiResponse<CurrentWalletBalance>>() {
+        Call<ApiResponse<CurrentWalletBalance>> call = bigBasketApiService.getCurrentWalletBalance();
+        call.enqueue(new BBNetworkCallback<ApiResponse<CurrentWalletBalance>>(this, true) {
             @Override
-            public void success(ApiResponse<CurrentWalletBalance> currentWalletBalCallback, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressView();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<CurrentWalletBalance> currentWalletBalCallback) {
                 if (currentWalletBalCallback.status == 0) {
                     renderWalletMonthActivity(currentWalletBalCallback.apiResponseContent.currentBalance,
                             currentWalletBalCallback.apiResponseContent.walletRule,
@@ -83,14 +77,13 @@ public class DoWalletActivity extends BackButtonActivity {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressView();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error, true);
             }
         });
     }
@@ -331,39 +324,32 @@ public class DoWalletActivity extends BackButtonActivity {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getWalletActivity(dateFrom, dateTo,
-                new Callback<ApiResponse<ArrayList<WalletDataItem>>>() {
-                    @Override
-                    public void success(ApiResponse<ArrayList<WalletDataItem>> walletActivityCallback, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        if (walletActivityCallback.status == 0) {
-                            if (walletActivityCallback.apiResponseContent != null &&
-                                    walletActivityCallback.apiResponseContent.size() > 0) {
-                                renderIntent(walletActivityCallback.apiResponseContent);
-                            } else {
-                                showAlertDialog(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
-                            }
-                        } else {
-                            handler.sendEmptyMessage(walletActivityCallback.status, walletActivityCallback.message);
-                        }
+        Call<ApiResponse<ArrayList<WalletDataItem>>> call = bigBasketApiService.getWalletActivity(dateFrom, dateTo);
+        call.enqueue(new BBNetworkCallback<ApiResponse<ArrayList<WalletDataItem>>>(this) {
+            @Override
+            public void onSuccess(ApiResponse<ArrayList<WalletDataItem>> walletActivityCallback) {
+                if (walletActivityCallback.status == 0) {
+                    if (walletActivityCallback.apiResponseContent != null &&
+                            walletActivityCallback.apiResponseContent.size() > 0) {
+                        renderIntent(walletActivityCallback.apiResponseContent);
+                    } else {
+                        showAlertDialog(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
                     }
+                } else {
+                    handler.sendEmptyMessage(walletActivityCallback.status, walletActivityCallback.message);
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
 
     }
 

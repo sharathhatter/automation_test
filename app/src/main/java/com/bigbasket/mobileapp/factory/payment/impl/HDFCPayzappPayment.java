@@ -3,8 +3,7 @@ package com.bigbasket.mobileapp.factory.payment.impl;
 import android.app.Activity;
 import android.os.AsyncTask;
 
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.enstage.wibmo.sdk.WibmoSDK;
@@ -66,12 +65,12 @@ public class HDFCPayzappPayment {
 
         @Override
         protected void onPreExecute() {
-            ((ProgressIndicationAware) activity).showProgressDialog("Please wait...");
+            ((AppOperationAware) activity).showProgressDialog("Please wait...");
         }
 
         @Override
         protected PayzappPostParams doInBackground(PayzappPostParams... params) {
-            if (((CancelableAware) activity).isSuspended()) return null;
+            if (((AppOperationAware) activity).isSuspended()) return null;
             PayzappPostParams payzappPostParams = params[0];
             WibmoSDK.setWibmoIntentActionPackage(payzappPostParams.getPkgName());
             WibmoSDKConfig.setWibmoDomain(payzappPostParams.getServerUrl());
@@ -81,9 +80,9 @@ public class HDFCPayzappPayment {
 
         @Override
         protected void onPostExecute(PayzappPostParams payzappPostParams) {
-            if (((CancelableAware) activity).isSuspended() ||
+            if (((AppOperationAware) activity).isSuspended() ||
                     payzappPostParams == null) return;
-            ((ProgressIndicationAware) activity).hideProgressDialog();
+            ((AppOperationAware) activity).hideProgressDialog();
             startHDFCPayzapp(payzappPostParams, activity);
         }
     }

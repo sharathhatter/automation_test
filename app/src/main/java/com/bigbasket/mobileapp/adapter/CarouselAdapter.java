@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
@@ -44,7 +44,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.typeface = typeface;
         this.screenName = screenName;
         this.numItems = sectionItems.size();
-        Context ctx = ((ActivityAware) context).getCurrentActivity();
+        Context ctx = ((AppOperationAware) context).getCurrentActivity();
         this.fourDp = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
         this.eightDp = (int) ctx.getResources().getDimension(R.dimen.padding_small);
         this.columnWidth = (int) ctx.getResources().getDimension(R.dimen.grid_width);
@@ -53,9 +53,9 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = ((ActivityAware) context).getCurrentActivity().getLayoutInflater();
+        LayoutInflater inflater = ((AppOperationAware) context).getCurrentActivity().getLayoutInflater();
         if (viewType == SectionItem.VIEW_UNKNOWN) {
-            return new FixedLayoutViewHolder(new View(((ActivityAware) context).getCurrentActivity()));
+            return new FixedLayoutViewHolder(new View(((AppOperationAware) context).getCurrentActivity()));
         } else {
             int layoutId = SectionItem.getLayoutResId(viewType);
             View view = inflater.inflate(layoutId, parent, false);
@@ -86,7 +86,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         ViewGroup layoutSection = holder.getLayoutSection();
         if (layoutSection != null) {
             ViewGroup.LayoutParams layoutSectionLayoutParams = layoutSection.getLayoutParams();
-            layoutSectionLayoutParams.height = sectionItem.getHeight(((ActivityAware) context).getCurrentActivity(), renderer);
+            layoutSectionLayoutParams.height = sectionItem.getHeight(((AppOperationAware) context).getCurrentActivity(), renderer);
             layoutSection.setLayoutParams(layoutSectionLayoutParams);
         }
 
@@ -133,7 +133,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (imgInRow != null) {
             if (sectionItem.hasImage()) {
                 imgInRow.setVisibility(View.VISIBLE);
-                sectionItem.displayImage(((ActivityAware) context).getCurrentActivity(),
+                sectionItem.displayImage(((AppOperationAware) context).getCurrentActivity(),
                         baseImgUrl, imgInRow, R.drawable.loading_small);
             } else {
                 imgInRow.setVisibility(View.GONE);
@@ -222,7 +222,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
             int pos = getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 OnSectionItemClickListener sectionItemClickListener =
-                        new OnSectionItemClickListener<>(((ActivityAware) context).getCurrentActivity(),
+                        new OnSectionItemClickListener<>(((AppOperationAware) context).getCurrentActivity(),
                                 section, sectionItems.get(pos), screenName);
                 sectionItemClickListener.onClick(v);
             }

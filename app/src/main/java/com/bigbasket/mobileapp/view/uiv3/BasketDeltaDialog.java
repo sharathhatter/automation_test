@@ -12,7 +12,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.order.QcListAdapter;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -26,7 +26,7 @@ public class BasketDeltaDialog<T extends BasketDeltaUserActionListener> {
                      @Nullable final String lat,
                      @Nullable final String lng,
                      @Nullable final String area) {
-        final BaseActivity activity = ((ActivityAware) ctx).getCurrentActivity();
+        final BaseActivity activity = ((AppOperationAware) ctx).getCurrentActivity();
 
         View baseView = null;
         boolean hasItems = hasQcErrors && qcErrorDatas != null && qcErrorDatas.size() > 0;
@@ -37,7 +37,7 @@ public class BasketDeltaDialog<T extends BasketDeltaUserActionListener> {
             QcListAdapter qcListAdapter = new QcListAdapter(activity, qcErrorDatas,
                     FontHolder.getInstance(activity).getFaceRobotoRegular());
             if (!TextUtils.isEmpty(msg)) {
-                TextView txt = new TextView(((ActivityAware) ctx).getCurrentActivity());
+                TextView txt = new TextView(((AppOperationAware) ctx).getCurrentActivity());
                 txt.setTextSize(14);
                 txt.setTextColor(activity.getResources().getColor(R.color.uiv3_primary_text_color));
                 txt.setText(msg);
