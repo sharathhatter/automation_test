@@ -7,7 +7,7 @@
     android:layout_marginRight="@dimen/margin_normal"
     android:background="@color/white"
     android:orientation="horizontal"
-    android:padding="@dimen/padding_normal">
+    android:padding="@dimen/padding_small">
 
     <TextView
         android:id="@+id/txtAddNewAddress"
@@ -17,8 +17,7 @@
         android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:paddingLeft="@dimen/padding_12"
-        android:paddingRight="@dimen/padding_12"
+        android:padding="@dimen/padding_normal"
         android:text="@string/addNewAddress"
         android:textColor="?attr/colorPrimary"
         android:textSize="@dimen/secondary_text_size" />

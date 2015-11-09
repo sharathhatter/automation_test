@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:popupBackground="@color/white" />
+                android:popupBackground="@color/uiv3_large_list_item_bck" />
         </android.support.v7.widget.Toolbar>
 
         <FrameLayout

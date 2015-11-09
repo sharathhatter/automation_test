@@ -135,7 +135,7 @@
     </style>
 
     <style name="RoundedFormButtonStyle" parent="@style/FormButtonStyle">
-        <item name="android:background">@drawable/red_rounded_btn_bkg</item>
+        <item name="android:background">@drawable/red_login_button</item>
     </style>
 
     <style name="RoundedFormButtonStyle.Location" parent="@style/FormButtonStyle">
@@ -165,7 +165,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_margin">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">@dimen/padding_small</item>NM
+        <item name="android:padding">@dimen/padding_small</item>
         <item name="android:layout_marginLeft">2dp</item>
         <item name="android:layout_marginRight">2dp</item>
         <item name="android:background">@drawable/main_btn_bkg_not_rounded</item>
@@ -277,7 +277,9 @@
         <item name="insetForeground">#4000</item>
     </style>
 
-    <style name="RippleStyle" />
+    <style name="RippleStyle">
+        <item name="android:background">@drawable/default_button_clicks</item>
+    </style>
 
     <style name="BottomButtonStyle">
         <item name="android:background">@drawable/main_btn_bkg_not_rounded</item>
