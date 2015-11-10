@@ -50,6 +50,7 @@ public class Order implements Parcelable {
     @SerializedName(Constants.CAN_PAY)
     private boolean canPay;
 
+
     public Order(Parcel parcel) {
         this.orderId = parcel.readString();
         this.orderNumber = parcel.readString();

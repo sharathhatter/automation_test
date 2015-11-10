@@ -16,4 +16,10 @@ public class PlaceOrderApiResponseContent {
 
     @SerializedName(Constants.ADD_MORE_MSG)
     public String addMoreMsg;
+
+    @SerializedName(Constants.VARIABLE_WEIGHT_MSG)
+    public String variableWeightMsg;
+
+    @SerializedName(Constants.VARIABLE_WEIGHT_LINK)
+    public String variableWeightLink;
 }

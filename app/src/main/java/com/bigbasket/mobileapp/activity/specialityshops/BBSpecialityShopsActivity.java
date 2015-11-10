@@ -32,7 +32,6 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityShopsListData;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityStore;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
@@ -63,7 +62,7 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
     private void getSpecialityShops() {
         if (getIntent() != null) {
             category = getIntent().getStringExtra(Constants.CATEGORY);
-            setTitle(category);
+            setTitle(category); //todo change to title order than slug
             loadSpecialityShops(category);
         }
     }
@@ -71,7 +70,8 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
     private void renderStoreList(String baseImgUrl, ArrayList<SpecialityStore> storeList) {
         RecyclerView recyclerViewStoreList = (RecyclerView) findViewById(R.id.store_list);
         UIUtil.configureRecyclerView(recyclerViewStoreList, this, 1, 1);
-        StoreListRecyclerAdapter<BBSpecialityShopsActivity> storeListRecyclerAdapter = new StoreListRecyclerAdapter<>(BBSpecialityShopsActivity.this, baseImgUrl, storeList);
+        StoreListRecyclerAdapter<BBSpecialityShopsActivity> storeListRecyclerAdapter =
+                new StoreListRecyclerAdapter<>(BBSpecialityShopsActivity.this, baseImgUrl, storeList);
         recyclerViewStoreList.setAdapter(storeListRecyclerAdapter);
         logViewSpecialityShopsEvent(category);
     }
@@ -135,7 +135,7 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
                         final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(BBSpecialityShopsActivity.this).getAddressSummaries();
                         if (addressSummaries != null && addressSummaries.size() > 0) {
                             showStoreEmptyMsg(addressSummaries.get(0).getArea() + "," + addressSummaries.get(0).getCityName());
-                            renderHeaderDropDown(null, 0, category);
+                            renderHeaderDropDown(null, 0, category); //todo change screen name
                         } else showStoreEmptyMsg(null);
                     }
                 } else handler.sendEmptyMessage(specialityStoreListApiResponse.status,
@@ -164,7 +164,7 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
         new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
                 .withCtx(this)
                 .withDefaultSelectedIdx(mHeaderSelectedIdx)
-                .withFallbackHeaderTitle(!TextUtils.isEmpty(category) ? category : screenName)
+                .withFallbackHeaderTitle(!TextUtils.isEmpty(category) ? category : screenName) //todo change title
                 .withHeadSection(headSection)
                 .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
                 .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))

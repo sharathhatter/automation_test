@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -48,8 +49,6 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
     private String mOrderType;
     private boolean mIsInShopFromPreviousOrderMode;
-    private int currentPage = 1;
-    private int totalPages;
     private OrderListAdapter orderListAdapter = null;
 
     @Override
@@ -60,16 +59,16 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         mIsInShopFromPreviousOrderMode = getIntent().getBooleanExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, false);
         setTitle(mIsInShopFromPreviousOrderMode ? getString(R.string.shopFromPreviousOrder) :
                 getString(R.string.my_order_label));
-        loadOrders(currentPage);
+        loadOrders(1);
 
     }
 
     @Override
-    public void getMoreOrders() {
-        loadOrders(++currentPage);
+    public void getMoreOrders(int nextPage) {
+        loadOrders(nextPage);
     }
 
-    private void loadOrders(int page) {
+    private void loadOrders(final int page) {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
             handler.sendOfflineError(true);
             return;
@@ -88,8 +87,8 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                             return;
                         }
                         if (orderListApiResponse.status == 0) {
-                            totalPages = orderListApiResponse.apiResponseContent.totalPages;
-                            renderOrderList(orderListApiResponse.apiResponseContent.orders);
+                            renderOrderList(orderListApiResponse.apiResponseContent.orders, page,
+                                    orderListApiResponse.apiResponseContent.totalPages);
                         } else {
                             handler.sendEmptyMessage(orderListApiResponse.status,
                                     orderListApiResponse.message, true);
@@ -131,7 +130,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
     @SuppressWarnings("unchecked")
-    private void renderOrderList(final ArrayList<Order> mOrders) {
+    private void renderOrderList(final ArrayList<Order> mOrders, int currentPage, int totalPages) {
 
         FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -145,14 +144,14 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
         } else {
             if (orderListAdapter == null) {
-                orderListAdapter = new OrderListAdapter<>(this, mOrders, totalPages);
-                orderListAdapter.setCurrentPage(currentPage);
+                orderListAdapter = new OrderListAdapter<>(this, mOrders, totalPages, currentPage,
+                        mOrders.size());
             }
 
             ArrayList<Order> olderOrderList = orderListAdapter.getOrders();
             if (currentPage > 1 && olderOrderList != null && olderOrderList.size() > 0
                     && mOrders != null && mOrders.size() > 0) {
-                updateOrderList(olderOrderList, mOrders);
+                updateOrderList(olderOrderList, mOrders, currentPage, totalPages);
             } else {
                 orderListView.setAdapter(orderListAdapter);
                 contentLayout.removeAllViews();
@@ -176,11 +175,15 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
 
-    private void updateOrderList(ArrayList<Order> olderOrderList, ArrayList<Order> newOrderList) {
-        int insertedAt = olderOrderList.size();
-        olderOrderList.addAll(newOrderList);
+    private void updateOrderList(ArrayList<Order> olderOrderList, ArrayList<Order> newOrderList,
+                                            int currentPage, int totalPages) {
+
+        olderOrderList.addAll(orderListAdapter.getOrders().size(), newOrderList);
         orderListAdapter.setCurrentPage(currentPage);
-        orderListAdapter.notifyItemRangeInserted(insertedAt, newOrderList.size());
+        orderListAdapter.setOrderList(olderOrderList);
+        orderListAdapter.setTotalPage(totalPages);
+        orderListAdapter.setOrderListSize(olderOrderList.size());
+        orderListAdapter.notifyDataSetChanged();
     }
 
     private void showInvoice(Order order) {

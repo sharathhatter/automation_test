@@ -38,14 +38,16 @@ public class
 
     private T context;
     private ArrayList<Order> orders;
-    private int totalPages, currentPage;
+    private int totalPages, currentPage, orderListSize;
     private Typeface faceRobotoRegular, faceRobotoBold;
 
     public OrderListAdapter(T context, ArrayList<Order> orders, int
-            totalPages) {
+            totalPages, int currentPage, int orderListSize) {
         this.context = context;
         this.orders = orders;
         this.totalPages = totalPages;
+        this.currentPage = currentPage;
+        this.orderListSize = orderListSize;
         this.faceRobotoRegular = FontHolder.getInstance(((ActivityAware) context)
                 .getCurrentActivity()).getFaceRobotoRegular();
         this.faceRobotoBold = FontHolder.getInstance(((ActivityAware) context)
@@ -54,6 +56,19 @@ public class
 
     public void setCurrentPage(int currentPage) {
         this.currentPage = currentPage;
+    }
+
+    public void setOrderList(ArrayList<Order> orders) {//CALL20
+        this.orders = orders;
+    }
+
+
+    public void setTotalPage(int totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    public void setOrderListSize(int orderListSize) {
+        this.orderListSize = orderListSize;
     }
 
     @Override
@@ -175,9 +190,8 @@ public class
             spannableMrp.setSpan(new CustomTypefaceSpan("", BaseActivity.faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.setText(spannableMrp);
-
-            if (orders.size() - 1 == position && currentPage != totalPages && totalPages != 0) {
-                ((OrderListActivity) context).getMoreOrders();
+            if (orderListSize - 1 == position && currentPage < totalPages && totalPages > 1) {
+                ((OrderListActivity) context).getMoreOrders(currentPage + 1);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {

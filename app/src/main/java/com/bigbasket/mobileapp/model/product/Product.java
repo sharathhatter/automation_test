@@ -65,6 +65,8 @@ public class Product extends BaseProduct {
     private ArrayList<HashMap<String, String>> storeAvailability;
     @SerializedName(Constants.GIFT_MSG)
     private String giftMsg;
+    @SerializedName(Constants.VARIABLE_WEIGHT_MSG)
+    private String variableWeightMsg;
 
     public Product(Parcel source) {
         super(source);
@@ -119,6 +121,11 @@ public class Product extends BaseProduct {
         boolean isGiftMsgNull = source.readByte() == (byte) 1;
         if (!isGiftMsgNull) {
             giftMsg = source.readString();
+        }
+
+        boolean isWeightMsgNull = source.readByte() == (byte) 1;
+        if (!isWeightMsgNull) {
+            variableWeightMsg = source.readString();
         }
     }
 
@@ -216,6 +223,12 @@ public class Product extends BaseProduct {
         if (!isGiftMsgNull) {
             dest.writeString(giftMsg);
         }
+
+        boolean isWeightMsgNull = variableWeightMsg == null;
+        dest.writeByte(isWeightMsgNull ? (byte) 1 : (byte) 0);
+        if (!isWeightMsgNull) {
+            dest.writeString(variableWeightMsg);
+        }
     }
 
     public String getSellPrice() {
@@ -310,5 +323,10 @@ public class Product extends BaseProduct {
     @Nullable
     public ArrayList<HashMap<String, String>> getStoreAvailability() {
         return storeAvailability;
+    }
+
+    @Nullable
+    public String getVariableWeightMsg() {
+        return variableWeightMsg;
     }
 }

@@ -49,6 +49,8 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         ArrayList<Order> orderArrayList = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
         String addMoreLink = getIntent().getStringExtra(Constants.ADD_MORE_LINK);
         String addMoreMsg = getIntent().getStringExtra(Constants.ADD_MORE_MSG);
+        //String variableWeightMsg = getIntent().getStringExtra(Constants.VARIABLE_WEIGHT_MSG);
+        //String variableWeightLink = getIntent().getStringExtra(Constants.VARIABLE_WEIGHT_LINK);
         showOrderList(orderArrayList);
         showAddMoreText(addMoreLink, addMoreMsg);
 
@@ -115,7 +117,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.append(spannableMrp);
 
-            String prefix = getString(R.string.ordernumber) + "\n";
+            String prefix = getString(R.string.ordernumber);
             SpannableString orderNumSpannable = new SpannableString(prefix + order.getOrderNumber());
             orderNumSpannable.setSpan(new UnderlineSpan(), prefix.length(), orderNumSpannable.length(),
                     Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -128,13 +130,16 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                 }
             });
 
+            TextView txtVariableWeightMsg = (TextView) base.findViewById(R.id.txtVariableWeightMsg);
+
+
             TextView txtSlotTime = (TextView) base.findViewById(R.id.txtSlotTime);
             if (order.getSlotDisplay() != null) {
                 String date = order.getSlotDisplay().getDate();
                 String time = order.getSlotDisplay().getTime();
                 String display = "";
                 if (!TextUtils.isEmpty(date)) {
-                    display += date;
+                    display += date+"\n";
                 }
                 if (!TextUtils.isEmpty(time)) {
                     if (!TextUtils.isEmpty(display)) {
@@ -142,7 +147,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     }
                     display += time;
                 }
-                txtSlotTime.setText(getString(R.string.delivery_time) + "\n" + display);
+                txtSlotTime.setText(getString(R.string.delivery_time) + display);
                 txtSlotTime.setTypeface(faceRobotoRegular);
             } else {
                 txtSlotTime.setVisibility(View.GONE);
