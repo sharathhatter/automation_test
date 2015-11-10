@@ -23,7 +23,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.BasketChangeQtyAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ActiveOrderRowAdapter<T extends AppOperationAware> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_CART_ITEM = 0;
     private static final int VIEW_TYPE_CART_HEADER = 1;
@@ -88,7 +88,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         this.baseImgUrl = baseImageUrl;
         this.navigationCtx = navigationCtx;
         this.currentTabIndex = currentTabIndex;
-        this.inflater = (LayoutInflater) ((ActivityAware) context).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.inflater = (LayoutInflater) context.getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -206,13 +206,13 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
 
     private void showFulfillmentInfo(Object obj, FulfillmentInfoViewHolder holder) {
         ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo<>((FulfillmentInfo) obj,
-                ((ActivityAware) context).getCurrentActivity(), faceRobotoRegular, holder);
+                context.getCurrentActivity(), faceRobotoRegular, holder);
         showFulfillmentInfo.showFulfillmentInfo(true, true);
     }
 
     private void showAnnotationInfo(Object obj, FulfillmentInfoViewHolder holder) {
         ShowAnnotationInfo showAnnotationInfo = new ShowAnnotationInfo<>((AnnotationInfo) obj,
-                ((ActivityAware) context).getCurrentActivity(), holder);
+                context.getCurrentActivity(), holder);
         showAnnotationInfo.showAnnotationInfo();
     }
 
@@ -326,7 +326,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         }
 
         ArrayList<String> addToBasketPostParamsArrayList = AppDataDynamic.
-                getInstance(((ActivityAware) context).getCurrentActivity()).getAddToBasketPostParams();
+                getInstance(context.getCurrentActivity()).getAddToBasketPostParams();
         final Map<String, String> basketQueryMap = new HashMap<>();
         HashMap<String, String> productStoreAvailabilityMap = cartItem.getStoreAvailability();
         if (addToBasketPostParamsArrayList != null && addToBasketPostParamsArrayList.size() > 0 &&
@@ -356,17 +356,20 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                 imgDecBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
+                        if (DataUtil.isInternetAvailable(context.getCurrentActivity())) {
                             if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
                                     (int) cartItem.getTotalQty() - 1);
-                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
-                                    BasketOperation.DEC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT,
-                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME,
-                                    basketQueryMap);
+
+                            BasketOperationTask basketOperationTask =
+                                    new BasketOperationTask.Builder<>(context, BasketOperation.DEC, product)
+                                            .withEventName(TrackingAware.BASKET_DECREMENT)
+                                            .withNavigationCtx(navigationCtx)
+                                            .withTabName(TrackEventkeys.SINGLE_TAB_NAME)
+                                            .withBasketQueryMap(basketQueryMap)
+                                            .build();
                             basketOperationTask.startTask();
 
                             if (context instanceof BasketChangeQtyAware) {
@@ -375,7 +378,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                         currentTabIndex);
                             }
                         } else {
-                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
                             toast.show();
                         }
@@ -384,17 +387,20 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                 imgIncBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
+                        if (DataUtil.isInternetAvailable(context.getCurrentActivity())) {
                             if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
                                     (int) cartItem.getTotalQty() + 1);
-                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
-                                    BasketOperation.INC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT,
-                                    navigationCtx, null, null, null, TrackEventkeys.SINGLE_TAB_NAME,
-                                    basketQueryMap);
+
+                            BasketOperationTask basketOperationTask =
+                                    new BasketOperationTask.Builder<>(context, BasketOperation.INC, product)
+                                            .withEventName(TrackingAware.BASKET_INCREMENT)
+                                            .withNavigationCtx(navigationCtx)
+                                            .withTabName(TrackEventkeys.SINGLE_TAB_NAME)
+                                            .withBasketQueryMap(basketQueryMap)
+                                            .build();
                             basketOperationTask.startTask();
 
                             if (context instanceof BasketChangeQtyAware) {
@@ -402,7 +408,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                         currentTabIndex);
                             }
                         } else {
-                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(),
+                            Toast toast = Toast.makeText(context.getCurrentActivity(),
                                     "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
                             toast.show();
@@ -412,17 +418,22 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                 imgRemove.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
+                        if (DataUtil.isInternetAvailable(context.getCurrentActivity())) {
                             if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
                                     0);
-                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
-                                    BasketOperation.EMPTY,
-                                    product, txtInBasket, null, null, null, "0",
-                                    TrackingAware.BASKET_REMOVE, navigationCtx, null, null, null,
-                                    TrackEventkeys.SINGLE_TAB_NAME, basketQueryMap);
+
+                            BasketOperationTask basketOperationTask =
+                                    new BasketOperationTask.Builder<>(context, BasketOperation.EMPTY, product)
+                                            .withBasketCountTextView(txtInBasket)
+                                            .withQty("0")
+                                            .withEventName(TrackingAware.BASKET_REMOVE)
+                                            .withNavigationCtx(navigationCtx)
+                                            .withTabName(TrackEventkeys.SINGLE_TAB_NAME)
+                                            .withBasketQueryMap(basketQueryMap)
+                                            .build();
                             basketOperationTask.startTask();
 
                             if (context instanceof BasketChangeQtyAware) {
@@ -430,7 +441,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                         currentTabIndex);
                             }
                         } else {
-                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
                             toast.show();
                         }
@@ -488,7 +499,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         txtPromoNameDesc.setVisibility(View.VISIBLE);
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
-        txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.red_color));
+        txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.red_color));
 
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -517,9 +528,9 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
         if (context instanceof ShowCartActivity) {
-            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
+            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
         } else {
-            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.link_color));
+            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.link_color));
         }
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -542,9 +553,9 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                         + separator.length(), regularQtyStr.length() + separator.length() + 1,
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE
         );
-        regularSpannable.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.tabDark)), regularSalePriceStr.length() - 1,
+        regularSpannable.setSpan(new ForegroundColorSpan(context.getCurrentActivity().getResources().getColor(R.color.tabDark)), regularSalePriceStr.length() - 1,
                 regularQtyStr.length() + separator.length() + regularSalePriceStr.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        regularSpannable.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.medium_grey)), 0,
+        regularSpannable.setSpan(new ForegroundColorSpan(context.getCurrentActivity().getResources().getColor(R.color.medium_grey)), 0,
                 regularQtyStr.length() + separator.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         txtRegularPriceAndQty.setText(regularSpannable);
 
@@ -573,9 +584,9 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
         if (context instanceof ShowCartActivity) {
-            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
+            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
         } else {
-            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.link_color));
+            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.link_color));
         }
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -826,10 +837,10 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+            Intent intent = new Intent(context.getCurrentActivity(), BBActivity.class);
             intent.putExtra(Constants.PROMO_ID, promoId);
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
-            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 }

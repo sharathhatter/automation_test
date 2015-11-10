@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.fragment.product.DiscountFragment;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -23,9 +24,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class DiscountActivity extends BBActivity {
@@ -44,15 +43,10 @@ public class DiscountActivity extends BBActivity {
     private void getDiscountData() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getApplicationContext());
         showProgressView();
-        bigBasketApiService.getDiscount(new Callback<ApiResponse<DiscountDataModel>>() {
+        Call<ApiResponse<DiscountDataModel>> call = bigBasketApiService.getDiscount();
+        call.enqueue(new BBNetworkCallback<ApiResponse<DiscountDataModel>>(this, true) {
             @Override
-            public void success(ApiResponse<DiscountDataModel> discountDataModelApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressView();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<DiscountDataModel> discountDataModelApiResponse) {
                 if (discountDataModelApiResponse.status == 0) {
                     SectionData categoryDiscount = discountDataModelApiResponse.apiResponseContent.categoryDiscount;
                     if (categoryDiscount != null) {
@@ -70,14 +64,13 @@ public class DiscountActivity extends BBActivity {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressView();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error, true);
             }
         });
     }

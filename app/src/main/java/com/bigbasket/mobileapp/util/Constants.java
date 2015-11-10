@@ -220,9 +220,6 @@ public class Constants {
     public static final String SLUG_PARAM = "&slug=";
 
     public static final String POST_PARAMS = "post_params";
-    public static final String PAYU_GATEWAY_URL = "pg_server_url";
-    public static final String SUCCESS_CAPTURE_URL = "scurl";
-    public static final String FAILURE_CAPTURE_URL = "fcurl";
     public static final String TXN_ID = "txn_id";
     public static final String P_ORDER_ID = "p_order_id";
     public static final String SUPPORT_CC = "support_cc";
@@ -230,6 +227,7 @@ public class Constants {
     public static final String PAY_NOW = "pay_now";
     public static final String HDFC_POWER_PAY = "hdfc-power-pay";
     public static final String PAYTM_WALLET = "paytm_wallet";
+    public static final String PAYUMONEY_WALLET = "payumoney_wallet";
     public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
     public static final String PAYTM_HASH_GENERATION_URL = "GURL";
     public static final String SOURCE_PLACE_ORDER = "placeOrder";
@@ -538,6 +536,7 @@ public class Constants {
     public static final String SUPPORT_POWER_PAY = "support_pp";
     public static final String SUPPORT_MOBIKWIK = "support_mk";
     public static final String SUPPORT_PAYTM = "support_pm";
+    public static final String SUPPORT_PAYUMONEY = "support_pum";
     public static final String ERR_RES_CODE = "err_res_code";
     public static final String ERR_RES_DESC = "err_res_desc";
     public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";
@@ -597,15 +596,12 @@ public class Constants {
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
     public static final String MOBIKWIKSDK = "MobikwikSDK";
-    public static final String MOBIKWIK_ORDER_ID = "orderid";
-    public static final String MOBIKWIK_STATUS_CODE = "statuscode";
     public static final String MOBIKWIK_MODE = "mode";
     public static final String MOBIKWIK_SDK_SIGN = "sdksign";
     public static final String MOBIKWIK_REDIRECT_ANDROID_CLASS_NAME = "redirecturl";
     public static final String MOBIKWIK_RESPONSE_HANDLER_CLASS = "com.bigbasket.mobileapp.activity.payment.MobiKwikResponseHandlerActivity";
     public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
     public static final String MOBIKWIK_PAYMENT_MW = "mw";
-    public static final String MOBIKWIK_STATUS = "status";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
 
     public static final String ADDRESS_SYNC_BROADCAST_ACTION = "com.bigbasket.mobileapp.broadcase.AddressSync";
@@ -618,6 +614,7 @@ public class Constants {
     public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
     public static final String EXPRESS_AVAILABILITY = "express_availability";
     public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
+    public static final String SPECIALITY_STORES_INFO = "speciality_stores_info";
     public static final String APP_LAUNCH = "appLaunch";
 
     // Gift items
@@ -639,7 +636,7 @@ public class Constants {
     public static final String STORE_IMG = "image_name";
     public static final String DELIVERY_TIME = "delivery_time";
     public static final String STORE_TIMINGS = "op_time";
-    public static final String STORE_LIST = "store-list";
+    public static final String STORE_LIST = "store_list";
     public static final String STORES = "stores";
 
     // Basket page
@@ -648,4 +645,16 @@ public class Constants {
     public static final int STANDARD_TAB_INDEX = 0;
     public static final int EXPRESS_TAB_INDEX = 1;
     public static final int DEFAULT_TAB_INDEX = 0;
+
+    //storeInfo
+    public static final String STORE_CATEGORY = "category";
+    public static final String STORE_ID = "store_id";
+    public static final String STORE_URL = "store_url";
+    public static final String STORE_ADD1 = "address1";
+    public static final String STORE_ADD2 = "address2";
+    public static final String STORE_NAME = "store_name";
+    public static final String STORE_LOGO = "store_logo";
+    public static final String STORE_DESC = "store_description";
+
+
 }

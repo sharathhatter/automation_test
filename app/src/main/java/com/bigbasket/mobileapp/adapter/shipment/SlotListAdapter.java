@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.shipments.Slot;
 
 import java.util.List;
@@ -85,7 +85,7 @@ public class SlotListAdapter<T> extends BaseAdapter {
     @SuppressWarnings("unchecked")
     private View getHeaderView(String slotHeader, View row, ViewGroup parent) {
         SlotHeaderViewHolder slotHeaderViewHolder;
-        BaseActivity activity = ((ActivityAware) ctx).getCurrentActivity();
+        BaseActivity activity = ((AppOperationAware) ctx).getCurrentActivity();
         if (row == null) {
             row = activity.getLayoutInflater().inflate(R.layout.uiv3_list_title, parent, false);
             slotHeaderViewHolder = new SlotHeaderViewHolder(row);
@@ -102,7 +102,7 @@ public class SlotListAdapter<T> extends BaseAdapter {
     @SuppressWarnings("unchecked")
     private View getSlotView(Slot slot, View row, ViewGroup parent) {
         SlotViewHolder slotViewHolder;
-        BaseActivity activity = ((ActivityAware) ctx).getCurrentActivity();
+        BaseActivity activity = ((AppOperationAware) ctx).getCurrentActivity();
         if (row == null) {
             int layoutId = R.layout.uiv3_slot_list_row;
             row = activity.getLayoutInflater().inflate(layoutId, parent, false);

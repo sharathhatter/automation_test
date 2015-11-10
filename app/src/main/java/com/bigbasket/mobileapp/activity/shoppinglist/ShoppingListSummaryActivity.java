@@ -34,6 +34,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummary
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -52,9 +53,7 @@ import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 public class ShoppingListSummaryActivity extends BBActivity {
 
@@ -70,7 +69,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadShoppingListSummary();
-        ((NavigationSelectionAware)getCurrentActivity()).onNavigationSelection(getString(R.string.shoppingList));
+        ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(getString(R.string.shoppingList));
     }
 
     @Override
@@ -135,47 +134,41 @@ public class ShoppingListSummaryActivity extends BBActivity {
         setTitle(null);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getShoppingListSummary(getCurrentNavigationContext(),
-                mShoppingListName.getSlug(), new Callback<ApiResponse<GetShoppingListSummaryResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
+        Call<ApiResponse<GetShoppingListSummaryResponse>> call = bigBasketApiService.getShoppingListSummary(
+                getCurrentNavigationContext(), mShoppingListName.getSlug());
+        call.enqueue(new BBNetworkCallback<ApiResponse<GetShoppingListSummaryResponse>>(this, true) {
+            @Override
+            public void onSuccess(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse) {
+                switch (getShoppingListSummaryApiResponse.status) {
+                    case 0:
+                        if (mShoppingListName != null) {
+                            mShoppingListName.setAsSystem(getShoppingListSummaryApiResponse.apiResponseContent.isSystem);
                         }
-                        switch (getShoppingListSummaryApiResponse.status) {
-                            case 0:
-                                if (mShoppingListName != null) {
-                                    mShoppingListName.setAsSystem(getShoppingListSummaryApiResponse.apiResponseContent.isSystem);
-                                }
-                                renderShoppingListSummary(mShoppingListName,
-                                        getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
-                                        getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl,
-                                        getShoppingListSummaryApiResponse.apiResponseContent.headerSection,
-                                        getShoppingListSummaryApiResponse.apiResponseContent.headerSelectedOn);
-                                break;
-                            default:
-                                handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
-                                        getShoppingListSummaryApiResponse.message, true);
-                                break;
-                        }
-                    }
+                        renderShoppingListSummary(mShoppingListName,
+                                getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
+                                getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl,
+                                getShoppingListSummaryApiResponse.apiResponseContent.headerSection,
+                                getShoppingListSummaryApiResponse.apiResponseContent.headerSelectedOn);
+                        break;
+                    default:
+                        handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
+                                getShoppingListSummaryApiResponse.message, true);
+                        break;
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error, true);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
 
-        ((NavigationSelectionAware)getCurrentActivity()).onNavigationSelection(getString(R.string.my_basket_header));
+        ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(getString(R.string.my_basket_header));
     }
 
     private void showNoShoppingListView(ViewGroup contentView) {
@@ -431,75 +424,70 @@ public class ShoppingListSummaryActivity extends BBActivity {
         String shoppingListSlug = mShoppingListName.getSlug();
         if (shoppingListSlug.equals(Constants.SMART_BASKET_SLUG)) {
             trackEvent(TrackingAware.SMART_BASKET + "." + shoppingListSummary.getFacetName() + " Add All", null);
-            bigBasketApiService.addAllToBasketSmartBasket(shoppingListSlug,
-                    shoppingListSummary.getFacetSlug(),
-                    new Callback<AddAllShoppingListItemResponse>() {
-                        @Override
-                        public void success(AddAllShoppingListItemResponse addAllToBasketSmartBasketCallBack, Response response) {
-                            if (isSuspended()) return;
-                            hideProgressView();
-                            switch (addAllToBasketSmartBasketCallBack.status) {
-                                case Constants.OK:
-                                    setCartSummary(addAllToBasketSmartBasketCallBack);
-                                    updateUIForCartInfo();
-                                    markBasketDirty();
-                                    if (viewPager != null) {
-                                        setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
-                                                shoppingListSummary);
-                                    } else {
-                                        loadShoppingListSummary();
-                                    }
-
-                                    break;
-                                case Constants.ERROR:
-                                    handler.sendEmptyMessage(addAllToBasketSmartBasketCallBack.getErrorTypeAsInt(),
-                                            addAllToBasketSmartBasketCallBack.message, false);
-                                    break;
+            Call<AddAllShoppingListItemResponse> call = bigBasketApiService.addAllToBasketSmartBasket(
+                    shoppingListSlug, shoppingListSummary.getFacetSlug());
+            call.enqueue(new BBNetworkCallback<AddAllShoppingListItemResponse>(this) {
+                @Override
+                public void onSuccess(AddAllShoppingListItemResponse addAllToBasketSmartBasketCallBack) {
+                    switch (addAllToBasketSmartBasketCallBack.status) {
+                        case Constants.OK:
+                            setCartSummary(addAllToBasketSmartBasketCallBack);
+                            updateUIForCartInfo();
+                            markBasketDirty();
+                            if (viewPager != null) {
+                                setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
+                                        shoppingListSummary);
+                            } else {
+                                loadShoppingListSummary();
                             }
-                        }
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (isSuspended()) return;
-                            hideProgressView();
-                            handler.handleRetrofitError(error, true);
-                        }
-                    });
+                            break;
+                        case Constants.ERROR:
+                            handler.sendEmptyMessage(addAllToBasketSmartBasketCallBack.getErrorTypeAsInt(),
+                                    addAllToBasketSmartBasketCallBack.message, false);
+                            break;
+                    }
+                }
+
+                @Override
+                public boolean updateProgress() {
+                    hideProgressView();
+                    return true;
+                }
+            });
+
         } else {
             trackEvent(TrackingAware.SHOPPING_LIST + "." + shoppingListSummary.getFacetName() + " Add All", null);
-            bigBasketApiService.addAllToBasketShoppingList(shoppingListSlug,
-                    shoppingListSummary.getFacetSlug(),
-                    new Callback<AddAllShoppingListItemResponse>() {
-                        @Override
-                        public void success(AddAllShoppingListItemResponse addAllToBasketShoppingListCallBack, Response response) {
-                            if (isSuspended()) return;
-                            hideProgressView();
-                            switch (addAllToBasketShoppingListCallBack.status) {
-                                case Constants.OK:
-                                    setCartSummary(addAllToBasketShoppingListCallBack);
-                                    updateUIForCartInfo();
-                                    markBasketDirty();
-                                    if (viewPager != null) {
-                                        setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
-                                                shoppingListSummary);
-                                    } else {
-                                        loadShoppingListSummary();
-                                    }
-                                    break;
-                                case Constants.ERROR:
-                                    handler.sendEmptyMessage(addAllToBasketShoppingListCallBack.getErrorTypeAsInt(),
-                                            addAllToBasketShoppingListCallBack.message, false);
-                                    break;
+            Call<AddAllShoppingListItemResponse> call = bigBasketApiService.addAllToBasketShoppingList(
+                    shoppingListSlug, shoppingListSummary.getFacetSlug());
+            call.enqueue(new BBNetworkCallback<AddAllShoppingListItemResponse>(this) {
+                @Override
+                public void onSuccess(AddAllShoppingListItemResponse addAllToBasketShoppingListCallBack) {
+                    switch (addAllToBasketShoppingListCallBack.status) {
+                        case Constants.OK:
+                            setCartSummary(addAllToBasketShoppingListCallBack);
+                            updateUIForCartInfo();
+                            markBasketDirty();
+                            if (viewPager != null) {
+                                setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
+                                        shoppingListSummary);
+                            } else {
+                                loadShoppingListSummary();
                             }
-                        }
+                            break;
+                        case Constants.ERROR:
+                            handler.sendEmptyMessage(addAllToBasketShoppingListCallBack.getErrorTypeAsInt(),
+                                    addAllToBasketShoppingListCallBack.message, false);
+                            break;
+                    }
+                }
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (isSuspended()) return;
-                            hideProgressView();
-                            handler.handleRetrofitError(error, true);
-                        }
-                    });
+                @Override
+                public boolean updateProgress() {
+                    hideProgressView();
+                    return true;
+                }
+            });
         }
     }
 
@@ -560,15 +548,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private void editShoppingListName(ShoppingListName shoppingListName, String newName) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.editShoppingList(shoppingListName.getSlug(), newName, new Callback<OldBaseApiResponse>() {
+        Call<OldBaseApiResponse> call = bigBasketApiService.editShoppingList(shoppingListName.getSlug(), newName);
+        call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(this) {
             @Override
-            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(OldBaseApiResponse oldBaseApiResponse) {
                 switch (oldBaseApiResponse.status) {
                     case Constants.OK:
                         Toast.makeText(getCurrentActivity(), getString(R.string.shoppingListUpdated),
@@ -584,14 +567,13 @@ public class ShoppingListSummaryActivity extends BBActivity {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
             }
         });
     }
@@ -599,15 +581,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private void deleteShoppingList(final ShoppingListName shoppingListName) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.deleteShoppingList(shoppingListName.getSlug(), new Callback<OldBaseApiResponse>() {
+        Call<OldBaseApiResponse> call = bigBasketApiService.deleteShoppingList(shoppingListName.getSlug());
+        call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(this) {
             @Override
-            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(OldBaseApiResponse oldBaseApiResponse) {
                 switch (oldBaseApiResponse.status) {
                     case Constants.OK:
                         String msg = "\"" + shoppingListName.getName() + "\" was deleted successfully";
@@ -623,14 +600,13 @@ public class ShoppingListSummaryActivity extends BBActivity {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
             }
         });
     }

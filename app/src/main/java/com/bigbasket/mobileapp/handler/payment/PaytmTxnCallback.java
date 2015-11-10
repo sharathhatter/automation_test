@@ -4,14 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
 
 import java.util.HashMap;
 
-public class PaytmTxnCallback<T> implements PaytmPaymentTransactionCallback {
+public class PaytmTxnCallback<T extends AppOperationAware> implements PaytmPaymentTransactionCallback {
 
     private T ctx;
     @Nullable
@@ -42,7 +42,7 @@ public class PaytmTxnCallback<T> implements PaytmPaymentTransactionCallback {
 
     @Override
     public void networkNotAvailable() {
-        ((HandlerAware) ctx).getHandler().sendOfflineError();
+        ctx.getHandler().sendOfflineError();
     }
 
     @Override
@@ -73,11 +73,12 @@ public class PaytmTxnCallback<T> implements PaytmPaymentTransactionCallback {
         if (TextUtils.isEmpty(txnId)) {
             txnId = paramsMap.get("ORDER_ID");
         }
-        new PostPaymentHandler<>(ctx, potentialOrderId, Constants.PAYTM_WALLET, status, orderId)
-                .setPayNow(isPayNow)
-                .isWallet(isWallet)
-                .setTxnId(txnId)
-                .setPayTmParams(paramsMap)
-                .start();
+
+        new PostPaymentProcessor<>(ctx, txnId)
+                .withOrderId(orderId)
+                .withPotentialOrderId(potentialOrderId)
+                .withIsFundWallet(isWallet)
+                .withIsPayNow(isPayNow)
+                .processPaytm(status, paramsMap);
     }
 }

@@ -17,6 +17,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -38,10 +39,11 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
+import retrofit.Call;
 
 public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActivity {
+
+    private boolean mIsInLogoutMode;
 
     public void setUpSocialButtons(View btnGoogleLogin, View btnFacebookLoginButton) {
         btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
@@ -56,8 +58,9 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
                 switch (playServicesAvailable) {
                     case ConnectionResult.SUCCESS:
-                        initializeGooglePlusSignIn();
+                        //initializeGoogleApiClient();
                         logSignInBtnClickEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE);
+                        showProgressDialog(getString(R.string.please_wait));
                         signInViaGPlus();
                         break;
                     default:
@@ -89,20 +92,24 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     @Override
     protected void onPlusClientSignIn(String authToken) {
-        if (mIsInLogoutMode) {
-            hideProgressDialog();
-            signOutFromGplus();
-            return;
-        }
         startSocialLogin(SocialAccountType.GP, authToken);
     }
 
+    @Override
+    protected void onPlusClientSignInFailed() {
+        hideProgressView();
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError();
+        } else {
+            showToast(getString(R.string.common_google_play_services_sign_in_failed_title));
+        }
+    }
+
     private void startSocialLogin(String loginType, String authToken) {
-        showProgressDialog(getString(R.string.please_wait));
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        bigBasketApiService.socialLogin(loginType, authToken,
-                new LoginApiResponseCallback(null,
-                        null, false, loginType, authToken));
+
+        Call<ApiResponse<LoginApiResponse>> call = bigBasketApiService.socialLogin(loginType, authToken);
+        call.enqueue(new LoginApiResponseCallback(null, null, false, loginType, authToken));
     }
 
     @Override
@@ -115,34 +122,8 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     }
 
     @Override
-    protected void onPlusClientRevokeAccess() {
-        initializeGooglePlusSignIn();
-    }
-
-    @Override
-    protected void onPlusClientBlockingUI(boolean show) {
-        if (show) {
-            showProgressDialog(getString(R.string.please_wait));
-        } else {
-            hideProgressDialog();
-        }
-    }
-
-    @Override
     protected void onPlusClientSignOut() {
         doLogout();
-    }
-
-    @Override
-    protected void updatePlusConnectedButtonState() {
-        if (getPlusClient() == null || isSuspended()) return;
-
-        boolean connected = getPlusClient().isConnected();
-        if (connected) {
-            showProgressDialog(getString(R.string.please_wait));
-        } else {
-            hideProgressDialog();
-        }
     }
 
     @Override
@@ -178,6 +159,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 case Constants.SOCIAL_LOGOUT:
                     if (valuePassed != null) {
                         if (valuePassed.equals(SocialAccountType.GP)) {
+                            showProgressDialog(getString(R.string.please_wait));
                             signOutFromGplus();
                         } else if (valuePassed.equals(SocialAccountType.FB)) {
                             revokeFbAccess();
@@ -189,7 +171,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     }
 
     @Override
-    public void revokeGPlusAccess() {
+    protected void revokeGPlusAccess() {
         showProgressDialog(getString(R.string.please_wait));
         super.revokeGPlusAccess();
     }
@@ -199,6 +181,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, "");
         if (!checkInternetConnection()) {
             handler.sendOfflineError();
+            onLogoutComplete(false);
             return;
         }
         if (!TextUtils.isEmpty(socialAccountType) && SocialAccountType.getSocialLoginTypes().contains(socialAccountType)) {
@@ -211,9 +194,8 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 case SocialAccountType.GP:
                     mIsInLogoutMode = true;
                     if (UIUtil.isPhoneWithGoogleAccount(this)) {
-                        initializeGooglePlusSignIn();
                         showProgressDialog(getString(R.string.please_wait));
-                        initiatePlusClientConnect();
+                        signOutFromGplus();
                     } else {
                         doLogout();
                     }
@@ -222,6 +204,13 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         } else {
             doLogout();
         }
+    }
+
+    /**
+     * Return true to consume logout event and block defaut post logout operation
+     */
+    protected boolean onLogoutComplete(boolean success) {
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -270,7 +259,9 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         }
         moEHelper.logoutUser();
         mIsInLogoutMode = false;
-        goToHome(true);
+        if (!onLogoutComplete(true)) {
+            goToHome(true);
+        }
     }
 
     public void saveLoginUserDetailInPreference(LoginApiResponse loginApiResponse, String socialAccountType,
@@ -324,7 +315,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         trackEvent(TrackingAware.LOGIN_FAILED, map);
     }
 
-    public class LoginApiResponseCallback implements Callback<ApiResponse<LoginApiResponse>> {
+    public class LoginApiResponseCallback extends BBNetworkCallback<ApiResponse<LoginApiResponse>> {
 
         private String loginType;
         private String email;
@@ -335,6 +326,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         public LoginApiResponseCallback(String email, String password, boolean rememberMe,
                                         String loginType,
                                         @Nullable String authToken) {
+            super(getCurrentActivity());
             this.email = email;
             this.password = password;
             this.rememberMe = rememberMe;
@@ -343,13 +335,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         }
 
         @Override
-        public void success(ApiResponse<LoginApiResponse> loginApiResponse, retrofit.client.Response response) {
-            if (isSuspended()) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
+        public void onSuccess(ApiResponse<LoginApiResponse> loginApiResponse) {
             switch (loginApiResponse.status) {
                 case 0:
                     if (TextUtils.isEmpty(email)) {
@@ -392,31 +378,45 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         }
 
         @Override
-        public void failure(RetrofitError error) {
-            if (isSuspended()) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
-            handler.handleRetrofitError(error);
+        public void onFailure(int httpErrorCode, String msg) {
+            logFailureEvents(msg);
+            super.onFailure(httpErrorCode, msg);
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            logFailureEvents("Network Error");
+            super.onFailure(t);
+        }
+
+        private void logFailureEvents(String err) {
             switch (loginType) {
                 case SocialAccountType.FB:
-                    logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_FACEBOOK, error.toString());
+                    logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_FACEBOOK, err);
                     break;
                 case SocialAccountType.GP:
-                    logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE, error.toString());
+                    logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE, err);
                     break;
                 case Constants.SIGN_IN_ACCOUNT_TYPE:
-                    logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_NORMAL, error.toString());
+                    logSignInFailureEvent(TrackEventkeys.LOGIN_TYPE_NORMAL, err);
                     break;
                 case Constants.REGISTER_ACCOUNT_TYPE:
                     HashMap<String, String> map = new HashMap<>();
-                    map.put(TrackEventkeys.FAILURE_REASON, error.toString());
+                    map.put(TrackEventkeys.FAILURE_REASON, err);
                     trackEvent(TrackingAware.REGISTRATION_FAILED, map);
                     break;
                 default:
                     throw new AssertionError("Login or register type error while success(status=ERROR)");
+            }
+        }
+
+        @Override
+        public boolean updateProgress() {
+            try {
+                hideProgressDialog();
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
             }
         }
     }

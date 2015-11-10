@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.adapter.account.WalletActivityListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
@@ -23,6 +24,8 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
+
+import retrofit.Call;
 
 
 public class WalletActivity extends BackButtonActivity implements InvoiceDataAware {
@@ -89,7 +92,8 @@ public class WalletActivity extends BackButtonActivity implements InvoiceDataAwa
     private void showInvoice(String orderId) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getInvoice(orderId, new CallbackOrderInvoice<>(getCurrentActivity()));
+        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(orderId);
+        call.enqueue(new CallbackOrderInvoice<>(getCurrentActivity()));
     }
 
     @Override

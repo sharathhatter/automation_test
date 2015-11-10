@@ -7,14 +7,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,10 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -37,6 +32,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.fragment.ShowCartFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.BasketChangeQtyAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -58,13 +54,12 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 public class ShowCartActivity extends BackButtonActivity implements BasketChangeQtyAware {
 
@@ -230,11 +225,10 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
-        bigBasketApiService.emptyCart(new Callback<BaseApiResponse>() {
+        Call<BaseApiResponse> call = bigBasketApiService.emptyCart();
+        call.enqueue(new BBNetworkCallback<BaseApiResponse>(this, true) {
             @Override
-            public void success(BaseApiResponse cartEmptyApiResponseCallback, Response response) {
-                if (isSuspended()) return;
-                hideProgressView();
+            public void onSuccess(BaseApiResponse cartEmptyApiResponseCallback) {
                 markBasketChanged(null);
                 if (cartEmptyApiResponseCallback.status == 0) {
                     editor.putString(Constants.GET_CART, "0");
@@ -252,10 +246,9 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 hideProgressView();
-                handler.handleRetrofitError(error, true);
+                return true;
             }
         });
     }
@@ -269,51 +262,48 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
-        bigBasketApiService.cartGet(isCurrentPageRequest ?
-                        getNextScreenNavigationContext() : getCurrentNavigationContext(),
-                fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
-                    @Override
-                    public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        hideProgressView();
-                        if (cartGetApiResponseContentApiResponse.status == 0) {
-                            CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
-                            setCartSummary(cartSummary);
-                            setBasketNumItemsDisplay();
-                            editor.putString(Constants.GET_CART,
-                                    String.valueOf(cartSummary.getNoOfItems()));
-                            fulfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
-                            annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
+        Call<ApiResponse<CartGetApiResponseContent>> call = bigBasketApiService.cartGet(
+                isCurrentPageRequest ? getNextScreenNavigationContext() : getCurrentNavigationContext(), fulfillmentIds);
+        call.enqueue(new BBNetworkCallback<ApiResponse<CartGetApiResponseContent>>(this, true) {
+            @Override
+            public void onSuccess(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse) {
+                if (cartGetApiResponseContentApiResponse.status == 0) {
+                    CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
+                    setCartSummary(cartSummary);
+                    setBasketNumItemsDisplay();
+                    editor.putString(Constants.GET_CART,
+                            String.valueOf(cartSummary.getNoOfItems()));
+                    fulfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
+                    annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
 
-                            if (cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent != null
-                                    && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
-                                    && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
-                                cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
-                                        cartGetApiCartItemsContent.cartItemLists;
+                    if (cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent != null
+                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
+                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
+                        cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
+                                cartGetApiCartItemsContent.cartItemLists;
 
-                                addTabsToPager(AppDataDynamic.getInstance(getCurrentActivity()).isContextualMode(),
-                                        cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.baseImgUrl,
-                                        fulfillmentInfos, annotationInfoArrayList);
+                        addTabsToPager(AppDataDynamic.getInstance(getCurrentActivity()).isContextualMode(),
+                                cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.baseImgUrl,
+                                fulfillmentInfos, annotationInfoArrayList);
 
-                                renderCheckoutLayout(cartSummary, isCurrentPageRequest);
-                            } else {
-                                showBasketEmptyMessage();
-                                editor.putString(Constants.GET_CART, "0");
-                            }
-                        } else {
-                            handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
-                                    cartGetApiResponseContentApiResponse.message, true);
-                        }
-                        editor.apply();
+                        renderCheckoutLayout(cartSummary, isCurrentPageRequest);
+                    } else {
+                        showBasketEmptyMessage();
+                        editor.putString(Constants.GET_CART, "0");
                     }
+                } else {
+                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
+                            cartGetApiResponseContentApiResponse.message, true);
+                }
+                editor.apply();
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        hideProgressView();
-                        handler.handleRetrofitError(error, true);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                hideProgressView();
+                return true;
+            }
+        });
     }
 
     private void addTabsToPager(boolean showTabs, String baseImgUrl, ArrayList<FulfillmentInfo> fulfillmentInfos,
@@ -325,6 +315,12 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
             TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
             pageTitleStrip.setVisibility(View.GONE);
+            if (!mViewPager.isShown()) {
+                mViewPager.setVisibility(View.VISIBLE);
+            }
+            ViewGroup base = (ViewGroup) findViewById(R.id.empty_cart);
+            if (base.isShown()) base.setVisibility(View.GONE);
+
             ArrayList<BBTab> bbTabs = new ArrayList<>();
 
             createTabFragment(getString(R.string.stnd_delivery), baseImgUrl,
@@ -362,17 +358,11 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
     }
 
     private void showBasketEmptyMessage() {
-
-        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.realative_show_cart);
-        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
         TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
-        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_show_cart);
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layoutCheckoutFooter);
         ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
 
-        LayoutInflater inflater = getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_empty_data_text, relativeLayout, false);
+        ViewGroup base = (ViewGroup) findViewById(R.id.empty_cart);
 
         ImageView imgEmptyPage = (ImageView) base.findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setImageResource(R.drawable.empty_basket);
@@ -392,21 +382,27 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         toolbar.setTitle(getString(R.string.my_basket_header));
         if (basketMenuItem != null) basketMenuItem.setVisible(false);
 
-        appBarLayout.removeView(pageTitleStrip);
-        coordinatorLayout.removeView(mViewPager);
-        relativeLayout.removeView(linearLayout);
-        frameLayout.addView(base);
+        pageTitleStrip.setVisibility(View.GONE);
+        mViewPager.setVisibility(View.GONE);
+        linearLayout.setVisibility(View.GONE);
+        base.setVisibility(View.VISIBLE);
+
         markBasketChanged(null);
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
                                                     Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo,
-                                                    @Nullable EditText editTextQty) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, product, qty, productView, cartInfo, editTextQty);
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextViewRef,
+                viewDecQtyRef, viewIncQtyRef,
+                btnAddToBasketRef, product, qty, productViewRef, cartInfoMapRef, editTextQtyRef);
         getCartItems(null, true);
     }
 
@@ -417,11 +413,15 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
 
     private void renderTabsDataToView(ArrayList<CartItemList> cartItemListsStnd, ArrayList<CartItemList> cartItemListsExp, String baseImgUrl) {
         final ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
+        if (!mViewPager.isShown()) mViewPager.setVisibility(View.VISIBLE);
         TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
+        ViewGroup base = (ViewGroup) findViewById(R.id.empty_cart);
+        if (base.isShown()) base.setVisibility(View.GONE);
+
         ArrayList<BBTab> bbTabs = new ArrayList<>();
 
         if (cartItemListsStnd.size() > 0 && cartItemListsExp.size() > 0) {
-            pageTitleStrip.setVisibility(View.VISIBLE);
+            if (!pageTitleStrip.isShown()) pageTitleStrip.setVisibility(View.VISIBLE);
             createTabFragment(getString(R.string.stnd_delivery), baseImgUrl,
                     cartItemListsStnd, fulfillmentInfos, annotationInfoArrayList, bbTabs, Constants.STANDARD_TAB_INDEX);
             createTabFragment(getString(R.string.exp_delivery), baseImgUrl,
@@ -440,11 +440,11 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
                 bbTabs);
         mViewPager.setAdapter(tabPagerAdapter);
-        pageTitleStrip.getSelectedTabPosition();
 
         if (pageTitleStrip.isShown()) {
             pageTitleStrip.setupWithViewPager(mViewPager);
             mViewPager.setCurrentItem(currentTabIndex);
+            pageTitleStrip.getSelectedTabPosition();
         }
         /*
         mViewPager.postDelayed(new Runnable() {
@@ -455,6 +455,11 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             }
         }, 100);
         */
+    }
+
+    @Override
+    public void markBasketChanged(@Nullable Intent data) {
+        super.markBasketChanged(null);
     }
 
     private class GenerateTabDataAsync extends AsyncTask<Void, Void, Void> {
@@ -526,11 +531,6 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             renderTabsDataToView(cartItemListsStnd, cartItemListsExp, baseImgUrl);
             hideProgressDialog();
         }
-    }
-
-    @Override
-    public void markBasketChanged(@Nullable Intent data) {
-        super.markBasketChanged(null);
     }
 
 }

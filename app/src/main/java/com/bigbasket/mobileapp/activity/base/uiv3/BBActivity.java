@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
@@ -35,6 +36,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
@@ -43,6 +45,7 @@ import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.devconfig.DevConfigViewHandler;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.FlatPageFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
@@ -59,11 +62,11 @@ import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
@@ -109,13 +112,14 @@ import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.bigbasket.mobileapp.view.uiv3.BasketDeltaDialog;
 import com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
-        CartInfoAware, HandlerAware, SubNavigationAware, FloatingBasketUIAware,
+        CartInfoAware, AppOperationAware, SubNavigationAware, FloatingBasketUIAware,
         OnAddressChangeListener, BasketDeltaUserActionListener, NavigationSelectionAware, NavigationDrawerAware {
 
     protected BigBasketMessageHandler handler;
@@ -132,6 +136,23 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private FloatingBadgeCountView mBtnViewBasket;
     private RecyclerView mListSubNavigation;
     private boolean mSyncNeeded;
+
+    private static <T extends SectionItem> void
+    setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
+                                 ArrayList<T> sectionItems,
+                                 Section section) {
+        for (int i = 0; i < sectionItems.size(); i++) {
+            SectionItem sectionItem = sectionItems.get(i);
+            if ((sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText()))
+                    || (sectionItem instanceof SubSectionItem && ((SubSectionItem) sectionItem).isLink())) {
+                if (i == 0 && ((sectionItem instanceof SubSectionItem) && !((SubSectionItem) sectionItem).isLink())) {
+                    // Duplicate the first element as it'll be used to display the back arrow
+                    sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
+                }
+                sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
+            }
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -308,6 +329,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         addToMainLayout(fragment, tag, false);
     }
 
+    //method for add bundle
+
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
         if (frameLayout == null) return;
@@ -326,8 +349,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mDrawerLayout.closeDrawers();
         }
     }
-
-    //method for add bundle
 
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
         if (fragment == null) return;
@@ -601,23 +622,29 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                   View viewDecQty, View viewIncQty, View btnAddToBasket,
-                                                   Product product, String qty,
-                                                   String errorType, @Nullable View productView,
-                                                   @Nullable EditText editTextQty) {
+    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation,
+                                                   @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                   @Nullable WeakReference<View> viewDecQtyRef,
+                                                   @Nullable WeakReference<View> viewIncQtyRef,
+                                                   @Nullable WeakReference<View> btnAddToBasketRef,
+                                                   Product product, String qty, String errorType,
+                                                   @Nullable WeakReference<View> productViewRef,
+                                                   @Nullable WeakReference<EditText> editTextQtyRef) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
                                                     Product product, String qty,
-                                                    @Nullable View productView,
-                                                    @Nullable HashMap<String, Integer> cartInfoMap,
-                                                    @Nullable EditText editTextQty) {
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
 
         Log.d("BB", "BB ACTIVITY updateUIAfterBasketOperationSuccess");
 
@@ -628,45 +655,47 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
         if (productQtyInBasket == 0) {
-            if (viewDecQty != null) {
-                viewDecQty.setVisibility(View.GONE);
+            if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
+                viewDecQtyRef.get().setVisibility(View.GONE);
             }
-            if (viewIncQty != null) {
-                viewIncQty.setVisibility(View.GONE);
+            if (viewIncQtyRef != null && viewIncQtyRef.get() != null) {
+                viewIncQtyRef.get().setVisibility(View.GONE);
             }
-            if (btnAddToBasket != null) {
-                btnAddToBasket.setVisibility(View.VISIBLE);
+            if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
+                btnAddToBasketRef.get().setVisibility(View.VISIBLE);
             }
-            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
-                editTextQty.setText("1");
-                editTextQty.setVisibility(View.VISIBLE);
+            if (editTextQtyRef != null && editTextQtyRef.get() != null
+                    && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQtyRef.get().setText("1");
+                editTextQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (basketCountTextView != null) {
-                basketCountTextView.setVisibility(View.GONE);
+            if (basketCountTextViewRef != null && basketCountTextViewRef.get() != null) {
+                basketCountTextViewRef.get().setVisibility(View.GONE);
             }
         } else {
-            if (viewDecQty != null) {
-                viewDecQty.setVisibility(View.VISIBLE);
+            if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
+                viewDecQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (viewIncQty != null) {
-                viewIncQty.setVisibility(View.VISIBLE);
+            if (viewIncQtyRef != null && viewIncQtyRef.get() != null) {
+                viewIncQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (btnAddToBasket != null) {
-                btnAddToBasket.setVisibility(View.GONE);
+            if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
+                btnAddToBasketRef.get().setVisibility(View.GONE);
             }
-            if (basketCountTextView != null) {
-                basketCountTextView.setText(String.valueOf(productQtyInBasket));
-                basketCountTextView.setVisibility(View.VISIBLE);
+            if (basketCountTextViewRef != null && basketCountTextViewRef.get() != null) {
+                basketCountTextViewRef.get().setText(String.valueOf(productQtyInBasket));
+                basketCountTextViewRef.get().setVisibility(View.VISIBLE);
             }
-            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
-                editTextQty.setVisibility(View.GONE);
+            if (editTextQtyRef != null && editTextQtyRef.get() != null
+                    && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQtyRef.get().setVisibility(View.GONE);
             }
         }
 
         if (product != null) {
             product.setNoOfItemsInCart(productQtyInBasket);
-            if (cartInfoMap != null) {
-                cartInfoMap.put(product.getSku(), productQtyInBasket);
+            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
+                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
             }
         }
 
@@ -812,7 +841,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (mNavRecyclerView == null || mDrawerLayout == null) return;
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
         txtNavSalutation.setTypeface(faceRobotoMedium);
-        ((TextView) findViewById(R.id.lblWelcome)).setTypeface(faceRobotoMedium);
+        TextView lblWelCome = (TextView) findViewById(R.id.lblWelcome);
+        lblWelCome.setTypeface(faceRobotoMedium);
         ImageView imgSwitchNav = (ImageView) findViewById(R.id.imgSwitchNav);
 
         AuthParameters authParameters = AuthParameters.getInstance(this);
@@ -829,6 +859,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     authParameters.getMemberFullName() : authParameters.getMemberEmail());
         } else {
             txtNavSalutation.setText(getString(R.string.bigbasketeer));
+        }
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            DevConfigViewHandler.setView(lblWelCome);
         }
 
         imgSwitchNav.setOnClickListener(new View.OnClickListener() {
@@ -924,23 +957,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
         return new Object[]{sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null,
                 sectionData != null ? sectionData.getRenderersMap() : null};
-    }
-
-    private static <T extends SectionItem> void
-    setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
-                                 ArrayList<T> sectionItems,
-                                 Section section) {
-        for (int i = 0; i < sectionItems.size(); i++) {
-            SectionItem sectionItem = sectionItems.get(i);
-            if ((sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText()))
-                    || (sectionItem instanceof SubSectionItem && ((SubSectionItem) sectionItem).isLink())) {
-                if (i == 0 && ((sectionItem instanceof SubSectionItem) && !((SubSectionItem) sectionItem).isLink())) {
-                    // Duplicate the first element as it'll be used to display the back arrow
-                    sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
-                }
-                sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
-            }
-        }
     }
 
     private ArrayList<SectionNavigationItem> getPreBakedNavigationItems() {

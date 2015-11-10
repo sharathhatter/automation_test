@@ -11,7 +11,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.DeepLinkHandler;
 import com.bigbasket.mobileapp.handler.SilentDeepLinkHandler;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
@@ -20,7 +20,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
-        HandlerAware {
+        AppOperationAware {
 
     protected BigBasketMessageHandler handler;
 

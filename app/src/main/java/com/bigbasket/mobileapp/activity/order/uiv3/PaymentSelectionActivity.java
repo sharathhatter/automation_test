@@ -2,11 +2,9 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
@@ -34,30 +32,23 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
+import com.bigbasket.mobileapp.factory.payment.PaymentHandler;
+import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
-import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
-import com.bigbasket.mobileapp.handler.payment.PayTMInitializer;
-import com.bigbasket.mobileapp.handler.payment.PaymentInitiator;
-import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
-import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
-import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
-import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.interfaces.payment.MobikwikAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
-import com.bigbasket.mobileapp.interfaces.payment.PayTMPaymentAware;
-import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
-import com.bigbasket.mobileapp.interfaces.payment.PayzappPaymentAware;
+import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
-import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -67,19 +58,15 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.enstage.wibmo.sdk.WibmoSDK;
-import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
 import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 public class PaymentSelectionActivity extends BackButtonActivity
-        implements PayzappPaymentAware, PayuPaymentAware,
-        OnPostPaymentListener, OnPaymentValidationListener, MobikwikAware, PayTMPaymentAware {
+        implements OnPostPaymentListener, OnPaymentValidationListener, PaymentTxnInfoAware {
 
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private ArrayList<PaymentType> mPaymentTypeList;
@@ -201,16 +188,15 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
+        String txnId = MobikwikResponseHandler.getLastTransactionID();
         if (!TextUtils.isEmpty(txnId)) {
-            String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-            new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(Constants.MOBIKWIK_ORDER_ID);
-            editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.commit();
+            if (mOrdersCreated != null) {
+                new PostPaymentProcessor<>(this, txnId)
+                        .withPotentialOrderId(mPotentialOrderId)
+                        .withOrderId(mOrdersCreated.get(0).getOrderNumber())
+                        .processPayment();
+            }
+            MobikwikResponseHandler.clear();
         }
     }
 
@@ -393,19 +379,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
         renderCheckOutProgressView();
     }
 
-    @Override
-    public void initializeMobikwik(HashMap<String, String> paymentParams) {
-        MobikwikInitializer.initiate(paymentParams, this);
-    }
-
-    @Override
-    public void initializePayTm(HashMap<String, String> paymentParams) {
-        mTxnId = paymentParams.get("ORDER_ID");
-        String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-        PayTMInitializer.initiate(paymentParams, this,
-                new PaytmTxnCallback<>(this, fullOrderId, mPotentialOrderId, false, false));
-    }
-
     private void onVoucherApplied(String voucher, OrderDetails orderDetails,
                                   ArrayList<CreditDetails> creditDetails) {
         if (!TextUtils.isEmpty(voucher)) {
@@ -433,16 +406,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (checkInternetConnection()) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
             showProgressDialog(getString(R.string.please_wait));
-            bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode, new Callback<ApiResponse<PostVoucherApiResponseContent>>() {
+            Call<ApiResponse<PostVoucherApiResponseContent>> call = bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode);
+            call.enqueue(new BBNetworkCallback<ApiResponse<PostVoucherApiResponseContent>>(this) {
                 @Override
-                public void success(ApiResponse<PostVoucherApiResponseContent> postVoucherApiResponse, Response response) {
-                    if (isSuspended()) return;
-                    try {
-                        hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
-                    }
-                    HashMap<String, String> map = new HashMap<>();
+                public void onSuccess(ApiResponse<PostVoucherApiResponseContent> postVoucherApiResponse) {
                     switch (postVoucherApiResponse.status) {
                         case 0:
                             onVoucherSuccessfullyApplied(voucherCode,
@@ -450,6 +417,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                                     postVoucherApiResponse.apiResponseContent.creditDetails);
                             break;
                         default:
+                            HashMap<String, String> map = new HashMap<>();
                             handler.sendEmptyMessage(postVoucherApiResponse.status, postVoucherApiResponse.message);
                             map.put(TrackEventkeys.FAILURE_REASON, postVoucherApiResponse.message);
                             trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, map);
@@ -458,15 +426,25 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
-                    if (isSuspended()) return;
+                public void onFailure(int httpErrorCode, String msg) {
+                    super.onFailure(httpErrorCode, msg);
+                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    super.onFailure(t);
+                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
+                }
+
+                @Override
+                public boolean updateProgress() {
                     try {
                         hideProgressDialog();
+                        return true;
                     } catch (IllegalArgumentException e) {
-                        return;
+                        return false;
                     }
-                    handler.handleRetrofitError(error);
-                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
                 }
             });
         } else {
@@ -481,15 +459,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.removeVoucher(mPotentialOrderId, new Callback<ApiResponse<PostVoucherApiResponseContent>>() {
+        Call<ApiResponse<PostVoucherApiResponseContent>> call = bigBasketApiService.removeVoucher(mPotentialOrderId);
+        call.enqueue(new BBNetworkCallback<ApiResponse<PostVoucherApiResponseContent>>(this) {
             @Override
-            public void success(ApiResponse<PostVoucherApiResponseContent> removeVoucherApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<PostVoucherApiResponseContent> removeVoucherApiResponse) {
                 switch (removeVoucherApiResponse.status) {
                     case 0:
                         Toast.makeText(getCurrentActivity(),
@@ -505,14 +478,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
             }
         });
     }
@@ -547,34 +519,22 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 (mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY) ||
                         mSelectedPaymentMethod.equals(Constants.PAYU) ||
                         mSelectedPaymentMethod.equals(Constants.MOBIKWIK_WALLET) ||
-                        mSelectedPaymentMethod.equals(Constants.PAYTM_WALLET));
+                        mSelectedPaymentMethod.equals(Constants.PAYTM_WALLET) ||
+                        mSelectedPaymentMethod.equals(Constants.PAYUMONEY_WALLET));
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            if (resultCode == RESULT_OK) {
-                WPayResponse res = WibmoSDK.processInAppResponseWPay(data);
-                String pgTxnId = res.getWibmoTxnId();
-                String dataPickupCode = res.getDataPickUpCode();
-                validateHdfcPayzappResponse(pgTxnId, dataPickupCode, mTxnId);
-            } else {
-                if (data != null) {
-                    String resCode = data.getStringExtra("ResCode");
-                    String resDesc = data.getStringExtra("ResDesc");
-                    communicateHdfcPayzappResponseFailure(resCode, resDesc);
-                } else {
-                    communicateHdfcPayzappResponseFailure(null, null);
-                }
-            }
+            new PostPaymentProcessor<>(this, mTxnId)
+                    .withPotentialOrderId(mPotentialOrderId)
+                    .processPayzapp(data, resultCode, mOrderDetails.getFormattedFinalTotal());
         } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
-            String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-            if (resultCode == RESULT_OK) {
-                new ValidatePaymentHandler<>(this, mPotentialOrderId, mTxnId, fullOrderId).start();
-            } else {
-                new ValidatePaymentHandler<>(this, mPotentialOrderId, mTxnId, fullOrderId).start();
-            }
+            new PostPaymentProcessor<>(this, mTxnId)
+                    .withPotentialOrderId(mPotentialOrderId)
+                    .withOrderId(mOrdersCreated.get(0).getOrderNumber())
+                    .processPayment();
         } else {
             switch (resultCode) {
                 case NavigationCodes.VOUCHER_APPLIED:
@@ -600,36 +560,29 @@ public class PaymentSelectionActivity extends BackButtonActivity
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
                 false);
-        bigBasketApiService.placeOrder(mPotentialOrderId, mSelectedPaymentMethod,
-                new Callback<OldApiResponse<PlaceOrderApiResponseContent>>() {
-                    @Override
-                    public void success(OldApiResponse<PlaceOrderApiResponseContent> placeOrderApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        if (placeOrderApiResponse.status.equals(Constants.OK)) {
-                            postOrderCreation(placeOrderApiResponse.apiResponseContent.orders,
-                                    placeOrderApiResponse.apiResponseContent.addMoreLink,
-                                    placeOrderApiResponse.apiResponseContent.addMoreMsg);
-                        } else {
-                            handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
-                        }
-                    }
+        Call<OldApiResponse<PlaceOrderApiResponseContent>> call = bigBasketApiService.placeOrder(mPotentialOrderId, mSelectedPaymentMethod);
+        call.enqueue(new BBNetworkCallback<OldApiResponse<PlaceOrderApiResponseContent>>(this) {
+            @Override
+            public void onSuccess(OldApiResponse<PlaceOrderApiResponseContent> placeOrderApiResponse) {
+                if (placeOrderApiResponse.status.equals(Constants.OK)) {
+                    postOrderCreation(placeOrderApiResponse.apiResponseContent.orders,
+                            placeOrderApiResponse.apiResponseContent.addMoreLink,
+                            placeOrderApiResponse.apiResponseContent.addMoreMsg);
+                } else {
+                    handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
     }
 
     private void postOrderCreation(ArrayList<Order> orders, String addMoreLink,
@@ -717,40 +670,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void getPaymentParams() {
-        new PaymentInitiator<>(this, mPotentialOrderId, mSelectedPaymentMethod)
-                .initiate();
+        new PaymentHandler<>(this, mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
+                mSelectedPaymentMethod, false, false).initiate();
     }
 
     @Override
-    public void initializeHDFCPayzapp(PayzappPostParams payzappPostParams) {
-        mTxnId = payzappPostParams.getTxnId();
-        PayzappInitializer.initiate(this, payzappPostParams);
-    }
-
-    @Override
-    public void initializePayu(HashMap<String, String> paymentParams) {
-        mTxnId = paymentParams.get(PayuConstants.TXNID);
-        PayuInitializer.initiate(paymentParams, this);
-    }
-
-    private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {
-        new PostPaymentHandler<>(this, mPotentialOrderId, mSelectedPaymentMethod,
-                true, null)
-                .setDataPickupCode(dataPickupCode)
-                .setPgTxnId(pgTxnId)
-                .setTxnId(txnId)
-                .setAmount(mOrderDetails.getFormattedFinalTotal())
-                .start();
-    }
-
-    private void communicateHdfcPayzappResponseFailure(String resCode, String resDesc) {
-        new PostPaymentHandler<>(this, mPotentialOrderId, mSelectedPaymentMethod,
-                false, null)
-                .setErrResCode(resCode)
-                .setErrResDesc(resDesc)
-                .setTxnId(mTxnId)
-                .setAmount(mOrderDetails.getFormattedFinalTotal())
-                .start();
+    public void setTxnId(String txnId) {
+        mTxnId = txnId;
     }
 
     @Override

@@ -7,9 +7,13 @@ import android.view.MenuItem;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+
+import retrofit.Call;
 
 public class SocialLoginConfirmActivity extends ChooseLocationActivity {
 
@@ -26,8 +30,8 @@ public class SocialLoginConfirmActivity extends ChooseLocationActivity {
         String authToken = getIntent().getStringExtra(Constants.AUTH_TOKEN);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.socialRegisterMember(mLoginType, authToken,
-                new LoginApiResponseCallback(null, null, false, mLoginType, authToken));
+        Call<ApiResponse<LoginApiResponse>> call = bigBasketApiService.socialRegisterMember(mLoginType, authToken);
+        call.enqueue(new LoginApiResponseCallback(null, null, false, mLoginType, authToken));
     }
 
     @Override

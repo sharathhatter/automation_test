@@ -295,6 +295,7 @@
     <string name="delivery_add">Delivery Address:</string>
     <string name="other_address">Other Addresses:</string>
     <string name="addAnAddress"> \u0020 Add an Address</string>
+    <string name="addNewAddress">ADD NEW ADDRESS</string>
     <string name="save">SAVE</string>
     <string name="saveAndContinue">Save and Continue</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
@@ -360,6 +361,7 @@
     <string name="unknownError">An unknown error occurred</string>
     <string name="saveThisLocation">USE THIS LOCATION</string>
     <string name="changeMyLocation">CHANGE MY LOCATION</string>
+
     <string name="changeMyAddress">CHANGE MY ADDRESS</string>
     <string name="preparingBasket">Preparing basket</string>
     <string name="status">Status</string>
@@ -399,6 +401,8 @@
     <string name="totalCostOfGiftWrapping">Total cost of gift wrapping</string>
     <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
     <string name="noAddGiftWrap">No additional gift wrap required.</string>
+
+    <string name="speciality_shop_title">Speciality Shop</string>
 
     <string name="your_loc">\u0020your location</string>
     <string name="store_empty">Sorry, Currently we do not have any speciality stores for\u0020</string>

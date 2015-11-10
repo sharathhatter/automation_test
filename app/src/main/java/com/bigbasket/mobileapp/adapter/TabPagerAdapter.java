@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
@@ -28,7 +28,7 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
         Fragment fragment = Fragment.instantiate(ctx, bbTab.getFragmentClass().getName(),
                 bbTab.getArgs());
 
-        UIUtil.addNavigationContextToBundle(fragment, ((ActivityAware) ctx).getCurrentActivity().getNextScreenNavigationContext());
+        UIUtil.addNavigationContextToBundle(fragment, ((AppOperationAware) ctx).getCurrentActivity().getNextScreenNavigationContext());
         return fragment;
     }
 

@@ -13,9 +13,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -47,18 +50,15 @@ import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity
 import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.fragment.base.ProgressDialogFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -91,8 +91,7 @@ import java.util.Map;
 import java.util.Random;
 
 public abstract class BaseActivity extends AppCompatActivity implements
-        CancelableAware, ProgressIndicationAware, ActivityAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware, HandlerAware,
+        AppOperationAware, TrackingAware, ApiErrorAware,
         LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware, LaunchStoreListAware {
 
     public static Typeface faceRupee;
@@ -105,6 +104,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private AppEventsLogger fbLogger;
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
+
+    private static String PROGRESS_DIALOG_TAG;
 
     public static void showKeyboard(final View view) {
         (new Handler()).postDelayed(new Runnable() {
@@ -126,10 +127,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public static void hideKeyboard(BaseActivity context, View view) {
-        if (context == null || context.isSuspended()) return;
+        if (context == null || view == null) return;
+        IBinder token = view.getWindowToken();
+        if (token == null) return;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(token, 0);
     }
 
     @Override
@@ -158,12 +161,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return DataUtil.isInternetAvailable(getCurrentActivity());
     }
 
-    @Nullable
-    @Override
-    public ProgressDialog getProgressDialog() {
-        return progressDialog;
-    }
-
     @Override
     public void showProgressDialog(String msg) {
         showProgressDialog(msg, true);
@@ -176,29 +173,48 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
-        if (progressDialog != null && progressDialog.isShowing()) return;
-        progressDialog = new ProgressDialog(this);
-        if (isDeterminate) {
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setIndeterminate(false);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                progressDialog.setProgressNumberFormat(null);
-                progressDialog.setProgressPercentFormat(null);
+        if (isSuspended()) return;
+        String progressDialogTag = getProgressDialogTag();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(progressDialogTag);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        try {
+            if (fragment != null) {
+                ft.remove(fragment);
+            }
+            fragment = ProgressDialogFragment.newInstance(msg, cancelable, isDeterminate);
+            ft.add(fragment, progressDialogTag);
+        } finally {
+            if (!isSuspended()) {
+                ft.commitAllowingStateLoss();
             }
         }
-        progressDialog.setCancelable(cancelable);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setMessage(msg);
-        if (isSuspended()) return;
-        progressDialog.show();
     }
 
     @Override
     public void hideProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-            progressDialog = null;
+        String progressDialogTag = getProgressDialogTag();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(progressDialogTag);
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            try {
+                ft.remove(fragment);
+            } finally {
+                if (!isSuspended()) {
+                    ft.commitAllowingStateLoss();
+                }
+            }
         }
+    }
+
+    private String getProgressDialogTag() {
+        if (PROGRESS_DIALOG_TAG == null) {
+            synchronized (this) {
+                if (PROGRESS_DIALOG_TAG == null) {
+                    PROGRESS_DIALOG_TAG = getScreenTag() + "#ProgressDilog";
+                }
+            }
+        }
+        return PROGRESS_DIALOG_TAG;
     }
 
     @Override
@@ -522,7 +538,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public boolean isSuspended() {
-        return isActivitySuspended;
+        return isActivitySuspended || isFinishing();
     }
 
     @Override
@@ -868,7 +884,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        if (intent != null) {
+            intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        }
         super.startActivityForResult(intent, requestCode);
     }
 

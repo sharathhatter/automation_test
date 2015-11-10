@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -32,7 +33,6 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityShopsListData;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityStore;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
@@ -40,9 +40,7 @@ import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 public class BBSpecialityShopsActivity extends BBActivity implements LaunchStoreListAware {
 
@@ -57,13 +55,13 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
 
     @Override
     public int getMainLayout() {
-        return R.layout.uiv3_sstore_list_activity;
+        return R.layout.uiv3_speciality_store_list_activity;
     }
 
     private void getSpecialityShops() {
         if (getIntent() != null) {
             category = getIntent().getStringExtra(Constants.CATEGORY);
-            setTitle(category);
+            setTitle(getString(R.string.speciality_shop_title));
             loadSpecialityShops(category);
         }
     }
@@ -114,15 +112,10 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getApplicationContext());
         showProgressView();
-        bigBasketApiService.getSpecialityShops(catVal, new Callback<ApiResponse<SpecialityShopsListData>>() {
+        Call<ApiResponse<SpecialityShopsListData>> call = bigBasketApiService.getSpecialityShops(catVal);
+        call.enqueue(new BBNetworkCallback<ApiResponse<SpecialityShopsListData>>(this, true) {
             @Override
-            public void success(ApiResponse<SpecialityShopsListData> specialityStoreListApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressView();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<SpecialityShopsListData> specialityStoreListApiResponse) {
                 if (specialityStoreListApiResponse.status == 0) {
                     Section headerSection = specialityStoreListApiResponse.apiResponseContent.getHeaderSection();
                     if (headerSection != null && headerSection.getSectionItems().size() > 0) {
@@ -135,21 +128,23 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
                         final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(BBSpecialityShopsActivity.this).getAddressSummaries();
                         if (addressSummaries != null && addressSummaries.size() > 0) {
                             showStoreEmptyMsg(addressSummaries.get(0).getArea() + "," + addressSummaries.get(0).getCityName());
-                            renderHeaderDropDown(null, 0, category);
+                            renderHeaderDropDown(null, 0, getString(R.string.speciality_shop_title));
                         } else showStoreEmptyMsg(null);
                     }
-                } else handler.sendEmptyMessage(specialityStoreListApiResponse.status,
-                        specialityStoreListApiResponse.message, true);
+                } else {
+                    handler.sendEmptyMessage(specialityStoreListApiResponse.status,
+                            specialityStoreListApiResponse.message, true);
+                }
             }
 
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            @Override
+            public boolean updateProgress() {
                 try {
                     hideProgressView();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error, true);
             }
         });
     }

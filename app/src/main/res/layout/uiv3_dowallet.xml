@@ -4,7 +4,7 @@
     android:id="@+id/layoutDoWallet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/uiv3_large_list_item_bck"
     android:orientation="vertical">
 
     <ScrollView
@@ -25,7 +25,7 @@
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
-                android:background="@color/uiv3_large_list_item_bck"
+                android:background="@color/white"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/padding_normal"
                 android:paddingLeft="@dimen/padding_normal"
@@ -78,8 +78,7 @@
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
-                android:background="@color/uiv3_large_list_item_bck"
-
+                android:background="@color/white"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/padding_normal"
                 android:paddingLeft="@dimen/padding_normal"
@@ -91,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/walletActivityFor"
-                    android:textColor="@color/red_color"
+                    android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/primary_text_size" />
 
                 <HorizontalScrollView
@@ -108,6 +107,7 @@
 
                         <TextView
                             android:id="@+id/month1"
+                            style="@style/RippleStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/margin_small"
@@ -115,7 +115,7 @@
                             android:gravity="center_vertical"
                             android:padding="@dimen/padding_mini"
                             android:text="March 2014"
-                            android:textColor="@color/uiv3_primary_text_color"
+                            android:textColor="@color/red_color"
                             android:textSize="@dimen/primary_text_size" />
 
                         <View
@@ -129,6 +129,7 @@
 
                         <TextView
                             android:id="@+id/month2"
+                            style="@style/RippleStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -137,7 +138,7 @@
                             android:gravity="center_vertical"
                             android:padding="@dimen/padding_mini"
                             android:text="March 2014"
-                            android:textColor="@color/uiv3_primary_text_color"
+                            android:textColor="@color/red_color"
                             android:textSize="@dimen/primary_text_size" />
 
                         <View
@@ -151,13 +152,14 @@
 
                         <TextView
                             android:id="@+id/month3"
+                            style="@style/RippleStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:gravity="center_vertical"
                             android:padding="@dimen/padding_mini"
                             android:text="March 2014"
-                            android:textColor="@color/uiv3_primary_text_color"
+                            android:textColor="@color/red_color"
                             android:textSize="@dimen/primary_text_size" />
 
                     </LinearLayout>
@@ -182,7 +184,7 @@
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
-                android:background="@color/uiv3_large_list_item_bck"
+                android:background="@color/white"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/padding_normal"
                 android:paddingLeft="@dimen/padding_normal"

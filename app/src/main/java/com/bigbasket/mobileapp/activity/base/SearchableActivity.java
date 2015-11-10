@@ -15,7 +15,6 @@ import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.FilterQueryProvider;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -101,12 +100,7 @@ public class SearchableActivity extends BackButtonActivity
         setupSearchView();
 
 
-        mSearchListAdapter.setFilterQueryProvider(new FilterQueryProvider() {
-            @Override
-            public Cursor runQuery(CharSequence constraint) {
-                return SearchUtil.searchQueryCall(constraint.toString(), getApplicationContext());
-            }
-        });
+        mSearchListAdapter.setFilterQueryProvider(new SearchViewAdapter.SearchFilterQueryProvider(this));
 
         searchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

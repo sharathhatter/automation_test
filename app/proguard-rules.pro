@@ -47,6 +47,7 @@
 -keep interface android.support.** { *; }
 
 # Retrofit & OkHttp
+-dontwarn retrofit.**
 -keep class retrofit.** { *; }
 -keep class com.squareup.okhttp.** { *; }
 -keep interface com.squareup.okhttp.** { *; }

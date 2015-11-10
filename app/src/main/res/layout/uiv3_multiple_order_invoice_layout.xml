@@ -5,14 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:fillViewport="true"
-    android:paddingBottom="@dimen/margin_normal">
-
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/margin_normal">
 
         <ImageView
             android:id="@+id/imgBBLogo"
@@ -87,12 +86,11 @@
 
         <Button
             android:id="@+id/btnLogin"
-            style="@style/FormButtonStyle"
+            style="@style/RoundedFormButtonStyle"
             android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/margin_large"
             android:layout_marginRight="@dimen/margin_large"
             android:layout_marginTop="@dimen/margin_xlarge"
-            android:background="@drawable/red_rounded_btn_bkg"
             android:onClick="onContinueBtnClicked"
             android:text="@string/continue_shopping"
             android:textColor="@color/white"

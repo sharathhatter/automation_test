@@ -7,22 +7,18 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class PostPaymentHandler<T> {
+public class SendPaymentResponseTask<T extends AppOperationAware> {
     private T ctx;
     private String potentialOrderId;
     private String paymentType;
@@ -42,8 +38,8 @@ public class PostPaymentHandler<T> {
     // For PAYTM
     private HashMap<String, String> paytmParams;
 
-    public PostPaymentHandler(T ctx, @Nullable String potentialOrderId, String paymentType,
-                              boolean status, @Nullable String orderId) {
+    public SendPaymentResponseTask(T ctx, @Nullable String potentialOrderId, String paymentType,
+                                   boolean status, @Nullable String orderId) {
         this.ctx = ctx;
         this.potentialOrderId = potentialOrderId;
         this.paymentType = paymentType;
@@ -51,58 +47,58 @@ public class PostPaymentHandler<T> {
         this.orderId = orderId;
     }
 
-    public PostPaymentHandler setPayNow(boolean payNow) {
+    public SendPaymentResponseTask setPayNow(boolean payNow) {
         this.isPayNow = payNow ? "1" : "0";
         return this;
     }
 
-    public PostPaymentHandler isWallet(boolean isWallet) {
+    public SendPaymentResponseTask isWallet(boolean isWallet) {
         this.isWallet = isWallet ? "1" : "0";
         return this;
     }
 
-    public PostPaymentHandler setPgTxnId(String pgTxnId) {
+    public SendPaymentResponseTask setPgTxnId(String pgTxnId) {
         this.pgTxnId = pgTxnId;
         return this;
     }
 
-    public PostPaymentHandler setDataPickupCode(String dataPickupCode) {
+    public SendPaymentResponseTask setDataPickupCode(String dataPickupCode) {
         this.dataPickupCode = dataPickupCode;
         return this;
     }
 
-    public PostPaymentHandler setErrResCode(String errResCode) {
+    public SendPaymentResponseTask setErrResCode(String errResCode) {
         this.errResCode = errResCode;
         return this;
     }
 
-    public PostPaymentHandler setErrResDesc(String errResDesc) {
+    public SendPaymentResponseTask setErrResDesc(String errResDesc) {
         this.errResDesc = errResDesc;
         return this;
     }
 
-    public PostPaymentHandler setTxnId(String txnId) {
+    public SendPaymentResponseTask setTxnId(String txnId) {
         this.txnId = txnId;
         return this;
     }
 
-    public PostPaymentHandler setAmount(String amount) {
+    public SendPaymentResponseTask setAmount(String amount) {
         this.amount = amount;
         return this;
     }
 
-    public PostPaymentHandler setPayTmParams(HashMap<String, String> paytmParams) {
+    public SendPaymentResponseTask setPayTmParams(HashMap<String, String> paytmParams) {
         this.paytmParams = paytmParams;
         return this;
     }
 
     public void start() {
-        if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendOfflineError();
+        if (!ctx.checkInternetConnection()) {
+            ctx.getHandler().sendOfflineError();
             return;
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
-        ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(ctx.getCurrentActivity());
+        ctx.showProgressDialog("Please wait...");
 
         Map<String, String> queryMap = new HashMap<>();
         queryMap.put(Constants.PAYMENT_TYPE, paymentType);
@@ -134,18 +130,19 @@ public class PostPaymentHandler<T> {
                 queryMap.putAll(paytmParams);
                 break;
         }
-        bigBasketApiService.postPrepaidPayment(queryMap, new PostPrepaidParamsCallback());
+        Call<ApiResponse<PostPrepaidPaymentResponse>> call =
+                bigBasketApiService.postPrepaidPayment(BBUrlEncodeUtils.urlEncode(queryMap));
+        call.enqueue(new PostPrepaidParamsCallback(ctx));
     }
 
-    private class PostPrepaidParamsCallback implements Callback<ApiResponse<PostPrepaidPaymentResponse>> {
+    private class PostPrepaidParamsCallback extends BBNetworkCallback<ApiResponse<PostPrepaidPaymentResponse>> {
+
+        public PostPrepaidParamsCallback(AppOperationAware ctx) {
+            super(ctx);
+        }
+
         @Override
-        public void success(ApiResponse<PostPrepaidPaymentResponse> postPrepaidPaymentApiResponse, Response response) {
-            if (((CancelableAware) ctx).isSuspended()) return;
-            try {
-                ((ProgressIndicationAware) ctx).hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
+        public void onSuccess(ApiResponse<PostPrepaidPaymentResponse> postPrepaidPaymentApiResponse) {
             switch (postPrepaidPaymentApiResponse.status) {
                 case 0:
                     if (postPrepaidPaymentApiResponse.apiResponseContent.paymentStatus) {
@@ -155,20 +152,20 @@ public class PostPaymentHandler<T> {
                     }
                     break;
                 default:
-                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(postPrepaidPaymentApiResponse.status, postPrepaidPaymentApiResponse.message);
+                    ctx.getHandler().sendEmptyMessage(postPrepaidPaymentApiResponse.status,
+                            postPrepaidPaymentApiResponse.message);
                     break;
             }
         }
 
         @Override
-        public void failure(RetrofitError error) {
-            if (((CancelableAware) ctx).isSuspended()) return;
+        public boolean updateProgress() {
             try {
-                ((ProgressIndicationAware) ctx).hideProgressDialog();
+                ctx.hideProgressDialog();
+                return true;
             } catch (IllegalArgumentException e) {
-                return;
+                return false;
             }
-            ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
         }
     }
 }

@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
@@ -50,7 +50,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
     public GiftItemMessageRecyclerAdapter(T context, Gift gift, boolean showCommonMsg) {
         this.context = context;
         this.showCommonMsg = showCommonMsg;
-        Activity activity = ((ActivityAware) context).getCurrentActivity();
+        Activity activity = ((AppOperationAware) context).getCurrentActivity();
         this.faceRobotoRegular = FontHolder.getInstance(activity).getFaceRobotoRegular();
         this.faceRobotoMedium = FontHolder.getInstance(activity).getFaceRobotoMedium();
         this.faceRobotoBold = FontHolder.getInstance(activity).getFaceRobotoBold();
@@ -59,7 +59,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = ((ActivityAware) context).getCurrentActivity().getLayoutInflater();
+        LayoutInflater inflater = ((AppOperationAware) context).getCurrentActivity().getLayoutInflater();
         switch (viewType) {
             case VIEW_TYPE_GIFT:
                 View row = inflater.inflate(R.layout.uiv3_gift_item_message_list_row, parent, false);
@@ -73,7 +73,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
                 return new GiftItemListRecyclerAdapter.GiftItemFooterViewHolder(row, faceRobotoRegular, faceRobotoBold);
             default:
                 row = inflater.inflate(R.layout.uiv3_gift_item_message, parent, false);
-                int dp16 = (int) ((ActivityAware) context).getCurrentActivity()
+                int dp16 = (int) ((AppOperationAware) context).getCurrentActivity()
                         .getResources().getDimension(R.dimen.padding_normal);
                 row.setPadding(dp16, dp16, dp16, dp16);
                 return new GiftItemMsgViewHolder(row);
@@ -81,7 +81,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
     }
 
     private void setUpHeaderView(View base) {
-        Context context = ((ActivityAware) this.context).getCurrentActivity();
+        Context context = ((AppOperationAware) this.context).getCurrentActivity();
         RadioButton rbtnCommonMsg = (RadioButton) base.findViewById(R.id.rbtnCommonMsg);
         RadioButton rbtnIndividualMsg = (RadioButton) base.findViewById(R.id.rbtnIndividualMsg);
 
@@ -155,7 +155,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         int viewType = getItemViewType(position);
         if (viewType == VIEW_TYPE_GIFT || viewType == VIEW_TYPE_GIFT_MSG) {
-            Activity activity = ((ActivityAware) context).getCurrentActivity();
+            Activity activity = ((AppOperationAware) context).getCurrentActivity();
             GiftItemMsgViewHolder giftItemMsgViewHolder = (GiftItemMsgViewHolder) holder;
             TextView txtTypeYourMsg = giftItemMsgViewHolder.getTxtTypeYourMsg();
             EditText editTextGiftMessage = giftItemMsgViewHolder.getEditTextGiftMessage();
@@ -200,7 +200,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
             }
         } else if (viewType == VIEW_TYPE_FOOTER) {
             UIUtil.setUpGiftItemListFooter(gift, (GiftItemListRecyclerAdapter.GiftItemFooterViewHolder) holder,
-                    ((ActivityAware) context).getCurrentActivity());
+                    ((AppOperationAware) context).getCurrentActivity());
         }
     }
 

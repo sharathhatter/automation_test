@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -42,14 +43,13 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class PromoSetProductsFragment extends ProductListAwareFragment implements CartInfoAware, BasketOperationAware {
@@ -130,10 +130,11 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         } else {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
             showProgressDialog(getString(R.string.please_wait));
-            bigBasketApiService.getPromoSetProducts(String.valueOf(promoId), String.valueOf(setId), new Callback<ApiResponse<PromoSetProductsApiResponseContent>>() {
+            Call<ApiResponse<PromoSetProductsApiResponseContent>> call =
+                    bigBasketApiService.getPromoSetProducts(String.valueOf(promoId), String.valueOf(setId));
+            call.enqueue(new BBNetworkCallback<ApiResponse<PromoSetProductsApiResponseContent>>(this) {
                 @Override
-                public void success(ApiResponse<PromoSetProductsApiResponseContent> promoSetProductsApiResponseContent, Response response) {
-                    hideProgressDialog();
+                public void onSuccess(ApiResponse<PromoSetProductsApiResponseContent> promoSetProductsApiResponseContent) {
                     int status = promoSetProductsApiResponseContent.status;
                     if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
                             || status == ApiErrorCodes.INVALID_FIELD || status == ApiErrorCodes.PROMO_CRITERIA_SET_NOT_EXISTS) {
@@ -145,8 +146,13 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
-                    hideProgressDialog();
+                public boolean updateProgress() {
+                    try {
+                        hideProgressDialog();
+                        return true;
+                    } catch (IllegalArgumentException e) {
+                        return false;
+                    }
                 }
             });
         }
@@ -155,9 +161,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     private void addBundle(final ArrayList<Product> products, final String baseImgUrl) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.addPromoBundle(String.valueOf(promoId), new Callback<ApiResponse<CartInfo>>() {
+        Call<ApiResponse<CartInfo>> call = bigBasketApiService.addPromoBundle(String.valueOf(promoId));
+        call.enqueue(new BBNetworkCallback<ApiResponse<CartInfo>>(this) {
             @Override
-            public void success(ApiResponse<CartInfo> addBundleApiResponse, Response response) {
+            public void onSuccess(ApiResponse<CartInfo> addBundleApiResponse) {
                 if (isSuspended()) return;
                 try {
                     hideProgressDialog();
@@ -184,23 +191,23 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
             }
         });
     }
 
     private void getPromoSummary() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        bigBasketApiService.getPromoSummary(String.valueOf(promoId), new Callback<ApiResponse<PromoSummaryApiResponseContent>>() {
+        Call<ApiResponse<PromoSummaryApiResponseContent>> call = bigBasketApiService.getPromoSummary(String.valueOf(promoId));
+        call.enqueue(new BBNetworkCallback<ApiResponse<PromoSummaryApiResponseContent>>(this) {
             @Override
-            public void success(ApiResponse<PromoSummaryApiResponseContent> promoSummaryApiResponseContent, Response response) {
+            public void onSuccess(ApiResponse<PromoSummaryApiResponseContent> promoSummaryApiResponseContent) {
                 int status = promoSummaryApiResponseContent.status;
                 if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
                         || status == ApiErrorCodes.INVALID_FIELD) {
@@ -217,14 +224,8 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    handler.handleRetrofitError(error);
-                } catch (IllegalArgumentException e) {
-
-                }
-
+            public boolean updateProgress() {
+                return true;
             }
         });
     }
@@ -348,12 +349,17 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView, View viewDecQty,
-                                                    View viewIncQty, View btnAddToBasket, Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo,
-                                                    @Nullable EditText editTextQty) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
-                viewIncQty, btnAddToBasket, product, qty, productView, cartInfo, editTextQty);
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
+                                                    Product product, String qty,
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextViewRef, viewDecQtyRef,
+                viewIncQtyRef, btnAddToBasketRef, product, qty, productViewRef, cartInfoMapRef, editTextQtyRef);
         getPromoSummary();
     }
 

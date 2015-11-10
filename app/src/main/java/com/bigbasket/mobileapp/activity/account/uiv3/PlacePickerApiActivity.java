@@ -34,7 +34,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class PlacePickerApiActivity extends BackButtonActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener, LocationAutoSuggestListener {
+        GoogleMap.OnMyLocationButtonClickListener, LocationAutoSuggestListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
     private LatLng mSelectedLatLng;
@@ -178,6 +179,11 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         readLastKnownLocation();
     }
 
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
     private void readLastKnownLocation() {
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
@@ -248,5 +254,10 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
             readLastKnownLocation();
         }
         return false;
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

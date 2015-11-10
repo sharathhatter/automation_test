@@ -12,6 +12,7 @@
 
     <Button
         android:id="@+id/btnApply"
+        style="@style/RippleStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -27,6 +28,7 @@
 
     <Button
         android:id="@+id/btnClear"
+        style="@style/RippleStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/viewSeparator"
@@ -37,6 +39,6 @@
         android:paddingRight="@dimen/padding_normal"
         android:paddingTop="@dimen/padding_small"
         android:text="@string/clear"
-        android:textColor="@color/uiv3_secondary_text_color"
+        android:textColor="@color/dark_black"
         android:textSize="@dimen/primary_text_size" />
 </RelativeLayout>

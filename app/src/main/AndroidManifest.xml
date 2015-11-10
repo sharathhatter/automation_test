@@ -296,7 +296,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="store-list"
+                    android:host="store_list"
                     android:scheme="bigbasket" />
             </intent-filter>
         </activity>
@@ -325,10 +325,15 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="search-engine"
+            android:resource="@xml/noindex" />
+
         <activity
             android:name=".activity.product.FilterActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FilterTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.LandingPageActivity"
@@ -367,7 +372,7 @@
             android:name=".activity.order.MemberAddressFormActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".activity.shoppinglist.ShoppingListActivity"
             android:screenOrientation="portrait"
@@ -400,7 +405,7 @@
         <activity
             android:name=".activity.account.uiv3.SignInActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/LandingPageTheme"
+            android:theme="@style/LoginScreenTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.TutorialActivity"
@@ -410,7 +415,7 @@
         <activity
             android:name=".activity.account.uiv3.SignupActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/LandingPageTheme"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.ShipmentSelectionActivity"

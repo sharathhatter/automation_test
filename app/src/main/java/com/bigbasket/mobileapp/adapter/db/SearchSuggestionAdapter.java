@@ -70,7 +70,7 @@ public class SearchSuggestionAdapter {
         }
         if (hasElement(autoSearchResponse.getQuery(), COLUMN_QUERY)) {
             DatabaseHelper.db.update(tableName, contentValues,
-                    COLUMN_QUERY + " = \"" + DatabaseUtils.sqlEscapeString(autoSearchResponse.getQuery()) + "\"", null);
+                    COLUMN_QUERY + " = " + DatabaseUtils.sqlEscapeString(autoSearchResponse.getQuery()), null);
         } else {
             DatabaseHelper.db.insert(tableName, null, contentValues);
         }
@@ -82,7 +82,7 @@ public class SearchSuggestionAdapter {
         try {
             cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_QUERY, COLUMN_CREATED_ON, COLUMN_TERMS,
                             COLUMN_CATEGORIES, COLUMN_CATEGORY_URLS, COLUMN_SUGGESTED_TERMS},
-                    COLUMN_QUERY + " = \"" + DatabaseUtils.sqlEscapeString(query) + "\"", null, null, null, COLUMN_ID);
+                    COLUMN_QUERY + " = " + DatabaseUtils.sqlEscapeString(query), null, null, null, COLUMN_ID);
             if (cursor.moveToFirst()) {
                 autoSearchResponse = new AutoSearchResponse(cursor);
             }
@@ -101,7 +101,7 @@ public class SearchSuggestionAdapter {
         boolean result = false;
         try {
             cursor = DatabaseHelper.db.query(true, tableName, null,
-                    columnName + "= \"" + DatabaseUtils.sqlEscapeString(value) + "\"", null, null, null, null, null);
+                    columnName + " = " + DatabaseUtils.sqlEscapeString(value), null, null, null, null, null);
             result = cursor.moveToFirst();
         } catch (SQLException ex) {
             ex.printStackTrace();

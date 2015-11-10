@@ -11,12 +11,12 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.telephony.SmsMessage;
-import android.telephony.SubscriptionManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -32,6 +32,8 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -40,6 +42,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -54,9 +57,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class MemberAddressFormActivity extends BackButtonActivity implements OtpDialogAware,
@@ -144,7 +145,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         citySpinner.setSelection(selectedPosition);
         citySpinner.setEnabled(AuthParameters.getInstance(this).isMultiCityEnabled());
 
-        TextView txtSaveAddress = (TextView) base.findViewById(R.id.txtSaveAddress);
+        Button txtSaveAddress = (Button) base.findViewById(R.id.txtSaveAddress);
         txtSaveAddress.setTypeface(faceRobotoMedium);
         txtSaveAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -368,10 +369,14 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (mAddress != null) {
             payload.put(Constants.ID, mAddress.getId());
             showProgressDialog(getString(R.string.please_wait));
-            bigBasketApiService.updateAddress(payload, new CreateUpdateAddressApiCallback());
+            Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
+                    bigBasketApiService.updateAddress(BBUrlEncodeUtils.urlEncode(payload));
+            call.enqueue(new CreateUpdateAddressApiCallback(this));
         } else {
             showProgressDialog(getString(R.string.please_wait));
-            bigBasketApiService.createAddress(payload, new CreateUpdateAddressApiCallback());
+            Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
+                    bigBasketApiService.createAddress(BBUrlEncodeUtils.urlEncode(payload));
+            call.enqueue(new CreateUpdateAddressApiCallback(this));
         }
     }
 
@@ -473,71 +478,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         unregisterBroadcastForSMS();
     }
 
-    private class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
-
-        @Override
-        public void success(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse, Response response) {
-            if (isSuspended() || getCurrentActivity() == null) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
-            switch (createUpdateAddressApiResponse.status) {
-                case 0:
-                    if (otpValidationDialogFragment != null) {
-                        if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode() != null)
-                            BaseActivity.hideKeyboard(getCurrentActivity(), otpValidationDialogFragment.getEditTextMobileCode());
-                        if (otpValidationDialogFragment.isVisible())
-                            otpValidationDialogFragment.dismiss();
-                    }
-
-                    if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
-                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, null);
-                    }
-                    if (mAddress == null) {
-                        Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.address);
-                    } else {
-                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified();
-                    }
-                    break;
-                case ApiErrorCodes.NUMBER_IN_USE:
-                    mErrorMsg = createUpdateAddressApiResponse.message;
-                    handleMessage(Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER);
-                    break;
-                case ApiErrorCodes.OTP_NEEDED:
-                    mErrorMsg = createUpdateAddressApiResponse.message;
-                    handleMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP);
-                    break;
-                case ApiErrorCodes.OTP_INVALID:
-                    mErrorMsg = createUpdateAddressApiResponse.message;
-                    handleMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
-                    break;
-                default:
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put(TrackEventkeys.FAILURE_REASON, createUpdateAddressApiResponse.message);
-                    trackEvent(mAddress == null ? TrackingAware.NEW_ADDRESS_FAILED :
-                            TrackingAware.UPDATE_ADDRESS_FAILED, map);
-                    handler.sendEmptyMessage(createUpdateAddressApiResponse.status,
-                            createUpdateAddressApiResponse.message, false);
-                    break;
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            if (isSuspended()) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
-            handler.handleRetrofitError(error);
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -584,5 +524,67 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     private void unregisterBroadcastForSMS() {
         if (broadcastReceiver == null) return;
         unregisterReceiver(broadcastReceiver);
+    }
+
+    private class CreateUpdateAddressApiCallback extends BBNetworkCallback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
+
+        public CreateUpdateAddressApiCallback(AppOperationAware ctx) {
+            super(ctx);
+        }
+
+        @Override
+        public void onSuccess(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse) {
+            switch (createUpdateAddressApiResponse.status) {
+                case 0:
+                    if (otpValidationDialogFragment != null) {
+                        if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode() != null)
+                            BaseActivity.hideKeyboard(getCurrentActivity(), otpValidationDialogFragment.getEditTextMobileCode());
+                        if (otpValidationDialogFragment.isVisible())
+                            otpValidationDialogFragment.dismiss();
+                    }
+
+                    if (mAddressPageMode == MemberAddressPageMode.CHECKOUT) {
+                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, null);
+                    }
+                    if (mAddress == null) {
+                        Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
+                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.address);
+                    } else {
+                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
+                        addressCreatedModified();
+                    }
+                    break;
+                case ApiErrorCodes.NUMBER_IN_USE:
+                    mErrorMsg = createUpdateAddressApiResponse.message;
+                    handleMessage(Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER);
+                    break;
+                case ApiErrorCodes.OTP_NEEDED:
+                    mErrorMsg = createUpdateAddressApiResponse.message;
+                    handleMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP);
+                    break;
+                case ApiErrorCodes.OTP_INVALID:
+                    mErrorMsg = createUpdateAddressApiResponse.message;
+                    handleMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
+                    break;
+                default:
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.FAILURE_REASON, createUpdateAddressApiResponse.message);
+                    trackEvent(mAddress == null ? TrackingAware.NEW_ADDRESS_FAILED :
+                            TrackingAware.UPDATE_ADDRESS_FAILED, map);
+                    handler.sendEmptyMessage(createUpdateAddressApiResponse.status,
+                            createUpdateAddressApiResponse.message, false);
+                    break;
+            }
+        }
+
+        @Override
+        public boolean updateProgress() {
+            try {
+                hideProgressDialog();
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+        }
     }
 }

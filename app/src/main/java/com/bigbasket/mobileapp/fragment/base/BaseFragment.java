@@ -30,11 +30,8 @@ import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -52,14 +49,14 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public abstract class BaseFragment extends AbstractFragment implements HandlerAware,
-        CartInfoAware, BasketOperationAware, ProgressIndicationAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware, LaunchProductListAware,
+public abstract class BaseFragment extends AbstractFragment implements
+        CartInfoAware, BasketOperationAware, TrackingAware, ApiErrorAware, LaunchProductListAware,
         AnalyticsNavigationContextAware, OnBasketChangeListener {
 
     protected BigBasketMessageHandler handler;
@@ -121,13 +118,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-
-    @Nullable
-    @Override
-    public ProgressDialog getProgressDialog() {
-        return progressDialog;
     }
 
     public void showProgressView() {
@@ -247,22 +237,29 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                   View viewDecQty, View viewIncQty, View btnAddToBasket,
+    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation,
+                                                   @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                   @Nullable WeakReference<View> viewDecQtyRef,
+                                                   @Nullable WeakReference<View> viewIncQtyRef,
+                                                   @Nullable WeakReference<View> btnAddToBasketRef,
                                                    Product product, String qty, String errorType,
-                                                   @Nullable View productView,
-                                                   @Nullable EditText editTextQty) {
+                                                   @Nullable WeakReference<View> productViewRef,
+                                                   @Nullable WeakReference<EditText> editTextQtyRef) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(getActivity(), "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
                                                     Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
-                                                    @Nullable EditText editTextQty) {
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
@@ -271,47 +268,49 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
         if (productQtyInBasket == 0) {
-            if (viewDecQty != null) {
-                viewDecQty.setVisibility(View.GONE);
+            if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
+                viewDecQtyRef.get().setVisibility(View.GONE);
             }
-            if (viewIncQty != null) {
-                viewIncQty.setVisibility(View.GONE);
+            if (viewIncQtyRef != null && viewIncQtyRef.get() != null) {
+                viewIncQtyRef.get().setVisibility(View.GONE);
             }
-            if (btnAddToBasket != null) {
-                btnAddToBasket.setVisibility(View.VISIBLE);
+            if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
+                btnAddToBasketRef.get().setVisibility(View.VISIBLE);
             }
-            if (basketCountTextView != null) {
-                basketCountTextView.setVisibility(View.GONE);
+            if (basketCountTextViewRef != null && basketCountTextViewRef.get() != null) {
+                basketCountTextViewRef.get().setVisibility(View.GONE);
             }
-            if (productView != null) {
-                productView.setBackgroundColor(Color.WHITE);
+            if (productViewRef != null && productViewRef.get() != null) {
+                productViewRef.get().setBackgroundColor(Color.WHITE);
             }
-            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
-                editTextQty.setText("1");
-                editTextQty.setVisibility(View.VISIBLE);
+            if (editTextQtyRef != null && editTextQtyRef.get() != null
+                    && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQtyRef.get().setText("1");
+                editTextQtyRef.get().setVisibility(View.VISIBLE);
             }
         } else {
-            if (viewDecQty != null) {
-                viewDecQty.setVisibility(View.VISIBLE);
+            if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
+                viewDecQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (viewIncQty != null) {
-                viewIncQty.setVisibility(View.VISIBLE);
+            if (viewIncQtyRef != null && viewIncQtyRef.get() != null) {
+                viewIncQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (btnAddToBasket != null) {
-                btnAddToBasket.setVisibility(View.GONE);
+            if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
+                btnAddToBasketRef.get().setVisibility(View.GONE);
             }
-            if (basketCountTextView != null) {
-                basketCountTextView.setText(String.valueOf(productQtyInBasket));
-                basketCountTextView.setVisibility(View.VISIBLE);
+            if (basketCountTextViewRef != null && basketCountTextViewRef.get() != null) {
+                basketCountTextViewRef.get().setText(String.valueOf(productQtyInBasket));
+                basketCountTextViewRef.get().setVisibility(View.VISIBLE);
             }
-            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
-                editTextQty.setVisibility(View.GONE);
+            if (editTextQtyRef != null && editTextQtyRef.get() != null
+                    && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQtyRef.get().setVisibility(View.GONE);
             }
         }
         if (product != null) {
             product.setNoOfItemsInCart(productQtyInBasket);
-            if (cartInfoMap != null) {
-                cartInfoMap.put(product.getSku(), productQtyInBasket);
+            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
+                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
             }
         }
 
