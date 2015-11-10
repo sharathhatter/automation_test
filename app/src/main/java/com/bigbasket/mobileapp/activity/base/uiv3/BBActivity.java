@@ -1123,6 +1123,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     /**
      *
      * @param name: name of the category user has selected in the navigation drawer
+     *            passing the selected category name to the adapter
      *
      */
     @Override
