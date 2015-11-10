@@ -39,7 +39,8 @@ public class GetAppDataDynamicIntentService extends IntentService {
                             getDynamicPageApiResponse.apiResponseContent.isContextualMode,
                             getDynamicPageApiResponse.apiResponseContent.expressAvailability,
                             getDynamicPageApiResponse.apiResponseContent.abModeName,
-                            getDynamicPageApiResponse.apiResponseContent.storeAvailabilityMap);
+                            getDynamicPageApiResponse.apiResponseContent.storeAvailabilityMap,
+                            getDynamicPageApiResponse.apiResponseContent.specialityStoresInfo);
                     sendSuccessBroadcast();
                 } else {
                     sendErrorBroadcast();
