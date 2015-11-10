@@ -64,6 +64,9 @@ import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -113,7 +116,7 @@ import java.util.Map;
 
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
         CartInfoAware, HandlerAware, SubNavigationAware, FloatingBasketUIAware,
-        OnAddressChangeListener, BasketDeltaUserActionListener {
+        OnAddressChangeListener, BasketDeltaUserActionListener, NavigationSelectionAware, NavigationDrawerAware {
 
     protected BigBasketMessageHandler handler;
     protected String mTitle;
@@ -274,6 +277,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+
                 Map<String, String> eventAttribs = new HashMap<>();
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
@@ -844,6 +848,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
         mNavRecyclerView.setAdapter(navigationAdapter);
+
     }
 
     private void setCityText(String text) {
@@ -1113,5 +1118,20 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         } else {
             super.onBackPressed();
         }
+    }
+
+    /**
+     *
+     * @param name: name of the category user has selected in the navigation drawer
+     *
+     */
+    @Override
+    public void onNavigationSelection(String name) {
+        ((NavigationSelectedValueAware)mNavRecyclerView.getAdapter()).setSelectedNavigationCategory(name);
+    }
+
+    @Override
+    public void closeDrawer() {
+        mDrawerLayout.closeDrawers();
     }
 }

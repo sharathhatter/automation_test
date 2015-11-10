@@ -75,6 +75,8 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     @SerializedName(Constants.TITLE_TYPE)
     private String titleType;
 
+    private boolean isSelected;
+
     public SectionItem(SectionTextItem title, SectionTextItem description, String image,
                        int renderingId, DestinationInfo destinationInfo) {
         super(title, description);
@@ -413,5 +415,13 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
 
     public boolean isExpressDynamicTitle() {
         return !TextUtils.isEmpty(titleType) && titleType.equals("express_dynamic");
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setIsSelected(boolean isSelected) {
+        this.isSelected = isSelected;
     }
 }

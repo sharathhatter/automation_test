@@ -37,6 +37,8 @@ import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
@@ -100,6 +102,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         setTitle(mTitlePassedViaIntent);
         mNameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
         loadProductTabs(currentTabIndex, false);
+
     }
 
     @Override
@@ -115,6 +118,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     public int getMainLayout() {
         return R.layout.uiv3_product_list_layout;
     }
+
+
 
     private void loadProductTabs(int currentTabIndex, boolean isFilterOrSortApplied) {
         if (mNameValuePairs == null || mNameValuePairs.size() == 0) {
@@ -171,10 +176,16 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     @Override
     public void setProductTabData(ProductTabData productTabData, int currentTabIndex,
                                   boolean isFilterOrSortApplied) {
+
+        if (productTabData.getProductTabInfos().size()>0){
+            ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(productTabData.getScreenName());
+        }
+        else
+            ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(mTitlePassedViaIntent);
+
         if (currentTabIndex < 0) {
             currentTabIndex = 0;
         }
-
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawers();
         }
@@ -251,6 +262,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
                             productTabInfo.getTabName() : mTitlePassedViaIntent;
                     setTitle(title);
+
                 }
                 logProductListingShownEvent(productTabInfo.getTabType());
                 setCurrentTabSortAndFilter(productTabInfo.getFilterOptionItems(),

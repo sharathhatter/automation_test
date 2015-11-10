@@ -11,6 +11,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.fragment.product.DiscountFragment;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -29,13 +30,14 @@ import retrofit.client.Response;
 
 public class DiscountActivity extends BBActivity {
 
-
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setNextScreenNavigationContext(TrackEventkeys.NC_DISCOUNT_SCREEN);
         setTitle(getString(R.string.discounts));
         getDiscountData();
+
+        ((NavigationSelectionAware)getCurrentActivity()).onNavigationSelection(getString(R.string.discounts));
     }
 
 

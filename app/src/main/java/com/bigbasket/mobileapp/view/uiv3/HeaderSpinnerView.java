@@ -14,8 +14,10 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
@@ -92,6 +94,8 @@ public class HeaderSpinnerView<T> {
                     typeface, ((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_primary_text_color), Color.WHITE);
             bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             listHeaderDropdown.setAdapter(bbArrayAdapter);
+
+            ((NavigationSelectionAware) ctx).onNavigationSelection(headSection.getSectionItems().get(0).getTitle().getText().split("\\(")[0]);
 
             listHeaderDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

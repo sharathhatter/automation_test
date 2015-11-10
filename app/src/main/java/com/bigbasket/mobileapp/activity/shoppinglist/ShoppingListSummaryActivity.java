@@ -34,6 +34,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummary
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.section.Section;
@@ -69,6 +70,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadShoppingListSummary();
+        ((NavigationSelectionAware)getCurrentActivity()).onNavigationSelection(getString(R.string.shoppingList));
     }
 
     @Override
@@ -172,6 +174,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
                         handler.handleRetrofitError(error, true);
                     }
                 });
+
+        ((NavigationSelectionAware)getCurrentActivity()).onNavigationSelection(getString(R.string.my_basket_header));
     }
 
     private void showNoShoppingListView(ViewGroup contentView) {

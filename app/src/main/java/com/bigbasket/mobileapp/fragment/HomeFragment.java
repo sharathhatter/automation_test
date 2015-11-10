@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.handler.AppUpdateHandler;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
@@ -112,6 +113,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         } else {
             syncHomePageIfNeeded();
         }
+        ((NavigationSelectionAware)getCurrentActivity()).onNavigationSelection(getString(R.string.home));
     }
 
     private void syncHomePageIfNeeded() {
