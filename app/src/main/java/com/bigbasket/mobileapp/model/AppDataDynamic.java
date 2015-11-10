@@ -77,6 +77,7 @@ public class AppDataDynamic {
             String storeJson = gson.toJson(storeAvailabilityMap);
             editor.putString(Constants.STORE_AVAILABILITY_MAP, storeJson);
         }
+
         editor.putBoolean(Constants.IS_CONTEXTUAL_MODE, isContextualMode);
         editor.putString(TIMEOUT_KEY, new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                 Locale.getDefault()).format(new Date()));
@@ -128,6 +129,7 @@ public class AppDataDynamic {
             }.getType();
             this.storeAvailabilityMap = gson.fromJson(storeJson, collectionType);
         }
+
     }
 
     public static void reset(Context context) {
@@ -171,4 +173,5 @@ public class AppDataDynamic {
     public HashMap<String, String> getStoreAvailabilityMap() {
         return storeAvailabilityMap;
     }
+
 }

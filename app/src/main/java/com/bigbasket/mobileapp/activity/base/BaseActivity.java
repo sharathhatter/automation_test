@@ -63,6 +63,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
@@ -828,6 +829,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
         SectionManager.clearAllSectionData(this);
         AppDataDynamic.reset(this);
+        SpecialityStorePreference.reset(this);
 
         if (!reopenLandingPage) {
             goToHome(true);

@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.account.SocialAccountType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
@@ -231,6 +232,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         editor.commit();
         AuthParameters.reset();
         AppDataDynamic.reset(getCurrentActivity());
+        SpecialityStorePreference.reset(getCurrentActivity());
 
         MoEngageWrapper.setUserAttribute(moEHelper, Constants.IS_LOGGED_IN, false);
 

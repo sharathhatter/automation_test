@@ -9,6 +9,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAppDataDynamicResponse;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.util.Constants;
 
 import java.io.IOException;
@@ -40,6 +41,9 @@ public class GetAppDataDynamicIntentService extends IntentService {
                             getDynamicPageApiResponse.apiResponseContent.expressAvailability,
                             getDynamicPageApiResponse.apiResponseContent.abModeName,
                             getDynamicPageApiResponse.apiResponseContent.storeAvailabilityMap);
+
+                    SpecialityStorePreference.saveSpecialityStoreDetailList(this,
+                            getDynamicPageApiResponse.apiResponseContent.specialityStoresInfo);
                     sendSuccessBroadcast();
                 } else {
                     sendErrorBroadcast();

@@ -55,13 +55,13 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
 
     @Override
     public int getMainLayout() {
-        return R.layout.uiv3_sstore_list_activity;
+        return R.layout.uiv3_speciality_store_list_activity;
     }
 
     private void getSpecialityShops() {
         if (getIntent() != null) {
             category = getIntent().getStringExtra(Constants.CATEGORY);
-            setTitle(category);
+            setTitle(getString(R.string.speciality_shop_title));
             loadSpecialityShops(category);
         }
     }
@@ -71,6 +71,7 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
         UIUtil.configureRecyclerView(recyclerViewStoreList, this, 1, 1);
         StoreListRecyclerAdapter<BBSpecialityShopsActivity> storeListRecyclerAdapter = new StoreListRecyclerAdapter<>(BBSpecialityShopsActivity.this, baseImgUrl, storeList);
         recyclerViewStoreList.setAdapter(storeListRecyclerAdapter);
+        setNextScreenNavigationContext(TrackingAware.SPECIALITYSHOPS + storeList.get(0).getStoreName());
         logViewSpecialityShopsEvent(category);
     }
 
@@ -128,7 +129,7 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
                         final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(BBSpecialityShopsActivity.this).getAddressSummaries();
                         if (addressSummaries != null && addressSummaries.size() > 0) {
                             showStoreEmptyMsg(addressSummaries.get(0).getArea() + "," + addressSummaries.get(0).getCityName());
-                            renderHeaderDropDown(null, 0, category);
+                            renderHeaderDropDown(null, 0, getString(R.string.speciality_shop_title));
                         } else showStoreEmptyMsg(null);
                     }
                 } else {
