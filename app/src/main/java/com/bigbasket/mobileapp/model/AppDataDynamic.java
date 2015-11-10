@@ -189,6 +189,7 @@ public class AppDataDynamic {
         return storeAvailabilityMap;
     }
 
+    @Nullable
     public ArrayList<HashMap<String, SpecialityStoresInfoModel>> getSpecialityStoresInfo() {
         return specialityStoresInfo;
     }
