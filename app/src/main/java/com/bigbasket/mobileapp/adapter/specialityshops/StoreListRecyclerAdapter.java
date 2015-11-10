@@ -35,7 +35,7 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = ((AppOperationAware) this.context).getCurrentActivity();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View row = inflater.inflate(R.layout.uiv3_sshops_row, parent, false);
+        View row = inflater.inflate(R.layout.uiv3_speciality_shops_row, parent, false);
         return new StoreListRowHolder(row, FontHolder.getInstance(context).getFaceRobotoRegular(), FontHolder.getInstance(context).getFaceRobotoLight());
     }
 
