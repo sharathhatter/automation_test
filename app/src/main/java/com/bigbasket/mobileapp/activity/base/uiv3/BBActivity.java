@@ -278,7 +278,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                setTitle(formatToolbarTitle(mTitle));
+                /**
+                 * commenting this line BB-6889-Title text wrong when selecting a category
+                 * title text was showing the previous category title even when the user navigates to new category
+                 * the value for getting overidden here
+                 */
+//                setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
                     onSubNavigationHideRequested(false);
