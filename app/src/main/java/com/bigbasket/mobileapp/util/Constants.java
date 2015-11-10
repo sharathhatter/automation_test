@@ -614,6 +614,7 @@ public class Constants {
     public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
     public static final String EXPRESS_AVAILABILITY = "express_availability";
     public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
+    public static final String SPECIALITY_STORES_INFO = "speciality_stores_info";
     public static final String APP_LAUNCH = "appLaunch";
 
     // Gift items
@@ -644,4 +645,16 @@ public class Constants {
     public static final int STANDARD_TAB_INDEX = 0;
     public static final int EXPRESS_TAB_INDEX = 1;
     public static final int DEFAULT_TAB_INDEX = 0;
+
+    //storeInfo
+    public static final String STORE_CATEGORY = "category";
+    public static final String STORE_ID = "store_id";
+    public static final String STORE_URL = "store_url";
+    public static final String STORE_ADD1 = "address1";
+    public static final String STORE_ADD2 = "address2";
+    public static final String STORE_NAME = "store_name";
+    public static final String STORE_LOGO = "store_logo";
+    public static final String STORE_DESC = "store_description";
+
+
 }
