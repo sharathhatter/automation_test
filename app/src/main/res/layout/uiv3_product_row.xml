@@ -39,16 +39,29 @@
 
     <TextView
         android:id="@+id/txtProductBrand"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtProductDesc"
         android:layout_marginLeft="@dimen/margin_mini"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_toLeftOf="@id/imgProductOverflowAction"
         android:layout_toRightOf="@id/imgProduct"
         android:text="Hampi Organic"
         android:textColor="@color/uiv3_secondary_text_color"
         android:textSize="@dimen/secondary_text_size" />
+
+    <ImageView
+        android:id="@+id/imgStoreIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txtProductBrand"
+        android:layout_below="@id/txtProductDesc"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_mini"
+        android:layout_toRightOf="@id/txtProductBrand"
+        android:contentDescription="@string/shoppingList"
+        android:paddingRight="@dimen/padding_small"
+        android:src="@drawable/promo_unused"
+        android:visibility="visible" />
+
 
     <LinearLayout
         android:id="@+id/layoutPackageDesc"

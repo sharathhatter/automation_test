@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.model.cart.CartItem;
 import com.bigbasket.mobileapp.model.promo.ProductPromoInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.Gson;
@@ -65,10 +66,12 @@ public class Product extends BaseProduct {
     private ArrayList<HashMap<String, String>> storeAvailability;
     @SerializedName(Constants.GIFT_MSG)
     private String giftMsg;
+    private List<String> storeIds;
 
     public Product(Parcel source) {
         super(source);
         boolean isSellPriceNull = source.readByte() == (byte) 1;
+
         if (!isSellPriceNull) {
             sellPrice = source.readString();
         }
@@ -119,6 +122,13 @@ public class Product extends BaseProduct {
         boolean isGiftMsgNull = source.readByte() == (byte) 1;
         if (!isGiftMsgNull) {
             giftMsg = source.readString();
+        }
+
+        boolean isStoreIdsNull = source.readByte() == (byte) 1;
+        if (!isStoreIdsNull) {
+            String storeId = source.readString();
+            storeIds = new ArrayList<>();
+            storeIds.add(storeId);
         }
     }
 
@@ -216,6 +226,12 @@ public class Product extends BaseProduct {
         if (!isGiftMsgNull) {
             dest.writeString(giftMsg);
         }
+
+        boolean iSStoredIdsNull = storeIds == null;
+        dest.writeByte(iSStoredIdsNull ? (byte) 1 : (byte) 0);
+        if (!iSStoredIdsNull) {
+            dest.writeList(storeIds);
+        }
     }
 
     public String getSellPrice() {
@@ -310,5 +326,10 @@ public class Product extends BaseProduct {
     @Nullable
     public ArrayList<HashMap<String, String>> getStoreAvailability() {
         return storeAvailability;
+    }
+
+    @Nullable
+    public List<String> getStoreIds() {
+        return storeIds;
     }
 }

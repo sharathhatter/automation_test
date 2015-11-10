@@ -35,6 +35,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private ViewGroup layoutExpressMsg;
     private TextView txtGiftMsg;
     private ImageView imgGiftIcon;
+    private ImageView imgStoreIcon;
 
     public ProductViewHolder(View itemView) {
         super(itemView);
@@ -195,5 +196,12 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             imgGiftIcon = (ImageView) itemView.findViewById(R.id.imgGiftIcon);
         }
         return imgGiftIcon;
+    }
+
+    public ImageView getImgStoreIcon() {
+        if (imgStoreIcon == null) {
+            imgStoreIcon = (ImageView) itemView.findViewById(R.id.imgStoreIcon);
+        }
+        return imgStoreIcon;
     }
 }

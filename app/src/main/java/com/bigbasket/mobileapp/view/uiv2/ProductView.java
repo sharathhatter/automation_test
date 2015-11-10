@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
+import com.bigbasket.mobileapp.fragment.StoreDetailsDialogFragment;
 import com.bigbasket.mobileapp.handler.OnBrandPageListener;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
@@ -349,6 +350,19 @@ public final class ProductView {
                                                    HashMap<String, String> allStoreAvailabilityMap) {
         String availabilityInfoId = particularStoreMap.get(Constants.AVAILABILITY_INFO_ID);
         return !TextUtils.isEmpty(availabilityInfoId) ? allStoreAvailabilityMap.get(availabilityInfoId) : null;
+    }
+
+    private static <T> void setStoreDetails(ProductViewHolder productViewHolder, Product product,
+                                            ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                            final T activityAware) {
+        ImageView imgStoreIcon = productViewHolder.getImgStoreIcon();
+        imgStoreIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StoreDetailsDialogFragment storeDetailsDialogFragment = StoreDetailsDialogFragment.newInstance();
+
+            }
+        });
     }
 
     private static <T> void setPromo(ProductViewHolder productViewHolder, Product product,
@@ -703,6 +717,7 @@ public final class ProductView {
         @Override
         public void onClick(View v) {
             final Button btnMorePackSizes = (Button) v;
+
             AlertDialog.Builder builder = new AlertDialog.Builder(productDataAware.getCurrentActivity());
             final AlertDialog dialog = builder.create();
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
