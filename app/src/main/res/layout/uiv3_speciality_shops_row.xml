@@ -47,7 +47,7 @@
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_normal"
-        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_normal"
         android:layout_toRightOf="@id/imgStore"
         android:drawableLeft="@drawable/clock"
         android:drawablePadding="@dimen/padding_small"
