@@ -115,12 +115,11 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             TextView txtNavListRowSubTitle = navViewHolder.getTxtNavListRowSubTitle();
             SectionItem sectionItem = sectionNavigationItem.getSectionItem();
 
-            if(getSelectedCategoryString()!=null) {
-                if (sectionItem.getTitle().getText().toString().replace(" ", "").equalsIgnoreCase(selectedCategoryString.replace(" ", ""))) {
-                    relativeLayoutRow.setPressed(true);
-                } else {
-                    relativeLayoutRow.setPressed(false);
-                }
+            if (getSelectionComparisionStatus(getSelectedCategoryString(),sectionItem)){
+                relativeLayoutRow.setPressed(true);
+            }
+            else{
+                relativeLayoutRow.setPressed(false);
             }
             if (sectionItem.getTitle() != null &&
                     !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
@@ -330,7 +329,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
                                 sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
                     } else {
-                        if (selectedCategoryString != null && sectionNavigationItem.getSectionItem().getTitle().getText().equalsIgnoreCase(selectedCategoryString)) {
+                        if(getSelectionComparisionStatus(getSelectedCategoryString(),sectionNavigationItem.getSectionItem())){
                             ((NavigationDrawerAware) context).closeDrawer();
                             notifyDataSetChanged();
                         } else {
@@ -357,5 +356,18 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             return txtNavMainItem;
         }
+    }
+
+
+    private boolean getSelectionComparisionStatus(String selectedCategoryString,SectionItem sectionItem) {
+
+        if (getSelectedCategoryString() != null) {
+            if (sectionItem.getTitle().getText().toString().replace(" ", "").equalsIgnoreCase(selectedCategoryString.replace(" ", "")) && sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 }

@@ -71,7 +71,6 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         this.section = section;
         this.sectionItem = sectionItem;
         this.screenName = screenName;
-        System.out.println();
     }
 
     @Override
