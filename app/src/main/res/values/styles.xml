@@ -7,8 +7,11 @@
     <!-- Application theme. -->
 
     <style name="BaseAppTheme.SearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="searchIcon">@drawable/ic_search_white_24dp</item>
-        <item name="closeIcon">@drawable/ic_clear_white_24dp</item>
+        <item name="searchIcon">@null</item>
+        <item name="closeIcon">@drawable/ic_close_grey600_24dp</item>
+        <item name="queryHint">@string/search</item>
+        <item name="iconifiedByDefault">false</item>
+        <item name="android:focusable">true</item>
     </style>
 
     <style name="BaseAppTheme.AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -22,6 +25,13 @@
         <item name="searchViewStyle">@style/BaseAppTheme.SearchViewStyle</item>
         <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
     </style>
+
+    <style name="BaseAppTheme.SearchToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+        <item name="searchViewStyle">@style/BaseAppTheme.SearchViewStyle</item>
+    </style>
+
+    <!--<style name="BaseAppTheme."-->
 
     <style name="BackButtonTheme" parent="BaseAppTheme" />
 

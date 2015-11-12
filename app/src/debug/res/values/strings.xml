@@ -14,6 +14,10 @@
     <string name="pref_header_server">Server configurations</string>
     <string name="pref_title_server_address">Bigbasket MAPI Server address</string>
 
+<<<<<<< HEAD
     <string name="pref_default_server_address" translatable="false">http://testaws.bigbasket.com</string>
+=======
+    <string name="pref_default_server_address" translatable="false">https://bigbasket.com</string>
+>>>>>>> search
 
 </resources>

@@ -513,12 +513,6 @@
             android:exported="false"
             android:multiprocess="true" />
 
-        <activity
-            android:name=".activity.base.SearchableActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.SearchViewTheme"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
-
         <!-- PayTM -->
 
         <activity
