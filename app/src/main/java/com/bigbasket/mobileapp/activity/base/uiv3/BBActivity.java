@@ -644,15 +644,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (scanResult != null) {
             String eanCode = scanResult.getContents();
             if (!TextUtils.isEmpty(eanCode)) {
-                HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.TERM, eanCode);
-                map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.PS);
-                trackEvent(TrackingAware.SEARCH, map, null, null, false, true);
-                Intent intent = new Intent(getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
-                intent.putExtra(Constants.EAN_CODE, eanCode);
-                setNextScreenNavigationContext(TrackEventkeys.PS_SCAN);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                handleEancode(eanCode);
                 return;
             }
         }
@@ -837,6 +829,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void doSearch(String searchQuery, String referrer) {
+        logSearchEvent(searchQuery);
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
@@ -1214,6 +1207,15 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         new IntentIntegrator(this).initiateScan();
     }
 
+    private void handleEancode(String eanCode) {
+        logSearchEvent(eanCode);
+        Intent intent = new Intent(getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
+        intent.putExtra(Constants.EAN_CODE, eanCode);
+        setNextScreenNavigationContext(TrackEventkeys.PS_SCAN);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    }
+
     private void doSearchByCategory(String categoryName, String categoryUrl,
                                     String categorySlug, String navigationCtx) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
@@ -1232,5 +1234,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(searchQuery);
         doSearch(searchQuery, referrer);
+    }
+
+    private void logSearchEvent(String query) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.TERM, query);
+        map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.PS);
+        trackEvent(TrackingAware.SEARCH, map, null, null, false, true);
     }
 }
