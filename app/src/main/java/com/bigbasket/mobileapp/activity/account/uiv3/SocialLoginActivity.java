@@ -232,7 +232,6 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         editor.commit();
         AuthParameters.reset();
         AppDataDynamic.reset(getCurrentActivity());
-        SpecialityStorePreference.reset(getCurrentActivity());
 
         MoEngageWrapper.setUserAttribute(moEHelper, Constants.IS_LOGGED_IN, false);
 

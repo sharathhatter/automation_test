@@ -246,7 +246,6 @@ public class UIUtil {
         SectionManager.clearAllSectionData(ctx);
         AppDataSyncHandler.reset(ctx);
         AppDataDynamic.reset(ctx);
-        SpecialityStorePreference.reset(ctx);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = preferences.edit();

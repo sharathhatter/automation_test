@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.Gson;
@@ -143,6 +144,7 @@ public class AppDataDynamic {
                 .remove(Constants.ADD_TO_BASKET_POST_PARAMS)
                 .remove(Constants.STORE_AVAILABILITY_MAP)
                 .apply();
+        SpecialityStorePreference.reset(context);
         appDataDynamic = null;
     }
 

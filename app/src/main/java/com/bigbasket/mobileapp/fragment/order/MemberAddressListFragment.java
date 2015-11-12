@@ -371,7 +371,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             }
             // Forcefully calling get-app-data-dynamic, as user might have change location
             AppDataDynamic.reset(getActivity());
-            SpecialityStorePreference.reset(getActivity());
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
             postDeliveryAddress();
         } else {

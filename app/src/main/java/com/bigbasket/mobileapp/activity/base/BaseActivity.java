@@ -829,7 +829,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
         SectionManager.clearAllSectionData(this);
         AppDataDynamic.reset(this);
-        SpecialityStorePreference.reset(this);
 
         if (!reopenLandingPage) {
             goToHome(true);
