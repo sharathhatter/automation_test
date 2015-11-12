@@ -11,8 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityStore;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -155,6 +157,8 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         public void onClick(View v) {
             final int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION)
+                ((BaseActivity)context).setNextScreenNavigationContext(TrackingAware.SPECIALITYSHOPS +
+                        storeList.get(position).getStoreName());
                 new OnSectionItemClickListener<>(context).handleDestinationClick(storeList.get(position).getDestinationInfo());
         }
     }
