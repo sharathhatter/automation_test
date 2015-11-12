@@ -41,26 +41,95 @@ public class SpecialityStoresInfoModel implements Parcelable {
     }
 
     public SpecialityStoresInfoModel(Parcel source) {
-        this.storeCategory = source.readString();
-        this.storeId = source.readString();
-        this.storeUrl = source.readString();
-        this.storeAdd1 = source.readString();
-        this.storeAdd2 = source.readString();
-        this.storeName = source.readString();
-        this.storeLogo = source.readString();
-        this.storeDesc = source.readString();
+        boolean isStoreCatNull = source.readByte() == (byte) 1;
+        if(!isStoreCatNull){
+            this.storeCategory = source.readString();
+        }
+
+        boolean isStoreIdNull = source.readByte() == (byte) 1;
+        if(!isStoreIdNull){
+            this.storeId = source.readString();
+        }
+
+        boolean isStoreUrlNull = source.readByte() == (byte) 1;
+        if(!isStoreUrlNull){
+            this.storeUrl = source.readString();
+        }
+        boolean isStoreAdd1Null = source.readByte() == (byte) 1;
+        if(!isStoreAdd1Null){
+            this.storeAdd1 = source.readString();
+        }
+
+        boolean isStoreAdd2Null = source.readByte() == (byte) 1;
+        if(!isStoreAdd2Null){
+            this.storeAdd2 = source.readString();
+        }
+
+        boolean isStoreNameNull = source.readByte() == (byte) 1;
+        if(!isStoreNameNull){
+            this.storeName = source.readString();
+        }
+
+        boolean isStoreLogoNull = source.readByte() == (byte) 1;
+        if(!isStoreLogoNull) {
+            this.storeLogo = source.readString();
+        }
+
+        boolean isStoreDescNull = source.readByte() == (byte) 1;
+        if(!isStoreDescNull) {
+            this.storeDesc = source.readString();
+        }
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flag) {
-        dest.writeString(storeCategory);
-        dest.writeString(storeId);
-        dest.writeString(storeUrl);
-        dest.writeString(storeAdd1);
-        dest.writeString(storeAdd2);
-        dest.writeString(storeName);
-        dest.writeString(storeLogo);
-        dest.writeString(storeDesc);
+        boolean isStoreCatNull = storeCategory == null;
+        dest.writeByte(isStoreCatNull ? (byte) 1 : (byte) 0);
+        if (!isStoreCatNull) {
+            dest.writeString(storeCategory);
+        }
+
+        boolean isStoreIdNull = storeId == null;
+        dest.writeByte(isStoreIdNull ? (byte) 1 : (byte) 0);
+        if (!isStoreIdNull) {
+            dest.writeString(storeId);
+        }
+
+        boolean isStoreUrlNull = storeUrl == null;
+        dest.writeByte(isStoreUrlNull ? (byte) 1 : (byte) 0);
+        if (!isStoreUrlNull) {
+            dest.writeString(storeUrl);
+        }
+
+        boolean isStoreAdd1Null = storeAdd1 == null;
+        dest.writeByte(isStoreAdd1Null ? (byte) 1 : (byte) 0);
+        if (!isStoreAdd1Null) {
+            dest.writeString(storeAdd1);
+        }
+
+        boolean isStoreAdd2Null = storeAdd2 == null;
+        dest.writeByte(isStoreAdd2Null ? (byte) 1 : (byte) 0);
+        if (!isStoreAdd2Null) {
+            dest.writeString(storeAdd2);
+        }
+
+        boolean isStoreNameNull = storeName == null;
+        dest.writeByte(isStoreNameNull ? (byte) 1 : (byte) 0);
+        if (!isStoreNameNull) {
+            dest.writeString(storeName);
+        }
+
+        boolean isStoreLogoNull = storeLogo == null;
+        dest.writeByte(isStoreLogoNull ? (byte) 1 : (byte) 0);
+        if (!isStoreLogoNull) {
+            dest.writeString(storeLogo);
+        }
+
+        boolean isStoreDescNull = storeDesc == null;
+        dest.writeByte(isStoreDescNull ? (byte) 1 : (byte) 0);
+        if (!isStoreDescNull) {
+            dest.writeString(storeDesc);
+        }
     }
 
     public static final Parcelable.Creator<SpecialityStoresInfoModel> CREATOR = new Parcelable.Creator<SpecialityStoresInfoModel>() {

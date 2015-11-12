@@ -38,7 +38,6 @@ public class AppDataDynamic {
     private String expressAvailability;
     private String abModeName;  // Used for analytics
     private HashMap<String, String> storeAvailabilityMap;
-    private ArrayList<HashMap<String, SpecialityStoresInfoModel>> specialityStoresInfo;
 
     public static AppDataDynamic getInstance(Context context) {
         AppDataDynamic localInstance = appDataDynamic;
@@ -60,8 +59,7 @@ public class AppDataDynamic {
                                       boolean isContextualMode,
                                       String expressAvailability,
                                       String abModeName,
-                                      HashMap<String, String> storeAvailabilityMap,
-                                      ArrayList<HashMap<String, SpecialityStoresInfoModel>> specialityStoresInfo) {
+                                      HashMap<String, String> storeAvailabilityMap) {
         if (context == null) return;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         Gson gson = new Gson();
@@ -79,11 +77,6 @@ public class AppDataDynamic {
         if (storeAvailabilityMap != null) {
             String storeJson = gson.toJson(storeAvailabilityMap);
             editor.putString(Constants.STORE_AVAILABILITY_MAP, storeJson);
-        }
-
-        if (specialityStoresInfo != null) {
-            String storeInfoJson = gson.toJson(specialityStoresInfo);
-            editor.putString(Constants.SPECIALITY_STORES_INFO, storeInfoJson);
         }
 
         editor.putBoolean(Constants.IS_CONTEXTUAL_MODE, isContextualMode);
@@ -138,12 +131,6 @@ public class AppDataDynamic {
             this.storeAvailabilityMap = gson.fromJson(storeJson, collectionType);
         }
 
-        String storeInfoJson = preferences.getString(Constants.SPECIALITY_STORES_INFO, null);
-        if (storeInfoJson != null) {
-            Type collectionType = new TypeToken<Collection<HashMap<String, SpecialityStoresInfoModel>>>() {
-            }.getType();
-            this.specialityStoresInfo = gson.fromJson(storeInfoJson, collectionType);
-        }
     }
 
     public static void reset(Context context) {
@@ -156,8 +143,8 @@ public class AppDataDynamic {
                 .remove(Constants.MODE_NAME)
                 .remove(Constants.ADD_TO_BASKET_POST_PARAMS)
                 .remove(Constants.STORE_AVAILABILITY_MAP)
-                .remove(Constants.SPECIALITY_STORES_INFO)
                 .apply();
+        SpecialityStorePreference.reset(context);
         appDataDynamic = null;
     }
 
@@ -189,8 +176,4 @@ public class AppDataDynamic {
         return storeAvailabilityMap;
     }
 
-    @Nullable
-    public ArrayList<HashMap<String, SpecialityStoresInfoModel>> getSpecialityStoresInfo() {
-        return specialityStoresInfo;
-    }
 }

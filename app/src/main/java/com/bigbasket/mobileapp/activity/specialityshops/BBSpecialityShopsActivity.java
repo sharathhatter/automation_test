@@ -71,6 +71,7 @@ public class BBSpecialityShopsActivity extends BBActivity implements LaunchStore
         UIUtil.configureRecyclerView(recyclerViewStoreList, this, 1, 1);
         StoreListRecyclerAdapter<BBSpecialityShopsActivity> storeListRecyclerAdapter = new StoreListRecyclerAdapter<>(BBSpecialityShopsActivity.this, baseImgUrl, storeList);
         recyclerViewStoreList.setAdapter(storeListRecyclerAdapter);
+        setNextScreenNavigationContext(TrackingAware.SPECIALITYSHOPS + storeList.get(0).getStoreName());
         logViewSpecialityShopsEvent(category);
     }
 
