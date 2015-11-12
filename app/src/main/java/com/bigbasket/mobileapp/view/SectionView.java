@@ -134,7 +134,6 @@ public class SectionView {
     @Nullable
     private View getViewToRender(Section section, LayoutInflater inflater, ViewGroup mainLayout,
                                  int position) {
-        Log.d("", "CLICKED>>>>" + section.getSectionType());
         switch (section.getSectionType()) {
             case Section.BANNER:
                 return getBannerView(section, inflater, mainLayout);

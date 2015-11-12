@@ -51,7 +51,9 @@ public class DatabaseContentProvider extends ContentProvider {
                         .insert(AreaPinInfoAdapter.tableName, null, values);
                 if (newID > 0) {
                     Uri newUri = ContentUris.withAppendedId(uri, newID);
-                    getContext().getContentResolver().notifyChange(uri, null);
+                    if (getContext() != null) {
+                        getContext().getContentResolver().notifyChange(uri, null);
+                    }
                     return newUri;
                 } else {
                     return uri;
@@ -85,7 +87,9 @@ public class DatabaseContentProvider extends ContentProvider {
 
         Cursor cursor = queryBuilder.query(databaseHelper.getReadableDatabase(),
                 projection, selection, selectionArgs, null, null, sortOrder);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        if (getContext() != null) {
+            cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }
         return cursor;
     }
 

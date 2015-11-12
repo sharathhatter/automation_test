@@ -17,9 +17,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.SearchUtil;
 
@@ -32,11 +32,13 @@ public class SearchViewAdapter<T> extends CursorAdapter {
     private static final int VIEW_TYPE_ITEM = 1;
     private LayoutInflater inflater;
     private FontHolder fontHolder;
+    private SearchTermRemoveAware searchTermRemoveAware;
 
-    public SearchViewAdapter(T context, Cursor contactCursor) {
+    public SearchViewAdapter(T context, Cursor contactCursor, SearchTermRemoveAware searchTermRemoveAware) {
         super(((AppOperationAware) context).getCurrentActivity(), contactCursor, false);
         this.inflater = LayoutInflater.from(((AppOperationAware) context).getCurrentActivity());
         this.fontHolder = FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity());
+        this.searchTermRemoveAware = searchTermRemoveAware;
     }
 
     @Override
@@ -80,7 +82,7 @@ public class SearchViewAdapter<T> extends CursorAdapter {
                         if (!TextUtils.isEmpty(deleteTerm)) {
                             MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(context);
                             mostSearchesAdapter.deleteTerm(deleteTerm);
-                            ((SearchableActivity) context).notifySearchTermAdapter();
+                            searchTermRemoveAware.notifySearchTermAdapter();
                         }
                     }
                 });
@@ -191,7 +193,6 @@ public class SearchViewAdapter<T> extends CursorAdapter {
         public TextView getTxtTermHeader() {
             if (txtTermHeader == null) {
                 txtTermHeader = (TextView) itemRow.findViewById(R.id.txtTermHeader);
-                txtTermHeader.setTypeface(fontHolder.getFaceRobotoRegular());
             }
             return txtTermHeader;
         }
