@@ -5,7 +5,6 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.model.cart.CartItem;
 import com.bigbasket.mobileapp.model.promo.ProductPromoInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.Gson;
@@ -66,6 +65,7 @@ public class Product extends BaseProduct {
     private ArrayList<HashMap<String, String>> storeAvailability;
     @SerializedName(Constants.GIFT_MSG)
     private String giftMsg;
+    @SerializedName(Constants.STORE_IDS)
     private List<String> storeIds;
 
     public Product(Parcel source) {
@@ -127,8 +127,9 @@ public class Product extends BaseProduct {
         boolean isStoreIdsNull = source.readByte() == (byte) 1;
         if (!isStoreIdsNull) {
             String storeId = source.readString();
-            storeIds = new ArrayList<>();
-            storeIds.add(storeId);
+            Type type = new TypeToken<List<String>>() {
+            }.getType();
+            storeIds = new Gson().fromJson(storeId, type);
         }
     }
 
@@ -227,9 +228,9 @@ public class Product extends BaseProduct {
             dest.writeString(giftMsg);
         }
 
-        boolean iSStoredIdsNull = storeIds == null;
-        dest.writeByte(iSStoredIdsNull ? (byte) 1 : (byte) 0);
-        if (!iSStoredIdsNull) {
+        boolean isStoredIdsNull = storeIds == null;
+        dest.writeByte(isStoredIdsNull ? (byte) 1 : (byte) 0);
+        if (!isStoredIdsNull) {
             dest.writeList(storeIds);
         }
     }

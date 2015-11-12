@@ -11,34 +11,33 @@ import com.google.gson.annotations.SerializedName;
  */
 public class SpecialityStoresInfoModel implements Parcelable {
 
+    public static final Parcelable.Creator<SpecialityStoresInfoModel> CREATOR = new Parcelable.Creator<SpecialityStoresInfoModel>() {
+        @Override
+        public SpecialityStoresInfoModel createFromParcel(Parcel source) {
+            return new SpecialityStoresInfoModel(source);
+        }
+
+        @Override
+        public SpecialityStoresInfoModel[] newArray(int size) {
+            return new SpecialityStoresInfoModel[size];
+        }
+    };
     @SerializedName(Constants.STORE_CATEGORY)
     public String storeCategory;
-
     @SerializedName(Constants.STORE_ID)
     public String storeId;
-
     @SerializedName(Constants.STORE_URL)
     public String storeUrl;
-
     @SerializedName(Constants.STORE_ADD1)
     public String storeAdd1;
-
     @SerializedName(Constants.STORE_ADD2)
     public String storeAdd2;
-
     @SerializedName(Constants.STORE_NAME)
     public String storeName;
-
     @SerializedName(Constants.STORE_LOGO)
     public String storeLogo;
-
     @SerializedName(Constants.STORE_DESC)
     public String storeDesc;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
     public SpecialityStoresInfoModel(Parcel source) {
         boolean isStoreCatNull = source.readByte() == (byte) 1;
@@ -79,6 +78,11 @@ public class SpecialityStoresInfoModel implements Parcelable {
         if(!isStoreDescNull) {
             this.storeDesc = source.readString();
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
@@ -132,15 +136,69 @@ public class SpecialityStoresInfoModel implements Parcelable {
         }
     }
 
-    public static final Parcelable.Creator<SpecialityStoresInfoModel> CREATOR = new Parcelable.Creator<SpecialityStoresInfoModel>() {
-        @Override
-        public SpecialityStoresInfoModel createFromParcel(Parcel source) {
-            return new SpecialityStoresInfoModel(source);
-        }
+    public String getStoreUrl() {
+        return storeUrl;
+    }
 
-        @Override
-        public SpecialityStoresInfoModel[] newArray(int size) {
-            return new SpecialityStoresInfoModel[size];
-        }
-    };
+    public void setStoreUrl(String storeUrl) {
+        this.storeUrl = storeUrl;
+    }
+
+    public String getStoreAdd1() {
+        return storeAdd1;
+    }
+
+    public void setStoreAdd1(String storeAdd1) {
+        this.storeAdd1 = storeAdd1;
+    }
+
+    public String getStoreAdd2() {
+        return storeAdd2;
+    }
+
+    public void setStoreAdd2(String storeAdd2) {
+        this.storeAdd2 = storeAdd2;
+    }
+
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public String getStoreLogo() {
+        return storeLogo;
+    }
+
+    public void setStoreLogo(String storeLogo) {
+        this.storeLogo = storeLogo;
+    }
+
+    public String getStoreDesc() {
+        return storeDesc;
+    }
+
+    public void setStoreDesc(String storeDesc) {
+        this.storeDesc = storeDesc;
+    }
+
+    public String getStoreCategory() {
+
+        return storeCategory;
+    }
+
+    public void setStoreCategory(String storeCategory) {
+        this.storeCategory = storeCategory;
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
+
 }

@@ -637,6 +637,7 @@ public class Constants {
     public static final String DELIVERY_TIME = "delivery_time";
     public static final String STORE_TIMINGS = "op_time";
     public static final String STORE_LIST = "store_list";
+    public static final String STORE_IDS = "store_ids";
     public static final String STORES = "stores";
 
     // Basket page
@@ -655,6 +656,6 @@ public class Constants {
     public static final String STORE_NAME = "store_name";
     public static final String STORE_LOGO = "store_logo";
     public static final String STORE_DESC = "store_description";
-
+    public static final String STORE_DETAILS_FLAG = "store_details_flag";
 
 }

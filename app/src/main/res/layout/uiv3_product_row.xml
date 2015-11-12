@@ -48,8 +48,7 @@
         android:textColor="@color/uiv3_secondary_text_color"
         android:textSize="@dimen/secondary_text_size" />
 
-    <ImageView
-        android:id="@+id/imgStoreIcon"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/txtProductBrand"
@@ -57,11 +56,18 @@
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_mini"
         android:layout_toRightOf="@id/txtProductBrand"
-        android:contentDescription="@string/shoppingList"
-        android:paddingRight="@dimen/padding_small"
-        android:src="@drawable/promo_unused"
-        android:visibility="visible" />
+        android:background="@drawable/circle_background"
+        android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/imgStoreIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/shoppingList"
+            android:src="@drawable/store_icon_states"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layoutPackageDesc"

@@ -38,7 +38,7 @@ public class SpecialityStorePreference {
     }
 
     @Nullable
-    public static ArrayList<HashMap<String, SpecialityStoresInfoModel>> getSpecialityStoreDetailList(Context context) {
+    public static HashMap<String, SpecialityStoresInfoModel> getSpecialityStoreDetailList(Context context) {
         String storeInfoJson =  getSpecialityStorePreferences(context.getApplicationContext()).getString(Constants.SPECIALITY_STORES_INFO, null);
         if (storeInfoJson != null) {
             Type collectionType = new TypeToken<HashMap<String, SpecialityStoresInfoModel>>() {
