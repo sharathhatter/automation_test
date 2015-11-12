@@ -56,6 +56,7 @@ import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
@@ -63,9 +64,9 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -93,7 +94,8 @@ import java.util.Random;
 
 public abstract class BaseActivity extends AppCompatActivity implements
         AppOperationAware, TrackingAware, ApiErrorAware,
-        LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware, LaunchStoreListAware {
+        LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware,
+        LaunchStoreListAware, DynamicScreenAware {
 
     public static Typeface faceRupee;
     protected static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
@@ -127,7 +129,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }, 100);
     }
 
-    public static void hideKeyboard(BaseActivity context, View view) {
+    public static void hideKeyboard(Context context, View view) {
         if (context == null || view == null) return;
         IBinder token = view.getWindowToken();
         if (token == null) return;
@@ -926,5 +928,20 @@ public abstract class BaseActivity extends AppCompatActivity implements
         intent.putExtra(Constants.IS_FIRST_TIME, isFirstTime);
         intent.putExtra(Constants.REOPEN_LANDING_PAGE, reopenLandingPage);
         getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    }
+
+    @Override
+    public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {
+        // Let the activity implement it
+    }
+
+    @Override
+    public void onDynamicScreenFailure(int error, String msg) {
+        // Let the activity implement it
+    }
+
+    @Override
+    public void onDynamicScreenFailure(Throwable t) {
+        // Let the activity implement it
     }
 }

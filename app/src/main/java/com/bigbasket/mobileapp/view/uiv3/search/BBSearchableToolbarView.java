@@ -8,19 +8,22 @@ import android.database.MatrixCursor;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.SearchViewAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
@@ -31,7 +34,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.List;
 
-public class BBSearchableToolbarView extends LinearLayout implements SearchView.OnQueryTextListener, SearchTermRemoveAware {
+public class BBSearchableToolbarView extends LinearLayout implements SearchTermRemoveAware {
     private ListView mSearchList;
     private EditText mSearchView;
     private SearchViewAdapter mSearchListAdapter;
@@ -55,6 +58,7 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchView.
         this.setVisibility(VISIBLE);
         mSearchView.requestFocus();
         UIUtil.changeStatusBarColor(getContext(), R.color.primary_dark_material_light);
+        BaseActivity.showKeyboard(mSearchView);
     }
 
     public void hide() {
@@ -133,6 +137,17 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchView.
     }
 
     private void setupSearchView() {
+        mSearchView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (((keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                        actionId == EditorInfo.IME_ACTION_DONE) {
+                    onQueryTextSubmit(mSearchView.getText().toString());
+                    return true;
+                }
+                return false;
+            }
+        });
         mSearchView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -205,17 +220,13 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchView.
         this.mOnSearchEventListenerProxy.setOnSearchEventListener(searchEventListener);
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
+    public void onQueryTextSubmit(String query) {
         if (mOnSearchEventListenerProxy != null && !TextUtils.isEmpty(query)) {
             mOnSearchEventListenerProxy.onSearchRequested(query.trim());
-            return true;
         }
-        return false;
     }
 
-    @Override
-    public boolean onQueryTextChange(String newText) {
+    public void onQueryTextChange(String newText) {
         if (TextUtils.isEmpty(newText)) {
             mSearchList.clearTextFilter();
             if (mImgBarcode != null) {
@@ -240,7 +251,6 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchView.
             mSearchList.setFilterText(newText);
             mSearchListAdapter.getFilter().filter(newText);
         }
-        return true;
     }
 
     private String getCategorySlug(String categoryUrl) {
@@ -270,7 +280,6 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchView.
 
         private void reset() {
             if (bbSearchableToolbarView == null) return;
-            bbSearchableToolbarView.setVisibility(View.GONE);
             if (bbSearchableToolbarView.mSearchView != null) {
                 bbSearchableToolbarView.mSearchView.clearFocus();
             }
@@ -282,6 +291,8 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchView.
             }
             if (bbSearchableToolbarView != null) {
                 UIUtil.changeStatusBarColor(bbSearchableToolbarView.getContext(), R.color.uiv3_status_bar_background);
+                BaseActivity.hideKeyboard(bbSearchableToolbarView.getContext(), bbSearchableToolbarView.mSearchView);
+                bbSearchableToolbarView.setVisibility(View.GONE);
             }
             if (bbSearchableToolbarView != null && bbSearchableToolbarView.mSearchView != null) {
                 bbSearchableToolbarView.mSearchView.setText("");
