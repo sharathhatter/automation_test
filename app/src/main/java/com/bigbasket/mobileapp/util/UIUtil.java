@@ -61,6 +61,7 @@ import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
