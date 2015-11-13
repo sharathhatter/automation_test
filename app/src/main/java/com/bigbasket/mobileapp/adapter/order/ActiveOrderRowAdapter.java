@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
@@ -837,7 +837,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+            Intent intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
             intent.putExtra(Constants.PROMO_ID, promoId);
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
             context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);

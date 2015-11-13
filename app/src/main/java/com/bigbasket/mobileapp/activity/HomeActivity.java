@@ -9,7 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.account.AddressSummaryDropdownAdapter;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -23,7 +23,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class HomeActivity extends BBActivity {
+public class HomeActivity extends SearchActivity {
 
     private Spinner mSpinnerArea;
     private ProgressBar mProgressBarArea;

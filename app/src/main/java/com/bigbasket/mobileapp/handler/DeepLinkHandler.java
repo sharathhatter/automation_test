@@ -7,9 +7,9 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.activity.product.DiscountActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
@@ -55,7 +55,7 @@ public class DeepLinkHandler {
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
-                    Intent intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+                    Intent intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
                     intent.putExtra(Constants.PROMO_ID, Integer.parseInt(id));
                     context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -157,7 +157,7 @@ public class DeepLinkHandler {
                 }
                 return FAILED;
             case Constants.PROMO_LIST:
-                intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+                intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
@@ -186,7 +186,7 @@ public class DeepLinkHandler {
                 return FAILED;
             case Constants.DYNAMIC_PAGE:
                 String screenName = uri.getQueryParameter(Constants.SCREEN);
-                intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+                intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
                 intent.putExtra(Constants.SCREEN, screenName);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_DYNAMIC_SCREEN);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
