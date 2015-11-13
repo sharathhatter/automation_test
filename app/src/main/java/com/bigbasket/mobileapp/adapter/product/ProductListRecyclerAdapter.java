@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.adapter.product;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
+import com.bigbasket.mobileapp.fragment.StoreDetailsDialogFragment;
+import com.bigbasket.mobileapp.handler.OnSpecialityShopIconClickListener;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
@@ -45,6 +48,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private String mTabType;
     private HashMap<String, String> storeAvailabilityMap;
     private HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap;
+    private View.OnClickListener mSpecialityShopClickListener;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -59,6 +63,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         this.mTabType = mTabType;
         this.storeAvailabilityMap = AppDataDynamic.getInstance(activityAware.getCurrentActivity()).getStoreAvailabilityMap();
         this.specialityStoreInfoHashMap = SpecialityStorePreference.getSpecialityStoreDetailList(activityAware.getCurrentActivity());
+        this.mSpecialityShopClickListener = new OnSpecialityShopIconClickListener<>(activityAware, specialityStoreInfoHashMap);
     }
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
@@ -99,7 +104,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         switch (viewType) {
             case VIEW_TYPE_DATA:
                 View row = inflater.inflate(R.layout.uiv3_product_row, viewGroup, false);
-                return new ProductViewHolder(row);
+                return new ProductViewHolder(row, mSpecialityShopClickListener);
             case VIEW_TYPE_LOADING:
                 row = inflater.inflate(R.layout.uiv3_list_loading_footer, viewGroup, false);
                 return new FixedLayoutViewHolder(row);

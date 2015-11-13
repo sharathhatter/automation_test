@@ -30,7 +30,9 @@ public class StoreDetailsDialogFragment extends AbstractDialogFragment {
 
     }
 
-    public static StoreDetailsDialogFragment newInstance(String title, @Nullable String desc, @Nullable String imgUrl, @Nullable String category) {
+    public static StoreDetailsDialogFragment newInstance(String title, @Nullable String desc,
+                                                         @Nullable String imgUrl,
+                                                         @Nullable String category) {
         StoreDetailsDialogFragment storeDetailsDialogFragment = new StoreDetailsDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.STORE_NAME, title);

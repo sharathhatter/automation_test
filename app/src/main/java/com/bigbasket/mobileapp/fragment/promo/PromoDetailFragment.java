@@ -296,7 +296,7 @@ public class PromoDetailFragment extends BaseFragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             productRowParams.setMargins(8, 8, 8, 0);
 
-            ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
+            ProductView.setProductView(new ProductViewHolder(base, null), freeProduct, promoDetail.getBaseImgUrl(),
                     null, productViewDisplayDataHolder, false, getCurrentActivity(), getNextScreenNavigationContext(), null, "none",
                     null, null);
             base.setLayoutParams(productRowParams);

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.OnSpecialityShopIconClickListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -157,7 +159,9 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
-        ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
+        ProductView.setProductView(new ProductViewHolder(productRow,
+                new OnSpecialityShopIconClickListener<>(this, SpecialityStorePreference.getSpecialityStoreDetailList(getActivity()))),
+                mProduct, null, null, productViewDisplayDataHolder,
                 false, this, getNextScreenNavigationContext(), null, "none",
                 AppDataDynamic.getInstance(getActivity()).getStoreAvailabilityMap(),
                 SpecialityStorePreference.getSpecialityStoreDetailList(getActivity()));
