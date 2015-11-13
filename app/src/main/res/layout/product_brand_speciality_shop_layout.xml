@@ -29,10 +29,9 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_centerInParent="true"
-            android:layout_margin="@dimen/margin_mini"
+            android:layout_margin="@dimen/margin_small"
             android:contentDescription="@string/shoppingList"
             android:scaleType="center"
-            android:src="@drawable/store_icon_states"
             android:visibility="visible" />
     </RelativeLayout>
 

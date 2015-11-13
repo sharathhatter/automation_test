@@ -35,7 +35,7 @@ import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.handler.OnBrandPageListener;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.handler.OnSpecialityShopIconClickListener;
+//import com.bigbasket.mobileapp.handler.OnSpecialityShopIconClickListener;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
@@ -76,7 +76,7 @@ public final class ProductView {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
                 productDetailOnClickListener, productDataAware);
-        setStoreDetails(specialityStoreInfoHashMap, productViewHolder, product, productDataAware);
+        setStoreDetails(specialityStoreInfoHashMap, productViewHolder, product);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
         setExpressMsg(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, tabName, navigationCtx, appDataStoreAvailabilityMap,
@@ -359,8 +359,8 @@ public final class ProductView {
     }
 
     private static <T extends AppOperationAware> void setStoreDetails(HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap,
-                                                                      ProductViewHolder productViewHolder, Product product,
-                                                                      final T productDataAware) {
+                                                                      ProductViewHolder productViewHolder,
+                                                                      Product product) {
 
         RelativeLayout storeIconLayout = productViewHolder.getStoreIconLayout();
         ImageView imgStoreIcon = productViewHolder.getImgStoreIcon();
@@ -378,7 +378,8 @@ public final class ProductView {
                         continue;
                     hasStores = true;
                     storeIconLayout.setVisibility(View.VISIBLE);
-                    imgStoreIcon.setOnClickListener(new OnSpecialityShopIconClickListener<>(productDataAware, specialityStoresInfoModel));
+                    imgStoreIcon.setImageResource(R.drawable.store_icon);
+                    imgStoreIcon.setTag(R.id.speciality_store_id, pStoreId);
                 }
             }
         }

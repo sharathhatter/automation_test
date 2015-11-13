@@ -38,9 +38,11 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private ImageView imgGiftIcon;
     private ImageView imgStoreIcon;
     private RelativeLayout storeIconLayout;
+    private View.OnClickListener specialityShopIconClickListener;
 
-    public ProductViewHolder(View itemView) {
+    public ProductViewHolder(View itemView, View.OnClickListener specialityShopIconClickListener) {
         super(itemView);
+        this.specialityShopIconClickListener = specialityShopIconClickListener;
     }
 
     public ImageView getImgProduct() {
@@ -203,6 +205,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public ImageView getImgStoreIcon() {
         if (imgStoreIcon == null) {
             imgStoreIcon = (ImageView) itemView.findViewById(R.id.imgStoreIcon);
+            imgStoreIcon.setOnClickListener(specialityShopIconClickListener);
         }
         return imgStoreIcon;
     }
