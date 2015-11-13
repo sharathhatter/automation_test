@@ -36,7 +36,6 @@ public class DiscountActivity extends BBActivity {
         setTitle(getString(R.string.discounts));
         getDiscountData();
 
-        ((NavigationSelectionAware)getCurrentActivity()).onNavigationSelection(getString(R.string.discounts));
     }
 
 
@@ -137,5 +136,10 @@ public class DiscountActivity extends BBActivity {
     @Override
     public int getMainLayout() {
         return R.layout.uiv3_swipe_tabview_with_drawer;
+    }
+
+    @Override
+    protected String getCategoryId() {
+        return getString(R.string.discounts);
     }
 }

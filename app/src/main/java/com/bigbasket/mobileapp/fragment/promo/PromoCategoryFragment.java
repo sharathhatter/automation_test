@@ -52,6 +52,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
                 return;
             }
         }
+        if (getCurrentActivity().getResources() != null)
         ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(getCurrentActivity().getResources().getString(R.string.promotions));
         getPromoCategories();
     }
@@ -153,7 +154,10 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
 
     @Override
     public String getTitle() {
+        if (getCurrentActivity().getResources() != null)
         return getCurrentActivity().getResources().getString(R.string.promotions);
+        else
+            return null;
     }
 
     @NonNull
@@ -174,4 +178,5 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
     public String getScreenTag() {
         return TrackEventkeys.PROMO_CATEGORY_SCREEN;
     }
+
 }

@@ -887,8 +887,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
         new AccountView<>(this, lstMyAccount);
+
+        String categoryId = getCategoryId();
+
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
+        if (!TextUtils.isEmpty(categoryId)) {
+            navigationAdapter.setSelectedCategoryString(categoryId);
+        }
         mNavRecyclerView.setAdapter(navigationAdapter);
 
     }
@@ -1005,6 +1011,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         Section shoppingListSection = new Section(null, null, Section.MSG, shoppingListSections, null);
         sectionNavigationItems.add(new SectionNavigationItem<>(shoppingListSection, shoppingListSectionItem));
         return sectionNavigationItems;
+    }
+
+    /**
+     * @return the category selected by the user
+     * method to be overridden in classes extending BBActivity
+     */
+    protected String getCategoryId() {
+        return null;
     }
     protected String getSubCategoryId(){
         return null;

@@ -173,20 +173,21 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     @Override
     protected String getSubCategoryId(){
-        if(mHeaderSpinnerView != null && mHeaderSpinnerView.getSelectedItem() !=null){
+        if (mHeaderSpinnerView != null && mHeaderSpinnerView.getSelectedItem() != null && mHeaderSpinnerView.getSelectedItem().getTitle() != null) {
             return mHeaderSpinnerView.getSelectedItem().getTitle().getText().split("\\(")[0];
         }
         return null;
     }
-
 
     @Override
     public void setProductTabData(ProductTabData productTabData, boolean isFilterOrSortApplied) {
 
         if (productTabData.getProductTabInfos().size() > 0) {
             ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(productTabData.getScreenName());
-        } else
+        } else {
             ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(mTitlePassedViaIntent);
+        }
+
 
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawers();
@@ -649,7 +650,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             mToolbarTextDropdown = (TextView) getLayoutInflater().
                     inflate(R.layout.uiv3_product_header_text, toolbar, false);
         }
-        //TODO: Keep a reference, update the data
         if(mHeaderSpinnerView == null) {
             mHeaderSpinnerView = new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
                     .withCtx(this)
