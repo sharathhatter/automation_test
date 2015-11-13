@@ -183,7 +183,8 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(getContext());
         int mostSearchTermsCount = mostSearchesAdapter.getRowCount();
         if (mostSearchTermsCount > 0) {
-            matrixCursor.addRow(new String[]{"0", "History", null, null, null, "History", null});
+            matrixCursor.addRow(new String[]{"0", getContext().getString(R.string.history), null,
+                    null, null, getContext().getString(R.string.history), null});
             if (mostSearchTermsCount >= 5) {
                 List<MostSearchedItem> mostSearchedItemList = mostSearchesAdapter.getRecentSearchedItems(5);
                 int i = 1;
@@ -217,7 +218,8 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
         String[] topSearchArrayString = getTopSearches();
         if (topSearchArrayString != null && topSearchArrayString.length > 0) {
             int i = 0;
-            matrixCursor.addRow(new String[]{String.valueOf(i++), "Popular Searches", null, null, null, "Popular Searches", null});
+            matrixCursor.addRow(new String[]{String.valueOf(i++), getContext().getString(R.string.popularSearches),
+                    null, null, null, getContext().getString(R.string.popularSearches), null});
             for (String term : topSearchArrayString)
                 matrixCursor.addRow(new String[]{String.valueOf(i++), term,
                         null, null, term,

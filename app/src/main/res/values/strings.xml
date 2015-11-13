@@ -401,6 +401,8 @@
     <string name="totalCostOfGiftWrapping">Total cost of gift wrapping</string>
     <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
     <string name="noAddGiftWrap">No additional gift wrap required.</string>
+    <string name="history">History</string>
+    <string name="popularSearches">Popular Searches</string>
 
     <!-- Speciality Stores -->
     <string name="speciality_shop_title">Speciality Shop</string>
