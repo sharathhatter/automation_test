@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -363,33 +364,42 @@ public final class ProductView {
                                                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                                       final T productDataAware) {
 
+        RelativeLayout storeIconLayout = productViewHolder.getStoreIconLayout();
         ImageView imgStoreIcon = productViewHolder.getImgStoreIcon();
+        if (storeIconLayout == null) return;
+        if (imgStoreIcon == null) return;
+        boolean hasStores = false;
         if (specialityStoreInfoHashMap != null && specialityStoreInfoHashMap.size() > 0) {
             List<String> storeIds = product.getStoreIds();
             if (storeIds != null && storeIds.size() > 0) {
                 for (String pStoreId : storeIds) {
-                    if (specialityStoreInfoHashMap.containsKey(pStoreId) && specialityStoreInfoHashMap.get(pStoreId) != null) {
-                        final SpecialityStoresInfoModel specialityStoresInfoModel = specialityStoreInfoHashMap.get(pStoreId);
-                        if (imgStoreIcon != null) {
-                            if (!TextUtils.isEmpty(specialityStoresInfoModel.getStoreName()) && (!TextUtils.isEmpty(specialityStoresInfoModel.getStoreDesc()) || !TextUtils.isEmpty(specialityStoresInfoModel.getStoreLogo()))) {
-                                imgStoreIcon.setVisibility(View.VISIBLE);
-                                imgStoreIcon.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        StoreDetailsDialogFragment storeDetailsDialogFragment = StoreDetailsDialogFragment.newInstance(specialityStoresInfoModel.getStoreName(), specialityStoresInfoModel.getStoreDesc(), specialityStoresInfoModel.getStoreLogo(), specialityStoresInfoModel.getStoreCategory());
-                                        if (!storeDetailsDialogFragment.isVisible()) {
-                                            storeDetailsDialogFragment.show(productDataAware.getCurrentActivity().getSupportFragmentManager(),
-                                                    Constants.STORE_DETAILS_FLAG);
-                                        }
-                                    }
-                                });
-                            } else {
-                                imgStoreIcon.setVisibility(View.GONE);
+                    if (!specialityStoreInfoHashMap.containsKey(pStoreId) || specialityStoreInfoHashMap.get(pStoreId) == null)
+                        continue;
+                    final SpecialityStoresInfoModel specialityStoresInfoModel = specialityStoreInfoHashMap.get(pStoreId);
+                    if (TextUtils.isEmpty(specialityStoresInfoModel.getStoreName()) ||
+                            (TextUtils.isEmpty(specialityStoresInfoModel.getStoreDesc()) &&
+                                    TextUtils.isEmpty(specialityStoresInfoModel.getStoreLogo())))
+                        continue;
+                    hasStores = true;
+                    storeIconLayout.setVisibility(View.VISIBLE);
+                    imgStoreIcon.setVisibility(View.VISIBLE);
+                    imgStoreIcon.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            StoreDetailsDialogFragment storeDetailsDialogFragment = StoreDetailsDialogFragment.newInstance(specialityStoresInfoModel.getStoreName(), specialityStoresInfoModel.getStoreDesc(), specialityStoresInfoModel.getStoreLogo(), specialityStoresInfoModel.getStoreCategory());
+                            if (!storeDetailsDialogFragment.isVisible()) {
+                                storeDetailsDialogFragment.show(productDataAware.getCurrentActivity().getSupportFragmentManager(),
+                                        Constants.STORE_DETAILS_FLAG);
                             }
                         }
-                    }
+                    });
+                    break;
                 }
             }
+        }
+        if (!hasStores) {
+            storeIconLayout.setVisibility(View.GONE);
+            imgStoreIcon.setVisibility(View.GONE);
         }
     }
 

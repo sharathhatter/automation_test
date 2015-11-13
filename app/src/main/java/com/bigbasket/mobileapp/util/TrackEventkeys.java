@@ -164,7 +164,7 @@ public final class TrackEventkeys {
     public static final String GIFT_ADDMESSAGE = "gift_addmessage";
 
     public static final String SPECIALITYSHOPS_LISTING_PAGE = "Speciality Shops Screen";
-    public static final String STORE_DETAILS = "Speciality Store Details";
+    public static final String SPECIALITY_STORE_DETAILS_DIALOG = "Speciality Store Details Dialog";
 
     private TrackEventkeys() {
     }

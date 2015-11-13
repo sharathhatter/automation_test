@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,55 +70,53 @@ public class StoreDetailsDialogFragment extends AbstractDialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         View view = getView();
-        if (view != null) {
-            if (detailsBundle != null) {
-                TextView dialogTitle = (TextView) view.findViewById(R.id.dialogTitle);
-                dialogTitle.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular(), Typeface.BOLD);
-                ImageView storeIcon = (ImageView) view.findViewById(R.id.storeIcon);
-                TextView storeDesc = (TextView) view.findViewById(R.id.txtStoreDesc);
-                storeDesc.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
-                final TextView txtDismiss = (TextView) view.findViewById(R.id.txtDismiss);
-                final TextView txtVisitStore = (TextView) view.findViewById(R.id.txtVisitStore);
+        if (view != null && detailsBundle != null) {
+            TextView dialogTitle = (TextView) view.findViewById(R.id.dialogTitle);
+            dialogTitle.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular(), Typeface.BOLD);
+            ImageView storeIcon = (ImageView) view.findViewById(R.id.storeIcon);
+            TextView storeDesc = (TextView) view.findViewById(R.id.txtStoreDesc);
+            storeDesc.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
+            final TextView txtDismiss = (TextView) view.findViewById(R.id.txtDismiss);
+            final TextView txtVisitStore = (TextView) view.findViewById(R.id.txtVisitStore);
 
-                txtDismiss.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        txtDismiss.setBackgroundColor(getResources().getColor(R.color.white));
+            txtDismiss.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    txtDismiss.setBackgroundColor(getResources().getColor(R.color.white));
+                    if (getDialog().isShowing())
+                        getDialog().dismiss();
+                }
+            });
+            txtVisitStore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String storeCategory = detailsBundle.getString(Constants.STORE_CATEGORY);
+                    if (!TextUtils.isEmpty(storeCategory)) {
+                        DestinationInfo destinationInfo = new DestinationInfo(DestinationInfo.STORE_LIST, storeCategory);
                         if (getDialog().isShowing())
                             getDialog().dismiss();
+                        new OnSectionItemClickListener<>(getActivity()).handleDestinationClick(destinationInfo);
                     }
-                });
-                txtVisitStore.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String storeCategory = detailsBundle.getString(Constants.STORE_CATEGORY);
-                        if (!TextUtils.isEmpty(storeCategory)) {
-                            DestinationInfo destinationInfo = new DestinationInfo(DestinationInfo.STORE_LIST, storeCategory);
-                            if (getDialog().isShowing())
-                                getDialog().dismiss();
-                            new OnSectionItemClickListener<>(getActivity()).handleDestinationClick(destinationInfo);
-                        }
-                    }
-                });
-                String title = detailsBundle.getString(Constants.STORE_NAME);
-                if (!TextUtils.isEmpty(title)) {
-                    dialogTitle.setText(title);
                 }
-                String desc = detailsBundle.getString(Constants.STORE_DESC);
-                if (!TextUtils.isEmpty(desc)) {
-                    storeDesc.setText(desc);
-                }
-                String imgUrl = detailsBundle.getString(Constants.STORE_IMG);
-                if (!TextUtils.isEmpty(imgUrl)) {
+            });
+            String title = detailsBundle.getString(Constants.STORE_NAME);
+            if (!TextUtils.isEmpty(title)) {
+                dialogTitle.setText(title);
+            }
+            String desc = detailsBundle.getString(Constants.STORE_DESC);
+            if (!TextUtils.isEmpty(desc)) {
+                storeDesc.setText(desc);
+            }
+            String imgUrl = detailsBundle.getString(Constants.STORE_IMG);
+            if (!TextUtils.isEmpty(imgUrl)) {
 //                    UIUtil.displayProductImage(null, imgUrl, storeIcon);
-                    UIUtil.displayAsyncImage(storeIcon, imgUrl);
-                }
+                UIUtil.displayAsyncImage(storeIcon, imgUrl);
             }
         }
     }
 
     @Override
     protected String getScreenTag() {
-        return TrackEventkeys.STORE_DETAILS;
+        return TrackEventkeys.SPECIALITY_STORE_DETAILS_DIALOG;
     }
 }
