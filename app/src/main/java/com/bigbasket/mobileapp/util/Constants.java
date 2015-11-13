@@ -656,6 +656,5 @@ public class Constants {
     public static final String STORE_NAME = "store_name";
     public static final String STORE_LOGO = "store_logo";
     public static final String STORE_DESC = "store_description";
-    public static final String STORE_DETAILS_FLAG = "store_details_flag";
 
 }

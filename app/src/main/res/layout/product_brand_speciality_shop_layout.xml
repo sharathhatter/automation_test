@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/txtProductBrand"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="Hampi Organic"
+        android:layout_gravity="center"
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
+
+    <RelativeLayout
+        android:id="@+id/storeIconLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_mini"
+        android:background="@drawable/circle_background"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/imgStoreIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/margin_mini"
+            android:contentDescription="@string/shoppingList"
+            android:scaleType="center"
+            android:src="@drawable/store_icon_states"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+
+</merge>
