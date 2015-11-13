@@ -165,6 +165,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 }
             }
         });
+
     }
 
     private void showNoShoppingListView(ViewGroup contentView) {
@@ -633,5 +634,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
     public void launchShoppingList(ShoppingListName shoppingListName) {
         mShoppingListName = shoppingListName;
         loadShoppingListSummary();
+    }
+
+    @Override
+    protected String getCategoryId() {
+        return getString(R.string.my_basket_header);
     }
 }

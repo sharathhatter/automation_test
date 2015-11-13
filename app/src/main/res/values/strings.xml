@@ -280,6 +280,7 @@
     <string name="createNewList">Create New List</string>
     <string name="connectUsing">You can connect using</string>
     <string name="tutorial">Tutorial</string>
+    <string name="promotions">Promotions</string>
 
     <!-- myaccount -->
     <string name="phone">Phone</string>
@@ -401,6 +402,7 @@
     <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
     <string name="noAddGiftWrap">No additional gift wrap required.</string>
 
+    <!-- Speciality Stores -->
     <string name="speciality_shop_title">Speciality Shop</string>
     <string name="createNewAddress">Create new address</string>
     <string name="addressAdded">Address added successfully</string>
@@ -410,4 +412,6 @@
     <string name="store_empty">Sorry, Currently we do not have any speciality stores for\u0020</string>
     <string name="available_in">\u0020available \nin </string>
     <string name="adding_newStores">\n\nWe will be adding new stores in this location soon.Mean while, please checkout other categories.\nThanks!</string>
+    <string name="visit_store">VISIT STORE</string>
+    <string name="dismiss_">DISMISS</string>
 </resources>

@@ -75,6 +75,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     @SerializedName(Constants.TITLE_TYPE)
     private String titleType;
 
+
     public SectionItem(SectionTextItem title, SectionTextItem description, String image,
                        int renderingId, DestinationInfo destinationInfo) {
         super(title, description);

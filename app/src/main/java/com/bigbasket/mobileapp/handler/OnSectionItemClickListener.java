@@ -28,6 +28,8 @@ import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
+import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionHelpManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
@@ -82,6 +84,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void onSectionClick() {
         if (context == null || ((AppOperationAware) context).isSuspended()) return;
+
 
         logClickEvent();
         if (sectionItem != null) {

@@ -38,6 +38,7 @@ import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
@@ -55,11 +56,11 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
@@ -89,6 +90,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private HashMap<String, Integer> mCartInfo;
     private String tabType;
     private ArrayList<String> mTabNameWithEmptyProductView;
+    private HeaderSpinnerView mHeaderSpinnerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -170,7 +172,23 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
+    protected String getSubCategoryId(){
+        if (mHeaderSpinnerView != null && mHeaderSpinnerView.getSelectedItem() != null && mHeaderSpinnerView.getSelectedItem().getTitle() != null) {
+            return mHeaderSpinnerView.getSelectedItem().getTitle().getText().split("\\(")[0];
+        }
+        return null;
+    }
+
+    @Override
     public void setProductTabData(ProductTabData productTabData, boolean isFilterOrSortApplied) {
+
+        if (productTabData.getProductTabInfos().size() > 0) {
+            ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(productTabData.getScreenName());
+        } else {
+            ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(mTitlePassedViaIntent);
+        }
+
+
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawers();
         }
@@ -244,6 +262,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
                             productTabInfo.getTabName() : mTitlePassedViaIntent;
                     setTitle(title);
+
                 }
                 logProductListingShownEvent(productTabInfo.getTabType());
                 setCurrentTabSortAndFilter(productTabInfo.getFilterOptionItems(),
@@ -631,21 +650,23 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             mToolbarTextDropdown = (TextView) getLayoutInflater().
                     inflate(R.layout.uiv3_product_header_text, toolbar, false);
         }
-        new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
-                .withCtx(this)
-                .withDefaultSelectedIdx(mHeaderSelectedIdx)
-                .withFallbackHeaderTitle(!TextUtils.isEmpty(mTitlePassedViaIntent) ? mTitlePassedViaIntent : screenName)
-                .withHeadSection(headSection)
-                .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
-                .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
-                .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
-                .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
-                .withToolbar(getToolbar())
-                .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
-                .withTxtToolbarDropdown(mToolbarTextDropdown)
-                .withTypeface(faceRobotoRegular)
-                .build()
-                .setView();
+        if(mHeaderSpinnerView == null) {
+            mHeaderSpinnerView = new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
+                    .withCtx(this)
+                    .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
+                    .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
+                    .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
+                    .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
+                    .withToolbar(getToolbar())
+                    .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
+                    .withTxtToolbarDropdown(mToolbarTextDropdown)
+                    .withTypeface(faceRobotoRegular)
+                    .build();
+        }
+        mHeaderSpinnerView.setDefaultSelectedIdx(mHeaderSelectedIdx);
+        mHeaderSpinnerView.setFallbackHeaderTitle(!TextUtils.isEmpty(mTitlePassedViaIntent) ? mTitlePassedViaIntent : screenName);
+        mHeaderSpinnerView.setHeadSection(headSection);
+        mHeaderSpinnerView.setView();
     }
 
     @Override

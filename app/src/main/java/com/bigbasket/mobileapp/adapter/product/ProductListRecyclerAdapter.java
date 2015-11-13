@@ -8,16 +8,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,6 +44,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private boolean mLoadingFailed;
     private String mTabType;
     private HashMap<String, String> storeAvailabilityMap;
+    private HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -54,6 +58,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         this.navigationCtx = navigationCtx;
         this.mTabType = mTabType;
         this.storeAvailabilityMap = AppDataDynamic.getInstance(activityAware.getCurrentActivity()).getStoreAvailabilityMap();
+        this.specialityStoreInfoHashMap = SpecialityStorePreference.getSpecialityStoreDetailList(activityAware.getCurrentActivity());
     }
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
@@ -122,7 +127,8 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             ProductView.setProductView((ProductViewHolder) viewHolder, product, baseImgUrl,
                     new ProductDetailOnClickListener(product.getSku(), activityAware),
                     productViewDisplayDataHolder,
-                    false, activityAware, navigationCtx, cartInfo, mTabType, storeAvailabilityMap);
+                    false, activityAware, navigationCtx, cartInfo, mTabType, storeAvailabilityMap,
+                    specialityStoreInfoHashMap);
 
             int positionToCheckForNextPageLoad = position + DELTA_FOR_NEXT_PAGE_LOAD;
             if (positionToCheckForNextPageLoad <= serverListSize && serverListSize > 0 &&

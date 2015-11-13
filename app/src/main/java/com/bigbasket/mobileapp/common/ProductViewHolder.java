@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -35,6 +36,8 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private ViewGroup layoutExpressMsg;
     private TextView txtGiftMsg;
     private ImageView imgGiftIcon;
+    private ImageView imgStoreIcon;
+    private RelativeLayout storeIconLayout;
 
     public ProductViewHolder(View itemView) {
         super(itemView);
@@ -195,5 +198,19 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             imgGiftIcon = (ImageView) itemView.findViewById(R.id.imgGiftIcon);
         }
         return imgGiftIcon;
+    }
+
+    public ImageView getImgStoreIcon() {
+        if (imgStoreIcon == null) {
+            imgStoreIcon = (ImageView) itemView.findViewById(R.id.imgStoreIcon);
+        }
+        return imgStoreIcon;
+    }
+
+    public RelativeLayout getStoreIconLayout(){
+        if (storeIconLayout == null){
+            storeIconLayout = (RelativeLayout) itemView.findViewById(R.id.storeIconLayout);
+        }
+        return storeIconLayout;
     }
 }

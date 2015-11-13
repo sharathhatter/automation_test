@@ -70,6 +70,9 @@ import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
+import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -125,7 +128,7 @@ import java.util.Map;
 
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
         CartInfoAware, AppOperationAware, SubNavigationAware, FloatingBasketUIAware,
-        OnAddressChangeListener, BasketDeltaUserActionListener {
+        OnAddressChangeListener, BasketDeltaUserActionListener, NavigationSelectionAware, NavigationDrawerAware {
 
     protected BigBasketMessageHandler handler;
     protected String mTitle;
@@ -310,7 +313,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                setTitle(formatToolbarTitle(mTitle));
+                /**
+                 * commenting this line BB-6889-Title text wrong when selecting a category
+                 * title text was showing the previous category title even when the user navigates to new category
+                 * the value for getting overidden here
+                 */
+//                setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
                     onSubNavigationHideRequested(false);
@@ -330,10 +338,15 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+
                 Map<String, String> eventAttribs = new HashMap<>();
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
+                if (mNavRecyclerView.getAdapter()!=null)
+                    mNavRecyclerView.getAdapter().notifyDataSetChanged();
+                if (mListSubNavigation.getAdapter()!=null)
+                    mListSubNavigation.getAdapter().notifyDataSetChanged();
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -926,9 +939,16 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
         new AccountView<>(this, lstMyAccount);
+
+        String categoryId = getCategoryId();
+
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
+        if (!TextUtils.isEmpty(categoryId)) {
+            navigationAdapter.setSelectedCategoryString(categoryId);
+        }
         mNavRecyclerView.setAdapter(navigationAdapter);
+
     }
 
     private void setCityText(String text) {
@@ -1045,6 +1065,16 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         return sectionNavigationItems;
     }
 
+    /**
+     * @return the category selected by the user
+     * method to be overridden in classes extending BBActivity
+     */
+    protected String getCategoryId() {
+        return null;
+    }
+    protected String getSubCategoryId(){
+        return null;
+    }
     @Override
     public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
                                          HashMap<Integer, Renderer> rendererHashMap) {
@@ -1062,11 +1092,17 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
+        String selectedId = getSubCategoryId();
+
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems,
                 SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
+        if(!TextUtils.isEmpty(selectedId)){
+            navigationAdapter.setSelectedCategoryString(selectedId);
+        }
         mListSubNavigation.setAdapter(navigationAdapter);
         mSubNavLayout.setVisibility(View.VISIBLE, true);
+//        navigationAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -1241,5 +1277,21 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         map.put(TrackEventkeys.TERM, query);
         map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.PS);
         trackEvent(TrackingAware.SEARCH, map, null, null, false, true);
+    }
+
+    /**
+     *
+     * @param name: name of the category user has selected in the navigation drawer
+     *            passing the selected category name to the adapter
+     *
+     */
+    @Override
+    public void onNavigationSelection(String name) {
+        ((NavigationSelectedValueAware)mNavRecyclerView.getAdapter()).setSelectedNavigationCategory(name);
+    }
+
+    @Override
+    public void closeDrawer() {
+        mDrawerLayout.closeDrawers();
     }
 }

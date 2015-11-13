@@ -153,4 +153,8 @@ public class HomeActivity extends BBActivity {
         setNextScreenNavigationContext(TrackEventkeys.HOME);
     }
 
+    @Override
+    protected String getCategoryId() {
+        return getString(R.string.home);
+    }
 }

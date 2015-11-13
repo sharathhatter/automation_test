@@ -23,7 +23,7 @@
     </item>
 
     <item android:state_pressed="false">
-        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+        <shape>
             <solid android:color="@color/uiv3_rounded_btn_bkg" />
             <corners android:radius="125dp" />
         </shape>

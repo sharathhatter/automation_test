@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
@@ -158,7 +159,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
 
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
                 false, this, getNextScreenNavigationContext(), null, "none",
-                AppDataDynamic.getInstance(getActivity()).getStoreAvailabilityMap());
+                AppDataDynamic.getInstance(getActivity()).getStoreAvailabilityMap(),
+                SpecialityStorePreference.getSpecialityStoreDetailList(getActivity()));
 
         if (mProduct.getProductPromoInfo() == null ||
                 !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {
