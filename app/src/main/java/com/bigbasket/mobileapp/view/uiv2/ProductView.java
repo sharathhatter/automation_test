@@ -11,6 +11,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StrikethroughSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +31,10 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
+import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
+import com.bigbasket.mobileapp.fragment.StoreDetailsDialogFragment;
 import com.bigbasket.mobileapp.handler.OnBrandPageListener;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
@@ -68,10 +72,12 @@ public final class ProductView {
                                                                     final T productDataAware, String navigationCtx,
                                                                     @Nullable HashMap<String, Integer> cartInfo,
                                                                     String tabName,
-                                                                    HashMap<String, String> appDataStoreAvailabilityMap) {
+                                                                    HashMap<String, String> appDataStoreAvailabilityMap,
+                                                                    HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
                 productDetailOnClickListener, productDataAware);
+        setStoreDetails(specialityStoreInfoHashMap, productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
         setExpressMsg(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, tabName, navigationCtx, appDataStoreAvailabilityMap,
@@ -79,7 +85,8 @@ public final class ProductView {
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
-                    productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap);
+                    productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap,
+                    specialityStoreInfoHashMap);
         }
     }
 
@@ -95,7 +102,8 @@ public final class ProductView {
                                                                        final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                                        final T productDataAware, final String navigationCtx,
                                                                        @Nullable HashMap<String, Integer> cartInfo,
-                                                                       @Nullable String tabName, HashMap<String, String> AppDataStoreAvailabilityMap) {
+                                                                       @Nullable String tabName, HashMap<String, String> AppDataStoreAvailabilityMap,
+                                                                       HashMap<String, SpecialityStoresInfoModel> specialityStoresInfoHashMap) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         final Button btnMorePackSizes = productViewHolder.getBtnMorePackSizes();
@@ -117,7 +125,7 @@ public final class ProductView {
                             childProductInBasket = childProduct;
                             listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
                                     product, productViewHolder, baseImgUrl, navigationCtx, cartInfo,
-                                    tabName, AppDataStoreAvailabilityMap);
+                                    tabName, AppDataStoreAvailabilityMap, specialityStoresInfoHashMap);
                             listener.setCurrentProduct(childProductInBasket);
                             break;
                         }
@@ -127,7 +135,7 @@ public final class ProductView {
             if (listener == null) {
                 listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
                         product, productViewHolder, baseImgUrl, navigationCtx, cartInfo, tabName,
-                        AppDataStoreAvailabilityMap);
+                        AppDataStoreAvailabilityMap, specialityStoresInfoHashMap);
             } else {
                 // There is a child product that is in basket
                 // Manually trigger click to change to that product
@@ -349,6 +357,50 @@ public final class ProductView {
                                                    HashMap<String, String> allStoreAvailabilityMap) {
         String availabilityInfoId = particularStoreMap.get(Constants.AVAILABILITY_INFO_ID);
         return !TextUtils.isEmpty(availabilityInfoId) ? allStoreAvailabilityMap.get(availabilityInfoId) : null;
+    }
+
+    private static <T extends AppOperationAware> void setStoreDetails(HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap,
+                                                                      ProductViewHolder productViewHolder, Product product,
+                                                                      ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                                      final T productDataAware) {
+
+        RelativeLayout storeIconLayout = productViewHolder.getStoreIconLayout();
+        ImageView imgStoreIcon = productViewHolder.getImgStoreIcon();
+        if (storeIconLayout == null) return;
+        if (imgStoreIcon == null) return;
+        boolean hasStores = false;
+        if (specialityStoreInfoHashMap != null && specialityStoreInfoHashMap.size() > 0) {
+            List<String> storeIds = product.getStoreIds();
+            if (storeIds != null && storeIds.size() > 0) {
+                for (String pStoreId : storeIds) {
+                    if (!specialityStoreInfoHashMap.containsKey(pStoreId) || specialityStoreInfoHashMap.get(pStoreId) == null)
+                        continue;
+                    final SpecialityStoresInfoModel specialityStoresInfoModel = specialityStoreInfoHashMap.get(pStoreId);
+                    if (TextUtils.isEmpty(specialityStoresInfoModel.getStoreName()) ||
+                            (TextUtils.isEmpty(specialityStoresInfoModel.getStoreDesc()) &&
+                                    TextUtils.isEmpty(specialityStoresInfoModel.getStoreLogo())))
+                        continue;
+                    hasStores = true;
+                    storeIconLayout.setVisibility(View.VISIBLE);
+                    imgStoreIcon.setVisibility(View.VISIBLE);
+                    imgStoreIcon.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            StoreDetailsDialogFragment storeDetailsDialogFragment = StoreDetailsDialogFragment.newInstance(specialityStoresInfoModel.getStoreName(), specialityStoresInfoModel.getStoreDesc(), specialityStoresInfoModel.getStoreLogo(), specialityStoresInfoModel.getStoreCategory());
+                            if (!storeDetailsDialogFragment.isVisible()) {
+                                storeDetailsDialogFragment.show(productDataAware.getCurrentActivity().getSupportFragmentManager(),
+                                        Constants.STORE_DETAILS_FLAG);
+                            }
+                        }
+                    });
+                    break;
+                }
+            }
+        }
+        if (!hasStores) {
+            storeIconLayout.setVisibility(View.GONE);
+            imgStoreIcon.setVisibility(View.GONE);
+        }
     }
 
     private static <T> void setPromo(ProductViewHolder productViewHolder, Product product,
@@ -681,12 +733,14 @@ public final class ProductView {
         private HashMap<String, Integer> cartInfo;
         private String tabName;
         private HashMap<String, String> AppDataStoreAvailabilityMap;
+        private HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap;
 
         public OnShowChildProductDropdownClickListener(T productDataAware, ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                        Product product, ProductViewHolder productViewHolder,
                                                        String baseImgUrl, String navigationCtx,
                                                        @Nullable HashMap<String, Integer> cartInfo,
-                                                       String tabName, HashMap<String, String> AppDataStoreAvailabilityMap) {
+                                                       String tabName, HashMap<String, String> AppDataStoreAvailabilityMap,
+                                                       HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap) {
             this.productDataAware = productDataAware;
             this.productViewDisplayDataHolder = productViewDisplayDataHolder;
             this.product = product;
@@ -698,11 +752,13 @@ public final class ProductView {
             this.cartInfo = cartInfo;
             this.tabName = tabName;
             this.AppDataStoreAvailabilityMap = AppDataStoreAvailabilityMap;
+            this.specialityStoreInfoHashMap = specialityStoreInfoHashMap;
         }
 
         @Override
         public void onClick(View v) {
             final Button btnMorePackSizes = (Button) v;
+
             AlertDialog.Builder builder = new AlertDialog.Builder(productDataAware.getCurrentActivity());
             final AlertDialog dialog = builder.create();
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -746,7 +802,7 @@ public final class ProductView {
             setProductView(productViewHolder, childProduct, baseImgUrl,
                     new ProductDetailOnClickListener(childProduct.getSku(), productDataAware),
                     productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo,
-                    tabName, AppDataStoreAvailabilityMap);
+                    tabName, AppDataStoreAvailabilityMap, specialityStoreInfoHashMap);
         }
 
         public void setCurrentProduct(Product currentProduct) {

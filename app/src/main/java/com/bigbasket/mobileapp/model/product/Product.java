@@ -65,10 +65,13 @@ public class Product extends BaseProduct {
     private ArrayList<HashMap<String, String>> storeAvailability;
     @SerializedName(Constants.GIFT_MSG)
     private String giftMsg;
+    @SerializedName(Constants.STORE_IDS)
+    private List<String> storeIds;
 
     public Product(Parcel source) {
         super(source);
         boolean isSellPriceNull = source.readByte() == (byte) 1;
+
         if (!isSellPriceNull) {
             sellPrice = source.readString();
         }
@@ -119,6 +122,14 @@ public class Product extends BaseProduct {
         boolean isGiftMsgNull = source.readByte() == (byte) 1;
         if (!isGiftMsgNull) {
             giftMsg = source.readString();
+        }
+
+        boolean isStoreIdsNull = source.readByte() == (byte) 1;
+        if (!isStoreIdsNull) {
+            String storeId = source.readString();
+            Type type = new TypeToken<List<String>>() {
+            }.getType();
+            storeIds = new Gson().fromJson(storeId, type);
         }
     }
 
@@ -216,6 +227,12 @@ public class Product extends BaseProduct {
         if (!isGiftMsgNull) {
             dest.writeString(giftMsg);
         }
+
+        boolean isStoredIdsNull = storeIds == null;
+        dest.writeByte(isStoredIdsNull ? (byte) 1 : (byte) 0);
+        if (!isStoredIdsNull) {
+            dest.writeList(storeIds);
+        }
     }
 
     public String getSellPrice() {
@@ -310,5 +327,10 @@ public class Product extends BaseProduct {
     @Nullable
     public ArrayList<HashMap<String, String>> getStoreAvailability() {
         return storeAvailability;
+    }
+
+    @Nullable
+    public List<String> getStoreIds() {
+        return storeIds;
     }
 }

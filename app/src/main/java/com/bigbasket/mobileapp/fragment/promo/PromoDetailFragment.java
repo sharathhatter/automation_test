@@ -298,7 +298,7 @@ public class PromoDetailFragment extends BaseFragment {
 
             ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
                     null, productViewDisplayDataHolder, false, getCurrentActivity(), getNextScreenNavigationContext(), null, "none",
-                    null);
+                    null, null);
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }

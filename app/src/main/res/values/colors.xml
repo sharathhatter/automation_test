@@ -76,4 +76,6 @@
     <color name="uiv3_large_list_item_bck_disabled">#e1e0e0</color>
     <color name="uiv3_default_button_click_bck">#fafafa</color>
 
+    <color name="uiv3_bbShops_circle">#84c225</color>
+
 </resources>
