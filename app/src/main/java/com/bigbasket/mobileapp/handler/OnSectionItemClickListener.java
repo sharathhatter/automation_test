@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.activity.product.DiscountActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
@@ -28,8 +29,6 @@ import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
-import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
-import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionHelpManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
@@ -122,7 +121,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                             categoryLandingFragment.setArguments(subCatBundle);
                             ((BBActivity) context).onChangeFragment(categoryLandingFragment);
                         } else {
-                            Intent intent = new Intent(((AppOperationAware) context).getCurrentActivity(), BBActivity.class);
+                            Intent intent = new Intent(((AppOperationAware) context).getCurrentActivity(), SearchActivity.class);
                             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
                             intent.putExtra(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
                             intent.putExtra(Constants.TOP_CATEGORY_NAME, title);
@@ -175,7 +174,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         promoDetailFragment.setArguments(promoDetailBundle);
                         ((BBActivity) context).onChangeFragment(promoDetailFragment);
                     } else {
-                        intent = new Intent(((AppOperationAware) context).getCurrentActivity(), BBActivity.class);
+                        intent = new Intent(((AppOperationAware) context).getCurrentActivity(), SearchActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
                         intent.putExtra(Constants.PROMO_ID, Integer.parseInt(destinationInfo.getDestinationSlug()));
                         ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -238,7 +237,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 if (hasMainMenu()) {
                     ((BBActivity) context).onChangeFragment(new PromoCategoryFragment());
                 } else {
-                    intent = new Intent(((AppOperationAware) context).getCurrentActivity(), BBActivity.class);
+                    intent = new Intent(((AppOperationAware) context).getCurrentActivity(), SearchActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
                     ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }

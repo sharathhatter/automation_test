@@ -15,7 +15,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 
 import retrofit.Call;
 
-public class GetDynamicPageTask<T extends AppOperationAware> {
+public class GetDynamicPageTask<T extends AppOperationAware & DynamicScreenAware> {
     private T context;
     private String screenName;
     private boolean inlineProgress;
@@ -49,7 +49,7 @@ public class GetDynamicPageTask<T extends AppOperationAware> {
                 getCurrentActivity(), screenName);
         SectionData sectionData = sectionManager.getStoredSectionData();
         if (sectionData != null && sectionData.getSections() != null && sectionData.getSections().size() > 0) {
-            ((DynamicScreenAware) context).onDynamicScreenSuccess(screenName, sectionData);
+            context.onDynamicScreenSuccess(screenName, sectionData);
             return;
         }
         if (!context.checkInternetConnection()) {
@@ -102,7 +102,7 @@ public class GetDynamicPageTask<T extends AppOperationAware> {
                         sectionData.setSections(SectionUtil.preserveMemory(sectionData.getSections()));
                     }
                     if (!silentMode) {
-                        ((DynamicScreenAware) context).onDynamicScreenSuccess(screenName, sectionData);
+                        context.onDynamicScreenSuccess(screenName, sectionData);
                     }
                     if (sectionData != null && sectionData.getSections() != null &&
                             sectionData.getSections().size() > 0) {
@@ -118,7 +118,7 @@ public class GetDynamicPageTask<T extends AppOperationAware> {
                     break;
                 default:
                     if (!silentMode) {
-                        ((DynamicScreenAware) context).onDynamicScreenFailure(getDynamicPageApiResponse.status,
+                        context.onDynamicScreenFailure(getDynamicPageApiResponse.status,
                                 getDynamicPageApiResponse.message);
                     }
                     break;
@@ -143,14 +143,12 @@ public class GetDynamicPageTask<T extends AppOperationAware> {
 
         @Override
         public void onFailure(int httpErrorCode, String msg) {
-            super.onFailure(httpErrorCode, msg);
-            ((DynamicScreenAware) context).onDynamicScreenFailure(httpErrorCode, msg);
+            context.onDynamicScreenFailure(httpErrorCode, msg);
         }
 
         @Override
         public void onFailure(Throwable t) {
-            super.onFailure(t);
-            ((DynamicScreenAware) context).onDynamicScreenFailure(t);
+            context.onDynamicScreenFailure(t);
         }
     }
 }

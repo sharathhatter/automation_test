@@ -18,7 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.specialityshops.StoreListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -42,7 +42,7 @@ import java.util.HashMap;
 
 import retrofit.Call;
 
-public class BBSpecialityShopsActivity extends BBActivity implements LaunchStoreListAware {
+public class BBSpecialityShopsActivity extends SearchActivity implements LaunchStoreListAware {
 
     private TextView mToolbarTextDropDown;
     private String category;

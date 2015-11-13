@@ -41,8 +41,6 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.SearchableActivity;
-import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.devconfig.DevConfigViewHandler;
@@ -76,7 +74,6 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
-import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -85,7 +82,6 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.product.Product;
-import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Renderer;
@@ -118,7 +114,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
+public abstract class BBActivity extends SocialLoginActivity implements BasketOperationAware,
         CartInfoAware, AppOperationAware, SubNavigationAware, FloatingBasketUIAware,
         OnAddressChangeListener, BasketDeltaUserActionListener, NavigationSelectionAware, NavigationDrawerAware {
 
@@ -204,7 +200,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (CityManager.isAreaPinInfoDataStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
         }
-
         mDynamicAppDataBroadcastReceiver = new DynamicAppDataBroadcastReceiver<>(this);
     }
 
@@ -308,9 +303,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
-                if (mNavRecyclerView.getAdapter()!=null)
+                if (mNavRecyclerView.getAdapter() != null)
                     mNavRecyclerView.getAdapter().notifyDataSetChanged();
-                if (mListSubNavigation.getAdapter()!=null)
+                if (mListSubNavigation.getAdapter() != null)
                     mListSubNavigation.getAdapter().notifyDataSetChanged();
             }
         };
@@ -388,9 +383,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         return super.onCreateOptionsMenu(menu);
     }
 
-    protected void setOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.action_menu, menu);
-    }
+    protected abstract void setOptionsMenu(Menu menu);
 
     @Override
     public void setTitle(CharSequence title) {
@@ -529,10 +522,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             return true;
         }
         switch (item.getItemId()) {
-            case R.id.action_search:
-                Intent searchIntent = new Intent(this, SearchableActivity.class);
-                startActivityForResult(searchIntent, NavigationCodes.START_SEARCH);
-                return false;
             case android.R.id.home:
                 finish();
                 return true;
@@ -587,16 +576,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == NavigationCodes.START_SEARCH) {
-            if (data != null) {
-                String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
-                String nc = data.getStringExtra(TrackEventkeys.NAVIGATION_CTX);
-                if (!TextUtils.isEmpty(searchQuery)) {
-                    doSearch(searchQuery.trim(), nc);
-                    return;
-                }
-            }
-        } else if (resultCode == NavigationCodes.LAUNCH_FRAGMENT && data != null) {
+        if (resultCode == NavigationCodes.LAUNCH_FRAGMENT && data != null) {
             createFragmentFromName(data.getStringExtra(Constants.FRAGMENT_CLASS_NAME), data.getExtras(),
                     data.getStringExtra(Constants.FRAGMENT_TAG));
             return;
@@ -788,17 +768,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 getSupportFragmentManager().findFragmentByTag(currentFragmentTag) == null) {
             startFragment();
         }
-    }
-
-    public void doSearch(String searchQuery, String referrer) {
-        Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
-        nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
-        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-        intent.putExtra(Constants.TITLE, searchQuery);
-        setNextScreenNavigationContext(referrer);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     public void onChangeTitle(String title) {
@@ -1020,9 +989,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     protected String getCategoryId() {
         return null;
     }
-    protected String getSubCategoryId(){
+
+    protected String getSubCategoryId() {
         return null;
     }
+
     @Override
     public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
                                          HashMap<Integer, Renderer> rendererHashMap) {
@@ -1045,7 +1016,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems,
                 SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
-        if(!TextUtils.isEmpty(selectedId)){
+        if (!TextUtils.isEmpty(selectedId)) {
             navigationAdapter.setSelectedCategoryString(selectedId);
         }
         mListSubNavigation.setAdapter(navigationAdapter);
@@ -1159,23 +1130,22 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
                 mSubNavLayout.setVisibility(View.GONE, true);
+                return;
             } else {
                 mDrawerLayout.closeDrawers();
+                return;
             }
-        } else {
-            super.onBackPressed();
         }
+        super.onBackPressed();
     }
 
     /**
-     *
      * @param name: name of the category user has selected in the navigation drawer
-     *            passing the selected category name to the adapter
-     *
+     *              passing the selected category name to the adapter
      */
     @Override
     public void onNavigationSelection(String name) {
-        ((NavigationSelectedValueAware)mNavRecyclerView.getAdapter()).setSelectedNavigationCategory(name);
+        ((NavigationSelectedValueAware) mNavRecyclerView.getAdapter()).setSelectedNavigationCategory(name);
     }
 
     @Override

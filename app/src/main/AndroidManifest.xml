@@ -301,7 +301,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.base.uiv3.BBActivity"
+            android:name=".activity.base.uiv3.SearchActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
@@ -512,12 +512,6 @@
             android:enabled="true"
             android:exported="false"
             android:multiprocess="true" />
-
-        <activity
-            android:name=".activity.base.SearchableActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.SearchViewTheme"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
 
         <!-- PayTM -->
 

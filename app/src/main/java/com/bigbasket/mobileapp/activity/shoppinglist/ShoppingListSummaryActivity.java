@@ -24,7 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -54,7 +54,7 @@ import java.util.HashMap;
 
 import retrofit.Call;
 
-public class ShoppingListSummaryActivity extends BBActivity {
+public class ShoppingListSummaryActivity extends SearchActivity {
 
     private String baseImgUrl;
     @Nullable

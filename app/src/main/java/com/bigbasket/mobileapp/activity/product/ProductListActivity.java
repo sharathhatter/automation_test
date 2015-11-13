@@ -25,7 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -74,7 +74,7 @@ import java.util.Map;
 import retrofit.Call;
 
 
-public class ProductListActivity extends BBActivity implements ProductListDataAware, LazyProductListAware {
+public class ProductListActivity extends SearchActivity implements ProductListDataAware, LazyProductListAware {
 
     private ArrayList<NameValuePair> mNameValuePairs;
     @Nullable
@@ -172,7 +172,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
-    protected String getSubCategoryId(){
+    protected String getSubCategoryId() {
         if (mHeaderSpinnerView != null && mHeaderSpinnerView.getSelectedItem() != null && mHeaderSpinnerView.getSelectedItem().getTitle() != null) {
             return mHeaderSpinnerView.getSelectedItem().getTitle().getText().split("\\(")[0];
         }
@@ -650,7 +650,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             mToolbarTextDropdown = (TextView) getLayoutInflater().
                     inflate(R.layout.uiv3_product_header_text, toolbar, false);
         }
-        if(mHeaderSpinnerView == null) {
+        if (mHeaderSpinnerView == null) {
             mHeaderSpinnerView = new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
                     .withCtx(this)
                     .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
