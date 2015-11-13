@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.PromoDetailNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -51,6 +52,8 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
                 return;
             }
         }
+        if (getCurrentActivity().getResources() != null)
+        ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(getCurrentActivity().getResources().getString(R.string.promotions));
         getPromoCategories();
     }
 
@@ -151,7 +154,10 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
 
     @Override
     public String getTitle() {
-        return "Promotions";
+        if (getCurrentActivity().getResources() != null)
+        return getCurrentActivity().getResources().getString(R.string.promotions);
+        else
+            return null;
     }
 
     @NonNull
@@ -172,4 +178,5 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
     public String getScreenTag() {
         return TrackEventkeys.PROMO_CATEGORY_SCREEN;
     }
+
 }
