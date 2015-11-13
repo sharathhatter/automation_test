@@ -42,6 +42,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private String baseImgUrl;
 
     private String selectedCategoryString;
+    private String selectedSubCategoryString;
 
     @Nullable
     private HashMap<Integer, Renderer> rendererHashMap;
@@ -66,6 +67,14 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void setSelectedCategoryString(String selectedCategoryString) {
         this.selectedCategoryString = selectedCategoryString;
+    }
+
+    public String getSelectedSubCategoryString() {
+        return selectedSubCategoryString;
+    }
+
+    public void setSelectedSubCategoryString(String selectedSubCategoryString) {
+        this.selectedSubCategoryString = selectedSubCategoryString;
     }
 
     public NavigationAdapter(Context context, Typeface typeface,
@@ -114,7 +123,11 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             TextView txtNavListRowSubTitle = navViewHolder.getTxtNavListRowSubTitle();
             SectionItem sectionItem = sectionNavigationItem.getSectionItem();
 
-            if (getSelectionComparisionStatus(getSelectedCategoryString(),sectionItem)){
+            /**
+             * checking for the selected category and sub category and
+             * then highlighting the row accordingly
+             */
+            if (getSelectionComparisionStatus(getSelectedSubCategoryString(), sectionItem)||   getSelectionComparisionStatus(getSelectedCategoryString(), sectionItem)){
                 relativeLayoutRow.setPressed(true);
             }
             else{
@@ -360,8 +373,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private boolean getSelectionComparisionStatus(String selectedCategoryString,SectionItem sectionItem) {
 
-        if (getSelectedCategoryString() != null) {
-            if (sectionItem.getTitle().getText().toString().replace(" ", "").equalsIgnoreCase(selectedCategoryString.replace(" ", "")) && sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+        if (selectedCategoryString != null) {
+            if (sectionItem.getTitle().getText().toString().replaceAll(" ", "").equalsIgnoreCase(selectedCategoryString.replaceAll(" ", "")) && sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 return true;
             } else {
                 return false;

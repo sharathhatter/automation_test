@@ -90,6 +90,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private HashMap<String, Integer> mCartInfo;
     private String tabType;
     private ArrayList<String> mTabNameWithEmptyProductView;
+    private HeaderSpinnerView mHeaderSpinnerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -169,6 +170,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         setResult(NavigationCodes.LAUNCH_FRAGMENT, data);
         finish();
     }
+
+    @Override
+    protected String getSubCategoryId(){
+        if(mHeaderSpinnerView != null && mHeaderSpinnerView.getSelectedItem() !=null){
+            return mHeaderSpinnerView.getSelectedItem().getTitle().getText().split("\\(")[0];
+        }
+        return null;
+    }
+
 
     @Override
     public void setProductTabData(ProductTabData productTabData, boolean isFilterOrSortApplied) {
@@ -639,21 +649,24 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             mToolbarTextDropdown = (TextView) getLayoutInflater().
                     inflate(R.layout.uiv3_product_header_text, toolbar, false);
         }
-        new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
-                .withCtx(this)
-                .withDefaultSelectedIdx(mHeaderSelectedIdx)
-                .withFallbackHeaderTitle(!TextUtils.isEmpty(mTitlePassedViaIntent) ? mTitlePassedViaIntent : screenName)
-                .withHeadSection(headSection)
-                .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
-                .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
-                .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
-                .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
-                .withToolbar(getToolbar())
-                .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
-                .withTxtToolbarDropdown(mToolbarTextDropdown)
-                .withTypeface(faceRobotoRegular)
-                .build()
-                .setView();
+        //TODO: Keep a reference, update the data
+        if(mHeaderSpinnerView == null) {
+            mHeaderSpinnerView = new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
+                    .withCtx(this)
+                    .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
+                    .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
+                    .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
+                    .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
+                    .withToolbar(getToolbar())
+                    .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
+                    .withTxtToolbarDropdown(mToolbarTextDropdown)
+                    .withTypeface(faceRobotoRegular)
+                    .build();
+        }
+        mHeaderSpinnerView.setDefaultSelectedIdx(mHeaderSelectedIdx);
+        mHeaderSpinnerView.setFallbackHeaderTitle(!TextUtils.isEmpty(mTitlePassedViaIntent) ? mTitlePassedViaIntent : screenName);
+        mHeaderSpinnerView.setHeadSection(headSection);
+        mHeaderSpinnerView.setView();
     }
 
     @Override

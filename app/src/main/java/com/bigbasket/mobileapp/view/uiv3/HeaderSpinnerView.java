@@ -19,6 +19,7 @@ import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.section.Section;
+import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -39,6 +40,7 @@ public class HeaderSpinnerView<T> {
     private TextView txtToolbarDropdown;
     private ImageView imgCloseChildDropdown;
     private ViewGroup layoutListHeader;
+    private int mSelectedPosition = Spinner.INVALID_POSITION;
 
     private HeaderSpinnerView(T ctx, Typeface typeface, @Nullable Section headSection, int defaultSelectedIdx,
                               @Nullable String fallbackHeaderTitle, ListView listHeaderDropdown,
@@ -80,7 +82,7 @@ public class HeaderSpinnerView<T> {
                 // Defensive check
                 defaultSelectedIdx = 0;
             }
-
+            mSelectedPosition = defaultSelectedIdx;
             SectionTextItem title = headSection.getSectionItems().get(defaultSelectedIdx).getTitle();
             txtToolbarDropdown.setText(title != null ? title.getText() : "");
             txtChildDropdownTitle.setTypeface(typeface);
@@ -93,6 +95,7 @@ public class HeaderSpinnerView<T> {
             bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             listHeaderDropdown.setAdapter(bbArrayAdapter);
 
+            if(headSection.getSectionItems()!=null)
             ((NavigationSelectionAware) ctx).onNavigationSelection(headSection.getSectionItems().get(0).getTitle().getText().split("\\(")[0]);
 
             listHeaderDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -100,6 +103,7 @@ public class HeaderSpinnerView<T> {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if (position != Spinner.INVALID_POSITION) {
                         if (position != defaultSelectedIdx) {
+                            mSelectedPosition = position;
                             new OnSectionItemClickListener<>(((AppOperationAware) ctx).getCurrentActivity(), headSection,
                                     headSection.getSectionItems().get(position),
                                     TrackingAware.PRODUCT_LIST_HEADER).onClick(view);
@@ -118,7 +122,27 @@ public class HeaderSpinnerView<T> {
                 txtToolbarDropdown.setOnClickListener(null);
                 toolbar.removeView(txtToolbarDropdown);
             }
+            mSelectedPosition = Spinner.INVALID_POSITION;
         }
+    }
+
+    public SectionItem getSelectedItem() {
+        if(mSelectedPosition != Spinner.INVALID_POSITION){
+            return headSection.getSectionItems().get(mSelectedPosition);
+        }
+        return null;
+    }
+
+    public void setDefaultSelectedIdx(int defaultSelectedIdx) {
+        this.defaultSelectedIdx = defaultSelectedIdx;
+    }
+
+    public void setFallbackHeaderTitle(@Nullable String fallbackHeaderTitle) {
+        this.fallbackHeaderTitle = fallbackHeaderTitle;
+    }
+
+    public void setHeadSection(@Nullable Section headSection) {
+        this.headSection = headSection;
     }
 
     public static class OnChildDropdownRequested implements View.OnClickListener {

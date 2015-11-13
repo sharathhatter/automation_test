@@ -308,6 +308,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
+                if (mNavRecyclerView.getAdapter()!=null)
+                    mNavRecyclerView.getAdapter().notifyDataSetChanged();
+                if (mListSubNavigation.getAdapter()!=null)
+                    mListSubNavigation.getAdapter().notifyDataSetChanged();
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -1002,7 +1006,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         sectionNavigationItems.add(new SectionNavigationItem<>(shoppingListSection, shoppingListSectionItem));
         return sectionNavigationItems;
     }
-
+    protected String getSubCategoryId(){
+        return null;
+    }
     @Override
     public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
                                          HashMap<Integer, Renderer> rendererHashMap) {
@@ -1020,11 +1026,17 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
+        String selectedId = getSubCategoryId();
+
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems,
                 SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
+        if(!TextUtils.isEmpty(selectedId)){
+            navigationAdapter.setSelectedCategoryString(selectedId);
+        }
         mListSubNavigation.setAdapter(navigationAdapter);
         mSubNavLayout.setVisibility(View.VISIBLE, true);
+//        navigationAdapter.notifyDataSetChanged();
     }
 
     @Override
