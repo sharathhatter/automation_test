@@ -28,7 +28,7 @@ public class MessageFormatUtil<T> {
         str = str.replaceAll("\\s*\\]\\s*", "]");
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(str);
         int idx1 = str.indexOf("[");
-        int idx2 = 0;
+        int idx2;
         int index = 0;
 
 
@@ -78,7 +78,7 @@ public class MessageFormatUtil<T> {
         str = str.replaceAll("\\s*\\]\\s*", "]");
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(str);
         int idx1 = str.indexOf("[");
-        int idx2 = 0;
+        int idx2;
         int index = 0;
         while (idx1 != -1) {
             idx2 = str.indexOf("]", idx1) + 1;
@@ -116,7 +116,7 @@ public class MessageFormatUtil<T> {
                                                                          final ArrayList<Class<?>> activityArrayList,
                                                                          final ArrayList<Integer> fragmentCodeArrayList) {
         SpannableString spannableString = null;
-        int replacedStringIndex = 0;
+        int replacedStringIndex;
         ArrayList<Integer> arrayListIndex = new ArrayList<>();
 
         while (msgStr.contains("{") && msgStr.contains("}")) {
@@ -135,6 +135,7 @@ public class MessageFormatUtil<T> {
             spannableString.setSpan(new ForegroundColorSpan(((AppOperationAware) ctx).getCurrentActivity().getResources().getColor(R.color.link_color)),
                     preIndexOfFormatStr, postIndex, 0);
         }
+        if (spannableString == null) return null;
         if (activityArrayList != null && activityArrayList.size() > 0) {
             return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
                     ((AppOperationAware) ctx).getCurrentActivity(), messageParamInfoList, activityArrayList,

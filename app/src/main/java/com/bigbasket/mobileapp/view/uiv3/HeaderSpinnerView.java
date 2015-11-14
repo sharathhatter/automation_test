@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -95,8 +96,13 @@ public class HeaderSpinnerView<T> {
             bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             listHeaderDropdown.setAdapter(bbArrayAdapter);
 
-            if(headSection.getSectionItems()!=null)
-            ((NavigationSelectionAware) ctx).onNavigationSelection(headSection.getSectionItems().get(0).getTitle().getText().split("\\(")[0]);
+            if (headSection.getSectionItems() != null && headSection.getSectionItems().size() > 0) {
+                SectionItem firstSectionItem = headSection.getSectionItems().get(0);
+                if (firstSectionItem != null && firstSectionItem.getTitle() != null
+                        && !TextUtils.isEmpty(firstSectionItem.getTitle().getText())) {
+                    ((NavigationSelectionAware) ctx).onNavigationSelection(firstSectionItem.getTitle().getText().split("\\(")[0]);
+                }
+            }
 
             listHeaderDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -127,7 +133,7 @@ public class HeaderSpinnerView<T> {
     }
 
     public SectionItem getSelectedItem() {
-        if(mSelectedPosition != Spinner.INVALID_POSITION){
+        if (mSelectedPosition != Spinner.INVALID_POSITION && headSection != null) {
             return headSection.getSectionItems().get(mSelectedPosition);
         }
         return null;

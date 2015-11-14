@@ -321,6 +321,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     private void callGetAppData(String client, String versionName) {
+        if (getCurrentActivity() == null) return;
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) return;
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         Call<ApiResponse<AppDataResponse>> call = bigBasketApiService.getAppData(client, versionName);
@@ -402,7 +403,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     private void getAppData(Bundle savedInstanceState) {
-        if (AppDataSyncHandler.isSyncNeeded(getActivity())) {
+        if (getCurrentActivity() == null) return;
+        if (AppDataSyncHandler.isSyncNeeded(getCurrentActivity())) {
             callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersion(getCurrentActivity()));
         }
         homePageGetter(savedInstanceState);

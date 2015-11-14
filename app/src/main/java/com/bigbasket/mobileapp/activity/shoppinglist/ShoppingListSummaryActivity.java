@@ -504,10 +504,11 @@ public class ShoppingListSummaryActivity extends SearchActivity {
                 if (getCurrentActivity() == null) return;
                 if (!UIUtil.isAlphaNumericString(inputText.trim())) {
                     showAlertDialog(getResources().getString(R.string.shoppingListNameAlphaNumeric));
-                } else if (mShoppingListName.getName().equalsIgnoreCase(inputText.trim()))
+                } else if (mShoppingListName != null && mShoppingListName.getName().equalsIgnoreCase(inputText.trim()))
                     showAlertDialog("Shopping List with name \"" + inputText.trim() + "\" already exits");
-                else
+                else {
                     editShoppingListName(mShoppingListName, inputText);
+                }
             }
         }.show();
     }

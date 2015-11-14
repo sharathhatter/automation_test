@@ -72,7 +72,10 @@ public class MostSearchesAdapter {
     }
 
     public int getRowCount() {
-        return DatabaseHelper.db.rawQuery("select * from " + tableName, null).getCount();
+        Cursor cursor = DatabaseHelper.db.rawQuery("select _id from " + tableName, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
     }
 
     public void update(String query) {

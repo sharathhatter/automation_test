@@ -196,11 +196,13 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
                     mostSearchesAdapter.deleteFirstRow();
             } else {
                 List<MostSearchedItem> mostSearchedItemList = mostSearchesAdapter.getRecentSearchedItems(mostSearchTermsCount);
-                int i = 0;
-                for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
-                    matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
-                            null, mostSearchedItem.getUrl(), null,
-                            null, SearchUtil.HISTORY_TERM});
+                if (mostSearchedItemList != null) {
+                    int i = 0;
+                    for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
+                        matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
+                                null, mostSearchedItem.getUrl(), null,
+                                null, SearchUtil.HISTORY_TERM});
+                }
             }
         }
         populateTopSearch(matrixCursor);
