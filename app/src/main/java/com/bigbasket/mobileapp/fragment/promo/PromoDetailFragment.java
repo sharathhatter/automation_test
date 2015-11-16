@@ -29,6 +29,9 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponse
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.OnBrandPageListener;
+import com.bigbasket.mobileapp.handler.OnPromoClickListener;
+import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -296,8 +299,8 @@ public class PromoDetailFragment extends BaseFragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             productRowParams.setMargins(8, 8, 8, 0);
 
-            ProductView.setProductView(new ProductViewHolder(base, null), freeProduct, promoDetail.getBaseImgUrl(),
-                    null, productViewDisplayDataHolder, false, getCurrentActivity(), getNextScreenNavigationContext(), null, "none",
+            ProductView.setProductView(new ProductViewHolder(base, null, new OnPromoClickListener<>(this), new ProductDetailOnClickListener<>(this),new OnBrandPageListener<>(this)), freeProduct, promoDetail.getBaseImgUrl(),
+                    productViewDisplayDataHolder, false, getCurrentActivity(), getNextScreenNavigationContext(), null, "none",
                     null, null);
             base.setLayoutParams(productRowParams);
             view.addView(base);

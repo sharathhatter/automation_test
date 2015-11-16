@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.adapter.product;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
-import com.bigbasket.mobileapp.fragment.StoreDetailsDialogFragment;
+import com.bigbasket.mobileapp.handler.OnPromoClickListener;
 import com.bigbasket.mobileapp.handler.OnSpecialityShopIconClickListener;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
@@ -23,7 +22,6 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,6 +47,9 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private HashMap<String, String> storeAvailabilityMap;
     private HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap;
     private View.OnClickListener mSpecialityShopClickListener;
+    private View.OnClickListener mPromoClickListener;
+    private View.OnClickListener productDetailOnClickListener;
+    private View.OnClickListener brandPageListener;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -64,6 +65,8 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         this.storeAvailabilityMap = AppDataDynamic.getInstance(activityAware.getCurrentActivity()).getStoreAvailabilityMap();
         this.specialityStoreInfoHashMap = SpecialityStorePreference.getSpecialityStoreDetailList(activityAware.getCurrentActivity());
         this.mSpecialityShopClickListener = new OnSpecialityShopIconClickListener<>(activityAware, specialityStoreInfoHashMap);
+        this.mPromoClickListener = new OnPromoClickListener<>(activityAware);
+        this.productDetailOnClickListener = new ProductDetailOnClickListener(activityAware);
     }
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
@@ -104,7 +107,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         switch (viewType) {
             case VIEW_TYPE_DATA:
                 View row = inflater.inflate(R.layout.uiv3_product_row, viewGroup, false);
-                return new ProductViewHolder(row, mSpecialityShopClickListener);
+                return new ProductViewHolder(row, mSpecialityShopClickListener, mPromoClickListener, productDetailOnClickListener,null);
             case VIEW_TYPE_LOADING:
                 row = inflater.inflate(R.layout.uiv3_list_loading_footer, viewGroup, false);
                 return new FixedLayoutViewHolder(row);
@@ -130,7 +133,6 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             position = getActualPosition(position);
             Product product = products.get(position);
             ProductView.setProductView((ProductViewHolder) viewHolder, product, baseImgUrl,
-                    new ProductDetailOnClickListener(product.getSku(), activityAware),
                     productViewDisplayDataHolder,
                     false, activityAware, navigationCtx, cartInfo, mTabType, storeAvailabilityMap,
                     specialityStoreInfoHashMap);
@@ -160,6 +162,10 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         return products.size() + 2;  // 1 for infiniteloading view, 1 for product count
     }
 
+    public void setLoadingFailed(boolean loadingFailed) {
+        this.mLoadingFailed = loadingFailed;
+    }
+
     private class ProductCountViewHolder extends RecyclerView.ViewHolder {
         private TextView txtProductCount;
 
@@ -174,10 +180,6 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             }
             return txtProductCount;
         }
-    }
-
-    public void setLoadingFailed(boolean loadingFailed) {
-        this.mLoadingFailed = loadingFailed;
     }
 }
 
