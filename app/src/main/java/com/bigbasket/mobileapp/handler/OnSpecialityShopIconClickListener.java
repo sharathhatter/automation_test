@@ -31,20 +31,20 @@ public class OnSpecialityShopIconClickListener<T extends AppOperationAware> impl
     @Override
     public void onClick(View view) {
         if (context == null) return;
-        String pStoreId = (String)view.getTag(R.id.speciality_store_id);
+        String pStoreId = (String) view.getTag(R.id.speciality_store_id);
         if (TextUtils.isEmpty(pStoreId)) return;
         SpecialityStoresInfoModel specialityStoresInfoModel = specialityStoreInfoHashMap.get(pStoreId);
         if (specialityStoresInfoModel == null) return;
         FragmentTransaction ft = context.getCurrentActivity().getSupportFragmentManager().beginTransaction();
         Fragment f = context.getCurrentActivity().getSupportFragmentManager().findFragmentByTag("store_details_flag");
-        if(f != null){
+        if (f != null) {
             ft.remove(f);
         }
         StoreDetailsDialogFragment storeDetailsDialogFragment = StoreDetailsDialogFragment.newInstance(specialityStoresInfoModel.getStoreName(),
                 specialityStoresInfoModel.getStoreDesc(), specialityStoresInfoModel.getStoreLogo(), specialityStoresInfoModel.getStoreCategory());
         try {
             storeDetailsDialogFragment.show(ft, "store_details_flag");
-        } catch (IllegalStateException ex){
+        } catch (IllegalStateException ex) {
             //Ignore
             Crashlytics.logException(ex);
         }

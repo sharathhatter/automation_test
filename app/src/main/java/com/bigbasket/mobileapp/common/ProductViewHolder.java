@@ -39,15 +39,22 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private ImageView imgStoreIcon;
     private RelativeLayout storeIconLayout;
     private View.OnClickListener specialityShopIconClickListener;
+    private View.OnClickListener promoClickListener;
+    private View.OnClickListener productOnClickListener;
+    private View.OnClickListener brandPageListener;
 
-    public ProductViewHolder(View itemView, View.OnClickListener specialityShopIconClickListener) {
+    public ProductViewHolder(View itemView, View.OnClickListener specialityShopIconClickListener, View.OnClickListener promoClickListener, View.OnClickListener productOnClickListener,View.OnClickListener brandPageListener) {
         super(itemView);
         this.specialityShopIconClickListener = specialityShopIconClickListener;
+        this.promoClickListener = promoClickListener;
+        this.productOnClickListener = productOnClickListener;
+        this.brandPageListener = brandPageListener;
     }
 
     public ImageView getImgProduct() {
         if (imgProduct == null) {
             imgProduct = (ImageView) itemView.findViewById(R.id.imgProduct);
+            imgProduct.setOnClickListener(productOnClickListener);
         }
         return imgProduct;
     }
@@ -55,6 +62,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public TextView getTxtProductBrand() {
         if (txtProductBrand == null) {
             txtProductBrand = (TextView) itemView.findViewById(R.id.txtProductBrand);
+            txtProductBrand.setOnClickListener(brandPageListener);
         }
         return txtProductBrand;
     }
@@ -62,6 +70,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public ImageView getImgPromoStar() {
         if (imgPromoStar == null) {
             imgPromoStar = (ImageView) itemView.findViewById(R.id.imgPromoStar);
+            imgPromoStar.setOnClickListener(promoClickListener);
         }
         return imgPromoStar;
     }
@@ -83,6 +92,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public TextView getTxtProductDesc() {
         if (txtProductDesc == null) {
             txtProductDesc = (TextView) itemView.findViewById(R.id.txtProductDesc);
+            txtProductDesc.setOnClickListener(productOnClickListener);
         }
         return txtProductDesc;
     }
@@ -104,6 +114,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public TextView getTxtPromoDesc() {
         if (txtPromoDesc == null) {
             txtPromoDesc = (TextView) itemView.findViewById(R.id.txtPromoName);
+            txtPromoDesc.setOnClickListener(promoClickListener);
         }
         return txtPromoDesc;
     }
@@ -210,8 +221,8 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return imgStoreIcon;
     }
 
-    public RelativeLayout getStoreIconLayout(){
-        if (storeIconLayout == null){
+    public RelativeLayout getStoreIconLayout() {
+        if (storeIconLayout == null) {
             storeIconLayout = (RelativeLayout) itemView.findViewById(R.id.storeIconLayout);
         }
         return storeIconLayout;
