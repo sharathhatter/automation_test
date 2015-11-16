@@ -8,6 +8,7 @@ import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -54,6 +55,7 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MutableLong;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.RoundedBackgroundSpan;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -353,7 +355,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 }
                 RadioButton rbtnPaymentType = UIUtil.
                         getPaymentOptionRadioButton(layoutPaymentOptions, this, inflater);
-                rbtnPaymentType.setText(paymentType.getDisplayName());
+                rbtnPaymentType.setText(UIUtil.getPaymentOptionRadioButtonText(this,paymentType), TextView.BufferType.SPANNABLE);
                 rbtnPaymentType.setId(i);
                 boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? paymentType.isSelected() :
                         mSelectedPaymentMethod.equals(paymentType.getValue());

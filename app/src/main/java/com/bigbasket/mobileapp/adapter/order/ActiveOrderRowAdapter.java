@@ -44,6 +44,8 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
 import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +71,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
     private String navigationCtx;
     private T context;
     private int currentTabIndex;
+    private String quantityText;
 
     public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
                                  Typeface faceRobotoRegular, @OrderItemDisplaySource.Type int orderItemDisplaySource,
@@ -89,6 +92,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         this.navigationCtx = navigationCtx;
         this.currentTabIndex = currentTabIndex;
         this.inflater = (LayoutInflater) context.getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.quantityText = context.getCurrentActivity().getResources().getString(R.string.quantity);
     }
 
     @Override
@@ -271,6 +275,12 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         }
 
         TextView txtSalePrice = rowHolder.getTxtSalePrice();
+
+        final TextView txtInBasket = rowHolder.getTxtInBasket();
+        final View imgDecBasketQty = rowHolder.getViewDecBasketQty();
+        final View imgIncBasketQty = rowHolder.getViewIncBasketQty();
+        final ImageView imgRemove = rowHolder.getImgRemove();
+
         if (cartItem.getTotalPrice() > 0) {
             String prefix = "`";
             String salePriceStr = UIUtil.formatAsMoney(cartItem.getTotalPrice());
@@ -282,8 +292,25 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
             txtSalePrice.setVisibility(View.VISIBLE);
         } else {
             txtSalePrice.setText("Free!");
+            txtInBasket.setVisibility(View.INVISIBLE);
+            imgIncBasketQty.setVisibility(View.INVISIBLE);
+            imgDecBasketQty.setVisibility(View.INVISIBLE);
+            imgRemove.setVisibility(View.INVISIBLE);
+            /**
+             * setting quantity of free item
+             * check if it is order display and not basket page
+             */
+            if (orderItemDisplaySource == OrderItemDisplaySource.ORDER_DISPLAY) {
+            if (cartItem.getTotalQty() > 0) {
+                txtInBasket.setVisibility(View.VISIBLE);
+                txtInBasket.setText(getDisplayTotalQty(cartItem.getTotalQty()));
+            } else {
+                txtInBasket.setVisibility(View.GONE);
+            }
+        }
         }
 
+        /*
         TextView txtGiftMsg = rowHolder.getTxtGiftMsg();
         if (TextUtils.isEmpty(cartItem.getGiftMsg())) {
             txtGiftMsg.setVisibility(View.GONE);
@@ -307,10 +334,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         }
         */
 
-        final TextView txtInBasket = rowHolder.getTxtInBasket();
-        final View imgDecBasketQty = rowHolder.getViewDecBasketQty();
-        final View imgIncBasketQty = rowHolder.getViewIncBasketQty();
-        final ImageView imgRemove = rowHolder.getImgRemove();
+
         TextView txtPackDesc = rowHolder.getTxtPackDesc();
         String packType = "";
         if (!TextUtils.isEmpty(cartItem.getProductWeight()))
@@ -339,7 +363,8 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
             }
         }
         if (imgDecBasketQty != null && imgIncBasketQty != null && imgRemove != null) {
-            if (orderItemDisplaySource == OrderItemDisplaySource.BASKET && !isReadOnlyBasket && cartItem.getTotalPrice() > 0) {
+            if (orderItemDisplaySource == OrderItemDisplaySource.BASKET && !isReadOnlyBasket && cartItem.getTotalPrice() > 0)
+            {
                 txtInBasket.setVisibility(View.VISIBLE);
                 imgIncBasketQty.setVisibility(View.VISIBLE);
                 imgDecBasketQty.setVisibility(View.VISIBLE);
@@ -352,6 +377,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                 } else {
                     txtInBasket.setVisibility(View.GONE);
                 }
+
 
                 imgDecBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -447,13 +473,32 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                         }
                     }
                 });
-            } else {
-                txtInBasket.setVisibility(View.GONE);
-                imgIncBasketQty.setVisibility(View.GONE);
-                imgDecBasketQty.setVisibility(View.GONE);
-                imgRemove.setVisibility(View.INVISIBLE);
             }
+            /**
+             * checking the order display source  and the based on it the txtInBasket  quantity is assigned
+             * views are made invisible and not gone as the have relation in xml
+             */
+            else if (orderItemDisplaySource == OrderItemDisplaySource.ORDER_DISPLAY && isReadOnlyBasket && cartItem.getTotalPrice() > 0) {
+                txtInBasket.setVisibility(View.VISIBLE);
+                imgIncBasketQty.setVisibility(View.INVISIBLE);
+                imgDecBasketQty.setVisibility(View.INVISIBLE);
+                imgRemove.setVisibility(View.INVISIBLE);
+
+                if (cartItem.getTotalQty() > 0) {
+                    txtInBasket.setVisibility(View.VISIBLE);
+                    txtInBasket.setText(getDisplayTotalQty(cartItem.getTotalQty()));
+                } else {
+                    txtInBasket.setVisibility(View.GONE);
+                }
+
+            }
+        }else {
+            txtInBasket.setVisibility(View.GONE);
+            imgIncBasketQty.setVisibility(View.GONE);
+            imgDecBasketQty.setVisibility(View.GONE);
+            imgRemove.setVisibility(View.INVISIBLE);
         }
+
     }
 
     private void getRegularPriceAndNoPromoView(RowHolder rowHolder) {
@@ -590,6 +635,23 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         }
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
+        }
+    }
+
+    /**
+     * getting the quantity of a particular commodity
+     *
+     * @param quantity: the quantity of the product ordered
+     * @return the string value of the quantity along with text "Quantity:" prefixed
+     */
+    private String getDisplayTotalQty(double quantity) {
+        if (quantity % 1 == 0) {
+            return quantityText + String.valueOf((int) quantity);
+        } else {
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.FLOOR);
+            double result = Double.valueOf(df.format(quantity));
+            return quantityText + String.valueOf(result);
         }
     }
 

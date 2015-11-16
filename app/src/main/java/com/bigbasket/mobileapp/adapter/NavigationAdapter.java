@@ -127,7 +127,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
              * checking for the selected category and sub category and
              * then highlighting the row accordingly
              */
-            if (getSelectionComparisionStatus(getSelectedSubCategoryString(), sectionItem)||   getSelectionComparisionStatus(getSelectedCategoryString(), sectionItem)){
+            if (getSelectionComparisionStatus(getSelectedSubCategoryString(), sectionItem) ||  getSelectionComparisionStatus(getSelectedCategoryString(), sectionItem)){
                 relativeLayoutRow.setPressed(true);
             }
             else{

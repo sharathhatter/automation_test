@@ -121,6 +121,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         call.enqueue(new BBNetworkCallback<ApiResponse<GetPaymentTypes>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<GetPaymentTypes> getPaymentTypesApiResponse) {
+
                 switch (getPaymentTypesApiResponse.status) {
                     case 0:
                         renderFundWallet(getPaymentTypesApiResponse.apiResponseContent.paymentTypes);
@@ -164,7 +165,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             final PaymentType paymentType = paymentTypes.get(i);
             RadioButton rbtnPaymentType = UIUtil.
                     getPaymentOptionRadioButton(layoutPaymentOptions, this, inflater);
-            rbtnPaymentType.setText(paymentType.getDisplayName());
+            rbtnPaymentType.setText(UIUtil.getPaymentOptionRadioButtonText(this, paymentType), TextView.BufferType.SPANNABLE);
             rbtnPaymentType.setId(i);
             if (i == 0) {
                 mSelectedPaymentMethod = paymentType.getValue();
