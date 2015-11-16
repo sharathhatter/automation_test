@@ -272,6 +272,7 @@ public class Constants {
     public static final String IS_EXPRESS = "is_express";
     public static final String IS_SELECTED = "is_selected";
     public static final String IS_LINK = "is_link";
+    public static final String OFFER_MSG = "offer_msg";
 
     public static final String SLOT_ID = "slot_id";
     public static final String SLOT_DATE = "slot_date";
