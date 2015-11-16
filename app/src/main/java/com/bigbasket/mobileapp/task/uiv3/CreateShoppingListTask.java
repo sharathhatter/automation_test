@@ -37,7 +37,7 @@ public class CreateShoppingListTask<T extends AppOperationAware> {
                             ctx.getCurrentActivity().
                                     getResources().getString(R.string.error), ctx.getCurrentActivity().
                                     getResources().getString(R.string.shoppingListNameAlphaNumeric),
-                            Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST, null);
+                            Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST_DIALOG, null);
                 }
             }
         }.show();

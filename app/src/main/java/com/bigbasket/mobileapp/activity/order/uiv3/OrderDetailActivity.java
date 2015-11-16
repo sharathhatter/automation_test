@@ -27,7 +27,7 @@ public class OrderDetailActivity extends TabActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Order Details");
+        setTitle(R.string.order_details);
     }
 
     @Override

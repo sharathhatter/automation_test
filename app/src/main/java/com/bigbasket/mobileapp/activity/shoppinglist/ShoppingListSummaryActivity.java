@@ -321,9 +321,11 @@ public class ShoppingListSummaryActivity extends SearchActivity {
                     msg += numTabs > 1 ? " from " + shoppingListSummary.getFacetName()
                             + " " + getString(R.string.toBasket) : "?";
                     msg += "\n" + getString(R.string.outOfStockExcluded);
+                    Bundle data = new Bundle(1);
+                    data.putParcelable(SHOPPING_LIST, shoppingListSummary);
                     showAlertDialog(null, msg,
-                            DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
-                            shoppingListSummary,
+                            DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL_DIALOG_REQUEST,
+                            data,
                             getString(R.string.yesTxt));
                 }
             }
@@ -384,15 +386,15 @@ public class ShoppingListSummaryActivity extends SearchActivity {
 
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (!TextUtils.isEmpty(sourceName) && sourceName.equalsIgnoreCase(Constants.ADD_ALL)) {
+    protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        if (sourceName == Constants.ADD_ALL_DIALOG_REQUEST) {
             if (!checkInternetConnection()) {
                 handler.sendOfflineError();
                 return;
             }
-            addAllItemsToBasket((ShoppingListSummary) valuePassed);
+            addAllItemsToBasket((ShoppingListSummary) valuePassed.getParcelable(SHOPPING_LIST));
         } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+            super.onPositiveButtonClicked(sourceName, valuePassed);
         }
     }
 

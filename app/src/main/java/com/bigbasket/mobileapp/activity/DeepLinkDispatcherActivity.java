@@ -51,7 +51,9 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         int resultCode = DeepLinkHandler.handleDeepLink(this, uri);
         if (resultCode == DeepLinkHandler.LOGIN_REQUIRED) {
             showToast(getString(R.string.login_required));
-            launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, uri);
+            Bundle data = new Bundle(1);
+            data.putString(Constants.DEEPLINK_URL, uri.toString());
+            launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, data);
         } else if (resultCode == DeepLinkHandler.FAILED) {
             showDefaultError();
         }

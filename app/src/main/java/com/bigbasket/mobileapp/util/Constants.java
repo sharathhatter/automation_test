@@ -232,7 +232,6 @@ public class Constants {
     public static final String PAYUMONEY_WALLET = "payumoney_wallet";
     public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
     public static final String PAYTM_HASH_GENERATION_URL = "GURL";
-    public static final String SOURCE_PLACE_ORDER = "placeOrder";
     public static final String WALLET_USED = "wallet_used";
     public static final String AMT_PAYABLE = "amount_payable";
     public static final String WALLET_REMAINING = "wallet_remaining";
@@ -320,11 +319,9 @@ public class Constants {
     public static final String FLAT_PAGE = "flat_page";
     public static final String EVOUCHER_CODE = "evoucher_code";
     public static final String NEW_FLOW_URL = "new_flow_url";
-    public static final String REMOVE_VOUCHER = "remove_voucher";
 
     public static final String ORDER = "order";
     public static final String WALLET = "wallet";
-    public static final String EMPTY_BASKET = "emptyBasket";
 
     public static final String SKU_ID = "sku_id";
     public static final String APP_EXPIRED_DIALOG_FLAG = "app_expired";
@@ -367,7 +364,6 @@ public class Constants {
     public static final String SHOPPING_LIST_SUMMARY = "shoplist_summary";
     public static final String SL_NAME = "name";
     public static final String IS_PUBLIC = "is_public";
-    public static final String ADD_ALL = "add_all";
 
     //otp
     //public static final String IMAGE_URLS = "image_urls/";
@@ -589,7 +585,7 @@ public class Constants {
     public static final String DEFAULT_ACTIONS = "default_actions";
     public static final String ON_TOGGLE_ACTIONS = "on_action_trigger";
 
-    public static final String NOT_ALPHANUMERIC_TXT_SHOPPING_LIST = "aplhaNumericTxt";
+    public static final int NOT_ALPHANUMERIC_TXT_SHOPPING_LIST_DIALOG = 868686;
 
     public static final String FORGOT_PASSWORD_DIALOG = "FPassDialog";
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
@@ -659,5 +655,20 @@ public class Constants {
     public static final String STORE_NAME = "store_name";
     public static final String STORE_LOGO = "store_logo";
     public static final String STORE_DESC = "store_description";
+
+    //Bundle params
+    public static final String DEEPLINK_URL = "deep_link_url";
+    public static final String FINISH_ACTIVITY = "__bb_finish_activity__"; //special boolean dialog argument
+    public static final String ACTIVITY_RESULT_CODE = "__bb_activity_result_code__";
+
+    public static final int UPDATE_ADDRESS_DIALOG_REQUEST = 8000;
+    public static final int ADD_ALL_DIALOG_REQUEST = 8001;
+    public static final int SOURCE_PLACE_ORDER_DIALOG_REQUEST = 8002;
+    public static final int REMOVE_VOUCHER_DIALOG_REQUEST = 8003;
+    public static final int EMPTY_BASKET_DIALOG_QUEST = 8004;
+    public static final int LOCATION_DIALOG_REQUEST = 8005;
+
+
+
 
 }

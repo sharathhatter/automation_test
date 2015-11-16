@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class PayuPayment {
 
-    public void startPaymentGateway(HashMap<String, String> paymentParamsInput,
+    public static void startPaymentGateway(HashMap<String, String> paymentParamsInput,
                                     Activity ctx) {
 
         // Copying into another hash-map
@@ -102,7 +102,7 @@ public class PayuPayment {
         ctx.startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
     }
 
-    private String getUnderscoreFieldNameAsCamelCase(String fieldName) {
+    private static String getUnderscoreFieldNameAsCamelCase(String fieldName) {
         String[] splits = fieldName.split("_");
         if (splits.length == 1) return splits[0];
         StringBuilder builder = new StringBuilder(splits[0]);
