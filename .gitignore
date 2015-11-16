@@ -39,3 +39,4 @@ payuSdkUi/src/main/.settings/*
 payuSdkUi/src/main/gen/*
 payuSdk/build/*
 payuSdk/src/main/gen/*
+infer-out/*

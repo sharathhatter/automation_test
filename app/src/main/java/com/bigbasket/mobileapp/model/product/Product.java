@@ -150,10 +150,12 @@ public class Product extends BaseProduct {
         for (Product product : productList) {
             if (product != null) {
                 if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0) {
-                    for (HashMap<String, String> availabilityMap : product.getStoreAvailability())
-                        if (availabilityMap.get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A")) {
+                    for (HashMap<String, String> availabilityMap : product.getStoreAvailability()) {
+                        if (availabilityMap.get(Constants.PRODUCT_STATUS) != null &&
+                                availabilityMap.get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A")) {
                             return false;
                         }
+                    }
                 } else if (!TextUtils.isEmpty(product.getProductStatus())
                         && product.getProductStatus().equals("A")) {
                     return false;

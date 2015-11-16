@@ -53,7 +53,7 @@ public class ShowCartFragment extends BaseFragment {
                                     ArrayList<FulfillmentInfo> fulfillmentInfos,
                                     ArrayList<AnnotationInfo> annotationInfoArrayList,
                                     int currentTabIndex) {
-        if (getContentView() == null) return;
+        if (getContentView() == null || getCurrentActivity() == null) return;
 
         List<Object> cartItemHeaderList = new ArrayList<>();
         for (CartItemList cartItemInfoArray : cartItemLists) {

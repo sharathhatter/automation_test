@@ -6,6 +6,11 @@
     -->
     <!-- Application theme. -->
 
+    <style name="BaseAppTheme.DialogTheme.Input" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorControlNormal">@color/secondary_text_default_material_light</item>
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+    </style>
+
     <style name="BaseAppTheme.SearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="searchIcon">@null</item>
         <item name="closeIcon">@drawable/ic_close_grey600_24dp</item>
@@ -77,10 +82,6 @@
     <style name="BBNavDrawerTheme" parent="BaseAppTheme" />
 
     <style name="BBNavDrawerTheme.SpinnerDatePickerTheme" parent="BaseAppTheme" />
-
-    <style name="FilterTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorAccent">@color/uiv3_action_bar_background</item>
-    </style>
 
     <style name="BaseAppTheme.SearchViewTheme" parent="BBNavDrawerTheme" />
 
@@ -296,7 +297,7 @@
     </style>
 
     <style name="LoginScreenTheme" parent="BaseAppTheme">
+        <item name="colorPrimaryDark">@color/primary_dark_material_light</item>
         <item name="colorAccent">@color/white</item>
     </style>
-
 </resources>

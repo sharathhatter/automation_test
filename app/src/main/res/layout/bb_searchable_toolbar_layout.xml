@@ -48,7 +48,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_toLeftOf="@id/imgVoice"
-                android:contentDescription="@string/voice"
+                android:contentDescription="@string/scan"
                 android:src="@drawable/barcode" />
 
             <ImageView

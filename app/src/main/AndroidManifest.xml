@@ -415,7 +415,7 @@
         <activity
             android:name=".activity.account.uiv3.SignupActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BackButtonTheme"
+            android:theme="@style/LoginScreenTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.ShipmentSelectionActivity"
