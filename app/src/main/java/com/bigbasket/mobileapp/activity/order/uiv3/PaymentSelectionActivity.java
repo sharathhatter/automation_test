@@ -84,6 +84,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mAddMoreLink;
     private String mAddMoreMsg;
     private MutableLong mElapsedTime;
+    private boolean mIsPaymentPending;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,6 +120,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (mPotentialOrderId != null) {
             outState.putString(Constants.P_ORDER_ID, mPotentialOrderId);
         }
+        outState.putBoolean(Constants.PAYMENT_STATUS, mIsPaymentPending);
         super.onSaveInstanceState(outState);
     }
 
@@ -137,6 +139,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (mPotentialOrderId == null) {
             mPotentialOrderId = savedInstanceState.getString(Constants.P_ORDER_ID);
         }
+        mIsPaymentPending = savedInstanceState.getBoolean(Constants.PAYMENT_STATUS, false);
     }
 
     private void setUpNewCheckoutFlowMsg() {
@@ -187,6 +190,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
     public void onResume() {
         super.onResume();
         processMobikWikResponse();
+        if (mIsPaymentPending && !TextUtils.isEmpty(mSelectedPaymentMethod)) {
+            openPaymentGateway();
+        }
     }
 
     private void processMobikWikResponse() {
@@ -647,6 +653,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void openPaymentGateway() {
+        mIsPaymentPending = true;
         final View paymentInProgressView = findViewById(R.id.layoutPaymentInProgress);
         paymentInProgressView.setVisibility(View.VISIBLE);
 
@@ -676,6 +683,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void getPaymentParams() {
+        if (isSuspended()) return;
+        mIsPaymentPending = false;
         new PaymentHandler<>(this, mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
                 mSelectedPaymentMethod, false, false).initiate();
     }

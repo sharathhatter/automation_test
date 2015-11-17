@@ -368,7 +368,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                         getString(R.string.newAddressNotAllowed),
                         DialogButton.OK, DialogButton.CANCEL,
                         Constants.UPDATE_ADDRESS,
-                        payload, getString(R.string.createNewAddress));
+                        payload, getString(R.string.lblContinue));
             } else {
                 uploadAddress(payload, true);
             }
@@ -426,7 +426,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (mAddress == null) {
             mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         }
-        return mAddress == null ? "Add Address" : "Update Address";
+        return mAddress == null ? getString(R.string.addAddress) : getString(R.string.updateAddress);
     }
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {

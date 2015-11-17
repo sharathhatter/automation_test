@@ -87,15 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-
-//    @Override
-//    public void onOpen(SQLiteDatabase db) {
-//        createTable(db);
-//    }
-
     private void createTable(SQLiteDatabase db) {
-
-        System.out.println();
         db.execSQL(CategoryAdapter.createTable);
         db.execSQL(SubCategoryAdapter.createTable);
         db.execSQL(AreaPinInfoAdapter.createTable);
