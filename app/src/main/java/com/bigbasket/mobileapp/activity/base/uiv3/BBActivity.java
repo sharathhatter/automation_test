@@ -303,10 +303,12 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
-                if (mNavRecyclerView.getAdapter() != null)
+                if (mNavRecyclerView.getAdapter() != null) {
                     mNavRecyclerView.getAdapter().notifyDataSetChanged();
+                }
                 if (mListSubNavigation.getAdapter() != null)
                     mListSubNavigation.getAdapter().notifyDataSetChanged();
+
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -1152,4 +1154,5 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     public void closeDrawer() {
         mDrawerLayout.closeDrawers();
     }
+
 }
