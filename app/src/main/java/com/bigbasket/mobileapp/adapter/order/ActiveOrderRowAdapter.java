@@ -71,6 +71,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
     private String navigationCtx;
     private T context;
     private int currentTabIndex;
+    private String quantityText;
 
     public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
                                  Typeface faceRobotoRegular, @OrderItemDisplaySource.Type int orderItemDisplaySource,
@@ -91,6 +92,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         this.navigationCtx = navigationCtx;
         this.currentTabIndex = currentTabIndex;
         this.inflater = (LayoutInflater) context.getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.quantityText = context.getCurrentActivity().getResources().getString(R.string.quantity);
     }
 
     @Override
@@ -644,12 +646,12 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
      */
     private String getDisplayTotalQty(double quantity) {
         if (quantity % 1 == 0) {
-            return context.getCurrentActivity().getResources().getString(R.string.quantity) + String.valueOf((int) quantity);
+            return quantityText + String.valueOf((int) quantity);
         } else {
             DecimalFormat df = new DecimalFormat("#.##");
             df.setRoundingMode(RoundingMode.FLOOR);
             double result = Double.valueOf(df.format(quantity));
-            return context.getCurrentActivity().getResources().getString(R.string.quantity) + String.valueOf(result);
+            return quantityText + String.valueOf(result);
         }
     }
 
