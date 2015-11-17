@@ -105,4 +105,9 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
     public void onDynamicScreenFailure(int error, String msg) {
         handler.sendEmptyMessage(error, msg, true);
     }
+
+    @Override
+    public void onDynamicScreenHttpFailure(int error, String msg) {
+        handler.handleHttpError(error, msg, true);
+    }
 }

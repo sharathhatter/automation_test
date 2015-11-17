@@ -430,6 +430,11 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     @Override
+    public void onDynamicScreenHttpFailure(int error, String msg) {
+        displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
+    }
+
+    @Override
     public BigBasketMessageHandler getHandler() {
         return handler;
     }
