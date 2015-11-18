@@ -749,7 +749,7 @@ public class UIUtil {
     public static SpannableStringBuilder getPaymentOptionRadioButtonText(Context context,PaymentType paymentType){
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
         stringBuilder.append(paymentType.getDisplayName());
-        if (TextUtils.isEmpty(paymentType.getOfferMsg())) {
+        if (!TextUtils.isEmpty(paymentType.getOfferMsg())) {
             stringBuilder.append("\n  "+paymentType.getOfferMsg());
             stringBuilder.setSpan(new RoundedBackgroundSpan(context), paymentType.getDisplayName().length() + 1, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
