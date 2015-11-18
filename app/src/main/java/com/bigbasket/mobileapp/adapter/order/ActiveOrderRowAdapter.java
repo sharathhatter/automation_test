@@ -301,16 +301,15 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
              * check if it is order display and not basket page
              */
             if (orderItemDisplaySource == OrderItemDisplaySource.ORDER_DISPLAY) {
-            if (cartItem.getTotalQty() > 0) {
-                txtInBasket.setVisibility(View.VISIBLE);
-                txtInBasket.setText(getDisplayTotalQty(cartItem.getTotalQty()));
-            } else {
-                txtInBasket.setVisibility(View.GONE);
+                if (cartItem.getTotalQty() > 0) {
+                    txtInBasket.setVisibility(View.VISIBLE);
+                    txtInBasket.setText(getDisplayTotalQty(cartItem.getTotalQty()));
+                } else {
+                    txtInBasket.setVisibility(View.GONE);
+                }
             }
         }
-        }
 
-        /*
         TextView txtGiftMsg = rowHolder.getTxtGiftMsg();
         if (TextUtils.isEmpty(cartItem.getGiftMsg())) {
             txtGiftMsg.setVisibility(View.GONE);
@@ -363,8 +362,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
             }
         }
         if (imgDecBasketQty != null && imgIncBasketQty != null && imgRemove != null) {
-            if (orderItemDisplaySource == OrderItemDisplaySource.BASKET && !isReadOnlyBasket && cartItem.getTotalPrice() > 0)
-            {
+            if (orderItemDisplaySource == OrderItemDisplaySource.BASKET && !isReadOnlyBasket && cartItem.getTotalPrice() > 0) {
                 txtInBasket.setVisibility(View.VISIBLE);
                 imgIncBasketQty.setVisibility(View.VISIBLE);
                 imgDecBasketQty.setVisibility(View.VISIBLE);
@@ -492,11 +490,8 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                 }
 
             }
-        }else {
+        } else {
             txtInBasket.setVisibility(View.GONE);
-            imgIncBasketQty.setVisibility(View.GONE);
-            imgDecBasketQty.setVisibility(View.GONE);
-            imgRemove.setVisibility(View.INVISIBLE);
         }
 
     }

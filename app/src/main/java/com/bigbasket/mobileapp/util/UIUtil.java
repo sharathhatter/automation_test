@@ -62,7 +62,6 @@ import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.PaymentType;
@@ -746,11 +745,11 @@ public class UIUtil {
         return radioButton;
     }
 
-    public static SpannableStringBuilder getPaymentOptionRadioButtonText(Context context,PaymentType paymentType){
+    public static SpannableStringBuilder getPaymentOptionRadioButtonText(Context context, PaymentType paymentType) {
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
         stringBuilder.append(paymentType.getDisplayName());
         if (!TextUtils.isEmpty(paymentType.getOfferMsg())) {
-            stringBuilder.append("\n  "+paymentType.getOfferMsg());
+            stringBuilder.append("\n  " + paymentType.getOfferMsg());
             stringBuilder.setSpan(new RoundedBackgroundSpan(context), paymentType.getDisplayName().length() + 1, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 

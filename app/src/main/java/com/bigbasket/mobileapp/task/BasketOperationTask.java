@@ -23,9 +23,9 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -211,10 +211,10 @@ public class BasketOperationTask<T extends AppOperationAware> {
         Call<CartOperationApiResponse> call = null;
         HashMap<String, String> urlEncodedBasketQueryMap = BBUrlEncodeUtils.urlEncode(basketQueryMap.get());
         String searchTerm = null;
-        if(navigationCtx != null && (navigationCtx.startsWith("pl.ps"))){
+        if (navigationCtx != null && (navigationCtx.startsWith("pl.ps"))) {
             navigationCtx = "pl.ps";
             String[] searchTermArray = navigationCtx.split("\\.");
-            if(searchTermArray.length == 3){
+            if (searchTermArray.length == 3) {
                 searchTerm = searchTermArray[2];
             }
         }

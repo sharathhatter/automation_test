@@ -941,6 +941,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onDynamicScreenHttpFailure(int error, String msg) {
+        // Let the activity implement it
+    }
+
+    @Override
     public void onDynamicScreenFailure(Throwable t) {
         // Let the activity implement it
     }

@@ -70,31 +70,31 @@ public class SpecialityStore implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         boolean isStoreImgNull = storeImg == null;
         dest.writeByte(isStoreImgNull ? (byte) 0 : (byte) 1);
-        if(!isStoreImgNull) {
+        if (!isStoreImgNull) {
             dest.writeString(storeImg);
         }
 
         boolean isStoreNameNull = storeImg == null;
         dest.writeByte(isStoreNameNull ? (byte) 0 : (byte) 1);
-        if(!isStoreNameNull) {
+        if (!isStoreNameNull) {
             dest.writeString(storeName);
         }
 
         boolean isStoreLocationNull = storeLocation == null;
         dest.writeByte(isStoreLocationNull ? (byte) 0 : (byte) 1);
-        if(!isStoreLocationNull) {
+        if (!isStoreLocationNull) {
             dest.writeString(storeLocation);
         }
 
         boolean isStoreDeliveryTimeNull = storeDeliveryTime == null;
         dest.writeByte(isStoreDeliveryTimeNull ? (byte) 0 : (byte) 1);
-        if(!isStoreDeliveryTimeNull){
+        if (!isStoreDeliveryTimeNull) {
             dest.writeString(storeDeliveryTime);
         }
 
-        boolean isStoreTimingsNull = storeTimings ==  null;
+        boolean isStoreTimingsNull = storeTimings == null;
         dest.writeByte(isStoreTimingsNull ? (byte) 0 : (byte) 1);
-        if(!isStoreTimingsNull){
+        if (!isStoreTimingsNull) {
             dest.writeString(storeTimings);
         }
     }

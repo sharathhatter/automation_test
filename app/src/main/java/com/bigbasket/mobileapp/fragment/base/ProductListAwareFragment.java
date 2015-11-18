@@ -34,11 +34,11 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.google.gson.Gson;
 

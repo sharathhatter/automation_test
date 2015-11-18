@@ -38,6 +38,7 @@ public abstract class BBNetworkCallback<K> implements Callback<K> {
     public void onFailure(Throwable t) {
         if (ctxWeakReference == null || ctxWeakReference.get() == null) return;
         if ((ctxWeakReference.get()).isSuspended()) return;
+        if (!updateProgress()) return;
         (ctxWeakReference.get()).getHandler().handleRetrofitError(t, finishOnFailure);
     }
 

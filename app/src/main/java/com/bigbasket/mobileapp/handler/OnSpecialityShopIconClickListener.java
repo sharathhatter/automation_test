@@ -10,7 +10,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoMo
 import com.bigbasket.mobileapp.fragment.StoreDetailsDialogFragment;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.crashlytics.android.Crashlytics;
-import com.localytics.android.Localytics;
 
 import java.util.HashMap;
 
