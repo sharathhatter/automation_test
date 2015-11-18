@@ -45,7 +45,6 @@ public class DeepLinkHandler {
         if (uri == null) {
             return FAILED;
         }
-
         AuthParameters authParameters = AuthParameters.getInstance(context.getCurrentActivity());
         if (getLoginRequiredUrls().contains(uri.getHost()) && authParameters.isAuthTokenEmpty()) {
             return LOGIN_REQUIRED;

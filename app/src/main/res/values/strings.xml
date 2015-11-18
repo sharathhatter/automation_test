@@ -281,6 +281,7 @@
     <string name="connectUsing">You can connect using</string>
     <string name="tutorial">Tutorial</string>
     <string name="promotions">Promotions</string>
+    <string name="quantity">Quantity:&#160;</string>
 
     <!-- myaccount -->
     <string name="phone">Phone</string>
