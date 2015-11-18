@@ -10,8 +10,8 @@ import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResp
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
+import com.bigbasket.mobileapp.util.Constants;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -10,8 +10,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -39,7 +37,7 @@ public class SpecialityStorePreference {
 
     @Nullable
     public static HashMap<String, SpecialityStoresInfoModel> getSpecialityStoreDetailList(Context context) {
-        String storeInfoJson =  getSpecialityStorePreferences(context.getApplicationContext()).getString(Constants.SPECIALITY_STORES_INFO, null);
+        String storeInfoJson = getSpecialityStorePreferences(context.getApplicationContext()).getString(Constants.SPECIALITY_STORES_INFO, null);
         if (storeInfoJson != null) {
             Type collectionType = new TypeToken<HashMap<String, SpecialityStoresInfoModel>>() {
             }.getType();

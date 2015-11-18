@@ -107,7 +107,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         switch (viewType) {
             case VIEW_TYPE_DATA:
                 View row = inflater.inflate(R.layout.uiv3_product_row, viewGroup, false);
-                return new ProductViewHolder(row, mSpecialityShopClickListener, mPromoClickListener, productDetailOnClickListener,null);
+                return new ProductViewHolder(row, mSpecialityShopClickListener, mPromoClickListener, productDetailOnClickListener, null);
             case VIEW_TYPE_LOADING:
                 row = inflater.inflate(R.layout.uiv3_list_loading_footer, viewGroup, false);
                 return new FixedLayoutViewHolder(row);

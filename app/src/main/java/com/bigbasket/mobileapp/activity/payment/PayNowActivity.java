@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,11 +32,9 @@ import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.RoundedBackgroundSpan;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
-import com.google.gson.Gson;
 import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
@@ -264,7 +260,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
             final PaymentType paymentType = paymentTypes.get(i);
             RadioButton rbtnPaymentType = UIUtil.
                     getPaymentOptionRadioButton(layoutPaymentOptions, this, inflater);
-            rbtnPaymentType.setText(UIUtil.getPaymentOptionRadioButtonText(this,paymentType), TextView.BufferType.SPANNABLE);
+            rbtnPaymentType.setText(UIUtil.getPaymentOptionRadioButtonText(this, paymentType), TextView.BufferType.SPANNABLE);
             rbtnPaymentType.setId(i);
             if (i == 0) {
                 mSelectedPaymentMethod = paymentType.getValue();

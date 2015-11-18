@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -55,7 +53,6 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MutableLong;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.RoundedBackgroundSpan;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -84,7 +81,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mAddMoreLink;
     private String mAddMoreMsg;
     private MutableLong mElapsedTime;
-    private boolean mIsPaymentPending;
+    private boolean mIsPaymentWarningDisplayed;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,6 +101,18 @@ public class PaymentSelectionActivity extends BackButtonActivity
         renderFooter(false);
         trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
         MoEngageWrapper.suppressInAppMessageHere(moEHelper);
+        if (savedInstanceState != null) {
+            if (mOrdersCreated == null) {
+                mOrdersCreated = savedInstanceState.getParcelableArrayList(Constants.ORDERS);
+            }
+            if (mTxnId == null) {
+                mTxnId = savedInstanceState.getString(Constants.TXN_ID);
+            }
+            if (mSelectedPaymentMethod == null) {
+                mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
+            }
+            mIsPaymentWarningDisplayed = savedInstanceState.getBoolean(Constants.PAYMENT_STATUS, false);
+        }
     }
 
     @Override
@@ -117,29 +126,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (mSelectedPaymentMethod != null) {
             outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
         }
-        if (mPotentialOrderId != null) {
-            outState.putString(Constants.P_ORDER_ID, mPotentialOrderId);
-        }
-        outState.putBoolean(Constants.PAYMENT_STATUS, mIsPaymentPending);
+        outState.putBoolean(Constants.PAYMENT_STATUS, mIsPaymentWarningDisplayed);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (mOrdersCreated == null) {
-            mOrdersCreated = savedInstanceState.getParcelableArrayList(Constants.ORDERS);
-        }
-        if (mTxnId == null) {
-            mTxnId = savedInstanceState.getString(Constants.TXN_ID);
-        }
-        if (mSelectedPaymentMethod == null) {
-            mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
-        }
-        if (mPotentialOrderId == null) {
-            mPotentialOrderId = savedInstanceState.getString(Constants.P_ORDER_ID);
-        }
-        mIsPaymentPending = savedInstanceState.getBoolean(Constants.PAYMENT_STATUS, false);
     }
 
     private void setUpNewCheckoutFlowMsg() {
@@ -190,9 +178,14 @@ public class PaymentSelectionActivity extends BackButtonActivity
     public void onResume() {
         super.onResume();
         processMobikWikResponse();
-        if (mIsPaymentPending && !TextUtils.isEmpty(mSelectedPaymentMethod)) {
+        if (isPaymentPending()) {
             openPaymentGateway();
         }
+    }
+
+    private boolean isPaymentPending() {
+        return mIsPaymentWarningDisplayed && !TextUtils.isEmpty(mSelectedPaymentMethod)
+                && mOrdersCreated != null;
     }
 
     private void processMobikWikResponse() {
@@ -361,7 +354,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 }
                 RadioButton rbtnPaymentType = UIUtil.
                         getPaymentOptionRadioButton(layoutPaymentOptions, this, inflater);
-                rbtnPaymentType.setText(UIUtil.getPaymentOptionRadioButtonText(this,paymentType), TextView.BufferType.SPANNABLE);
+                rbtnPaymentType.setText(UIUtil.getPaymentOptionRadioButtonText(this, paymentType), TextView.BufferType.SPANNABLE);
                 rbtnPaymentType.setId(i);
                 boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? paymentType.isSelected() :
                         mSelectedPaymentMethod.equals(paymentType.getValue());
@@ -653,7 +646,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void openPaymentGateway() {
-        mIsPaymentPending = true;
+        mIsPaymentWarningDisplayed = true;
         final View paymentInProgressView = findViewById(R.id.layoutPaymentInProgress);
         paymentInProgressView.setVisibility(View.VISIBLE);
 
@@ -684,7 +677,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     private void getPaymentParams() {
         if (isSuspended()) return;
-        mIsPaymentPending = false;
+        mIsPaymentWarningDisplayed = false;
         new PaymentHandler<>(this, mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
                 mSelectedPaymentMethod, false, false).initiate();
     }
