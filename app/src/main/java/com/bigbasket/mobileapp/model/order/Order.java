@@ -49,6 +49,10 @@ public class Order implements Parcelable {
     private Address address;
     @SerializedName(Constants.CAN_PAY)
     private boolean canPay;
+    @SerializedName(Constants.VARIABLE_WEIGHT_MSG)
+    public String variableWeightMsg;
+    @SerializedName(Constants.VARIABLE_WEIGHT_LINK)
+    public String variableWeightLink;
 
 
     public Order(Parcel parcel) {
@@ -71,6 +75,14 @@ public class Order implements Parcelable {
             address = parcel.readParcelable(Order.class.getClassLoader());
         }
         this.canPay = parcel.readByte() == (byte) 1;
+        boolean _wasVariableWeightMsgNull = parcel.readByte() == (byte) 0;
+        if(!_wasVariableWeightMsgNull){
+            variableWeightMsg = parcel.readString();
+        }
+        boolean _wasVariableWeightLinkNull = parcel.readByte() == (byte) 0;
+        if(!_wasVariableWeightLinkNull){
+            variableWeightLink = parcel.readString();
+        }
     }
 
     @Override
@@ -96,6 +108,16 @@ public class Order implements Parcelable {
             dest.writeParcelable(address, flags);
         }
         dest.writeByte(canPay ? (byte) 1 : (byte) 0);
+        boolean _wasVariableWeightMsgNull = variableWeightMsg == null;
+        dest.writeByte(_wasVariableWeightMsgNull ? (byte) 0 : (byte) 1);
+        if (!_wasVariableWeightMsgNull) {
+            dest.writeString(variableWeightMsg);
+        }
+        boolean _wasVariableWeightLinkNull = variableWeightLink == null;
+        dest.writeByte(_wasVariableWeightLinkNull ? (byte) 0 : (byte) 1);
+        if (!_wasVariableWeightLinkNull) {
+            dest.writeString(variableWeightLink);
+        }
     }
 
     @Override
@@ -157,5 +179,13 @@ public class Order implements Parcelable {
 
     public boolean canPay() {
         return canPay;
+    }
+
+    public String getVariableWeightMsg() {
+        return variableWeightMsg;
+    }
+
+    public String getVariableWeightLink() {
+        return variableWeightLink;
     }
 }

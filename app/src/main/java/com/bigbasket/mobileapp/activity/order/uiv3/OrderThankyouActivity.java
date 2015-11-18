@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,8 +51,6 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         ArrayList<Order> orderArrayList = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
         String addMoreLink = getIntent().getStringExtra(Constants.ADD_MORE_LINK);
         String addMoreMsg = getIntent().getStringExtra(Constants.ADD_MORE_MSG);
-        //String variableWeightMsg = getIntent().getStringExtra(Constants.VARIABLE_WEIGHT_MSG);
-        //String variableWeightLink = getIntent().getStringExtra(Constants.VARIABLE_WEIGHT_LINK);
         showOrderList(orderArrayList);
         showAddMoreText(addMoreLink, addMoreMsg);
 
@@ -131,6 +131,31 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
             });
 
             TextView txtVariableWeightMsg = (TextView) base.findViewById(R.id.txtVariableWeightMsg);
+            if(!TextUtils.isEmpty(order.getVariableWeightMsg()) &&
+                    !TextUtils.isEmpty(order.getVariableWeightLink())){
+                txtVariableWeightMsg.setVisibility(View.VISIBLE);
+                SpannableString spannableString = new SpannableString(order.getVariableWeightMsg() + " "+
+                                        getString(R.string.know_more));
+                spannableString.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(View view) {
+                        trackEvent(TrackingAware.CHECKOUT_KNOW_MORE_LINK_CLICKED, null);
+                        Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
+                        intent.putExtra(Constants.WEBVIEW_URL, order.getVariableWeightLink());
+                        intent.putExtra(Constants.WEBVIEW_TITLE, (order.getVariableWeightMsg()));
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    }
+                }, order.getVariableWeightMsg().length() + 1 , order.getVariableWeightMsg().length() + 1 +
+                                getString(R.string.know_more).length() ,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                txtVariableWeightMsg.setMovementMethod(LinkMovementMethod.getInstance());
+                txtVariableWeightMsg.setText(spannableString);
+
+            }else {
+                txtVariableWeightMsg.setVisibility(View.GONE);
+            }
+
 
 
             TextView txtSlotTime = (TextView) base.findViewById(R.id.txtSlotTime);

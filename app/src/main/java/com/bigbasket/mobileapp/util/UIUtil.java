@@ -300,6 +300,7 @@ public class UIUtil {
                 LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, userDetails.analytics.dateOfBirth);
             }
 
+            /*
             if (userDetails.analytics.additionalAttrs != null) {
                 for (Map.Entry<String, Object> additionalInfoObj : userDetails.analytics.additionalAttrs.entrySet()) {
                     MoEngageWrapper.setUserAttribute(moEHelper, additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
@@ -307,6 +308,7 @@ public class UIUtil {
                 }
                 editor.putString(Constants.ANALYTICS_ADDITIONAL_ATTRS, new Gson().toJson(userDetails.analytics.additionalAttrs));
             }
+            */
         }
         editor.commit();
 

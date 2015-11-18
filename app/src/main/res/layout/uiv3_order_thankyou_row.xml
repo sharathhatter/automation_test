@@ -48,7 +48,6 @@
     <TextView
         android:layout_width="match_parent"
         android:id="@+id/txtVariableWeightMsg"
-        android:text="@string/thank_you_variable_weight"
         android:textColor="@color/uiv3_primary_text_color"
         android:layout_marginTop="@dimen/margin_normal"
         android:layout_below="@id/btnPayNow"
