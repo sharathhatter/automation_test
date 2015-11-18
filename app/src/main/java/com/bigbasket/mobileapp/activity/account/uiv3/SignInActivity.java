@@ -183,6 +183,8 @@ public class SignInActivity extends BackButtonActivity {
         UIUtil.resetFormInputField(textInputEmail);
         UIUtil.resetFormInputField(textInputPasswd);
 
+        hideKeyboard(getCurrentActivity(), mEmailView);
+
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString().trim();
         String password = mPasswordView.getText().toString().trim();
