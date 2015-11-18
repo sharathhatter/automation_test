@@ -173,6 +173,7 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("c-incr-i/")
     Call<CartOperationApiResponse> incrementCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                     @Field(TrackEventkeys.TERM) String searchTerm,
                                                      @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
                                                      @FieldMap(encoded = true) Map<String, String> basketQueryMap);
 
@@ -185,6 +186,7 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("c-set-i/")
     Call<CartOperationApiResponse> setCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                               @Field(TrackEventkeys.TERM) String searchTerm,
                                                @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
                                                @FieldMap(encoded = true) Map<String, String> basketQueryMap);
 

@@ -210,18 +210,26 @@ public class BasketOperationTask<T extends AppOperationAware> {
         String reqProdId = product.getSku();
         Call<CartOperationApiResponse> call = null;
         HashMap<String, String> urlEncodedBasketQueryMap = BBUrlEncodeUtils.urlEncode(basketQueryMap.get());
+        String searchTerm = null;
+        if(navigationCtx != null && (navigationCtx.startsWith("pl.ps"))){
+            navigationCtx = "pl.ps";
+            String[] searchTermArray = navigationCtx.split("\\.");
+            if(searchTermArray.length == 3){
+                searchTerm = searchTermArray[2];
+            }
+        }
         switch (basketOperation) {
             case BasketOperation.INC:
-                call = bigBasketApiService.incrementCartItem(navigationCtx, reqProdId, qty, urlEncodedBasketQueryMap);
+                call = bigBasketApiService.incrementCartItem(navigationCtx, searchTerm, reqProdId, qty, urlEncodedBasketQueryMap);
                 break;
             case BasketOperation.DEC:
                 call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, urlEncodedBasketQueryMap);
                 break;
             case BasketOperation.SET:
-                call = bigBasketApiService.setCartItem(navigationCtx, reqProdId, qty, urlEncodedBasketQueryMap);
+                call = bigBasketApiService.setCartItem(navigationCtx, searchTerm, reqProdId, qty, urlEncodedBasketQueryMap);
                 break;
             case BasketOperation.EMPTY:
-                call = bigBasketApiService.setCartItem(navigationCtx, reqProdId, "0", urlEncodedBasketQueryMap);
+                call = bigBasketApiService.setCartItem(navigationCtx, null, reqProdId, "0", urlEncodedBasketQueryMap);
                 break;
         }
         if (call != null) {
