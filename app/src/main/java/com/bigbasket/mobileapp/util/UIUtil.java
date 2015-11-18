@@ -28,6 +28,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.telephony.TelephonyManager;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -64,6 +65,7 @@ import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
@@ -742,6 +744,17 @@ public class UIUtil {
         radioButton.setLayoutParams(layoutParams);
         radioButton.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
         return radioButton;
+    }
+
+    public static SpannableStringBuilder getPaymentOptionRadioButtonText(Context context,PaymentType paymentType){
+        SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
+        stringBuilder.append(paymentType.getDisplayName());
+        if (!TextUtils.isEmpty(paymentType.getOfferMsg())) {
+            stringBuilder.append("\n  "+paymentType.getOfferMsg());
+            stringBuilder.setSpan(new RoundedBackgroundSpan(context), paymentType.getDisplayName().length() + 1, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return stringBuilder;
     }
 
     public static String getIMEI(Context context) {
