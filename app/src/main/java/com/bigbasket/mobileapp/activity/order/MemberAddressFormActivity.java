@@ -234,6 +234,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         UIUtil.resetFormInputField(textInputArea);
         UIUtil.resetFormInputField(textInputPincode);
 
+        hideKeyboard(this, editTextAddressNick);
+
         // Validation
         boolean cancel = false;
         View focusView = null;
