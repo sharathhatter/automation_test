@@ -2,10 +2,8 @@ package com.daimajia.slider.library;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -97,7 +95,7 @@ public class SliderLayout extends RelativeLayout {
     /**
      * the duration between animation.
      */
-    private long mSliderDuration = 4000;
+    private long mSliderDuration = 2000;
 
     /**
      * Visibility of {@link com.daimajia.slider.library.Indicators.PagerIndicator}
@@ -184,9 +182,22 @@ public class SliderLayout extends RelativeLayout {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (sliderLayoutRef != null) {
+            if (sliderLayoutRef != null && sliderLayoutRef.get() != null) {
                 sliderLayoutRef.get().moveNextPosition(true);
             }
+        }
+    }
+
+    private static class AutoCycleTimerTask extends TimerTask {
+        private AutoCycleHandler autoCycleHandler;
+
+        public AutoCycleTimerTask(AutoCycleHandler autoCycleHandler) {
+            this.autoCycleHandler = autoCycleHandler;
+        }
+
+        @Override
+        public void run() {
+            autoCycleHandler.sendEmptyMessage(0);
         }
     }
 
@@ -209,12 +220,7 @@ public class SliderLayout extends RelativeLayout {
         mSliderDuration = duration;
         mCycleTimer = new Timer();
         mAutoRecover = autoRecover;
-        mCycleTask = new TimerTask() {
-            @Override
-            public void run() {
-                mh.sendEmptyMessage(0);
-            }
-        };
+        mCycleTask = new AutoCycleTimerTask(mh);
         mCycleTimer.schedule(mCycleTask, delay, mSliderDuration);
         mCycling = true;
         mAutoCycle = true;
