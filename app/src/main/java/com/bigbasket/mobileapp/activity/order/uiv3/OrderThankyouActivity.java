@@ -120,7 +120,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.append(spannableMrp);
 
-            String prefix = getString(R.string.ordernumber);
+            String prefix = getString(R.string.ordernumber) + " ";
             SpannableString orderNumSpannable = new SpannableString(prefix + order.getOrderNumber());
             orderNumSpannable.setSpan(new UnderlineSpan(), prefix.length(), orderNumSpannable.length(),
                     Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -147,7 +147,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                         intent.putExtra(Constants.WEBVIEW_URL, order.getVariableWeightLink());
                         intent.putExtra(Constants.WEBVIEW_TITLE, (order.getVariableWeightMsg()));
-                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        startActivity(intent);
                     }
                 }, order.getVariableWeightMsg().length() + 1 , order.getVariableWeightMsg().length() + 1 +
                                 getString(R.string.know_more).length() ,
@@ -175,7 +175,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     }
                     display += time;
                 }
-                txtSlotTime.setText(getString(R.string.delivery_time) + display);
+                txtSlotTime.setText(getString(R.string.delivery_time_with_space) + display);
                 txtSlotTime.setTypeface(faceRobotoRegular);
             } else {
                 txtSlotTime.setVisibility(View.GONE);

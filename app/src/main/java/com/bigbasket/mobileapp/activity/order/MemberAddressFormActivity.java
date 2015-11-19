@@ -91,8 +91,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             mChoosenCity = new City(cityName, cityId);
         }
         new GetCitiesTask<>(this).startTask();  // Sync the cities
-
-
     }
 
     @Override
@@ -234,6 +232,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         UIUtil.resetFormInputField(textInputArea);
         UIUtil.resetFormInputField(textInputPincode);
 
+        hideKeyboard(this, editTextAddressNick);
+
         // Validation
         boolean cancel = false;
         View focusView = null;
@@ -306,51 +306,19 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
 
         // Sending request
 
-        final HashMap<String, String> payload = new HashMap<String, String>() {
-            {
-                put(Constants.ADDR_NICK, editTextAddressNick.getText().toString());
-            }
+        final HashMap<String, String> payload = new HashMap<>();
+        payload.put(Constants.ADDR_NICK, editTextAddressNick.getText().toString());
+        payload.put(Constants.FIRSTNAME, editTextFirstName.getText().toString());
+        payload.put(Constants.LASTNAME, editTextLastName.getText().toString());
+        payload.put(Constants.AREA, editTextArea.getText().toString());
+        payload.put(Constants.CONTACT_NUM, editTextMobileNumber.getText().toString());
+        payload.put(Constants.STREET, editTextStreetName.getText().toString());
+        payload.put(Constants.HOUSE_NO, editTextHouseNum.getText().toString());
+        payload.put(Constants.PIN, editTextPincode.getText().toString());
+        payload.put(Constants.LANDMARK, editTextLandmark.getText().toString());
+        payload.put(Constants.RES_CMPLX, editTextResidentialComplex.getText().toString());
+        payload.put(Constants.IS_DEFAULT, chkIsAddrDefault.isChecked() ? "1" : "0");
 
-            {
-                put(Constants.FIRSTNAME, editTextFirstName.getText().toString());
-            }
-
-            {
-                put(Constants.LASTNAME, editTextLastName.getText().toString());
-            }
-
-            {
-                put(Constants.AREA, editTextArea.getText().toString());
-            }
-
-            {
-                put(Constants.CONTACT_NUM, editTextMobileNumber.getText().toString());
-            }
-
-            {
-                put(Constants.STREET, editTextStreetName.getText().toString());
-            }
-
-            {
-                put(Constants.HOUSE_NO, editTextHouseNum.getText().toString());
-            }
-
-            {
-                put(Constants.PIN, editTextPincode.getText().toString());
-            }
-
-            {
-                put(Constants.LANDMARK, editTextLandmark.getText().toString());
-            }
-
-            {
-                put(Constants.RES_CMPLX, editTextResidentialComplex.getText().toString());
-            }
-
-            {
-                put(Constants.IS_DEFAULT, chkIsAddrDefault.isChecked() ? "1" : "0");
-            }
-        };
         if (AuthParameters.getInstance(this).isMultiCityEnabled()) {
             payload.put(Constants.CITY_ID, String.valueOf(mChoosenCity.getId()));
         }
@@ -366,7 +334,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                         getString(R.string.newAddressNotAllowed),
                         DialogButton.OK, DialogButton.CANCEL,
                         Constants.UPDATE_ADDRESS,
-                        payload, getString(R.string.createNewAddress));
+                        payload, getString(R.string.lblContinue));
             } else {
                 uploadAddress(payload, true);
             }
@@ -424,7 +392,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (mAddress == null) {
             mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         }
-        return mAddress == null ? "Add Address" : "Update Address";
+        return mAddress == null ? getString(R.string.addAddress) : getString(R.string.updateAddress);
     }
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {

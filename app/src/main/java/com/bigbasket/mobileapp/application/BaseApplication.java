@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -10,6 +11,7 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.moe.pushlibrary.MoEHelper;
+import com.squareup.leakcanary.LeakCanary;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -26,13 +28,22 @@ public class BaseApplication extends Application {
     }
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        if (BuildConfig.DEBUG) {
+            MultiDex.install(this);
+        }
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
-        //Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
         AuthParameters.reset();
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
         LocalyticsWrapper.integrate(this);
+        LeakCanary.install(this);
         if (!BuildConfig.DEBUG) {
             AdWordsConversionReporter.reportWithConversionId(this.getApplicationContext(),
                     "990877306", "wqThCIz2ql8Q-qy-2AM", "0.00", false);

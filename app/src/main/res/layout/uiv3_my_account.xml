@@ -253,7 +253,7 @@
                 android:paddingLeft="@dimen/margin_small"
                 android:paddingRight="@dimen/margin_small"
                 android:paddingTop="@dimen/margin_mini"
-                android:text="@string/addAddress"
+                android:text="@string/addWithSpace"
                 android:textColor="@color/text_color_myaccount"
                 android:textSize="@dimen/primary_text_size" />
 

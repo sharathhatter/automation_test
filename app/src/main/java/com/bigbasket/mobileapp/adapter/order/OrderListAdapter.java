@@ -14,12 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.GetMoreOrderAware;
+import com.bigbasket.mobileapp.interfaces.OrderItemClickAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -28,8 +29,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
-public class
-        OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private static final int VIEW_TYPE_LOADING = 0;
@@ -58,7 +58,7 @@ public class
         this.currentPage = currentPage;
     }
 
-    public void setOrderList(ArrayList<Order> orders) {//CALL20
+    public void setOrderList(ArrayList<Order> orders) {
         this.orders = orders;
     }
 
@@ -191,13 +191,13 @@ public class
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.setText(spannableMrp);
             if (orderListSize - 1 == position && currentPage < totalPages && totalPages > 1) {
-                ((OrderListActivity) context).getMoreOrders(currentPage + 1);
+                ((GetMoreOrderAware) context).getMoreOrders(currentPage + 1);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((OrderListActivity) ((AppOperationAware) context).getCurrentActivity()).onOrderItemClicked(order);
+                    ((OrderItemClickAware) context).onOrderItemClicked(order);
                 }
             });
         }

@@ -14,14 +14,13 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
-
 import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
-import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.SectionItem;
+import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
 
 import java.util.ArrayList;
@@ -116,7 +115,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         int viewType = getItemViewType(position);
         if (viewType == VIEW_TYPE_SECTION_ITEM) {
             NavViewHolder navViewHolder = (NavViewHolder) holder;
-            RelativeLayout relativeLayoutRow=navViewHolder.getRelativeLayoutRow();
+            RelativeLayout relativeLayoutRow = navViewHolder.getRelativeLayoutRow();
             TextView txtNavListRow = navViewHolder.getTxtNavListRow();
             ImageView imgNavItem = navViewHolder.getImgNavItem();
             ImageView imgNavItemExpand = navViewHolder.getImgNavItemExpand();
@@ -127,10 +126,9 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
              * checking for the selected category and sub category and
              * then highlighting the row accordingly
              */
-            if (getSelectionComparisionStatus(getSelectedSubCategoryString(), sectionItem) ||  getSelectionComparisionStatus(getSelectedCategoryString(), sectionItem)){
+            if (getSelectionComparisonStatus(getSelectedSubCategoryString(), sectionItem) || getSelectionComparisonStatus(getSelectedCategoryString(), sectionItem)) {
                 relativeLayoutRow.setPressed(true);
-            }
-            else{
+            } else {
                 relativeLayoutRow.setPressed(false);
             }
             if (sectionItem.getTitle() != null &&
@@ -294,7 +292,6 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
 
-
         public NavViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
@@ -341,7 +338,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
                                 sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
                     } else {
-                        if(getSelectionComparisionStatus(getSelectedCategoryString(),sectionNavigationItem.getSectionItem())){
+                        if (getSelectionComparisonStatus(getSelectedCategoryString(), sectionNavigationItem.getSectionItem())) {
                             ((NavigationDrawerAware) context).closeDrawer();
                             notifyDataSetChanged();
                         } else {
@@ -371,13 +368,12 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
 
-    private boolean getSelectionComparisionStatus(String selectedCategoryString,SectionItem sectionItem) {
-
-        if (selectedCategoryString != null) {
-            if (sectionItem.getTitle().getText().toString().replaceAll(" ", "").equalsIgnoreCase(selectedCategoryString.replaceAll(" ", "")) && sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
-                return true;
-            } else {
-                return false;
+    private boolean getSelectionComparisonStatus(String selectedCategoryString, SectionItem sectionItem) {
+        if (!TextUtils.isEmpty(selectedCategoryString) && sectionItem != null
+                && sectionItem.getTitle() != null) {
+            SectionTextItem sectionTextItem = sectionItem.getTitle();
+            if (!TextUtils.isEmpty(sectionTextItem.getText())) {
+                return sectionTextItem.getText().replaceAll(" ", "").equalsIgnoreCase(selectedCategoryString.replaceAll(" ", ""));
             }
         }
         return false;

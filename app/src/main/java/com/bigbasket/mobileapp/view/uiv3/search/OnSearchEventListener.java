@@ -4,7 +4,10 @@ import android.support.annotation.NonNull;
 
 public interface OnSearchEventListener {
     void onVoiceSearchRequested();
+
     void onBarcodeScanRequested();
+
     void onSearchRequested(@NonNull String query);
+
     void onCategorySearchRequested(String categoryName, String categoryUrl, String categorySlug);
 }

@@ -331,6 +331,11 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     }
 
     @Override
+    public void onDynamicScreenHttpFailure(int error, String msg) {
+        handler.handleHttpError(error, msg, true);
+    }
+
+    @Override
     public String getScreenTag() {
         return TrackEventkeys.START_SCREEN;
     }

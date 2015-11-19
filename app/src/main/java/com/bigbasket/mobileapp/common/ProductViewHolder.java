@@ -43,7 +43,10 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private View.OnClickListener productOnClickListener;
     private View.OnClickListener brandPageListener;
 
-    public ProductViewHolder(View itemView, View.OnClickListener specialityShopIconClickListener, View.OnClickListener promoClickListener, View.OnClickListener productOnClickListener,View.OnClickListener brandPageListener) {
+    public ProductViewHolder(View itemView, View.OnClickListener specialityShopIconClickListener,
+                             View.OnClickListener promoClickListener,
+                             View.OnClickListener productOnClickListener,
+                             View.OnClickListener brandPageListener) {
         super(itemView);
         this.specialityShopIconClickListener = specialityShopIconClickListener;
         this.promoClickListener = promoClickListener;

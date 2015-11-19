@@ -49,6 +49,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     private String mOrderType;
     private boolean mIsInShopFromPreviousOrderMode;
     private OrderListAdapter orderListAdapter = null;
+    private int currentPage = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,8 +59,19 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         mIsInShopFromPreviousOrderMode = getIntent().getBooleanExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, false);
         setTitle(mIsInShopFromPreviousOrderMode ? getString(R.string.shopFromPreviousOrder) :
                 getString(R.string.my_order_label));
-        loadOrders(1);
+        if(savedInstanceState != null){
+            int savedCurrentPage  = savedInstanceState.getInt(Constants.CURRENT_PAGE, 1);
+            loadOrders(savedCurrentPage);
+        }else {
+            loadOrders(currentPage);
+        }
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(Constants.CURRENT_PAGE, currentPage);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -82,6 +94,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 if (orderListApiResponse.status == 0) {
                     renderOrderList(orderListApiResponse.apiResponseContent.orders, page,
                             orderListApiResponse.apiResponseContent.totalPages);
+                    currentPage = page;
                 } else {
                     handler.sendEmptyMessage(orderListApiResponse.status,
                             orderListApiResponse.message, true);
@@ -138,16 +151,15 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             if (orderListAdapter == null) {
                 orderListAdapter = new OrderListAdapter<>(this, mOrders, totalPages, currentPage,
                         mOrders.size());
+                orderListView.setAdapter(orderListAdapter);
+                contentLayout.removeAllViews();
+                contentLayout.addView(base);
             }
 
             ArrayList<Order> olderOrderList = orderListAdapter.getOrders();
             if (currentPage > 1 && olderOrderList != null && olderOrderList.size() > 0
                     && mOrders != null && mOrders.size() > 0) {
                 updateOrderList(olderOrderList, mOrders, currentPage, totalPages);
-            } else {
-                orderListView.setAdapter(orderListAdapter);
-                contentLayout.removeAllViews();
-                contentLayout.addView(base);
             }
         }
 

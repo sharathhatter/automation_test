@@ -169,6 +169,7 @@
     <string name="change_password">Change Password</string>
     <string name="wallet_activity">My Wallet</string>
     <string name="delivery_time">Delivery Time:</string>
+    <string name="delivery_time_with_space">Delivery Time:\u0020</string>
     <string name="delivery_charges">Delivery Charges:</string>
     <string name="past_label">past</string>
     <string name="deleteShoppingList">Delete Shopping List</string>
@@ -261,6 +262,8 @@
     <string name="nowShoppingListMsg1">You have not created any shopping list yet.</string>
     <string name="nowShoppingListMsg2">Start creating now for easy shopping.</string>
     <string name="adAddresCaps">ADD ADDRESS</string>
+    <string name="addAddress">Add Address</string>
+    <string name="updateAddress">Update Address</string>
 
     <string name="noSmartBasketProducts">You haven\'t placed any orders yet, hence your Smart Basket is currently empty</string>
     <string name="skip">Skip</string>
@@ -288,7 +291,7 @@
     <string name="birthday">Birthday</string>
     <string name="address">Address</string>
     <string name="default_address">Default Address</string>
-    <string name="addAddress">\u0020 Add</string>
+    <string name="addWithSpace">\u0020 Add</string>
     <string name="viewAll">\u0020 View All</string>
 
     <!-- address -->
@@ -404,6 +407,7 @@
     <string name="noAddGiftWrap">No additional gift wrap required.</string>
     <string name="history">History</string>
     <string name="popularSearches">Popular Searches</string>
+    <string name="lblContinue">Continue</string>
 
     <!-- Speciality Stores -->
     <string name="speciality_shop_title">Speciality Shop</string>

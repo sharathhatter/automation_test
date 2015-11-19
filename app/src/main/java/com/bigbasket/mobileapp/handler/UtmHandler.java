@@ -6,8 +6,8 @@ import android.net.Uri;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
-import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
+import com.bigbasket.mobileapp.util.DataUtil;
 
 import java.io.IOException;
 import java.util.Collections;

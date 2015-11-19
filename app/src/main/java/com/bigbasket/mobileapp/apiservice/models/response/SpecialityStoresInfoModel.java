@@ -41,41 +41,41 @@ public class SpecialityStoresInfoModel implements Parcelable {
 
     public SpecialityStoresInfoModel(Parcel source) {
         boolean isStoreCatNull = source.readByte() == (byte) 1;
-        if(!isStoreCatNull){
+        if (!isStoreCatNull) {
             this.storeCategory = source.readString();
         }
 
         boolean isStoreIdNull = source.readByte() == (byte) 1;
-        if(!isStoreIdNull){
+        if (!isStoreIdNull) {
             this.storeId = source.readString();
         }
 
         boolean isStoreUrlNull = source.readByte() == (byte) 1;
-        if(!isStoreUrlNull){
+        if (!isStoreUrlNull) {
             this.storeUrl = source.readString();
         }
         boolean isStoreAdd1Null = source.readByte() == (byte) 1;
-        if(!isStoreAdd1Null){
+        if (!isStoreAdd1Null) {
             this.storeAdd1 = source.readString();
         }
 
         boolean isStoreAdd2Null = source.readByte() == (byte) 1;
-        if(!isStoreAdd2Null){
+        if (!isStoreAdd2Null) {
             this.storeAdd2 = source.readString();
         }
 
         boolean isStoreNameNull = source.readByte() == (byte) 1;
-        if(!isStoreNameNull){
+        if (!isStoreNameNull) {
             this.storeName = source.readString();
         }
 
         boolean isStoreLogoNull = source.readByte() == (byte) 1;
-        if(!isStoreLogoNull) {
+        if (!isStoreLogoNull) {
             this.storeLogo = source.readString();
         }
 
         boolean isStoreDescNull = source.readByte() == (byte) 1;
-        if(!isStoreDescNull) {
+        if (!isStoreDescNull) {
             this.storeDesc = source.readString();
         }
     }

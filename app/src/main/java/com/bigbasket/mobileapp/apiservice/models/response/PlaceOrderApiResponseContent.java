@@ -16,5 +16,4 @@ public class PlaceOrderApiResponseContent {
 
     @SerializedName(Constants.ADD_MORE_MSG)
     public String addMoreMsg;
-
 }

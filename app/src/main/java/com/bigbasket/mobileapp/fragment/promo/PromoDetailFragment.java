@@ -299,7 +299,9 @@ public class PromoDetailFragment extends BaseFragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             productRowParams.setMargins(8, 8, 8, 0);
 
-            ProductView.setProductView(new ProductViewHolder(base, null, new OnPromoClickListener<>(this), new ProductDetailOnClickListener<>(this),new OnBrandPageListener<>(this)), freeProduct, promoDetail.getBaseImgUrl(),
+            ProductView.setProductView(new ProductViewHolder(base, null, new OnPromoClickListener<>(this),
+                            new ProductDetailOnClickListener<>(this), new OnBrandPageListener<>(this)),
+                    freeProduct, promoDetail.getBaseImgUrl(),
                     productViewDisplayDataHolder, false, getCurrentActivity(), getNextScreenNavigationContext(), null, "none",
                     null, null);
             base.setLayoutParams(productRowParams);
@@ -352,6 +354,7 @@ public class PromoDetailFragment extends BaseFragment {
 
         TextView txtValNeeded = (TextView) base.findViewById(R.id.txtValueNeed);
         txtValNeeded.setTypeface(faceRobotoRegular);
+        txtValNeeded.setVisibility(View.GONE);
 
         TextView txtValInBasket = (TextView) base.findViewById(R.id.txtValueInBasket);
         txtValInBasket.setTypeface(faceRobotoRegular);

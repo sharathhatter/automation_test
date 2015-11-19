@@ -121,7 +121,8 @@ public class BBSpecialityShopsActivity extends SearchActivity implements LaunchS
                 if (specialityStoreListApiResponse.status == 0) {
                     Section headerSection = specialityStoreListApiResponse.apiResponseContent.getHeaderSection();
                     if (headerSection != null && headerSection.getSectionItems().size() > 0) {
-                        renderHeaderDropDown(headerSection, specialityStoreListApiResponse.apiResponseContent.getHeaderSelectedIndex(), catVal);
+                        renderHeaderDropDown(headerSection, specialityStoreListApiResponse.apiResponseContent.getHeaderSelectedIndex(),
+                                getString(R.string.speciality_shop_title));
                     }
                     ArrayList<SpecialityStore> storeList = specialityStoreListApiResponse.apiResponseContent.getStoreList();
                     if (storeList != null && storeList.size() > 0) {
@@ -161,7 +162,7 @@ public class BBSpecialityShopsActivity extends SearchActivity implements LaunchS
         new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
                 .withCtx(this)
                 .withDefaultSelectedIdx(mHeaderSelectedIdx)
-                .withFallbackHeaderTitle(!TextUtils.isEmpty(category) ? category : screenName) //todo change title
+                .withFallbackHeaderTitle(!TextUtils.isEmpty(screenName) ? screenName : getString(R.string.app_name))
                 .withHeadSection(headSection)
                 .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
                 .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))

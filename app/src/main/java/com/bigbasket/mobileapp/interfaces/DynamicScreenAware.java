@@ -8,4 +8,6 @@ public interface DynamicScreenAware {
     void onDynamicScreenFailure(Throwable t);
 
     void onDynamicScreenFailure(int error, String msg);
+
+    void onDynamicScreenHttpFailure(int error, String msg);
 }
