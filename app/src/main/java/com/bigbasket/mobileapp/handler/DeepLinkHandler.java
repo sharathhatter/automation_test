@@ -7,18 +7,19 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.activity.product.DiscountActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
@@ -33,16 +34,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import retrofit.Call;
+
 public class DeepLinkHandler {
     public static final int SUCCESS = 1;
     public static final int FAILED = 2;
     public static final int LOGIN_REQUIRED = 3;
 
-    public static int handleDeepLink(ActivityAware context, Uri uri) {
+    public static int handleDeepLink(AppOperationAware context, Uri uri) {
         if (uri == null) {
             return FAILED;
         }
-
         AuthParameters authParameters = AuthParameters.getInstance(context.getCurrentActivity());
         if (getLoginRequiredUrls().contains(uri.getHost()) && authParameters.isAuthTokenEmpty()) {
             return LOGIN_REQUIRED;
@@ -52,7 +54,7 @@ public class DeepLinkHandler {
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
-                    Intent intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+                    Intent intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
                     intent.putExtra(Constants.PROMO_ID, Integer.parseInt(id));
                     context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -72,8 +74,9 @@ public class DeepLinkHandler {
                 id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id)) {
                     BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context.getCurrentActivity());
-                    ((ProgressIndicationAware) context).showProgressDialog("Please wait!");
-                    bigBasketApiService.getInvoice(id, new CallbackOrderInvoice<>(context.getCurrentActivity()));
+                    context.showProgressDialog("Please wait!");
+                    Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(id);
+                    call.enqueue(new CallbackOrderInvoice<>(context));
                     return SUCCESS;
                 }
                 return FAILED;
@@ -153,7 +156,7 @@ public class DeepLinkHandler {
                 }
                 return FAILED;
             case Constants.PROMO_LIST:
-                intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+                intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
@@ -182,7 +185,7 @@ public class DeepLinkHandler {
                 return FAILED;
             case Constants.DYNAMIC_PAGE:
                 String screenName = uri.getQueryParameter(Constants.SCREEN);
-                intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+                intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
                 intent.putExtra(Constants.SCREEN, screenName);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_DYNAMIC_SCREEN);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);

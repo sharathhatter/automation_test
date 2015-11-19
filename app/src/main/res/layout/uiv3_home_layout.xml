@@ -10,53 +10,65 @@
     <!-- As the main content view, the view below consumes the entire
          space available using match_parent in both dimensions. -->
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbarMain"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:layout_height="match_parent">
 
-            <ProgressBar
-                android:id="@+id/progressBarArea"
-                style="?android:attr/progressBarStyleSmall"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbarMain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                <ProgressBar
+                    android:id="@+id/progressBarArea"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_normal" />
+
+                <Spinner
+                    android:id="@+id/spinnerArea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:popupBackground="@color/uiv3_large_list_item_bck" />
+            </android.support.v7.widget.Toolbar>
+
+            <FrameLayout
+                android:id="@+id/content_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/toolbarMain" />
+
+            <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
+                android:id="@+id/btnViewBasket"
+                style="@style/RippleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_normal" />
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_small"
+                android:src="@drawable/filled_basket"
+                app:fab_colorNormal="@color/uiv3_action_bar_background"
+                app:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
+        </RelativeLayout>
 
-            <Spinner
-                android:id="@+id/spinnerArea"
-                android:background="@null"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </android.support.v7.widget.Toolbar>
-
-        <FrameLayout
-            android:id="@+id/content_frame"
+        <com.bigbasket.mobileapp.view.uiv3.search.BBSearchableToolbarView
+            android:id="@+id/bbSearchView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbarMain" />
-
-        <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
-            android:id="@+id/btnViewBasket"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="@dimen/margin_normal"
-            android:layout_marginRight="@dimen/margin_small"
-            android:src="@drawable/filled_basket"
-            app:fab_colorNormal="@color/uiv3_action_bar_background"
-            app:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
-    </RelativeLayout>
+            android:visibility="gone" />
+    </FrameLayout>
 
     <!-- android:layout_gravity="start" tells DrawerLayout to treat
          this as a sliding drawer on the left side for left-to-right

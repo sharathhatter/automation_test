@@ -1,17 +1,18 @@
 package com.bigbasket.mobileapp.activity.payment;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -21,6 +22,8 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
 import com.bigbasket.mobileapp.factory.payment.PayNowPaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
@@ -31,17 +34,17 @@ import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.RoundedBackgroundSpan;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
+import com.google.gson.Gson;
 import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 /**
  * Don't do the mistake of moving this to Fragment. I've done all that, and these 3rd Party SDKs
@@ -109,40 +112,34 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes",
-                new Callback<ApiResponse<GetPayNowParamsResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (payNowParamsApiResponse.status) {
-                            case 0:
-                                displayPayNowSummary(payNowParamsApiResponse.apiResponseContent.amount,
-                                        payNowParamsApiResponse.apiResponseContent.payNowDetailList,
-                                        payNowParamsApiResponse.apiResponseContent.paymentTypes);
-                                break;
-                            default:
-                                handler.sendEmptyMessage(payNowParamsApiResponse.status,
-                                        payNowParamsApiResponse.message, true);
-                                break;
-                        }
-                    }
+        Call<ApiResponse<GetPayNowParamsResponse>> call = bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes", "yes");
+        call.enqueue(new BBNetworkCallback<ApiResponse<GetPayNowParamsResponse>>(this, true) {
+            @Override
+            public void onSuccess(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse) {
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
+                switch (payNowParamsApiResponse.status) {
+                    case 0:
+                        displayPayNowSummary(payNowParamsApiResponse.apiResponseContent.amount,
+                                payNowParamsApiResponse.apiResponseContent.payNowDetailList,
+                                payNowParamsApiResponse.apiResponseContent.paymentTypes);
+                        break;
+                    default:
+                        handler.sendEmptyMessage(payNowParamsApiResponse.status,
+                                payNowParamsApiResponse.message, true);
+                        break;
+                }
+            }
+
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
     }
 
     private void displayPayNowSummary(final String amount, ArrayList<PayNowDetail> payNowDetailList,
@@ -172,20 +169,14 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
+        String txnId = MobikwikResponseHandler.getLastTransactionID();
         if (!TextUtils.isEmpty(txnId)) {
-            String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
-            if (!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0) {
+            if (MobikwikResponseHandler.wasTransactionSuccessful()) {
                 onPayNowSuccess();
             } else {
                 onPayNowFailure();
             }
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(Constants.MOBIKWIK_ORDER_ID);
-            editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.apply();
+            MobikwikResponseHandler.clear();
         }
     }
 
@@ -273,7 +264,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
             final PaymentType paymentType = paymentTypes.get(i);
             RadioButton rbtnPaymentType = UIUtil.
                     getPaymentOptionRadioButton(layoutPaymentOptions, this, inflater);
-            rbtnPaymentType.setText(paymentType.getDisplayName());
+            rbtnPaymentType.setText(UIUtil.getPaymentOptionRadioButtonText(this,paymentType), TextView.BufferType.SPANNABLE);
             rbtnPaymentType.setId(i);
             if (i == 0) {
                 mSelectedPaymentMethod = paymentType.getValue();

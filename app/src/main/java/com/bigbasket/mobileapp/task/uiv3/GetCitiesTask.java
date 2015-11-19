@@ -3,22 +3,17 @@ package com.bigbasket.mobileapp.task.uiv3;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.account.City;
 
 import java.util.ArrayList;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class GetCitiesTask<T extends CityListDisplayAware> {
+public class GetCitiesTask<T extends CityListDisplayAware & AppOperationAware> {
     private T context;
 
     public GetCitiesTask(T context) {
@@ -26,42 +21,32 @@ public class GetCitiesTask<T extends CityListDisplayAware> {
     }
 
     public void startTask() {
-        ArrayList<City> cities = CityManager.getStoredCity(((ActivityAware) context).getCurrentActivity());
+        ArrayList<City> cities = CityManager.getStoredCity(context.getCurrentActivity());
         if (cities != null && cities.size() > 0) {
             context.onReadyToDisplayCity(cities);
             return;
         }
-        if (!((ConnectivityAware) context).checkInternetConnection()) {
-            ((HandlerAware) context).getHandler().sendOfflineError(true);
+        if (!context.checkInternetConnection()) {
+            context.getHandler().sendOfflineError(true);
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) context).getCurrentActivity());
-        ((ProgressIndicationAware) context).showProgressDialog(((ActivityAware) context).getCurrentActivity().getString(R.string.please_wait));
-        bigBasketApiService.listCities(new Callback<ArrayList<City>>() {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context.getCurrentActivity());
+        context.showProgressDialog(context.getCurrentActivity().getString(R.string.please_wait));
+        Call<ArrayList<City>> call = bigBasketApiService.listCities();
+        call.enqueue(new BBNetworkCallback<ArrayList<City>>(context, true) {
             @Override
-            public void success(ArrayList<City> cities, Response response) {
-                if (((CancelableAware) context).isSuspended()) {
-                    return;
-                }
-                try {
-                    ((ProgressIndicationAware) context).hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                CityManager.storeCities(((ActivityAware) context).getCurrentActivity(), cities);
+            public void onSuccess(ArrayList<City> cities) {
+                CityManager.storeCities(context.getCurrentActivity(), cities);
                 context.onReadyToDisplayCity(cities);
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (((CancelableAware) context).isSuspended()) {
-                    return;
-                }
+            public boolean updateProgress() {
                 try {
-                    ((ProgressIndicationAware) context).hideProgressDialog();
+                    context.hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                ((HandlerAware) context).getHandler().handleRetrofitError(error, true);
             }
         });
     }

@@ -60,7 +60,7 @@ public class GiftOptionsFragment extends BaseFragment {
 
     private void renderGiftLayout(final Bundle args) {
         ViewGroup contentView = getContentView();
-        if (contentView == null) return;
+        if (contentView == null || getCurrentActivity() == null) return;
         renderCheckOutProgressView();
         TextView textViewCount = (TextView) contentView.findViewById(R.id.textViewNumGifts);
         TextView txtWouldYouLike = (TextView) contentView.findViewById(R.id.txtWouldYouLike);

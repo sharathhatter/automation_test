@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -133,7 +134,6 @@ public class SectionView {
     @Nullable
     private View getViewToRender(Section section, LayoutInflater inflater, ViewGroup mainLayout,
                                  int position) {
-        Log.d("", "CLICKED>>>>" + section.getSectionType());
         switch (section.getSectionType()) {
             case Section.BANNER:
                 return getBannerView(section, inflater, mainLayout);
@@ -163,7 +163,7 @@ public class SectionView {
 
     private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, parent, false);
-        SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
+        final SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
         ViewGroup.LayoutParams bannerLayoutParams = bannerSlider.getLayoutParams();
         if (bannerLayoutParams != null && !isHelp) {
             bannerLayoutParams.height = section.getWidgetHeight(context, mSectionData.getRenderersMap(), true);
@@ -187,6 +187,21 @@ public class SectionView {
                     continue;
                 }
                 sliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+                /**
+                 * adding globalLayoutListener to track if the banner pager is visible to user or not
+                 * and stopping/starting the auto play based on that
+                 */
+                bannerSlider.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (!bannerSlider.isShown())
+                            bannerSlider.stopAutoCycle();
+                        else
+                            bannerSlider.startAutoCycle();
+                    }
+
+
+                });
                 bannerSlider.addSlider(sliderView);
             }
 

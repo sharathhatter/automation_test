@@ -2,14 +2,13 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -38,6 +37,8 @@ import com.bigbasket.mobileapp.factory.payment.PaymentHandler;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -54,6 +55,7 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MutableLong;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.RoundedBackgroundSpan;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -63,9 +65,7 @@ import com.payu.india.Payu.PayuConstants;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 public class PaymentSelectionActivity extends BackButtonActivity
         implements OnPostPaymentListener, OnPaymentValidationListener, PaymentTxnInfoAware {
@@ -190,18 +190,15 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void processMobikWikResponse() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
+        String txnId = MobikwikResponseHandler.getLastTransactionID();
         if (!TextUtils.isEmpty(txnId)) {
-            new PostPaymentProcessor<>(this, txnId)
-                    .withPotentialOrderId(mPotentialOrderId)
-                    .withOrderId(mOrdersCreated.get(0).getOrderNumber())
-                    .processPayment();
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(Constants.MOBIKWIK_ORDER_ID);
-            editor.remove(Constants.MOBIKWIK_STATUS);
-            editor.apply();
+            if (mOrdersCreated != null) {
+                new PostPaymentProcessor<>(this, txnId)
+                        .withPotentialOrderId(mPotentialOrderId)
+                        .withOrderId(mOrdersCreated.get(0).getOrderNumber())
+                        .processPayment();
+            }
+            MobikwikResponseHandler.clear();
         }
     }
 
@@ -358,9 +355,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 }
                 RadioButton rbtnPaymentType = UIUtil.
                         getPaymentOptionRadioButton(layoutPaymentOptions, this, inflater);
-                rbtnPaymentType.setText(paymentType.getDisplayName());
+                rbtnPaymentType.setText(UIUtil.getPaymentOptionRadioButtonText(this,paymentType), TextView.BufferType.SPANNABLE);
                 rbtnPaymentType.setId(i);
-                boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? i == 0 :
+                boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? paymentType.isSelected() :
                         mSelectedPaymentMethod.equals(paymentType.getValue());
                 if (isSelected) {
                     rbtnPaymentType.setChecked(true);
@@ -411,16 +408,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (checkInternetConnection()) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
             showProgressDialog(getString(R.string.please_wait));
-            bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode, new Callback<ApiResponse<PostVoucherApiResponseContent>>() {
+            Call<ApiResponse<PostVoucherApiResponseContent>> call = bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode);
+            call.enqueue(new BBNetworkCallback<ApiResponse<PostVoucherApiResponseContent>>(this) {
                 @Override
-                public void success(ApiResponse<PostVoucherApiResponseContent> postVoucherApiResponse, Response response) {
-                    if (isSuspended()) return;
-                    try {
-                        hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
-                    }
-                    HashMap<String, String> map = new HashMap<>();
+                public void onSuccess(ApiResponse<PostVoucherApiResponseContent> postVoucherApiResponse) {
                     switch (postVoucherApiResponse.status) {
                         case 0:
                             onVoucherSuccessfullyApplied(voucherCode,
@@ -428,6 +419,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                                     postVoucherApiResponse.apiResponseContent.creditDetails);
                             break;
                         default:
+                            HashMap<String, String> map = new HashMap<>();
                             handler.sendEmptyMessage(postVoucherApiResponse.status, postVoucherApiResponse.message);
                             map.put(TrackEventkeys.FAILURE_REASON, postVoucherApiResponse.message);
                             trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, map);
@@ -436,15 +428,25 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
-                    if (isSuspended()) return;
+                public void onFailure(int httpErrorCode, String msg) {
+                    super.onFailure(httpErrorCode, msg);
+                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    super.onFailure(t);
+                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
+                }
+
+                @Override
+                public boolean updateProgress() {
                     try {
                         hideProgressDialog();
+                        return true;
                     } catch (IllegalArgumentException e) {
-                        return;
+                        return false;
                     }
-                    handler.handleRetrofitError(error);
-                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
                 }
             });
         } else {
@@ -459,15 +461,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.removeVoucher(mPotentialOrderId, new Callback<ApiResponse<PostVoucherApiResponseContent>>() {
+        Call<ApiResponse<PostVoucherApiResponseContent>> call = bigBasketApiService.removeVoucher(mPotentialOrderId);
+        call.enqueue(new BBNetworkCallback<ApiResponse<PostVoucherApiResponseContent>>(this) {
             @Override
-            public void success(ApiResponse<PostVoucherApiResponseContent> removeVoucherApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<PostVoucherApiResponseContent> removeVoucherApiResponse) {
                 switch (removeVoucherApiResponse.status) {
                     case 0:
                         Toast.makeText(getCurrentActivity(),
@@ -483,14 +480,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
             }
         });
     }
@@ -525,7 +521,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 (mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY) ||
                         mSelectedPaymentMethod.equals(Constants.PAYU) ||
                         mSelectedPaymentMethod.equals(Constants.MOBIKWIK_WALLET) ||
-                        mSelectedPaymentMethod.equals(Constants.PAYTM_WALLET));
+                        mSelectedPaymentMethod.equals(Constants.PAYTM_WALLET) ||
+                        mSelectedPaymentMethod.equals(Constants.PAYUMONEY_WALLET));
     }
 
     @Override
@@ -562,39 +559,36 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void placeOrder() {
+        if (TextUtils.isEmpty(mSelectedPaymentMethod)) {
+            showToast(getString(R.string.missingPaymentMethod));
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
                 false);
-        bigBasketApiService.placeOrder(mPotentialOrderId, mSelectedPaymentMethod,
-                new Callback<OldApiResponse<PlaceOrderApiResponseContent>>() {
-                    @Override
-                    public void success(OldApiResponse<PlaceOrderApiResponseContent> placeOrderApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        if (placeOrderApiResponse.status.equals(Constants.OK)) {
-                            postOrderCreation(placeOrderApiResponse.apiResponseContent.orders,
-                                    placeOrderApiResponse.apiResponseContent.addMoreLink,
-                                    placeOrderApiResponse.apiResponseContent.addMoreMsg);
-                        } else {
-                            handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
-                        }
-                    }
+        Call<OldApiResponse<PlaceOrderApiResponseContent>> call = bigBasketApiService.placeOrder(mPotentialOrderId, mSelectedPaymentMethod);
+        call.enqueue(new BBNetworkCallback<OldApiResponse<PlaceOrderApiResponseContent>>(this) {
+            @Override
+            public void onSuccess(OldApiResponse<PlaceOrderApiResponseContent> placeOrderApiResponse) {
+                if (placeOrderApiResponse.status.equals(Constants.OK)) {
+                    postOrderCreation(placeOrderApiResponse.apiResponseContent.orders,
+                            placeOrderApiResponse.apiResponseContent.addMoreLink,
+                            placeOrderApiResponse.apiResponseContent.addMoreMsg);
+                } else {
+                    handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
     }
 
     private void postOrderCreation(ArrayList<Order> orders, String addMoreLink,

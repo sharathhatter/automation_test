@@ -29,12 +29,14 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
@@ -57,9 +59,7 @@ import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware,
@@ -106,15 +106,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         mSelectedAddress = null; // Reset
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.getDeliveryAddresses(new Callback<ApiResponse<GetDeliveryAddressApiResponseContent>>() {
+        Call<ApiResponse<GetDeliveryAddressApiResponseContent>> call = bigBasketApiService.getDeliveryAddresses();
+        call.enqueue(new BBNetworkCallback<ApiResponse<GetDeliveryAddressApiResponseContent>>(this, true) {
             @Override
-            public void success(ApiResponse<GetDeliveryAddressApiResponseContent> getDeliveryAddressApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressView();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<GetDeliveryAddressApiResponseContent> getDeliveryAddressApiResponse) {
                 switch (getDeliveryAddressApiResponse.status) {
                     case 0:
                         mAddressArrayList = getDeliveryAddressApiResponse.apiResponseContent.addresses;
@@ -131,14 +126,9 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressView();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error, true);
+            public boolean updateProgress() {
+                hideProgressView();
+                return true;
             }
         });
     }

@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,12 +16,13 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.section.Section;
+import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.HashMap;
 
@@ -39,6 +41,7 @@ public class HeaderSpinnerView<T> {
     private TextView txtToolbarDropdown;
     private ImageView imgCloseChildDropdown;
     private ViewGroup layoutListHeader;
+    private int mSelectedPosition = Spinner.INVALID_POSITION;
 
     private HeaderSpinnerView(T ctx, Typeface typeface, @Nullable Section headSection, int defaultSelectedIdx,
                               @Nullable String fallbackHeaderTitle, ListView listHeaderDropdown,
@@ -65,14 +68,14 @@ public class HeaderSpinnerView<T> {
                 && headSection.getSectionItems().size() > 0) {
             final OnChildDropdownRequested onChildDropdownRequested =
                     new OnChildDropdownRequested(layoutChildToolbarContainer,
-                            ((ActivityAware) ctx).getCurrentActivity());
+                            ((AppOperationAware) ctx).getCurrentActivity());
 
             if (toolbar.findViewById(txtToolbarDropdown.getId()) == null) {
                 txtToolbarDropdown.setTypeface(typeface);
                 toolbar.addView(txtToolbarDropdown);
             }
             toolbar.setTitle("");
-            ((ActivityAware) ctx).getCurrentActivity().setTitle("");
+            ((AppOperationAware) ctx).getCurrentActivity().setTitle("");
             txtToolbarDropdown.setOnClickListener(onChildDropdownRequested);
             imgCloseChildDropdown.setOnClickListener(onChildDropdownRequested);
 
@@ -80,25 +83,34 @@ public class HeaderSpinnerView<T> {
                 // Defensive check
                 defaultSelectedIdx = 0;
             }
-
+            mSelectedPosition = defaultSelectedIdx;
             SectionTextItem title = headSection.getSectionItems().get(defaultSelectedIdx).getTitle();
             txtToolbarDropdown.setText(title != null ? title.getText() : "");
             txtChildDropdownTitle.setTypeface(typeface);
             txtChildDropdownTitle.setText(title != null ? title.getText() : "");
             txtChildDropdownTitle.setOnClickListener(onChildDropdownRequested);
 
-            BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(((ActivityAware) ctx).getCurrentActivity(),
+            BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(((AppOperationAware) ctx).getCurrentActivity(),
                     R.layout.uiv3_product_header_list_item, headSection.getSectionItems(),
-                    typeface, ((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_primary_text_color), Color.WHITE);
+                    typeface, ((AppOperationAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_primary_text_color), Color.WHITE);
             bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             listHeaderDropdown.setAdapter(bbArrayAdapter);
+
+            if (headSection.getSectionItems() != null && headSection.getSectionItems().size() > 0) {
+                SectionItem firstSectionItem = headSection.getSectionItems().get(0);
+                if (firstSectionItem != null && firstSectionItem.getTitle() != null
+                        && !TextUtils.isEmpty(firstSectionItem.getTitle().getText())) {
+                    ((NavigationSelectionAware) ctx).onNavigationSelection(firstSectionItem.getTitle().getText().split("\\(")[0]);
+                }
+            }
 
             listHeaderDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if (position != Spinner.INVALID_POSITION) {
                         if (position != defaultSelectedIdx) {
-                            new OnSectionItemClickListener<>(((ActivityAware) ctx).getCurrentActivity(), headSection,
+                            mSelectedPosition = position;
+                            new OnSectionItemClickListener<>(((AppOperationAware) ctx).getCurrentActivity(), headSection,
                                     headSection.getSectionItems().get(position),
                                     TrackingAware.PRODUCT_LIST_HEADER).onClick(view);
                         }
@@ -116,7 +128,27 @@ public class HeaderSpinnerView<T> {
                 txtToolbarDropdown.setOnClickListener(null);
                 toolbar.removeView(txtToolbarDropdown);
             }
+            mSelectedPosition = Spinner.INVALID_POSITION;
         }
+    }
+
+    public SectionItem getSelectedItem() {
+        if (mSelectedPosition != Spinner.INVALID_POSITION && headSection != null) {
+            return headSection.getSectionItems().get(mSelectedPosition);
+        }
+        return null;
+    }
+
+    public void setDefaultSelectedIdx(int defaultSelectedIdx) {
+        this.defaultSelectedIdx = defaultSelectedIdx;
+    }
+
+    public void setFallbackHeaderTitle(@Nullable String fallbackHeaderTitle) {
+        this.fallbackHeaderTitle = fallbackHeaderTitle;
+    }
+
+    public void setHeadSection(@Nullable Section headSection) {
+        this.headSection = headSection;
     }
 
     public static class OnChildDropdownRequested implements View.OnClickListener {
@@ -137,12 +169,8 @@ public class HeaderSpinnerView<T> {
                 if (activity.getSupportActionBar() != null) {
                     activity.getSupportActionBar().show();
                 }
-                UIUtil.changeStatusBarColor(activity,
-                        R.color.uiv3_status_bar_background);
             } else {
                 layoutChildToolbarContainer.setVisibility(View.VISIBLE);
-                UIUtil.changeStatusBarColor(activity,
-                        R.color.uiv3_grey_status_bar_color);
                 if (activity.getSupportActionBar() != null) {
                     activity.getSupportActionBar().hide();
                 }

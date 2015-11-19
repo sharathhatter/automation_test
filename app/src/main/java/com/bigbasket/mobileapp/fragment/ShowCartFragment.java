@@ -53,7 +53,7 @@ public class ShowCartFragment extends BaseFragment {
                                     ArrayList<FulfillmentInfo> fulfillmentInfos,
                                     ArrayList<AnnotationInfo> annotationInfoArrayList,
                                     int currentTabIndex) {
-        if (getContentView() == null) return;
+        if (getContentView() == null || getCurrentActivity() == null) return;
 
         List<Object> cartItemHeaderList = new ArrayList<>();
         for (CartItemList cartItemInfoArray : cartItemLists) {
@@ -96,7 +96,7 @@ public class ShowCartFragment extends BaseFragment {
         }
 
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemHeaderList,
-                getActivity(),
+                getCurrentActivity(),
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl,
                 getNextScreenNavigationContext(), currentTabIndex);

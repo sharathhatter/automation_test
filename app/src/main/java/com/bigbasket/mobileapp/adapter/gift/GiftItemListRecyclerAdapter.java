@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.gift.GiftOperationAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
@@ -38,7 +38,7 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
         this.context = context;
         this.gift = gift;
         this.baseImgUrl = baseImgUrl;
-        Context ctx = ((ActivityAware) context).getCurrentActivity();
+        Context ctx = ((AppOperationAware) context).getCurrentActivity();
         this.faceRupee = FontHolder.getInstance(ctx).getFaceRupee();
         this.faceRobotoBold = FontHolder.getInstance(ctx).getFaceRobotoBold();
         this.faceRobotoRegular = FontHolder.getInstance(ctx).getFaceRobotoRegular();
@@ -48,7 +48,7 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        Context context = ((ActivityAware) this.context).getCurrentActivity();
+        Context context = ((AppOperationAware) this.context).getCurrentActivity();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         switch (viewType) {
             case VIEW_TYPE_FOOTER:
@@ -72,7 +72,7 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
     public void onBindViewHolder(RecyclerView.ViewHolder vholder, final int position) {
         if (getItemViewType(position) == VIEW_TYPE_GIFT) {
             GiftItemViewHolder holder = (GiftItemViewHolder) vholder;
-            Context context = ((ActivityAware) this.context).getCurrentActivity();
+            Context context = ((AppOperationAware) this.context).getCurrentActivity();
             ImageView imgProduct = holder.getImgProduct();
             TextView txtProductDesc = holder.getTxtProductDesc();
             TextView txtProductQuantity = holder.getTxtProductQty();
@@ -147,7 +147,7 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
             txtProductGiftWrapQuantityStatus.setText(giftItem.getReservedQty() + " " + context.getString(R.string.qtyToGiftWrapOrMsg));
         } else {
             UIUtil.setUpGiftItemListFooter(gift, (GiftItemFooterViewHolder) vholder,
-                    ((ActivityAware) context).getCurrentActivity());
+                    ((AppOperationAware) context).getCurrentActivity());
         }
     }
 

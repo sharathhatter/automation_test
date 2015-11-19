@@ -184,7 +184,8 @@ public interface TrackingAware {
     String GIFT_OPTS_SAVE_AND_CONTINUE = "Gift.SaveAndContinue";
 
     // SpecialityShops
-    String SPECIALITYSHOPS_LIST_SHOWN = "SpecialityShops.Shown";
+    String SPECIALITYSHOPS_LIST_SHOWN = "Speciality.StoreListing Shown";
+    String SPECIALITYSHOPS = "SPS.";
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease,

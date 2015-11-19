@@ -9,9 +9,14 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAppDataDynamicResponse;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.util.Constants;
 
-import retrofit.RetrofitError;
+import java.io.IOException;
+
+import retrofit.Call;
+import retrofit.Response;
+
 
 public class GetAppDataDynamicIntentService extends IntentService {
     private static final String TAG = "GetAppDynamicService";
@@ -24,20 +29,29 @@ public class GetAppDataDynamicIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         try {
-            ApiResponse<GetAppDataDynamicResponse> getDynamicPageApiResponse = bigBasketApiService.getAppDataDynamic();
-            if (getDynamicPageApiResponse.status == 0) {
-                AppDataDynamic.updateInstance(this,
-                        getDynamicPageApiResponse.apiResponseContent.addToBasketPostParams,
-                        getDynamicPageApiResponse.apiResponseContent.addressSummaries,
-                        getDynamicPageApiResponse.apiResponseContent.isContextualMode,
-                        getDynamicPageApiResponse.apiResponseContent.expressAvailability,
-                        getDynamicPageApiResponse.apiResponseContent.abModeName,
-                        getDynamicPageApiResponse.apiResponseContent.storeAvailabilityMap);
-                sendSuccessBroadcast();
+            Call<ApiResponse<GetAppDataDynamicResponse>> call = bigBasketApiService.getAppDataDynamic();
+            Response<ApiResponse<GetAppDataDynamicResponse>> response = call.execute();
+            if (response.isSuccess()) {
+                ApiResponse<GetAppDataDynamicResponse> getDynamicPageApiResponse = response.body();
+                if (getDynamicPageApiResponse.status == 0) {
+                    AppDataDynamic.updateInstance(this,
+                            getDynamicPageApiResponse.apiResponseContent.addToBasketPostParams,
+                            getDynamicPageApiResponse.apiResponseContent.addressSummaries,
+                            getDynamicPageApiResponse.apiResponseContent.isContextualMode,
+                            getDynamicPageApiResponse.apiResponseContent.expressAvailability,
+                            getDynamicPageApiResponse.apiResponseContent.abModeName,
+                            getDynamicPageApiResponse.apiResponseContent.storeAvailabilityMap);
+
+                    SpecialityStorePreference.saveSpecialityStoreDetailList(this,
+                            getDynamicPageApiResponse.apiResponseContent.specialityStoresInfo);
+                    sendSuccessBroadcast();
+                } else {
+                    sendErrorBroadcast();
+                }
             } else {
                 sendErrorBroadcast();
             }
-        } catch (RetrofitError e) {
+        } catch (IOException e) {
             sendErrorBroadcast();
         }
     }

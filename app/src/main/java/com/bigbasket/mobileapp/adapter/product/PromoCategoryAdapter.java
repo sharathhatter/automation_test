@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.PromoDetailNavigationAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
@@ -38,7 +38,7 @@ public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = ((ActivityAware) context).getCurrentActivity().getLayoutInflater();
+        LayoutInflater inflater = ((AppOperationAware) context).getCurrentActivity().getLayoutInflater();
         switch (viewType) {
             case VIEW_TYPE_CATEGORY:
                 View view = inflater.inflate(R.layout.uiv3_promo_category_list_header, parent, false);

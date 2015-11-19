@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -34,9 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 public class ShopFromOrderFragment extends ProductListAwareFragment {
 
@@ -80,15 +79,10 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getProductsForOrder(mOrderId, new Callback<ApiResponse<GetProductsForOrderApiResponseContent>>() {
+        Call<ApiResponse<GetProductsForOrderApiResponseContent>> call = bigBasketApiService.getProductsForOrder(mOrderId);
+        call.enqueue(new BBNetworkCallback<ApiResponse<GetProductsForOrderApiResponseContent>>(this) {
             @Override
-            public void success(ApiResponse<GetProductsForOrderApiResponseContent> getProductsForOrderApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<GetProductsForOrderApiResponseContent> getProductsForOrderApiResponse) {
                 switch (getProductsForOrderApiResponse.status) {
                     case 0:
                         mProducts = getProductsForOrderApiResponse.apiResponseContent.products;
@@ -102,14 +96,13 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
             }
         });
     }
@@ -198,32 +191,29 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     private void addAllItemsToBasket() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.addAllToBasketPastOrders(mOrderId,
-                new Callback<OldApiResponseWithCart>() {
-                    @Override
-                    public void success(OldApiResponseWithCart addAllToBasketPastOrdersCallBack, Response response) {
-                        if (isSuspended()) return;
-                        hideProgressView();
-                        switch (addAllToBasketPastOrdersCallBack.status) {
-                            case Constants.OK:
-                                setCartSummary(addAllToBasketPastOrdersCallBack);
-                                updateUIForCartInfo();
-                                loadProducts();
-                                break;
-                            case Constants.ERROR:
-                                handler.sendEmptyMessage(addAllToBasketPastOrdersCallBack.getErrorTypeAsInt(),
-                                        addAllToBasketPastOrdersCallBack.message);
-                                break;
-                        }
-                    }
+        Call<OldApiResponseWithCart> call = bigBasketApiService.addAllToBasketPastOrders(mOrderId);
+        call.enqueue(new BBNetworkCallback<OldApiResponseWithCart>(this) {
+            @Override
+            public void onSuccess(OldApiResponseWithCart addAllToBasketPastOrdersCallBack) {
+                switch (addAllToBasketPastOrdersCallBack.status) {
+                    case Constants.OK:
+                        setCartSummary(addAllToBasketPastOrdersCallBack);
+                        updateUIForCartInfo();
+                        loadProducts();
+                        break;
+                    case Constants.ERROR:
+                        handler.sendEmptyMessage(addAllToBasketPastOrdersCallBack.getErrorTypeAsInt(),
+                                addAllToBasketPastOrdersCallBack.message);
+                        break;
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        hideProgressView();
-                        handler.handleRetrofitError(error);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                hideProgressView();
+                return true;
+            }
+        });
     }
 
     private void logShopFromOrderEvent() {

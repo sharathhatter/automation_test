@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
@@ -37,6 +38,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.google.gson.Gson;
 
@@ -45,9 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public abstract class ProductListAwareFragment extends BaseSectionFragment implements
@@ -110,11 +110,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             mNameValuePairs.put(Constants.TAB_TYPE, new Gson().toJson(new String[]{mTabType}));
 
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
-            bigBasketApiService.productNextPage(mNameValuePairs, new Callback<ApiResponse<ProductNextPageResponse>>() {
+            Call<ApiResponse<ProductNextPageResponse>> call =
+                    bigBasketApiService.productNextPage(BBUrlEncodeUtils.urlEncode(mNameValuePairs));
+            call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
                 @Override
-                public void success(ApiResponse<ProductNextPageResponse> productNextPageApiResponse, Response response) {
+                public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {
                     setNextPageLoading(false);
-                    if (isSuspended()) return;
                     if (productNextPageApiResponse.status == 0) {
                         mProductInfo.setCurrentPage(nextPage);
                         HashMap<String, ArrayList<Product>> productMap = productNextPageApiResponse.apiResponseContent.productListMap;
@@ -128,10 +129,24 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
+                public void onFailure(int httpErrorCode, String msg) {
+                    failure();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    failure();
+                }
+
+                public void failure() {
                     setNextPageLoading(false);
                     mProductListRecyclerAdapter.setLoadingFailed(true);
                     mProductListRecyclerAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public boolean updateProgress() {
+                    return true;
                 }
             });
         }

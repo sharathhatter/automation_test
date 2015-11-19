@@ -10,8 +10,7 @@ import android.widget.AutoCompleteTextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.location.LocationAutoSuggestListener;
 import com.bigbasket.mobileapp.model.location.AutoCompletePlace;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -59,7 +58,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
         if (autoCompleteTextViewWeakReference == null ||
                 autoCompleteTextViewWeakReference.get() == null) return;
         AutoCompleteTextView aEditTextChooseArea = autoCompleteTextViewWeakReference.get();
-        Activity activity = ((ActivityAware) ctx).getCurrentActivity();
+        Activity activity = ((AppOperationAware) ctx).getCurrentActivity();
         placeAutoSuggestAdapter = new BBArrayAdapter<>(activity, android.R.layout.simple_list_item_1,
                 FontHolder.getInstance(activity).getFaceRobotoRegular(),
                 activity.getResources().getColor(R.color.uiv3_primary_text_color),
@@ -76,7 +75,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (!TextUtils.isEmpty(s) && s.length() > 2) {
                     if (!charsetEncoder.canEncode(s)) {
-                        ((ActivityAware) ctx).getCurrentActivity().
+                        ((AppOperationAware) ctx).getCurrentActivity().
                                 showToast("Only english alphabets are allowed!");
                         return;
                     }
@@ -110,7 +109,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
                 || !googleApiClientWeakReference.get().isConnected()) return;
 
         if (showProgress) {
-            ((ProgressIndicationAware) ctx).showProgressView();
+            ((AppOperationAware) ctx).showProgressView();
         }
         if (autoCompleteFilter == null) {
             ArrayList<Integer> filterTypes = new ArrayList<>();
@@ -136,7 +135,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
                         }
                         buffer.release();
                         if (showProgress) {
-                            ((ProgressIndicationAware) ctx).hideProgressView();
+                            ((AppOperationAware) ctx).hideProgressView();
                         }
                     }
                 });
@@ -148,7 +147,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
                 || !googleApiClientWeakReference.get().isConnected()) return;
 
         if (showProgress) {
-            ((ProgressIndicationAware) ctx).showProgressView();
+            ((AppOperationAware) ctx).showProgressView();
         }
 
         Places.GeoDataApi.getPlaceById(googleApiClientWeakReference.get(), id).setResultCallback(new ResultCallback<PlaceBuffer>() {
@@ -164,7 +163,7 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
                     places.release();
                 }
                 if (showProgress) {
-                    ((ProgressIndicationAware) ctx).hideProgressView();
+                    ((AppOperationAware) ctx).hideProgressView();
                 }
             }
         });

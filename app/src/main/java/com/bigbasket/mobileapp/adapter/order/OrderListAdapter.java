@@ -19,7 +19,7 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -48,9 +48,9 @@ public class
         this.totalPages = totalPages;
         this.currentPage = currentPage;
         this.orderListSize = orderListSize;
-        this.faceRobotoRegular = FontHolder.getInstance(((ActivityAware) context)
+        this.faceRobotoRegular = FontHolder.getInstance(((AppOperationAware) context)
                 .getCurrentActivity()).getFaceRobotoRegular();
-        this.faceRobotoBold = FontHolder.getInstance(((ActivityAware) context)
+        this.faceRobotoBold = FontHolder.getInstance(((AppOperationAware) context)
                 .getCurrentActivity()).getFaceRobotoBold();
     }
 
@@ -79,7 +79,7 @@ public class
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(((ActivityAware) context).getCurrentActivity());
+        LayoutInflater inflater = LayoutInflater.from(((AppOperationAware) context).getCurrentActivity());
         switch (viewType) {
             case VIEW_TYPE_DATA:
                 View row = inflater.inflate(R.layout.uiv3_order_list_row, parent, false);
@@ -88,7 +88,7 @@ public class
                 row = inflater.inflate(R.layout.uiv3_list_loading_footer, parent, false);
                 return new FixedLayoutViewHolder(row);
             case VIEW_TYPE_EMPTY:
-                row = new View(((ActivityAware) context).getCurrentActivity());
+                row = new View(((AppOperationAware) context).getCurrentActivity());
                 return new FixedLayoutViewHolder(row);
         }
         return null;
@@ -158,12 +158,12 @@ public class
                 txtSlotTime.setVisibility(View.VISIBLE);
             } else if (order.getOrderState() == 1) { //delivered
                 txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.uiv3_large_list_item_bck));
+                layoutOrderData.setBackgroundColor(((AppOperationAware) context).getCurrentActivity().getResources().getColor(R.color.uiv3_large_list_item_bck));
                 imgOrderType.setImageResource(R.drawable.complete_order);
                 txtSlotTime.setVisibility(View.GONE);
             } else { //cancel
                 txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.uiv3_large_list_item_bck));
+                layoutOrderData.setBackgroundColor(((AppOperationAware) context).getCurrentActivity().getResources().getColor(R.color.uiv3_large_list_item_bck));
                 imgOrderType.setImageResource(R.drawable.order_cancel);
                 txtSlotTime.setVisibility(View.GONE);
             }
@@ -173,9 +173,9 @@ public class
                 btnPayNow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), PayNowActivity.class);
+                        Intent intent = new Intent(((AppOperationAware) context).getCurrentActivity(), PayNowActivity.class);
                         intent.putExtra(Constants.ORDER_ID, order.getOrderId());
-                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                 });
             } else {
@@ -197,7 +197,7 @@ public class
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((OrderListActivity) ((ActivityAware) context).getCurrentActivity()).onOrderItemClicked(order);
+                    ((OrderListActivity) ((AppOperationAware) context).getCurrentActivity()).onOrderItemClicked(order);
                 }
             });
         }

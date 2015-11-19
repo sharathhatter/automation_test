@@ -37,27 +37,32 @@
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
 
-    <TextView
-        android:id="@+id/txtProductBrand"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:id="@+id/layoutProductBrand"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtProductDesc"
         android:layout_marginLeft="@dimen/margin_mini"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_toLeftOf="@id/imgProductOverflowAction"
         android:layout_toRightOf="@id/imgProduct"
-        android:text="Hampi Organic"
-        android:textColor="@color/uiv3_secondary_text_color"
-        android:textSize="@dimen/secondary_text_size" />
+        android:orientation="horizontal">
+
+        <include
+            android:id="@+id/layoutBrandSpecialityIcon"
+            layout="@layout/product_brand_speciality_shop_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/layoutPackageDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtProductBrand"
+        android:layout_below="@id/layoutProductBrand"
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_normal"
-        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_small"
         android:layout_toRightOf="@id/imgProduct"
         android:orientation="vertical">
 

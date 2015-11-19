@@ -7,22 +7,18 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class SendPaymentResponseTask<T> {
+public class SendPaymentResponseTask<T extends AppOperationAware> {
     private T ctx;
     private String potentialOrderId;
     private String paymentType;
@@ -97,12 +93,12 @@ public class SendPaymentResponseTask<T> {
     }
 
     public void start() {
-        if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendOfflineError();
+        if (!ctx.checkInternetConnection()) {
+            ctx.getHandler().sendOfflineError();
             return;
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
-        ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(ctx.getCurrentActivity());
+        ctx.showProgressDialog("Please wait...");
 
         Map<String, String> queryMap = new HashMap<>();
         queryMap.put(Constants.PAYMENT_TYPE, paymentType);
@@ -134,18 +130,19 @@ public class SendPaymentResponseTask<T> {
                 queryMap.putAll(paytmParams);
                 break;
         }
-        bigBasketApiService.postPrepaidPayment(queryMap, new PostPrepaidParamsCallback());
+        Call<ApiResponse<PostPrepaidPaymentResponse>> call =
+                bigBasketApiService.postPrepaidPayment(BBUrlEncodeUtils.urlEncode(queryMap));
+        call.enqueue(new PostPrepaidParamsCallback(ctx));
     }
 
-    private class PostPrepaidParamsCallback implements Callback<ApiResponse<PostPrepaidPaymentResponse>> {
+    private class PostPrepaidParamsCallback extends BBNetworkCallback<ApiResponse<PostPrepaidPaymentResponse>> {
+
+        public PostPrepaidParamsCallback(AppOperationAware ctx) {
+            super(ctx);
+        }
+
         @Override
-        public void success(ApiResponse<PostPrepaidPaymentResponse> postPrepaidPaymentApiResponse, Response response) {
-            if (((CancelableAware) ctx).isSuspended()) return;
-            try {
-                ((ProgressIndicationAware) ctx).hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
+        public void onSuccess(ApiResponse<PostPrepaidPaymentResponse> postPrepaidPaymentApiResponse) {
             switch (postPrepaidPaymentApiResponse.status) {
                 case 0:
                     if (postPrepaidPaymentApiResponse.apiResponseContent.paymentStatus) {
@@ -155,21 +152,20 @@ public class SendPaymentResponseTask<T> {
                     }
                     break;
                 default:
-                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(postPrepaidPaymentApiResponse.status,
+                    ctx.getHandler().sendEmptyMessage(postPrepaidPaymentApiResponse.status,
                             postPrepaidPaymentApiResponse.message);
                     break;
             }
         }
 
         @Override
-        public void failure(RetrofitError error) {
-            if (((CancelableAware) ctx).isSuspended()) return;
+        public boolean updateProgress() {
             try {
-                ((ProgressIndicationAware) ctx).hideProgressDialog();
+                ctx.hideProgressDialog();
+                return true;
             } catch (IllegalArgumentException e) {
-                return;
+                return false;
             }
-            ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
         }
     }
 }

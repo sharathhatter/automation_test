@@ -20,9 +20,14 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.OnBrandPageListener;
+import com.bigbasket.mobileapp.handler.OnPromoClickListener;
+import com.bigbasket.mobileapp.handler.OnSpecialityShopIconClickListener;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
@@ -44,9 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class ProductDetailFragment extends BaseFragment implements ShoppingListNamesAware {
@@ -100,15 +103,10 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         setNextScreenNavigationContext("pd." + (productId != null ? productId : eanCode));
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.productDetails(productId, eanCode, new Callback<ProductDetailApiResponse>() {
+        Call<ProductDetailApiResponse> call = bigBasketApiService.productDetails(productId, eanCode);
+        call.enqueue(new BBNetworkCallback<ProductDetailApiResponse>(this, true) {
             @Override
-            public void success(ProductDetailApiResponse productDetailApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ProductDetailApiResponse productDetailApiResponse) {
                 switch (productDetailApiResponse.status) {
                     case Constants.OK:
                         mProduct = productDetailApiResponse.product;
@@ -122,14 +120,13 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error, true);
             }
         });
     }
@@ -163,9 +160,12 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
-        ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
+        ProductView.setProductView(new ProductViewHolder(productRow,
+                        new OnSpecialityShopIconClickListener<>(this, SpecialityStorePreference.getSpecialityStoreDetailList(getActivity())), new OnPromoClickListener<>(this), null, new OnBrandPageListener<>(this)),
+                mProduct, null, productViewDisplayDataHolder,
                 false, this, getNextScreenNavigationContext(), null, "none",
-                AppDataDynamic.getInstance(getActivity()).getStoreAvailabilityMap());
+                AppDataDynamic.getInstance(getActivity()).getStoreAvailabilityMap(),
+                SpecialityStorePreference.getSpecialityStoreDetailList(getActivity()));
 
         if (mProduct.getProductPromoInfo() == null ||
                 !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {
@@ -173,13 +173,14 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         }
         layoutProductDetail.addView(productRow);
 
+        TextView txtVariableWeightMsg =(TextView) productRow.findViewById(R.id.txtVariableWeightMsg);
         String variableWeightMsg = mProduct.getVariableWeightMsg();
         if(!TextUtils.isEmpty(variableWeightMsg)) {
-            View variableInfoLayout = inflater.inflate(R.layout.variable_weight_layout, layoutProductDetail, false);
-            TextView txtVariableWeightMsg =(TextView) variableInfoLayout.findViewById(R.id.txtVariableWeightMsg);
             txtVariableWeightMsg.setTypeface(faceRobotoRegular);
             txtVariableWeightMsg.setText(variableWeightMsg);
-            layoutProductDetail.addView(variableInfoLayout);
+            txtVariableWeightMsg.setVisibility(View.VISIBLE);
+        }else {
+            txtVariableWeightMsg.setVisibility(View.GONE);
         }
 
         ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();

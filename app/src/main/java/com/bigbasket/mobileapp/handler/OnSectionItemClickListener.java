@@ -18,15 +18,15 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.activity.product.DiscountActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -82,16 +82,17 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void onSectionClick() {
-        if (context == null || ((CancelableAware) context).isSuspended()) return;
+        if (context == null || ((AppOperationAware) context).isSuspended()) return;
+
 
         logClickEvent();
         if (sectionItem != null) {
             if (sectionItem.getHelpDestinationInfo() != null &&
                     sectionItem.getHelpDestinationInfo().getDestinationType() != null &&
-                    !SectionHelpManager.isRead(((ActivityAware) context).getCurrentActivity(),
+                    !SectionHelpManager.isRead(((AppOperationAware) context).getCurrentActivity(),
                             sectionItem.getHelpDestinationInfo().getHelpKey())) {
                 HelpDestinationInfo helpDestinationInfo = sectionItem.getHelpDestinationInfo();
-                SectionHelpManager.markAsRead(((ActivityAware) context).getCurrentActivity(),
+                SectionHelpManager.markAsRead(((AppOperationAware) context).getCurrentActivity(),
                         helpDestinationInfo.getHelpKey());
                 handleDestinationClick(helpDestinationInfo);
                 return;
@@ -105,7 +106,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     public void handleDestinationClick(DestinationInfo destinationInfo) {
-        if (context == null || ((CancelableAware) context).isSuspended()) return;
+        if (context == null || ((AppOperationAware) context).isSuspended()) return;
         switch (destinationInfo.getDestinationType()) {
             case DestinationInfo.CATEGORY_LANDING:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
@@ -120,12 +121,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                             categoryLandingFragment.setArguments(subCatBundle);
                             ((BBActivity) context).onChangeFragment(categoryLandingFragment);
                         } else {
-                            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+                            Intent intent = new Intent(((AppOperationAware) context).getCurrentActivity(), SearchActivity.class);
                             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
                             intent.putExtra(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
                             intent.putExtra(Constants.TOP_CATEGORY_NAME, title);
                             intent.putExtra(Constants.TOP_CATEGORY_VERSION, destinationInfo.getCacheVersion());
-                            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
                     }
                 }
@@ -134,11 +135,11 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                     Intent intent;
                     if (destinationInfo instanceof HelpDestinationInfo) {
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), SectionHelpActivity.class);
+                        intent = new Intent(((AppOperationAware) context).getCurrentActivity(), SectionHelpActivity.class);
                         intent.putExtra(Constants.SECTION_INFO, (Parcelable) section);
                         intent.putExtra(Constants.SECTION_ITEM, (Parcelable) sectionItem);
                     } else {
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
+                        intent = new Intent(((AppOperationAware) context).getCurrentActivity(), BackButtonActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                         intent.putExtra(Constants.WEBVIEW_URL, destinationInfo.getDestinationSlug());
                     }
@@ -146,21 +147,21 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         intent.putExtra(Constants.WEBVIEW_TITLE, sectionItem.getTitle() != null ?
                                 sectionItem.getTitle().getText() : null);
                     }
-                    ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
                 break;
             case DestinationInfo.PREVIOUS_ORDERS:
-                Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), OrderListActivity.class);
-                intent.putExtra(Constants.ORDER, ((ActivityAware) context).getCurrentActivity().getString(R.string.past_label));
+                Intent intent = new Intent(((AppOperationAware) context).getCurrentActivity(), OrderListActivity.class);
+                intent.putExtra(Constants.ORDER, ((AppOperationAware) context).getCurrentActivity().getString(R.string.past_label));
                 intent.putExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, true);
-                ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 break;
             case DestinationInfo.PRODUCT_DETAIL:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
-                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
+                    intent = new Intent(((AppOperationAware) context).getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
                     intent.putExtra(Constants.SKU_ID, destinationInfo.getDestinationSlug());
-                    ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
                 break;
             case DestinationInfo.PROMO_DETAIL:
@@ -173,10 +174,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         promoDetailFragment.setArguments(promoDetailBundle);
                         ((BBActivity) context).onChangeFragment(promoDetailFragment);
                     } else {
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+                        intent = new Intent(((AppOperationAware) context).getCurrentActivity(), SearchActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
                         intent.putExtra(Constants.PROMO_ID, Integer.parseInt(destinationInfo.getDestinationSlug()));
-                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                 }
                 break;
@@ -197,9 +198,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 }
                 break;
             case DestinationInfo.SHOPPING_LIST_LANDING:
-                intent = new Intent(((ActivityAware) context).getCurrentActivity(), ShoppingListActivity.class);
+                intent = new Intent(((AppOperationAware) context).getCurrentActivity(), ShoppingListActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
-                ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 break;
             case DestinationInfo.SEARCH:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
@@ -223,7 +224,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             case DestinationInfo.DEEP_LINK:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                     try {
-                        ((ActivityAware) context).getCurrentActivity().
+                        ((AppOperationAware) context).getCurrentActivity().
                                 startActivityForResult(new Intent(Intent.ACTION_VIEW,
                                                 Uri.parse(destinationInfo.getDestinationSlug())),
                                         NavigationCodes.GO_TO_HOME);
@@ -236,47 +237,47 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 if (hasMainMenu()) {
                     ((BBActivity) context).onChangeFragment(new PromoCategoryFragment());
                 } else {
-                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+                    intent = new Intent(((AppOperationAware) context).getCurrentActivity(), SearchActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
-                    ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
                 break;
             case DestinationInfo.HOME:
-                ((ActivityAware) context).getCurrentActivity().goToHome(false);
+                ((AppOperationAware) context).getCurrentActivity().goToHome(false);
                 break;
             case DestinationInfo.COMMUNICATION_HUB:
-                ((ActivityAware) context).getCurrentActivity().launchMoEngageCommunicationHub();
+                ((AppOperationAware) context).getCurrentActivity().launchMoEngageCommunicationHub();
                 break;
             case DestinationInfo.CALL:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                     UIUtil.dialNumber(destinationInfo.getDestinationSlug(),
-                            ((ActivityAware) context).getCurrentActivity());
+                            ((AppOperationAware) context).getCurrentActivity());
                 }
                 break;
             case DestinationInfo.DYNAMIC_PAGE:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                     if (destinationInfo instanceof HelpDestinationInfo) {
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), SectionHelpActivity.class);
+                        intent = new Intent(((AppOperationAware) context).getCurrentActivity(), SectionHelpActivity.class);
                         intent.putExtra(Constants.SECTION_INFO, (Parcelable) section);
                         intent.putExtra(Constants.SECTION_ITEM, (Parcelable) sectionItem);
-                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     } else {
                         Bundle bundle = new Bundle();
                         bundle.putString(Constants.SCREEN, destinationInfo.getDestinationSlug());
                         DynamicScreenFragment dynamicScreenFragment = new DynamicScreenFragment();
                         dynamicScreenFragment.setArguments(bundle);
-                        ((ActivityAware) context).getCurrentActivity().onChangeFragment(dynamicScreenFragment);
+                        ((AppOperationAware) context).getCurrentActivity().onChangeFragment(dynamicScreenFragment);
                     }
                 }
                 break;
             case DestinationInfo.DISCOUNT:
-                intent = new Intent(((ActivityAware) context).getCurrentActivity(),
+                intent = new Intent(((AppOperationAware) context).getCurrentActivity(),
                         DiscountActivity.class);
-                ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent,
+                ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent,
                         NavigationCodes.GO_TO_HOME);
                 break;
             case DestinationInfo.BASKET:
-                ((ActivityAware) context).getCurrentActivity().launchViewBasketScreen();
+                ((AppOperationAware) context).getCurrentActivity().launchViewBasketScreen();
                 break;
             case DestinationInfo.STORE_LIST:
                 launchStoreList(destinationInfo);
@@ -367,7 +368,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (context instanceof Fragment && context instanceof AnalyticsNavigationContextAware) {
             ((AnalyticsNavigationContextAware) context).setNextScreenNavigationContext(ncBuilder.toString());
         }
-        ((ActivityAware) context).getCurrentActivity().setNextScreenNavigationContext(ncBuilder.toString());
+        ((AppOperationAware) context).getCurrentActivity().setNextScreenNavigationContext(ncBuilder.toString());
     }
 
     @Nullable
@@ -414,7 +415,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             eventAttribs.put(TrackEventkeys.BANNER_ID, String.valueOf(index));
             eventAttribs.put(TrackEventkeys.BANNER_SLUG, bannerName);
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
-                    ((ActivityAware) context).getCurrentActivity().getNextScreenNavigationContext());
+                    ((AppOperationAware) context).getCurrentActivity().getNextScreenNavigationContext());
             ((TrackingAware) context).trackEvent(eventName, eventAttribs);
         }
     }
@@ -450,7 +451,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (!TextUtils.isEmpty(itemName))
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName(true));
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
-                ((ActivityAware) context).getCurrentActivity().getNextScreenNavigationContext());
+                ((AppOperationAware) context).getCurrentActivity().getNextScreenNavigationContext());
         String eventName = getAnalyticsFormattedScreeName();
         if (eventName == null) return;
         if (screenName != null && screenName.equals(SectionManager.DISCOUNT_PAGE)) {

@@ -20,10 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.BasketChangeQtyAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -44,13 +44,15 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
 import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ActiveOrderRowAdapter<T extends AppOperationAware> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_CART_ITEM = 0;
     private static final int VIEW_TYPE_CART_HEADER = 1;
@@ -69,6 +71,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
     private String navigationCtx;
     private T context;
     private int currentTabIndex;
+    private String quantityText;
 
     public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
                                  Typeface faceRobotoRegular, @OrderItemDisplaySource.Type int orderItemDisplaySource,
@@ -88,7 +91,8 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         this.baseImgUrl = baseImageUrl;
         this.navigationCtx = navigationCtx;
         this.currentTabIndex = currentTabIndex;
-        this.inflater = (LayoutInflater) ((ActivityAware) context).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.inflater = (LayoutInflater) context.getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.quantityText = context.getCurrentActivity().getResources().getString(R.string.quantity);
     }
 
     @Override
@@ -206,13 +210,13 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
 
     private void showFulfillmentInfo(Object obj, FulfillmentInfoViewHolder holder) {
         ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo<>((FulfillmentInfo) obj,
-                ((ActivityAware) context).getCurrentActivity(), faceRobotoRegular, holder);
+                context.getCurrentActivity(), faceRobotoRegular, holder);
         showFulfillmentInfo.showFulfillmentInfo(true, true);
     }
 
     private void showAnnotationInfo(Object obj, FulfillmentInfoViewHolder holder) {
         ShowAnnotationInfo showAnnotationInfo = new ShowAnnotationInfo<>((AnnotationInfo) obj,
-                ((ActivityAware) context).getCurrentActivity(), holder);
+                context.getCurrentActivity(), holder);
         showAnnotationInfo.showAnnotationInfo();
     }
 
@@ -271,6 +275,12 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         }
 
         TextView txtSalePrice = rowHolder.getTxtSalePrice();
+
+        final TextView txtInBasket = rowHolder.getTxtInBasket();
+        final View imgDecBasketQty = rowHolder.getViewDecBasketQty();
+        final View imgIncBasketQty = rowHolder.getViewIncBasketQty();
+        final ImageView imgRemove = rowHolder.getImgRemove();
+
         if (cartItem.getTotalPrice() > 0) {
             String prefix = "`";
             String salePriceStr = UIUtil.formatAsMoney(cartItem.getTotalPrice());
@@ -282,8 +292,25 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
             txtSalePrice.setVisibility(View.VISIBLE);
         } else {
             txtSalePrice.setText("Free!");
+            txtInBasket.setVisibility(View.INVISIBLE);
+            imgIncBasketQty.setVisibility(View.INVISIBLE);
+            imgDecBasketQty.setVisibility(View.INVISIBLE);
+            imgRemove.setVisibility(View.INVISIBLE);
+            /**
+             * setting quantity of free item
+             * check if it is order display and not basket page
+             */
+            if (orderItemDisplaySource == OrderItemDisplaySource.ORDER_DISPLAY) {
+            if (cartItem.getTotalQty() > 0) {
+                txtInBasket.setVisibility(View.VISIBLE);
+                txtInBasket.setText(getDisplayTotalQty(cartItem.getTotalQty()));
+            } else {
+                txtInBasket.setVisibility(View.GONE);
+            }
+        }
         }
 
+        /*
         TextView txtGiftMsg = rowHolder.getTxtGiftMsg();
         if (TextUtils.isEmpty(cartItem.getGiftMsg())) {
             txtGiftMsg.setVisibility(View.GONE);
@@ -307,10 +334,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         }
         */
 
-        final TextView txtInBasket = rowHolder.getTxtInBasket();
-        final View imgDecBasketQty = rowHolder.getViewDecBasketQty();
-        final View imgIncBasketQty = rowHolder.getViewIncBasketQty();
-        final ImageView imgRemove = rowHolder.getImgRemove();
+
         TextView txtPackDesc = rowHolder.getTxtPackDesc();
         String packType = "";
         if (!TextUtils.isEmpty(cartItem.getProductWeight()))
@@ -326,7 +350,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         }
 
         ArrayList<String> addToBasketPostParamsArrayList = AppDataDynamic.
-                getInstance(((ActivityAware) context).getCurrentActivity()).getAddToBasketPostParams();
+                getInstance(context.getCurrentActivity()).getAddToBasketPostParams();
         final Map<String, String> basketQueryMap = new HashMap<>();
         HashMap<String, String> productStoreAvailabilityMap = cartItem.getStoreAvailability();
         if (addToBasketPostParamsArrayList != null && addToBasketPostParamsArrayList.size() > 0 &&
@@ -339,7 +363,8 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
             }
         }
         if (imgDecBasketQty != null && imgIncBasketQty != null && imgRemove != null) {
-            if (orderItemDisplaySource == OrderItemDisplaySource.BASKET && !isReadOnlyBasket && cartItem.getTotalPrice() > 0) {
+            if (orderItemDisplaySource == OrderItemDisplaySource.BASKET && !isReadOnlyBasket && cartItem.getTotalPrice() > 0)
+            {
                 txtInBasket.setVisibility(View.VISIBLE);
                 imgIncBasketQty.setVisibility(View.VISIBLE);
                 imgDecBasketQty.setVisibility(View.VISIBLE);
@@ -353,10 +378,11 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                     txtInBasket.setVisibility(View.GONE);
                 }
 
+
                 imgDecBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
+                        if (DataUtil.isInternetAvailable(context.getCurrentActivity())) {
                             if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
@@ -378,7 +404,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                         currentTabIndex);
                             }
                         } else {
-                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
                             toast.show();
                         }
@@ -387,7 +413,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                 imgIncBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
+                        if (DataUtil.isInternetAvailable(context.getCurrentActivity())) {
                             if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
@@ -408,7 +434,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                         currentTabIndex);
                             }
                         } else {
-                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(),
+                            Toast toast = Toast.makeText(context.getCurrentActivity(),
                                     "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
                             toast.show();
@@ -418,7 +444,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                 imgRemove.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
+                        if (DataUtil.isInternetAvailable(context.getCurrentActivity())) {
                             if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
@@ -441,19 +467,38 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                                         currentTabIndex);
                             }
                         } else {
-                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(context.getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
                             toast.show();
                         }
                     }
                 });
-            } else {
-                txtInBasket.setVisibility(View.GONE);
-                imgIncBasketQty.setVisibility(View.GONE);
-                imgDecBasketQty.setVisibility(View.GONE);
-                imgRemove.setVisibility(View.INVISIBLE);
             }
+            /**
+             * checking the order display source  and the based on it the txtInBasket  quantity is assigned
+             * views are made invisible and not gone as the have relation in xml
+             */
+            else if (orderItemDisplaySource == OrderItemDisplaySource.ORDER_DISPLAY && isReadOnlyBasket && cartItem.getTotalPrice() > 0) {
+                txtInBasket.setVisibility(View.VISIBLE);
+                imgIncBasketQty.setVisibility(View.INVISIBLE);
+                imgDecBasketQty.setVisibility(View.INVISIBLE);
+                imgRemove.setVisibility(View.INVISIBLE);
+
+                if (cartItem.getTotalQty() > 0) {
+                    txtInBasket.setVisibility(View.VISIBLE);
+                    txtInBasket.setText(getDisplayTotalQty(cartItem.getTotalQty()));
+                } else {
+                    txtInBasket.setVisibility(View.GONE);
+                }
+
+            }
+        }else {
+            txtInBasket.setVisibility(View.GONE);
+            imgIncBasketQty.setVisibility(View.GONE);
+            imgDecBasketQty.setVisibility(View.GONE);
+            imgRemove.setVisibility(View.INVISIBLE);
         }
+
     }
 
     private void getRegularPriceAndNoPromoView(RowHolder rowHolder) {
@@ -499,7 +544,7 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         txtPromoNameDesc.setVisibility(View.VISIBLE);
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
-        txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.red_color));
+        txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.red_color));
 
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -528,9 +573,9 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
         if (context instanceof ShowCartActivity) {
-            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
+            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
         } else {
-            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.link_color));
+            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.link_color));
         }
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -553,9 +598,9 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
                         + separator.length(), regularQtyStr.length() + separator.length() + 1,
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE
         );
-        regularSpannable.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.tabDark)), regularSalePriceStr.length() - 1,
+        regularSpannable.setSpan(new ForegroundColorSpan(context.getCurrentActivity().getResources().getColor(R.color.tabDark)), regularSalePriceStr.length() - 1,
                 regularQtyStr.length() + separator.length() + regularSalePriceStr.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        regularSpannable.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.medium_grey)), 0,
+        regularSpannable.setSpan(new ForegroundColorSpan(context.getCurrentActivity().getResources().getColor(R.color.medium_grey)), 0,
                 regularQtyStr.length() + separator.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         txtRegularPriceAndQty.setText(regularSpannable);
 
@@ -584,12 +629,29 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
         if (context instanceof ShowCartActivity) {
-            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
+            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
         } else {
-            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.link_color));
+            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.link_color));
         }
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
+        }
+    }
+
+    /**
+     * getting the quantity of a particular commodity
+     *
+     * @param quantity: the quantity of the product ordered
+     * @return the string value of the quantity along with text "Quantity:" prefixed
+     */
+    private String getDisplayTotalQty(double quantity) {
+        if (quantity % 1 == 0) {
+            return quantityText + String.valueOf((int) quantity);
+        } else {
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.FLOOR);
+            double result = Double.valueOf(df.format(quantity));
+            return quantityText + String.valueOf(result);
         }
     }
 
@@ -837,10 +899,10 @@ public class ActiveOrderRowAdapter<T> extends RecyclerView.Adapter<RecyclerView.
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+            Intent intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
             intent.putExtra(Constants.PROMO_ID, promoId);
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
-            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 }

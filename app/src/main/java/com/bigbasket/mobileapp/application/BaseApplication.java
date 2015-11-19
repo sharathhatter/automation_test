@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.application;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -13,6 +14,16 @@ import com.moe.pushlibrary.MoEHelper;
 import io.fabric.sdk.android.Fabric;
 
 public class BaseApplication extends Application {
+
+    private static Context sContext;
+
+    public BaseApplication() {
+        sContext = this;
+    }
+
+    public static Context getsContext() {
+        return sContext;
+    }
 
     @Override
     public void onCreate() {

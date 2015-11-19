@@ -10,8 +10,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.util.FontHolder;
 
@@ -34,7 +34,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         this.addressObjectList = addressObjectList;
         this.context = context;
         this.fromAccount = fromAccount;
-        inflater = ((ActivityAware) context).getCurrentActivity().getLayoutInflater();
+        inflater = ((AppOperationAware) context).getCurrentActivity().getLayoutInflater();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             case VIEW_TYPE_ADD_ADDRESS:
                 view = inflater.inflate(R.layout.uiv3_add_address_layout, viewGroup, false);
                 ((TextView) view.findViewById(R.id.txtAddNewAddress))
-                        .setTypeface(FontHolder.getInstance(((ActivityAware) context).getCurrentActivity()).getFaceRobotoMedium());
+                        .setTypeface(FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity()).getFaceRobotoMedium());
                 return new AddAddressViewHolder(view);
         }
         return null;
@@ -83,7 +83,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             if (position > 1) {
                 View view = memberAddressViewHolder.getItemView();
                 ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-                params.bottomMargin = (int) ((ActivityAware) context).getCurrentActivity().getResources().getDimension(R.dimen.margin_small);
+                params.bottomMargin = (int) ((AppOperationAware) context).getCurrentActivity().getResources().getDimension(R.dimen.margin_small);
                 view.setLayoutParams(params);
             }
 
@@ -107,7 +107,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 params.leftMargin = 0;
                 txtAddress.setLayoutParams(params);
             } else {
-                params.leftMargin = (int) ((ActivityAware) context).getCurrentActivity().getResources().getDimension(R.dimen.margin_normal);
+                params.leftMargin = (int) ((AppOperationAware) context).getCurrentActivity().getResources().getDimension(R.dimen.margin_normal);
                 txtAddress.setLayoutParams(params);
             }
             txtAddress.setText(address.toString());
@@ -120,21 +120,17 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                     ((AddressSelectionAware) context).onEditAddressClicked(address);
                 }
             });
-            if (!fromAccount)
-                imgEditIcon.setVisibility(View.INVISIBLE);
-            else
-                imgEditIcon.setVisibility(View.VISIBLE);
 
             TextView txtExpressDelivery = memberAddressViewHolder.getTxtExpressDelivery();
             if (address.isExpress()) {
-                txtExpressDelivery.setText(((ActivityAware) context).getCurrentActivity().getString(R.string.expressAvailable));
+                txtExpressDelivery.setText(((AppOperationAware) context).getCurrentActivity().getString(R.string.expressAvailable));
                 txtExpressDelivery.setVisibility(View.VISIBLE);
                 ViewGroup.MarginLayoutParams txtExpressDeliveryParams = (ViewGroup.MarginLayoutParams) txtExpressDelivery.getLayoutParams();
                 if (fromAccount) {
                     txtExpressDeliveryParams.leftMargin = 0;
                     txtExpressDelivery.setLayoutParams(txtExpressDeliveryParams);
                 } else {
-                    params.leftMargin = (int) ((ActivityAware) context).getCurrentActivity().getResources().getDimension(R.dimen.margin_normal);
+                    params.leftMargin = (int) ((AppOperationAware) context).getCurrentActivity().getResources().getDimension(R.dimen.margin_normal);
                     txtExpressDelivery.setLayoutParams(txtExpressDeliveryParams);
                 }
 
@@ -181,7 +177,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         public TextView getTxtAddressLabel() {
             if (txtAddressLabel == null) {
                 txtAddressLabel = (TextView) itemView.findViewById(R.id.txtAddressLabel);
-                txtAddressLabel.setTypeface(FontHolder.getInstance(((ActivityAware) context).getCurrentActivity()).getFaceRobotoRegular());
+                txtAddressLabel.setTypeface(FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity()).getFaceRobotoRegular());
             }
             return txtAddressLabel;
         }
@@ -220,7 +216,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         public TextView getTxtAddress() {
             if (txtAddress == null) {
                 txtAddress = (TextView) itemView.findViewById(R.id.txtAddress);
-                txtAddress.setTypeface(FontHolder.getInstance(((ActivityAware) context).getCurrentActivity()).getFaceRobotoMedium());
+                txtAddress.setTypeface(FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity()).getFaceRobotoMedium());
             }
 
             return txtAddress;
@@ -229,7 +225,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         public TextView getTxtExpressDelivery() {
             if (txtExpressDelivery == null) {
                 txtExpressDelivery = (TextView) itemView.findViewById(R.id.txtExpressDelivery);
-                txtExpressDelivery.setTypeface(FontHolder.getInstance(((ActivityAware) context).getCurrentActivity()).getFaceRobotoRegular());
+                txtExpressDelivery.setTypeface(FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity()).getFaceRobotoRegular());
             }
             return txtExpressDelivery;
         }

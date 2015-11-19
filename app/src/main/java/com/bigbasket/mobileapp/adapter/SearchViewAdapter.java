@@ -2,33 +2,43 @@ package com.bigbasket.mobileapp.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Typeface;
+import android.support.annotation.Nullable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.Filterable;
+import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.SearchUtil;
 
-public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
+import java.lang.ref.WeakReference;
+
+public class SearchViewAdapter<T> extends CursorAdapter {
+
 
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_ITEM = 1;
     private LayoutInflater inflater;
     private FontHolder fontHolder;
+    private SearchTermRemoveAware searchTermRemoveAware;
 
-    public SearchViewAdapter(T context, Cursor contactCursor) {
-        super(((ActivityAware) context).getCurrentActivity(), contactCursor, false);
-        this.inflater = LayoutInflater.from(((ActivityAware) context).getCurrentActivity());
-        this.fontHolder = FontHolder.getInstance(((ActivityAware) context).getCurrentActivity());
+    public SearchViewAdapter(T context, Cursor contactCursor, SearchTermRemoveAware searchTermRemoveAware) {
+        super(((AppOperationAware) context).getCurrentActivity(), contactCursor, false);
+        this.inflater = LayoutInflater.from(((AppOperationAware) context).getCurrentActivity());
+        this.fontHolder = FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity());
+        this.searchTermRemoveAware = searchTermRemoveAware;
     }
 
     @Override
@@ -39,8 +49,27 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
         if (viewType == VIEW_TYPE_ITEM) {
             RowViewHolder rowViewHolder = (RowViewHolder) view.getTag();
             TextView txtTerm = rowViewHolder.getTxtTerm();
-            txtTerm.setText(termString.trim());
-
+            String term = termString.trim();
+            int termLength = term.length();
+            String constraint = getFilterQuery();
+            if (!TextUtils.isEmpty(constraint)) {
+                int startIndx = term.indexOf(constraint);
+                int endIndx = startIndx > -1 ? startIndx + constraint.length() - 1 : -1;
+                if (endIndx > 0) {
+                    endIndx = Math.min(endIndx, termLength - 1);
+                }
+                if (endIndx > startIndx) {
+                    SpannableString spannableString = new SpannableString(term);
+                    spannableString.setSpan(new StyleSpan(Typeface.BOLD),
+                            startIndx, endIndx + 1,
+                            Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                    txtTerm.setText(spannableString);
+                } else {
+                    txtTerm.setText(term);
+                }
+            } else {
+                txtTerm.setText(term);
+            }
 
             ImageView imgRemoveTerm = rowViewHolder.getImgRemoveTerm();
             if (getItemRightIcon(cursor) != null && getItemRightIcon(cursor).equals(SearchUtil.HISTORY_TERM)) {
@@ -53,7 +82,7 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
                         if (!TextUtils.isEmpty(deleteTerm)) {
                             MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(context);
                             mostSearchesAdapter.deleteTerm(deleteTerm);
-                            ((SearchableActivity) context).notifySearchTermAdapter();
+                            searchTermRemoveAware.notifySearchTermAdapter();
                         }
                     }
                 });
@@ -79,6 +108,19 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
             return VIEW_TYPE_HEADER;
         }
         return VIEW_TYPE_ITEM;
+    }
+
+    @Nullable
+    private String getFilterQuery() {
+        if (getFilterQueryProvider() instanceof SearchFilterQueryProvider) {
+            return ((SearchFilterQueryProvider) getFilterQueryProvider()).getConstraint();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return getItemViewType(position) == VIEW_TYPE_ITEM;
     }
 
     public String getItemRightIcon(Cursor cursor) {
@@ -151,9 +193,33 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
         public TextView getTxtTermHeader() {
             if (txtTermHeader == null) {
                 txtTermHeader = (TextView) itemRow.findViewById(R.id.txtTermHeader);
-                txtTermHeader.setTypeface(fontHolder.getFaceRobotoRegular());
             }
             return txtTermHeader;
+        }
+    }
+
+    public static class SearchFilterQueryProvider implements FilterQueryProvider {
+
+        private String constraint;
+        private WeakReference<Context> context;
+
+        @Nullable
+        public String getConstraint() {
+            return constraint;
+        }
+
+        public SearchFilterQueryProvider(Context context) {
+            this.context = new WeakReference<>(context);
+        }
+
+        @Override
+        public Cursor runQuery(CharSequence constraint) {
+            if (context != null && context.get() != null && constraint != null) {
+                this.constraint = constraint.toString();
+                return SearchUtil.searchQueryCall(constraint.toString(),
+                        context.get().getApplicationContext());
+            }
+            return null;
         }
     }
 }

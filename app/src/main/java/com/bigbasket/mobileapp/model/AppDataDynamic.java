@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.Gson;
@@ -77,6 +78,7 @@ public class AppDataDynamic {
             String storeJson = gson.toJson(storeAvailabilityMap);
             editor.putString(Constants.STORE_AVAILABILITY_MAP, storeJson);
         }
+
         editor.putBoolean(Constants.IS_CONTEXTUAL_MODE, isContextualMode);
         editor.putString(TIMEOUT_KEY, new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                 Locale.getDefault()).format(new Date()));
@@ -128,6 +130,7 @@ public class AppDataDynamic {
             }.getType();
             this.storeAvailabilityMap = gson.fromJson(storeJson, collectionType);
         }
+
     }
 
     public static void reset(Context context) {
@@ -141,6 +144,7 @@ public class AppDataDynamic {
                 .remove(Constants.ADD_TO_BASKET_POST_PARAMS)
                 .remove(Constants.STORE_AVAILABILITY_MAP)
                 .apply();
+        SpecialityStorePreference.reset(context);
         appDataDynamic = null;
     }
 
@@ -171,4 +175,5 @@ public class AppDataDynamic {
     public HashMap<String, String> getStoreAvailabilityMap() {
         return storeAvailabilityMap;
     }
+
 }

@@ -16,6 +16,11 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
 
+import java.io.IOException;
+
+import retrofit.Call;
+import retrofit.Response;
+
 public class SearchUtil {
 
     //public static final String SEARCH_LEFT_ICON = "s";
@@ -34,12 +39,20 @@ public class SearchUtil {
             // Get the results by querying server
             if (DataUtil.isInternetAvailable(context)) {
                 BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
-                ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = bigBasketApiService.autoSearch(query);
-                switch (autoSearchApiResponse.status) {
-                    case 0:
-                        autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
-                        searchSuggestionAdapter.insertAsync(autoSearchResponse);
-                        break;
+                try {
+                    Call<ApiResponse<AutoSearchApiResponseContent>> call = bigBasketApiService.autoSearch(query);
+                    Response<ApiResponse<AutoSearchApiResponseContent>> response = call.execute();
+                    if (response.isSuccess()) {
+                        ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = response.body();
+                        switch (autoSearchApiResponse.status) {
+                            case 0:
+                                autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
+                                searchSuggestionAdapter.insertAsync(autoSearchResponse);
+                                break;
+                        }
+                    }
+                } catch (IOException e) {
+                    // Fail silently
                 }
             }
         }

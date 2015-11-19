@@ -10,5 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
         android:inputType="text"
+        android:theme="@style/BaseAppTheme.DialogTheme.Input"
         android:id="@+id/editTextDialog" />
 </LinearLayout>

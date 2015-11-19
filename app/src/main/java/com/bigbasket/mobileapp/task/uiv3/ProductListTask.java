@@ -3,43 +3,43 @@ package com.bigbasket.mobileapp.task.uiv3;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.ProductListApiResponseCallback;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.model.product.ProductTabData;
+import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 
 import java.util.HashMap;
 
-public class ProductListTask<T> {
+import retrofit.Call;
+
+public class ProductListTask<T extends AppOperationAware> {
 
     protected T ctx;
     private String navigationCtx;
     private HashMap<String, String> paramMap;
-    private int currentTabIndex;
     private boolean isFilterOrSortApplied;
 
     public ProductListTask(T ctx, HashMap<String, String> paramMap, String navigationCtx,
-                           int currentTabIndex, boolean isFilterOrSortApplied) {
+                           boolean isFilterOrSortApplied) {
         this.ctx = ctx;
         this.paramMap = paramMap;
         this.navigationCtx = navigationCtx;
-        this.currentTabIndex = currentTabIndex;
         this.isFilterOrSortApplied = isFilterOrSortApplied;
     }
 
 
     public void startTask() {
-        if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendOfflineError(true);
+        if (!ctx.checkInternetConnection()) {
+            ctx.getHandler().sendOfflineError(true);
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
-                getApiService(((ActivityAware) ctx).getCurrentActivity());
+                getApiService(ctx.getCurrentActivity());
 
-        if (((CancelableAware) ctx).isSuspended()) return;
-        ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        bigBasketApiService.productList(navigationCtx, paramMap,
-                new ProductListApiResponseCallback<>(ctx, false, currentTabIndex, isFilterOrSortApplied));
+        if (ctx.isSuspended()) return;
+        ctx.showProgressDialog("Please wait...");
+        Call<ApiResponse<ProductTabData>> call =
+                bigBasketApiService.productList(navigationCtx, BBUrlEncodeUtils.urlEncode(paramMap));
+        call.enqueue(new ProductListApiResponseCallback<>(ctx, false, isFilterOrSortApplied));
     }
 }

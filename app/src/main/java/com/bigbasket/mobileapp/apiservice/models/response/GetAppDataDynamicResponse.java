@@ -25,4 +25,7 @@ public class GetAppDataDynamicResponse {
 
     @SerializedName(Constants.STORE_AVAILABILITY_MAP)
     public HashMap<String, String> storeAvailabilityMap;
+
+    @SerializedName(Constants.SPECIALITY_STORES_INFO)
+    public HashMap<String, SpecialityStoresInfoModel> specialityStoresInfo;
 }

@@ -5,15 +5,19 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
+
+import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.section.Renderer;
@@ -23,7 +27,7 @@ import com.bigbasket.mobileapp.model.section.SubSectionItem;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements NavigationSelectedValueAware {
 
     private static final int VIEW_TYPE_SECTION_ITEM = 0;
     private static final int VIEW_TYPE_HEADER = 1;
@@ -36,6 +40,9 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private ArrayList<SectionNavigationItem> sectionNavigationItems;
     private String screenName;
     private String baseImgUrl;
+
+    private String selectedCategoryString;
+    private String selectedSubCategoryString;
 
     @Nullable
     private HashMap<Integer, Renderer> rendererHashMap;
@@ -52,6 +59,22 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.screenName = screenName;
         this.baseImgUrl = baseImgUrl;
         this.rendererHashMap = rendererHashMap;
+    }
+
+    public String getSelectedCategoryString() {
+        return selectedCategoryString;
+    }
+
+    public void setSelectedCategoryString(String selectedCategoryString) {
+        this.selectedCategoryString = selectedCategoryString;
+    }
+
+    public String getSelectedSubCategoryString() {
+        return selectedSubCategoryString;
+    }
+
+    public void setSelectedSubCategoryString(String selectedSubCategoryString) {
+        this.selectedSubCategoryString = selectedSubCategoryString;
     }
 
     public NavigationAdapter(Context context, Typeface typeface,
@@ -93,11 +116,23 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         int viewType = getItemViewType(position);
         if (viewType == VIEW_TYPE_SECTION_ITEM) {
             NavViewHolder navViewHolder = (NavViewHolder) holder;
+            RelativeLayout relativeLayoutRow=navViewHolder.getRelativeLayoutRow();
             TextView txtNavListRow = navViewHolder.getTxtNavListRow();
             ImageView imgNavItem = navViewHolder.getImgNavItem();
             ImageView imgNavItemExpand = navViewHolder.getImgNavItemExpand();
             TextView txtNavListRowSubTitle = navViewHolder.getTxtNavListRowSubTitle();
             SectionItem sectionItem = sectionNavigationItem.getSectionItem();
+
+            /**
+             * checking for the selected category and sub category and
+             * then highlighting the row accordingly
+             */
+            if (getSelectionComparisionStatus(getSelectedSubCategoryString(), sectionItem) ||  getSelectionComparisionStatus(getSelectedCategoryString(), sectionItem)){
+                relativeLayoutRow.setPressed(true);
+            }
+            else{
+                relativeLayoutRow.setPressed(false);
+            }
             if (sectionItem.getTitle() != null &&
                     !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtNavListRow.setText(sectionItem.getTitle().getText());
@@ -165,7 +200,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavMainItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((SubNavigationAware) context).onSubNavigationHideRequested(true);
+
                     }
                 });
             } else {
@@ -221,6 +256,12 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return sectionNavigationItems.size();
     }
 
+    @Override
+    public void setSelectedNavigationCategory(String name) {
+        setSelectedCategoryString(name);
+        notifyDataSetChanged();
+    }
+
     private class NavViewHeaderHolder extends RecyclerView.ViewHolder {
         private TextView txtNavListRowHeader;
 
@@ -243,6 +284,16 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private TextView txtNavListRow;
         private TextView txtNavListRowSubTitle;
         private ImageView imgNavItemExpand;
+        private RelativeLayout relativeLayoutRow;
+
+        public RelativeLayout getRelativeLayoutRow() {
+            if (relativeLayoutRow == null) {
+                relativeLayoutRow = (RelativeLayout) itemView.findViewById(R.id.relativeLayoutRow);
+            }
+            return relativeLayoutRow;
+        }
+
+
 
         public NavViewHolder(View itemView) {
             super(itemView);
@@ -290,8 +341,13 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
                                 sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
                     } else {
-                        new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
-                                sectionNavigationItem.getSectionItem(), screenName).onClick(v);
+                        if(getSelectionComparisionStatus(getSelectedCategoryString(),sectionNavigationItem.getSectionItem())){
+                            ((NavigationDrawerAware) context).closeDrawer();
+                            notifyDataSetChanged();
+                        } else {
+                            new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
+                                    sectionNavigationItem.getSectionItem(), screenName).onClick(v);
+                        }
                     }
                 }
             }
@@ -312,5 +368,18 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             return txtNavMainItem;
         }
+    }
+
+
+    private boolean getSelectionComparisionStatus(String selectedCategoryString,SectionItem sectionItem) {
+
+        if (selectedCategoryString != null) {
+            if (sectionItem.getTitle().getText().toString().replaceAll(" ", "").equalsIgnoreCase(selectedCategoryString.replaceAll(" ", "")) && sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 }

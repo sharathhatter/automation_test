@@ -6,12 +6,12 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
 
 import java.util.HashMap;
 
-public class PaytmTxnCallback<T> implements PaytmPaymentTransactionCallback {
+public class PaytmTxnCallback<T extends AppOperationAware> implements PaytmPaymentTransactionCallback {
 
     private T ctx;
     @Nullable
@@ -42,7 +42,7 @@ public class PaytmTxnCallback<T> implements PaytmPaymentTransactionCallback {
 
     @Override
     public void networkNotAvailable() {
-        ((HandlerAware) ctx).getHandler().sendOfflineError();
+        ctx.getHandler().sendOfflineError();
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.GetMoreOrderAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.interfaces.OrderItemClickAware;
@@ -39,9 +40,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class OrderListActivity extends BackButtonActivity implements InvoiceDataAware,
@@ -76,36 +75,29 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         if (page == 1)
             showProgressView();
-        bigBasketApiService.getOrders(mOrderType, String.valueOf(page),
-                new Callback<ApiResponse<OrderListApiResponse>>() {
-                    @Override
-                    public void success(ApiResponse<OrderListApiResponse> orderListApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressView();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        if (orderListApiResponse.status == 0) {
-                            renderOrderList(orderListApiResponse.apiResponseContent.orders, page,
-                                    orderListApiResponse.apiResponseContent.totalPages);
-                        } else {
-                            handler.sendEmptyMessage(orderListApiResponse.status,
-                                    orderListApiResponse.message, true);
-                        }
-                    }
+        Call<ApiResponse<OrderListApiResponse>> call = bigBasketApiService.getOrders(mOrderType, String.valueOf(page));
+        call.enqueue(new BBNetworkCallback<ApiResponse<OrderListApiResponse>>(this, true) {
+            @Override
+            public void onSuccess(ApiResponse<OrderListApiResponse> orderListApiResponse) {
+                if (orderListApiResponse.status == 0) {
+                    renderOrderList(orderListApiResponse.apiResponseContent.orders, page,
+                            orderListApiResponse.apiResponseContent.totalPages);
+                } else {
+                    handler.sendEmptyMessage(orderListApiResponse.status,
+                            orderListApiResponse.message, true);
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressView();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressView();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
     }
 
     private void showEmptyPage(LayoutInflater inflater, FrameLayout contentLayout) {
@@ -189,7 +181,8 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     private void showInvoice(Order order) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getInvoice(order.getOrderId(), new CallbackOrderInvoice<>(this));
+        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(order.getOrderId());
+        call.enqueue(new CallbackOrderInvoice<>(this));
     }
 
     @Override

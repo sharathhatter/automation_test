@@ -120,4 +120,10 @@ public final class CityManager {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getBoolean(Constants.HAS_USER_CHOSEN_CITY, false);
     }
+
+    public static void clearChosenCity(Context context) {
+        SharedPreferences preferences =
+                PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        preferences.edit().remove(Constants.HAS_USER_CHOSEN_CITY).apply();
+    }
 }

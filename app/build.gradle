@@ -55,6 +55,9 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            // FIXME: Causes crash in some samsung devices,
+            // Enable shrinkResources once gradle tool version 1.4.0 is released
+            //shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
             signingConfig signingConfigs.bigbasket
@@ -79,16 +82,13 @@ android {
         abortOnError false
     }
 
-//    Uncomment at the time of deployment, but don't commit the uncommented version to VCS.
-//    This is because build time increases significantly, due to which development time becomes slow
-//    (1.5 minutes on avg)
-//    splits {
-//        density {
-//            enable true
-//            exclude "ldpi", "tvdpi"
-//            compatibleScreens 'small', 'normal', 'large', 'xlarge'
-//        }
-//    }
+    splits {
+        density {
+            enable project.ENABLE_SPLITS != null ? project.ENABLE_SPLITS.toBoolean() : false;
+            exclude "ldpi", "tvdpi"
+            compatibleScreens 'small', 'normal', 'large', 'xlarge'
+        }
+    }
 
 
 }
@@ -114,6 +114,7 @@ int calculateVersionCodeFromDpi(int dpi, int delta) {
     return ("" + minSdk + (dpi / 10) + versionCode).toInteger()
 }
 
+
 dependencies {
     compile files('libs/localytics.jar')
     compile project(':androidImageSlider')
@@ -131,7 +132,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:design:22.2.1'
     compile 'com.android.support:recyclerview-v7:22.2.1'
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     compile 'com.google.android.gms:play-services-ads:7.5.0'
     compile 'com.google.android.gms:play-services-plus:7.5.0'
     compile 'com.google.android.gms:play-services-gcm:7.5.0'

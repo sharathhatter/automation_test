@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
@@ -36,6 +37,8 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+
+import retrofit.Call;
 
 public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAware {
 
@@ -199,7 +202,8 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
     private void showInvoice(Order order) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getInvoice(order.getOrderId(), new CallbackOrderInvoice<>(this));
+        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(order.getOrderId());
+        call.enqueue(new CallbackOrderInvoice<>(this));
     }
 
     @Override

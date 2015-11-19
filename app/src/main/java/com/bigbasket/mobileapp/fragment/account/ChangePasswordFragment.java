@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
@@ -28,9 +29,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class ChangePasswordFragment extends BaseFragment {
@@ -144,46 +143,51 @@ public class ChangePasswordFragment extends BaseFragment {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.changePassword(oldEditText.getText().toString(), newPwdText.getText().toString(),
-                confirmPwdEditText.getText().toString(),
-                new Callback<OldBaseApiResponse>() {
-                    @Override
-                    public void success(OldBaseApiResponse changePasswordCallback, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        if (changePasswordCallback.status.equals(Constants.OK)) {
-                            onChangePasswordSuccessResponse();
-                        } else {
-                            onChangePasswordErrorResponse(changePasswordCallback.message);
-                            switch (changePasswordCallback.getErrorTypeAsInt()) {
-                                case ApiErrorCodes.INVALID_USER_PASSED:
-                                    showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
-                                    break;
-                                default:
-                                    handler.sendEmptyMessage(changePasswordCallback.getErrorTypeAsInt(),
-                                            changePasswordCallback.message);
-                                    break;
-                            }
-                        }
-
+        Call<OldBaseApiResponse> call = bigBasketApiService.changePassword(oldEditText.getText().toString(),
+                newPwdText.getText().toString(), confirmPwdEditText.getText().toString());
+        call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(this) {
+            @Override
+            public void onSuccess(OldBaseApiResponse changePasswordCallback) {
+                if (changePasswordCallback.status.equals(Constants.OK)) {
+                    onChangePasswordSuccessResponse();
+                } else {
+                    onChangePasswordErrorResponse(changePasswordCallback.message);
+                    switch (changePasswordCallback.getErrorTypeAsInt()) {
+                        case ApiErrorCodes.INVALID_USER_PASSED:
+                            showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
+                            break;
+                        default:
+                            handler.sendEmptyMessage(changePasswordCallback.getErrorTypeAsInt(),
+                                    changePasswordCallback.message);
+                            break;
                     }
+                }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                        logChangePasswordErrorEvent(error.toString(), TrackingAware.CHANGE_PASSWORD_FAILED);
-                    }
-                });
+            }
+
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+
+            @Override
+            public void onFailure(int httpErrorCode, String msg) {
+                super.onFailure(httpErrorCode, msg);
+                logChangePasswordErrorEvent(msg, TrackingAware.CHANGE_PASSWORD_FAILED);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                super.onFailure(t);
+                logChangePasswordErrorEvent("Network Error", TrackingAware.CHANGE_PASSWORD_FAILED);
+            }
+
+        });
     }
 
     private void onChangePasswordSuccessResponse() {

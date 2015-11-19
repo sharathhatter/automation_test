@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class AddToShoppingListAdapter<T> extends BaseAdapter {
         this.activityAware = activityAware;
         this.shoppingListNames = shoppingListNames != null ? shoppingListNames :
                 new ArrayList<ShoppingListName>();
-        Context context = ((ActivityAware) activityAware).getCurrentActivity();
+        Context context = ((AppOperationAware) activityAware).getCurrentActivity();
         textColor = context.getResources().getColor(R.color.uiv3_secondary_text_color);
         drawable = ContextCompat.getDrawable(context, R.drawable.shopping_list);
         this.dp8 = (int) context.getResources().getDimension(R.dimen.padding_normal);
@@ -74,7 +74,7 @@ public class AddToShoppingListAdapter<T> extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         // Using same view for both the view types
         if (convertView == null) {
-            convertView = ((ActivityAware) activityAware).getCurrentActivity().
+            convertView = ((AppOperationAware) activityAware).getCurrentActivity().
                     getLayoutInflater().inflate(R.layout.add_to_shopping_list_item, parent, false);
         }
 
@@ -85,7 +85,7 @@ public class AddToShoppingListAdapter<T> extends BaseAdapter {
         textShoppingListItemName.setTypeface(typeface);
 
         if (getItemViewType(position) == VIEW_TYPE_CREATE) {
-            Context context = ((ActivityAware) activityAware).getCurrentActivity();
+            Context context = ((AppOperationAware) activityAware).getCurrentActivity();
             textShoppingListItemName.setCompoundDrawablesWithIntrinsicBounds(
                     ContextCompat.getDrawable(context,
                             R.drawable.red_plus), null, null, null);

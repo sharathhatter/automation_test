@@ -8,19 +8,14 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SetAddressResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SetAddressTransientResponse;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class ChangeAddressTask<T extends OnAddressChangeListener> {
+public class ChangeAddressTask<T extends OnAddressChangeListener & AppOperationAware> {
     private T ctx;
     @Nullable
     private String addressId;
@@ -47,70 +42,59 @@ public class ChangeAddressTask<T extends OnAddressChangeListener> {
     }
 
     public void startTask() {
-        if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendOfflineError();
+        if (!ctx.checkInternetConnection()) {
+            ctx.getHandler().sendOfflineError();
         }
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter
-                .getApiService(((ActivityAware) ctx).getCurrentActivity());
+                .getApiService(ctx.getCurrentActivity());
         if (isTransient) {
-            ((ProgressIndicationAware) ctx).showProgressDialog("Checking for changes in basket...");
-            bigBasketApiService.setCurrentAddress(addressId, lat, lng, isTransient ? "1" : "0", area,
-                    new Callback<ApiResponse<SetAddressTransientResponse>>() {
-                        @Override
-                        public void success(ApiResponse<SetAddressTransientResponse> setAddressTransientResponse, Response response) {
-                            if (((CancelableAware) ctx).isSuspended()) return;
-                            try {
-                                ((ProgressIndicationAware) ctx).hideProgressDialog();
-                            } catch (IllegalArgumentException e) {
-                                return;
-                            }
-                            switch (setAddressTransientResponse.status) {
-                                case 0:
-                                    if (!TextUtils.isEmpty(setAddressTransientResponse.apiResponseContent.title) ||
-                                            !TextUtils.isEmpty(setAddressTransientResponse.apiResponseContent.msg) ||
-                                            setAddressTransientResponse.apiResponseContent.hasQcErrors ||
-                                            (setAddressTransientResponse.apiResponseContent.qcErrorDatas != null
-                                                    && setAddressTransientResponse.apiResponseContent.qcErrorDatas.size() > 0)) {
-                                        ctx.onBasketDelta(addressId, lat, lng,
-                                                setAddressTransientResponse.apiResponseContent.title,
-                                                setAddressTransientResponse.apiResponseContent.msg,
-                                                area,
-                                                setAddressTransientResponse.apiResponseContent.hasQcErrors,
-                                                setAddressTransientResponse.apiResponseContent.qcErrorDatas);
-                                    } else {
-                                        ctx.onNoBasketDelta(addressId, lat, lng, area);
-                                    }
-                                    break;
-                                default:
-                                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(setAddressTransientResponse.status,
-                                            setAddressTransientResponse.message);
-                                    break;
-                            }
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (((CancelableAware) ctx).isSuspended()) return;
-                            try {
-                                ((ProgressIndicationAware) ctx).hideProgressDialog();
-                            } catch (IllegalArgumentException e) {
-                                return;
-                            }
-                            ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
-                        }
-                    });
-        } else {
-            ((ProgressIndicationAware) ctx).showProgressDialog("Updating your address...");
-            bigBasketApiService.setCurrentAddress(addressId, lat, lng, area, new Callback<ApiResponse<SetAddressResponse>>() {
+            ctx.showProgressDialog("Checking for changes in basket...");
+            Call<ApiResponse<SetAddressTransientResponse>> call =
+                    bigBasketApiService.setCurrentAddress(addressId, lat, lng, isTransient ? "1" : "0", area);
+            call.enqueue(new BBNetworkCallback<ApiResponse<SetAddressTransientResponse>>(ctx) {
                 @Override
-                public void success(ApiResponse<SetAddressResponse> getAddressSummaryApiResponse, Response response) {
-                    if (((CancelableAware) ctx).isSuspended()) return;
-                    try {
-                        ((ProgressIndicationAware) ctx).hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
+                public void onSuccess(ApiResponse<SetAddressTransientResponse> setAddressTransientResponse) {
+                    switch (setAddressTransientResponse.status) {
+                        case 0:
+                            if (!TextUtils.isEmpty(setAddressTransientResponse.apiResponseContent.title) ||
+                                    !TextUtils.isEmpty(setAddressTransientResponse.apiResponseContent.msg) ||
+                                    setAddressTransientResponse.apiResponseContent.hasQcErrors ||
+                                    (setAddressTransientResponse.apiResponseContent.qcErrorDatas != null
+                                            && setAddressTransientResponse.apiResponseContent.qcErrorDatas.size() > 0)) {
+                                ctx.onBasketDelta(addressId, lat, lng,
+                                        setAddressTransientResponse.apiResponseContent.title,
+                                        setAddressTransientResponse.apiResponseContent.msg,
+                                        area,
+                                        setAddressTransientResponse.apiResponseContent.hasQcErrors,
+                                        setAddressTransientResponse.apiResponseContent.qcErrorDatas);
+                            } else {
+                                ctx.onNoBasketDelta(addressId, lat, lng, area);
+                            }
+                            break;
+                        default:
+                            ctx.getHandler().sendEmptyMessage(setAddressTransientResponse.status,
+                                    setAddressTransientResponse.message);
+                            break;
                     }
+                }
+
+                @Override
+                public boolean updateProgress() {
+                    try {
+                        ctx.hideProgressDialog();
+                        return true;
+                    } catch (IllegalArgumentException e) {
+                        return false;
+                    }
+                }
+            });
+        } else {
+            ctx.showProgressDialog("Updating your address...");
+            Call<ApiResponse<SetAddressResponse>> call = bigBasketApiService.setCurrentAddress(addressId, lat, lng, area);
+            call.enqueue(new BBNetworkCallback<ApiResponse<SetAddressResponse>>(ctx) {
+                @Override
+                public void onSuccess(ApiResponse<SetAddressResponse> getAddressSummaryApiResponse) {
                     switch (getAddressSummaryApiResponse.status) {
                         case 0:
                             ctx.onAddressChanged(getAddressSummaryApiResponse.apiResponseContent.addressSummaries);
@@ -119,21 +103,20 @@ public class ChangeAddressTask<T extends OnAddressChangeListener> {
                             ctx.onAddressNotSupported(getAddressSummaryApiResponse.message);
                             break;
                         default:
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(getAddressSummaryApiResponse.status,
+                            ctx.getHandler().sendEmptyMessage(getAddressSummaryApiResponse.status,
                                     getAddressSummaryApiResponse.message);
                             break;
                     }
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
-                    if (((CancelableAware) ctx).isSuspended()) return;
+                public boolean updateProgress() {
                     try {
-                        ((ProgressIndicationAware) ctx).hideProgressDialog();
+                        ctx.hideProgressDialog();
+                        return true;
                     } catch (IllegalArgumentException e) {
-                        return;
+                        return false;
                     }
-                    ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
                 }
             });
         }

@@ -50,24 +50,28 @@
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
 
-    <TextView
-        android:id="@+id/txtProductBrand"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:id="@+id/layoutProductBrand"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/txtProductDesc"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_toLeftOf="@id/imgProductOverflowAction"
-        android:text="Hampi Organic"
-        android:textColor="@color/uiv3_secondary_text_color"
-        android:textSize="@dimen/secondary_text_size" />
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_alignLeft="@id/txtProductDesc"
+        android:orientation="horizontal">
+
+        <include
+            android:id="@+id/layoutBrandSpecialityIcon"
+            layout="@layout/product_brand_speciality_shop_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layoutPackageDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtProductBrand"
+        android:layout_below="@id/layoutProductBrand"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"
@@ -256,4 +260,24 @@
             android:textColor="@color/uiv3_secondary_text_color"
             android:textSize="@dimen/secondary_text_size" />
     </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/txtVariableWeightMsg"
+        android:layout_below="@id/layoutPromoInfoBox"
+        android:drawablePadding="@dimen/padding_normal"
+        android:background="@drawable/pg_border"
+        android:layout_marginLeft="@dimen/padding_normal"
+        android:layout_marginRight="@dimen/padding_normal"
+        android:layout_marginTop="@dimen/margin_medium_large"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingTop="@dimen/margin_small"
+        android:drawableLeft="@drawable/v_weight_icon"
+        android:paddingRight="@dimen/margin_small"
+        android:paddingLeft="@dimen/margin_normal"
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:textSize="@dimen/small_text_size"
+        android:layout_marginBottom="@dimen/padding_mini"
+        android:layout_height="wrap_content" />
+
 </RelativeLayout>

@@ -64,4 +64,5 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
     public void setSectionData(SectionData sectionData) {
         mSectionData = sectionData;
     }
+
 }
