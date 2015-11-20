@@ -103,6 +103,7 @@ public class HomeActivity extends SearchActivity {
         super.onNoBasketUpdate();
         if (mSpinnerArea != null && mSpinnerArea.getAdapter() != null
                 && mSpinnerArea.getAdapter().getCount() > 0) {
+            mCurrentSpinnerIdx = 0;
             mSpinnerArea.setSelection(0);
         }
     }

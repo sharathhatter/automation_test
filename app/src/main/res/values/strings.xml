@@ -41,6 +41,7 @@
     <string name="placeorder">Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
+    <string name="ordernumberWithSpace">Order No:\u0020</string>
     <string name="vat">VAT</string>
     <string name="action">Action</string>
     <string name="item">Item</string>
@@ -151,6 +152,7 @@
 
     <!-- Shopping list -->
     <string name="change">Change</string>
+    <string name="changeAllCaps">CHANGE</string>
     <string name="deleteShoppingListText">Are you sure, that you want to delete this shopping list?</string>
     <string name="delete">Delete</string>
     <string name="deleteQuestion">Delete?</string>

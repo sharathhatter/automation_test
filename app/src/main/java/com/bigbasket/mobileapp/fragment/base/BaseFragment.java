@@ -43,6 +43,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -576,5 +577,11 @@ public abstract class BaseFragment extends AbstractFragment implements
     public void markBasketChanged(@Nullable Intent data) {
         if (getActivity() == null) return;
         ((BaseActivity) getActivity()).markBasketChanged(data);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LeakCanaryObserver.Factory.observe(this);
     }
 }

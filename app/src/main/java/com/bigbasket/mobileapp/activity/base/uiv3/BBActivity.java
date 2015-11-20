@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -872,25 +873,22 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
     private void setCityText(String text) {
         TextView txtCityName = (TextView) findViewById(R.id.txtCityName);
-        if (txtCityName == null) return;
+        Button btnChangeAddress = (Button) findViewById(R.id.btnChangeAddress);
+        if (txtCityName == null || btnChangeAddress == null) return;
         txtCityName.setTypeface(faceRobotoMedium);
 
         AuthParameters authParameters = AuthParameters.getInstance(this);
-
         if (authParameters.isAuthTokenEmpty() || authParameters.isMultiCityEnabled()) {
-            txtCityName.setOnClickListener(new View.OnClickListener() {
+            View.OnClickListener changeAddressOnClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     changeAddressRequested();
                 }
-            });
-            txtCityName.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.address_white), null,
-                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.ic_edit_white_24dp), null);
+            };
+            txtCityName.setOnClickListener(changeAddressOnClickListener);
+            btnChangeAddress.setOnClickListener(changeAddressOnClickListener);
         } else {
-            txtCityName.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.address_white),
-                    null, null, null);
+            btnChangeAddress.setVisibility(View.GONE);
         }
         txtCityName.setText(text);
     }

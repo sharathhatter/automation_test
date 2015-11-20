@@ -120,7 +120,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.append(spannableMrp);
 
-            String prefix = getString(R.string.ordernumber) + " ";
+            String prefix = getString(R.string.ordernumberWithSpace);
             SpannableString orderNumSpannable = new SpannableString(prefix + order.getOrderNumber());
             orderNumSpannable.setSpan(new UnderlineSpan(), prefix.length(), orderNumSpannable.length(),
                     Spanned.SPAN_EXCLUSIVE_INCLUSIVE);

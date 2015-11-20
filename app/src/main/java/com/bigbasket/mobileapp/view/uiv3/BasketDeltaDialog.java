@@ -60,15 +60,16 @@ public class BasketDeltaDialog<T extends BasketDeltaUserActionListener> {
             public void onClick(DialogInterface dialog, int which) {
                 ctx.onUpdateBasket(addressId, lat, lng, area);
             }
-        }).setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ctx.onNoBasketUpdate();
-            }
-        });
+        }).setNegativeButton(R.string.dismiss, null);
 
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new OnDialogShowListener());
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ctx.onNoBasketUpdate();
+            }
+        });
         dialog.show();
     }
 }
