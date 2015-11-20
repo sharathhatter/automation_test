@@ -372,7 +372,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToHome(false);
+                goToHome();
             }
         });
 

@@ -591,6 +591,7 @@ public class Constants {
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
     public static final String FIRSE_TIME_USER = "fst_tm_user";
+    public static final String DISCOUNT_PAGE = "Discount Page";
 
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";

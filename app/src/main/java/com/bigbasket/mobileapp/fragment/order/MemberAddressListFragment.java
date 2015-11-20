@@ -282,12 +282,13 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     @Override
-    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries) {
+    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries, String selectedAddressId) {
         if (getCurrentActivity() == null) return;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.FRAGMENT_CODE, String.valueOf(NavigationCodes.GO_TO_BASKET));
         editor.apply();
-        ((BBActivity) getActivity()).onAddressChanged(addressSummaries);
+        ((BBActivity) getActivity()).onAddressChanged(addressSummaries, selectedAddressId);
+        new CreatePotentialOrderTask<>(this, selectedAddressId).startTask();
     }
 
     @Override

@@ -52,6 +52,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.adapter.db.DynamicScreenAdapter;
 import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -59,7 +60,6 @@ import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.managers.CityManager;
-import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
@@ -244,7 +244,9 @@ public class UIUtil {
     }
 
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
-        SectionManager.clearAllSectionData(ctx);
+        DynamicScreenAdapter dynamicScreenAdapter = new DynamicScreenAdapter(ctx);
+        dynamicScreenAdapter.clearAll();
+
         AppDataSyncHandler.reset(ctx);
         AppDataDynamic.reset(ctx);
 
@@ -422,7 +424,7 @@ public class UIUtil {
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BaseActivity) context).goToHome(false);
+                ((BaseActivity) context).goToHome();
             }
         });
         parent.addView(emptyPageView);

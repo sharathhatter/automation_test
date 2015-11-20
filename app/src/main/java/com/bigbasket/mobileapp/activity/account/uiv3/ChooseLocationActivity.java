@@ -212,7 +212,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     @Override
-    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries) {
+    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries, String selectedAddressId) {
         if (addressSummaries != null && addressSummaries.size() > 0) {
             mChosenAddressSummary = addressSummaries.get(0);
             onLocationChanged();
@@ -274,10 +274,12 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     public void requestCityChange(City newCity) {
         boolean reopenLandingPage = getIntent().getBooleanExtra(Constants.REOPEN_LANDING_PAGE, false);
-        changeCity(newCity, reopenLandingPage);
+        changeCity(newCity);
         if (reopenLandingPage) {
             setResult(NavigationCodes.LOCATION_CHOSEN);
             finish();
+        } else {
+            goToHome();
         }
     }
 

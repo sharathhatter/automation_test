@@ -215,7 +215,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
     }
 
     public void onContinueBtnClicked(View view) {
-        goToHome(false);
+        goToHome();
     }
 
     @Override
@@ -230,12 +230,12 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
 
     @Override
     public void onBackPressed() {
-        goToHome(false);
+        goToHome();
     }
 
     @Override
     public void onChangeTitle(String title) {
-        goToHome(false);
+        goToHome();
     }
 
     @Override

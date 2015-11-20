@@ -97,7 +97,8 @@ public class ChangeAddressTask<T extends OnAddressChangeListener & AppOperationA
                 public void onSuccess(ApiResponse<SetAddressResponse> getAddressSummaryApiResponse) {
                     switch (getAddressSummaryApiResponse.status) {
                         case 0:
-                            ctx.onAddressChanged(getAddressSummaryApiResponse.apiResponseContent.addressSummaries);
+                            ctx.onAddressChanged(getAddressSummaryApiResponse.apiResponseContent.addressSummaries,
+                                    addressId);
                             break;
                         case ApiErrorCodes.ADDRESS_NOT_SERVED:
                             ctx.onAddressNotSupported(getAddressSummaryApiResponse.message);

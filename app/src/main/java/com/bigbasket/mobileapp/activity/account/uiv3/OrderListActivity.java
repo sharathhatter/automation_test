@@ -124,7 +124,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToHome(false);
+                goToHome();
             }
         });
 

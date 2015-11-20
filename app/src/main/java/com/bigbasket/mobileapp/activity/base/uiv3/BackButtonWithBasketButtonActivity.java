@@ -25,7 +25,7 @@ public class BackButtonWithBasketButtonActivity extends BBActivity implements Sh
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
         Intent intent = getIntent();
-        handleIntent(intent, savedInstanceState);
+        handleIntent(savedInstanceState);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class BackButtonActivity extends BBActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
         Intent intent = getIntent();
-        handleIntent(intent, savedInstanceState);
+        handleIntent(savedInstanceState);
     }
 
     @Override

@@ -28,11 +28,9 @@ import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.managers.CityManager;
-import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
-import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -110,7 +108,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
                 startLandingPage();
             }
         } else {
-            loadNavigation();
+            loadHomePage();
         }
     }
 
@@ -156,14 +154,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    private void loadNavigation() {
-        getMainMenu();
-    }
-
-    private void getMainMenu() {
-        new GetDynamicPageTask<>(this, SectionManager.MAIN_MENU, false, true, true).startTask();
     }
 
     @Override
@@ -294,8 +284,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     private void handleResults(boolean reloadApp) {
         removePendingGoToHome();
         if (reloadApp) {
-            loadNavigation();
-        } else {
             loadHomePage();
         }
     }

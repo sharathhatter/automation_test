@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.adapter.db.DynamicScreenAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -21,7 +22,6 @@ import com.bigbasket.mobileapp.fragment.dialogs.ConfirmationDialogFragment;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.SocialAccountType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -214,7 +214,8 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     @SuppressWarnings("unchecked")
     public void doLogout() {
-        SectionManager.clearAllSectionData(getCurrentActivity());
+        DynamicScreenAdapter dynamicScreenAdapter = new DynamicScreenAdapter(getCurrentActivity());
+        dynamicScreenAdapter.clearAll();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         SharedPreferences.Editor editor = preferences.edit();
@@ -259,7 +260,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         moEHelper.logoutUser();
         mIsInLogoutMode = false;
         if (!onLogoutComplete(true)) {
-            goToHome(true);
+            // do nothing
         }
     }
 
@@ -304,7 +305,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 editor.apply();
             }
         }
-        goToHome(true);
+        goToHome();
     }
 
     private void logSignInFailureEvent(String type, String reason) {

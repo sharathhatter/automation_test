@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.fragment;
 
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AppCapability;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
@@ -33,16 +35,16 @@ import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
-import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
-import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
-import com.bigbasket.mobileapp.task.GetDynamicPageTask;
+import com.bigbasket.mobileapp.receivers.DynamicScreenLoaderCallback;
+import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.SectionCursorHelper;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
@@ -53,9 +55,8 @@ import java.util.ArrayList;
 
 import retrofit.Call;
 
-public class HomeFragment extends BaseSectionFragment implements DynamicScreenAware {
+public class HomeFragment extends BaseSectionFragment {
 
-    private boolean mSyncChanges;
     @Nullable
     private RecyclerView mRecyclerView;
     @Nullable
@@ -104,27 +105,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         if (appUpdateData != null && !TextUtils.isEmpty(appUpdateData.getAppExpireBy())) {
             showUpgradeAppDialog(appUpdateData.getAppExpireBy(), appUpdateData.getAppUpdateMsg(),
                     appUpdateData.getLatestAppVersion());
-        }
-        if (mSyncChanges) {
-            Log.d("Home page", "Home page has to be refreshed");
-            mSyncChanges = false;
-            SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE);
-            SectionData sectionData = sectionManager.getStoredSectionData();
-            onDynamicScreenSuccess(SectionManager.HOME_PAGE, sectionData);
-        } else {
-            syncHomePageIfNeeded();
-        }
-    }
-
-    private void syncHomePageIfNeeded() {
-        SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE);
-        SectionData sectionData = sectionManager.getStoredSectionData();
-        if (sectionData == null || sectionData.getSections() == null || sectionData.getSections().size() == 0) {
-            if (!checkInternetConnection()) return;
-            // Need to refresh
-            mSyncChanges = true;
-            Log.d("Home page", "Home page sync is required");
-            new GetDynamicPageTask<>(this, SectionManager.HOME_PAGE, false, false, true, true).startTask();
         }
     }
 
@@ -201,8 +181,28 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     private void getHomePage() {
-        if (getActivity() == null) return;
-        new GetDynamicPageTask<>(this, SectionManager.HOME_PAGE, true, true).startTask();
+        getLoaderManager().initLoader(DynamicScreenSyncService.HOME_PAGE_ID, null,
+                new DynamicScreenLoaderCallback(getActivity()) {
+                    @Override
+                    public void onCursorNonEmpty(Cursor data) {
+                        hideProgressView();
+                        handleHomePageResponse(SectionCursorHelper.getSectionData(data));
+                    }
+
+                    @Override
+                    public void onCursorLoadingInProgress() {
+                        showProgressView();
+                    }
+                });
+    }
+
+    private void handleHomePageResponse(GetDynamicPageApiResponse getDynamicPageApiResponse) {
+        SectionData sectionData = getDynamicPageApiResponse.sectionData;
+        if (sectionData != null) {
+            onDynamicScreenSuccess(DynamicScreenSyncService.HOME_PAGE, sectionData);
+        } else {
+            displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
+        }
     }
 
     private void renderHomePage() {
@@ -421,28 +421,10 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         homePageGetter(savedInstanceState);
     }
 
-
-    @Override
     public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {
         setSectionData(sectionData);
         setScreenName(screenName);
         renderHomePage();
-        //screen name pass to OnSectionItemClickListener
-    }
-
-    @Override
-    public void onDynamicScreenFailure(Throwable t) {
-        displayHomePageError(getString(R.string.communicationError), R.drawable.empty_no_internet);
-    }
-
-    @Override
-    public void onDynamicScreenFailure(int error, String msg) {
-        displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
-    }
-
-    @Override
-    public void onDynamicScreenHttpFailure(int error, String msg) {
-        displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
     }
 
     @Override

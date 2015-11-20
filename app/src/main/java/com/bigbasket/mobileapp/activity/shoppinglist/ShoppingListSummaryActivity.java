@@ -183,7 +183,7 @@ public class ShoppingListSummaryActivity extends SearchActivity {
             @Override
             public void onClick(View v) {
                 if (getCurrentActivity() == null) return;
-                getCurrentActivity().goToHome(false);
+                getCurrentActivity().goToHome();
             }
         });
         contentView.addView(base);
@@ -619,7 +619,7 @@ public class ShoppingListSummaryActivity extends SearchActivity {
     @Override
     public void onBasketChanged(Intent data) {
         super.onBasketChanged(data);
-        handleIntent(getIntent());
+        handleIntent(null);
     }
 
     @Override

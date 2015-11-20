@@ -41,13 +41,8 @@ public class BigBasketApiAdapter {
     }
 
     private static BigBasketApiService refreshBigBasketApiService(Context context) {
-        final AuthParameters authParameters = AuthParameters.getInstance(context);
 
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
-        okHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
-        okHttpClient.interceptors().add(new BigBasketApiInterceptor(authParameters.getVisitorId(),
-                DataUtil.getAppVersion(context), authParameters.getBbAuthToken()));
+        OkHttpClient okHttpClient = getHttpClient(context);
 
         Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(MobileApiUrl.getMobileApiUrl(context))
@@ -56,5 +51,15 @@ public class BigBasketApiAdapter {
                 .build();
 
         return restAdapter.create(BigBasketApiService.class);
+    }
+
+    public static OkHttpClient getHttpClient(Context context) {
+        final AuthParameters authParameters = AuthParameters.getInstance(context);
+        OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
+        okHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
+        okHttpClient.interceptors().add(new BigBasketApiInterceptor(authParameters.getVisitorId(),
+                DataUtil.getAppVersion(context), authParameters.getBbAuthToken()));
+        return okHttpClient;
     }
 }
