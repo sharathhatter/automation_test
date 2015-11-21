@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.adapter.db.DynamicScreenAdapter;
 import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
-import com.bigbasket.mobileapp.util.Constants;
 
 public abstract class DynamicScreenLoaderCallback implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = DynamicScreenLoaderCallback.class.getName();
@@ -31,11 +29,8 @@ public abstract class DynamicScreenLoaderCallback implements LoaderManager.Loade
         dynamicScreenType = getDynamicScreenType(id);
         if (dynamicScreenType == null) return null;
         Toast.makeText(context, "Create loader invoked for = " + dynamicScreenType, Toast.LENGTH_SHORT).show();
-        String cityId = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(Constants.CITY_ID, "1");
-        if (dynamicScreenType == null) return null;
         String selection = DynamicScreenAdapter.COLUMN_DYNAMIC_SCREEN_TYPE + " = \'" + dynamicScreenType
-                + "\' AND " + DynamicScreenAdapter.COLUMN_CITY_ID + " = " + cityId;
+                + "\'";
         return new CursorLoader(context, Uri.withAppendedPath(DynamicScreenAdapter.CONTENT_URI, dynamicScreenType),
                 DynamicScreenAdapter.getDefaultProjection(),
                 selection,

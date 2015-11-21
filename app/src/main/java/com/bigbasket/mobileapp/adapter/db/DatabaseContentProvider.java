@@ -10,14 +10,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
 
 public class DatabaseContentProvider extends ContentProvider {
-
     DatabaseHelper databaseHelper;
+    private static final String TAG = DatabaseContentProvider.class.getName();
+
     public static final String AUTHORITY = BaseApplication.getsContext().getPackageName() + ".DatabaseContentProvider";
 
     public static final Uri CONTENT_URI_PREFIX = Uri.parse("content://" + AUTHORITY);
@@ -42,7 +44,10 @@ public class DatabaseContentProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
         String tableName = getTableName(uri);
-        return sqlDB.delete(tableName, selection, selectionArgs);
+        Log.d(TAG, "Running delete for uri = " + uri);
+        int rowCount = sqlDB.delete(tableName, selection, selectionArgs);
+        notifyChange(uri);
+        return rowCount;
     }
 
     @Override
@@ -54,6 +59,7 @@ public class DatabaseContentProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
         String tableName = getTableName(uri);
+        Log.d(TAG, "Running insert for uri = " + uri + " and values = " + values);
         long newID = sqlDB.insert(tableName, null, values);
         if (newID > 0) {
             Uri newUri = ContentUris.withAppendedId(uri, newID);
@@ -77,6 +83,7 @@ public class DatabaseContentProvider extends ContentProvider {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         String tableName = getTableName(uri);
         queryBuilder.setTables(tableName);
+        Log.d(TAG, "Running query for uri = " + uri);
         Cursor cursor = queryBuilder.query(databaseHelper.getReadableDatabase(),
                 projection, selection, selectionArgs, null, null, sortOrder);
         if (getContext() != null) {
@@ -89,6 +96,7 @@ public class DatabaseContentProvider extends ContentProvider {
     public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         String tableName = getTableName(uri);
+        Log.d(TAG, "Running update for uri = " + uri);
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         int rowCount = db.update(tableName, values, selection, selectionArgs);
         if (rowCount > 0 && getContext() != null) {
@@ -97,7 +105,7 @@ public class DatabaseContentProvider extends ContentProvider {
         return rowCount;
     }
 
-    private String getTableName (Uri uri) throws IllegalArgumentException {
+    private String getTableName(Uri uri) throws IllegalArgumentException {
         switch (sURIMatcher.match(uri)) {
             case AREA_PIN_INFO_URI_MATCHER_CODE:
                 return AreaPinInfoAdapter.tableName;
@@ -105,7 +113,7 @@ public class DatabaseContentProvider extends ContentProvider {
             case MAIN_MENU_SECTION_URI_MATCHER_CODE:
                 return DynamicScreenAdapter.tableName;
             default:
-                throw new IllegalArgumentException("Unknown URI " + uri + " for query()");
+                throw new IllegalArgumentException("Unknown URI " + uri);
         }
     }
 

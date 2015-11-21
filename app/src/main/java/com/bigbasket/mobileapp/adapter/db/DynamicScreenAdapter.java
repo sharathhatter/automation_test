@@ -1,38 +1,32 @@
 package com.bigbasket.mobileapp.adapter.db;
 
-import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
-import com.bigbasket.mobileapp.util.Constants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class DynamicScreenAdapter {
     public static final String COLUMN_ID = "_Id";
-    public static final String COLUMN_CITY_ID = "city_id";
     public static final String COLUMN_DYNAMIC_SCREEN_TYPE = "dynamic_screen_type";
     public static final String COLUMN_SCREEN_DATA = "screen_data";
     public static final String tableName = "dynamicScreen";
 
     public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s " +
                     "(%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "%3$s INTEGER , %4$s TEXT , %5$s TEXT);", tableName, COLUMN_ID,
-            COLUMN_CITY_ID, COLUMN_DYNAMIC_SCREEN_TYPE, COLUMN_SCREEN_DATA);
+                    "%3$s TEXT , %4$s TEXT);", tableName, COLUMN_ID,
+            COLUMN_DYNAMIC_SCREEN_TYPE, COLUMN_SCREEN_DATA);
 
     public static final Uri CONTENT_URI = Uri.parse(DatabaseContentProvider.CONTENT_URI_PREFIX
             + "/" + tableName);
@@ -46,11 +40,11 @@ public class DynamicScreenAdapter {
         this.context = context;
     }
 
-    public void insert(int cityId, String dynamicScreenType, String dynamicScreenJson) {
+    public void insert(String dynamicScreenType, String dynamicScreenJson) {
         Uri uri = Uri.withAppendedPath(CONTENT_URI, dynamicScreenType);
         Cursor cursor = context.getContentResolver()
                 .query(uri, new String[]{COLUMN_ID},
-                        COLUMN_DYNAMIC_SCREEN_TYPE + " = \'" + dynamicScreenType + "\' AND " + COLUMN_CITY_ID + " = " + cityId,
+                        COLUMN_DYNAMIC_SCREEN_TYPE + " = \'" + dynamicScreenType + "\'",
                         null, null);
         int existingID = -1;
         if (cursor != null) {
@@ -60,7 +54,6 @@ public class DynamicScreenAdapter {
             cursor.close();
         }
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_CITY_ID, cityId);
         cv.put(COLUMN_DYNAMIC_SCREEN_TYPE, dynamicScreenType);
         cv.put(COLUMN_SCREEN_DATA, dynamicScreenJson);
         if (existingID <= 0) {
@@ -74,11 +67,9 @@ public class DynamicScreenAdapter {
 
     public static boolean isStale(Context context, String dynamicScreenType) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String cityId = preferences.getString(Constants.CITY_ID, "1");
-        String preferenceKey = dynamicScreenType + "_" + cityId;
-        String createdOn = preferences.getString(preferenceKey + TIME_KEY, null);
+        String createdOn = preferences.getString(dynamicScreenType + TIME_KEY, null);
         if (TextUtils.isEmpty(createdOn)) return false;
-        int cacheDuration = preferences.getInt(preferenceKey + DURATION_KEY,
+        int cacheDuration = preferences.getInt(dynamicScreenType + DURATION_KEY,
                 Section.DEFAULT_SECTION_TIMEOUT_IN_MINUTES);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                 Locale.getDefault());
@@ -98,28 +89,27 @@ public class DynamicScreenAdapter {
         SharedPreferences.Editor editor = preferences.edit();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                 Locale.getDefault());
-        String cityId = preferences.getString(Constants.CITY_ID, "1");
-        String preferenceKey = dynamicScreenType + "_" + cityId;
-        editor.putString(preferenceKey + TIME_KEY, dateFormat.format(new Date()));
-        editor.putInt(preferenceKey + DURATION_KEY, cacheDuration);
+        editor.putString(dynamicScreenType + TIME_KEY, dateFormat.format(new Date()));
+        editor.putInt(dynamicScreenType + DURATION_KEY, cacheDuration);
         editor.apply();
     }
 
     public void clearAll() {
-        ArrayList<ContentProviderOperation> contentProviderOperations = new ArrayList<>();
+//        ArrayList<ContentProviderOperation> contentProviderOperations = new ArrayList<>();
         for (String dynamicScreenType : new String[]{DynamicScreenSyncService.HOME_PAGE, DynamicScreenSyncService.MAIN_MENU}) {
             Uri uri = Uri.withAppendedPath(CONTENT_URI, dynamicScreenType);
-            ContentProviderOperation contentProviderOperation = ContentProviderOperation.newDelete(uri).build();
-            contentProviderOperations.add(contentProviderOperation);
+            context.getContentResolver().delete(uri, null, null);
+            //ContentProviderOperation contentProviderOperation = ContentProviderOperation.newDelete(uri).build();
+            //contentProviderOperations.add(contentProviderOperation);
         }
-        try {
-            context.getContentResolver().applyBatch(DatabaseContentProvider.AUTHORITY, contentProviderOperations);
-        } catch (RemoteException | OperationApplicationException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            context.getContentResolver().applyBatch(DatabaseContentProvider.AUTHORITY, contentProviderOperations);
+//        } catch (RemoteException | OperationApplicationException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static String[] getDefaultProjection() {
-        return new String[]{COLUMN_ID, COLUMN_CITY_ID, COLUMN_DYNAMIC_SCREEN_TYPE, COLUMN_SCREEN_DATA};
+        return new String[]{COLUMN_ID, COLUMN_DYNAMIC_SCREEN_TYPE, COLUMN_SCREEN_DATA};
     }
 }

@@ -2,9 +2,7 @@ package com.bigbasket.mobileapp.fragment.order;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -284,9 +282,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     @Override
     public void onAddressChanged(ArrayList<AddressSummary> addressSummaries, String selectedAddressId) {
         if (getCurrentActivity() == null) return;
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.putString(Constants.FRAGMENT_CODE, String.valueOf(NavigationCodes.GO_TO_BASKET));
-        editor.apply();
         ((BBActivity) getActivity()).onAddressChanged(addressSummaries, selectedAddressId);
         new CreatePotentialOrderTask<>(this, selectedAddressId).startTask();
     }

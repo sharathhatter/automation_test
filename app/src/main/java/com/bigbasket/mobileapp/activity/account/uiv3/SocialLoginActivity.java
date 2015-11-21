@@ -126,6 +126,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     @Override
     protected void onPlusClientSignOut() {
+        hideProgressDialog();
         doLogout();
     }
 

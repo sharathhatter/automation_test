@@ -2,11 +2,9 @@ package com.bigbasket.mobileapp.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.preference.PreferenceManager;
 
 import com.bigbasket.mobileapp.adapter.db.DynamicScreenAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -53,9 +51,7 @@ public class DynamicScreenSyncService extends IntentService {
         } catch (IOException e) {
             responseJson = "";
         }
-        String cityIdStr = PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.CITY_ID, "1");
-        int cityId = Integer.parseInt(cityIdStr);
         DynamicScreenAdapter dynamicScreenAdapter = new DynamicScreenAdapter(this);
-        dynamicScreenAdapter.insert(cityId, dynamicScreenType, responseJson);
+        dynamicScreenAdapter.insert(dynamicScreenType, responseJson);
     }
 }

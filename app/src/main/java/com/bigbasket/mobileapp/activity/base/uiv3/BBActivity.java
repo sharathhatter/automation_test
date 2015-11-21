@@ -188,15 +188,14 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
     public void onDataSynced(boolean isManuallyTriggered) {
         ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
-        if (addressSummaries == null || addressSummaries.size() == 0) return;
-
-        AddressSummary defaultAddress = addressSummaries.get(0);
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString(Constants.CITY, defaultAddress.getCityName());
-        editor.putString(Constants.CITY_ID, String.valueOf(defaultAddress.getCityId()));
-        editor.apply();
-
-        setCityText(defaultAddress.toString());
+        if (addressSummaries != null && addressSummaries.size() > 0) {
+            AddressSummary defaultAddress = addressSummaries.get(0);
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            editor.putString(Constants.CITY, defaultAddress.getCityName());
+            editor.putString(Constants.CITY_ID, String.valueOf(defaultAddress.getCityId()));
+            editor.apply();
+            setCityText(defaultAddress.toString());
+        }
 
         HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager()
                 .findFragmentByTag(HomeFragment.class.getName());
@@ -316,8 +315,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     public void addToMainLayout(AbstractFragment fragment, String tag) {
         addToMainLayout(fragment, tag, false);
     }
-
-    //method for add bundle
 
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
@@ -524,6 +521,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             City newCity = new City(addressSummaries.get(0).getCityName(),
                     addressSummaries.get(0).getCityId());
             changeCity(newCity);
+            startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
         } else {
             showToast(getString(R.string.unknownError));
         }
@@ -789,6 +787,10 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     @SuppressWarnings("unchecked")
     private void loadNavigationItems() {
         if (mNavRecyclerView == null || mDrawerLayout == null) return;
+        readMainMenu();
+    }
+
+    private void setMainMenuHeader() {
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
         txtNavSalutation.setTypeface(faceRobotoMedium);
         TextView lblWelCome = (TextView) findViewById(R.id.lblWelcome);
@@ -820,9 +822,18 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 toggleNavigationArea((ImageView) v);
             }
         });
+        imgSwitchNav.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.settings));
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
+        lstMyAccount.setVisibility(View.GONE);
         new AccountView<>(this, lstMyAccount);
-        readMainMenu();
+    }
+
+    @Override
+    public void doLogout() {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawers();
+        }
+        super.doLogout();
     }
 
     private void readMainMenu() {
@@ -831,6 +842,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                     @Override
                     public void onCursorNonEmpty(Cursor data) {
                         showMenuLoading(false);
+                        setMainMenuHeader();
                         NavigationAdapter navigationAdapter =
                                 SectionCursorHelper.getNavigationAdapter(getCurrentActivity(), data, getCategoryId());
                         mNavRecyclerView.setAdapter(navigationAdapter);
