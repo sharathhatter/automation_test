@@ -17,7 +17,6 @@ import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
-import com.bigbasket.mobileapp.model.SpecialityStorePreference;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
@@ -55,6 +54,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                       AppOperationAware activityAware, int productCount, String navigationCtx,
                                       String mTabType) {
+        AppDataDynamic appDataDynamic = AppDataDynamic.getInstance(activityAware.getCurrentActivity());
         this.baseImgUrl = baseImgUrl;
         this.productViewDisplayDataHolder = productViewDisplayDataHolder;
         this.activityAware = activityAware;
@@ -62,11 +62,11 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         this.serverListSize = productCount;
         this.navigationCtx = navigationCtx;
         this.mTabType = mTabType;
-        this.storeAvailabilityMap = AppDataDynamic.getInstance(activityAware.getCurrentActivity()).getStoreAvailabilityMap();
-        this.specialityStoreInfoHashMap = SpecialityStorePreference.getSpecialityStoreDetailList(activityAware.getCurrentActivity());
+        this.storeAvailabilityMap = appDataDynamic.getStoreAvailabilityMap();
+        this.specialityStoreInfoHashMap = appDataDynamic.getSpecialityStoreDetailList();
         this.mSpecialityShopClickListener = new OnSpecialityShopIconClickListener<>(activityAware, specialityStoreInfoHashMap);
         this.mPromoClickListener = new OnPromoClickListener<>(activityAware);
-        this.productDetailOnClickListener = new ProductDetailOnClickListener(activityAware);
+        this.productDetailOnClickListener = new ProductDetailOnClickListener<>(activityAware);
     }
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,

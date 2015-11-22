@@ -27,6 +27,8 @@ public class DatabaseContentProvider extends ContentProvider {
     public static final int AREA_PIN_INFO_URI_MATCHER_CODE = 100;
     public static final int HOME_SECTION_URI_MATCHER_CODE = 200;
     public static final int MAIN_MENU_SECTION_URI_MATCHER_CODE = 300;
+    public static final int APP_DATA_DYNAMIC_URI_MATCHER_CODE = 400;
+
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -35,6 +37,7 @@ public class DatabaseContentProvider extends ContentProvider {
                 MAIN_MENU_SECTION_URI_MATCHER_CODE);
         sURIMatcher.addURI(AUTHORITY, DynamicScreenAdapter.tableName + "/" + DynamicScreenSyncService.HOME_PAGE,
                 HOME_SECTION_URI_MATCHER_CODE);
+        sURIMatcher.addURI(AUTHORITY, AppDataDynamicAdapter.tableName, APP_DATA_DYNAMIC_URI_MATCHER_CODE);
     }
 
     public DatabaseContentProvider() {
@@ -112,6 +115,8 @@ public class DatabaseContentProvider extends ContentProvider {
             case HOME_SECTION_URI_MATCHER_CODE:
             case MAIN_MENU_SECTION_URI_MATCHER_CODE:
                 return DynamicScreenAdapter.tableName;
+            case APP_DATA_DYNAMIC_URI_MATCHER_CODE:
+                return AppDataDynamicAdapter.tableName;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }

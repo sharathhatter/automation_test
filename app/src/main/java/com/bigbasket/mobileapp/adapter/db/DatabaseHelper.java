@@ -88,6 +88,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             try {
                 db.execSQL("DELETE FROM " + DynamicScreenAdapter.tableName);
                 db.execSQL("DROP TABLE " + DynamicScreenAdapter.tableName);
+                db.execSQL("DELETE FROM " + AppDataDynamicAdapter.tableName);
+                db.execSQL("DROP TABLE " + AppDataDynamicAdapter.tableName);
             } catch (Exception e) {
                 Crashlytics.logException(e);
             }
@@ -101,5 +103,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SearchSuggestionAdapter.createTable);
         db.execSQL(MostSearchesAdapter.createTable);
         db.execSQL(DynamicScreenAdapter.createTable);  // Added in version 16
+        db.execSQL(AppDataDynamicAdapter.createTable);  // Added in version 16
     }
 }

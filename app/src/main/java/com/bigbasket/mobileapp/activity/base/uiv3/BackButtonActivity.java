@@ -18,7 +18,11 @@ public class BackButtonActivity extends BBActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDynamicAppDataBroadcastReceiver = null; // We don't want any receiver here
+    }
+
+    @Override
+    public void readAppDataDynamic() {
+        // We don't want any app-data dynamic here
     }
 
     @Override

@@ -86,16 +86,7 @@ public interface BigBasketApiService {
     Call<ApiResponse<GetDynamicPageApiResponse>> getDynamicPage(@Query(Constants.OS) String osName,
                                                                 @Query(Constants.APP_VERSION) String version,
                                                                 @Query(Constants.SCREEN) String screen);
-
-
-    @GET("get-home-page/")
-    Call<ApiResponse<GetDynamicPageApiResponse>> getHomePage(@Query(Constants.OS) String osName,
-                                                             @Query(Constants.APP_VERSION) String version);
-
-    @GET("get-main-menu/")
-    Call<ApiResponse<GetDynamicPageApiResponse>> getMainMenu(@Query(Constants.OS) String osName,
-                                                             @Query(Constants.APP_VERSION) String version);
-
+    
     @GET("c-get/")
     Call<ApiResponse<CartGetApiResponseContent>> cartGet(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                          @Query(Constants.FULFILLMENT_ID) String fulfillmentId);
@@ -404,8 +395,5 @@ public interface BigBasketApiService {
     @GET("get-location-detail/")
     Call<ApiResponse<AddressSummary>> getLocationDetail(@Query(Constants.LAT) String latitude,
                                                         @Query(Constants.LNG) String longitude);
-
-    @POST("get-app-data-dynamic/")
-    Call<ApiResponse<GetAppDataDynamicResponse>> getAppDataDynamic();
 
 }

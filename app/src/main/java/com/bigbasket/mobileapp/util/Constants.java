@@ -12,7 +12,6 @@ public class Constants {
     public static final String CURRENT_PAGE = "page";
     public static final String TOTAL_PAGES = "tot_pages";
 
-    public static final String SEARCH_QUERY = "q";
     public static final String PRODUCT_QUERY = "productQuery";
     public static final String PRODUCT_COUNT = "p_count";
     public static final String FACET_NAME = "facet_name";
@@ -89,7 +88,6 @@ public class Constants {
     //sub category
     public static final String SUB_CATEGORY_ITEMS = "items";
     public static final String DISPLAY_NAME = "display_name";
-    public static final String DISPLAY_VALUE = "display_value";
     public static final String ORDER_TYPE = "order_type";
     public static final String ORDER_STATE = "order_state";
     public static final String TOTAL_PAGE = "total_pages";
@@ -116,8 +114,6 @@ public class Constants {
     public static final String FILTER_VALUES_SLUG = "filter_value_slug";
 
     public static final String STORE_AVAILABILITY = "store_availability";
-    //public static final String STORE_ID = "store_id";
-    public static final String AVAILABILITY = "availability";
     public static final String EXPRESS = "express";
     public static final String AVAILABILITY_INFO_ID = "availability_info_id";
 
@@ -173,7 +169,6 @@ public class Constants {
     public static final String OS_PREFERENCE_KEY = "os";
 
     public static final String TOP_MENU_SLUG = "top-menu";
-    public static final String TOP_CAT_SLUG = "top_category_slug";
     public static final String TOP_MENU = "Top Menu";
     public static final String CATEGORY_SLUG = "category_slug";
 
@@ -549,7 +544,6 @@ public class Constants {
     public static final String HEADER_SEL = "header_sel";
     public static final String TAB_INFO = "tab_info";
     public static final String TAB_NAME = "tab_name";
-    public static final String TAB_IMG = "tab_img";
     public static final String CONTENT_SECTION = "content_section";
     public static final String CART_INFO = "cart_info";
 
@@ -603,8 +597,6 @@ public class Constants {
     public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
     public static final String MOBIKWIK_PAYMENT_MW = "mw";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
-
-    public static final String ADDRESS_SYNC_BROADCAST_ACTION = "com.bigbasket.mobileapp.broadcase.AddressSync";
 
     // Sku Tabs
     public static final String SKU_TYPE_EXPRESS = "express";

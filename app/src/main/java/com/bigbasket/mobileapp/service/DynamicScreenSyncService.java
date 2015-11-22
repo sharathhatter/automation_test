@@ -5,6 +5,8 @@ import android.content.Intent;
 
 import com.bigbasket.mobileapp.adapter.db.DynamicScreenAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -40,6 +42,8 @@ public class DynamicScreenSyncService extends IntentService {
         } else {
             urlSuffix = "get-main-menu/";
         }
+        urlSuffix += "?" + Constants.OS + "=android&" + Constants.APP_VERSION
+                + "=" + DataUtil.getAppVersion(this);
         Request request = new Request.Builder()
                 .url(MobileApiUrl.getMobileApiUrl(this) + urlSuffix)
                 .build();
@@ -47,7 +51,11 @@ public class DynamicScreenSyncService extends IntentService {
         String responseJson;
         try {
             Response response = client.newCall(request).execute();
-            responseJson = response.body().string();
+            if (response.isSuccessful()) {
+                responseJson = response.body().string();
+            } else {
+                responseJson = "";
+            }
         } catch (IOException e) {
             responseJson = "";
         }

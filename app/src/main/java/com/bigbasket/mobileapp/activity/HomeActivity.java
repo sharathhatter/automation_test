@@ -125,8 +125,8 @@ public class HomeActivity extends SearchActivity {
     }
 
     @Override
-    public void onDataSynced(boolean isManuallyTriggered) {
-        super.onDataSynced(isManuallyTriggered);
+    public void onDataSynced() {
+        super.onDataSynced();
         setUpAddressSpinner();
     }
 

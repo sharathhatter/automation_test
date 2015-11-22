@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.base.uiv3;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -14,8 +13,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -45,6 +46,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
+import com.bigbasket.mobileapp.adapter.db.AppDataDynamicAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.devconfig.DevConfigViewHandler;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
@@ -89,7 +91,6 @@ import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
-import com.bigbasket.mobileapp.receivers.DynamicAppDataBroadcastReceiver;
 import com.bigbasket.mobileapp.receivers.DynamicScreenLoaderCallback;
 import com.bigbasket.mobileapp.service.AreaPinInfoIntentService;
 import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
@@ -121,8 +122,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
     protected BigBasketMessageHandler handler;
     protected String mTitle;
-    @Nullable
-    protected DynamicAppDataBroadcastReceiver mDynamicAppDataBroadcastReceiver;
     private ActionBarDrawerToggle mDrawerToggle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartSummary = new CartSummary();
@@ -183,10 +182,37 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         if (CityManager.isAreaPinInfoDataStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
         }
-        mDynamicAppDataBroadcastReceiver = new DynamicAppDataBroadcastReceiver<>(this);
+        readAppDataDynamic();
     }
 
-    public void onDataSynced(boolean isManuallyTriggered) {
+    public void readAppDataDynamic() {
+        getSupportLoaderManager().initLoader(GetAppDataDynamicIntentService.APP_DATA_DYNAMIC_ID, null,
+                new LoaderManager.LoaderCallbacks<Cursor>() {
+                    @Override
+                    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                        return new CursorLoader(getCurrentActivity(), AppDataDynamicAdapter.CONTENT_URI,
+                                AppDataDynamicAdapter.getDefaultProjection(), null, null, null);
+                    }
+
+                    @Override
+                    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                        AppDataDynamic appDataDynamic = AppDataDynamic.getInstance(getCurrentActivity());
+                        boolean success = appDataDynamic.updateInstance(getCurrentActivity(), data);
+                        if (success) {
+                            onDataSynced();
+                        } else {
+                            onDataSyncFailure();
+                        }
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<Cursor> loader) {
+
+                    }
+                });
+    }
+
+    public void onDataSynced() {
         ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
         if (addressSummaries != null && addressSummaries.size() > 0) {
             AddressSummary defaultAddress = addressSummaries.get(0);
@@ -993,16 +1019,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (mDynamicAppDataBroadcastReceiver != null) {
-            IntentFilter addressSyncIntentFilter = new IntentFilter(Constants.ADDRESS_SYNC_BROADCAST_ACTION);
-            LocalBroadcastManager.getInstance(this).registerReceiver(mDynamicAppDataBroadcastReceiver,
-                    addressSyncIntentFilter);
-        }
-
-        // Also manually trigger it once to sync address-change in case receiver got unregistered
-        onDataSynced(true);
-
         FragmentManager sfm = getSupportFragmentManager();
         if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {
             LocalyticsWrapper.tagScreen(getScreenTag());
@@ -1025,14 +1041,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         super.onPause();
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
-        }
-
-        if (mDynamicAppDataBroadcastReceiver != null) {
-            try {
-                LocalBroadcastManager.getInstance(this).unregisterReceiver(mDynamicAppDataBroadcastReceiver);
-            } catch (IllegalArgumentException e) {
-                // Fail silently
-            }
         }
     }
 

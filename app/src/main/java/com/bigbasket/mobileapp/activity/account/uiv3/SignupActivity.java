@@ -22,7 +22,6 @@ import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
-import com.bigbasket.mobileapp.receivers.DynamicAppDataBroadcastReceiver;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -49,7 +48,6 @@ public class SignupActivity extends BackButtonActivity {
         setTitle(getString(R.string.signUpCapsVerb));
 
         renderSignUp();
-        mDynamicAppDataBroadcastReceiver = new DynamicAppDataBroadcastReceiver<>(this);
     }
 
     @Override
@@ -248,12 +246,10 @@ public class SignupActivity extends BackButtonActivity {
     }
 
     @Override
-    public void onDataSynced(boolean isManuallyTriggered) {
-        super.onDataSynced(isManuallyTriggered);
-        if (!isManuallyTriggered) {
-            showLocationView();
-            hideProgressDialog();
-        }
+    public void onDataSynced() {
+        super.onDataSynced();
+        showLocationView();
+        hideProgressDialog();
     }
 
     @Override
