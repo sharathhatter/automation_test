@@ -31,6 +31,8 @@ import com.bigbasket.mobileapp.handler.AppUpdateHandler;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
@@ -453,7 +455,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         return TrackEventkeys.HOME_SCREEN;
     }
 
-    public class HomePageHandler<T> extends BigBasketMessageHandler<T> {
+    public class HomePageHandler<T extends ApiErrorAware & AppOperationAware> extends BigBasketMessageHandler<T> {
 
         public HomePageHandler(T ctx) {
             super(ctx);

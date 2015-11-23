@@ -106,7 +106,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
                 String numItems = preferences.getString(Constants.GET_CART, "0");
                 if (!TextUtils.isEmpty(numItems) && !numItems.equals("0")) {
                     showAlertDialog(null, getString(R.string.removeAllProducts), DialogButton.YES,
-                            DialogButton.NO, Constants.EMPTY_BASKET, null, getString(R.string.emptyBasket));
+                            DialogButton.NO, Constants.EMPTY_BASKET_DIALOG_QUEST, null, getString(R.string.emptyBasket));
                 }
                 return true;
             default:
@@ -165,7 +165,9 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
                 trackEvent(TrackingAware.BASKET_CHECKOUT_CLICKED, map);
                 if (getCartSummary() != null && getCartSummary().getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                        launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, NavigationCodes.GO_TO_BASKET);
+                        Bundle data = new Bundle();
+                        data.putInt(Constants.FRAGMENT_CODE, NavigationCodes.GO_TO_BASKET);
+                        launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, data);
                     } else {
                         startCheckout(cartTotal);
                     }
@@ -194,19 +196,15 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
     }
 
     @Override
-    public void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (!TextUtils.isEmpty(sourceName)) {
-            switch (sourceName) {
-                case Constants.EMPTY_BASKET:
-                    if (cartItemLists != null)
-                        emptyCart();
-                    break;
-                default:
-                    super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
-                    break;
-            }
-        } else {
-            super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
+    public void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        switch (sourceName) {
+            case Constants.EMPTY_BASKET_DIALOG_QUEST:
+                if (cartItemLists != null)
+                    emptyCart();
+                break;
+            default:
+                super.onPositiveButtonClicked(sourceName, valuePassed);
+                break;
         }
     }
 

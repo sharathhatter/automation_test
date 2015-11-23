@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
+import com.bigbasket.mobileapp.fragment.dialogs.ConfirmationDialogFragment;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -30,6 +32,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
+import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -145,30 +148,26 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null) {
-            switch (sourceName) {
-                case Constants.GOOGLE_PLAY_SERVICES:
-                    try {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.gms")));
-                    } catch (ActivityNotFoundException e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.gms")));
+/*
+    //Looks like Constants.SOCIAL_LOGOUT dialog is not used at all
+    @Override
+    protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        switch (sourceName) {
+            case Constants.SOCIAL_LOGOUT:
+                if (valuePassed != null) {
+                    if (valuePassed.equals(SocialAccountType.GP)) {
+                        showProgressDialog(getString(R.string.please_wait));
+                        signOutFromGplus();
+                    } else if (valuePassed.equals(SocialAccountType.FB)) {
+                        revokeFbAccess();
                     }
-                    break;
-                case Constants.SOCIAL_LOGOUT:
-                    if (valuePassed != null) {
-                        if (valuePassed.equals(SocialAccountType.GP)) {
-                            showProgressDialog(getString(R.string.please_wait));
-                            signOutFromGplus();
-                        } else if (valuePassed.equals(SocialAccountType.FB)) {
-                            revokeFbAccess();
-                        }
-                    }
-                    break;
-            }
+                }
+                break;
+            default:
+                super.onPositiveButtonClicked(sourceName, valuePassed);
         }
     }
+*/
 
     @Override
     protected void revokeGPlusAccess() {
@@ -352,7 +351,16 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case ApiErrorCodes.INVALID_USER_PASSED:
-                    showAlertDialog(null, getString(R.string.INVALID_USER_PASS));
+                    //showAlertDialog(null, getString(R.string.INVALID_USER_PASS));
+                    ConfirmationDialogFragment dialogFragment =
+                            ConfirmationDialogFragment.newInstance(0, getString(R.string.INVALID_USER_PASS),
+                            getString(R.string.ok), true);
+                    try {
+                        dialogFragment.show(getSupportFragmentManager(),
+                                getScreenTag() + "#InvalidUserPassDialog");
+                    } catch (IllegalStateException ex){
+                        Crashlytics.logException(ex);
+                    }
                     break;
                 default:
                     handler.sendEmptyMessage(loginApiResponse.status,

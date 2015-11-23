@@ -75,6 +75,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     private ArrayList<City> mCities;
     @Nullable
     private BroadcastReceiver broadcastReceiver;
+    private HashMap<String, String> mPayload;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -330,11 +331,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (mAddress != null && mChoosenCity.getId() != mAddress.getCityId()) {
             if (TextUtils.isEmpty(otpCode)) {
                 // User is trying to change the city, show an alert
+                mPayload = payload;
                 showAlertDialog(getString(R.string.createNewAddress),
                         getString(R.string.newAddressNotAllowed),
                         DialogButton.OK, DialogButton.CANCEL,
-                        Constants.UPDATE_ADDRESS,
-                        payload, getString(R.string.lblContinue));
+                        Constants.UPDATE_ADDRESS_DIALOG_REQUEST,
+                        null, getString(R.string.lblContinue));
             } else {
                 uploadAddress(payload, true);
             }
@@ -410,19 +412,18 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null) {
-            switch (sourceName) {
-                case Constants.ERROR:
-                    finish();
-                    break;
-                case Constants.UPDATE_ADDRESS:
-                    uploadAddress((HashMap<String, String>) valuePassed, true);
-                    break;
-            }
+    protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        switch (sourceName) {
+            case Constants.UPDATE_ADDRESS_DIALOG_REQUEST:
+                if(mPayload != null) {
+                    uploadAddress(mPayload, true);
+                    mPayload = null;
+                }
+                break;
+            default:
+                super.onPositiveButtonClicked( sourceName, valuePassed);
         }
-        super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+
     }
 
     @Override

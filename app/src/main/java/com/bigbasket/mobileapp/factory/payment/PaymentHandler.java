@@ -95,7 +95,7 @@ public class PaymentHandler<T extends AppOperationAware> {
         switch (paymentMethod) {
             case Constants.PAYU:
             case Constants.PAYUMONEY_WALLET:
-                new PayuPayment().startPaymentGateway(paymentParams, ctx.getCurrentActivity());
+                PayuPayment.startPaymentGateway(paymentParams, ctx.getCurrentActivity());
                 break;
             case Constants.MOBIKWIK_PAYMENT:
                 new MobikwikPayment().startPaymentGateway(paymentParams, ctx.getCurrentActivity());

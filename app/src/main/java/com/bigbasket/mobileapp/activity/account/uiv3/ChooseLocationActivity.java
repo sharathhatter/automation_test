@@ -82,7 +82,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         if (!DataUtil.isLocationServiceEnabled(this)) {
             showAlertDialog(getString(R.string.enableLocationHeading),
                     getString(R.string.enableLocation),
-                    DialogButton.YES, DialogButton.CANCEL, Constants.LOCATION, null,
+                    DialogButton.YES, DialogButton.CANCEL, Constants.LOCATION_DIALOG_REQUEST, null,
                     getString(R.string.enable));
         } else {
             showProgressDialog(getString(R.string.readingYourCurrentLocation));
@@ -308,8 +308,8 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null && sourceName.equals(Constants.LOCATION)) {
+    protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        if (sourceName == Constants.LOCATION_DIALOG_REQUEST) {
             try {
                 Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(myIntent);
@@ -318,7 +318,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                         R.string.locationSettingError, Snackbar.LENGTH_SHORT).show();
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+            super.onPositiveButtonClicked(sourceName, valuePassed);
         }
     }
 }

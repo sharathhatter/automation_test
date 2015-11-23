@@ -957,9 +957,12 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         }
     }
 
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null && Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST.equals(sourceName)) {
+    @Override
+    protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        if (sourceName == Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST_DIALOG) {
             new CreateShoppingListTask<>(this).showDialog();
+        } else {
+            super.onPositiveButtonClicked(sourceName, valuePassed);
         }
     }
 

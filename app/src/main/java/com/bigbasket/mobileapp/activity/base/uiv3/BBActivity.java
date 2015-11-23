@@ -791,22 +791,20 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         return spannableString;
     }
-
+/*
+    Looks like Constants.LOGOUT dialog is not used at all
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (!TextUtils.isEmpty(sourceName)) {
-            switch (sourceName) {
+    protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        switch (sourceName) {
                 case Constants.LOGOUT:
                     onLogoutRequested();
                     break;
                 default:
-                    super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+                    super.onPositiveButtonClicked(sourceName, valuePassed);
                     break;
             }
-        } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
-        }
     }
+*/
 
     public void setTxtNavSalutation() {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());

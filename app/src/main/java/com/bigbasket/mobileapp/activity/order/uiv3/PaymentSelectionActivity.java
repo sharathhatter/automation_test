@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -312,8 +311,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxtRemoveVoucher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAlertDialog(getString(R.string.removeVoucherHeading), getString(R.string.removeVoucherDesc),
-                        DialogButton.YES, DialogButton.CANCEL, Constants.REMOVE_VOUCHER, mAppliedVoucherCode,
+                Bundle data = new Bundle(1);
+                data.putString(Constants.EVOUCHER_CODE, mAppliedVoucherCode);
+                showAlertDialog(getString(R.string.removeVoucherHeading),
+                        getString(R.string.removeVoucherDesc),
+                        DialogButton.YES, DialogButton.CANCEL,
+                        Constants.REMOVE_VOUCHER_DIALOG_REQUEST, data,
                         getString(R.string.remove));
             }
         });
@@ -709,26 +712,23 @@ public class PaymentSelectionActivity extends BackButtonActivity
             showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
         } else {
             // Show a message and then take to Order thank-you page
-            showAlertDialog(null, msg, Constants.SOURCE_PLACE_ORDER);
+            showAlertDialog(null, msg, Constants.SOURCE_PLACE_ORDER_DIALOG_REQUEST);
         }
     }
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, @Nullable String sourceName, Object valuePassed) {
-        if (!TextUtils.isEmpty(sourceName)) {
-            switch (sourceName) {
-                case Constants.REMOVE_VOUCHER:
-                    removeVoucher();
-                    break;
-                case Constants.SOURCE_PLACE_ORDER:
-                    showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
-                    break;
-                default:
-                    super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
-            }
-        } else {
-            super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
+    protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        switch (sourceName) {
+            case Constants.REMOVE_VOUCHER_DIALOG_REQUEST:
+                removeVoucher();
+                break;
+            case Constants.SOURCE_PLACE_ORDER_DIALOG_REQUEST:
+                showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
+                break;
+            default:
+                super.onPositiveButtonClicked(sourceName, valuePassed);
         }
+
     }
 
     @Override
