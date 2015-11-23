@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -118,7 +120,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.append(spannableMrp);
 
-            String prefix = getString(R.string.ordernumber) + "\n";
+            String prefix = getString(R.string.ordernumberWithSpace);
             SpannableString orderNumSpannable = new SpannableString(prefix + order.getOrderNumber());
             orderNumSpannable.setSpan(new UnderlineSpan(), prefix.length(), orderNumSpannable.length(),
                     Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -131,13 +133,41 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                 }
             });
 
+            TextView txtVariableWeightMsg = (TextView) base.findViewById(R.id.txtVariableWeightMsg);
+            if(!TextUtils.isEmpty(order.getVariableWeightMsg()) &&
+                    !TextUtils.isEmpty(order.getVariableWeightLink())){
+                txtVariableWeightMsg.setVisibility(View.VISIBLE);
+                SpannableString spannableString = new SpannableString(order.getVariableWeightMsg() + " "+
+                                        getString(R.string.know_more));
+                spannableString.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(View view) {
+                        trackEvent(TrackingAware.CHECKOUT_KNOW_MORE_LINK_CLICKED, null);
+                        Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
+                        intent.putExtra(Constants.WEBVIEW_URL, order.getVariableWeightLink());
+                        intent.putExtra(Constants.WEBVIEW_TITLE, (order.getVariableWeightMsg()));
+                        startActivity(intent);
+                    }
+                }, order.getVariableWeightMsg().length() + 1 , order.getVariableWeightMsg().length() + 1 +
+                                getString(R.string.know_more).length() ,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                txtVariableWeightMsg.setMovementMethod(LinkMovementMethod.getInstance());
+                txtVariableWeightMsg.setText(spannableString);
+
+            }else {
+                txtVariableWeightMsg.setVisibility(View.GONE);
+            }
+
+
+
             TextView txtSlotTime = (TextView) base.findViewById(R.id.txtSlotTime);
             if (order.getSlotDisplay() != null) {
                 String date = order.getSlotDisplay().getDate();
                 String time = order.getSlotDisplay().getTime();
                 String display = "";
                 if (!TextUtils.isEmpty(date)) {
-                    display += date;
+                    display += date+"\n";
                 }
                 if (!TextUtils.isEmpty(time)) {
                     if (!TextUtils.isEmpty(display)) {
@@ -145,7 +175,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     }
                     display += time;
                 }
-                txtSlotTime.setText(getString(R.string.delivery_time) + "\n" + display);
+                txtSlotTime.setText(getString(R.string.delivery_time_with_space) + display);
                 txtSlotTime.setTypeface(faceRobotoRegular);
             } else {
                 txtSlotTime.setVisibility(View.GONE);

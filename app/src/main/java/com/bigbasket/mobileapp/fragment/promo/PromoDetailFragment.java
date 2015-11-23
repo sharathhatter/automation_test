@@ -354,6 +354,7 @@ public class PromoDetailFragment extends BaseFragment {
 
         TextView txtValNeeded = (TextView) base.findViewById(R.id.txtValueNeed);
         txtValNeeded.setTypeface(faceRobotoRegular);
+        txtValNeeded.setVisibility(View.GONE);
 
         TextView txtValInBasket = (TextView) base.findViewById(R.id.txtValueInBasket);
         txtValInBasket.setTypeface(faceRobotoRegular);

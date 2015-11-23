@@ -43,4 +43,14 @@
         android:minHeight="0dp"
         android:minWidth="0dp"
         android:text="@string/payNow" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/txtVariableWeightMsg"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_below="@id/btnPayNow"
+        android:textSize="@dimen/primary_text_size"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

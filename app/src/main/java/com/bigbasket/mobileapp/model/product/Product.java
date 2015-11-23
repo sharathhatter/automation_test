@@ -65,6 +65,8 @@ public class Product extends BaseProduct {
     private ArrayList<HashMap<String, String>> storeAvailability;
     @SerializedName(Constants.GIFT_MSG)
     private String giftMsg;
+    @SerializedName(Constants.VARIABLE_WEIGHT_MSG)
+    private String variableWeightMsg;
     @SerializedName(Constants.STORE_IDS)
     private List<String> storeIds;
 
@@ -124,6 +126,10 @@ public class Product extends BaseProduct {
             giftMsg = source.readString();
         }
 
+        boolean isWeightMsgNull = source.readByte() == (byte) 1;
+        if (!isWeightMsgNull) {
+            variableWeightMsg = source.readString();
+        }
         boolean isStoreIdsNull = source.readByte() == (byte) 1;
         if (!isStoreIdsNull) {
             String storeId = source.readString();
@@ -230,6 +236,11 @@ public class Product extends BaseProduct {
             dest.writeString(giftMsg);
         }
 
+        boolean isWeightMsgNull = variableWeightMsg == null;
+        dest.writeByte(isWeightMsgNull ? (byte) 1 : (byte) 0);
+        if (!isWeightMsgNull) {
+            dest.writeString(variableWeightMsg);
+        }
         boolean isStoredIdsNull = storeIds == null;
         dest.writeByte(isStoredIdsNull ? (byte) 1 : (byte) 0);
         if (!isStoredIdsNull) {
@@ -329,6 +340,11 @@ public class Product extends BaseProduct {
     @Nullable
     public ArrayList<HashMap<String, String>> getStoreAvailability() {
         return storeAvailability;
+    }
+
+    @Nullable
+    public String getVariableWeightMsg() {
+        return variableWeightMsg;
     }
 
     @Nullable

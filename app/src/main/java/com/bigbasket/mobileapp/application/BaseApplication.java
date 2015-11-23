@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -30,6 +31,14 @@ public class BaseApplication extends Application {
         if (BuildConfig.DEBUG) {
             LeakCanaryObserver leakCanaryObserver = LeakCanaryObserver.Factory.create();
             leakCanaryObserver.initializeWatcher(this);
+        }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        if (BuildConfig.DEBUG) {
+            MultiDex.install(this);
         }
     }
 

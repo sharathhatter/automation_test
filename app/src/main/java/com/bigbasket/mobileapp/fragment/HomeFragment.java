@@ -45,6 +45,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
+import com.moengage.widgets.NudgeView;
 
 import java.util.ArrayList;
 
@@ -61,7 +62,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.uiv3_list_container, container, false);
+        View view = inflater.inflate(R.layout.home_fragment_layout, container, false);
         view.setBackgroundColor(Color.WHITE);
         return view;
     }
@@ -213,6 +214,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
         contentView.removeAllViews();
 
+        addNudgeView();
+
         Pair<RecyclerView, ArrayList<Integer>> pair = getSectionRecylerView(contentView);
         mRecyclerView = pair.first;
         if (mRecyclerView != null) {
@@ -222,6 +225,12 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
         // Check if any deep-link needs to be opened
         processPendingDeepLink();
+    }
+
+    private void addNudgeView(){
+        if(getCurrentActivity()== null || getView()== null) return;
+        NudgeView nudgeView = (NudgeView)getView().findViewById(R.id.nudge);
+        nudgeView.setMoEHelper(getCurrentActivity().getMoEHelper());
     }
 
     public void syncDynamicTiles() {

@@ -173,6 +173,16 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         }
         layoutProductDetail.addView(productRow);
 
+        TextView txtVariableWeightMsg =(TextView) productRow.findViewById(R.id.txtVariableWeightMsg);
+        String variableWeightMsg = mProduct.getVariableWeightMsg();
+        if(!TextUtils.isEmpty(variableWeightMsg)) {
+            txtVariableWeightMsg.setTypeface(faceRobotoRegular);
+            txtVariableWeightMsg.setText(variableWeightMsg);
+            txtVariableWeightMsg.setVisibility(View.VISIBLE);
+        }else {
+            txtVariableWeightMsg.setVisibility(View.GONE);
+        }
+
         ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();
         if (productAdditionalInfos != null && productAdditionalInfos.size() > 0) {
             for (ProductAdditionalInfo productAdditionalInfo : productAdditionalInfos) {

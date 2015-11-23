@@ -33,6 +33,8 @@ public class Constants {
     public static final String PRODUCT_BRAND = "p_brand";
     public static final String BRAND_SLUG = "brand_slug";
     public static final String GIFT_MSG = "gift_msg";
+    public static final String VARIABLE_WEIGHT_MSG = "v_weight_msg";
+    public static final String VARIABLE_WEIGHT_LINK = "v_weight_link";
     public static final String PRODUCT_DESC = "p_desc";
     public static final String PACKAGE_DESC = "pack_desc";
     public static final String PRODUCT_STATUS = "pstat";

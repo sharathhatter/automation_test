@@ -41,6 +41,7 @@
     <string name="placeorder">Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
+    <string name="ordernumberWithSpace">Order No:\u0020</string>
     <string name="vat">VAT</string>
     <string name="action">Action</string>
     <string name="item">Item</string>
@@ -170,6 +171,7 @@
     <string name="change_password">Change Password</string>
     <string name="wallet_activity">My Wallet</string>
     <string name="delivery_time">Delivery Time:</string>
+    <string name="delivery_time_with_space">Delivery Time:\u0020</string>
     <string name="delivery_charges">Delivery Charges:</string>
     <string name="past_label">past</string>
     <string name="deleteShoppingList">Delete Shopping List</string>
