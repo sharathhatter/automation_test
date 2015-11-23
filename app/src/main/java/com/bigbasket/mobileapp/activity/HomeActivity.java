@@ -152,6 +152,18 @@ public class HomeActivity extends SearchActivity {
     public void onResume() {
         super.onResume();
         setNextScreenNavigationContext(TrackEventkeys.HOME);
+        // Check if spinner's index is set to "CHANGE MY LOCATION"
+        // In case it is True, then reset it to 0, and ensure that spinner's on item-selection
+        // even is NOT triggered
+        if (mSpinnerArea != null && mSpinnerArea.getSelectedItemPosition() > 0
+                && mSpinnerArea.getAdapter() instanceof AddressSummaryDropdownAdapter) {
+            AddressSummaryDropdownAdapter adapter = (AddressSummaryDropdownAdapter) mSpinnerArea.getAdapter();
+            if (adapter.getSpinnerViewType(mSpinnerArea.getSelectedItemPosition())
+                    == AddressSummaryDropdownAdapter.VIEW_TYPE_CHANGE) {
+                mCurrentSpinnerIdx = 0;
+                mSpinnerArea.setSelection(0);
+            }
+        }
     }
 
     @Override

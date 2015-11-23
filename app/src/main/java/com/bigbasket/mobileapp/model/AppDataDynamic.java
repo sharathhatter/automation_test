@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
@@ -12,6 +13,7 @@ import com.bigbasket.mobileapp.adapter.db.AppDataDynamicAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataDynamicResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
+import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.google.gson.Gson;
 
 import java.text.DateFormat;
@@ -115,6 +117,7 @@ public class AppDataDynamic {
         editor.remove(TIMEOUT_KEY).apply();
         AppDataDynamicAdapter appDataDynamicAdapter = new AppDataDynamicAdapter(context);
         appDataDynamicAdapter.delete();
+        context.startService(new Intent(context, GetAppDataDynamicIntentService.class));
         appDataDynamic = null;
     }
 
