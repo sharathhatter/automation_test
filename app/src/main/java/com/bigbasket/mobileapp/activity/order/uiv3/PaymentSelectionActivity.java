@@ -14,11 +14,8 @@ import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +52,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
+import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.payu.india.Payu.PayuConstants;
 
@@ -64,10 +62,10 @@ import java.util.HashMap;
 import retrofit.Call;
 
 public class PaymentSelectionActivity extends BackButtonActivity
-        implements OnPostPaymentListener, OnPaymentValidationListener, PaymentTxnInfoAware {
+        implements OnPostPaymentListener, OnPaymentValidationListener, PaymentTxnInfoAware, PaymentMethodsView.OnPaymentOptionSelectionListener {
 
     private ArrayList<ActiveVouchers> mActiveVouchersList;
-    private ArrayList<PaymentType> mPaymentTypeList;
+    private ArrayList<PaymentType> paymentTypeList;
     private String mPotentialOrderId;
     private TextView mTxtApplyVoucher;
     private TextView mTxtRemoveVoucher;
@@ -244,7 +242,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mActiveVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
         mAppliedVoucherCode = getIntent().getStringExtra(Constants.EVOUCHER_CODE);
 
-        mPaymentTypeList = getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES);
+        paymentTypeList = getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES);
 
         ArrayList<CreditDetails> creditDetails = getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS);
         renderPaymentMethodsAndSummary(creditDetails);
@@ -334,7 +332,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (isInHDFCPayMode) {
             // Now check whether Payzapp is actually present
             boolean hasHdfc = false;
-            for (PaymentType paymentType : mPaymentTypeList) {
+            for (PaymentType paymentType : paymentTypeList) {
                 if (paymentType.getValue().equals(Constants.HDFC_POWER_PAY)) {
                     hasHdfc = true;
                     break;
@@ -342,43 +340,18 @@ public class PaymentSelectionActivity extends BackButtonActivity
             }
             isInHDFCPayMode = hasHdfc;
         }
-        RadioGroup layoutPaymentOptions = (RadioGroup) findViewById(R.id.layoutPaymentOptions);
+        LinearLayout layoutPaymentOptions = (LinearLayout) findViewById(R.id.layoutPaymentOptions);
         layoutPaymentOptions.removeAllViews();
 
         if (mOrderDetails.getFinalTotal() <= 0) {
             lblAmountFromWallet.setVisibility(View.VISIBLE);
-            mSelectedPaymentMethod = mPaymentTypeList.get(0).getValue();
+            mSelectedPaymentMethod = paymentTypeList.get(0).getValue();
         } else {
             lblAmountFromWallet.setVisibility(View.GONE);
-            int i = 0;
-            for (final PaymentType paymentType : mPaymentTypeList) {
-                if (isInHDFCPayMode && !paymentType.getValue().equals(Constants.HDFC_POWER_PAY)) {
-                    continue;
-                }
-                RadioButton rbtnPaymentType = UIUtil.
-                        getPaymentOptionRadioButton(layoutPaymentOptions, this, inflater);
-                rbtnPaymentType.setText(UIUtil.getPaymentOptionRadioButtonText(this, paymentType), TextView.BufferType.SPANNABLE);
-                rbtnPaymentType.setId(i);
-                boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? paymentType.isSelected() :
-                        mSelectedPaymentMethod.equals(paymentType.getValue());
-                if (isSelected) {
-                    rbtnPaymentType.setChecked(true);
-                    mSelectedPaymentMethod = paymentType.getValue();
-                    toggleNewCheckoutFlowMsg(isCreditCardPayment());
-                }
-                rbtnPaymentType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            mSelectedPaymentMethod = paymentType.getValue();
-                            toggleNewCheckoutFlowMsg(isCreditCardPayment());
-                            renderFooter(true);
-                        }
-                    }
-                });
-                layoutPaymentOptions.addView(rbtnPaymentType);
-                i++;
-            }
+
+            PaymentMethodsView mPaymentMethodsView = new PaymentMethodsView(this);
+            mPaymentMethodsView.setPaymentMethods(paymentTypeList, false, isInHDFCPayMode);
+            layoutPaymentOptions.addView(mPaymentMethodsView);
         }
         renderCheckOutProgressView();
     }
@@ -632,7 +605,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
         // Empty all the parameters to free up some memory
         mActiveVouchersList = null;
-        mPaymentTypeList = null;
+        paymentTypeList = null;
         mPotentialOrderId = null;
         mTxtApplyVoucher = null;
         mTxtRemoveVoucher = null;
@@ -739,6 +712,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
     @Override
     public String getScreenTag() {
         return TrackEventkeys.PAYMENT_SELECTION_SCREEN;
+    }
+
+    @Override
+    public void onPaymentOptionSelected(String paymentTypeValue) {
+        mSelectedPaymentMethod = paymentTypeValue;
+        toggleNewCheckoutFlowMsg(isCreditCardPayment());
+        renderFooter(true);
     }
 
     private class OnShowAvailableVouchersListener implements View.OnClickListener {

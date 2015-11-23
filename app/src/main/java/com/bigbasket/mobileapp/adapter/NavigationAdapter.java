@@ -60,6 +60,16 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.rendererHashMap = rendererHashMap;
     }
 
+    public NavigationAdapter(Context context, Typeface typeface,
+                             ArrayList<SectionNavigationItem> sectionNavigationItems,
+                             String screenName, @Nullable String baseImgUrl,
+                             @Nullable HashMap<Integer, Renderer> rendererHashMap,
+                             @Nullable SectionItem parentSectionItem) {
+        this(context, typeface, sectionNavigationItems, screenName, baseImgUrl,
+                rendererHashMap);
+        this.parentSectionItem = parentSectionItem;
+    }
+
     public String getSelectedCategoryString() {
         return selectedCategoryString;
     }
@@ -74,16 +84,6 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void setSelectedSubCategoryString(String selectedSubCategoryString) {
         this.selectedSubCategoryString = selectedSubCategoryString;
-    }
-
-    public NavigationAdapter(Context context, Typeface typeface,
-                             ArrayList<SectionNavigationItem> sectionNavigationItems,
-                             String screenName, @Nullable String baseImgUrl,
-                             @Nullable HashMap<Integer, Renderer> rendererHashMap,
-                             @Nullable SectionItem parentSectionItem) {
-        this(context, typeface, sectionNavigationItems, screenName, baseImgUrl,
-                rendererHashMap);
-        this.parentSectionItem = parentSectionItem;
     }
 
     @Override
@@ -198,7 +198,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavMainItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        ((SubNavigationAware) context).onSubNavigationHideRequested(true);
                     }
                 });
             } else {
@@ -260,6 +260,17 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         notifyDataSetChanged();
     }
 
+    private boolean getSelectionComparisonStatus(String selectedCategoryString, SectionItem sectionItem) {
+        if (!TextUtils.isEmpty(selectedCategoryString) && sectionItem != null
+                && sectionItem.getTitle() != null) {
+            SectionTextItem sectionTextItem = sectionItem.getTitle();
+            if (!TextUtils.isEmpty(sectionTextItem.getText())) {
+                return sectionTextItem.getText().replaceAll(" ", "").equalsIgnoreCase(selectedCategoryString.replaceAll(" ", ""));
+            }
+        }
+        return false;
+    }
+
     private class NavViewHeaderHolder extends RecyclerView.ViewHolder {
         private TextView txtNavListRowHeader;
 
@@ -284,17 +295,16 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private ImageView imgNavItemExpand;
         private RelativeLayout relativeLayoutRow;
 
+        public NavViewHolder(View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(this);
+        }
+
         public RelativeLayout getRelativeLayoutRow() {
             if (relativeLayoutRow == null) {
                 relativeLayoutRow = (RelativeLayout) itemView.findViewById(R.id.relativeLayoutRow);
             }
             return relativeLayoutRow;
-        }
-
-
-        public NavViewHolder(View itemView) {
-            super(itemView);
-            itemView.setOnClickListener(this);
         }
 
         public ImageView getImgNavItem() {
@@ -365,17 +375,5 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             return txtNavMainItem;
         }
-    }
-
-
-    private boolean getSelectionComparisonStatus(String selectedCategoryString, SectionItem sectionItem) {
-        if (!TextUtils.isEmpty(selectedCategoryString) && sectionItem != null
-                && sectionItem.getTitle() != null) {
-            SectionTextItem sectionTextItem = sectionItem.getTitle();
-            if (!TextUtils.isEmpty(sectionTextItem.getText())) {
-                return sectionTextItem.getText().replaceAll(" ", "").equalsIgnoreCase(selectedCategoryString.replaceAll(" ", ""));
-            }
-        }
-        return false;
     }
 }

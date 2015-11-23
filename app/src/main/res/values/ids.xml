@@ -5,4 +5,5 @@
     <item name="promo_id" type="id" />
     <item name="sku_id" type="id" />
     <item name="brand_slug" type="id" />
+    <item name="payment_value" type="id" />
 </resources>
