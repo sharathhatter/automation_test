@@ -6,7 +6,6 @@ import com.bigbasket.mobileapp.apiservice.callbacks.ProductListApiResponseCallba
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.product.ProductTabData;
-import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 
 import java.util.HashMap;
 
@@ -39,7 +38,7 @@ public class ProductListTask<T extends AppOperationAware> {
         if (ctx.isSuspended()) return;
         ctx.showProgressDialog("Please wait...");
         Call<ApiResponse<ProductTabData>> call =
-                bigBasketApiService.productList(navigationCtx, BBUrlEncodeUtils.urlEncode(paramMap));
+                bigBasketApiService.productList(navigationCtx, paramMap);
         call.enqueue(new ProductListApiResponseCallback<>(ctx, false, isFilterOrSortApplied));
     }
 }

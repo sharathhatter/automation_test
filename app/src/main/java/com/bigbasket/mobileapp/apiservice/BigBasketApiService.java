@@ -12,7 +12,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiRespon
 import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.GetAppDataDynamicResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAreaInfoResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
@@ -86,7 +85,7 @@ public interface BigBasketApiService {
     Call<ApiResponse<GetDynamicPageApiResponse>> getDynamicPage(@Query(Constants.OS) String osName,
                                                                 @Query(Constants.APP_VERSION) String version,
                                                                 @Query(Constants.SCREEN) String screen);
-    
+
     @GET("c-get/")
     Call<ApiResponse<CartGetApiResponseContent>> cartGet(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                          @Query(Constants.FULFILLMENT_ID) String fulfillmentId);
@@ -96,13 +95,13 @@ public interface BigBasketApiService {
 
     @GET("product-list/")
     Call<ApiResponse<ProductTabData>> productList(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
-                                                  @QueryMap(encoded = true) Map<String, String> productQueryMap);
+                                                  @QueryMap Map<String, String> productQueryMap);
 
     @GET("store-list/")
     Call<ApiResponse<SpecialityShopsListData>> getSpecialityShops(@Query(Constants.CATEGORY) String categoryValue);
 
     @GET("product-next-page/")
-    Call<ApiResponse<ProductNextPageResponse>> productNextPage(@QueryMap(encoded = true) Map<String, String> productQueryMap);
+    Call<ApiResponse<ProductNextPageResponse>> productNextPage(@QueryMap Map<String, String> productQueryMap);
 
     @GET("browse-promo-cat/")
     Call<ApiResponse<BrowsePromoCategoryApiResponseContent>> browsePromoCategory();
@@ -166,20 +165,20 @@ public interface BigBasketApiService {
     Call<CartOperationApiResponse> incrementCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                      @Field(TrackEventkeys.TERM) String searchTerm,
                                                      @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
-                                                     @FieldMap(encoded = true) Map<String, String> basketQueryMap);
+                                                     @FieldMap Map<String, String> basketQueryMap);
 
     @FormUrlEncoded
     @POST("c-decr-i/")
     Call<CartOperationApiResponse> decrementCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                      @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
-                                                     @FieldMap(encoded = true) Map<String, String> basketQueryMap);
+                                                     @FieldMap Map<String, String> basketQueryMap);
 
     @FormUrlEncoded
     @POST("c-set-i/")
     Call<CartOperationApiResponse> setCartItem(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                @Field(TrackEventkeys.TERM) String searchTerm,
                                                @Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
-                                               @FieldMap(encoded = true) Map<String, String> basketQueryMap);
+                                               @FieldMap Map<String, String> basketQueryMap);
 
     @FormUrlEncoded
     @POST("change-password/")
@@ -215,14 +214,12 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("create-address/")
-    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> createAddress(@FieldMap(encoded = true)
-                                                                           HashMap<String, String> params);
+    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> createAddress(@FieldMap HashMap<String, String> params);
 
 
     @FormUrlEncoded
     @POST("update-address/")
-    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> updateAddress(@FieldMap(encoded = true)
-                                                                           HashMap<String, String> params);
+    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> updateAddress(@FieldMap HashMap<String, String> params);
 
     @GET("get-orders/")
     Call<ApiResponse<OrderListApiResponse>> getOrders(@Query(Constants.ORDER_TYPE) String orderType,
@@ -305,7 +302,7 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("post-order-payment/")
-    Call<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPayment(@FieldMap(encoded = true) Map<String, String> paymentParams);
+    Call<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPayment(@FieldMap Map<String, String> paymentParams);
 
     @GET("validate-order-payment/")
     Call<ApiResponse<ValidateOrderPaymentApiResponse>> validateOrderPayment(@Query(Constants.TXN_ID) String txnId,

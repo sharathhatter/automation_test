@@ -29,7 +29,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.SearchViewAdapter;
-import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
+import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
 import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
 import com.bigbasket.mobileapp.util.Constants;
@@ -180,22 +180,22 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
                 SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID,
                 SearchManager.SUGGEST_COLUMN_ICON_1, SearchManager.SUGGEST_COLUMN_ICON_2});
-        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(getContext());
-        int mostSearchTermsCount = mostSearchesAdapter.getRowCount();
+        MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(getContext());
+        int mostSearchTermsCount = mostSearchesDbHelper.getRowCount();
         if (mostSearchTermsCount > 0) {
             matrixCursor.addRow(new String[]{"0", getContext().getString(R.string.history), null,
                     null, null, getContext().getString(R.string.history), null});
             if (mostSearchTermsCount >= 5) {
-                List<MostSearchedItem> mostSearchedItemList = mostSearchesAdapter.getRecentSearchedItems(5);
+                List<MostSearchedItem> mostSearchedItemList = mostSearchesDbHelper.getRecentSearchedItems(5);
                 int i = 1;
                 for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
                     matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
                             mostSearchedItem.getUrl(), null, mostSearchedItem.getQuery(),
                             null, SearchUtil.HISTORY_TERM});
                 if (mostSearchTermsCount > 20)
-                    mostSearchesAdapter.deleteFirstRow();
+                    mostSearchesDbHelper.deleteFirstRow();
             } else {
-                List<MostSearchedItem> mostSearchedItemList = mostSearchesAdapter.getRecentSearchedItems(mostSearchTermsCount);
+                List<MostSearchedItem> mostSearchedItemList = mostSearchesDbHelper.getRecentSearchedItems(mostSearchTermsCount);
                 if (mostSearchedItemList != null) {
                     int i = 0;
                     for (MostSearchedItem mostSearchedItem : mostSearchedItemList)

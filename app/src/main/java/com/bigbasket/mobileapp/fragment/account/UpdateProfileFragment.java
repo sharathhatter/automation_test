@@ -308,7 +308,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
                 if (memberProfileDataCallback.status == 0) {
                     if (otpValidationDialogFragment != null) {
                         if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode() != null)
-                            BaseActivity.hideKeyboard((BaseActivity) (getActivity()), otpValidationDialogFragment.getEditTextMobileCode());
+                            BaseActivity.hideKeyboard(getActivity(), otpValidationDialogFragment.getEditTextMobileCode());
                         if (otpValidationDialogFragment.isVisible())
                             otpValidationDialogFragment.dismiss();
                     }
@@ -328,7 +328,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
                                 TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
                         if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
                             if (getCurrentActivity() != null)
-                                BaseActivity.hideKeyboard((BaseActivity) (getActivity()), getCurrentActivity().getCurrentFocus());
+                                BaseActivity.hideKeyboard(getActivity(), getCurrentActivity().getCurrentFocus());
                             otpValidationDialogFragment.dismiss();
                         }
                     }

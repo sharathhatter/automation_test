@@ -53,6 +53,7 @@ public class HomeActivity extends SearchActivity {
     }
 
     private void setUpAddressSpinner() {
+        mCurrentSpinnerIdx = 0;
         final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
 
         boolean isGuest = AuthParameters.getInstance(this).isAuthTokenEmpty();

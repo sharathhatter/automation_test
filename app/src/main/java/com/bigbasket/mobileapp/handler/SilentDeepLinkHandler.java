@@ -23,26 +23,26 @@ public class SilentDeepLinkHandler<T extends AppOperationAware & ApiErrorAware>
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.ERROR_CODE, String.valueOf(what));
         map.put(TrackEventkeys.ERROR_MSG, message);
-        ((AppOperationAware) ctx).getCurrentActivity().trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
-        ((AppOperationAware) ctx).getCurrentActivity().goToHome();
+        ctx.getCurrentActivity().trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
+        ctx.getCurrentActivity().goToHome();
     }
 
     @Override
     public void handleRetrofitError(Throwable t, boolean finish) {
         logNotificationEvent(0, "Network Error");
-        ((AppOperationAware) ctx).getCurrentActivity().goToHome();
+        ctx.getCurrentActivity().goToHome();
     }
 
     public void handleHttpError(int errorCode, String reasonPhrase, boolean finish) {
         logNotificationEvent(errorCode, reasonPhrase);
-        ((AppOperationAware) ctx).getCurrentActivity().goToHome();
+        ctx.getCurrentActivity().goToHome();
     }
 
     private void logNotificationEvent(int code, String msg) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.ERROR_CODE, String.valueOf(code));
         map.put(TrackEventkeys.ERROR_MSG, String.valueOf(msg));
-        ((AppOperationAware) ctx).getCurrentActivity().trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
+        ctx.getCurrentActivity().trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
     }
 
 }

@@ -5,26 +5,26 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-public class AppDataDynamicAdapter {
+public class AppDataDynamicDbHelper {
     public static final String COLUMN_ID = "_Id";
     public static final String COLUMN_APP_DATA_DYNAMIC_PARAMS = "app_data_dynamic_params";
 
-    public static final String tableName = "app_data_dynamic";
+    public static final String TABLE_NAME = "app_data_dynamic";
 
-    public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s " +
+    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s " +
             "(%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "%3$s TEXT);", tableName, COLUMN_ID, COLUMN_APP_DATA_DYNAMIC_PARAMS);
+            "%3$s TEXT);", TABLE_NAME, COLUMN_ID, COLUMN_APP_DATA_DYNAMIC_PARAMS);
 
-    public static final Uri CONTENT_URI = Uri.parse(DatabaseContentProvider.CONTENT_URI_PREFIX
-            + "/" + tableName);
+    public static final Uri CONTENT_URI =
+            Uri.withAppendedPath(DatabaseContentProvider.CONTENT_URI_PREFIX, TABLE_NAME);
 
     private Context context;
 
-    public AppDataDynamicAdapter(Context context) {
+    public AppDataDynamicDbHelper(Context context) {
         this.context = context;
     }
 
-    public void insert(String appDataDynamicJson) {
+    public void save(String appDataDynamicJson) {
         Cursor cursor = context.getContentResolver()
                 .query(CONTENT_URI, new String[]{COLUMN_ID}, null, null, null);
         int existingID = -1;
@@ -44,8 +44,8 @@ public class AppDataDynamicAdapter {
         }
     }
 
-    public void delete() {
-       context.getContentResolver().delete(CONTENT_URI, null, null);
+    public static void delete(Context context) {
+        context.getContentResolver().delete(CONTENT_URI, null, null);
     }
 
     public static String[] getDefaultProjection() {

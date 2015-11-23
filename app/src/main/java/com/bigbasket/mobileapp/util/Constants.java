@@ -512,7 +512,6 @@ public class Constants {
     public static final String AUTH = "auth";
     public static final String INBOX = "inbox";
     public static final String IS_PENDING_GO_TO_HOME = "isPendingGoToHome";
-    public static final String RELOAD_APP = "reloadApp";
     public static final String HAS_USER_CHOSEN_CITY = "has_user_chosen_city";
 
     public static final String MERCHANT_ID = "mer_id";
@@ -660,8 +659,4 @@ public class Constants {
     public static final int REMOVE_VOUCHER_DIALOG_REQUEST = 8003;
     public static final int EMPTY_BASKET_DIALOG_QUEST = 8004;
     public static final int LOCATION_DIALOG_REQUEST = 8005;
-
-
-
-
 }

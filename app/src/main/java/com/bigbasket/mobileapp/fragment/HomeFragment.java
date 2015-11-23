@@ -40,9 +40,10 @@ import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.receivers.DynamicScreenLoaderCallback;
-import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
+import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.LoaderIds;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.SectionCursorHelper;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -181,12 +182,22 @@ public class HomeFragment extends BaseSectionFragment {
     }
 
     private void getHomePage() {
-        getLoaderManager().initLoader(DynamicScreenSyncService.HOME_PAGE_ID, null,
+        getLoaderManager().initLoader(LoaderIds.HOME_PAGE_ID, null,
                 new DynamicScreenLoaderCallback(getActivity()) {
                     @Override
                     public void onCursorNonEmpty(Cursor data) {
                         hideProgressView();
-                        handleHomePageResponse(SectionCursorHelper.getSectionData(data));
+                        SectionCursorHelper.getSectionDataAsync(data, new SectionCursorHelper.Callback() {
+                            @Override
+                            public void onParseSuccess(@Nullable GetDynamicPageApiResponse getDynamicPageApiResponse) {
+                                handleHomePageResponse(getDynamicPageApiResponse);
+                            }
+
+                            @Override
+                            public void onParseFailure() {
+                                displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
+                            }
+                        });
                     }
 
                     @Override
@@ -196,10 +207,11 @@ public class HomeFragment extends BaseSectionFragment {
                 });
     }
 
-    private void handleHomePageResponse(GetDynamicPageApiResponse getDynamicPageApiResponse) {
-        SectionData sectionData = getDynamicPageApiResponse.sectionData;
+    private void handleHomePageResponse(@Nullable GetDynamicPageApiResponse getDynamicPageApiResponse) {
+        SectionData sectionData = getDynamicPageApiResponse != null ?
+                getDynamicPageApiResponse.sectionData : null;
         if (sectionData != null) {
-            onDynamicScreenSuccess(DynamicScreenSyncService.HOME_PAGE, sectionData);
+            onDynamicScreenSuccess(AbstractDynamicPageSyncService.HOME_PAGE, sectionData);
         } else {
             displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
         }
@@ -229,9 +241,9 @@ public class HomeFragment extends BaseSectionFragment {
         processPendingDeepLink();
     }
 
-    private void addNudgeView(){
-        if(getCurrentActivity()== null || getView()== null) return;
-        NudgeView nudgeView = (NudgeView)getView().findViewById(R.id.nudge);
+    private void addNudgeView() {
+        if (getCurrentActivity() == null || getView() == null) return;
+        NudgeView nudgeView = (NudgeView) getView().findViewById(R.id.nudge);
         nudgeView.setMoEHelper(getCurrentActivity().getMoEHelper());
     }
 

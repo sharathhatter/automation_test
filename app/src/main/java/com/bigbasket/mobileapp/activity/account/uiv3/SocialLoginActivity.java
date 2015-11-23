@@ -1,19 +1,15 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.adapter.db.DynamicScreenAdapter;
+import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -215,8 +211,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     @SuppressWarnings("unchecked")
     public void doLogout() {
-        DynamicScreenAdapter dynamicScreenAdapter = new DynamicScreenAdapter(getCurrentActivity());
-        dynamicScreenAdapter.clearAll();
+        DynamicPageDbHelper.clearAll(getCurrentActivity());
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         SharedPreferences.Editor editor = preferences.edit();
@@ -356,11 +351,11 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     //showAlertDialog(null, getString(R.string.INVALID_USER_PASS));
                     ConfirmationDialogFragment dialogFragment =
                             ConfirmationDialogFragment.newInstance(0, getString(R.string.INVALID_USER_PASS),
-                            getString(R.string.ok), true);
+                                    getString(R.string.ok), true);
                     try {
                         dialogFragment.show(getSupportFragmentManager(),
                                 getScreenTag() + "#InvalidUserPassDialog");
-                    } catch (IllegalStateException ex){
+                    } catch (IllegalStateException ex) {
                         Crashlytics.logException(ex);
                     }
                     break;

@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;

@@ -2,88 +2,94 @@ package com.bigbasket.mobileapp.util;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
-import com.bigbasket.mobileapp.adapter.db.DynamicScreenAdapter;
+import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.apiservice.models.response.DynamicPageResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
-import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
-import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
+import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public final class SectionCursorHelper {
+    public interface Callback {
+        void onParseSuccess(@Nullable GetDynamicPageApiResponse getDynamicPageApiResponse);
+
+        void onParseFailure();
+    }
+
+    public interface NavigationCallback {
+        void onNavigationAdapterCreated(NavigationAdapter navigationAdapter);
+    }
+
     private SectionCursorHelper() {
     }
 
     @SuppressWarnings("unchecked")
-    public static NavigationAdapter getNavigationAdapter(Context context, Cursor sectionCursor,
-                                                         @Nullable String selectedCategoryId) {
-        Object[] data = getSectionNavigationItems(context, sectionCursor);
-        ArrayList<SectionNavigationItem> sectionNavigationItems = (ArrayList<SectionNavigationItem>) data[0];
-        String baseImgUrl = (String) data[1];
-        HashMap<Integer, Renderer> rendererHashMap = (HashMap<Integer, Renderer>) data[2];
-
-        NavigationAdapter navigationAdapter = new NavigationAdapter(context,
-                FontHolder.getInstance(context).getFaceRobotoMedium(),
-                sectionNavigationItems, DynamicScreenSyncService.MAIN_MENU, baseImgUrl, rendererHashMap);
-        if (!TextUtils.isEmpty(selectedCategoryId)) {
-            navigationAdapter.setSelectedCategoryString(selectedCategoryId);
-        }
-        return navigationAdapter;
-    }
-
-    private static Object[] getSectionNavigationItems(Context context, Cursor sectionCursor) {
-        ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
+    public static void getNavigationAdapterAsync(final Context context, Cursor sectionCursor,
+                                                 @Nullable final String selectedCategoryId,
+                                                 @NonNull final NavigationCallback navigationCallback) {
+        final ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         sectionNavigationItems.addAll(getPreBakedNavigationItems(context));
-
-        SectionData sectionData = null;
-        GetDynamicPageApiResponse response = getSectionData(sectionCursor);
-        if (response != null) {
-            sectionData = response.sectionData;
-            if (sectionData != null && sectionData.getSections() != null && sectionData.getSections().size() > 0) {
-                for (Section section : sectionData.getSections()) {
-                    if (section == null || section.getSectionItems() == null || section.getSectionItems().size() == 0)
-                        continue;
-                    if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-                        sectionNavigationItems.add(new SectionNavigationItem(section));
+        Callback wrapperCallback = new Callback() {
+            @Override
+            public void onParseSuccess(@Nullable GetDynamicPageApiResponse getDynamicPageApiResponse) {
+                SectionData sectionData = getDynamicPageApiResponse != null ? getDynamicPageApiResponse.sectionData : null;
+                if (sectionData != null && sectionData.getSections() != null && sectionData.getSections().size() > 0) {
+                    for (Section section : sectionData.getSections()) {
+                        if (section == null || section.getSectionItems() == null || section.getSectionItems().size() == 0)
+                            continue;
+                        if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
+                            sectionNavigationItems.add(new SectionNavigationItem(section));
+                        }
+                        setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
+                                section);
                     }
-                    setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
-                            section);
                 }
+                navigationCallback.onNavigationAdapterCreated(getNavigationAdapter(sectionData));
             }
 
-        }
-        return new Object[]{sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null,
-                sectionData != null ? sectionData.getRenderersMap() : null};
+            @Override
+            public void onParseFailure() {
+                navigationCallback.onNavigationAdapterCreated(getNavigationAdapter(null));
+            }
+
+            private NavigationAdapter getNavigationAdapter(@Nullable SectionData sectionData) {
+                NavigationAdapter navigationAdapter = new NavigationAdapter(context,
+                        FontHolder.getInstance(context).getFaceRobotoMedium(),
+                        sectionNavigationItems, AbstractDynamicPageSyncService.MAIN_MENU,
+                        sectionData != null ? sectionData.getBaseImgUrl() : null,
+                        sectionData != null ? sectionData.getRenderersMap() : null);
+                if (!TextUtils.isEmpty(selectedCategoryId)) {
+                    navigationAdapter.setSelectedCategoryString(selectedCategoryId);
+                }
+                return navigationAdapter;
+            }
+        };
+        getSectionDataAsync(sectionCursor, wrapperCallback);
     }
 
-    public static GetDynamicPageApiResponse getSectionData(Cursor sectionCursor) {
+    public static void getSectionDataAsync(Cursor sectionCursor, @NonNull Callback callback) {
         if (sectionCursor != null && sectionCursor.moveToFirst()) {
             String sectionRespJson = sectionCursor.
-                    getString(sectionCursor.getColumnIndex(DynamicScreenAdapter.COLUMN_SCREEN_DATA));
-            if (!TextUtils.isEmpty(sectionRespJson)) {
-                Gson gson = new Gson();
-                DynamicPageResponse apiResponse = gson.fromJson(sectionRespJson, DynamicPageResponse.class);
-                switch (apiResponse.status) {
-                    case 0:
-                        return apiResponse.apiResponseContent;
-                }
-            }
+                    getString(sectionCursor.getColumnIndex(DynamicPageDbHelper.COLUMN_SCREEN_DATA));
+            new SectionJsonParserAsyncTask(callback).execute(sectionRespJson);
+        } else {
+            callback.onParseSuccess(null);
         }
-        return null;
     }
 
     public static <T extends SectionItem> void setSectionNavigationItemList(
@@ -140,5 +146,40 @@ public final class SectionCursorHelper {
         Section shoppingListSection = new Section(null, null, Section.MSG, shoppingListSections, null);
         sectionNavigationItems.add(new SectionNavigationItem<>(shoppingListSection, shoppingListSectionItem));
         return sectionNavigationItems;
+    }
+
+    // Since JSON will be 4-6KB, it's better to parse it in a background thread
+    private static class SectionJsonParserAsyncTask extends AsyncTask<String, Void, DynamicPageResponse> {
+
+        private
+        @NonNull
+        Callback callback;
+
+        public SectionJsonParserAsyncTask(@NonNull Callback callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        protected DynamicPageResponse doInBackground(String... params) {
+            String sectionRespJson = params[0];
+            if (!TextUtils.isEmpty(sectionRespJson)) {
+                Gson gson = new Gson();
+                return gson.fromJson(sectionRespJson, DynamicPageResponse.class);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(@Nullable DynamicPageResponse dynamicPageResponse) {
+            if (dynamicPageResponse != null) {
+                if (dynamicPageResponse.status == 0) {
+                    callback.onParseSuccess(dynamicPageResponse.apiResponseContent);
+                } else {
+                    callback.onParseFailure();
+                }
+            } else {
+                callback.onParseSuccess(null);
+            }
+        }
     }
 }

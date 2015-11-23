@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.order;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -42,7 +41,6 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
-import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
@@ -54,7 +52,6 @@ import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -345,21 +342,21 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         }
     }
 
-    private void uploadAddress(Map<String, String> payload, boolean forceCreate) {
+    private void uploadAddress(HashMap<String, String> payload, boolean forceCreate) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        Map<String, String> eventAttribs = new HashMap<>();
+        HashMap<String, String> eventAttribs = new HashMap<>();
         trackEvent(TrackingAware.ENABLE_DEFAULT_ADDRESS, eventAttribs);
         if (mAddress != null && !forceCreate) {
             payload.put(Constants.ID, mAddress.getId());
             showProgressDialog(getString(R.string.please_wait));
             Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
-                    bigBasketApiService.updateAddress(BBUrlEncodeUtils.urlEncode(payload));
+                    bigBasketApiService.updateAddress(payload);
             call.enqueue(new CreateUpdateAddressApiCallback(this, false));
         } else {
             payload.remove(Constants.ID); // Defensive check
             showProgressDialog(getString(R.string.please_wait));
             Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
-                    bigBasketApiService.createAddress(BBUrlEncodeUtils.urlEncode(payload));
+                    bigBasketApiService.createAddress(payload);
             call.enqueue(new CreateUpdateAddressApiCallback(this, forceCreate));
         }
     }
@@ -415,13 +412,13 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
         switch (sourceName) {
             case Constants.UPDATE_ADDRESS_DIALOG_REQUEST:
-                if(mPayload != null) {
+                if (mPayload != null) {
                     uploadAddress(mPayload, true);
                     mPayload = null;
                 }
                 break;
             default:
-                super.onPositiveButtonClicked( sourceName, valuePassed);
+                super.onPositiveButtonClicked(sourceName, valuePassed);
         }
 
     }

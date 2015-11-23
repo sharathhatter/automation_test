@@ -93,13 +93,14 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
             btnConfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (TextUtils.isEmpty(editTextMobileCode.getText().toString())) {
-                    } else if (editTextMobileCode.getText() != null && editTextMobileCode.getText().toString().length() > 0) {
-                        resendOrConfirmOTP(editTextMobileCode.getText().toString());
-                    } else {
-                        txtErrorValidateNumber.setText(getResources().getString(R.string.otpCodeErrorMsg));
-                        txtErrorValidateNumber.setVisibility(View.VISIBLE);
-                        txtResendNumber.setVisibility(View.GONE);
+                    if (!TextUtils.isEmpty(editTextMobileCode.getText().toString())) {
+                        if (editTextMobileCode.getText() != null && editTextMobileCode.getText().toString().length() > 0) {
+                            resendOrConfirmOTP(editTextMobileCode.getText().toString());
+                        } else {
+                            txtErrorValidateNumber.setText(getResources().getString(R.string.otpCodeErrorMsg));
+                            txtErrorValidateNumber.setVisibility(View.VISIBLE);
+                            txtResendNumber.setVisibility(View.GONE);
+                        }
                     }
                 }
             });
@@ -110,7 +111,7 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
                 @Override
                 public void onClick(View v) {
                     txtCancel.setBackgroundColor(getResources().getColor(R.color.white));
-                    BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextMobileCode);
+                    BaseActivity.hideKeyboard(getActivity(), editTextMobileCode);
                     if (getDialog().isShowing())
                         getDialog().dismiss();
                 }

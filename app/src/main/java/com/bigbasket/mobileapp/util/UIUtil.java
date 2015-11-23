@@ -51,8 +51,8 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
-import com.bigbasket.mobileapp.adapter.db.DynamicScreenAdapter;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
+import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -244,8 +244,7 @@ public class UIUtil {
     }
 
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
-        DynamicScreenAdapter dynamicScreenAdapter = new DynamicScreenAdapter(ctx);
-        dynamicScreenAdapter.clearAll();
+        DynamicPageDbHelper.clearAll(ctx);
 
         AppDataSyncHandler.reset(ctx);
         AppDataDynamic.reset(ctx);
@@ -261,7 +260,7 @@ public class UIUtil {
         if (!TextUtils.isEmpty(cityId) &&
                 !cityId.equals(String.valueOf(userDetails.analytics.cityId))) {
             editor.remove(Constants.AREA_INFO_CALL_LAST);
-            new AreaPinInfoAdapter(ctx).deleteData();
+            new AreaPinInfoDbHelper(ctx).deleteData();
         }
 
         if (userDetails.analytics != null) {
@@ -751,7 +750,7 @@ public class UIUtil {
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
         stringBuilder.append(paymentType.getDisplayName());
         if (!TextUtils.isEmpty(paymentType.getOfferMsg())) {
-            stringBuilder.append("\n  " + paymentType.getOfferMsg());
+            stringBuilder.append("\n  ").append(paymentType.getOfferMsg());
             stringBuilder.setSpan(new RoundedBackgroundSpan(context), paymentType.getDisplayName().length() + 1, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 

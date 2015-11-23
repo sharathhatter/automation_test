@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -46,7 +45,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
-import com.bigbasket.mobileapp.adapter.db.AppDataDynamicAdapter;
+import com.bigbasket.mobileapp.adapter.db.AppDataDynamicDbHelper;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.devconfig.DevConfigViewHandler;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
@@ -92,13 +91,14 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
 import com.bigbasket.mobileapp.receivers.DynamicScreenLoaderCallback;
+import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.service.AreaPinInfoIntentService;
-import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
 import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.LoaderIds;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.SectionCursorHelper;
@@ -122,14 +122,20 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
     protected BigBasketMessageHandler handler;
     protected String mTitle;
+    @Nullable
     private ActionBarDrawerToggle mDrawerToggle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartSummary = new CartSummary();
+    @Nullable
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
+    @Nullable
     private RecyclerView mNavRecyclerView;
+    @Nullable
     private AnimatedRelativeLayout mSubNavLayout;
+    @Nullable
     private FloatingBadgeCountView mBtnViewBasket;
+    @Nullable
     private RecyclerView mListSubNavigation;
 
     @Override
@@ -186,12 +192,12 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     }
 
     public void readAppDataDynamic() {
-        getSupportLoaderManager().initLoader(GetAppDataDynamicIntentService.APP_DATA_DYNAMIC_ID, null,
+        getSupportLoaderManager().initLoader(LoaderIds.APP_DATA_DYNAMIC_ID, null,
                 new LoaderManager.LoaderCallbacks<Cursor>() {
                     @Override
                     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                        return new CursorLoader(getCurrentActivity(), AppDataDynamicAdapter.CONTENT_URI,
-                                AppDataDynamicAdapter.getDefaultProjection(), null, null, null);
+                        return new CursorLoader(getCurrentActivity(), AppDataDynamicDbHelper.CONTENT_URI,
+                                AppDataDynamicDbHelper.getDefaultProjection(), null, null, null);
                     }
 
                     @Override
@@ -311,12 +317,11 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
-                if (mNavRecyclerView.getAdapter() != null) {
+                if (mNavRecyclerView != null && mNavRecyclerView.getAdapter() != null) {
                     mNavRecyclerView.getAdapter().notifyDataSetChanged();
                 }
-                if (mListSubNavigation.getAdapter() != null)
+                if (mListSubNavigation != null && mListSubNavigation.getAdapter() != null)
                     mListSubNavigation.getAdapter().notifyDataSetChanged();
-
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -813,10 +818,29 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     @SuppressWarnings("unchecked")
     private void loadNavigationItems() {
         if (mNavRecyclerView == null || mDrawerLayout == null) return;
-        readMainMenu();
+        getSupportLoaderManager().initLoader(LoaderIds.MAIN_MENU_ID, null,
+                new DynamicScreenLoaderCallback(this) {
+                    @Override
+                    public void onCursorNonEmpty(Cursor data) {
+                        showMenuLoading(false);
+                        displayMainMenuHeader();
+                        SectionCursorHelper.getNavigationAdapterAsync(getCurrentActivity(), data, getCategoryId(),
+                                new SectionCursorHelper.NavigationCallback() {
+                                    @Override
+                                    public void onNavigationAdapterCreated(NavigationAdapter navigationAdapter) {
+                                        mNavRecyclerView.setAdapter(navigationAdapter);
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onCursorLoadingInProgress() {
+                        showMenuLoading(true);
+                    }
+                });
     }
 
-    private void setMainMenuHeader() {
+    private void displayMainMenuHeader() {
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
         txtNavSalutation.setTypeface(faceRobotoMedium);
         TextView lblWelCome = (TextView) findViewById(R.id.lblWelcome);
@@ -860,25 +884,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             mDrawerLayout.closeDrawers();
         }
         super.doLogout();
-    }
-
-    private void readMainMenu() {
-        getSupportLoaderManager().initLoader(DynamicScreenSyncService.MAIN_MENU_ID, null,
-                new DynamicScreenLoaderCallback(this) {
-                    @Override
-                    public void onCursorNonEmpty(Cursor data) {
-                        showMenuLoading(false);
-                        setMainMenuHeader();
-                        NavigationAdapter navigationAdapter =
-                                SectionCursorHelper.getNavigationAdapter(getCurrentActivity(), data, getCategoryId());
-                        mNavRecyclerView.setAdapter(navigationAdapter);
-                    }
-
-                    @Override
-                    public void onCursorLoadingInProgress() {
-                        showMenuLoading(true);
-                    }
-                });
     }
 
     private void showMenuLoading(boolean visible) {
@@ -981,7 +986,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems,
-                DynamicScreenSyncService.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
+                AbstractDynamicPageSyncService.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
         if (!TextUtils.isEmpty(selectedId)) {
             navigationAdapter.setSelectedCategoryString(selectedId);
         }
@@ -1076,11 +1081,15 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
      */
     @Override
     public void onNavigationSelection(String name) {
-        ((NavigationSelectedValueAware) mNavRecyclerView.getAdapter()).setSelectedNavigationCategory(name);
+        if (mNavRecyclerView != null && mNavRecyclerView.getAdapter() != null) {
+            ((NavigationSelectedValueAware) mNavRecyclerView.getAdapter()).setSelectedNavigationCategory(name);
+        }
     }
 
     @Override
     public void closeDrawer() {
-        mDrawerLayout.closeDrawers();
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawers();
+        }
     }
 }

@@ -13,29 +13,29 @@ import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 import java.util.ArrayList;
 
 
-public class AreaPinInfoAdapter {
+public class AreaPinInfoDbHelper {
 
     public static final String COLUMN_ID = "_Id";
     public static final String COLUMN_PIN = "pincode";
     public static final String COLUMN_AREA = "area";
     public static final String COLUMN_CITY = "city";
     public static final String COLUMN_CITY_ID = "city_id";
-    public static final String tableName = "areaPinInfo";
-    public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    public static final String TABLE_NAME = "areaPinInfo";
+    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "%3$s TEXT , %4$s TEXT , %5$s TEXT , " +
-                    "%6$s INTEGER);", tableName, COLUMN_ID, COLUMN_PIN, COLUMN_AREA,
+                    "%6$s INTEGER);", TABLE_NAME, COLUMN_ID, COLUMN_PIN, COLUMN_AREA,
             COLUMN_CITY, COLUMN_CITY_ID);
 
     /**
      * Content URI for the content provider to manipulate this table(areaPinInfo)
      */
-    public static final Uri CONTENT_URI = Uri.parse(DatabaseContentProvider.CONTENT_URI_PREFIX
-            + "/" + tableName);
+    public static final Uri CONTENT_URI =
+            Uri.withAppendedPath(DatabaseContentProvider.CONTENT_URI_PREFIX, TABLE_NAME);
 
 
     private Context context;
 
-    public AreaPinInfoAdapter(Context context) {
+    public AreaPinInfoDbHelper(Context context) {
         this.context = context;
         open();
     }
@@ -52,7 +52,6 @@ public class AreaPinInfoAdapter {
             cv.put(COLUMN_AREA, areaName);
             cv.put(COLUMN_CITY, cityName);
             cv.put(COLUMN_CITY_ID, cityId);
-//            DatabaseHelper.db.insert(tableName, null, cv);
             /**
              * inserting values using content provider
              */
@@ -76,7 +75,7 @@ public class AreaPinInfoAdapter {
             areaPinCursor = context.getContentResolver().query(CONTENT_URI, projection, COLUMN_AREA + " = " + "\"" + areaName + "\" AND " +
                     COLUMN_CITY + " = \"" + cityName + "\"", null, null);
             if (areaPinCursor != null && areaPinCursor.moveToFirst()) {
-                pinCode = areaPinCursor.getString(areaPinCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_PIN));
+                pinCode = areaPinCursor.getString(areaPinCursor.getColumnIndex(AreaPinInfoDbHelper.COLUMN_PIN));
             }
 
         } catch (SQLiteException ex) {
@@ -104,7 +103,7 @@ public class AreaPinInfoAdapter {
             areaNameCursor = context.getContentResolver().query(CONTENT_URI, projection, COLUMN_CITY + " = \"" + cityName + "\"", null, COLUMN_AREA + " ASC");
             if (areaNameCursor != null && areaNameCursor.moveToFirst()) {
                 do {
-                    areaNameStr = areaNameCursor.getString(areaNameCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_AREA));
+                    areaNameStr = areaNameCursor.getString(areaNameCursor.getColumnIndex(AreaPinInfoDbHelper.COLUMN_AREA));
                     result.add(areaNameStr);
                 } while (areaNameCursor.moveToNext());
             }
@@ -133,7 +132,7 @@ public class AreaPinInfoAdapter {
             areaPinCursor = context.getContentResolver().query(CONTENT_URI, projection, COLUMN_CITY + " = \"" + cityName + "\"", null, COLUMN_PIN + " ASC");
             if (areaPinCursor != null && areaPinCursor.moveToFirst()) {
                 do {
-                    areaNameStr = areaPinCursor.getString(areaPinCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_PIN));
+                    areaNameStr = areaPinCursor.getString(areaPinCursor.getColumnIndex(AreaPinInfoDbHelper.COLUMN_PIN));
                     result.add(areaNameStr);
                 } while (areaPinCursor.moveToNext());
             }
@@ -161,7 +160,7 @@ public class AreaPinInfoAdapter {
                     COLUMN_CITY + " = \"" + cityName + "\"", null, null);
             if (areaNameCursor != null && areaNameCursor.moveToFirst()) {
                 do {
-                    String areaNameStr = areaNameCursor.getString(areaNameCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_AREA));
+                    String areaNameStr = areaNameCursor.getString(areaNameCursor.getColumnIndex(AreaPinInfoDbHelper.COLUMN_AREA));
                     areaNameArrayList.add(areaNameStr);
                 } while (areaNameCursor.moveToNext());
             }
@@ -176,6 +175,6 @@ public class AreaPinInfoAdapter {
     }
 
     public void deleteData() {
-        DatabaseHelper.db.execSQL("DELETE FROM " + tableName);
+        DatabaseHelper.db.execSQL("DELETE FROM " + TABLE_NAME);
     }
 }

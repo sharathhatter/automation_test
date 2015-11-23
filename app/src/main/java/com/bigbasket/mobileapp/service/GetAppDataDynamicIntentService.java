@@ -3,7 +3,7 @@ package com.bigbasket.mobileapp.service;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.bigbasket.mobileapp.adapter.db.AppDataDynamicAdapter;
+import com.bigbasket.mobileapp.adapter.db.AppDataDynamicDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.squareup.okhttp.OkHttpClient;
@@ -14,7 +14,6 @@ import java.io.IOException;
 
 
 public class GetAppDataDynamicIntentService extends IntentService {
-    public static final int APP_DATA_DYNAMIC_ID = 4;
     private static final String TAG = "GetAppDynamicService";
 
     public GetAppDataDynamicIntentService() {
@@ -40,7 +39,7 @@ public class GetAppDataDynamicIntentService extends IntentService {
         } catch (IOException e) {
             responseJson = "";
         }
-        AppDataDynamicAdapter appDataDynamicAdapter = new AppDataDynamicAdapter(this);
-        appDataDynamicAdapter.insert(responseJson);
+        AppDataDynamicDbHelper appDataDynamicDbHelper = new AppDataDynamicDbHelper(this);
+        appDataDynamicDbHelper.save(responseJson);
     }
 }

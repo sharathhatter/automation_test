@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;

@@ -627,7 +627,10 @@
             android:exported="false" />
 
         <service
-            android:name=".service.DynamicScreenSyncService"
+            android:name=".service.HomePageSyncService"
+            android:exported="false" />
+        <service
+            android:name=".service.MainMenuSyncService"
             android:exported="false" />
     </application>
 

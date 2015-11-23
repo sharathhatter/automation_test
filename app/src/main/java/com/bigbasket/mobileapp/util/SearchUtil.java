@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.adapter.db.SearchSuggestionAdapter;
+import com.bigbasket.mobileapp.adapter.db.SearchSuggestionDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -30,8 +30,8 @@ public class SearchUtil {
     public static Cursor searchQueryCall(String query, Context context) {
         if (TextUtils.isEmpty(query.trim()) || (query.trim().length() < 3)) return null;
 
-        SearchSuggestionAdapter searchSuggestionAdapter = new SearchSuggestionAdapter(context);
-        AutoSearchResponse autoSearchResponse = searchSuggestionAdapter.getStoredResponse(query);
+        SearchSuggestionDbHelper searchSuggestionDbHelper = new SearchSuggestionDbHelper(context);
+        AutoSearchResponse autoSearchResponse = searchSuggestionDbHelper.getStoredResponse(query);
 
         // If not present in local db or is older than a day
         if (autoSearchResponse == null || autoSearchResponse.isStale()) {
@@ -47,7 +47,7 @@ public class SearchUtil {
                         switch (autoSearchApiResponse.status) {
                             case 0:
                                 autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
-                                searchSuggestionAdapter.insertAsync(autoSearchResponse);
+                                searchSuggestionDbHelper.insertAsync(autoSearchResponse);
                                 break;
                         }
                     }

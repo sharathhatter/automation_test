@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.section.Section;
-import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
+import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,30 +17,30 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class DynamicScreenAdapter {
+public class DynamicPageDbHelper {
     public static final String COLUMN_ID = "_Id";
     public static final String COLUMN_DYNAMIC_SCREEN_TYPE = "dynamic_screen_type";
     public static final String COLUMN_SCREEN_DATA = "screen_data";
-    public static final String tableName = "dynamicScreen";
+    public static final String TABLE_NAME = "dynamicScreen";
 
-    public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s " +
+    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s " +
                     "(%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "%3$s TEXT , %4$s TEXT);", tableName, COLUMN_ID,
+                    "%3$s TEXT , %4$s TEXT);", TABLE_NAME, COLUMN_ID,
             COLUMN_DYNAMIC_SCREEN_TYPE, COLUMN_SCREEN_DATA);
 
-    public static final Uri CONTENT_URI = Uri.parse(DatabaseContentProvider.CONTENT_URI_PREFIX
-            + "/" + tableName);
+    public static final Uri CONTENT_URI =
+            Uri.withAppendedPath(DatabaseContentProvider.CONTENT_URI_PREFIX, TABLE_NAME);
 
     private Context context;
 
     private static final String TIME_KEY = "_time";
     private static final String DURATION_KEY = "_duration";
 
-    public DynamicScreenAdapter(Context context) {
+    public DynamicPageDbHelper(Context context) {
         this.context = context;
     }
 
-    public void insert(String dynamicScreenType, String dynamicScreenJson) {
+    public void save(String dynamicScreenType, String dynamicScreenJson, int cacheDuration) {
         Uri uri = Uri.withAppendedPath(CONTENT_URI, dynamicScreenType);
         Cursor cursor = context.getContentResolver()
                 .query(uri, new String[]{COLUMN_ID},
@@ -62,7 +62,7 @@ public class DynamicScreenAdapter {
             context.getContentResolver().update(uri,
                     cv, COLUMN_ID + " = " + existingID, null);
         }
-        storeSectionRefreshData(context, dynamicScreenType, 1);
+        storeSectionRefreshData(context, dynamicScreenType, cacheDuration);
     }
 
     public static boolean isStale(Context context, String dynamicScreenType) {
@@ -94,9 +94,9 @@ public class DynamicScreenAdapter {
         editor.apply();
     }
 
-    public void clearAll() {
+    public static void clearAll(Context context) {
 //        ArrayList<ContentProviderOperation> contentProviderOperations = new ArrayList<>();
-        for (String dynamicScreenType : new String[]{DynamicScreenSyncService.HOME_PAGE, DynamicScreenSyncService.MAIN_MENU}) {
+        for (String dynamicScreenType : new String[]{AbstractDynamicPageSyncService.HOME_PAGE, AbstractDynamicPageSyncService.MAIN_MENU}) {
             Uri uri = Uri.withAppendedPath(CONTENT_URI, dynamicScreenType);
             context.getContentResolver().delete(uri, null, null);
             //ContentProviderOperation contentProviderOperation = ContentProviderOperation.newDelete(uri).build();

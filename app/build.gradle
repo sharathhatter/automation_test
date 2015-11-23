@@ -120,7 +120,7 @@ int calculateVersionCodeFromDpi(int dpi, int delta) {
 dependencies {
     compile files('libs/localytics.jar')
     compile project(':androidImageSlider')
-    provided 'com.squareup.okhttp:okhttp:2.3.0'
+    provided 'com.squareup.okhttp:okhttp:2.6.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.1@aar') {
         transitive = true;
     }

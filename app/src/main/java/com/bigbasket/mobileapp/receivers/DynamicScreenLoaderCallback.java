@@ -10,10 +10,12 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.bigbasket.mobileapp.adapter.db.DynamicScreenAdapter;
-import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
+import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
+import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
+import com.bigbasket.mobileapp.service.HomePageSyncService;
+import com.bigbasket.mobileapp.service.MainMenuSyncService;
+import com.bigbasket.mobileapp.util.LoaderIds;
 
 public abstract class DynamicScreenLoaderCallback implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = DynamicScreenLoaderCallback.class.getName();
@@ -28,11 +30,11 @@ public abstract class DynamicScreenLoaderCallback implements LoaderManager.Loade
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         dynamicScreenType = getDynamicScreenType(id);
         if (dynamicScreenType == null) return null;
-        Toast.makeText(context, "Create loader invoked for = " + dynamicScreenType, Toast.LENGTH_SHORT).show();
-        String selection = DynamicScreenAdapter.COLUMN_DYNAMIC_SCREEN_TYPE + " = \'" + dynamicScreenType
+        Log.d(TAG, "Create loader invoked for = " + dynamicScreenType);
+        String selection = DynamicPageDbHelper.COLUMN_DYNAMIC_SCREEN_TYPE + " = \'" + dynamicScreenType
                 + "\'";
-        return new CursorLoader(context, Uri.withAppendedPath(DynamicScreenAdapter.CONTENT_URI, dynamicScreenType),
-                DynamicScreenAdapter.getDefaultProjection(),
+        return new CursorLoader(context, Uri.withAppendedPath(DynamicPageDbHelper.CONTENT_URI, dynamicScreenType),
+                DynamicPageDbHelper.getDefaultProjection(),
                 selection,
                 null, null);
     }
@@ -40,10 +42,10 @@ public abstract class DynamicScreenLoaderCallback implements LoaderManager.Loade
     @Nullable
     private String getDynamicScreenType(int loaderID) {
         switch (loaderID) {
-            case DynamicScreenSyncService.HOME_PAGE_ID:
-                return DynamicScreenSyncService.HOME_PAGE;
-            case DynamicScreenSyncService.MAIN_MENU_ID:
-                return DynamicScreenSyncService.MAIN_MENU;
+            case LoaderIds.HOME_PAGE_ID:
+                return AbstractDynamicPageSyncService.HOME_PAGE;
+            case LoaderIds.MAIN_MENU_ID:
+                return AbstractDynamicPageSyncService.MAIN_MENU;
             default:
                 return null;
         }
@@ -51,9 +53,9 @@ public abstract class DynamicScreenLoaderCallback implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Toast.makeText(context, "Load finished invoked for = " + dynamicScreenType, Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "Load finished invoked for = " + dynamicScreenType);
         if (data != null && data.moveToFirst()) {
-            if (DynamicScreenAdapter.isStale(context, dynamicScreenType)) {
+            if (DynamicPageDbHelper.isStale(context, dynamicScreenType)) {
                 Log.d(TAG, "Dynamic screen = " + dynamicScreenType + " is stale, triggering refresh");
                 downloadDynamicScreen();
             }
@@ -65,8 +67,9 @@ public abstract class DynamicScreenLoaderCallback implements LoaderManager.Loade
     }
 
     private void downloadDynamicScreen() {
-        Intent intent = new Intent(context, DynamicScreenSyncService.class);
-        intent.setAction(dynamicScreenType);
+        Class<?> cls = dynamicScreenType.equals(AbstractDynamicPageSyncService.HOME_PAGE) ?
+                HomePageSyncService.class : MainMenuSyncService.class;
+        Intent intent = new Intent(context, cls);
         context.startService(intent);
     }
 

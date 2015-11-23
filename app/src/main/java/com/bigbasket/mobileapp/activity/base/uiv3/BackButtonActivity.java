@@ -21,11 +21,6 @@ public class BackButtonActivity extends BBActivity {
     }
 
     @Override
-    public void readAppDataDynamic() {
-        // We don't want any app-data dynamic here
-    }
-
-    @Override
     public void setViewBasketFloatingButton() {
         FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (btnViewBasket != null) {

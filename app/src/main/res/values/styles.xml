@@ -79,6 +79,11 @@
         <item name="textAllCaps">false</item>
     </style>
 
+    <style name="BaseAppTheme.RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/uiv3_action_bar_background</item>
+        <item name="colorControlActivated">@color/uiv3_action_bar_background</item>
+    </style>
+
     <style name="LandingPageTheme.DialogTheme" parent="BaseAppTheme.AlertDialogStyle">
         <item name="colorControlNormal">@color/uiv3_action_bar_background</item>
         <item name="colorControlHighlight">@color/uiv3_status_bar_background</item>

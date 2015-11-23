@@ -12,9 +12,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.application.BaseApplication;
-import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
+import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 
 public class DatabaseContentProvider extends ContentProvider {
     DatabaseHelper databaseHelper;
@@ -32,12 +32,12 @@ public class DatabaseContentProvider extends ContentProvider {
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        sURIMatcher.addURI(AUTHORITY, AreaPinInfoAdapter.tableName, AREA_PIN_INFO_URI_MATCHER_CODE);
-        sURIMatcher.addURI(AUTHORITY, DynamicScreenAdapter.tableName + "/" + DynamicScreenSyncService.MAIN_MENU,
+        sURIMatcher.addURI(AUTHORITY, AreaPinInfoDbHelper.TABLE_NAME, AREA_PIN_INFO_URI_MATCHER_CODE);
+        sURIMatcher.addURI(AUTHORITY, DynamicPageDbHelper.TABLE_NAME + "/" + AbstractDynamicPageSyncService.MAIN_MENU,
                 MAIN_MENU_SECTION_URI_MATCHER_CODE);
-        sURIMatcher.addURI(AUTHORITY, DynamicScreenAdapter.tableName + "/" + DynamicScreenSyncService.HOME_PAGE,
+        sURIMatcher.addURI(AUTHORITY, DynamicPageDbHelper.TABLE_NAME + "/" + AbstractDynamicPageSyncService.HOME_PAGE,
                 HOME_SECTION_URI_MATCHER_CODE);
-        sURIMatcher.addURI(AUTHORITY, AppDataDynamicAdapter.tableName, APP_DATA_DYNAMIC_URI_MATCHER_CODE);
+        sURIMatcher.addURI(AUTHORITY, AppDataDynamicDbHelper.TABLE_NAME, APP_DATA_DYNAMIC_URI_MATCHER_CODE);
     }
 
     public DatabaseContentProvider() {
@@ -111,12 +111,12 @@ public class DatabaseContentProvider extends ContentProvider {
     private String getTableName(Uri uri) throws IllegalArgumentException {
         switch (sURIMatcher.match(uri)) {
             case AREA_PIN_INFO_URI_MATCHER_CODE:
-                return AreaPinInfoAdapter.tableName;
+                return AreaPinInfoDbHelper.TABLE_NAME;
             case HOME_SECTION_URI_MATCHER_CODE:
             case MAIN_MENU_SECTION_URI_MATCHER_CODE:
-                return DynamicScreenAdapter.tableName;
+                return DynamicPageDbHelper.TABLE_NAME;
             case APP_DATA_DYNAMIC_URI_MATCHER_CODE:
-                return AppDataDynamicAdapter.tableName;
+                return AppDataDynamicDbHelper.TABLE_NAME;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }

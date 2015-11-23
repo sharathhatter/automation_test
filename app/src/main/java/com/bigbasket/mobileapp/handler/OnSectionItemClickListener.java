@@ -38,7 +38,7 @@ import com.bigbasket.mobileapp.model.section.HelpDestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
-import com.bigbasket.mobileapp.service.DynamicScreenSyncService;
+import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -314,10 +314,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         StringBuilder ncBuilder = new StringBuilder();
         if (screenName != null) {
             switch (screenName) {
-                case DynamicScreenSyncService.HOME_PAGE:
+                case AbstractDynamicPageSyncService.HOME_PAGE:
                     ncBuilder.append(TrackEventkeys.HOME);
                     break;
-                case DynamicScreenSyncService.MAIN_MENU:
+                case AbstractDynamicPageSyncService.MAIN_MENU:
                     ncBuilder.append(TrackEventkeys.MENU);
                     break;
                 case Constants.DISCOUNT_PAGE:
@@ -375,9 +375,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     private String getAnalyticsFormattedScreeName() {
         if (screenName == null) return null;
         switch (screenName) {
-            case DynamicScreenSyncService.HOME_PAGE:
+            case AbstractDynamicPageSyncService.HOME_PAGE:
                 return TrackingAware.HOME_PAGE_ITEM_CLICKED;
-            case DynamicScreenSyncService.MAIN_MENU:
+            case AbstractDynamicPageSyncService.MAIN_MENU:
                 return TrackingAware.MENU_ITEM_CLICKED;
             default:
                 return screenName + "." + TrackingAware.ITEM_CLICKED;

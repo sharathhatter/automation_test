@@ -46,8 +46,8 @@ import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
-import com.bigbasket.mobileapp.adapter.db.DynamicScreenAdapter;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
+import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProgressDialogFragment;
 import com.bigbasket.mobileapp.fragment.dialogs.ConfirmationDialogFragment;
@@ -482,24 +482,24 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    private void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode,
+    private void setAreaPinCode(String areaName, AreaPinInfoDbHelper areaPinInfoDbHelper, EditText editTextPincode,
                                 String cityName) {
         if (!TextUtils.isEmpty(areaName)) {
-            String pinCode = areaPinInfoAdapter.getAreaPin(areaName, cityName);
+            String pinCode = areaPinInfoDbHelper.getAreaPin(areaName, cityName);
             editTextPincode.setText(pinCode);
         }
     }
 
     protected void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode,
                                   final String cityName) {
-        final AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(getCurrentActivity());
-        ArrayList<String> areaPinArrayList = areaPinInfoAdapter.getPinList(cityName);
+        final AreaPinInfoDbHelper areaPinInfoDbHelper = new AreaPinInfoDbHelper(getCurrentActivity());
+        ArrayList<String> areaPinArrayList = areaPinInfoDbHelper.getPinList(cityName);
         ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(getCurrentActivity(),
                 android.R.layout.select_dialog_item, areaPinArrayList);
         editTextPincode.setThreshold(1);
         editTextPincode.setAdapter(pinAdapter);
 
-        ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaNameList(cityName);
+        ArrayList<String> areaNameArrayList = areaPinInfoDbHelper.getAreaNameList(cityName);
         final ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(getCurrentActivity(),
                 android.R.layout.select_dialog_item, areaNameArrayList);
         editTextArea.setThreshold(1);
@@ -510,7 +510,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 editTextArea.setText("");
                 String pinCode = editTextPincode.getText().toString();
-                ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaName(pinCode, cityName);
+                ArrayList<String> areaNameArrayList = areaPinInfoDbHelper.getAreaName(pinCode, cityName);
                 if (areaNameArrayList.size() > 1) {
                     areaAdapter.clear();
                     for (String areaName : areaNameArrayList)
@@ -529,7 +529,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 String areaName = editTextArea.getText().toString();
-                setAreaPinCode(areaName, areaPinInfoAdapter, editTextPincode, cityName);
+                setAreaPinCode(areaName, areaPinInfoDbHelper, editTextPincode, cityName);
             }
         });
     }
@@ -754,7 +754,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void removePendingGoToHome() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.remove(Constants.IS_PENDING_GO_TO_HOME);
-        editor.remove(Constants.RELOAD_APP);
         editor.apply();
     }
 
@@ -764,11 +763,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         editor.remove(Constants.DEEP_LINK);
         editor.apply();
         removePendingGoToHome();
-    }
-
-    protected boolean isPendingReloadApp() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        return preferences.getBoolean(Constants.RELOAD_APP, false);
     }
 
     protected void togglePasswordView(EditText passwordEditText, boolean show) {
@@ -824,8 +818,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 .putBoolean(Constants.HAS_USER_CHOSEN_CITY, true)
                 .apply();
 
-        DynamicScreenAdapter dynamicScreenAdapter = new DynamicScreenAdapter(getCurrentActivity());
-        dynamicScreenAdapter.clearAll();
+        DynamicPageDbHelper.clearAll(getCurrentActivity());
 
         AppDataDynamic.reset(this);
     }

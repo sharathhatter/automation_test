@@ -2,6 +2,6 @@
 
     <application>
         <activity android:name="com.bigbasket.mobileapp.devconfig.BBDevConfigActivity"
-            android:label="@string/title_activity_settings" android:theme="@style/BackButtonTheme"></activity>
+            android:label="@string/title_activity_settings" android:theme="@style/BackButtonTheme" />
     </application>
 </manifest>

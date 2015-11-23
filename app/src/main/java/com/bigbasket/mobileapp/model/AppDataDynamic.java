@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.adapter.db.AppDataDynamicAdapter;
+import com.bigbasket.mobileapp.adapter.db.AppDataDynamicDbHelper;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataDynamicResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
@@ -60,7 +60,7 @@ public class AppDataDynamic {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         boolean success = true;
         if (cursor != null && cursor.moveToFirst()) {
-            String appDataDynamicJson = cursor.getString(cursor.getColumnIndex(AppDataDynamicAdapter.COLUMN_APP_DATA_DYNAMIC_PARAMS));
+            String appDataDynamicJson = cursor.getString(cursor.getColumnIndex(AppDataDynamicDbHelper.COLUMN_APP_DATA_DYNAMIC_PARAMS));
             if (!TextUtils.isEmpty(appDataDynamicJson)) {
                 Gson gson = new Gson();
                 AppDataDynamicResponse appDataDynamicResponse = gson.fromJson(appDataDynamicJson, AppDataDynamicResponse.class);
@@ -101,8 +101,8 @@ public class AppDataDynamic {
     }
 
     private AppDataDynamic(Context context) {
-        Cursor cursor = context.getContentResolver().query(AppDataDynamicAdapter.CONTENT_URI,
-                AppDataDynamicAdapter.getDefaultProjection(), null, null, null);
+        Cursor cursor = context.getContentResolver().query(AppDataDynamicDbHelper.CONTENT_URI,
+                AppDataDynamicDbHelper.getDefaultProjection(), null, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 updateInstance(context, cursor);
@@ -115,8 +115,7 @@ public class AppDataDynamic {
         if (context == null) return;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.remove(TIMEOUT_KEY).apply();
-        AppDataDynamicAdapter appDataDynamicAdapter = new AppDataDynamicAdapter(context);
-        appDataDynamicAdapter.delete();
+        AppDataDynamicDbHelper.delete(context);
         context.startService(new Intent(context, GetAppDataDynamicIntentService.class));
         appDataDynamic = null;
     }

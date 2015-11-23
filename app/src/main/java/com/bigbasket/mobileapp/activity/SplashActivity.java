@@ -26,11 +26,9 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
-import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -46,7 +44,7 @@ import org.json.JSONObject;
 import retrofit.Call;
 
 
-public class SplashActivity extends SocialLoginActivity implements DynamicScreenAware, AppOperationAware {
+public class SplashActivity extends SocialLoginActivity implements AppOperationAware {
 
     private boolean mIsFromActivityResult;
 
@@ -54,46 +52,36 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setNextScreenNavigationContext(TrackEventkeys.NC_SPLASH_SCREEN);
-        boolean reloadApp = getIntent().getBooleanExtra(Constants.RELOAD_APP, false);
-        if (reloadApp) {
-            setContentView(R.layout.loading_layout);
-            ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
-            UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo);
 
-            mIsFromActivityResult = true;
-            handleResults(true);
+        // Defensive fix
+        removePendingCodes();
+        try {
+            boolean isHDFCPayMode = getIntent().getBooleanExtra(Constants.MODE_HDFC_PAY, false);
+            if (isHDFCPayMode) {
+                HDFCPayzappHandler.setHDFCPayMode(this);
+            }
+        } catch (ClassCastException e) {
+            // Fail silently
+        }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        if (preferences.contains(Constants.FIRSE_TIME_USER)) {
+            MoEngageWrapper.setExistingUser(moEHelper, true);
         } else {
+            MoEngageWrapper.setExistingUser(moEHelper, false);
+            editor.putBoolean(Constants.FIRSE_TIME_USER, true);
+        }
+        if (!BuildConfig.DEBUG) {
             AppsFlyerLib.setAppsFlyerKey(Constants.APP_FLYER_ID);
             AppsFlyerLib.setUseHTTPFalback(true);
             AppsFlyerLib.sendTracking(getApplicationContext()); //detects installation, session and updates
             AppsFlyerLib.setCurrencyCode("INR");
-
-            // Defensive fix
-            removePendingCodes();
-            try {
-                boolean isHDFCPayMode = getIntent().getBooleanExtra(Constants.MODE_HDFC_PAY, false);
-                if (isHDFCPayMode) {
-                    HDFCPayzappHandler.setHDFCPayMode(this);
-                }
-            } catch (ClassCastException e) {
-
+            editor.putBoolean(Constants.APP_LAUNCH, true);
+            if (checkInternetConnection()) {
+                NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
             }
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = preferences.edit();
-            if (preferences.contains(Constants.FIRSE_TIME_USER)) {
-                MoEngageWrapper.setExistingUser(moEHelper, true);
-            } else {
-                MoEngageWrapper.setExistingUser(moEHelper, false);
-                editor.putBoolean(Constants.FIRSE_TIME_USER, true);
-            }
-            if (!BuildConfig.DEBUG) {
-                editor.putBoolean(Constants.APP_LAUNCH, true);
-                if (checkInternetConnection()) {
-                    NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
-                }
-            }
-            editor.commit(); //HomeActivity need APP_LAUNCH flag, so we don't want to write data in background
         }
+        editor.commit(); //HomeActivity need APP_LAUNCH flag, so we don't want to write data in background
     }
 
     private void startSplashScreen() {
@@ -154,11 +142,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    @Override
-    public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {
-        loadHomePage();
     }
 
     private void loadHomePage() {
@@ -272,8 +255,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         mIsFromActivityResult = true;
         if (resultCode == NavigationCodes.GO_TO_HOME) {
             removePendingGoToHome();
-            boolean reloadApp = data != null && data.getBooleanExtra(Constants.RELOAD_APP, false);
-            handleResults(reloadApp);
+            handleResults();
         } else if (requestCode == NavigationCodes.TUTORIAL_SEEN) {
             super.onActivityResult(requestCode, resultCode, data);
         } else {
@@ -281,11 +263,8 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         }
     }
 
-    private void handleResults(boolean reloadApp) {
-        removePendingGoToHome();
-        if (reloadApp) {
-            loadHomePage();
-        }
+    private void handleResults() {
+        loadHomePage();
     }
 
     @Override
@@ -306,21 +285,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     protected void onPause() {
         super.onPause();
-    }
-
-    @Override
-    public void onDynamicScreenFailure(Throwable t) {
-        handler.handleRetrofitError(t, true);
-    }
-
-    @Override
-    public void onDynamicScreenFailure(int error, String msg) {
-        handler.sendEmptyMessage(error, msg, true);
-    }
-
-    @Override
-    public void onDynamicScreenHttpFailure(int error, String msg) {
-        handler.handleHttpError(error, msg, true);
     }
 
     @Override
