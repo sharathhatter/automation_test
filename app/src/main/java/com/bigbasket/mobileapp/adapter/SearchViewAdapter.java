@@ -19,9 +19,10 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
-import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
+import com.bigbasket.mobileapp.interfaces.OnSearchTermActionCallback;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.SearchUtil;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.lang.ref.WeakReference;
 
@@ -32,13 +33,51 @@ public class SearchViewAdapter<T> extends CursorAdapter {
     private static final int VIEW_TYPE_ITEM = 1;
     private LayoutInflater inflater;
     private FontHolder fontHolder;
-    private SearchTermRemoveAware searchTermRemoveAware;
+    private SearchTermActionListener searchTermActionListener;
 
-    public SearchViewAdapter(T context, Cursor contactCursor, SearchTermRemoveAware searchTermRemoveAware) {
+    public SearchViewAdapter(T context, Cursor contactCursor, OnSearchTermActionCallback onSearchTermActionCallback) {
         super(((AppOperationAware) context).getCurrentActivity(), contactCursor, false);
         this.inflater = LayoutInflater.from(((AppOperationAware) context).getCurrentActivity());
         this.fontHolder = FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity());
-        this.searchTermRemoveAware = searchTermRemoveAware;
+        this.searchTermActionListener = new SearchTermActionListener(onSearchTermActionCallback,
+                ((AppOperationAware) context).getCurrentActivity());
+    }
+
+    private static class SearchTermActionListener implements View.OnClickListener {
+        private OnSearchTermActionCallback onSearchTermActionCallback;
+        private Context context;
+
+        public SearchTermActionListener(OnSearchTermActionCallback onSearchTermActionCallback, Context context) {
+            this.onSearchTermActionCallback = onSearchTermActionCallback;
+            this.context = context;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Object tagVal = v.getTag(R.id.search_history_term_tag_id);
+            if (tagVal != null) {
+                deleteTerm(String.valueOf(tagVal));
+            } else {
+                tagVal = v.getTag(R.id.search_suggestion_term_tag_id);
+                if (tagVal != null) {
+                    fillTerm(String.valueOf(tagVal));
+                }
+            }
+        }
+
+        private void deleteTerm(String term) {
+            if (!TextUtils.isEmpty(term)) {
+                MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(context);
+                mostSearchesDbHelper.deleteTerm(term);
+                onSearchTermActionCallback.notifySearchTermDeletion();
+            }
+        }
+
+        private void fillTerm(String term) {
+            if (!TextUtils.isEmpty(term)) {
+                onSearchTermActionCallback.setSearchText(term);
+            }
+        }
     }
 
     @Override
@@ -71,23 +110,23 @@ public class SearchViewAdapter<T> extends CursorAdapter {
                 txtTerm.setText(term);
             }
 
-            ImageView imgRemoveTerm = rowViewHolder.getImgRemoveTerm();
-            if (getItemRightIcon(cursor) != null && getItemRightIcon(cursor).equals(SearchUtil.HISTORY_TERM)) {
-                imgRemoveTerm.setVisibility(View.VISIBLE);
-                imgRemoveTerm.setTag(termString);
-                imgRemoveTerm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String deleteTerm = String.valueOf(v.getTag());
-                        if (!TextUtils.isEmpty(deleteTerm)) {
-                            MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(context);
-                            mostSearchesDbHelper.deleteTerm(deleteTerm);
-                            searchTermRemoveAware.notifySearchTermAdapter();
-                        }
-                    }
-                });
+            ImageView imgSearchTermAction = rowViewHolder.getImgSearchTermAction();
+            String itemRightIconKey = getItemRightIcon(cursor);
+            if (!TextUtils.isEmpty(itemRightIconKey)) {
+                int drawableResId;
+                if (itemRightIconKey.equals(SearchUtil.HISTORY_TERM)) {
+                    imgSearchTermAction.setTag(R.id.search_history_term_tag_id, term);
+                    imgSearchTermAction.setTag(R.id.search_suggestion_term_tag_id, null); // Reset
+                    drawableResId = R.drawable.ic_close_grey600_24dp;
+                } else {
+                    imgSearchTermAction.setTag(R.id.search_history_term_tag_id, null); // Reset
+                    imgSearchTermAction.setTag(R.id.search_suggestion_term_tag_id, term);
+                    drawableResId = R.drawable.ic_arrow_angled_grey_24dp;
+                }
+                UIUtil.displayAsyncImage(imgSearchTermAction, drawableResId);
+                imgSearchTermAction.setVisibility(View.VISIBLE);
             } else {
-                imgRemoveTerm.setVisibility(View.GONE);
+                imgSearchTermAction.setVisibility(View.GONE);
             }
 
         } else {
@@ -151,7 +190,7 @@ public class SearchViewAdapter<T> extends CursorAdapter {
     private class RowViewHolder {
         private TextView txtTerm;
         private View itemRow;
-        private ImageView imgRemoveTerm;
+        private ImageView imgSearchTermAction;
 
         private RowViewHolder(View itemRow) {
             this.itemRow = itemRow;
@@ -165,19 +204,13 @@ public class SearchViewAdapter<T> extends CursorAdapter {
             return txtTerm;
         }
 
-        public ImageView getImgRemoveTerm() {
-            if (imgRemoveTerm == null) {
-                imgRemoveTerm = (ImageView) itemRow.findViewById(R.id.imgRemoveTerm);
+        public ImageView getImgSearchTermAction() {
+            if (imgSearchTermAction == null) {
+                imgSearchTermAction = (ImageView) itemRow.findViewById(R.id.imgSearchTermAction);
+                imgSearchTermAction.setOnClickListener(searchTermActionListener);
             }
-            return imgRemoveTerm;
+            return imgSearchTermAction;
         }
-
-//        public ImageView getImgSearchListIcon() {
-//            if (imgSearchListIcon == null) {
-//                imgSearchListIcon = (ImageView) itemRow.findViewById(R.id.imgSearchListIcon);
-//            }
-//            return imgSearchListIcon;
-//        }
     }
 
     private class HeaderViewHolder {

@@ -2,12 +2,11 @@ package com.bigbasket.mobileapp.view.uiv3.search;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
@@ -25,14 +24,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.SearchViewAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
-import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
+import com.bigbasket.mobileapp.interfaces.OnSearchTermActionCallback;
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.SearchUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -40,8 +39,9 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class BBSearchableToolbarView extends LinearLayout implements SearchTermRemoveAware {
+public class BBSearchableToolbarView extends LinearLayout implements OnSearchTermActionCallback {
     public static final int REQ_CODE_SPEECH_INPUT = 100;
 
     private ListView mSearchList;
@@ -51,6 +51,7 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
     private View mImgVoice;
     private View mImgBarcode;
     private View mImgClear;
+    private Activity mAttachedActivity;
 
     public BBSearchableToolbarView(Context context) {
         super(context);
@@ -60,6 +61,10 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
     public BBSearchableToolbarView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+    }
+
+    public void attachActivity(Activity activity) {
+        mAttachedActivity = activity;
     }
 
     public void show() {
@@ -117,17 +122,13 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
         mImgVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnSearchEventListenerProxy != null) {
-                    mOnSearchEventListenerProxy.onVoiceSearchRequested();
-                }
+                launchVoiceSearch();
             }
         });
         mImgBarcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnSearchEventListenerProxy != null) {
-                    mOnSearchEventListenerProxy.onBarcodeScanRequested();
-                }
+                launchScanner();
             }
         });
         mImgClear.setOnClickListener(new OnClickListener() {
@@ -205,28 +206,8 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
                 }
             }
         }
-        populateTopSearch(matrixCursor);
+        SearchUtil.populateTopSearch(matrixCursor, getContext());
         return matrixCursor;
-    }
-
-    private String[] getTopSearches() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String topSearchCommaSeparatedString = preferences.getString(Constants.TOP_SEARCHES, null);
-        if (topSearchCommaSeparatedString == null) return null;
-        return topSearchCommaSeparatedString.split(",");
-    }
-
-    private void populateTopSearch(MatrixCursor matrixCursor) {
-        String[] topSearchArrayString = getTopSearches();
-        if (topSearchArrayString != null && topSearchArrayString.length > 0) {
-            int i = 0;
-            matrixCursor.addRow(new String[]{String.valueOf(i++), getContext().getString(R.string.popularSearches),
-                    null, null, null, getContext().getString(R.string.popularSearches), null});
-            for (String term : topSearchArrayString)
-                matrixCursor.addRow(new String[]{String.valueOf(i++), term,
-                        null, null, term,
-                        null, SearchUtil.TOP_SEARCH_TERM});
-        }
     }
 
     public void setOnSearchEventListener(OnSearchEventListener searchEventListener) {
@@ -261,8 +242,11 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
             if (mImgClear != null && mImgClear.getVisibility() != View.VISIBLE) {
                 mImgClear.setVisibility(View.VISIBLE);
             }
-            mSearchList.setFilterText(newText);
-            mSearchListAdapter.getFilter().filter(newText);
+            if (mSearchList != null && mSearchListAdapter != null &&
+                    mSearchListAdapter.getFilter() != null) {
+                mSearchList.setFilterText(newText);
+                mSearchListAdapter.getFilter().filter(newText);
+            }
         }
     }
 
@@ -272,11 +256,17 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
     }
 
     @Override
-    public void notifySearchTermAdapter() {
+    public void notifySearchTermDeletion() {
         if (mSearchListAdapter != null) {
             mSearchListAdapter.changeCursor(populatePastSearchTermsList());
             mSearchListAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void setSearchText(String term) {
+        mSearchView.setText("");
+        mSearchView.append(term); // This also moves the screen cursor to the end
     }
 
     private static class OnSearchEventListenerProxy implements OnSearchEventListener {
@@ -313,22 +303,6 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
         }
 
         @Override
-        public void onVoiceSearchRequested() {
-            reset();
-            if (mOnSearchEventListener != null) {
-                mOnSearchEventListener.onVoiceSearchRequested();
-            }
-        }
-
-        @Override
-        public void onBarcodeScanRequested() {
-            reset();
-            if (mOnSearchEventListener != null) {
-                mOnSearchEventListener.onBarcodeScanRequested();
-            }
-        }
-
-        @Override
         public void onSearchRequested(@NonNull String query) {
             reset();
             if (mOnSearchEventListener != null) {
@@ -343,6 +317,24 @@ public class BBSearchableToolbarView extends LinearLayout implements SearchTermR
                 mOnSearchEventListener.onCategorySearchRequested(categoryName, categoryUrl, categorySlug);
             }
         }
+    }
+
+    private void launchVoiceSearch() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, mAttachedActivity.getString(R.string.voicePrompt));
+        try {
+            mAttachedActivity.startActivityForResult(intent, BBSearchableToolbarView.REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), getContext().getString(R.string.speechNotSupported), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void launchScanner() {
+        Toast.makeText(getContext(), getContext().getString(R.string.please_wait), Toast.LENGTH_SHORT).show();
+        new IntentIntegrator(mAttachedActivity).initiateScan();
     }
 
     @Nullable

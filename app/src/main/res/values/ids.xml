@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="search_suggestion_term_tag_id" type="id" />
+    <item name="search_history_term_tag_id" type="id" />
     <item name="fab_expand_menu_button" type="id" />
     <item name="speciality_store_id" type="id" />
     <item name="promo_id" type="id" />
