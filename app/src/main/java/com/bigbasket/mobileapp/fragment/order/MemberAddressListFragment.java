@@ -283,7 +283,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     public void onAddressChanged(ArrayList<AddressSummary> addressSummaries, String selectedAddressId) {
         if (getCurrentActivity() == null) return;
         ((BBActivity) getActivity()).onAddressChanged(addressSummaries, selectedAddressId);
-        new CreatePotentialOrderTask<>(this, selectedAddressId).startTask();
+        finish(); // Go back to previous page (which happens to be basket)
     }
 
     @Override
