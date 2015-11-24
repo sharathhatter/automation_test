@@ -941,18 +941,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextViewRef, viewDecQtyRef,
                 viewIncQtyRef, btnAddToBasketRef, product, qty, productViewRef, cartInfoMapRef, editTextQtyRef);
         if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
-            // Sync local cartInfoMap with this one
-            //mCartInfo = cartInfoMap;
             setCartInfo(cartInfoMapRef.get());
-            // Update in-memory fragments
-//            if (mViewPager != null) { // if list page don't have tabs
-//                if(mViewPager.getCurrentItem() == 1){
-//                    redrawFragment(0);
-//                }else {
-//                    setProductListForFragmentAtPosition(mViewPager.getCurrentItem() - 1);
-//                }
-//                setProductListForFragmentAtPosition(mViewPager.getCurrentItem() + 1);
-//            }
         }
     }
 
@@ -998,4 +987,17 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         }
     }
 
+    @Override
+    protected void showSearchUI() {
+        if (mBbSearchableToolbarView != null && mNameValuePairs != null) {
+            HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
+            String type = paramMap.get(Constants.TYPE);
+            String slug = paramMap.get(Constants.SLUG);
+            if (type != null && type.equals(ProductListType.SEARCH)
+                    && !TextUtils.isEmpty(slug)) {
+                mBbSearchableToolbarView.setSearchText(slug);
+            }
+            mBbSearchableToolbarView.show();
+        }
+    }
 }

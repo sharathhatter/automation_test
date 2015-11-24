@@ -407,6 +407,8 @@
     <string name="noAddGiftWrap">No additional gift wrap required.</string>
     <string name="history">History</string>
     <string name="popularSearches">Popular Searches</string>
+    <string name="popularCategories">Popular Categories</string>
+    <string name="suggestion">Suggestion</string>
     <string name="lblContinue">Continue</string>
 
     <!-- Speciality Stores -->

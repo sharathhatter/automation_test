@@ -159,7 +159,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
 
         ViewGroup layoutPaymentOptions = (ViewGroup) findViewById(R.id.layoutPaymentOptions);
         PaymentMethodsView mPaymentMethodsView = new PaymentMethodsView(this);
-        mPaymentMethodsView.setPaymentMethods(paymentTypeList, 0, true,false);
+        mPaymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
         layoutPaymentOptions.addView(mPaymentMethodsView);
     }
 

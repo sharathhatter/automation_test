@@ -154,7 +154,9 @@ public class PaymentMethodsView extends LinearLayout {
         setSelectedPaymentMethod(savedState.getSelectedPaymentMethodSavedState());
     }
 
-    /** overriding to ensure children don't save and restore their state as well.**/
+    /**
+     * overriding to ensure children don't save and restore their state as well.
+     **/
     @Override
     protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
         super.dispatchFreezeSelfOnly(container);

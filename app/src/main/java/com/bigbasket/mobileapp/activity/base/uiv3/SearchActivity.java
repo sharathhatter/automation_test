@@ -1,9 +1,7 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.Menu;
@@ -22,32 +20,22 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.search.BBSearchableToolbarView;
 import com.bigbasket.mobileapp.view.uiv3.search.OnSearchEventListener;
 import com.bigbasket.mobileapp.view.uiv3.search.SearchIntentResult;
-import com.google.zxing.integration.android.IntentIntegrator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 
 public class SearchActivity extends BBActivity {
     @Nullable
-    private BBSearchableToolbarView mBbSearchableToolbarView;
+    protected BBSearchableToolbarView mBbSearchableToolbarView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBbSearchableToolbarView =
                 (BBSearchableToolbarView) findViewById(R.id.bbSearchView);
+        mBbSearchableToolbarView.attachActivity(getCurrentActivity());
         if (mBbSearchableToolbarView != null) {
             mBbSearchableToolbarView.setOnSearchEventListener(new OnSearchEventListener() {
-                @Override
-                public void onVoiceSearchRequested() {
-                    launchVoiceSearch();
-                }
-
-                @Override
-                public void onBarcodeScanRequested() {
-                    launchScanner();
-                }
 
                 @Override
                 public void onSearchRequested(@NonNull String query) {
@@ -71,31 +59,17 @@ public class SearchActivity extends BBActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                if (mBbSearchableToolbarView != null) {
-                    mBbSearchableToolbarView.show();
-                }
+                showSearchUI();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void launchVoiceSearch() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voicePrompt));
-        try {
-            startActivityForResult(intent, BBSearchableToolbarView.REQ_CODE_SPEECH_INPUT);
-        } catch (ActivityNotFoundException e) {
-            showToast(getString(R.string.speechNotSupported));
+    protected void showSearchUI() {
+        if (mBbSearchableToolbarView != null) {
+            mBbSearchableToolbarView.show();
         }
-    }
-
-    private void launchScanner() {
-        showToast(getString(R.string.please_wait));
-        new IntentIntegrator(this).initiateScan();
     }
 
     private void handleEancode(String eanCode) {
