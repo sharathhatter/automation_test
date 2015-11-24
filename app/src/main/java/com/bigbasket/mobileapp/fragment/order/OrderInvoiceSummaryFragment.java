@@ -166,7 +166,7 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         btnShopFromOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onShopFromThisOrder(orderInvoice.getOrderNumber());
+                onShopFromThisOrder(orderInvoice.getOrderId(), orderInvoice.getOrderNumber());
             }
         });
 
@@ -262,10 +262,11 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         return OrderInvoiceSummaryFragment.class.getName();
     }
 
-    private void onShopFromThisOrder(String orderNumber) {
+    private void onShopFromThisOrder(String orderId, String orderNumber) {
         Intent intent = new Intent(getActivity(), BackButtonWithBasketButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
-        intent.putExtra(Constants.ORDER_ID, orderNumber);
+        intent.putExtra(Constants.ORDER_ID, orderId);
+        intent.putExtra(Constants.ORDER_NUMBER, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
