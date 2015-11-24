@@ -2,7 +2,7 @@ package com.bigbasket.mobileapp.interfaces;
 
 
 public interface OnSearchTermActionCallback {
-    void notifySearchTermDeletion();
+    void onSearchTermDeleted();
 
     void setSearchText(String term);
 }

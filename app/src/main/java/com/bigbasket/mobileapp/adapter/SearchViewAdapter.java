@@ -69,7 +69,7 @@ public class SearchViewAdapter<T> extends CursorAdapter {
             if (!TextUtils.isEmpty(term)) {
                 MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(context);
                 mostSearchesDbHelper.deleteTerm(term);
-                onSearchTermActionCallback.notifySearchTermDeletion();
+                onSearchTermActionCallback.onSearchTermDeleted();
             }
         }
 

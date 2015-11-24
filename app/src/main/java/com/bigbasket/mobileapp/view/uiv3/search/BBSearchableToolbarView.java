@@ -256,7 +256,7 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
     }
 
     @Override
-    public void notifySearchTermDeletion() {
+    public void onSearchTermDeleted() {
         if (mSearchListAdapter != null) {
             mSearchListAdapter.changeCursor(populatePastSearchTermsList());
             mSearchListAdapter.notifyDataSetChanged();

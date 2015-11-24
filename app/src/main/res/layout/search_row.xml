@@ -20,7 +20,7 @@
         android:id="@+id/txtTerm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="72dp"
+        android:layout_marginLeft="@dimen/search_suggestion_row_left_margin"
         android:layout_toLeftOf="@id/imgSearchTermAction"
         android:paddingBottom="@dimen/padding_12"
         android:paddingTop="@dimen/padding_12"
