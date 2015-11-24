@@ -6,7 +6,7 @@
     -->
     <!-- Application theme. -->
 
-    <style name="BaseAppTheme.DialogTheme.Input" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="BaseAppTheme.DialogTheme.Input" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorControlNormal">@color/secondary_text_default_material_light</item>
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
     </style>
@@ -19,8 +19,19 @@
         <item name="android:focusable">true</item>
     </style>
 
+    <style name="BaseAppTheme.AlertDialogNegativeButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="colorAccent">@color/dark_black</item>
+        <item name="android:textColor">@color/dark_black</item>
+    </style>
+
+    <style name="BaseAppTheme.AlertDialogPositiveButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+        <item name="android:textColor">@color/uiv3_action_bar_background</item>
+    </style>
     <style name="BaseAppTheme.AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
+        <item name="buttonBarNegativeButtonStyle">@style/BaseAppTheme.AlertDialogNegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/BaseAppTheme.AlertDialogPositiveButtonStyle</item>
     </style>
 
     <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -34,6 +45,7 @@
     <style name="BaseAppTheme.SearchToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
         <item name="searchViewStyle">@style/BaseAppTheme.SearchViewStyle</item>
+        <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
     </style>
 
     <!--<style name="BaseAppTheme."-->

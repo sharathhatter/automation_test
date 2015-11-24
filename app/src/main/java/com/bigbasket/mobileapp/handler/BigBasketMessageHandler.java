@@ -11,7 +11,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.net.HttpURLConnection;
 
-public class BigBasketMessageHandler<T> {
+public class BigBasketMessageHandler<T extends ApiErrorAware & AppOperationAware> {
 
     private T ctx;
 
@@ -150,7 +150,7 @@ public class BigBasketMessageHandler<T> {
         if (errorCode == HttpURLConnection.HTTP_UNAVAILABLE) {
             if (!finish) {
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.weAreDown),
-                        getString(R.string.serviceUnavailable), null, null);
+                        getString(R.string.serviceUnavailable), 0, null);
             } else {
                 ((AppOperationAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreDown),
                         getString(R.string.serviceUnavailable));
@@ -158,7 +158,7 @@ public class BigBasketMessageHandler<T> {
         } else if (errorCode == HttpURLConnection.HTTP_BAD_GATEWAY || errorCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
             if (!finish) {
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingServerError),
-                        getString(R.string.server_error), null, null);
+                        getString(R.string.server_error), 0, null);
             } else {
                 ((AppOperationAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.headingServerError),
                         getString(R.string.server_error));
@@ -168,7 +168,7 @@ public class BigBasketMessageHandler<T> {
         } else {
             String msg = "HTTP " + errorCode + " : " + reasonPhrase;
             if (!finish) {
-                ((ApiErrorAware) ctx).showApiErrorDialog(null, msg, null, null);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, msg, 0, null);
             } else {
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, msg, true);
             }

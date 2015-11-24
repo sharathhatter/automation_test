@@ -423,4 +423,7 @@
     <string name="adding_newStores">\n\nWe will be adding new stores in this location soon.Mean while, please checkout other categories.\nThanks!</string>
     <string name="visit_store">VISIT STORE</string>
     <string name="dismiss_">DISMISS</string>
+    <string name="order_details">Order Details</string>
+    <string name="empty_email_address_error">Please enter your e-mail address</string>
+    <string name="empty_password_error">Please enter your password</string>
 </resources>

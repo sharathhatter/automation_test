@@ -1,12 +1,14 @@
 package com.bigbasket.mobileapp.handler;
 
+import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.HashMap;
 
-public class SilentDeepLinkHandler<T> extends BigBasketMessageHandler {
+public class SilentDeepLinkHandler<T extends AppOperationAware & ApiErrorAware>
+        extends BigBasketMessageHandler {
 
     private T ctx;
 

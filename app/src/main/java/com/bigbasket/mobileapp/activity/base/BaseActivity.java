@@ -51,6 +51,7 @@ import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivit
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProgressDialogFragment;
+import com.bigbasket.mobileapp.fragment.dialogs.ConfirmationDialogFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
@@ -78,6 +79,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
+import com.crashlytics.android.Crashlytics;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.moengage.addon.ubox.UnifiedInboxActivity;
@@ -95,7 +97,7 @@ import java.util.Random;
 public abstract class BaseActivity extends AppCompatActivity implements
         AppOperationAware, TrackingAware, ApiErrorAware,
         LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware,
-        LaunchStoreListAware, DynamicScreenAware {
+        LaunchStoreListAware, DynamicScreenAware, ConfirmationDialogFragment.ConfirmationDialogCallback {
 
     public static Typeface faceRupee;
     protected static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
@@ -108,7 +110,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
 
-    private static String PROGRESS_DIALOG_TAG;
+    private String PROGRESS_DIALOG_TAG;
 
     public static void showKeyboard(final View view) {
         (new Handler()).postDelayed(new Runnable() {
@@ -180,15 +182,16 @@ public abstract class BaseActivity extends AppCompatActivity implements
         String progressDialogTag = getProgressDialogTag();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(progressDialogTag);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        try {
-            if (fragment != null) {
-                ft.remove(fragment);
-            }
-            fragment = ProgressDialogFragment.newInstance(msg, cancelable, isDeterminate);
-            ft.add(fragment, progressDialogTag);
-        } finally {
-            if (!isSuspended()) {
+        if (fragment != null) {
+            ft.remove(fragment);
+        }
+        fragment = ProgressDialogFragment.newInstance(msg, cancelable, isDeterminate);
+        ft.add(fragment, progressDialogTag);
+        if (!isSuspended()) {
+            try {
                 ft.commitAllowingStateLoss();
+            } catch (IllegalStateException ex){
+                Crashlytics.logException(ex);
             }
         }
     }
@@ -288,7 +291,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
             startActivity(communicationHunIntent);
         } else {
             showToast(getString(R.string.loginToContinue));
-            launchLogin(getCurrentNavigationContext(), FragmentCodes.START_COMMUNICATION_HUB);
+            Bundle bundle = new Bundle(1);
+            bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_COMMUNICATION_HUB);
+            launchLogin(getCurrentNavigationContext(), bundle);
         }
 
         Map<String, String> eventAttribs = new HashMap<>();
@@ -297,27 +302,47 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showAlertDialog(String title, String msg) {
-        showAlertDialog(title, msg, null);
+        showAlertDialog(title, msg, -1);
     }
 
-    public void showAlertDialog(String title, String msg, String sourceName) {
-        showAlertDialog(title, msg, sourceName, null);
+    public void showAlertDialog(String title, String msg, int requestCode) {
+        showAlertDialog(title, msg, requestCode, null);
     }
 
-    public void showAlertDialog(String title, String msg, final String sourceName, final Object valuePassed) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity())
-                .setTitle(title == null ? "BigBasket" : title)
-                .setMessage(msg)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onPositiveButtonClicked(dialog, sourceName, valuePassed);
-                    }
-                })
-                .setCancelable(false);
+    public void showAlertDialog(String title, String msg, final int requestCode, final Bundle valuePassed) {
+
         if (isSuspended())
             return;
-        builder.create().show();
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
+                requestCode, title == null ? "BigBasket" : title, msg, getString(R.string.ok),
+                null, false);
+        try {
+            dialogFragment.show(getSupportFragmentManager(), getScreenTag() + "#AlertDialog");
+        }catch (IllegalStateException ex){
+            Crashlytics.logException(ex);
+        }
+    }
+
+    @Override
+    public void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive){
+        if(isPositive){
+            if(data != null && data.getBoolean(Constants.FINISH_ACTIVITY, false)) {
+                if(data.containsKey(Constants.ACTIVITY_RESULT_CODE)){
+                    setResult(data.getInt(Constants.ACTIVITY_RESULT_CODE, RESULT_OK));
+                }
+                finish();
+            } else {
+                onPositiveButtonClicked( reqCode, data);
+            }
+        } else {
+            onNegativeButtonClicked(null, reqCode);
+        }
+    }
+
+
+    @Override
+    public void onDialogCancelled(int reqCode){
+
     }
 
     public void showAlertDialogFinish(String title, String msg) {
@@ -325,23 +350,19 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showAlertDialogFinish(String title, String msg, final int resultCode) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity())
-                .setTitle(title == null ? "BigBasket" : title)
-                .setMessage(msg)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (resultCode > -1) {
-                            getCurrentActivity().setResult(resultCode);
-                        }
-                        dialog.dismiss();
-                        getCurrentActivity().finish();
-                    }
-                })
-                .setCancelable(false);
         if (isSuspended())
             return;
-        builder.create().show();
+        Bundle data = new Bundle(2);
+        data.putBoolean(Constants.FINISH_ACTIVITY, true);
+        data.putInt(Constants.ACTIVITY_RESULT_CODE, resultCode);
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
+                0, title == null ? getString(R.string.app_name) : title, msg, getString(R.string.ok),
+                null, data, false);
+        try {
+            dialogFragment.show(getSupportFragmentManager(), getScreenTag() + "#AlertDialog");
+        } catch (IllegalStateException ex){
+            Crashlytics.logException(ex);
+        }
     }
 
     public void showAlertDialog(String msg) {
@@ -350,69 +371,61 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public void showAlertDialog(String title,
                                 String msg, @DialogButton.ButtonType int dialogButton,
-                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName) {
-        showAlertDialog(title, msg, dialogButton, nxtDialogButton, sourceName, null, null);
+                                @DialogButton.ButtonType int nxtDialogButton, final int requestCode) {
+        showAlertDialog(title, msg, dialogButton, nxtDialogButton, requestCode, null, null);
     }
 
     public void showAlertDialog(String title,
                                 String msg, @DialogButton.ButtonType int dialogButton,
-                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName,
-                                final String passedValue) {
-        showAlertDialog(title, msg, dialogButton, nxtDialogButton, sourceName, passedValue, null);
+                                @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
+                                final Bundle passedValue) {
+        showAlertDialog(title, msg, dialogButton, nxtDialogButton, requestCode, passedValue, null);
     }
 
     public void showAlertDialog(String title,
                                 String msg, @DialogButton.ButtonType int dialogButton,
-                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName,
-                                final Object passedValue, String positiveBtnText) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
-        builder.setTitle(title);
-        builder.setMessage(msg);
-        builder.setCancelable(false);
+                                @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
+                                final Bundle passedValue, String positiveBtnText) {
+        String negativeButtonText = null;
+
         if (dialogButton != DialogButton.NONE && nxtDialogButton != DialogButton.NONE) {
             if (dialogButton == DialogButton.YES || dialogButton == DialogButton.OK) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
                     int textId = dialogButton == DialogButton.YES ? R.string.yesTxt : R.string.ok;
                     positiveBtnText = getString(textId);
                 }
-                builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        onPositiveButtonClicked(dialogInterface, sourceName, passedValue);
-                    }
-                });
             }
             if (nxtDialogButton == DialogButton.NO || nxtDialogButton == DialogButton.CANCEL) {
                 int textId = nxtDialogButton == DialogButton.NO ? R.string.noTxt : R.string.cancel;
-                builder.setNegativeButton(textId, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        onNegativeButtonClicked(dialogInterface, sourceName);
-                    }
-                });
+                negativeButtonText = getString(textId);
             }
         }
-        AlertDialog alertDialog = builder.create();
         if (isSuspended())
             return;
-        alertDialog.setOnShowListener(new OnDialogShowListener());
-        alertDialog.show();
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
+                requestCode, title == null ? getString(R.string.app_name) : title, msg, positiveBtnText,
+                negativeButtonText, passedValue, false);
+        try {
+            dialogFragment.show(getSupportFragmentManager(), getScreenTag() + "#AlertDialog");
+        } catch (IllegalStateException ex){
+            Crashlytics.logException(ex);
+        }
     }
 
     public void showAlertDialog(String title,
                                 String msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton) {
-        showAlertDialog(title, msg, dialogButton, nxtDialogButton, null);
+        showAlertDialog(title, msg, dialogButton, nxtDialogButton, 0);
     }
 
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null) {
-            switch (sourceName) {
-                case NavigationCodes.GO_TO_LOGIN:
-                    launchLogin(getCurrentNavigationContext(), valuePassed);
-                    break;
-            }
+    protected void onPositiveButtonClicked(int sourceName,
+                                           Bundle valuePassed) {
+        switch (sourceName) {
+            case NavigationCodes.GO_TO_LOGIN:
+                launchLogin(getCurrentNavigationContext(), valuePassed);
+                break;
         }
+
     }
 
     public void launchViewBasketScreen() {
@@ -420,7 +433,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    protected void onNegativeButtonClicked(DialogInterface dialogInterface, String sourceName) {
+    protected void onNegativeButtonClicked(DialogInterface dialogInterface, int requestCode) {
 
     }
 
@@ -703,8 +716,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, String sourceName, Object valuePassed) {
-        showAlertDialog(title, message, sourceName, valuePassed);
+    public void showApiErrorDialog(@Nullable String title, String message, int requestCode, Bundle valuePassed) {
+        showAlertDialog(title, message, requestCode, valuePassed);
     }
 
     @Override
@@ -808,14 +821,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
         launchLogin(navigationCtx, null);
     }
 
-    public void launchLogin(String navigationCtx, Object params) {
+    public void launchLogin(String navigationCtx, Bundle params) {
         Intent loginIntent = new Intent(this, SignInActivity.class);
         loginIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         if (params != null) {
-            if (params instanceof Uri) {
-                loginIntent.putExtra(Constants.DEEP_LINK, params.toString());
-            } else {
-                loginIntent.putExtra(Constants.FRAGMENT_CODE, params.toString());
+            if (params.containsKey(Constants.DEEPLINK_URL)) {
+                loginIntent.putExtra(Constants.DEEP_LINK, params.getString(Constants.DEEPLINK_URL));
+            } else if (params.containsKey(Constants.FRAGMENT_CODE)) {
+                loginIntent.putExtra(Constants.FRAGMENT_CODE, params.getInt(Constants.FRAGMENT_CODE));
             }
         }
         startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);

@@ -2,15 +2,14 @@ package com.bigbasket.mobileapp.fragment.base;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -24,8 +23,8 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
+import com.bigbasket.mobileapp.fragment.dialogs.ConfirmationDialogFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
-import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
@@ -49,6 +48,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
+import com.crashlytics.android.Crashlytics;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -58,13 +58,14 @@ import java.util.Map;
 
 public abstract class BaseFragment extends AbstractFragment implements
         CartInfoAware, BasketOperationAware, TrackingAware, ApiErrorAware, LaunchProductListAware,
-        AnalyticsNavigationContextAware, OnBasketChangeListener {
+        AnalyticsNavigationContextAware, OnBasketChangeListener, ConfirmationDialogFragment.ConfirmationDialogCallback {
 
     protected BigBasketMessageHandler handler;
     private ProgressDialog progressDialog;
     protected BasketOperationResponse basketOperationResponse;
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
+    private String progressDialogTag;
 
     @Override
     public void onAttach(Activity activity) {
@@ -153,26 +154,46 @@ public abstract class BaseFragment extends AbstractFragment implements
         if (TextUtils.isEmpty(msg)) {
             msg = getResources().getString(R.string.please_wait);
         }
-        progressDialog = new ProgressDialog(getActivity());
-        if (isDeterminate) {
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setIndeterminate(false);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                progressDialog.setProgressNumberFormat(null);
-                progressDialog.setProgressPercentFormat(null);
+        String progressDialogTag = getProgressDialogTag();
+        Fragment fragment = getFragmentManager().findFragmentByTag(progressDialogTag);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        if (fragment != null) {
+            ft.remove(fragment);
+        }
+        fragment = ProgressDialogFragment.newInstance(msg, cancelable, isDeterminate);
+        ft.add(fragment, progressDialogTag);
+        if (!isSuspended()) {
+            try {
+                ft.commitAllowingStateLoss();
+            } catch (IllegalStateException ex){
+                Crashlytics.logException(ex);
             }
         }
-        progressDialog.setCancelable(cancelable);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setMessage(msg);
-        progressDialog.show();
+    }
+
+    private String getProgressDialogTag() {
+        if (progressDialogTag == null) {
+            synchronized (this) {
+                if (progressDialogTag == null) {
+                    progressDialogTag = getScreenTag() + "#ProgressDilog";
+                }
+            }
+        }
+        return progressDialogTag;
     }
 
     public void hideProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()
-                && !isSuspended()) {
-            progressDialog.dismiss();
-            progressDialog = null;
+        String progressDialogTag = getProgressDialogTag();
+        Fragment fragment = getFragmentManager().findFragmentByTag(progressDialogTag);
+        if (fragment != null) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            try {
+                ft.remove(fragment);
+            } finally {
+                if (!isSuspended()) {
+                    ft.commitAllowingStateLoss();
+                }
+            }
         }
     }
 
@@ -361,57 +382,66 @@ public abstract class BaseFragment extends AbstractFragment implements
 
     public void showAlertDialog(String title,
                                 String msg, @DialogButton.ButtonType int dialogButton,
-                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName,
-                                final Object passedValue, String positiveBtnText) {
+                                @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
+                                final Bundle passedValue, String positiveBtnText) {
         if (getActivity() == null) return;
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(!TextUtils.isEmpty(title) ? title : "BigBasket");
-        builder.setMessage(msg);
-        builder.setCancelable(false);
-        if (dialogButton != DialogButton.NONE) {
+        String negativeButtonText = null;
+
+        if (dialogButton != DialogButton.NONE && nxtDialogButton != DialogButton.NONE) {
             if (dialogButton == DialogButton.YES || dialogButton == DialogButton.OK) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
                     int textId = dialogButton == DialogButton.YES ? R.string.yesTxt : R.string.ok;
                     positiveBtnText = getString(textId);
                 }
-                builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        onPositiveButtonClicked(dialogInterface, sourceName, passedValue);
-                    }
-                });
             }
-            if (nxtDialogButton != DialogButton.NONE && nxtDialogButton == DialogButton.NO
-                    || nxtDialogButton == DialogButton.CANCEL) {
-                builder.setNegativeButton(R.string.noTxt, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        onNegativeButtonClicked(dialogInterface, sourceName);
-                    }
-                });
+            if (nxtDialogButton == DialogButton.NO || nxtDialogButton == DialogButton.CANCEL) {
+                int textId = nxtDialogButton == DialogButton.NO ? R.string.noTxt : R.string.cancel;
+                negativeButtonText = getString(textId);
             }
         }
-        AlertDialog alertDialog = builder.create();
         if (isSuspended())
             return;
-        alertDialog.setOnShowListener(new OnDialogShowListener());
-        alertDialog.show();
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(this,
+                requestCode, title == null ? getString(R.string.app_name) : title, msg, positiveBtnText,
+                negativeButtonText, passedValue, false);
+        try {
+            dialogFragment.show(getFragmentManager(), getScreenTag() + "#AlertDialog");
+        } catch (IllegalStateException ex){
+            Crashlytics.logException(ex);
+        }
+    }
+    @Override
+    public void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive){
+        if(isPositive){
+            if(data != null && data.getBoolean(Constants.FINISH_ACTIVITY, false)) {
+                getCurrentActivity().finish();
+            } else {
+                onPositiveButtonClicked(reqCode, data);
+            }
+        } else {
+            onNegativeButtonClicked(reqCode);
+        }
     }
 
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, @Nullable String sourceName, Object valuePassed) {
-        if (sourceName != null && getActivity() != null) {
+
+    @Override
+    public void onDialogCancelled(int reqCode){
+
+    }
+    protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        if (getActivity() != null) {
             switch (sourceName) {
                 case NavigationCodes.GO_TO_LOGIN:
                     Intent loginIntent = new Intent(getActivity(), SignInActivity.class);
                     startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
                     break;
-                case Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST:
+                case Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST_DIALOG:
                     new CreateShoppingListTask<>(this).showDialog();
             }
         }
     }
 
-    protected void onNegativeButtonClicked(DialogInterface dialogInterface, String sourceName) {
+    protected void onNegativeButtonClicked(int requestCode) {
 
     }
 
@@ -478,28 +508,23 @@ public abstract class BaseFragment extends AbstractFragment implements
     public void showAlertDialogFinish(String title, String msg) {
         if (getCurrentActivity() == null || isSuspended()) return;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
-        builder.setTitle(title == null ? "BigBasket" : title);
-        builder.setMessage(msg);
-        builder.setCancelable(false);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (getCurrentActivity() != null) {
-                    finish();
-                }
-            }
-        });
-        AlertDialog alertDialog = builder.create();
-        if (isSuspended())
-            return;
-        alertDialog.show();
+        Bundle data = new Bundle(2);
+        data.putBoolean(Constants.FINISH_ACTIVITY, true);
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
+                this, 0, title == null ? getString(R.string.app_name) : title, msg,
+                getString(R.string.ok),
+                null, data, false);
+        try {
+            dialogFragment.show(getFragmentManager(), getScreenTag() + "#AlertDialog");
+        } catch (IllegalStateException ex){
+            Crashlytics.logException(ex);
+        }
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, String sourceName, Object valuePassed) {
+    public void showApiErrorDialog(@Nullable String title, String message, int requestCode, Bundle valuePassed) {
         if (getCurrentActivity() == null) return;
-        showAlertDialog(title, message, DialogButton.OK, DialogButton.NONE, sourceName, valuePassed, null);
+        showAlertDialog(title, message, DialogButton.OK, DialogButton.NONE, requestCode, valuePassed, null);
     }
 
     @Override
