@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.adapter.account;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -91,10 +90,6 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
         TextView txtChangeCity = (TextView) convertView;
         txtChangeCity.setTypeface(faceRobotLight);
         txtChangeCity.setText(changeAddressTxt);
-        /************Setting different color for gingerbread and below******/
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-            txtChangeCity.setTextColor(getContext().getResources().getColor(R.color.dark_black));
-        }
         return convertView;
     }
 
@@ -111,12 +106,9 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
         } else {
             addressViewHolder = (AddressViewHolder) convertView.getTag();
         }
-        /************Setting different color for gingerbread and below******/
+
         TextView txtAddress = addressViewHolder.getTxtAddress();
         txtAddress.setTextColor(getContext().getResources().getColor(color));
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-            txtAddress.setTextColor(getContext().getResources().getColor(R.color.dark_black));
-        }
 
         String area = TextUtils.isEmpty(addressSummary.getArea()) ? "" :
                 addressSummary.getArea() + "\n";
