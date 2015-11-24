@@ -39,13 +39,13 @@ import retrofit.Call;
 public class ShopFromOrderFragment extends ProductListAwareFragment {
 
     private ArrayList<Product> mProducts;
-    private String mOrderId;
+    private String mOrderId, mOrderNumber;
     @Nullable
     private ProductListRecyclerAdapter productListRecyclerAdapter;
 
     @Override
     public String getTitle() {
-        return TextUtils.isEmpty(mOrderId) ? getString(R.string.shopFromOrder) : mOrderId;
+        return TextUtils.isEmpty(mOrderNumber) ? getString(R.string.shopFromOrder) : mOrderNumber;
     }
 
     @Override
@@ -69,10 +69,11 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     @Override
     public void loadProducts() {
         mOrderId = getArguments().getString(Constants.ORDER_ID);
+        mOrderNumber = getArguments().getString(Constants.ORDER_NUMBER);
         if (TextUtils.isEmpty(mOrderId)) {
             return;
         }
-        setTitle(mOrderId);
+        setTitle(mOrderNumber);
         if (!checkInternetConnection()) {
             handler.sendOfflineError(true);
         }

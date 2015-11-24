@@ -490,8 +490,10 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 break;
             case FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT:
                 String orderId = getIntent().getStringExtra(Constants.ORDER_ID);
+                String orderNumber = getIntent().getStringExtra(Constants.ORDER_NUMBER);
                 Bundle orderProductListBundle = new Bundle();
                 orderProductListBundle.putString(Constants.ORDER_ID, orderId);
+                orderProductListBundle.putString(Constants.ORDER_NUMBER, orderNumber);
                 orderProductListBundle.putString(TrackEventkeys.NAVIGATION_CTX,
                         getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
                 ShopFromOrderFragment shopFromOrderFragment = new ShopFromOrderFragment();
