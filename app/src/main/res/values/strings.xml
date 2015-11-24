@@ -304,6 +304,7 @@
     <string name="save">SAVE</string>
     <string name="saveAndContinue">Save and Continue</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
+    <string name="incomplete">Incomplete</string>
 
     <!-- Show cart tabs -->
     <string name="exp_delivery">Express Delivery</string>

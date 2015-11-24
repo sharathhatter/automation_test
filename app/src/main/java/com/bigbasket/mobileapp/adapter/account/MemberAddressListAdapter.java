@@ -136,6 +136,15 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
             } else
                 txtExpressDelivery.setVisibility(View.GONE);
+
+            TextView txtPartialAddress = memberAddressViewHolder.getPartial_address_textview();
+            if (address.isPartial()) {
+                txtPartialAddress.setText(((AppOperationAware) context).getCurrentActivity().getString(R.string.incomplete));
+                txtPartialAddress.setVisibility(View.VISIBLE);
+            } else
+                txtPartialAddress.setVisibility(View.GONE);
+
+
         }
     }
 
@@ -190,6 +199,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
         private TextView txtAddress;
         private TextView txtExpressDelivery;
         private View itemView;
+        private TextView partial_address_textview;
 
         public MemberAddressViewHolder(View itemView) {
             super(itemView);
@@ -228,6 +238,15 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 txtExpressDelivery.setTypeface(FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity()).getFaceRobotoRegular());
             }
             return txtExpressDelivery;
+        }
+
+        public TextView getPartial_address_textview() {
+            if (partial_address_textview == null) {
+                partial_address_textview = (TextView) itemView.findViewById(R.id.partial_address_textview);
+                partial_address_textview.setTypeface(FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity()).getFaceRobotoRegular());
+
+            }
+            return partial_address_textview;
         }
 
         @Override
