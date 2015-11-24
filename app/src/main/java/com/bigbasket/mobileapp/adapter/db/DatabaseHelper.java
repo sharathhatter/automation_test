@@ -14,10 +14,8 @@ import com.crashlytics.android.Crashlytics;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "bigbasket.db";
-    /*
-    Changes:
-        - In Version 16
-            - Added "app_data_dynamic" table
+    /**
+     * Version 16: Added "app_data_dynamic" table
      */
     protected static final int DATABASE_VERSION = 16;
     public static SQLiteDatabase db = null;
@@ -69,26 +67,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (newVersion >= 15) {
+        if (oldVersion <= 15) {
             try {
                 db.execSQL("DELETE FROM " + CategoryAdapter.TABLE_NAME);
                 db.execSQL("DROP TABLE " + CategoryAdapter.TABLE_NAME);
             } catch (Exception e) {
                 Crashlytics.logException(e);
             }
+            try {
+                db.execSQL("DELETE FROM " + SubCategoryAdapter.TABLE_NAME);
+                db.execSQL("DROP TABLE " + SubCategoryAdapter.TABLE_NAME);
+            } catch (Exception e) {
+                Crashlytics.logException(e);
+            }
+            try {
+                db.execSQL("DELETE FROM " + AreaPinInfoDbHelper.TABLE_NAME);
+                db.execSQL("DROP TABLE " + AreaPinInfoDbHelper.TABLE_NAME);
+            } catch (Exception e) {
+                Crashlytics.logException(e);
+            }
         }
-        try {
-            db.execSQL("DELETE FROM " + SubCategoryAdapter.TABLE_NAME);
-            db.execSQL("DROP TABLE " + SubCategoryAdapter.TABLE_NAME);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
+        if(oldVersion < 16){
+            upgradeTo16(db);
         }
-        try {
-            db.execSQL("DELETE FROM " + AreaPinInfoDbHelper.TABLE_NAME);
-            db.execSQL("DROP TABLE " + AreaPinInfoDbHelper.TABLE_NAME);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
+    }
+
+    private void upgradeTo16(SQLiteDatabase db) {
+        db.execSQL(DynamicPageDbHelper.CREATE_TABLE);
+        db.execSQL(AppDataDynamicDbHelper.CREATE_TABLE);
     }
 
     private void createTable(SQLiteDatabase db) {
