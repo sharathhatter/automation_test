@@ -50,4 +50,11 @@
     <dimen name="nav_text_margin_top">18dp</dimen>
     <dimen name="nav_img_margin_top">16dp</dimen>
 
+    <!-- dimenision for payment option view-->
+    <dimen name="dimen_2">2dp</dimen>
+    <dimen name="dimen_20">20dp</dimen>
+    <dimen name="dimen_5">5dp</dimen>
+    <dimen name="dimen_10">1dp</dimen>
+    <dimen name="dimen_15">15dp</dimen>
+
 </resources>

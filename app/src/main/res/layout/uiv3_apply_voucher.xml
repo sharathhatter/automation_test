@@ -14,6 +14,7 @@
         android:layout_marginTop="@dimen/margin_22"
         style="@style/RippleStyle"
         android:text="@string/applyAllCaps"
+        android:padding="@dimen/padding_small"
         android:textColor="@color/uiv3_dialog_header_text_bkg"
         android:textSize="@dimen/primary_text_size" />
 

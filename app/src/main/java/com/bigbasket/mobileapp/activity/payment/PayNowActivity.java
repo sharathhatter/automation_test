@@ -8,9 +8,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
-import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -34,6 +31,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.payu.india.Payu.PayuConstants;
 
@@ -47,7 +45,7 @@ import retrofit.Call;
  * don't handle fragments well.
  */
 public class PayNowActivity extends BackButtonActivity implements OnPostPaymentListener,
-        CityListDisplayAware, PaymentTxnInfoAware {
+        CityListDisplayAware, PaymentTxnInfoAware, PaymentMethodsView.OnPaymentOptionSelectionListener {
 
     @Nullable
     private String mSelectedPaymentMethod;
@@ -252,34 +250,20 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
 
     }
 
-    private void displayPaymentMethods(ArrayList<PaymentType> paymentTypes) {
-        LayoutInflater inflater = getLayoutInflater();
+    private void displayPaymentMethods(ArrayList<PaymentType> paymentTypeList) {
         ViewGroup layoutPaymentOptions = (ViewGroup) findViewById(R.id.layoutPaymentOptions);
-
-        for (int i = 0; i < paymentTypes.size(); i++) {
-            final PaymentType paymentType = paymentTypes.get(i);
-            RadioButton rbtnPaymentType = UIUtil.
-                    getPaymentOptionRadioButton(layoutPaymentOptions, this, inflater);
-            rbtnPaymentType.setText(UIUtil.getPaymentOptionRadioButtonText(this, paymentType), TextView.BufferType.SPANNABLE);
-            rbtnPaymentType.setId(i);
-            if (i == 0) {
-                mSelectedPaymentMethod = paymentType.getValue();
-                rbtnPaymentType.setChecked(true);
-            }
-            layoutPaymentOptions.addView(rbtnPaymentType);
-            rbtnPaymentType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    if (isChecked) {
-                        mSelectedPaymentMethod = paymentType.getValue();
-                    }
-                }
-            });
-        }
+        PaymentMethodsView mPaymentMethodsView = new PaymentMethodsView(this);
+        mPaymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
+        layoutPaymentOptions.addView(mPaymentMethodsView);
     }
 
     @Override
     public int getMainLayout() {
         return R.layout.uiv3_pay_now;
+    }
+
+    @Override
+    public void onPaymentOptionSelected(String paymentTypeValue) {
+        mSelectedPaymentMethod = paymentTypeValue;
     }
 }
