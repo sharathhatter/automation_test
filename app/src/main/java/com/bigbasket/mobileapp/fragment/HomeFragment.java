@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.fragment;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -66,9 +65,7 @@ public class HomeFragment extends BaseSectionFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.home_fragment_layout, container, false);
-        view.setBackgroundColor(Color.WHITE);
-        return view;
+        return inflater.inflate(R.layout.home_fragment_layout, container, false);
     }
 
     @Override
@@ -285,7 +282,7 @@ public class HomeFragment extends BaseSectionFragment {
 
     @Override
     public String getTitle() {
-        return "BigBasket";
+        return getString(R.string.app_name);
     }
 
     @Override
