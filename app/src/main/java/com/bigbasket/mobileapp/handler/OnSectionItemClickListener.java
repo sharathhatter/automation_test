@@ -31,7 +31,6 @@ import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.SectionHelpManager;
-import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
@@ -39,6 +38,7 @@ import com.bigbasket.mobileapp.model.section.HelpDestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
+import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -243,7 +243,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 }
                 break;
             case DestinationInfo.HOME:
-                ((AppOperationAware) context).getCurrentActivity().goToHome(false);
+                ((AppOperationAware) context).getCurrentActivity().goToHome();
                 break;
             case DestinationInfo.COMMUNICATION_HUB:
                 ((AppOperationAware) context).getCurrentActivity().launchMoEngageCommunicationHub();
@@ -314,14 +314,14 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         StringBuilder ncBuilder = new StringBuilder();
         if (screenName != null) {
             switch (screenName) {
-                case SectionManager.HOME_PAGE:
+                case AbstractDynamicPageSyncService.HOME_PAGE:
                     ncBuilder.append(TrackEventkeys.HOME);
                     break;
-                case SectionManager.MAIN_MENU:
+                case AbstractDynamicPageSyncService.MAIN_MENU:
                     ncBuilder.append(TrackEventkeys.MENU);
                     break;
-                case SectionManager.DISCOUNT_PAGE:
-                    ncBuilder.append(SectionManager.DISCOUNT_PAGE);
+                case Constants.DISCOUNT_PAGE:
+                    ncBuilder.append(Constants.DISCOUNT_PAGE);
                     break;
                 default:
                     if (!TextUtils.isEmpty(screenName)) {
@@ -375,9 +375,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     private String getAnalyticsFormattedScreeName() {
         if (screenName == null) return null;
         switch (screenName) {
-            case SectionManager.HOME_PAGE:
+            case AbstractDynamicPageSyncService.HOME_PAGE:
                 return TrackingAware.HOME_PAGE_ITEM_CLICKED;
-            case SectionManager.MAIN_MENU:
+            case AbstractDynamicPageSyncService.MAIN_MENU:
                 return TrackingAware.MENU_ITEM_CLICKED;
             default:
                 return screenName + "." + TrackingAware.ITEM_CLICKED;
@@ -454,7 +454,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 ((AppOperationAware) context).getCurrentActivity().getNextScreenNavigationContext());
         String eventName = getAnalyticsFormattedScreeName();
         if (eventName == null) return;
-        if (screenName != null && screenName.equals(SectionManager.DISCOUNT_PAGE)) {
+        if (screenName != null && screenName.equals(Constants.DISCOUNT_PAGE)) {
             ((TrackingAware) context).trackEvent(eventName, eventAttribs,
                     null, null, false, true);
         } else {

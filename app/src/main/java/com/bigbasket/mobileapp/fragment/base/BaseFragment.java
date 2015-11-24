@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.fragment.base;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -61,7 +60,6 @@ public abstract class BaseFragment extends AbstractFragment implements
         AnalyticsNavigationContextAware, OnBasketChangeListener, ConfirmationDialogFragment.ConfirmationDialogCallback {
 
     protected BigBasketMessageHandler handler;
-    private ProgressDialog progressDialog;
     protected BasketOperationResponse basketOperationResponse;
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
@@ -150,7 +148,6 @@ public abstract class BaseFragment extends AbstractFragment implements
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
-        if (progressDialog != null && progressDialog.isShowing()) return;
         if (TextUtils.isEmpty(msg)) {
             msg = getResources().getString(R.string.please_wait);
         }
@@ -165,7 +162,7 @@ public abstract class BaseFragment extends AbstractFragment implements
         if (!isSuspended()) {
             try {
                 ft.commitAllowingStateLoss();
-            } catch (IllegalStateException ex){
+            } catch (IllegalStateException ex) {
                 Crashlytics.logException(ex);
             }
         }
@@ -406,14 +403,16 @@ public abstract class BaseFragment extends AbstractFragment implements
                 negativeButtonText, passedValue, false);
         try {
             dialogFragment.show(getFragmentManager(), getScreenTag() + "#AlertDialog");
-        } catch (IllegalStateException ex){
+        } catch (IllegalStateException ex) {
             Crashlytics.logException(ex);
         }
     }
+
     @Override
-    public void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive){
-        if(isPositive){
-            if(data != null && data.getBoolean(Constants.FINISH_ACTIVITY, false)) {
+    public void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive) {
+        if (getCurrentActivity() == null) return;
+        if (isPositive) {
+            if (data != null && data.getBoolean(Constants.FINISH_ACTIVITY, false)) {
                 getCurrentActivity().finish();
             } else {
                 onPositiveButtonClicked(reqCode, data);
@@ -425,9 +424,10 @@ public abstract class BaseFragment extends AbstractFragment implements
 
 
     @Override
-    public void onDialogCancelled(int reqCode){
+    public void onDialogCancelled(int reqCode) {
 
     }
+
     protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
         if (getActivity() != null) {
             switch (sourceName) {
@@ -516,7 +516,7 @@ public abstract class BaseFragment extends AbstractFragment implements
                 null, data, false);
         try {
             dialogFragment.show(getFragmentManager(), getScreenTag() + "#AlertDialog");
-        } catch (IllegalStateException ex){
+        } catch (IllegalStateException ex) {
             Crashlytics.logException(ex);
         }
     }

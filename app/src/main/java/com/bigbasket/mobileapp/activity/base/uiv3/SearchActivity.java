@@ -11,7 +11,7 @@ import android.view.MenuItem;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
-import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
+import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
@@ -109,8 +109,8 @@ public class SearchActivity extends BBActivity {
 
     private void doSearchByCategory(String categoryName, String categoryUrl,
                                     String categorySlug, String navigationCtx) {
-        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-        mostSearchesAdapter.update(categoryName, categoryUrl);
+        MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
+        mostSearchesDbHelper.update(categoryName, categoryUrl);
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
@@ -122,8 +122,8 @@ public class SearchActivity extends BBActivity {
     }
 
     private void triggerSearch(String searchQuery, String referrer) {
-        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-        mostSearchesAdapter.update(searchQuery);
+        MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
+        mostSearchesDbHelper.update(searchQuery);
         doSearch(searchQuery, referrer);
     }
 

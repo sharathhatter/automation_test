@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 import com.crashlytics.android.Crashlytics;
@@ -14,7 +14,12 @@ import com.crashlytics.android.Crashlytics;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "bigbasket.db";
-    protected static final int DATABASE_VERSION = 15;
+    /*
+    Changes:
+        - In Version 16
+            - Added "app_data_dynamic" table
+     */
+    protected static final int DATABASE_VERSION = 16;
     public static SQLiteDatabase db = null;
     private static volatile DatabaseHelper dbAdapter = null;
     private static boolean isConnectionOpen = false;
@@ -64,34 +69,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (newVersion >= DATABASE_VERSION)
+        if (newVersion >= 15) {
             try {
-                db.execSQL("DELETE FROM " + CategoryAdapter.tableName);
-                db.execSQL("DROP TABLE " + CategoryAdapter.tableName);
+                db.execSQL("DELETE FROM " + CategoryAdapter.TABLE_NAME);
+                db.execSQL("DROP TABLE " + CategoryAdapter.TABLE_NAME);
             } catch (Exception e) {
                 Crashlytics.logException(e);
             }
-        try {
-            db.execSQL("DELETE FROM " + SubCategoryAdapter.tableName);
-            db.execSQL("DROP TABLE " + SubCategoryAdapter.tableName);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-
         }
         try {
-            db.execSQL("DELETE FROM " + AreaPinInfoAdapter.tableName);
-            db.execSQL("DROP TABLE " + AreaPinInfoAdapter.tableName);
+            db.execSQL("DELETE FROM " + SubCategoryAdapter.TABLE_NAME);
+            db.execSQL("DROP TABLE " + SubCategoryAdapter.TABLE_NAME);
         } catch (Exception e) {
             Crashlytics.logException(e);
-
+        }
+        try {
+            db.execSQL("DELETE FROM " + AreaPinInfoDbHelper.TABLE_NAME);
+            db.execSQL("DROP TABLE " + AreaPinInfoDbHelper.TABLE_NAME);
+        } catch (Exception e) {
+            Crashlytics.logException(e);
         }
     }
 
     private void createTable(SQLiteDatabase db) {
-        db.execSQL(CategoryAdapter.createTable);
-        db.execSQL(SubCategoryAdapter.createTable);
-        db.execSQL(AreaPinInfoAdapter.createTable);
-        db.execSQL(SearchSuggestionAdapter.createTable);
-        db.execSQL(MostSearchesAdapter.createTable);
+        db.execSQL(CategoryAdapter.CREATE_TABLE);
+        db.execSQL(SubCategoryAdapter.CREATE_TABLE);
+        db.execSQL(AreaPinInfoDbHelper.CREATE_TABLE);
+        db.execSQL(SearchSuggestionDbHelper.CREATE_TABLE);
+        db.execSQL(MostSearchesDbHelper.CREATE_TABLE);
+        db.execSQL(DynamicPageDbHelper.CREATE_TABLE);  // Added in version 16
+        db.execSQL(AppDataDynamicDbHelper.CREATE_TABLE);  // Added in version 16
     }
 }

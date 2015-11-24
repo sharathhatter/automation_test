@@ -116,7 +116,6 @@
     <string name="please_wait">Please wait...</string>
     <string name="placeOrderPleaseWait">Please wait while we place your order and transfer you to payment gateway.</string>
     <string name="email">E-mail</string>
-    <string name="emailNewPassword">Email new password</string>
     <string name="oldPassword">Old password</string>
     <string name="newPassword">New Password</string>
     <string name="confirmPassword">Confirm Password</string>
@@ -238,7 +237,6 @@
     <string name="weAreDown">We are down for maintenance!</string>
 
     <string name="networkError">Network Error</string>
-    <string name="communicationError">Failed to connect to the server</string>
     <string name="otherError">An error occurred</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
@@ -330,7 +328,6 @@
 
     <string name="add_bundle">ADD BUNDLE</string>
     <string name="error">Error!</string>
-    <string name="emailBlank">Please enter an email address</string>
     <string name="payNow">Pay Now</string>
     <string name="order_pay_now_amount">Amount:</string>
     <string name="payNowThankyou">Your payment was successful!</string>

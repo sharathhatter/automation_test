@@ -20,9 +20,9 @@ public class SubCategoryAdapter {
     public static final String COLUMN_BLOB = "subCategoryResponse";
     public static final String COLUMN_SECTION_DATA = "sectionData";
     public static final String COLUMN_SLUG = "slug";
-    public static final String tableName = "subcategory";
-    public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s BLOB NULL);", tableName, COLUMN_ID, COLUMN_VERSION,
+    public static final String TABLE_NAME = "subcategory";
+    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s BLOB NULL);", TABLE_NAME, COLUMN_ID, COLUMN_VERSION,
             COLUMN_SLUG, COLUMN_BLOB, COLUMN_SECTION_DATA);
     private Context context;
 
@@ -46,7 +46,7 @@ public class SubCategoryAdapter {
             byte[] bytesSection = ResponseSerializer.serializeObject(sectionData);
             cv.put(COLUMN_SECTION_DATA, bytesSection);
         }
-        DatabaseHelper.db.insert(tableName, null, cv);
+        DatabaseHelper.db.insert(TABLE_NAME, null, cv);
 
     }
 
@@ -54,7 +54,7 @@ public class SubCategoryAdapter {
         Cursor subCategoryCursor = null;
         ArrayList<Object> result = new ArrayList<>();
         try {
-            subCategoryCursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_BLOB, COLUMN_SECTION_DATA}
+            subCategoryCursor = DatabaseHelper.db.query(TABLE_NAME, new String[]{COLUMN_BLOB, COLUMN_SECTION_DATA}
                     , COLUMN_SLUG + " = " + "\"" + slug + "\"", null, null, null, null);
             if (subCategoryCursor.moveToFirst()) {
                 byte[] subCategoryCursorBlob = subCategoryCursor.getBlob(
@@ -79,7 +79,7 @@ public class SubCategoryAdapter {
         Cursor cursor = null;
         String version = null;
         try {
-            cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_VERSION, COLUMN_BLOB}
+            cursor = DatabaseHelper.db.query(TABLE_NAME, new String[]{COLUMN_VERSION, COLUMN_BLOB}
                     , COLUMN_SLUG + " = " + "\"" + slug + "\"", null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 byte[] blob = cursor.getBlob(cursor.getColumnIndex(COLUMN_BLOB));

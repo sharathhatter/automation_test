@@ -4,7 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -77,13 +77,13 @@ public class AreaPinInfoIntentService extends IntentService {
             }
         }
         if (success && downloadedDataMap.size() > 0) {
-            AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(this);
+            AreaPinInfoDbHelper areaPinInfoDbHelper = new AreaPinInfoDbHelper(this);
             DatabaseHelper.db.beginTransaction();
-            areaPinInfoAdapter.deleteData();
+            areaPinInfoDbHelper.deleteData();
 
             for (Map.Entry<City, HashMap<String, ArrayList<String>>> pinCodeEntrySet :
                     downloadedDataMap.entrySet()) {
-                insertPinCodes(areaPinInfoAdapter,
+                insertPinCodes(areaPinInfoDbHelper,
                         pinCodeEntrySet.getKey(), pinCodeEntrySet.getValue());
             }
 
@@ -94,13 +94,13 @@ public class AreaPinInfoIntentService extends IntentService {
         }
     }
 
-    private void insertPinCodes(AreaPinInfoAdapter areaPinInfoAdapter,
+    private void insertPinCodes(AreaPinInfoDbHelper areaPinInfoDbHelper,
                                 City city, HashMap<String, ArrayList<String>> pinCodeMaps) {
         for (Map.Entry<String, ArrayList<String>> pincodeAreaEntrySet : pinCodeMaps.entrySet()) {
             String pinCode = pincodeAreaEntrySet.getKey();
             ArrayList<String> areas = pincodeAreaEntrySet.getValue();
             for (String areaName : areas) {
-                areaPinInfoAdapter.insert(areaName, pinCode, city.getName(), city.getId());
+                areaPinInfoDbHelper.insert(areaName, pinCode, city.getName(), city.getId());
             }
         }
     }

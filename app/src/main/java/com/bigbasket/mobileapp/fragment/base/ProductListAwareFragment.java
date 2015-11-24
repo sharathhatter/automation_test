@@ -34,7 +34,6 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
-import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -111,7 +110,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
             Call<ApiResponse<ProductNextPageResponse>> call =
-                    bigBasketApiService.productNextPage(BBUrlEncodeUtils.urlEncode(mNameValuePairs));
+                    bigBasketApiService.productNextPage(mNameValuePairs);
             call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
                 @Override
                 public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {

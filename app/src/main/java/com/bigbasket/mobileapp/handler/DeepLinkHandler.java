@@ -207,7 +207,7 @@ public class DeepLinkHandler {
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
             case Constants.HOME:
-                context.getCurrentActivity().goToHome(false);
+                context.getCurrentActivity().goToHome();
                 return SUCCESS;
             case Constants.STORE_LIST:
                 String category = uri.getQueryParameter(Constants.CATEGORY);

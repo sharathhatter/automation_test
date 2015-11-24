@@ -2,11 +2,11 @@ package com.bigbasket.mobileapp.application;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.multidex.MultiDex;
 
 import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.LeakCanaryObserver;
+import com.bigbasket.mobileapp.util.MultiDexHandler;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
@@ -38,7 +38,7 @@ public class BaseApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         if (BuildConfig.DEBUG) {
-            MultiDex.install(this);
+            MultiDexHandler.Factory.create().install(this);
         }
     }
 

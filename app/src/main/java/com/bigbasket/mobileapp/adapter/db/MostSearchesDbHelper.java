@@ -12,19 +12,19 @@ import com.bigbasket.mobileapp.model.search.MostSearchedItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MostSearchesAdapter {
+public class MostSearchesDbHelper {
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_QUERY = "query";
     public static final String COLUMN_URL = "category_url";
     public static final String COLUMN_COUNT = "count";
     public static final String tableName = "mostsearches";
-    public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (" +
+    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s (" +
                     "%2$s INTEGER PRIMARY KEY AUTOINCREMENT, %3$s TEXT NOT NULL, %4$s TEXT, %5$s INTEGER NOT NULL);",
             tableName, COLUMN_ID, COLUMN_QUERY, COLUMN_URL, COLUMN_COUNT);
     private Context context;
 
-    public MostSearchesAdapter(Context context) {
+    public MostSearchesDbHelper(Context context) {
         this.context = context;
         open();
     }

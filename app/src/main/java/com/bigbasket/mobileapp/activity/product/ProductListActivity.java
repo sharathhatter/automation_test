@@ -56,7 +56,6 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
-import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -447,7 +446,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             newNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(tabTypeWithNoProducts)));
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
             Call<ApiResponse<ProductNextPageResponse>> call =
-                    bigBasketApiService.productNextPage(BBUrlEncodeUtils.urlEncode(NameValuePair.toMap(newNameValuePairs)));
+                    bigBasketApiService.productNextPage(NameValuePair.toMap(newNameValuePairs));
             call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
                 @Override
                 public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {

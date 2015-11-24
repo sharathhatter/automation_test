@@ -19,7 +19,7 @@ import java.util.Map;
 public class PayuPayment {
 
     public static void startPaymentGateway(HashMap<String, String> paymentParamsInput,
-                                    Activity ctx) {
+                                           Activity ctx) {
 
         // Copying into another hash-map
         HashMap<String, String> paymentParamsMap = new HashMap<>(paymentParamsInput);

@@ -624,7 +624,14 @@
             android:name=".adapter.db.DatabaseContentProvider"
             android:authorities="${applicationId}.DatabaseContentProvider"
             android:enabled="true"
-            android:exported="false"></provider>
+            android:exported="false" />
+
+        <service
+            android:name=".service.HomePageSyncService"
+            android:exported="false" />
+        <service
+            android:name=".service.MainMenuSyncService"
+            android:exported="false" />
     </application>
 
 </manifest>

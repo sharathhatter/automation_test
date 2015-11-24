@@ -76,11 +76,11 @@ public class Order implements Parcelable {
         }
         this.canPay = parcel.readByte() == (byte) 1;
         boolean _wasVariableWeightMsgNull = parcel.readByte() == (byte) 0;
-        if(!_wasVariableWeightMsgNull){
+        if (!_wasVariableWeightMsgNull) {
             variableWeightMsg = parcel.readString();
         }
         boolean _wasVariableWeightLinkNull = parcel.readByte() == (byte) 0;
-        if(!_wasVariableWeightLinkNull){
+        if (!_wasVariableWeightLinkNull) {
             variableWeightLink = parcel.readString();
         }
     }

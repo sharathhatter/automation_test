@@ -60,7 +60,7 @@ public class PayNowThankyouActivity extends BaseActivity implements InvoiceDataA
     }
 
     public void onContinueBtnClicked(View v) {
-        goToHome(false);
+        goToHome();
     }
 
     @Override
@@ -80,7 +80,7 @@ public class PayNowThankyouActivity extends BaseActivity implements InvoiceDataA
 
     @Override
     public void onBackPressed() {
-        goToHome(false);
+        goToHome();
     }
 
     @Override

@@ -1,10 +1,9 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,8 +12,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,6 +35,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
+import com.bigbasket.mobileapp.adapter.db.AppDataDynamicDbHelper;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.devconfig.DevConfigViewHandler;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
@@ -73,7 +76,6 @@ import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
-import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
@@ -84,23 +86,22 @@ import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
-import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
-import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
-import com.bigbasket.mobileapp.receivers.DynamicAppDataBroadcastReceiver;
+import com.bigbasket.mobileapp.receivers.DynamicScreenLoaderCallback;
+import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.service.AreaPinInfoIntentService;
 import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
-import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.LoaderIds;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.SectionCursorHelper;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
@@ -122,34 +123,20 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     protected BigBasketMessageHandler handler;
     protected String mTitle;
     @Nullable
-    protected DynamicAppDataBroadcastReceiver mDynamicAppDataBroadcastReceiver;
     private ActionBarDrawerToggle mDrawerToggle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartSummary = new CartSummary();
+    @Nullable
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
+    @Nullable
     private RecyclerView mNavRecyclerView;
+    @Nullable
     private AnimatedRelativeLayout mSubNavLayout;
+    @Nullable
     private FloatingBadgeCountView mBtnViewBasket;
+    @Nullable
     private RecyclerView mListSubNavigation;
-    private boolean mSyncNeeded;
-
-    private static <T extends SectionItem> void
-    setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
-                                 ArrayList<T> sectionItems,
-                                 Section section) {
-        for (int i = 0; i < sectionItems.size(); i++) {
-            SectionItem sectionItem = sectionItems.get(i);
-            if ((sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText()))
-                    || (sectionItem instanceof SubSectionItem && ((SubSectionItem) sectionItem).isLink())) {
-                if (i == 0 && ((sectionItem instanceof SubSectionItem) && !((SubSectionItem) sectionItem).isLink())) {
-                    // Duplicate the first element as it'll be used to display the back arrow
-                    sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
-                }
-                sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
-            }
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -201,20 +188,46 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         if (CityManager.isAreaPinInfoDataStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
         }
-        mDynamicAppDataBroadcastReceiver = new DynamicAppDataBroadcastReceiver<>(this);
+        readAppDataDynamic();
     }
 
-    public void onDataSynced(boolean isManuallyTriggered) {
+    public void readAppDataDynamic() {
+        getSupportLoaderManager().initLoader(LoaderIds.APP_DATA_DYNAMIC_ID, null,
+                new LoaderManager.LoaderCallbacks<Cursor>() {
+                    @Override
+                    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                        return new CursorLoader(getCurrentActivity(), AppDataDynamicDbHelper.CONTENT_URI,
+                                AppDataDynamicDbHelper.getDefaultProjection(), null, null, null);
+                    }
+
+                    @Override
+                    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                        AppDataDynamic appDataDynamic = AppDataDynamic.getInstance(getCurrentActivity());
+                        boolean success = appDataDynamic.updateInstance(getCurrentActivity(), data);
+                        if (success) {
+                            onDataSynced();
+                        } else {
+                            onDataSyncFailure();
+                        }
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<Cursor> loader) {
+
+                    }
+                });
+    }
+
+    public void onDataSynced() {
         ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
-        if (addressSummaries == null || addressSummaries.size() == 0) return;
-
-        AddressSummary defaultAddress = addressSummaries.get(0);
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString(Constants.CITY, defaultAddress.getCityName());
-        editor.putString(Constants.CITY_ID, String.valueOf(defaultAddress.getCityId()));
-        editor.apply();
-
-        setCityText(defaultAddress.toString());
+        if (addressSummaries != null && addressSummaries.size() > 0) {
+            AddressSummary defaultAddress = addressSummaries.get(0);
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            editor.putString(Constants.CITY, defaultAddress.getCityName());
+            editor.putString(Constants.CITY_ID, String.valueOf(defaultAddress.getCityId()));
+            editor.apply();
+            setCityText(defaultAddress.toString());
+        }
 
         HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager()
                 .findFragmentByTag(HomeFragment.class.getName());
@@ -304,12 +317,11 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
-                if (mNavRecyclerView.getAdapter() != null) {
+                if (mNavRecyclerView != null && mNavRecyclerView.getAdapter() != null) {
                     mNavRecyclerView.getAdapter().notifyDataSetChanged();
                 }
-                if (mListSubNavigation.getAdapter() != null)
+                if (mListSubNavigation != null && mListSubNavigation.getAdapter() != null)
                     mListSubNavigation.getAdapter().notifyDataSetChanged();
-
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -319,8 +331,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         }
 
         loadNavigationItems();
-        Intent intent = getIntent();
-        handleIntent(intent, savedInstanceState);
+        handleIntent(savedInstanceState);
     }
 
     @Override
@@ -335,8 +346,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     public void addToMainLayout(AbstractFragment fragment, String tag) {
         addToMainLayout(fragment, tag, false);
     }
-
-    //method for add bundle
 
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
@@ -538,11 +547,12 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     }
 
     @Override
-    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries) {
+    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries, String selectedAddressId) {
         if (addressSummaries != null && addressSummaries.size() > 0) {
             City newCity = new City(addressSummaries.get(0).getCityName(),
                     addressSummaries.get(0).getCityId());
-            changeCity(newCity, false);
+            changeCity(newCity);
+            startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
         } else {
             showToast(getString(R.string.unknownError));
         }
@@ -754,17 +764,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         return handler;
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
-    }
-
-    public void handleIntent(Intent intent) {
-        handleIntent(intent, null);
-    }
-
-    public void handleIntent(Intent intent, Bundle savedInstanceState) {
+    public void handleIntent(Bundle savedInstanceState) {
         currentFragmentTag = savedInstanceState != null ?
                 savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
         if (TextUtils.isEmpty(currentFragmentTag) ||
@@ -818,6 +818,29 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     @SuppressWarnings("unchecked")
     private void loadNavigationItems() {
         if (mNavRecyclerView == null || mDrawerLayout == null) return;
+        getSupportLoaderManager().initLoader(LoaderIds.MAIN_MENU_ID, null,
+                new DynamicScreenLoaderCallback(this) {
+                    @Override
+                    public void onCursorNonEmpty(Cursor data) {
+                        showMenuLoading(false);
+                        displayMainMenuHeader();
+                        SectionCursorHelper.getNavigationAdapterAsync(getCurrentActivity(), data, getCategoryId(),
+                                new SectionCursorHelper.NavigationCallback() {
+                                    @Override
+                                    public void onNavigationAdapterCreated(NavigationAdapter navigationAdapter) {
+                                        mNavRecyclerView.setAdapter(navigationAdapter);
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onCursorLoadingInProgress() {
+                        showMenuLoading(true);
+                    }
+                });
+    }
+
+    private void displayMainMenuHeader() {
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
         txtNavSalutation.setTypeface(faceRobotoMedium);
         TextView lblWelCome = (TextView) findViewById(R.id.lblWelcome);
@@ -849,24 +872,33 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 toggleNavigationArea((ImageView) v);
             }
         });
-
-        Object[] data = getSectionNavigationItems();
-        ArrayList<SectionNavigationItem> sectionNavigationItems = (ArrayList<SectionNavigationItem>) data[0];
-        String baseImgUrl = (String) data[1];
-        HashMap<Integer, Renderer> rendererHashMap = (HashMap<Integer, Renderer>) data[2];
-
+        imgSwitchNav.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.settings));
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
+        lstMyAccount.setVisibility(View.GONE);
         new AccountView<>(this, lstMyAccount);
+    }
 
-        String categoryId = getCategoryId();
-
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
-                sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
-        if (!TextUtils.isEmpty(categoryId)) {
-            navigationAdapter.setSelectedCategoryString(categoryId);
+    @Override
+    public void doLogout() {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawers();
         }
-        mNavRecyclerView.setAdapter(navigationAdapter);
+        super.doLogout();
+    }
 
+    private void showMenuLoading(boolean visible) {
+        ProgressBar progressBarMenu = (ProgressBar) findViewById(R.id.progressBarMenu);
+        if (visible) {
+            progressBarMenu.setVisibility(View.VISIBLE);
+            if (mNavRecyclerView != null) {
+                mNavRecyclerView.setVisibility(View.GONE);
+            }
+        } else {
+            progressBarMenu.setVisibility(View.GONE);
+            if (mNavRecyclerView != null) {
+                mNavRecyclerView.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void setCityText(String text) {
@@ -920,66 +952,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         imgSwitchNav.setImageDrawable(ContextCompat.getDrawable(this, drawableId));
     }
 
-    private Object[] getSectionNavigationItems() {
-        ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        sectionNavigationItems.addAll(getPreBakedNavigationItems());
-
-        SectionManager sectionManager = new SectionManager(this, SectionManager.MAIN_MENU);
-        SectionData sectionData = sectionManager.getStoredSectionData(true);
-        if (sectionData != null && sectionData.getSections() != null && sectionData.getSections().size() > 0) {
-            for (Section section : sectionData.getSections()) {
-                if (section == null || section.getSectionItems() == null || section.getSectionItems().size() == 0)
-                    continue;
-                if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-                    sectionNavigationItems.add(new SectionNavigationItem(section));
-                }
-                setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
-                        section);
-            }
-        }
-        return new Object[]{sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null,
-                sectionData != null ? sectionData.getRenderersMap() : null};
-    }
-
-    private ArrayList<SectionNavigationItem> getPreBakedNavigationItems() {
-        ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-
-        // Home
-        SectionItem homeSectionItem = new SectionItem(new SectionTextItem(getString(R.string.home), 0),
-                null, null, -1, new DestinationInfo(DestinationInfo.HOME, null));
-        ArrayList<SectionItem> homeSectionItems = new ArrayList<>();
-        homeSectionItems.add(homeSectionItem);
-        Section homeSection = new Section(null, null, Section.MSG, homeSectionItems, null);
-        sectionNavigationItems.add(new SectionNavigationItem<>(homeSection, homeSectionItem));
-
-        // My Basket
-        SectionItem myBasketSectionItem = new SectionItem(new SectionTextItem(getString(R.string.my_basket_header), 0),
-                null, null, -1, new DestinationInfo(DestinationInfo.BASKET, null));
-        ArrayList<SectionItem> myBasketSectionItems = new ArrayList<>();
-        myBasketSectionItems.add(myBasketSectionItem);
-        Section myBasketSection = new Section(null, null, Section.MSG, myBasketSectionItems, null);
-        sectionNavigationItems.add(new SectionNavigationItem<>(myBasketSection, myBasketSectionItem));
-
-        // Smart Basket
-        String smartBasketDeepLink = "bigbasket://smart-basket/";
-        SectionItem smartBasketSectionItem = new SectionItem(new SectionTextItem(getString(R.string.smartBasket), 0),
-                null, null, -1, new DestinationInfo(DestinationInfo.DEEP_LINK, smartBasketDeepLink));
-        ArrayList<SectionItem> smartBasketSectionItems = new ArrayList<>();
-        smartBasketSectionItems.add(smartBasketSectionItem);
-        Section smartBasketSection = new Section(null, null, Section.MSG, smartBasketSectionItems, null);
-        sectionNavigationItems.add(new SectionNavigationItem<>(smartBasketSection, smartBasketSectionItem));
-
-        // Shopping List
-        String shoppingListDeepLink = "bigbasket://sl/";
-        SectionItem shoppingListSectionItem = new SectionItem(new SectionTextItem(getString(R.string.shoppingList), 0),
-                null, null, -1, new DestinationInfo(DestinationInfo.DEEP_LINK, shoppingListDeepLink));
-        ArrayList<SectionItem> shoppingListSections = new ArrayList<>();
-        shoppingListSections.add(shoppingListSectionItem);
-        Section shoppingListSection = new Section(null, null, Section.MSG, shoppingListSections, null);
-        sectionNavigationItems.add(new SectionNavigationItem<>(shoppingListSection, shoppingListSectionItem));
-        return sectionNavigationItems;
-    }
-
     /**
      * @return the category selected by the user
      * method to be overridden in classes extending BBActivity
@@ -1008,12 +980,13 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             mListSubNavigation.setLayoutManager(new LinearLayoutManager(this));
         }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
+        SectionCursorHelper.setSectionNavigationItemList(sectionNavigationItems,
+                subNavigationSectionItems, section);
         String selectedId = getSubCategoryId();
 
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems,
-                SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
+                AbstractDynamicPageSyncService.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
         if (!TextUtils.isEmpty(selectedId)) {
             navigationAdapter.setSelectedCategoryString(selectedId);
         }
@@ -1051,16 +1024,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (mDynamicAppDataBroadcastReceiver != null) {
-            IntentFilter addressSyncIntentFilter = new IntentFilter(Constants.ADDRESS_SYNC_BROADCAST_ACTION);
-            LocalBroadcastManager.getInstance(this).registerReceiver(mDynamicAppDataBroadcastReceiver,
-                    addressSyncIntentFilter);
-        }
-
-        // Also manually trigger it once to sync address-change in case receiver got unregistered
-        onDataSynced(true);
-
         FragmentManager sfm = getSupportFragmentManager();
         if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {
             LocalyticsWrapper.tagScreen(getScreenTag());
@@ -1073,26 +1036,8 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             syncCartInfoFromPreference();
         }
 
-        if (mSyncNeeded) {
-            mSyncNeeded = false;
-            loadNavigationItems();
-        } else {
-            syncMainMenuIfNeeded();
-        }
-
         if (AppDataDynamic.isStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
-        }
-    }
-
-    private void syncMainMenuIfNeeded() {
-        SectionManager sectionManager = new SectionManager(getCurrentActivity(), SectionManager.MAIN_MENU);
-        SectionData sectionData = sectionManager.getStoredSectionData();
-        if (sectionData == null || sectionData.getSections() == null || sectionData.getSections().size() == 0) {
-            if (!checkInternetConnection()) return;
-            // Need to refresh
-            mSyncNeeded = true;
-            new GetDynamicPageTask<>(getCurrentActivity(), SectionManager.MAIN_MENU, false, false, true, true).startTask();
         }
     }
 
@@ -1101,13 +1046,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         super.onPause();
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
-        }
-
-        if (mDynamicAppDataBroadcastReceiver != null) {
-            try {
-                LocalBroadcastManager.getInstance(this).unregisterReceiver(mDynamicAppDataBroadcastReceiver);
-            } catch (IllegalArgumentException e) {
-            }
         }
     }
 
@@ -1143,12 +1081,15 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
      */
     @Override
     public void onNavigationSelection(String name) {
-        ((NavigationSelectedValueAware) mNavRecyclerView.getAdapter()).setSelectedNavigationCategory(name);
+        if (mNavRecyclerView != null && mNavRecyclerView.getAdapter() != null) {
+            ((NavigationSelectedValueAware) mNavRecyclerView.getAdapter()).setSelectedNavigationCategory(name);
+        }
     }
 
     @Override
     public void closeDrawer() {
-        mDrawerLayout.closeDrawers();
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawers();
+        }
     }
-
 }

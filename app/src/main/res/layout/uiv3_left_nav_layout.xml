@@ -9,26 +9,40 @@
     android:clickable="true"
     app:insetForeground="#4000">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/uiv3_left_nav_header" />
+        <include
+            android:id="@+id/layoutNavHeader"
+            layout="@layout/uiv3_left_nav_header" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/listNavigation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutNavHeader" />
 
         <ListView
             android:id="@+id/lstMyAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/layoutNavHeader"
             android:divider="@null"
             android:dividerHeight="0dp"
             android:visibility="gone" />
-    </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBarMenu"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutNavHeader"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout
         android:id="@+id/layoutSubNavigationItems"

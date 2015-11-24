@@ -134,32 +134,30 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
             });
 
             TextView txtVariableWeightMsg = (TextView) base.findViewById(R.id.txtVariableWeightMsg);
-            if(!TextUtils.isEmpty(order.getVariableWeightMsg()) &&
-                    !TextUtils.isEmpty(order.getVariableWeightLink())){
+            if (!TextUtils.isEmpty(order.getVariableWeightMsg()) &&
+                    !TextUtils.isEmpty(order.getVariableWeightLink())) {
                 txtVariableWeightMsg.setVisibility(View.VISIBLE);
-                SpannableString spannableString = new SpannableString(order.getVariableWeightMsg() + " "+
-                                        getString(R.string.know_more));
+                SpannableString spannableString = new SpannableString(order.getVariableWeightMsg() + " " +
+                        getString(R.string.know_more));
                 spannableString.setSpan(new ClickableSpan() {
-                    @Override
-                    public void onClick(View view) {
-                        trackEvent(TrackingAware.CHECKOUT_KNOW_MORE_LINK_CLICKED, null);
-                        Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                        intent.putExtra(Constants.WEBVIEW_URL, order.getVariableWeightLink());
-                        intent.putExtra(Constants.WEBVIEW_TITLE, (order.getVariableWeightMsg()));
-                        startActivity(intent);
-                    }
-                }, order.getVariableWeightMsg().length() + 1 , order.getVariableWeightMsg().length() + 1 +
-                                getString(R.string.know_more).length() ,
+                                            @Override
+                                            public void onClick(View view) {
+                                                trackEvent(TrackingAware.CHECKOUT_KNOW_MORE_LINK_CLICKED, null);
+                                                Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                                                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
+                                                intent.putExtra(Constants.WEBVIEW_URL, order.getVariableWeightLink());
+                                                intent.putExtra(Constants.WEBVIEW_TITLE, (order.getVariableWeightMsg()));
+                                                startActivity(intent);
+                                            }
+                                        }, order.getVariableWeightMsg().length() + 1, order.getVariableWeightMsg().length() + 1 +
+                                getString(R.string.know_more).length(),
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 txtVariableWeightMsg.setMovementMethod(LinkMovementMethod.getInstance());
                 txtVariableWeightMsg.setText(spannableString);
 
-            }else {
+            } else {
                 txtVariableWeightMsg.setVisibility(View.GONE);
             }
-
-
 
             TextView txtSlotTime = (TextView) base.findViewById(R.id.txtSlotTime);
             if (order.getSlotDisplay() != null) {
@@ -167,7 +165,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                 String time = order.getSlotDisplay().getTime();
                 String display = "";
                 if (!TextUtils.isEmpty(date)) {
-                    display += date+"\n";
+                    display += date + "\n";
                 }
                 if (!TextUtils.isEmpty(time)) {
                     if (!TextUtils.isEmpty(display)) {
@@ -215,7 +213,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
     }
 
     public void onContinueBtnClicked(View view) {
-        goToHome(false);
+        goToHome();
     }
 
     @Override
@@ -230,12 +228,12 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
 
     @Override
     public void onBackPressed() {
-        goToHome(false);
+        goToHome();
     }
 
     @Override
     public void onChangeTitle(String title) {
-        goToHome(false);
+        goToHome();
     }
 
     @Override

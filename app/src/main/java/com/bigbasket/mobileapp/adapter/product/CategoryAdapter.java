@@ -20,9 +20,9 @@ public class CategoryAdapter {
     public static final String COLUMN_BLOB = "blob";
     public static final String COLUMN_IMAGE_PATH = "icon";
     public static final String COLUMN_FLAT_PAGE = "flat_page";
-    public static final String tableName = "category";
-    public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "%3$s TEXT NOT NULL, %4$s TEXT NOT NULL, %5$s TEXT, %6$s TEXT, %7$s TEXT, %8$s BLOB );", tableName, COLUMN_ID, COLUMN_SLUG,
+    public static final String TABLE_NAME = "category";
+    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "%3$s TEXT NOT NULL, %4$s TEXT NOT NULL, %5$s TEXT, %6$s TEXT, %7$s TEXT, %8$s BLOB );", TABLE_NAME, COLUMN_ID, COLUMN_SLUG,
             COLUMN_VERSION, COLUMN_NAME, COLUMN_IMAGE_PATH, COLUMN_FLAT_PAGE, COLUMN_BLOB
     );
     private Context context;
@@ -41,7 +41,7 @@ public class CategoryAdapter {
     }
 
     public void insert(ArrayList<TopCategoryModel> categoryListArray, String version) {
-        DatabaseHelper.db.execSQL("DELETE FROM " + tableName);
+        DatabaseHelper.db.execSQL("DELETE FROM " + TABLE_NAME);
 
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_SLUG, Constants.TOP_MENU_SLUG);
@@ -51,7 +51,7 @@ public class CategoryAdapter {
         cv.put(COLUMN_FLAT_PAGE, Constants.FLAT_PAGE);
         byte[] bytesCategories = ResponseSerializer.serializeObject(categoryListArray);
         cv.put(COLUMN_BLOB, bytesCategories);
-        DatabaseHelper.db.insert(tableName, null, cv);
+        DatabaseHelper.db.insert(TABLE_NAME, null, cv);
 
         for (int i = 0; i < categoryListArray.size(); i++) {
             ContentValues cvc = new ContentValues();
@@ -61,7 +61,7 @@ public class CategoryAdapter {
             cvc.put(COLUMN_IMAGE_PATH, categoryListArray.get(i).getImagePath());
             cvc.put(COLUMN_FLAT_PAGE, categoryListArray.get(i).getFlatPage());
             cvc.put(COLUMN_BLOB, new byte[]{});
-            DatabaseHelper.db.insert(tableName, null, cvc);
+            DatabaseHelper.db.insert(TABLE_NAME, null, cvc);
         }
     }
 }

@@ -23,7 +23,6 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
-import com.bigbasket.mobileapp.util.BBUrlEncodeUtils;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -209,7 +208,6 @@ public class BasketOperationTask<T extends AppOperationAware> {
                 .getString(R.string.please_wait));
         String reqProdId = product.getSku();
         Call<CartOperationApiResponse> call = null;
-        HashMap<String, String> urlEncodedBasketQueryMap = BBUrlEncodeUtils.urlEncode(basketQueryMap.get());
         String searchTerm = null;
         if (navigationCtx != null && (navigationCtx.startsWith("pl.ps"))) {
             navigationCtx = "pl.ps";
@@ -220,16 +218,16 @@ public class BasketOperationTask<T extends AppOperationAware> {
         }
         switch (basketOperation) {
             case BasketOperation.INC:
-                call = bigBasketApiService.incrementCartItem(navigationCtx, searchTerm, reqProdId, qty, urlEncodedBasketQueryMap);
+                call = bigBasketApiService.incrementCartItem(navigationCtx, searchTerm, reqProdId, qty, basketQueryMap.get());
                 break;
             case BasketOperation.DEC:
-                call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, urlEncodedBasketQueryMap);
+                call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get());
                 break;
             case BasketOperation.SET:
-                call = bigBasketApiService.setCartItem(navigationCtx, searchTerm, reqProdId, qty, urlEncodedBasketQueryMap);
+                call = bigBasketApiService.setCartItem(navigationCtx, searchTerm, reqProdId, qty, basketQueryMap.get());
                 break;
             case BasketOperation.EMPTY:
-                call = bigBasketApiService.setCartItem(navigationCtx, null, reqProdId, "0", urlEncodedBasketQueryMap);
+                call = bigBasketApiService.setCartItem(navigationCtx, null, reqProdId, "0", basketQueryMap.get());
                 break;
         }
         if (call != null) {
@@ -309,7 +307,6 @@ public class BasketOperationTask<T extends AppOperationAware> {
 
         @Override
         public boolean updateProgress() {
-            // Due to some n/w error things went bad
             context.hideProgressDialog();
             return true;
         }

@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
+import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -80,8 +80,8 @@ public class SearchViewAdapter<T> extends CursorAdapter {
                     public void onClick(View v) {
                         String deleteTerm = String.valueOf(v.getTag());
                         if (!TextUtils.isEmpty(deleteTerm)) {
-                            MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(context);
-                            mostSearchesAdapter.deleteTerm(deleteTerm);
+                            MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(context);
+                            mostSearchesDbHelper.deleteTerm(deleteTerm);
                             searchTermRemoveAware.notifySearchTermAdapter();
                         }
                     }

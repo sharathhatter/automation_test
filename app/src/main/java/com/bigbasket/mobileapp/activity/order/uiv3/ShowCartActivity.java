@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -372,7 +371,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToHome(false);
+                goToHome();
             }
         });
 

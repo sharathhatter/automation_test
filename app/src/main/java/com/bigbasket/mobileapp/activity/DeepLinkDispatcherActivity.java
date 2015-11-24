@@ -70,7 +70,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         // if user minimize app isFromBckGround=> False
         if (sourceName != null && sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION)
                 && isFromBckGround) {
-            goToHome(false);
+            goToHome();
         } else {
             finish();
         }

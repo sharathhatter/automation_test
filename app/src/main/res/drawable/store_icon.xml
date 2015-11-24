@@ -3,5 +3,5 @@
     <item android:drawable="@drawable/grey_store_icon" android:state_focused="true" android:state_pressed="true" />
     <item android:drawable="@drawable/white_store_icon" android:state_focused="true" android:state_pressed="false" />
     <item android:drawable="@drawable/grey_store_icon" android:state_focused="false" android:state_pressed="true" />
-    <item android:drawable="@drawable/white_store_icon"></item>
+    <item android:drawable="@drawable/white_store_icon" />
 </selector>

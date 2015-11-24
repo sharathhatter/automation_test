@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -59,10 +58,10 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         mIsInShopFromPreviousOrderMode = getIntent().getBooleanExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, false);
         setTitle(mIsInShopFromPreviousOrderMode ? getString(R.string.shopFromPreviousOrder) :
                 getString(R.string.my_order_label));
-        if(savedInstanceState != null){
-            int savedCurrentPage  = savedInstanceState.getInt(Constants.CURRENT_PAGE, 1);
+        if (savedInstanceState != null) {
+            int savedCurrentPage = savedInstanceState.getInt(Constants.CURRENT_PAGE, 1);
             loadOrders(savedCurrentPage);
-        }else {
+        } else {
             loadOrders(currentPage);
         }
 
@@ -124,7 +123,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToHome(false);
+                goToHome();
             }
         });
 
@@ -180,7 +179,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
 
     private void updateOrderList(ArrayList<Order> olderOrderList, ArrayList<Order> newOrderList,
-                                            int currentPage, int totalPages) {
+                                 int currentPage, int totalPages) {
 
         olderOrderList.addAll(orderListAdapter.getOrders().size(), newOrderList);
         orderListAdapter.setCurrentPage(currentPage);
