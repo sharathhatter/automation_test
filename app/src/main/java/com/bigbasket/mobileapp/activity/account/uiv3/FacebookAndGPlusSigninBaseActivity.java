@@ -28,7 +28,7 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
 
             @Override
             public void onCancel() {
-
+                hideKeyboard(getCurrentActivity(), getCurrentFocus());
             }
 
             @Override
