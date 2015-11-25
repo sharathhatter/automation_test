@@ -20,11 +20,24 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_normal">
 
+            <ImageView
+                android:id="@+id/imgClear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/clear"
+                android:paddingLeft="@dimen/margin_normal"
+                android:paddingRight="@dimen/margin_normal"
+                android:src="@drawable/ic_close_grey600_24dp"
+                android:visibility="gone" />
+
             <EditText
                 android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/imgClear"
                 android:background="@null"
                 android:hint="@string/search"
                 android:imeActionLabel="@string/search"
@@ -50,17 +63,6 @@
                 android:layout_toLeftOf="@id/imgVoice"
                 android:contentDescription="@string/scan"
                 android:src="@drawable/barcode" />
-
-            <ImageView
-                android:id="@+id/imgClear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/margin_normal"
-                android:contentDescription="@string/clear"
-                android:src="@drawable/ic_close_grey600_24dp"
-                android:visibility="gone" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 

@@ -166,7 +166,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
                     if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
                         Bundle data = new Bundle();
                         data.putInt(Constants.FRAGMENT_CODE, NavigationCodes.GO_TO_BASKET);
-                        launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, data);
+                        launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, data, true);
                     } else {
                         startCheckout(cartTotal);
                     }

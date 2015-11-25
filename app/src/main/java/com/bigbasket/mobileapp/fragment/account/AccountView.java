@@ -131,7 +131,7 @@ public class AccountView<T> {
             switch (position) {
                 case 0:
                     ctx.trackEvent(TrackingAware.LOGIN_CLICKED, map);
-                    ctx.launchLogin(TrackEventkeys.ACCOUNT_MENU);
+                    ctx.launchLogin(TrackEventkeys.ACCOUNT_MENU, false);
                     break;
                 case 1:
                     ctx.launchMoEngageCommunicationHub();
