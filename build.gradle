@@ -17,4 +17,9 @@ allprojects {
     repositories {
         jcenter()
     }
+    ext {
+        supportLibVersion = '22.2.1'
+        playServicesLibVersion = '7.5.0'
+        picassoLibVersion = '2.5.2'
+    }
 }
