@@ -366,7 +366,6 @@ public class Constants {
     public static final String FRAGMENT_CODE = "fragmentCode";
     public static final String FRAGMENT_TAG = "fragmentTag";
     public static final String FRAGMENT_STATE = "fragmentState";
-    public static final String LOGOUT = "logout";
     public static final String REMEMBER_ME_PREF = "CHECKBOX"; // Sybrant gave this name, can't change it for compatibility with older versions
     public static final String EMAIL_PREF = "NAME";
     public static final String PASSWD_PREF = "PWD";
@@ -484,7 +483,6 @@ public class Constants {
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
     public static final String AUTH_TOKEN = "auth_token";
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
-    public static final String SOCIAL_LOGOUT = "social_logout";
     public static final int SOCIAL_ACCOUNT_NOT_LINKED = 1835;
     public static final String REOPEN_LANDING_PAGE = "reopen_landing";
 
@@ -492,7 +490,6 @@ public class Constants {
     public static final String SIGN_IN_ACCOUNT_TYPE = "signIn";
     public static final String REGISTER_ACCOUNT_TYPE = "register";
 
-    public static final String GOOGLE_PLAY_SERVICES = "googlePlayServices";
     public static final String BUNDLE_PACK = "bundle-pack";
     public static final String NOW_AT_BB = "nowatbb";
     public static final String NEW_AT_BB = "new_launches";
@@ -580,11 +577,11 @@ public class Constants {
 
     public static final int NOT_ALPHANUMERIC_TXT_SHOPPING_LIST_DIALOG = 868686;
 
-    public static final String FORGOT_PASSWORD_DIALOG = "FPassDialog";
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
     public static final String FIRSE_TIME_USER = "fst_tm_user";
     public static final String DISCOUNT_PAGE = "Discount Page";
+    public static final String GO_TO_HOME = "go_to_home";
 
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";

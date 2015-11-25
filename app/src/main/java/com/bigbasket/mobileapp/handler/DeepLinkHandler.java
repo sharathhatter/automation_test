@@ -192,7 +192,7 @@ public class DeepLinkHandler {
                 return SUCCESS;
             case Constants.AUTH:
                 if (authParameters.isAuthTokenEmpty()) {
-                    context.getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_DEEP_LINK);
+                    context.getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_DEEP_LINK, true);
                     return SUCCESS;
                 }
                 return FAILED;
