@@ -349,9 +349,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
         } else {
             lblAmountFromWallet.setVisibility(View.GONE);
 
-            PaymentMethodsView mPaymentMethodsView = new PaymentMethodsView(this);
-            mPaymentMethodsView.setPaymentMethods(paymentTypeList, false, isInHDFCPayMode);
-            layoutPaymentOptions.addView(mPaymentMethodsView);
+            PaymentMethodsView paymentMethodsView = new PaymentMethodsView(this);
+            paymentMethodsView.setPaymentMethods(paymentTypeList, false, isInHDFCPayMode);
+            layoutPaymentOptions.addView(paymentMethodsView);
         }
         renderCheckOutProgressView();
     }

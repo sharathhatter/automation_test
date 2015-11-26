@@ -99,7 +99,7 @@ public class PaymentMethodsView extends LinearLayout {
 
             /**setting the font**/
             mPaymentDisplayNameTextView.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
-            mPaymentOfferTextView.setTypeface(FontHolder.getInstance(context).getFaceRobotoLight());
+            mPaymentOfferTextView.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
 
             if (!TextUtils.isEmpty(paymentType.getDisplayName())) {
                 mPaymentDisplayNameTextView.setText(paymentType.getDisplayName());

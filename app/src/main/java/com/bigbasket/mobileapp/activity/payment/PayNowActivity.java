@@ -252,9 +252,9 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
 
     private void displayPaymentMethods(ArrayList<PaymentType> paymentTypeList) {
         ViewGroup layoutPaymentOptions = (ViewGroup) findViewById(R.id.layoutPaymentOptions);
-        PaymentMethodsView mPaymentMethodsView = new PaymentMethodsView(this);
-        mPaymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
-        layoutPaymentOptions.addView(mPaymentMethodsView);
+        PaymentMethodsView paymentMethodsView = new PaymentMethodsView(this);
+        paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
+        layoutPaymentOptions.addView(paymentMethodsView);
     }
 
     @Override
