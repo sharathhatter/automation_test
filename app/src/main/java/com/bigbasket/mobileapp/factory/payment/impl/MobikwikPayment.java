@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class MobikwikPayment {
 
-    public void startPaymentGateway(HashMap<String, String> paymentParams, Activity ctx) {
+    public static void startPaymentGateway(HashMap<String, String> paymentParams, Activity ctx) {
         Intent walletIntent = new Intent(Constants.MOBIKWIKSDK);
         walletIntent.setPackage(ctx.getPackageName());
         walletIntent.setType("text/plain");

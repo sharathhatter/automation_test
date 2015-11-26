@@ -75,31 +75,35 @@
                 android:layout_marginBottom="@dimen/margin_small"
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_small"
                 android:background="@color/white"
                 android:orientation="vertical"
-                android:paddingBottom="@dimen/padding_normal"
-                android:paddingLeft="@dimen/padding_normal"
+                android:paddingLeft="@dimen/padding_small"
                 android:paddingRight="@dimen/padding_small"
+                android:paddingBottom="@dimen/padding_normal"
                 android:paddingTop="@dimen/padding_normal">
-
-                <LinearLayout
-                    android:id="@+id/layoutPaymentOptions"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                </LinearLayout>
 
                 <TextView
                     android:id="@+id/lblAmountFromWallet"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginTop="@dimen/margin_mini"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:padding="@dimen/padding_small"
+                    android:layout_gravity="center"
                     android:text="@string/fromWalletMsg"
                     android:textColor="@color/uiv3_dialog_header_text_bkg"
                     android:textSize="@dimen/primary_text_size" />
+
+                <com.bigbasket.mobileapp.view.PaymentMethodsView
+                    android:id="@+id/layoutPaymentOptions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/white">
+
+                </com.bigbasket.mobileapp.view.PaymentMethodsView>
+
             </LinearLayout>
 
             <RelativeLayout
@@ -184,9 +188,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_large"
             android:layout_marginRight="@dimen/margin_large"
+            android:gravity="center"
             android:text="@string/orderPlacedTakingToPaymentGateway"
             android:textSize="@dimen/heading_2_text_size" />
-
         <ProgressBar
             android:id="@+id/progressBar"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -194,6 +198,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_large"
             android:layout_marginRight="@dimen/margin_large"
-            android:layout_marginTop="@dimen/margin_normal" />
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:indeterminate="true"/>
+
     </LinearLayout>
 </RelativeLayout>

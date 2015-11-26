@@ -15,7 +15,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
-import com.bigbasket.mobileapp.factory.payment.PayNowPaymentHandler;
+import com.bigbasket.mobileapp.factory.payment.PayNowPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
@@ -32,6 +32,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
+import com.crashlytics.android.Crashlytics;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.payu.india.Payu.PayuConstants;
 
@@ -54,6 +55,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     @Nullable
     private String mHDFCPayzappTxnId;
     private double mFinalTotal;
+    private PayNowPrepaymentProcessingTask<PayNowActivity> mPayNowPrepaymentProcessingTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -153,13 +155,49 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
 
     private void startPayNow(double total) {
         mFinalTotal = total;
-        new PayNowPaymentHandler<>(this, null, mOrderId, mSelectedPaymentMethod, true, false).initiate();
+        mPayNowPrepaymentProcessingTask = new PayNowPrepaymentProcessingTask<PayNowActivity>(this,
+                null, mOrderId, mSelectedPaymentMethod, true, false){
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
+                if(isPaused() || isCancelled() || isSuspended()){
+                    return;
+                }
+                if(!success){
+                    if(errorResponse != null) {
+                        if(errorResponse.isException()){
+                            //TODO: Possible network error retry
+                            getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
+                        } else if( errorResponse.getCode() > 0) {
+                            getHandler().handleHttpError(errorResponse.getCode(),
+                                    errorResponse.getMessage(), false);
+                        } else {
+                            getHandler().sendEmptyMessage(-1 * errorResponse.getCode(),
+                                    errorResponse.getMessage(), false);
+                        }
+                    } else {
+                        //Should never happen
+                        Crashlytics.logException(new IllegalStateException(
+                                "OrderPreprocessing error without error response"));
+                    }
+                }
+            }
+        };
+        mPayNowPrepaymentProcessingTask.execute();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         processMobikWikResponse();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mPayNowPrepaymentProcessingTask != null){
+            mPayNowPrepaymentProcessingTask.cancel(true);
+        }
     }
 
     private void processMobikWikResponse() {
@@ -251,10 +289,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void displayPaymentMethods(ArrayList<PaymentType> paymentTypeList) {
-        ViewGroup layoutPaymentOptions = (ViewGroup) findViewById(R.id.layoutPaymentOptions);
-        PaymentMethodsView paymentMethodsView = new PaymentMethodsView(this);
+        PaymentMethodsView paymentMethodsView = (PaymentMethodsView)findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
-        layoutPaymentOptions.addView(paymentMethodsView);
     }
 
     @Override

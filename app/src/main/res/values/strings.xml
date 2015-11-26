@@ -428,4 +428,8 @@
     <string name="order_details">Order Details</string>
     <string name="empty_email_address_error">Please enter your e-mail address</string>
     <string name="empty_password_error">Please enter your password</string>
+    <string name="remainig_seconds_format">%1$ds</string>
+    <string name="evoucher_applied_format">"eVoucher: %1$s Applied!"</string>
+    <string name="abort_payment_transaction_confirmation">The order has been already created. It will be automatically converted to Cash on Delivery in a short while.\n\nCancel payment transaction and make the payment on delivery?</string>
+    <string name="cancel_transaction">Cancel transaction</string>
 </resources>

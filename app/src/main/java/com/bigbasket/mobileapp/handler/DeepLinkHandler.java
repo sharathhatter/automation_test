@@ -64,7 +64,6 @@ public class DeepLinkHandler {
         if (TextUtils.isEmpty(authParameters.getVisitorId())) {
             return REGISTER_DEVICE_REQUIRED;
         }
-
         if (authParameters.isAuthTokenEmpty()) {
             if (uri.getHost().contains(Constants.HTTP_HOST)) {
                 String path = uri.getPath();
