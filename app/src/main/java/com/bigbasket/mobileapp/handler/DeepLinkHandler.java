@@ -46,10 +46,8 @@ public class DeepLinkHandler {
         if (uri == null) {
             return FAILED;
         }
+
         AuthParameters authParameters = AuthParameters.getInstance(context.getCurrentActivity());
-        if (getLoginRequiredUrls().contains(uri.getHost()) && authParameters.isAuthTokenEmpty()) {
-            return LOGIN_REQUIRED;
-        }
 
         /**
          * checking if the visitorId is empty/null
@@ -57,6 +55,9 @@ public class DeepLinkHandler {
          */
         if (TextUtils.isEmpty(authParameters.getVisitorId())) {
             return REGISTER_DEVICE_REQUIRED;
+        }
+        if (getLoginRequiredUrls().contains(uri.getHost()) && authParameters.isAuthTokenEmpty()) {
+            return LOGIN_REQUIRED;
         }
         UtmHandler.postUtm(context.getCurrentActivity(), uri);
         switch (uri.getHost()) {
@@ -201,7 +202,7 @@ public class DeepLinkHandler {
                 return SUCCESS;
             case Constants.AUTH:
                 if (authParameters.isAuthTokenEmpty()) {
-                    context.getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_DEEP_LINK);
+                    context.getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_DEEP_LINK, true);
                     return SUCCESS;
                 }
                 return FAILED;

@@ -53,7 +53,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             showToast(getString(R.string.login_required));
             Bundle data = new Bundle(1);
             data.putString(Constants.DEEPLINK_URL, uri.toString());
-            launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, data);
+            launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, data, true);
         } else if (resultCode == DeepLinkHandler.REGISTER_DEVICE_REQUIRED) {
             /**
              * launch splash activity for visitor registration

@@ -17,6 +17,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.fragment.dialogs.ConfirmationDialogFragment;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.SocialAccountType;
@@ -301,7 +302,16 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 editor.apply();
             }
         }
-        goToHome();
+        boolean shouldGoToHome = getIntent().getBooleanExtra(Constants.GO_TO_HOME, true);
+        if (shouldGoToHome) {
+            goToHome();
+        } else {
+            if (getCurrentActivity() instanceof CartInfoAware) {
+                ((CartInfoAware) getCurrentActivity()).markBasketDirty();
+                setResult(NavigationCodes.BASKET_CHANGED);
+            }
+            finish();
+        }
     }
 
     private void logSignInFailureEvent(String type, String reason) {

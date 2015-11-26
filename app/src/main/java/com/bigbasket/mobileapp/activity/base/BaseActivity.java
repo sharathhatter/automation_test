@@ -288,7 +288,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             showToast(getString(R.string.loginToContinue));
             Bundle bundle = new Bundle(1);
             bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_COMMUNICATION_HUB);
-            launchLogin(getCurrentNavigationContext(), bundle);
+            launchLogin(getCurrentNavigationContext(), bundle, true);
         }
 
         Map<String, String> eventAttribs = new HashMap<>();
@@ -417,7 +417,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                            Bundle valuePassed) {
         switch (sourceName) {
             case NavigationCodes.GO_TO_LOGIN:
-                launchLogin(getCurrentNavigationContext(), valuePassed);
+                launchLogin(getCurrentNavigationContext(), valuePassed, true);
                 break;
         }
 
@@ -793,13 +793,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
         trackEvent(TrackingAware.SHOW_PASSWORD_ENABLED, eventAttribs);
     }
 
-    public void launchLogin(String navigationCtx) {
-        launchLogin(navigationCtx, null);
+    public void launchLogin(String navigationCtx, boolean shouldGoBackToHomePage) {
+        launchLogin(navigationCtx, null, shouldGoBackToHomePage);
     }
 
-    public void launchLogin(String navigationCtx, Bundle params) {
+    public void launchLogin(String navigationCtx, Bundle params, boolean shouldGoBackToHomePage) {
         Intent loginIntent = new Intent(this, SignInActivity.class);
         loginIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        loginIntent.putExtra(Constants.GO_TO_HOME, shouldGoBackToHomePage);
         if (params != null) {
             if (params.containsKey(Constants.DEEPLINK_URL)) {
                 loginIntent.putExtra(Constants.DEEP_LINK, params.getString(Constants.DEEPLINK_URL));
@@ -896,7 +897,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void handleTutorialResponse(int resultCode) {
         switch (resultCode) {
             case NavigationCodes.LAUNCH_LOGIN:
-                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
+                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, true);
                 break;
             case NavigationCodes.LAUNCH_CITY:
                 showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, false);
