@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -214,7 +215,22 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
                 editor.commit();
                 AuthParameters.reset();
 
+                /**
+                 * checking if the activity was launched from the DeeplinkDispatcherActivity
+                 * if redirectIntent is not null the same intent is fired again i.e the calling intent, while finishing the current activity
+                 */
+                Intent redirectIntent = getIntent().getParcelableExtra(Constants.REDIRECT_INTENT);
+                if (redirectIntent != null) {
+                    try {
+                        startActivity(redirectIntent);
+                        finish();
+                        return;
+                    } catch (ActivityNotFoundException ex) {
+
+                    }
+                }
                 startLandingPage();
+
             }
 
             @Override
