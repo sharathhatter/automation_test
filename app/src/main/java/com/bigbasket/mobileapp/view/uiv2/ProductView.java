@@ -23,10 +23,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -36,13 +34,11 @@ import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
-import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
-import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -564,94 +560,36 @@ public final class ProductView {
                     }
                 }
 
-                viewIncBasketQty.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (basketOperationAware.checkInternetConnection()) {
-                            BasketOperationTask basketOperationTask =
-                                    new BasketOperationTask.Builder<>(basketOperationAware, BasketOperation.INC, product)
-                                            .withBasketCountTextView(txtInBasket)
-                                            .withViewDecQty(viewDecBasketQty)
-                                            .withViewIncQty(viewIncBasketQty)
-                                            .withViewAddToBasket(imgAddToBasket)
-                                            .withEventName(TrackingAware.BASKET_INCREMENT)
-                                            .withNavigationCtx(navigationCtx)
-                                            .withProductView(productViewHolder.itemView)
-                                            .withCartInfo(cartInfo)
-                                            .withEditTextQty(editTextQty)
-                                            .withTabName(tabName)
-                                            .withBasketQueryMap(basketQueryMap)
-                                            .build();
-                            basketOperationTask.startTask();
-                        } else {
-                            productViewDisplayDataHolder.getHandler().sendOfflineError();
-                        }
-                    }
-                });
+                viewIncBasketQty.setTag(R.id.basket_op_product_tag_id, product);
+                viewIncBasketQty.setTag(R.id.basket_op_qty_tag_id, null);
+                viewIncBasketQty.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_INCREMENT);
+                viewIncBasketQty.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
+                viewIncBasketQty.setTag(R.id.basket_op_tabname_tag_id, tabName);
+                viewIncBasketQty.setTag(R.id.basket_op_read_input_qty_tag_id, null);
+                viewIncBasketQty.setTag(R.id.basket_op_product_view_holder_tag_id, productViewHolder);
+                viewIncBasketQty.setTag(R.id.basket_op_additional_query_map_tag_id, basketQueryMap);
+                viewIncBasketQty.setTag(R.id.basket_op_cart_info_map_tag_id, cartInfo);
 
-                viewDecBasketQty.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (basketOperationAware.checkInternetConnection()) {
-                            BasketOperationTask basketOperationTask =
-                                    new BasketOperationTask.Builder<>(basketOperationAware, BasketOperation.DEC, product)
-                                            .withBasketCountTextView(txtInBasket)
-                                            .withViewDecQty(viewDecBasketQty)
-                                            .withViewIncQty(viewIncBasketQty)
-                                            .withViewAddToBasket(imgAddToBasket)
-                                            .withEventName(TrackingAware.BASKET_DECREMENT)
-                                            .withNavigationCtx(navigationCtx)
-                                            .withProductView(productViewHolder.itemView)
-                                            .withCartInfo(cartInfo)
-                                            .withEditTextQty(editTextQty)
-                                            .withTabName(tabName)
-                                            .withBasketQueryMap(basketQueryMap)
-                                            .build();
-                            basketOperationTask.startTask();
-                        } else {
-                            productViewDisplayDataHolder.getHandler().sendOfflineError();
-                        }
-                    }
+                viewDecBasketQty.setTag(R.id.basket_op_product_tag_id, product);
+                viewDecBasketQty.setTag(R.id.basket_op_qty_tag_id, null);
+                viewDecBasketQty.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_DECREMENT);
+                viewDecBasketQty.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
+                viewDecBasketQty.setTag(R.id.basket_op_tabname_tag_id, tabName);
+                viewDecBasketQty.setTag(R.id.basket_op_read_input_qty_tag_id, null);
+                viewDecBasketQty.setTag(R.id.basket_op_product_view_holder_tag_id, productViewHolder);
+                viewDecBasketQty.setTag(R.id.basket_op_additional_query_map_tag_id, basketQueryMap);
+                viewDecBasketQty.setTag(R.id.basket_op_cart_info_map_tag_id, cartInfo);
 
-                });
+                imgAddToBasket.setTag(R.id.basket_op_product_tag_id, product);
+                imgAddToBasket.setTag(R.id.basket_op_qty_tag_id, "1");
+                imgAddToBasket.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_DECREMENT);
+                imgAddToBasket.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
+                imgAddToBasket.setTag(R.id.basket_op_tabname_tag_id, tabName);
+                imgAddToBasket.setTag(R.id.basket_op_read_input_qty_tag_id, productViewDisplayDataHolder.isShowQtyInput());
+                imgAddToBasket.setTag(R.id.basket_op_product_view_holder_tag_id, productViewHolder);
+                imgAddToBasket.setTag(R.id.basket_op_additional_query_map_tag_id, basketQueryMap);
+                imgAddToBasket.setTag(R.id.basket_op_cart_info_map_tag_id, cartInfo);
 
-                imgAddToBasket.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (basketOperationAware.checkInternetConnection()) {
-                            String qty = "1";
-                            if (productViewDisplayDataHolder.isShowQtyInput()) {
-                                String txt = editTextQty.getText().toString();
-                                if (TextUtils.isEmpty(txt)) {
-                                    Toast.makeText(basketOperationAware.getCurrentActivity(),
-                                            "Quantity shouldn\'t be blank", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                BaseActivity.hideKeyboard(basketOperationAware.getCurrentActivity(),
-                                        editTextQty);
-                                qty = txt;
-                            }
-                            BasketOperationTask basketOperationTask =
-                                    new BasketOperationTask.Builder<>(basketOperationAware, BasketOperation.INC, product)
-                                            .withBasketCountTextView(txtInBasket)
-                                            .withViewDecQty(viewDecBasketQty)
-                                            .withViewIncQty(viewIncBasketQty)
-                                            .withViewAddToBasket(imgAddToBasket)
-                                            .withEventName(TrackingAware.BASKET_ADD)
-                                            .withNavigationCtx(navigationCtx)
-                                            .withProductView(productViewHolder.itemView)
-                                            .withCartInfo(cartInfo)
-                                            .withEditTextQty(editTextQty)
-                                            .withTabName(tabName)
-                                            .withBasketQueryMap(basketQueryMap)
-                                            .withQty(qty)
-                                            .build();
-                            basketOperationTask.startTask();
-                        } else {
-                            productViewDisplayDataHolder.getHandler().sendOfflineError();
-                        }
-                    }
-                });
                 txtOutOfStockORNotForSale.setVisibility(View.GONE);
             } else {
                 txtInBasket.setVisibility(View.GONE);

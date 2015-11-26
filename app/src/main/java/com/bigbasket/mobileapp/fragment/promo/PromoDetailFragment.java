@@ -29,9 +29,9 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponse
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.handler.OnBrandPageListener;
-import com.bigbasket.mobileapp.handler.OnPromoClickListener;
-import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
+import com.bigbasket.mobileapp.handler.click.OnBrandPageListener;
+import com.bigbasket.mobileapp.handler.click.OnPromoClickListener;
+import com.bigbasket.mobileapp.handler.click.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;

@@ -411,6 +411,7 @@
     <string name="popularCategories">Popular Categories</string>
     <string name="suggestion">Suggestion</string>
     <string name="lblContinue">Continue</string>
+    <string name="quantity_missing">Quantity shouldn\'t be blank</string>
 
     <!-- Speciality Stores -->
     <string name="speciality_shop_title">Speciality Shop</string>

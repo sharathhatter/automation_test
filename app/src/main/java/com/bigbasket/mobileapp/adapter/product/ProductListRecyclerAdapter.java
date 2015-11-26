@@ -11,9 +11,9 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
-import com.bigbasket.mobileapp.handler.OnPromoClickListener;
-import com.bigbasket.mobileapp.handler.OnSpecialityShopIconClickListener;
-import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
+import com.bigbasket.mobileapp.handler.click.OnPromoClickListener;
+import com.bigbasket.mobileapp.handler.click.OnSpecialityShopIconClickListener;
+import com.bigbasket.mobileapp.handler.click.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -48,7 +48,6 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private View.OnClickListener mSpecialityShopClickListener;
     private View.OnClickListener mPromoClickListener;
     private View.OnClickListener productDetailOnClickListener;
-    private View.OnClickListener brandPageListener;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -107,7 +106,8 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         switch (viewType) {
             case VIEW_TYPE_DATA:
                 View row = inflater.inflate(R.layout.uiv3_product_row, viewGroup, false);
-                return new ProductViewHolder(row, mSpecialityShopClickListener, mPromoClickListener, productDetailOnClickListener, null);
+                return new ProductViewHolder(row, mSpecialityShopClickListener, mPromoClickListener,
+                        productDetailOnClickListener, null);
             case VIEW_TYPE_LOADING:
                 row = inflater.inflate(R.layout.uiv3_list_loading_footer, viewGroup, false);
                 return new FixedLayoutViewHolder(row);

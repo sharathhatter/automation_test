@@ -10,21 +10,19 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.handler.click.basket.OnCartBasketActionListener;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
-import com.bigbasket.mobileapp.interfaces.BasketChangeQtyAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
@@ -33,10 +31,8 @@ import com.bigbasket.mobileapp.model.cart.CartItem;
 import com.bigbasket.mobileapp.model.cart.CartItemHeader;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
-import com.bigbasket.mobileapp.model.product.Product;
-import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -376,101 +372,30 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                     txtInBasket.setVisibility(View.GONE);
                 }
 
+                imgDecBasketQty.setTag(R.id.basket_op_cart_item_tag_id, cartItem);
+                imgDecBasketQty.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_DECREMENT);
+                imgDecBasketQty.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
+                imgDecBasketQty.setTag(R.id.basket_op_tabname_tag_id, TrackEventkeys.SINGLE_TAB_NAME);
+                imgDecBasketQty.setTag(R.id.basket_op_additional_query_map_tag_id, basketQueryMap);
+                imgDecBasketQty.setTag(R.id.basket_op_cart_view_holder_tag_id, rowHolder);
+                imgDecBasketQty.setTag(R.id.basket_op_cart_page_tab_index_tag_id, currentTabIndex);
 
-                imgDecBasketQty.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(context.getCurrentActivity())) {
-                            if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
-                            Product product = new Product(cartItem.getProductBrand(),
-                                    cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
-                                    cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
-                                    (int) cartItem.getTotalQty() - 1);
+                imgIncBasketQty.setTag(R.id.basket_op_cart_item_tag_id, cartItem);
+                imgIncBasketQty.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_INCREMENT);
+                imgIncBasketQty.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
+                imgIncBasketQty.setTag(R.id.basket_op_tabname_tag_id, TrackEventkeys.SINGLE_TAB_NAME);
+                imgIncBasketQty.setTag(R.id.basket_op_additional_query_map_tag_id, basketQueryMap);
+                imgIncBasketQty.setTag(R.id.basket_op_cart_view_holder_tag_id, rowHolder);
+                imgIncBasketQty.setTag(R.id.basket_op_cart_page_tab_index_tag_id, currentTabIndex);
 
-                            BasketOperationTask basketOperationTask =
-                                    new BasketOperationTask.Builder<>(context, BasketOperation.DEC, product)
-                                            .withEventName(TrackingAware.BASKET_DECREMENT)
-                                            .withNavigationCtx(navigationCtx)
-                                            .withTabName(TrackEventkeys.SINGLE_TAB_NAME)
-                                            .withBasketQueryMap(basketQueryMap)
-                                            .build();
-                            basketOperationTask.startTask();
-
-                            if (context instanceof BasketChangeQtyAware) {
-                                int scrollOffset = cartItem.getTotalQty() == 1 ? 1 : 0;
-                                ((BasketChangeQtyAware) context).onBasketQtyChanged(rowHolder.getAdapterPosition() - scrollOffset,
-                                        currentTabIndex);
-                            }
-                        } else {
-                            Toast toast = Toast.makeText(context.getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
-                            toast.show();
-                        }
-                    }
-                });
-                imgIncBasketQty.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(context.getCurrentActivity())) {
-                            if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
-                            Product product = new Product(cartItem.getProductBrand(),
-                                    cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
-                                    cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
-                                    (int) cartItem.getTotalQty() + 1);
-
-                            BasketOperationTask basketOperationTask =
-                                    new BasketOperationTask.Builder<>(context, BasketOperation.INC, product)
-                                            .withEventName(TrackingAware.BASKET_INCREMENT)
-                                            .withNavigationCtx(navigationCtx)
-                                            .withTabName(TrackEventkeys.SINGLE_TAB_NAME)
-                                            .withBasketQueryMap(basketQueryMap)
-                                            .build();
-                            basketOperationTask.startTask();
-
-                            if (context instanceof BasketChangeQtyAware) {
-                                ((BasketChangeQtyAware) context).onBasketQtyChanged(rowHolder.getAdapterPosition(),
-                                        currentTabIndex);
-                            }
-                        } else {
-                            Toast toast = Toast.makeText(context.getCurrentActivity(),
-                                    "Unable to connect to Internet", Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
-                            toast.show();
-                        }
-                    }
-                });
-                imgRemove.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(context.getCurrentActivity())) {
-                            if (rowHolder.getAdapterPosition() == RecyclerView.NO_POSITION) return;
-                            Product product = new Product(cartItem.getProductBrand(),
-                                    cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
-                                    cartItem.getTopCategoryName(), cartItem.getProductCategoryName(),
-                                    0);
-
-                            BasketOperationTask basketOperationTask =
-                                    new BasketOperationTask.Builder<>(context, BasketOperation.EMPTY, product)
-                                            .withBasketCountTextView(txtInBasket)
-                                            .withQty("0")
-                                            .withEventName(TrackingAware.BASKET_REMOVE)
-                                            .withNavigationCtx(navigationCtx)
-                                            .withTabName(TrackEventkeys.SINGLE_TAB_NAME)
-                                            .withBasketQueryMap(basketQueryMap)
-                                            .build();
-                            basketOperationTask.startTask();
-
-                            if (context instanceof BasketChangeQtyAware) {
-                                ((BasketChangeQtyAware) context).onBasketQtyChanged(rowHolder.getAdapterPosition() - 1,
-                                        currentTabIndex);
-                            }
-                        } else {
-                            Toast toast = Toast.makeText(context.getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
-                            toast.show();
-                        }
-                    }
-                });
+                imgRemove.setTag(R.id.basket_op_cart_item_tag_id, cartItem);
+                imgRemove.setTag(R.id.basket_op_qty_tag_id, "0");
+                imgRemove.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_INCREMENT);
+                imgRemove.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
+                imgRemove.setTag(R.id.basket_op_tabname_tag_id, TrackEventkeys.SINGLE_TAB_NAME);
+                imgRemove.setTag(R.id.basket_op_additional_query_map_tag_id, basketQueryMap);
+                imgRemove.setTag(R.id.basket_op_cart_view_holder_tag_id, rowHolder);
+                imgRemove.setTag(R.id.basket_op_cart_page_tab_index_tag_id, currentTabIndex);
             }
             /**
              * checking the order display source  and the based on it the txtInBasket  quantity is assigned
@@ -650,7 +575,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         }
     }
 
-    private class RowHolder extends RecyclerView.ViewHolder {
+    public static class RowHolder extends RecyclerView.ViewHolder {
         private ImageView imgProduct;
         private TextView txtProductDesc;
         private TextView txtSalePrice;
@@ -669,9 +594,11 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         private TextView txtExpressAvailable;
         private TextView txtPackDesc;
         private TextView txtGiftMsg;
+        private Typeface faceRobotoRegular;
 
         public RowHolder(View base) {
             super(base);
+            this.faceRobotoRegular = FontHolder.getInstance(base.getContext()).getFaceRobotoRegular();
         }
 
         public ImageView getImgProduct() {
@@ -779,20 +706,26 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         }
 
         public ImageView getImgRemove() {
-            if (imgRemove == null)
+            if (imgRemove == null) {
                 imgRemove = (ImageView) itemView.findViewById(R.id.imgRemove);
+                imgRemove.setOnClickListener(new OnCartBasketActionListener(BasketOperation.DELETE_ITEM));
+            }
             return imgRemove;
         }
 
         public View getViewIncBasketQty() {
-            if (viewIncBasketQty == null)
+            if (viewIncBasketQty == null) {
                 viewIncBasketQty = itemView.findViewById(R.id.viewIncBasketQty);
+                viewIncBasketQty.setOnClickListener(new OnCartBasketActionListener(BasketOperation.INC));
+            }
             return viewIncBasketQty;
         }
 
         public View getViewDecBasketQty() {
-            if (viewDecBasketQty == null)
+            if (viewDecBasketQty == null) {
                 viewDecBasketQty = itemView.findViewById(R.id.viewDecBasketQty);
+                viewDecBasketQty.setOnClickListener(new OnCartBasketActionListener(BasketOperation.DEC));
+            }
             return viewDecBasketQty;
         }
 

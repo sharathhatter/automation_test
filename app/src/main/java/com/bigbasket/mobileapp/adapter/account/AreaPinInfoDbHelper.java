@@ -44,24 +44,6 @@ public class AreaPinInfoDbHelper {
         DatabaseHelper.getInstance(context).open(context);
     }
 
-    public void insert(String areaName, String pinCode, String cityName, int cityId) {
-        try {
-            ContentValues cv = new ContentValues();
-
-            cv.put(COLUMN_PIN, pinCode);
-            cv.put(COLUMN_AREA, areaName);
-            cv.put(COLUMN_CITY, cityName);
-            cv.put(COLUMN_CITY_ID, cityId);
-            /**
-             * inserting values using content provider
-             */
-            context.getContentResolver().insert(CONTENT_URI, cv);
-
-        } catch (Exception e) {
-            e.getStackTrace();
-        }
-    }
-
     public String getAreaPin(String areaName, String cityName) {
 
         Cursor areaPinCursor = null;
@@ -174,7 +156,7 @@ public class AreaPinInfoDbHelper {
         return areaNameArrayList;
     }
 
-    public void deleteData() {
-        DatabaseHelper.db.execSQL("DELETE FROM " + TABLE_NAME);
+    public static void clearAll(Context context) {
+        context.getContentResolver().delete(CONTENT_URI, null, null);
     }
 }
