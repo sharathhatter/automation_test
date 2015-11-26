@@ -54,6 +54,12 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             Bundle data = new Bundle(1);
             data.putString(Constants.DEEPLINK_URL, uri.toString());
             launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, data, true);
+        } else if (resultCode == DeepLinkHandler.REGISTER_DEVICE_REQUIRED) {
+            /**
+             * launch splash activity for visitor registration
+             */
+            launchSplashActivity();
+
         } else if (resultCode == DeepLinkHandler.FAILED) {
             showDefaultError();
         }
@@ -74,6 +80,20 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         } else {
             finish();
         }
+    }
+
+    /**
+     * launching the splashactivity for registering the visitor id
+     * passing the current intent with the key Constants.REDIRECT_INTENT
+     */
+    private void launchSplashActivity() {
+        Intent intent = getIntent();
+        intent.setClass(this, getClass());
+        Intent splashActivityIntent = new Intent(this, SplashActivity.class);
+        splashActivityIntent.putExtra(Constants.REDIRECT_INTENT, intent);
+        startActivity(splashActivityIntent);
+        finish();
+
     }
 
 //    private void setAppInBackGround(final Context context) {

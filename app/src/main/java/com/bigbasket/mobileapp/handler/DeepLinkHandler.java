@@ -40,12 +40,22 @@ public class DeepLinkHandler {
     public static final int SUCCESS = 1;
     public static final int FAILED = 2;
     public static final int LOGIN_REQUIRED = 3;
+    public static final int REGISTER_DEVICE_REQUIRED = 4;
 
     public static int handleDeepLink(AppOperationAware context, Uri uri) {
         if (uri == null) {
             return FAILED;
         }
+
         AuthParameters authParameters = AuthParameters.getInstance(context.getCurrentActivity());
+
+        /**
+         * checking if the visitorId is empty/null
+         * empty/null means the app hasn't registered the device with server
+         */
+        if (TextUtils.isEmpty(authParameters.getVisitorId())) {
+            return REGISTER_DEVICE_REQUIRED;
+        }
         if (getLoginRequiredUrls().contains(uri.getHost()) && authParameters.isAuthTokenEmpty()) {
             return LOGIN_REQUIRED;
         }

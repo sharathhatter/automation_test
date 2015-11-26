@@ -649,6 +649,8 @@ public class Constants {
     public static final String DEEPLINK_URL = "deep_link_url";
     public static final String FINISH_ACTIVITY = "__bb_finish_activity__"; //special boolean dialog argument
     public static final String ACTIVITY_RESULT_CODE = "__bb_activity_result_code__";
+    public static final String REDIRECT_INTENT = "redirect_intent";
+
 
     public static final int UPDATE_ADDRESS_DIALOG_REQUEST = 8000;
     public static final int ADD_ALL_DIALOG_REQUEST = 8001;
