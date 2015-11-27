@@ -14,9 +14,11 @@ import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.handler.click.OnPromoClickListener;
 import com.bigbasket.mobileapp.handler.click.OnSpecialityShopIconClickListener;
 import com.bigbasket.mobileapp.handler.click.ProductDetailOnClickListener;
+import com.bigbasket.mobileapp.handler.click.basket.OnProductBasketActionListener;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
@@ -48,6 +50,8 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private View.OnClickListener mSpecialityShopClickListener;
     private View.OnClickListener mPromoClickListener;
     private View.OnClickListener productDetailOnClickListener;
+    private OnProductBasketActionListener basketIncActionListener;
+    private OnProductBasketActionListener basketDecActionListener;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -66,6 +70,8 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         this.mSpecialityShopClickListener = new OnSpecialityShopIconClickListener<>(activityAware, specialityStoreInfoHashMap);
         this.mPromoClickListener = new OnPromoClickListener<>(activityAware);
         this.productDetailOnClickListener = new ProductDetailOnClickListener<>(activityAware);
+        this.basketIncActionListener = new OnProductBasketActionListener(BasketOperation.INC, activityAware);
+        this.basketDecActionListener = new OnProductBasketActionListener(BasketOperation.DEC, activityAware);
     }
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
@@ -106,8 +112,13 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         switch (viewType) {
             case VIEW_TYPE_DATA:
                 View row = inflater.inflate(R.layout.uiv3_product_row, viewGroup, false);
-                return new ProductViewHolder(row, mSpecialityShopClickListener, mPromoClickListener,
-                        productDetailOnClickListener, null);
+                ProductViewHolder productViewHolder = new ProductViewHolder(row);
+                productViewHolder.setSpecialityShopIconClickListener(mSpecialityShopClickListener);
+                productViewHolder.setPromoClickListener(mPromoClickListener);
+                productViewHolder.setProductDetailOnClickListener(productDetailOnClickListener);
+                productViewHolder.setBasketIncActionListener(basketIncActionListener);
+                productViewHolder.setBasketDecActionListener(basketDecActionListener);
+                return productViewHolder;
             case VIEW_TYPE_LOADING:
                 row = inflater.inflate(R.layout.uiv3_list_loading_footer, viewGroup, false);
                 return new FixedLayoutViewHolder(row);

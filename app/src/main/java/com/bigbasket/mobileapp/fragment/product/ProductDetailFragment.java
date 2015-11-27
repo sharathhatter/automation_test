@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.handler.click.OnBrandPageListener;
 import com.bigbasket.mobileapp.handler.click.OnPromoClickListener;
 import com.bigbasket.mobileapp.handler.click.OnSpecialityShopIconClickListener;
+import com.bigbasket.mobileapp.handler.click.basket.OnProductBasketActionListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -160,10 +161,14 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
         AppDataDynamic appDataDynamic = AppDataDynamic.getInstance(getActivity());
-        ProductView.setProductView(new ProductViewHolder(productRow,
-                        new OnSpecialityShopIconClickListener<>(this,
-                                appDataDynamic.getSpecialityStoreDetailList()),
-                        new OnPromoClickListener<>(this), null, new OnBrandPageListener<>(this)),
+        ProductViewHolder productViewHolder = new ProductViewHolder(productRow);
+        productViewHolder.setSpecialityShopIconClickListener(
+                new OnSpecialityShopIconClickListener<>(this, appDataDynamic.getSpecialityStoreDetailList()));
+        productViewHolder.setPromoClickListener(new OnPromoClickListener<>(this));
+        productViewHolder.setBrandPageListener(new OnBrandPageListener<>(this));
+        productViewHolder.setBasketIncActionListener(new OnProductBasketActionListener(BasketOperation.INC, this));
+        productViewHolder.setBasketDecActionListener(new OnProductBasketActionListener(BasketOperation.DEC, this));
+        ProductView.setProductView(productViewHolder,
                 mProduct, null, productViewDisplayDataHolder,
                 false, this, getNextScreenNavigationContext(), null, "none",
                 appDataDynamic.getStoreAvailabilityMap(),

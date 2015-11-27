@@ -56,7 +56,7 @@ android {
         release {
             minifyEnabled true
             shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
             signingConfig signingConfigs.bigbasket
         }
