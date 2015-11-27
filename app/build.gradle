@@ -24,6 +24,11 @@ repositories {
     }
 }
 
+repositories {
+    jcenter()
+    maven { url 'http://maven.localytics.com/public' }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'newrelic'
@@ -117,6 +122,7 @@ int calculateVersionCodeFromDpi(int dpi, int delta) {
 
 dependencies {
     compile files('libs/localytics.jar')
+    //compile 'com.localytics.android:library:3.5+'
     compile project(':androidImageSlider')
     provided 'com.squareup.okhttp:okhttp:2.6.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.3@aar') {

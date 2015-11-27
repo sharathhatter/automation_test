@@ -255,7 +255,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
         super.onPause();
         isActivitySuspended = true;
         MoEngageWrapper.onPause(moEHelper, getCurrentActivity());
-        LocalyticsWrapper.onPause();
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            LocalyticsWrapper.onPause();
+        }
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
@@ -275,6 +277,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
             goToHome();
             return;
         }
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            LocalyticsWrapper.onResume();
+        }
+
         MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
         FacebookEventTrackWrapper.activateApp(getCurrentActivity());
     }
@@ -837,7 +843,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 .apply();
 
         DynamicPageDbHelper.clearAll(getCurrentActivity());
-
         AppDataDynamic.reset(this);
     }
 

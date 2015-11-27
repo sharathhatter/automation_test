@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Build;
 
 import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -11,6 +12,7 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.google.ads.conversiontracking.AdWordsConversionReporter;
+import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
 import com.moe.pushlibrary.MoEHelper;
 
 import io.fabric.sdk.android.Fabric;
@@ -49,7 +51,12 @@ public class BaseApplication extends Application {
         AuthParameters.reset();
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
-        LocalyticsWrapper.integrate(this);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            registerActivityLifecycleCallbacks(
+                    new LocalyticsActivityLifecycleCallbacks(this));
+        } else {
+            LocalyticsWrapper.integrate(this);
+        }
         initializeLeakCanary();
         if (!BuildConfig.DEBUG) {
             AdWordsConversionReporter.reportWithConversionId(this.getApplicationContext(),
