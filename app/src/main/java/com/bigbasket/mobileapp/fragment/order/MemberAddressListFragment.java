@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
+import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -367,6 +368,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             }
             // Forcefully calling get-app-data-dynamic, as user might have change location
             AppDataDynamic.reset(getActivity());
+            DynamicPageDbHelper.clearAll(getCurrentActivity());
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
             postDeliveryAddress();
         } else {

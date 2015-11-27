@@ -837,7 +837,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 .apply();
 
         DynamicPageDbHelper.clearAll(getCurrentActivity());
-
         AppDataDynamic.reset(this);
     }
 
