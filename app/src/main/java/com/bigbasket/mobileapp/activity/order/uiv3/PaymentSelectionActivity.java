@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -27,7 +26,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
-import com.bigbasket.mobileapp.factory.payment.PaymentHandler;
+import com.bigbasket.mobileapp.factory.payment.OrderPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
@@ -53,6 +52,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
+import com.crashlytics.android.Crashlytics;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.payu.india.Payu.PayuConstants;
 
@@ -64,6 +64,9 @@ import retrofit.Call;
 public class PaymentSelectionActivity extends BackButtonActivity
         implements OnPostPaymentListener, OnPaymentValidationListener, PaymentTxnInfoAware, PaymentMethodsView.OnPaymentOptionSelectionListener {
 
+    private static final java.lang.String IS_PREPAYMENT_TASK_PAUSED = "is_prepayment_task_paused";
+    private static final java.lang.String IS_PREPAYMENT_TASK_STARTED = "is_prepayment_task_started";
+    private static final java.lang.String IS_PREPAYMENT_ABORT_INITIATED = "is_prepayment_abort_initiated";
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private ArrayList<PaymentType> paymentTypeList;
     private String mPotentialOrderId;
@@ -78,7 +81,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mAddMoreLink;
     private String mAddMoreMsg;
     private MutableLong mElapsedTime;
-    private boolean mIsPaymentWarningDisplayed;
+    private boolean mIsPrepaymentProcessingStarted;
+    private OrderPrepaymentProcessingTask<PaymentSelectionActivity> mOrderPrepaymentProcessingTask;
+    private boolean mIsPrepaymentAbortInitiated;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,7 +113,14 @@ public class PaymentSelectionActivity extends BackButtonActivity
             if (mSelectedPaymentMethod == null) {
                 mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
             }
-            mIsPaymentWarningDisplayed = savedInstanceState.getBoolean(Constants.PAYMENT_STATUS, false);
+            mIsPrepaymentProcessingStarted =
+                    savedInstanceState.getBoolean(IS_PREPAYMENT_TASK_STARTED, false);
+            mIsPrepaymentAbortInitiated =
+                    savedInstanceState.getBoolean(IS_PREPAYMENT_ABORT_INITIATED, false);
+            if (isPaymentPending()) {
+                startPrepaymentProcessing(savedInstanceState);
+            }
+
         }
     }
 
@@ -123,7 +135,11 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (mSelectedPaymentMethod != null) {
             outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
         }
-        outState.putBoolean(Constants.PAYMENT_STATUS, mIsPaymentWarningDisplayed);
+        if(mOrderPrepaymentProcessingTask != null) {
+            outState.putBoolean(IS_PREPAYMENT_TASK_STARTED, mIsPrepaymentProcessingStarted);
+            outState.putBoolean(IS_PREPAYMENT_TASK_PAUSED, mOrderPrepaymentProcessingTask.isPaused());
+            outState.putBoolean(IS_PREPAYMENT_ABORT_INITIATED, mIsPrepaymentAbortInitiated);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -175,13 +191,44 @@ public class PaymentSelectionActivity extends BackButtonActivity
     public void onResume() {
         super.onResume();
         processMobikWikResponse();
-        if (isPaymentPending()) {
-            openPaymentGateway();
+        if(mOrderPrepaymentProcessingTask != null && !mIsPrepaymentAbortInitiated){
+            mOrderPrepaymentProcessingTask.resume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mOrderPrepaymentProcessingTask != null){
+            mOrderPrepaymentProcessingTask.pause();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mOrderPrepaymentProcessingTask != null){
+            mOrderPrepaymentProcessingTask.cancel(true);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(isPaymentPending()) {
+            if(mOrderPrepaymentProcessingTask != null){
+                mOrderPrepaymentProcessingTask.pause();
+            }
+            showAlertDialog(null, getString(R.string.abort_payment_transaction_confirmation),
+                    getString(R.string.cancel_transaction), getString(R.string.noTxt),
+                    Constants.PREPAYMENT_ABORT_CONFIRMATION_DIALOG, null);
+            mIsPrepaymentAbortInitiated = true;
+        } else {
+            super.onBackPressed();
         }
     }
 
     private boolean isPaymentPending() {
-        return mIsPaymentWarningDisplayed && !TextUtils.isEmpty(mSelectedPaymentMethod)
+        return mIsPrepaymentProcessingStarted && !TextUtils.isEmpty(mSelectedPaymentMethod)
                 && mOrdersCreated != null;
     }
 
@@ -340,8 +387,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
             }
             isInHDFCPayMode = hasHdfc;
         }
-        LinearLayout layoutPaymentOptions = (LinearLayout) findViewById(R.id.layoutPaymentOptions);
-        layoutPaymentOptions.removeAllViews();
+        PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
+        paymentMethodsView.removeAllViews();
 
         if (mOrderDetails.getFinalTotal() <= 0) {
             lblAmountFromWallet.setVisibility(View.VISIBLE);
@@ -349,9 +396,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         } else {
             lblAmountFromWallet.setVisibility(View.GONE);
 
-            PaymentMethodsView paymentMethodsView = new PaymentMethodsView(this);
             paymentMethodsView.setPaymentMethods(paymentTypeList, false, isInHDFCPayMode);
-            layoutPaymentOptions.addView(paymentMethodsView);
         }
         renderCheckOutProgressView();
     }
@@ -369,7 +414,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private void showVoucherAppliedText(String voucher) {
         mTxtApplyVoucher.setVisibility(View.GONE);
         mTxtRemoveVoucher.setVisibility(View.VISIBLE);
-        mTxtRemoveVoucher.setText("eVoucher: " + voucher + " Applied!");
+        mTxtRemoveVoucher.setText(getString(R.string.evoucher_applied_format, voucher));
         if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
             mTxtApplicableVoucherCount.setVisibility(View.GONE);
         }
@@ -574,7 +619,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             mOrdersCreated = orders;
             mAddMoreLink = addMoreLink;
             mAddMoreMsg = addMoreMsg;
-            openPaymentGateway();
+            startPrepaymentProcessing(null);
         } else {
             showOrderThankyou(orders, addMoreLink, addMoreMsg);
         }
@@ -621,8 +666,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    private void openPaymentGateway() {
-        mIsPaymentWarningDisplayed = true;
+    private void startPrepaymentProcessing(Bundle savedInstanceState) {
+        mIsPrepaymentProcessingStarted = true;
         final View paymentInProgressView = findViewById(R.id.layoutPaymentInProgress);
         paymentInProgressView.setVisibility(View.VISIBLE);
 
@@ -637,25 +682,51 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
         ((TextView) findViewById(R.id.lblOrderPlaced)).setTypeface(faceRobotoRegular);
 
-        new CountDownTimer(totalDuration, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                progressBar.setProgress(totalDuration - (int) millisUntilFinished);
-            }
+        mOrderPrepaymentProcessingTask =
+                new OrderPrepaymentProcessingTask<PaymentSelectionActivity>(this,
+                        mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
+                        mSelectedPaymentMethod, false, false){
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        mIsPrepaymentProcessingStarted = true;
+                    }
 
-            @Override
-            public void onFinish() {
-                progressBar.setProgress(totalDuration - 100);
-                getPaymentParams();
-            }
-        }.start();
-    }
-
-    private void getPaymentParams() {
-        if (isSuspended()) return;
-        mIsPaymentWarningDisplayed = false;
-        new PaymentHandler<>(this, mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
-                mSelectedPaymentMethod, false, false).initiate();
+                    @Override
+                    protected void onPostExecute(Boolean success) {
+                        super.onPostExecute(success);
+                        if(isPaused() || isCancelled() || isSuspended()){
+                            return;
+                        }
+                        mIsPrepaymentProcessingStarted = false;
+                        if(!success){
+                            if(errorResponse != null) {
+                                if(errorResponse.isException()){
+                                    //TODO: Possible network error retry
+                                    getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
+                                } else if( errorResponse.getCode() > 0) {
+                                    getHandler().handleHttpError(errorResponse.getCode(),
+                                            errorResponse.getMessage(), false);
+                                } else {
+                                    getHandler().sendEmptyMessage(-1 * errorResponse.getCode(),
+                                            errorResponse.getMessage(), false);
+                                }
+                            } else {
+                                //Should never happen
+                                Crashlytics.logException(new IllegalStateException(
+                                        "OrderPreprocessing error without error response"));
+                            }
+                        }
+                        mOrderPrepaymentProcessingTask = null;
+                    }
+                };
+        if(savedInstanceState != null
+                && savedInstanceState.getBoolean(IS_PREPAYMENT_TASK_PAUSED, false)){
+            mOrderPrepaymentProcessingTask.pause();
+        } else {
+            mOrderPrepaymentProcessingTask.setMinDuration(5000);
+        }
+        mOrderPrepaymentProcessingTask.execute();
     }
 
     @Override
@@ -698,8 +769,43 @@ public class PaymentSelectionActivity extends BackButtonActivity
             case Constants.SOURCE_PLACE_ORDER_DIALOG_REQUEST:
                 showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
                 break;
+            case Constants.PREPAYMENT_ABORT_CONFIRMATION_DIALOG:
+                String txnId = null;
+                mIsPrepaymentAbortInitiated = false;
+                if(mOrderPrepaymentProcessingTask != null) {
+                    mOrderPrepaymentProcessingTask.cancel(true);
+                    txnId = mOrderPrepaymentProcessingTask.getTransactionId();
+                    mOrderPrepaymentProcessingTask = null;
+                }
+                mIsPrepaymentProcessingStarted = false;
+                String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
+                if(!TextUtils.isEmpty(txnId)) {
+                    new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
+                } else {
+                    showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
+                }
+                break;
             default:
                 super.onPositiveButtonClicked(sourceName, valuePassed);
+        }
+
+    }
+
+    @Override
+    protected void onNegativeButtonClicked(int requestCode, Bundle data) {
+        switch (requestCode){
+            case Constants.PREPAYMENT_ABORT_CONFIRMATION_DIALOG:
+                mIsPrepaymentAbortInitiated = false;
+                if(mOrderPrepaymentProcessingTask != null
+                        && mOrderPrepaymentProcessingTask.isPaused()
+                        && !mOrderPrepaymentProcessingTask.isCancelled()){
+                    mOrderPrepaymentProcessingTask.resume();
+                } else {
+                    startPrepaymentProcessing(null);
+                }
+                break;
+            default:
+                super.onNegativeButtonClicked(requestCode, data);
         }
 
     }
@@ -724,7 +830,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private class OnShowAvailableVouchersListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Intent availableVoucherListActivity = new Intent(getCurrentActivity(), AvailableVoucherListActivity.class);
+            Intent availableVoucherListActivity = new Intent(getCurrentActivity(),
+                    AvailableVoucherListActivity.class);
             availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
             startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
         }

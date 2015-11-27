@@ -16,7 +16,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
-import com.bigbasket.mobileapp.factory.payment.FundWalletPaymentHandler;
+import com.bigbasket.mobileapp.factory.payment.FundWalletPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
+import com.crashlytics.android.Crashlytics;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.payu.india.Payu.PayuConstants;
 
@@ -47,6 +48,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     @Nullable
     private String mHDFCPayzappTxnId;
     private double mFinalTotal;
+    private FundWalletPrepaymentProcessingTask<FundWalletActivity> mFundWalletPrepaymentProcessingTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,14 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     public void onResume() {
         super.onResume();
         processMobikWikResponse();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mFundWalletPrepaymentProcessingTask != null){
+            mFundWalletPrepaymentProcessingTask.cancel(true);
+        }
     }
 
     private void processMobikWikResponse() {
@@ -157,10 +167,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             }
         });
 
-        ViewGroup layoutPaymentOptions = (ViewGroup) findViewById(R.id.layoutPaymentOptions);
-        PaymentMethodsView paymentMethodsView = new PaymentMethodsView(this);
+        PaymentMethodsView paymentMethodsView = (PaymentMethodsView)findViewById(R.id.layoutPaymentOptions);;
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
-        layoutPaymentOptions.addView(paymentMethodsView);
     }
 
     private void initiateWalletFunding(String amount) {
@@ -180,15 +188,43 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             showAlertDialog(getString(R.string.invalidAmount));
             return;
         }
-        new FundWalletPaymentHandler<>(this, null, null, mSelectedPaymentMethod, false, true, amount)
-                .initiate();
+        mFundWalletPrepaymentProcessingTask =
+                new FundWalletPrepaymentProcessingTask<FundWalletActivity>(this, null, null,
+                        mSelectedPaymentMethod, false, true, amount) {
+                    @Override
+                    protected void onPostExecute(Boolean success) {
+                        super.onPostExecute(success);
+                        if(isPaused() || isCancelled() || isSuspended()){
+                            return;
+                        }
+                        if(!success){
+                            if(errorResponse != null) {
+                                if(errorResponse.isException()){
+                                    //TODO: Possible network error retry
+                                    getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
+                                } else if( errorResponse.getCode() > 0) {
+                                    getHandler().handleHttpError(errorResponse.getCode(),
+                                            errorResponse.getMessage(), false);
+                                } else {
+                                    getHandler().sendEmptyMessage(-1 * errorResponse.getCode(),
+                                            errorResponse.getMessage(), false);
+                                }
+                            } else {
+                                //Should never happen
+                                Crashlytics.logException(new IllegalStateException(
+                                        "Fund wallet preprocessing error without error response"));
+                            }
+                        }
+                    }
+                };
+        mFundWalletPrepaymentProcessingTask.execute();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            new PostPaymentProcessor<>(this, mHDFCPayzappTxnId)
+            new PostPaymentProcessor<FundWalletActivity>(this, mHDFCPayzappTxnId)
                     .withIsFundWallet(true)
                     .processPayzapp(data, resultCode, UIUtil.formatAsMoney(mFinalTotal));
         } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {

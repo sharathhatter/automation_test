@@ -1,10 +1,11 @@
 package com.bigbasket.mobileapp.apiservice.models.response;
 
-import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-public class GetPayzappPaymentParamsResponse {
+import java.util.HashMap;
+
+public class PrePaymentParamsResponse {
     @SerializedName(Constants.POST_PARAMS)
-    public PayzappPostParams payzappPostParams;
+    public HashMap<String, String> postParams;
 }

@@ -8,6 +8,8 @@ import com.bigbasket.mobileapp.model.holders.InMemMobikwikResponseHolder;
 
 public final class MobikwikResponseHandler {
 
+    public static final String KEY_TRANS_ID = "orderid";
+
     @Nullable
     private static MobikwikResponseHandler mobikwikResponseHandler;
 
@@ -18,7 +20,7 @@ public final class MobikwikResponseHandler {
     }
 
     public static void setMobikwikTransaction(Intent intent) {
-        String txnId = intent.getStringExtra("orderid");
+        String txnId = intent.getStringExtra(KEY_TRANS_ID);
         String statusCode = intent.getStringExtra("statuscode");
         mobikwikResponseHandler = new MobikwikResponseHandler(new InMemMobikwikResponseHolder(txnId, statusCode));
     }

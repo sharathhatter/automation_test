@@ -17,8 +17,8 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiR
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
-import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PayzappPrePaymentParamsResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PrePaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
@@ -295,10 +295,10 @@ public interface BigBasketApiService {
     Call<OldApiResponseWithCart> addAllToBasketPastOrders(@Field(Constants.ORDER_ID) String orderId);
 
     @GET("get-order-payment-params/")
-    Call<ApiResponse<GetPrepaidPaymentResponse>> getOrderPaymentParams(@Query(Constants.P_ORDER_ID) String potentialOrderId);
+    Call<ApiResponse<PrePaymentParamsResponse>> getOrderPaymentParams(@Query(Constants.P_ORDER_ID) String potentialOrderId);
 
     @GET("get-order-payment-params/")
-    Call<ApiResponse<GetPayzappPaymentParamsResponse>> getPayzappOrderPaymentParams(@Query(Constants.P_ORDER_ID) String potentialOrderId);
+    Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappOrderPaymentParams(@Query(Constants.P_ORDER_ID) String potentialOrderId);
 
     @FormUrlEncoded
     @POST("post-order-payment/")
@@ -349,12 +349,12 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("pay-now/")
-    Call<ApiResponse<GetPrepaidPaymentResponse>> postPayNowDetails(@Field(Constants.ORDER_ID) String orderId,
+    Call<ApiResponse<PrePaymentParamsResponse>> postPayNowDetails(@Field(Constants.ORDER_ID) String orderId,
                                                                    @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @FormUrlEncoded
     @POST("pay-now/")
-    Call<ApiResponse<GetPayzappPaymentParamsResponse>> postPayzappPayNowDetails(@Field(Constants.ORDER_ID) String orderId,
+    Call<ApiResponse<PayzappPrePaymentParamsResponse>> postPayzappPayNowDetails(@Field(Constants.ORDER_ID) String orderId,
                                                                                 @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @GET("fund-wallet/")
@@ -366,12 +366,12 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("fund-wallet/")
-    Call<ApiResponse<GetPrepaidPaymentResponse>> postFundWallet(@Field(Constants.PAYMENT_METHOD) String payment_method,
+    Call<ApiResponse<PrePaymentParamsResponse>> postFundWallet(@Field(Constants.PAYMENT_METHOD) String payment_method,
                                                                 @Field(Constants.AMOUNT) String amount);
 
     @FormUrlEncoded
     @POST("fund-wallet/")
-    Call<ApiResponse<GetPayzappPaymentParamsResponse>> postPayzappFundWallet(@Field(Constants.PAYMENT_METHOD) String payment_method,
+    Call<ApiResponse<PayzappPrePaymentParamsResponse>> postPayzappFundWallet(@Field(Constants.PAYMENT_METHOD) String payment_method,
                                                                              @Field(Constants.AMOUNT) String amount);
 
     @FormUrlEncoded

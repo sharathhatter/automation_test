@@ -58,6 +58,7 @@ public class ProgressDialogFragment extends DialogFragment {
         }
         progressDialog.setCancelable(cancellable);
         progressDialog.setCanceledOnTouchOutside(cancellable);
+        setCancelable(cancellable);
         progressDialog.setMessage(message);
         return progressDialog;
     }

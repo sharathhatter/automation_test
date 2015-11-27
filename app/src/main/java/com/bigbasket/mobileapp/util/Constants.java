@@ -658,8 +658,9 @@ public class Constants {
     public static final int REMOVE_VOUCHER_DIALOG_REQUEST = 8003;
     public static final int EMPTY_BASKET_DIALOG_QUEST = 8004;
     public static final int LOCATION_DIALOG_REQUEST = 8005;
+    public static final int PREPAYMENT_ABORT_CONFIRMATION_DIALOG = 8006;
 
     // App Indexing params
     public static final String HTTP_HOST = "bigbasket.com";
-
+    public static final String PAYTM_TRANS_ID_KEY = "ORDER_ID";
 }

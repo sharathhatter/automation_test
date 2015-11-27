@@ -319,7 +319,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive) {
+    public final void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive) {
         if (isPositive) {
             if (data != null && data.getBoolean(Constants.FINISH_ACTIVITY, false)) {
                 if (data.containsKey(Constants.ACTIVITY_RESULT_CODE)) {
@@ -330,13 +330,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 onPositiveButtonClicked(reqCode, data);
             }
         } else {
-            onNegativeButtonClicked(null, reqCode);
+            onNegativeButtonClicked(reqCode, data);
         }
     }
 
 
     @Override
-    public void onDialogCancelled(int reqCode) {
+    public final void onDialogCancelled(int reqCode) {
 
     }
 
@@ -408,6 +408,23 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showAlertDialog(String title,
+                                String msg, String positiveBtnText,
+                                String negativeBtnText, final int requestCode,
+                                final Bundle passedValue) {
+
+        if (isSuspended())
+            return;
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
+                requestCode, title, msg, positiveBtnText,
+                negativeBtnText, passedValue, false);
+        try {
+            dialogFragment.show(getSupportFragmentManager(), getScreenTag() + "#AlertDialog");
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+        }
+    }
+
+    public void showAlertDialog(String title,
                                 String msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, 0);
@@ -428,7 +445,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    protected void onNegativeButtonClicked(DialogInterface dialogInterface, int requestCode) {
+    protected void onNegativeButtonClicked(int requestCode, Bundle data) {
 
     }
 

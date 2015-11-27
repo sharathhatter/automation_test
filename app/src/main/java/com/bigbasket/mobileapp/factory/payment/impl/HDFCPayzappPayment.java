@@ -19,8 +19,12 @@ public class HDFCPayzappPayment {
         new PayzappTriggerAsyncTask(ctx).execute(payzappPostParams);
     }
 
-    private static void startHDFCPayzapp(PayzappPostParams payzappPostParams,
+    public static void startHDFCPayzapp(PayzappPostParams payzappPostParams,
                                          Activity activity) {
+        if(payzappPostParams == null || activity == null){
+            throw new IllegalArgumentException("Illegal arguments, activity: " + activity
+                    + ", payzappPostParams: " + payzappPostParams);
+        }
         if (activity instanceof PaymentTxnInfoAware) {
             ((PaymentTxnInfoAware) activity).setTxnId(payzappPostParams.getTxnId());
         }

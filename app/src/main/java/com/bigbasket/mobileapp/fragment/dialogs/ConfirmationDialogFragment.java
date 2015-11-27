@@ -131,6 +131,7 @@ public class ConfirmationDialogFragment extends DialogFragment {
         }
         boolean isCancelable = args.getBoolean(ARG_IS_CANCELLABLE, false);
         builder.setCancelable(isCancelable);
+        setCancelable(isCancelable);
         AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(isCancelable);
         return dialog;

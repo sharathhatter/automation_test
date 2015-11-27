@@ -16,13 +16,13 @@ import java.util.HashMap;
 
 public class PaytmPayment {
 
-    public void startPaymentGateway(HashMap<String, String> paymentParams, Activity ctx,
-                                    @Nullable String potentialOrderId,
-                                    @Nullable String fullOrderId,
-                                    boolean isPayNow, boolean isFundWallet) {
+    public static void startPaymentGateway(HashMap<String, String> paymentParams, Activity ctx,
+                                           @Nullable String potentialOrderId,
+                                           @Nullable String fullOrderId,
+                                           boolean isPayNow, boolean isFundWallet) {
 
         if (ctx instanceof PaymentTxnInfoAware) {
-            ((PaymentTxnInfoAware) ctx).setTxnId(paymentParams.get("ORDER_ID"));
+            ((PaymentTxnInfoAware) ctx).setTxnId(paymentParams.get(Constants.PAYTM_TRANS_ID_KEY));
         }
         PaytmPGService paytmPGService = BuildConfig.DEBUG ? PaytmPGService.getStagingService() :
                 PaytmPGService.getProductionService();

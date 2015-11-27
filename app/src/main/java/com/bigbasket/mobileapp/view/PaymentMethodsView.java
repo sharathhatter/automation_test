@@ -1,9 +1,12 @@
 package com.bigbasket.mobileapp.view;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,16 +35,25 @@ public class PaymentMethodsView extends LinearLayout {
     private OnClickListener paymentTypeClicked;
     private int selectedDefaultPosition;
 
+    public PaymentMethodsView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public PaymentMethodsView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public PaymentMethodsView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init();
+    }
+
     public PaymentMethodsView(Context context) {
         super(context);
-        this.context = context;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.paymentTypeClicked = new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onPaymentTypeSelection(view);
-            }
-        };
         init();
     }
 
@@ -54,11 +66,15 @@ public class PaymentMethodsView extends LinearLayout {
     }
 
     private void init() {
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
         setOrientation(VERTICAL);
-        layoutParams.setMargins(0, 0, 0, 0);
-        setLayoutParams(layoutParams);
+        this.context = getContext();
+        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.paymentTypeClicked = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onPaymentTypeSelection(view);
+            }
+        };
     }
 
     /**
@@ -81,17 +97,11 @@ public class PaymentMethodsView extends LinearLayout {
                 mSelectedPaymentMethod = Constants.HDFC_POWER_PAY;
                 continue;
             }
-            LinearLayout linearLayout = new LinearLayout(context);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            setOrientation(VERTICAL);
-            layoutParams.setMargins(0, 10, 0, 10);
-            linearLayout.setLayoutParams(layoutParams);
 
             /**
              * initializing the views
              */
-            View paymentOptionRow = inflater.inflate(R.layout.payment_option_row, null);
+            View paymentOptionRow = inflater.inflate(R.layout.payment_option_row, this, false);
             RelativeLayout mPaymentParentRelativelayout = (RelativeLayout) paymentOptionRow.findViewById(R.id.mPaymentParentRelativelayout);
             TextView mPaymentDisplayNameTextView = (TextView) paymentOptionRow.findViewById(R.id.mPaymentDisplayTextView);
             TextView mPaymentOfferTextView = (TextView) paymentOptionRow.findViewById(R.id.mPaymentOfferTextView);
@@ -131,8 +141,7 @@ public class PaymentMethodsView extends LinearLayout {
 
             mPaymentParentRelativelayout.setTag(R.id.payment_value, paymentType.getValue());
             mPaymentParentRelativelayout.setOnClickListener(paymentTypeClicked);
-            linearLayout.addView(paymentOptionRow);
-            addView(linearLayout);
+            addView(paymentOptionRow);
             i++;
         }
     }
@@ -175,22 +184,18 @@ public class PaymentMethodsView extends LinearLayout {
             previousClickedImageView.setSelected(false);
             previousSelectedLayout.setSelected(false);
         }
-        for (int i = 0; i < ((ViewGroup) view).getChildCount(); ++i) {
-            View nextChild = ((ViewGroup) view).getChildAt(i);
-            if (nextChild instanceof ImageView) {
-                ImageView imageView = (ImageView) view.findViewById(R.id.mSelectionImageView);
-                if (imageView != null) {
-                    mSelectedPaymentMethod = view.getTag(R.id.payment_value).toString();
-                    previousClickedImageView = imageView;
-                    previousSelectedLayout = (RelativeLayout) view;
-                    /**
-                     * making the imageview and the layout selected
-                     */
-                    imageView.setSelected(true);
-                    view.setSelected(true);
-                    ((OnPaymentOptionSelectionListener) context).onPaymentOptionSelected(mSelectedPaymentMethod);
-                    break;
-                }
+        ImageView imageView = (ImageView) view.findViewById(R.id.mSelectionImageView);
+        if (imageView != null) {
+            mSelectedPaymentMethod = view.getTag(R.id.payment_value).toString();
+            previousClickedImageView = imageView;
+            previousSelectedLayout = (RelativeLayout) view;
+            /**
+             * making the imageview and the layout selected
+             */
+            imageView.setSelected(true);
+            view.setSelected(true);
+            if (context instanceof OnPaymentOptionSelectionListener) {
+                ((OnPaymentOptionSelectionListener) context).onPaymentOptionSelected(mSelectedPaymentMethod);
             }
         }
 

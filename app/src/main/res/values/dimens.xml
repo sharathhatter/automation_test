@@ -55,7 +55,7 @@
     <dimen name="dimen_2">2dp</dimen>
     <dimen name="dimen_20">20dp</dimen>
     <dimen name="dimen_5">5dp</dimen>
-    <dimen name="dimen_10">1dp</dimen>
+    <dimen name="dimen_10">10dp</dimen>
     <dimen name="dimen_15">15dp</dimen>
 
 </resources>
