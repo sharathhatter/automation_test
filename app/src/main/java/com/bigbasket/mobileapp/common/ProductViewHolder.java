@@ -12,6 +12,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.handler.click.basket.OnProductBasketActionListener;
+import com.bigbasket.mobileapp.model.cart.BasketOperation;
 
 public class ProductViewHolder extends RecyclerView.ViewHolder {
     private ImageView imgProduct;
@@ -132,6 +134,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public ImageView getImgAddToBasket() {
         if (imgAddToBasket == null) {
             imgAddToBasket = (ImageView) itemView.findViewById(R.id.imgAddToBasket);
+            imgAddToBasket.setOnClickListener(new OnProductBasketActionListener(BasketOperation.INC));
         }
         return imgAddToBasket;
     }
@@ -139,6 +142,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public View getViewDecBasketQty() {
         if (viewDecBasketQty == null) {
             viewDecBasketQty = itemView.findViewById(R.id.viewDecBasketQty);
+            viewDecBasketQty.setOnClickListener(new OnProductBasketActionListener(BasketOperation.DEC));
         }
         return viewDecBasketQty;
     }
@@ -153,6 +157,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public View getViewIncBasketQty() {
         if (viewIncBasketQty == null) {
             viewIncBasketQty = itemView.findViewById(R.id.viewIncBasketQty);
+            viewIncBasketQty.setOnClickListener(new OnProductBasketActionListener(BasketOperation.INC));
         }
         return viewIncBasketQty;
     }

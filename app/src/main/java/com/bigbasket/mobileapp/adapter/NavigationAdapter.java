@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;

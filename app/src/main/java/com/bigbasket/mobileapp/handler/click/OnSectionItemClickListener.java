@@ -1,4 +1,4 @@
-package com.bigbasket.mobileapp.handler;
+package com.bigbasket.mobileapp.handler.click;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;

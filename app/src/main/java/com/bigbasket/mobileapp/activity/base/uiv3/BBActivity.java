@@ -938,17 +938,21 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
     private void toggleNavigationArea(ImageView imgSwitchNav) {
         if (mNavRecyclerView == null) return;
-
+        ProgressBar progressBarMenu = (ProgressBar) findViewById(R.id.progressBarMenu);
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
 
         int drawableId;
         if (mNavRecyclerView.getVisibility() == View.VISIBLE) {
-            mNavRecyclerView.setVisibility(View.GONE);
+            if (progressBarMenu.getVisibility() != View.VISIBLE) {  // If main menu is downloading, then don't toggle any visibility
+                mNavRecyclerView.setVisibility(View.GONE);
+            }
             lstMyAccount.setVisibility(View.VISIBLE);
             drawableId = R.drawable.ic_menu_white_36dp;
         } else {
             lstMyAccount.setVisibility(View.GONE);
-            mNavRecyclerView.setVisibility(View.VISIBLE);
+            if (progressBarMenu.getVisibility() != View.VISIBLE) { // If main menu is downloading, then don't toggle any visibility
+                mNavRecyclerView.setVisibility(View.VISIBLE);
+            }
             drawableId = R.drawable.settings;
         }
         imgSwitchNav.setImageDrawable(ContextCompat.getDrawable(this, drawableId));

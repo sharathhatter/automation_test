@@ -258,7 +258,7 @@ public class UIUtil {
         if (!TextUtils.isEmpty(cityId) &&
                 !cityId.equals(String.valueOf(userDetails.analytics.cityId))) {
             editor.remove(Constants.AREA_INFO_CALL_LAST);
-            new AreaPinInfoDbHelper(ctx).deleteData();
+            AreaPinInfoDbHelper.clearAll(ctx);
         }
 
         if (userDetails.analytics != null) {

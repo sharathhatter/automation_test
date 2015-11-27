@@ -1,4 +1,4 @@
-package com.bigbasket.mobileapp.handler;
+package com.bigbasket.mobileapp.handler.click;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;

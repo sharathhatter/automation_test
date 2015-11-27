@@ -25,7 +25,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
-import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
+import com.bigbasket.mobileapp.handler.click.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;

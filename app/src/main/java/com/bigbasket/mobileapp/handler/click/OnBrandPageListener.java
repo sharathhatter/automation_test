@@ -1,4 +1,4 @@
-package com.bigbasket.mobileapp.handler;
+package com.bigbasket.mobileapp.handler.click;
 
 import android.text.TextUtils;
 import android.view.View;

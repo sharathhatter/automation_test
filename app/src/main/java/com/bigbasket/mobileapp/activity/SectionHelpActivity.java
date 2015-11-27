@@ -9,7 +9,7 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.FlatPageFragment;
 import com.bigbasket.mobileapp.fragment.HelpDynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
-import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.HelpDestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;

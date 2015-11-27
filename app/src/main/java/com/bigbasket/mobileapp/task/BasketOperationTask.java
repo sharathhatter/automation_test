@@ -151,7 +151,7 @@ public class BasketOperationTask<T extends AppOperationAware> {
 
     /**
      * @param context             This activity on behalf of which this request is being made
-     * @param basketOperation     Type of basket operation. eg. SET, DEC, INC or EMPTY
+     * @param basketOperation     Type of basket operation. eg. SET, DEC, INC or DELETE_ITEM
      * @param product             Product object for which quantity has to be changed
      * @param basketCountTextView Basket quantity text-view that should be updated once the operation completes
      * @param viewDecQty          Basket qty increment widget that should be toggled on basket operation completion
@@ -218,16 +218,20 @@ public class BasketOperationTask<T extends AppOperationAware> {
         }
         switch (basketOperation) {
             case BasketOperation.INC:
-                call = bigBasketApiService.incrementCartItem(navigationCtx, searchTerm, reqProdId, qty, basketQueryMap.get());
+                call = bigBasketApiService.incrementCartItem(navigationCtx, searchTerm, reqProdId, qty,
+                        basketQueryMap != null ? basketQueryMap.get(): null);
                 break;
             case BasketOperation.DEC:
-                call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, basketQueryMap.get());
+                call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty,
+                        basketQueryMap != null ? basketQueryMap.get(): null);
                 break;
             case BasketOperation.SET:
-                call = bigBasketApiService.setCartItem(navigationCtx, searchTerm, reqProdId, qty, basketQueryMap.get());
+                call = bigBasketApiService.setCartItem(navigationCtx, searchTerm, reqProdId, qty,
+                        basketQueryMap != null ? basketQueryMap.get(): null);
                 break;
-            case BasketOperation.EMPTY:
-                call = bigBasketApiService.setCartItem(navigationCtx, null, reqProdId, "0", basketQueryMap.get());
+            case BasketOperation.DELETE_ITEM:
+                call = bigBasketApiService.setCartItem(navigationCtx, null, reqProdId, "0",
+                        basketQueryMap != null ? basketQueryMap.get(): null);
                 break;
         }
         if (call != null) {
