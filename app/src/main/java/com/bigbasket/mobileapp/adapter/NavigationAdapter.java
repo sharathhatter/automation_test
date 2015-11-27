@@ -16,12 +16,12 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
-import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
+import com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,26 +47,30 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private HashMap<Integer, Renderer> rendererHashMap;
     @Nullable
     private SectionItem parentSectionItem;
+    private BBNavigationMenu mainMenuView;
 
     public NavigationAdapter(Context context, Typeface typeface,
                              ArrayList<SectionNavigationItem> sectionNavigationItems,
                              String screenName, @Nullable String baseImgUrl,
-                             @Nullable HashMap<Integer, Renderer> rendererHashMap) {
+                             @Nullable HashMap<Integer, Renderer> rendererHashMap,
+                             BBNavigationMenu mainMenuView) {
         this.context = context;
         this.typeface = typeface;
         this.sectionNavigationItems = sectionNavigationItems;
         this.screenName = screenName;
         this.baseImgUrl = baseImgUrl;
         this.rendererHashMap = rendererHashMap;
+        this.mainMenuView = mainMenuView;
     }
 
     public NavigationAdapter(Context context, Typeface typeface,
                              ArrayList<SectionNavigationItem> sectionNavigationItems,
                              String screenName, @Nullable String baseImgUrl,
                              @Nullable HashMap<Integer, Renderer> rendererHashMap,
-                             @Nullable SectionItem parentSectionItem) {
+                             @Nullable SectionItem parentSectionItem,
+                             BBNavigationMenu mainMenuView) {
         this(context, typeface, sectionNavigationItems, screenName, baseImgUrl,
-                rendererHashMap);
+                rendererHashMap, mainMenuView);
         this.parentSectionItem = parentSectionItem;
     }
 
@@ -198,7 +202,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavMainItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((SubNavigationAware) context).onSubNavigationHideRequested(true);
+                        mainMenuView.onSubNavigationHideRequested(true);
                     }
                 });
             } else {
@@ -214,7 +218,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavMainItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((SubNavigationAware) context).onSubNavigationHideRequested(true);
+                        mainMenuView.onSubNavigationHideRequested(true);
                     }
                 });
             } else {
@@ -345,7 +349,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (!sectionNavigationItem.isHeader()) {
                     if (sectionNavigationItem.getSectionItem() != null && sectionNavigationItem.getSectionItem().getSubSectionItems() != null
                             && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
-                        ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
+                        mainMenuView.onSubNavigationRequested(sectionNavigationItem.getSection(),
                                 sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
                     } else {
                         if (getSelectionComparisonStatus(getSelectedCategoryString(), sectionNavigationItem.getSectionItem())) {
