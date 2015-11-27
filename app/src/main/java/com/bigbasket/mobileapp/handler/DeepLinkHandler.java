@@ -10,6 +10,8 @@ import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
+import com.bigbasket.mobileapp.activity.payment.FundWalletActivity;
+import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.activity.product.DiscountActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
@@ -32,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import retrofit.Call;
@@ -41,6 +44,11 @@ public class DeepLinkHandler {
     public static final int FAILED = 2;
     public static final int LOGIN_REQUIRED = 3;
     public static final int REGISTER_DEVICE_REQUIRED = 4;
+    public static final String PATH_MY_WALLET = "/member/credit/";
+    public static final String PATH_FUND_WALLET = "/payment/wallet/";
+    public static final String REGEX_PATH_MY_WALLET = "^" + PATH_MY_WALLET + "$";
+    public static final String REGEX_PATH_FUND_WALLET = "^" + PATH_FUND_WALLET + "$";
+    public static final String REGEX_PATH_PAY_NOW = "^/payment/pay_now/\\d+/$";
 
     public static int handleDeepLink(AppOperationAware context, Uri uri) {
         if (uri == null) {
@@ -56,11 +64,28 @@ public class DeepLinkHandler {
         if (TextUtils.isEmpty(authParameters.getVisitorId())) {
             return REGISTER_DEVICE_REQUIRED;
         }
-        if (getLoginRequiredUrls().contains(uri.getHost()) && authParameters.isAuthTokenEmpty()) {
-            return LOGIN_REQUIRED;
+
+        if (authParameters.isAuthTokenEmpty()) {
+            if (uri.getHost().contains(Constants.HTTP_HOST)) {
+                String path = uri.getPath();
+                if (!TextUtils.isEmpty(path)) {
+                    for (Iterator<String> iterator = getHttpLoginRequiredUrls().iterator(); iterator.hasNext(); ) {
+                        String pathPattern = iterator.next();
+                        if (path.matches(pathPattern)) {
+                            return LOGIN_REQUIRED;
+                        }
+                    }
+                } else return FAILED;
+            }
+            if (getLoginRequiredUrls().contains(uri.getHost())) {
+                return LOGIN_REQUIRED;
+            }
         }
+
         UtmHandler.postUtm(context.getCurrentActivity(), uri);
         switch (uri.getHost()) {
+            case Constants.HTTP_HOST:
+                return handleHttpLinks(context, uri);
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
@@ -241,6 +266,38 @@ public class DeepLinkHandler {
         loginRequiredUrls.add(Constants.ALL_SL);
         loginRequiredUrls.add(Constants.SMART_BASKET_SLUG);
         loginRequiredUrls.add(Constants.INBOX);
+        return loginRequiredUrls;
+    }
+
+    private static int handleHttpLinks(AppOperationAware context, Uri uri) {
+        String path = uri.getPath();
+        if (!TextUtils.isEmpty(path)) {
+            if (path.equalsIgnoreCase(PATH_MY_WALLET)) {
+                Intent intent = new Intent(context.getCurrentActivity(), DoWalletActivity.class);
+                context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                return SUCCESS;
+            } else if (path.equalsIgnoreCase(PATH_FUND_WALLET)) {
+                Intent intent = new Intent(context.getCurrentActivity(), FundWalletActivity.class);
+                context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                return SUCCESS;
+            } else if (path.matches(REGEX_PATH_PAY_NOW)) {
+                String orderId = uri.getLastPathSegment();
+                if (!TextUtils.isEmpty(orderId) && !orderId.equalsIgnoreCase(Constants.PAY_NOW)) {
+                    Intent intent = new Intent(context.getCurrentActivity(), PayNowActivity.class);
+                    intent.putExtra(Constants.ORDER_ID, orderId);
+                    context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    return SUCCESS;
+                }
+            }
+        }
+        return FAILED;
+    }
+
+    private static Set<String> getHttpLoginRequiredUrls() {
+        Set<String> loginRequiredUrls = new HashSet<>();
+        loginRequiredUrls.add(REGEX_PATH_MY_WALLET);
+        loginRequiredUrls.add(REGEX_PATH_FUND_WALLET);
+        loginRequiredUrls.add(REGEX_PATH_PAY_NOW);
         return loginRequiredUrls;
     }
 }
