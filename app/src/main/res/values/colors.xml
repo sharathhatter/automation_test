@@ -43,6 +43,8 @@
     <color name="uiv3_grey_status_bar_color">#bdbdbd</color>
     <color name="uiv3_grey_status_bar_color_pressed">#88bdbdbd</color>
     <color name="uiv3_dialog_header_text_bkg">#df212a</color>
+    <color name="uiv3_main_menu_inset_foreground">#4000</color>
+    <color name="uiv3_nav_item_selected_background">#e2e2e2</color>
     <!--<color name="uiv3_rounded_btn_bkg">#e73937</color>-->
     <color name="uiv3_rounded_btn_bkg">@color/uiv3_dialog_header_text_bkg</color>
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     style="@style/WindowStyle"
     android:layout_width="match_parent"
@@ -39,5 +40,12 @@
             android:visibility="gone" />
     </FrameLayout>
 
-    <include layout="@layout/uiv3_left_nav_layout" />
+    <com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu
+        android:id="@+id/left_drawer"
+        style="@style/NavDrawer"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="@color/white"
+        android:clickable="true"
+        app:insetForeground="@color/uiv3_main_menu_inset_foreground" />
 </com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>

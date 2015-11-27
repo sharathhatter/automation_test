@@ -29,7 +29,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.HashMap;
 
-public class AccountView<T> {
+public class AccountView<T extends AppOperationAware> {
 
     private ListView lstMyAccount;
     private T context;
@@ -41,7 +41,7 @@ public class AccountView<T> {
     }
 
     private void setListView() {
-        final BaseActivity ctx = ((AppOperationAware) context).getCurrentActivity();
+        final BaseActivity ctx = context.getCurrentActivity();
         if (AuthParameters.getInstance(ctx).isAuthTokenEmpty()) {
             // Not logged in
             final String[] itemDetails = {
@@ -71,7 +71,7 @@ public class AccountView<T> {
     private class onListItemClickedWhenUserIsLoggedIn implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final BaseActivity ctx = ((AppOperationAware) context).getCurrentActivity();
+            final BaseActivity ctx = context.getCurrentActivity();
             ctx.setNextScreenNavigationContext(TrackEventkeys.ACCOUNT_MENU);
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
@@ -125,7 +125,7 @@ public class AccountView<T> {
     private class onListItemClickedWhenUserIsNOTLoggedIn implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final BaseActivity ctx = ((AppOperationAware) context).getCurrentActivity();
+            final BaseActivity ctx = context.getCurrentActivity();
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
             switch (position) {
@@ -182,7 +182,7 @@ public class AccountView<T> {
             View row = convertView;
             ViewHolder viewHolder;
             if (row == null) {
-                LayoutInflater inflater = ((AppOperationAware) context).getCurrentActivity().getLayoutInflater();
+                LayoutInflater inflater = context.getCurrentActivity().getLayoutInflater();
                 row = inflater.inflate(R.layout.uiv3_main_nav_list_row, parent, false);
                 row.findViewById(R.id.txtNavListRowSubTitle).setVisibility(View.GONE);
                 row.findViewById(R.id.imgNavItem).setVisibility(View.GONE);
@@ -210,7 +210,7 @@ public class AccountView<T> {
             public TextView getItemTitle() {
                 if (itemTitle == null) {
                     itemTitle = (TextView) itemView.findViewById(R.id.txtNavListRow);
-                    itemTitle.setTypeface(FontHolder.getInstance(((AppOperationAware) context)
+                    itemTitle.setTypeface(FontHolder.getInstance(context
                             .getCurrentActivity()).getFaceRobotoMedium());
                 }
                 return itemTitle;

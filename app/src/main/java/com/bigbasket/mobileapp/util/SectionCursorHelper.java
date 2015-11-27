@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
 import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
+import com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public final class SectionCursorHelper {
     @SuppressWarnings("unchecked")
     public static void getNavigationAdapterAsync(final Context context, Cursor sectionCursor,
                                                  @Nullable final String selectedCategoryId,
+                                                 final BBNavigationMenu mainMenuView,
                                                  @NonNull final NavigationCallback navigationCallback) {
         final ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         sectionNavigationItems.addAll(getPreBakedNavigationItems(context));
@@ -72,7 +74,8 @@ public final class SectionCursorHelper {
                         FontHolder.getInstance(context).getFaceRobotoMedium(),
                         sectionNavigationItems, AbstractDynamicPageSyncService.MAIN_MENU,
                         sectionData != null ? sectionData.getBaseImgUrl() : null,
-                        sectionData != null ? sectionData.getRenderersMap() : null);
+                        sectionData != null ? sectionData.getRenderersMap() : null,
+                        mainMenuView);
                 if (!TextUtils.isEmpty(selectedCategoryId)) {
                     navigationAdapter.setSelectedCategoryString(selectedCategoryId);
                 }

@@ -86,5 +86,12 @@
          the container. A solid background is used for contrast
          with the content view. -->
 
-    <include layout="@layout/uiv3_left_nav_layout" />
+    <com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu
+        android:id="@+id/left_drawer"
+        style="@style/NavDrawer"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="@color/white"
+        android:clickable="true"
+        app:insetForeground="@color/uiv3_main_menu_inset_foreground" />
 </com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>
