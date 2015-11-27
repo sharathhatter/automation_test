@@ -277,6 +277,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                               ArrayList<QCErrorData> qcErrorDatas) {
         new BasketDeltaDialog<>().show(this, title, msg, hasQcError, qcErrorDatas, addressId,
                 getString(R.string.reviewBasket), lat, lng, area);
+        markBasketChanged(null);
     }
 
     @Override

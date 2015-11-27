@@ -84,6 +84,15 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.BASKET_CHANGED) {
+            markBasketChanged(null);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     protected void setOptionsMenu(Menu menu) {
         super.setOptionsMenu(menu);
         MenuInflater menuInflater = getMenuInflater();
