@@ -845,7 +845,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {
             LocalyticsWrapper.tagScreen(getScreenTag());
         }
-        LocalyticsWrapper.onResume();
 
         if (isBasketDirty()) {
             syncBasket();

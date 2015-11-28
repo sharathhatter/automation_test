@@ -450,14 +450,15 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         StringBuilder sectionItemNameBuilder = new StringBuilder();
         String sectionName = getSectionName();
         if (!TextUtils.isEmpty(sectionName)){
-            sectionItemNameBuilder.append(sectionName+".");
+            sectionItemNameBuilder.append(sectionName).append('.');
         }
         String itemName = getSectionItemName(true);
         if (!TextUtils.isEmpty(itemName)){
             sectionItemNameBuilder.append(itemName);
         }
-        if (!TextUtils.isEmpty(sectionItemNameBuilder))
+        if (!TextUtils.isEmpty(sectionItemNameBuilder)) {
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, sectionItemNameBuilder.toString());
+        }
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
                 ((AppOperationAware) context).getCurrentActivity().getNextScreenNavigationContext());
         String eventName = getAnalyticsFormattedScreeName();
