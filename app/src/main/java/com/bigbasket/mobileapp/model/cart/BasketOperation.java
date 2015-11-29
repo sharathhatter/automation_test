@@ -10,11 +10,10 @@ public final class BasketOperation {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({SET, INC, DEC, DELETE_ITEM})
+    @IntDef({INC, DEC, DELETE_ITEM})
     public @interface Mode {
     }
 
-    public static final int SET = 0;
     public static final int INC = 1;
     public static final int DEC = 2;
     public static final int DELETE_ITEM = 3;

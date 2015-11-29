@@ -225,10 +225,6 @@ public class BasketOperationTask<T extends AppOperationAware> {
                 call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty,
                         basketQueryMap != null ? basketQueryMap.get(): null);
                 break;
-            case BasketOperation.SET:
-                call = bigBasketApiService.setCartItem(navigationCtx, searchTerm, reqProdId, qty,
-                        basketQueryMap != null ? basketQueryMap.get(): null);
-                break;
             case BasketOperation.DELETE_ITEM:
                 call = bigBasketApiService.setCartItem(navigationCtx, null, reqProdId, "0",
                         basketQueryMap != null ? basketQueryMap.get(): null);

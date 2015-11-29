@@ -290,7 +290,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         if (layoutPromoProductList == null) return;
         layoutPromoProductList.removeAllViews();
 
-        showProgressDialog(getString(R.string.please_wait));
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, layoutPromoProductList);
 
         if (cartInfo == null) {
@@ -321,10 +320,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             });
         } else {
             layoutAddBundle.setVisibility(View.GONE);
-        }
-        try {
-            hideProgressDialog();
-        } catch (IllegalArgumentException e) {
         }
 
         HashMap<String, String> map = new HashMap<>();

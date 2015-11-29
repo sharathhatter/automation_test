@@ -20,9 +20,12 @@ public abstract class OnBasketActionAbstractListener implements View.OnClickList
     protected
     @BasketOperation.Mode
     int basketOperation;
+    protected AppOperationAware appOperationAware;
 
-    public OnBasketActionAbstractListener(@BasketOperation.Mode int basketOperation) {
+    public OnBasketActionAbstractListener(@BasketOperation.Mode int basketOperation,
+                                          AppOperationAware appOperationAware) {
         this.basketOperation = basketOperation;
+        this.appOperationAware = appOperationAware;
     }
 
     @Override
@@ -57,7 +60,7 @@ public abstract class OnBasketActionAbstractListener implements View.OnClickList
             return;
         }
         BasketOperationTask.Builder builder =
-                new BasketOperationTask.Builder<>((AppOperationAware) v.getContext(), basketOperation, product)
+                new BasketOperationTask.Builder<>(appOperationAware, basketOperation, product)
                         .withEventName(eventName)
                         .withNavigationCtx(nc)
                         .withProductView(v)

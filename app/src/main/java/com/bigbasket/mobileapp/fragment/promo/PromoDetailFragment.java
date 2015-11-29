@@ -298,9 +298,11 @@ public class PromoDetailFragment extends BaseFragment {
             LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             productRowParams.setMargins(8, 8, 8, 0);
-
-            ProductView.setProductView(new ProductViewHolder(base, null, new OnPromoClickListener<>(this),
-                            new ProductDetailOnClickListener<>(this), new OnBrandPageListener<>(this)),
+            ProductViewHolder productViewHolder = new ProductViewHolder(base);
+            productViewHolder.setPromoClickListener(new OnPromoClickListener<>(this));
+            productViewHolder.setProductDetailOnClickListener(new ProductDetailOnClickListener<>(this));
+            productViewHolder.setBrandPageListener(new OnBrandPageListener<>(this));
+            ProductView.setProductView(productViewHolder,
                     freeProduct, promoDetail.getBaseImgUrl(),
                     productViewDisplayDataHolder, false, getCurrentActivity(), getNextScreenNavigationContext(), null, "none",
                     null, null);

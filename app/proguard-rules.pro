@@ -134,7 +134,6 @@
  *;
 }
 
-# PayU
 -keepclassmembers class * {
  @android.webkit.JavascriptInterface <methods>;
 }
@@ -159,7 +158,6 @@
 }
 
 -keep class com.paymentsdk.android.model.** { *; }
-
 
 
 #moengage

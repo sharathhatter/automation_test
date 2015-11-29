@@ -1,18 +1,21 @@
 package com.bigbasket.mobileapp.handler.click.basket;
 
-import android.content.Context;
 import android.view.View;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.BasketChangeQtyAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.CartItem;
 import com.bigbasket.mobileapp.model.product.Product;
 
 public class OnCartBasketActionListener extends OnBasketActionAbstractListener {
-    public OnCartBasketActionListener(@BasketOperation.Mode int basketOperation) {
-        super(basketOperation);
+
+
+    public OnCartBasketActionListener(@BasketOperation.Mode int basketOperation,
+                                      AppOperationAware appOperationAware) {
+        super(basketOperation, appOperationAware);
     }
 
     @Override
@@ -45,8 +48,7 @@ public class OnCartBasketActionListener extends OnBasketActionAbstractListener {
                 v.getTag(R.id.basket_op_cart_view_holder_tag_id);
         if (v.getTag(R.id.basket_op_cart_page_tab_index_tag_id) != null) {
             int currentTabIndex = (int) v.getTag(R.id.basket_op_cart_page_tab_index_tag_id);
-            Context context = v.getContext();
-            if (context instanceof BasketChangeQtyAware) {
+            if (appOperationAware instanceof BasketChangeQtyAware) {
                 int itemPosition;
                 switch (basketOperation) {
                     case BasketOperation.DEC:
@@ -60,7 +62,7 @@ public class OnCartBasketActionListener extends OnBasketActionAbstractListener {
                         itemPosition = rowHolder.getAdapterPosition();
                         break;
                 }
-                ((BasketChangeQtyAware) context).onBasketQtyChanged(itemPosition,
+                ((BasketChangeQtyAware) appOperationAware).onBasketQtyChanged(itemPosition,
                         currentTabIndex);
             }
         }

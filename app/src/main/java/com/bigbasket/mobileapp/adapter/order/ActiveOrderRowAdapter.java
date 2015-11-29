@@ -68,6 +68,9 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
     private T context;
     private int currentTabIndex;
     private String quantityText;
+    private OnCartBasketActionListener basketIncActionListener;
+    private OnCartBasketActionListener basketDecActionListener;
+    private OnCartBasketActionListener basketDeleteItemActionListener;
 
     public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
                                  Typeface faceRobotoRegular, @OrderItemDisplaySource.Type int orderItemDisplaySource,
@@ -89,6 +92,9 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         this.currentTabIndex = currentTabIndex;
         this.inflater = (LayoutInflater) context.getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.quantityText = context.getCurrentActivity().getResources().getString(R.string.quantity);
+        this.basketIncActionListener = new OnCartBasketActionListener(BasketOperation.INC, context);
+        this.basketDecActionListener = new OnCartBasketActionListener(BasketOperation.DEC, context);
+        this.basketDeleteItemActionListener = new OnCartBasketActionListener(BasketOperation.DELETE_ITEM, context);
     }
 
     @Override
@@ -99,7 +105,11 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                 if (orderItemDisplaySource == OrderItemDisplaySource.ORDER_DISPLAY) {
                     row.setBackgroundColor(Color.WHITE);
                 }
-                return new RowHolder(row);
+                RowHolder rowHolder = new RowHolder(row);
+                rowHolder.setBasketDecActionListener(basketDecActionListener);
+                rowHolder.setBasketIncActionListener(basketIncActionListener);
+                rowHolder.setBasketDeleteItemActionListener(basketDeleteItemActionListener);
+                return rowHolder;
             case VIEW_TYPE_FULFILLMENT_INFO:
                 row = inflater.inflate(R.layout.fulfillment_info, parent, false);
                 return new FulfillmentInfoViewHolder(row);
@@ -595,10 +605,25 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         private TextView txtPackDesc;
         private TextView txtGiftMsg;
         private Typeface faceRobotoRegular;
+        private OnCartBasketActionListener basketIncActionListener;
+        private OnCartBasketActionListener basketDecActionListener;
+        private OnCartBasketActionListener basketDeleteItemActionListener;
 
         public RowHolder(View base) {
             super(base);
             this.faceRobotoRegular = FontHolder.getInstance(base.getContext()).getFaceRobotoRegular();
+        }
+
+        public void setBasketIncActionListener(OnCartBasketActionListener basketIncActionListener) {
+            this.basketIncActionListener = basketIncActionListener;
+        }
+
+        public void setBasketDecActionListener(OnCartBasketActionListener basketDecActionListener) {
+            this.basketDecActionListener = basketDecActionListener;
+        }
+
+        public void setBasketDeleteItemActionListener(OnCartBasketActionListener basketDeleteItemActionListener) {
+            this.basketDeleteItemActionListener = basketDeleteItemActionListener;
         }
 
         public ImageView getImgProduct() {
@@ -708,7 +733,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         public ImageView getImgRemove() {
             if (imgRemove == null) {
                 imgRemove = (ImageView) itemView.findViewById(R.id.imgRemove);
-                imgRemove.setOnClickListener(new OnCartBasketActionListener(BasketOperation.DELETE_ITEM));
+                imgRemove.setOnClickListener(basketDeleteItemActionListener);
             }
             return imgRemove;
         }
@@ -716,7 +741,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         public View getViewIncBasketQty() {
             if (viewIncBasketQty == null) {
                 viewIncBasketQty = itemView.findViewById(R.id.viewIncBasketQty);
-                viewIncBasketQty.setOnClickListener(new OnCartBasketActionListener(BasketOperation.INC));
+                viewIncBasketQty.setOnClickListener(basketIncActionListener);
             }
             return viewIncBasketQty;
         }
@@ -724,7 +749,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         public View getViewDecBasketQty() {
             if (viewDecBasketQty == null) {
                 viewDecBasketQty = itemView.findViewById(R.id.viewDecBasketQty);
-                viewDecBasketQty.setOnClickListener(new OnCartBasketActionListener(BasketOperation.DEC));
+                viewDecBasketQty.setOnClickListener(basketDecActionListener);
             }
             return viewDecBasketQty;
         }

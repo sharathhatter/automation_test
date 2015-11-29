@@ -10,10 +10,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/delete"
-        android:paddingLeft="@dimen/margin_small"
-        android:paddingRight="@dimen/margin_normal"
-        android:paddingTop="2dp"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_normal"
+        android:paddingRight="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_small"
         android:src="@drawable/ic_close_grey600_24dp" />
 
     <TextView
