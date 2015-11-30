@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.click.basket.OnProductBasketActionListener;
-import com.bigbasket.mobileapp.model.cart.BasketOperation;
 
 public class ProductViewHolder extends RecyclerView.ViewHolder {
     private ImageView imgProduct;
@@ -42,24 +41,44 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private RelativeLayout storeIconLayout;
     private View.OnClickListener specialityShopIconClickListener;
     private View.OnClickListener promoClickListener;
-    private View.OnClickListener productOnClickListener;
+    private View.OnClickListener productDetailOnClickListener;
     private View.OnClickListener brandPageListener;
+    private OnProductBasketActionListener basketIncActionListener;
+    private OnProductBasketActionListener basketDecActionListener;
 
-    public ProductViewHolder(View itemView, View.OnClickListener specialityShopIconClickListener,
-                             View.OnClickListener promoClickListener,
-                             View.OnClickListener productOnClickListener,
-                             View.OnClickListener brandPageListener) {
+
+    public ProductViewHolder(View itemView) {
         super(itemView);
+    }
+
+    public void setSpecialityShopIconClickListener(View.OnClickListener specialityShopIconClickListener) {
         this.specialityShopIconClickListener = specialityShopIconClickListener;
+    }
+
+    public void setPromoClickListener(View.OnClickListener promoClickListener) {
         this.promoClickListener = promoClickListener;
-        this.productOnClickListener = productOnClickListener;
+    }
+
+    public void setProductDetailOnClickListener(View.OnClickListener productOnClickListener) {
+        this.productDetailOnClickListener = productOnClickListener;
+    }
+
+    public void setBrandPageListener(View.OnClickListener brandPageListener) {
         this.brandPageListener = brandPageListener;
+    }
+
+    public void setBasketIncActionListener(OnProductBasketActionListener basketIncActionListener) {
+        this.basketIncActionListener = basketIncActionListener;
+    }
+
+    public void setBasketDecActionListener(OnProductBasketActionListener basketDecActionListener) {
+        this.basketDecActionListener = basketDecActionListener;
     }
 
     public ImageView getImgProduct() {
         if (imgProduct == null) {
             imgProduct = (ImageView) itemView.findViewById(R.id.imgProduct);
-            imgProduct.setOnClickListener(productOnClickListener);
+            imgProduct.setOnClickListener(productDetailOnClickListener);
         }
         return imgProduct;
     }
@@ -97,7 +116,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public TextView getTxtProductDesc() {
         if (txtProductDesc == null) {
             txtProductDesc = (TextView) itemView.findViewById(R.id.txtProductDesc);
-            txtProductDesc.setOnClickListener(productOnClickListener);
+            txtProductDesc.setOnClickListener(productDetailOnClickListener);
         }
         return txtProductDesc;
     }
@@ -134,7 +153,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public ImageView getImgAddToBasket() {
         if (imgAddToBasket == null) {
             imgAddToBasket = (ImageView) itemView.findViewById(R.id.imgAddToBasket);
-            imgAddToBasket.setOnClickListener(new OnProductBasketActionListener(BasketOperation.INC));
+            imgAddToBasket.setOnClickListener(basketIncActionListener);
         }
         return imgAddToBasket;
     }
@@ -142,7 +161,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public View getViewDecBasketQty() {
         if (viewDecBasketQty == null) {
             viewDecBasketQty = itemView.findViewById(R.id.viewDecBasketQty);
-            viewDecBasketQty.setOnClickListener(new OnProductBasketActionListener(BasketOperation.DEC));
+            viewDecBasketQty.setOnClickListener(basketDecActionListener);
         }
         return viewDecBasketQty;
     }
@@ -157,7 +176,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public View getViewIncBasketQty() {
         if (viewIncBasketQty == null) {
             viewIncBasketQty = itemView.findViewById(R.id.viewIncBasketQty);
-            viewIncBasketQty.setOnClickListener(new OnProductBasketActionListener(BasketOperation.INC));
+            viewIncBasketQty.setOnClickListener(basketIncActionListener);
         }
         return viewIncBasketQty;
     }

@@ -217,6 +217,8 @@ public class ShoppingListSummaryActivity extends SearchActivity {
                                            final ArrayList<ShoppingListSummary> shoppingListSummaries,
                                            String baseImgUrl, @Nullable Section headerSection,
                                            int headerSelectedOn) {
+        // Refresh the options menu
+        invalidateOptionsMenu();
         this.baseImgUrl = baseImgUrl;
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
