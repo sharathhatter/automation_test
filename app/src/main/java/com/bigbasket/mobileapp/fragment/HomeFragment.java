@@ -71,10 +71,21 @@ public class HomeFragment extends BaseSectionFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getAppData(savedInstanceState);
         trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
         setNextScreenNavigationContext(TrackEventkeys.HOME);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // removed home event from here
+        AppUpdateHandler.AppUpdateData appUpdateData = AppUpdateHandler.isOutOfDate(getActivity());
+        if (appUpdateData != null && !TextUtils.isEmpty(appUpdateData.getAppExpireBy())) {
+            showUpgradeAppDialog(appUpdateData.getAppExpireBy(), appUpdateData.getAppUpdateMsg(),
+                    appUpdateData.getLatestAppVersion());
+        }
+
+        getAppData(null);
     }
 
     private void homePageGetter(Bundle savedInstanceState) {
@@ -93,17 +104,6 @@ public class HomeFragment extends BaseSectionFragment {
         super.onBackResume();
         // removed home event from here
         setNextScreenNavigationContext(TrackEventkeys.HOME);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // removed home event from here
-        AppUpdateHandler.AppUpdateData appUpdateData = AppUpdateHandler.isOutOfDate(getActivity());
-        if (appUpdateData != null && !TextUtils.isEmpty(appUpdateData.getAppExpireBy())) {
-            showUpgradeAppDialog(appUpdateData.getAppExpireBy(), appUpdateData.getAppUpdateMsg(),
-                    appUpdateData.getLatestAppVersion());
-        }
     }
 
     private boolean isVisitorUpdateNeeded() {
@@ -179,7 +179,7 @@ public class HomeFragment extends BaseSectionFragment {
     }
 
     private void getHomePage() {
-        getLoaderManager().initLoader(LoaderIds.HOME_PAGE_ID, null,
+        getLoaderManager().restartLoader(LoaderIds.HOME_PAGE_ID, null,
                 new DynamicScreenLoaderCallback(getActivity()) {
                     @Override
                     public void onCursorNonEmpty(Cursor data) {

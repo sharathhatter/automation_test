@@ -160,11 +160,10 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         if (CityManager.isAreaPinInfoDataStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
         }
-        readAppDataDynamic();
     }
 
     public void readAppDataDynamic() {
-        getSupportLoaderManager().initLoader(LoaderIds.APP_DATA_DYNAMIC_ID, null,
+        getSupportLoaderManager().restartLoader(LoaderIds.APP_DATA_DYNAMIC_ID, null,
                 new LoaderManager.LoaderCallbacks<Cursor>() {
                     @Override
                     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -291,8 +290,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        loadNavigationItems();
         handleIntent(savedInstanceState);
     }
 
@@ -766,7 +763,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     }
 
     @SuppressWarnings("unchecked")
-    private void loadNavigationItems() {
+    protected void loadNavigationItems() {
         if (mMainMenuView == null || mDrawerLayout == null) return;
         getSupportLoaderManager().initLoader(LoaderIds.MAIN_MENU_ID, null,
                 new DynamicScreenLoaderCallback(this) {
@@ -852,9 +849,11 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             syncCartInfoFromPreference();
         }
 
+        readAppDataDynamic();
         if (AppDataDynamic.isStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
         }
+        loadNavigationItems();
     }
 
     @Override

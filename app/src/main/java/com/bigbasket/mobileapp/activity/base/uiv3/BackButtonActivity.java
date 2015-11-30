@@ -45,6 +45,11 @@ public class BackButtonActivity extends BBActivity {
     }
 
     @Override
+    protected void loadNavigationItems() {
+        // Do nothing here
+    }
+
+    @Override
     protected void setOptionsMenu(Menu menu) {
         BBDrawerLayout drawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
         if (drawerLayout != null) {
