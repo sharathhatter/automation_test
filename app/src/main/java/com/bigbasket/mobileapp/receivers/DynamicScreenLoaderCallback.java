@@ -19,21 +19,22 @@ import com.bigbasket.mobileapp.util.LoaderIds;
 
 public abstract class DynamicScreenLoaderCallback implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = DynamicScreenLoaderCallback.class.getName();
-    private Context context;
-    private String dynamicScreenType;
+    private Context mContext;
+    @Nullable
+    private String mDynamicScreenType;
 
     public DynamicScreenLoaderCallback(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        dynamicScreenType = getDynamicScreenType(id);
-        if (dynamicScreenType == null) return null;
-        Log.d(TAG, "Create loader invoked for = " + dynamicScreenType);
-        String selection = DynamicPageDbHelper.COLUMN_DYNAMIC_SCREEN_TYPE + " = \'" + dynamicScreenType
+        mDynamicScreenType = getDynamicScreenType(id);
+        if (mDynamicScreenType == null) return null;
+        Log.d(TAG, "Create loader invoked for = " + mDynamicScreenType);
+        String selection = DynamicPageDbHelper.COLUMN_DYNAMIC_SCREEN_TYPE + " = \'" + mDynamicScreenType
                 + "\'";
-        return new CursorLoader(context, Uri.withAppendedPath(DynamicPageDbHelper.CONTENT_URI, dynamicScreenType),
+        return new CursorLoader(mContext, Uri.withAppendedPath(DynamicPageDbHelper.CONTENT_URI, mDynamicScreenType),
                 DynamicPageDbHelper.getDefaultProjection(),
                 selection,
                 null, null);
@@ -53,24 +54,28 @@ public abstract class DynamicScreenLoaderCallback implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.d(TAG, "Load finished invoked for = " + dynamicScreenType);
+        if (mDynamicScreenType == null) {
+            mDynamicScreenType = getDynamicScreenType(loader.getId());
+        }
+        if (mDynamicScreenType == null) return; // Defensive check
+        Log.d(TAG, "Load finished invoked for = " + mDynamicScreenType);
         if (data != null && data.moveToFirst()) {
-            if (DynamicPageDbHelper.isStale(context, dynamicScreenType)) {
-                Log.d(TAG, "Dynamic screen = " + dynamicScreenType + " is stale, triggering refresh");
-                downloadDynamicScreen();
+            if (DynamicPageDbHelper.isStale(mContext, mDynamicScreenType)) {
+                Log.d(TAG, "Dynamic screen = " + mDynamicScreenType + " is stale, triggering refresh");
+                downloadDynamicScreen(mDynamicScreenType);
             }
             onCursorNonEmpty(data);
         } else {
             onCursorLoadingInProgress();
-            downloadDynamicScreen();
+            downloadDynamicScreen(mDynamicScreenType);
         }
     }
 
-    private void downloadDynamicScreen() {
+    private void downloadDynamicScreen(String dynamicScreenType) {
         Class<?> cls = dynamicScreenType.equals(AbstractDynamicPageSyncService.HOME_PAGE) ?
                 HomePageSyncService.class : MainMenuSyncService.class;
-        Intent intent = new Intent(context, cls);
-        context.startService(intent);
+        Intent intent = new Intent(mContext, cls);
+        mContext.startService(intent);
     }
 
     @Override
