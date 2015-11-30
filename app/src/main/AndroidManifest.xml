@@ -304,6 +304,7 @@
                     android:host="store_list"
                     android:scheme="bigbasket" />
             </intent-filter>
+            <!-- Wallet Page -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -313,29 +314,6 @@
                 <data
                     android:host="bigbasket.com"
                     android:path="/member/credit/"
-                    android:scheme="http" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="bigbasket.com"
-                    android:path="/payment/wallet/"
-                    android:scheme="http" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="bigbasket.com"
-                    android:path="/payment/pay_now/"
-                    android:pathPattern="/payment/pay_now/.*"
                     android:scheme="http" />
             </intent-filter>
             <intent-filter>
@@ -356,9 +334,82 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
+                    android:host="*.bigbasket.com"
+                    android:path="/member/credit/"
+                    android:scheme="http" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*.bigbasket.com"
+                    android:path="/member/credit/"
+                    android:scheme="https" />
+            </intent-filter>
+            <!-- end Wallet Page -->
+
+            <!-- Fund Wallet Page -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="bigbasket.com"
+                    android:path="/payment/wallet/"
+                    android:scheme="http" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
                     android:host="bigbasket.com"
                     android:path="/payment/wallet/"
                     android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*.bigbasket.com"
+                    android:path="/payment/wallet/"
+                    android:scheme="http" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*.bigbasket.com"
+                    android:path="/payment/wallet/"
+                    android:scheme="https" />
+            </intent-filter>
+            <!-- end FUnd Wallet -->
+            <!-- Pay Now -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="bigbasket.com"
+                    android:path="/payment/pay_now/"
+                    android:pathPattern="/payment/pay_now/.*"
+                    android:scheme="http" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -372,6 +423,31 @@
                     android:pathPattern="/payment/pay_now/.*"
                     android:scheme="https" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*.bigbasket.com"
+                    android:path="/payment/pay_now/"
+                    android:pathPattern="/payment/pay_now/.*"
+                    android:scheme="http" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*.bigbasket.com"
+                    android:path="/payment/pay_now/"
+                    android:pathPattern="/payment/pay_now/.*"
+                    android:scheme="https" />
+            </intent-filter>
+            <!-- end Pay Now -->
         </activity>
         <activity
             android:name=".activity.base.uiv3.SearchActivity"
