@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
+import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -577,19 +578,37 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     }
 
     @Override
-    public void doSearch(String searchQuery, String referrer) {
+    protected void doSearch(String searchQuery, String referrer) {
         if (!TextUtils.isEmpty(searchQuery)) {
             mTitlePassedViaIntent = searchQuery;
             mNameValuePairs = new ArrayList<>();
             mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
             mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
-            if (getSupportFragmentManager().getFragments() != null &&
-                    getSupportFragmentManager().getFragments().size() > 0) {
-                // New product list is requested over current page, so change nc by copying next-nc
-                setCurrentNavigationContext(referrer);
-            }
-            loadProductTabs(false);
+            refreshProductList(referrer);
         }
+    }
+
+    protected void doSearchByCategory(String categoryName, String categoryUrl,
+                                      String categorySlug, String navigationCtx) {
+        // Re-use the same activity for pc calls via search instead of creating a new one
+        if (!TextUtils.isEmpty(categorySlug)) {
+            mTitlePassedViaIntent = categoryName;
+            MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
+            mostSearchesDbHelper.update(categoryName, categoryUrl);
+            mNameValuePairs = new ArrayList<>();
+            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
+            mNameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
+            refreshProductList(navigationCtx);
+        }
+    }
+
+    private void refreshProductList(String navigationCtx) {
+        if (getSupportFragmentManager().getFragments() != null &&
+                getSupportFragmentManager().getFragments().size() > 0) {
+            // New product list is requested over current page, so change nc by copying next-nc
+            setCurrentNavigationContext(navigationCtx);
+        }
+        loadProductTabs(false);
     }
 
     private void setProductListForFragmentAtPosition(int position) {

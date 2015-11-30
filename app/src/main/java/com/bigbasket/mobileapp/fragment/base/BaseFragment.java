@@ -607,6 +607,10 @@ public abstract class BaseFragment extends AbstractFragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
+        observeMemoryLeak();
+    }
+
+    protected void observeMemoryLeak() {
         LeakCanaryObserver.Factory.observe(this);
     }
 }
