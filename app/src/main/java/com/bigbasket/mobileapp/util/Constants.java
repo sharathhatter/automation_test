@@ -663,4 +663,7 @@ public class Constants {
     public static final String HTTP_HOST = "bigbasket.com";
     public static final String SHOW_PAYMENT_OPTIONS_KNOW_MORE = "show_payment_options_know_more";
     public static final int KNOW_MORE_DIALOG_ID = 8008;
+
+    public static final String USER_SELECTED_ADDRESS = "selected_address";
+
 }

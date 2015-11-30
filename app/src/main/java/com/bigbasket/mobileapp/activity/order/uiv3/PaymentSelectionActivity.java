@@ -1006,5 +1006,4 @@ public class PaymentSelectionActivity extends BackButtonActivity
             startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
         }
     }
-
 }

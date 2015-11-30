@@ -61,6 +61,20 @@ public class Address extends AddressSummary {
         this.isSelected = source.readByte() == (byte) 1;
     }
 
+    public Address(boolean isDefault, String contactNum, String firstName, String lastName, String houseNumber, String street, String residentialComplex, String landmark, boolean isMapped, boolean isExpress, boolean isSelected) {
+        this.isDefault = isDefault;
+        this.contactNum = contactNum;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.houseNumber = houseNumber;
+        this.street = street;
+        this.residentialComplex = residentialComplex;
+        this.landmark = landmark;
+        this.isMapped = isMapped;
+        this.isExpress = isExpress;
+        this.isSelected = isSelected;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);

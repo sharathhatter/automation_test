@@ -297,13 +297,18 @@
     <!-- address -->
     <string name="expressAvailable"> \u0020 Express Delivery is available!</string>
     <string name="delivery_add">Delivery Address:</string>
+    <string name="delivery_address">Delivery Address</string>
     <string name="other_address">Other Addresses:</string>
     <string name="addAnAddress"> \u0020 Add an Address</string>
-    <string name="addNewAddress">ADD NEW ADDRESS</string>
+    <string name="addNewAddress">Add New Address</string>
     <string name="save">SAVE</string>
     <string name="saveAndContinue">Save and Continue</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
     <string name="incomplete">Incomplete</string>
+    <string name="pickAnAddress">Pick an address</string>
+    <string name="chooseAddress">Choose address</string>
+    <string name="chooseDelAddress">Choose delivery address</string>
+    <string name="notSignedIn">You are not signed in.\nPlease sign-in to continue</string>
 
     <!-- Show cart tabs -->
     <string name="exp_delivery">Express Delivery</string>
@@ -433,4 +438,5 @@
     <string name="evoucher_applied_format">"eVoucher: %1$s Applied!"</string>
     <string name="abort_payment_transaction_confirmation">Order is already placed. Convert payment to "Cash on Delivery" and cancel the transaction?</string>
     <string name="dont_not_show_this_message">Do not show this message again</string>
+
 </resources>

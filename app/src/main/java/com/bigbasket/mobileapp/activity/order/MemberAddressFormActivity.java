@@ -347,11 +347,19 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         HashMap<String, String> eventAttribs = new HashMap<>();
         trackEvent(TrackingAware.ENABLE_DEFAULT_ADDRESS, eventAttribs);
         if (mAddress != null && !forceCreate) {
-            payload.put(Constants.ID, mAddress.getId());
-            showProgressDialog(getString(R.string.please_wait));
-            Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
-                    bigBasketApiService.updateAddress(payload);
-            call.enqueue(new CreateUpdateAddressApiCallback(this, false));
+            if (!TextUtils.isEmpty(mAddress.getId())) {
+                payload.put(Constants.ID, mAddress.getId());
+                showProgressDialog(getString(R.string.please_wait));
+                Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
+                        bigBasketApiService.updateAddress(payload);
+                call.enqueue(new CreateUpdateAddressApiCallback(this, false));
+            } else {
+                //handling if the address is created manually without id
+                showProgressDialog(getString(R.string.please_wait));
+                Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
+                        bigBasketApiService.createAddress(payload);
+                call.enqueue(new CreateUpdateAddressApiCallback(this, false));
+            }
         } else {
             payload.remove(Constants.ID); // Defensive check
             showProgressDialog(getString(R.string.please_wait));
@@ -370,11 +378,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         Intent result = new Intent();
         result.putExtra(Constants.UPDATE_ADDRESS, address);
         setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED, result);
-        finish();
-    }
-
-    private void addressCreatedModified() {
-        setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
         finish();
     }
 
@@ -542,7 +545,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                         addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.address);
                     } else {
                         Toast.makeText(getCurrentActivity(), R.string.addressUpdated, Toast.LENGTH_LONG).show();
-                        addressCreatedModified();
+                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.address);
                     }
                     break;
                 case ApiErrorCodes.NUMBER_IN_USE:

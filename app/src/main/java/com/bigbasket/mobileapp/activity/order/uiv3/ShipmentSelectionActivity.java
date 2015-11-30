@@ -369,6 +369,29 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         return TrackEventkeys.SLOT_SELECTION_SCREEN;
     }
 
+    private void trackToggleEvent(String cityMode) {
+        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.ACTION_NAME, cityMode);
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Toggle", map);
+    }
+
+    private void trackFinalShipmentEvent(ArrayList<Shipment> shipments, String cityMode) {
+        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.ACTION_NAME, !mHasUserToggledShipmentsAtAll ? "none" : cityMode);
+        if (mOriginalShipmentMap == null) {
+            mOriginalShipmentMap = new HashMap<>();
+        }
+        for (Shipment shipment : shipments) {
+            map.put(TrackEventkeys.FINAL_FIS, shipment.getFulfillmentType());
+            map.put(TrackEventkeys.ORIGINAL_FIS, mOriginalShipmentMap.get(shipment.getShipmentId()));
+            map.put("Final_" + shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
+        }
+
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".FinalStatus", map);
+    }
+
     private class OnViewShipmentLinkedProductsListener implements View.OnClickListener {
         private Shipment shipment;
 
@@ -441,13 +464,6 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         }
     }
 
-    private void trackToggleEvent(String cityMode) {
-        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.ACTION_NAME, cityMode);
-        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Toggle", map);
-    }
-
     private class OnPostShipmentClickListener implements View.OnClickListener {
 
         private String cityMode;
@@ -483,22 +499,6 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                     TrackEventkeys.CO_DELIVERY_OPS).startTask();
             trackFinalShipmentEvent(mShipments, cityMode);
         }
-    }
-
-    private void trackFinalShipmentEvent(ArrayList<Shipment> shipments, String cityMode) {
-        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.ACTION_NAME, !mHasUserToggledShipmentsAtAll ? "none" : cityMode);
-        if (mOriginalShipmentMap == null) {
-            mOriginalShipmentMap = new HashMap<>();
-        }
-        for (Shipment shipment : shipments) {
-            map.put(TrackEventkeys.FINAL_FIS, shipment.getFulfillmentType());
-            map.put(TrackEventkeys.ORIGINAL_FIS, mOriginalShipmentMap.get(shipment.getShipmentId()));
-            map.put("Final_" + shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
-        }
-
-        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".FinalStatus", map);
     }
 
     private class OnSelectSlotClickListener implements View.OnClickListener {
