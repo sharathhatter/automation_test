@@ -167,7 +167,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             }
         });
 
-        PaymentMethodsView paymentMethodsView = (PaymentMethodsView)findViewById(R.id.layoutPaymentOptions);;
+        PaymentMethodsView paymentMethodsView = (PaymentMethodsView)findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
     }
 

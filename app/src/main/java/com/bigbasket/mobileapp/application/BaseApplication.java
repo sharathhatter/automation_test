@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.google.ads.conversiontracking.AdWordsConversionReporter;
+import com.localytics.android.Localytics;
 import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
 import com.moe.pushlibrary.MoEHelper;
 
@@ -61,6 +62,8 @@ public class BaseApplication extends Application {
         if (!BuildConfig.DEBUG) {
             AdWordsConversionReporter.reportWithConversionId(this.getApplicationContext(),
                     "990877306", "wqThCIz2ql8Q-qy-2AM", "0.00", false);
+        } else {
+            Localytics.setLoggingEnabled(true);
         }
     }
 }

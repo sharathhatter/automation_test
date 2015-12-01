@@ -1,18 +1,29 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Typeface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.SpannableString;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
-import android.text.style.UnderlineSpan;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -37,6 +48,7 @@ import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
+import com.bigbasket.mobileapp.interfaces.payment.PaymentOptionsKnowMoreDialogCallback;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
@@ -45,6 +57,7 @@ import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MutableLong;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -62,7 +75,8 @@ import java.util.HashMap;
 import retrofit.Call;
 
 public class PaymentSelectionActivity extends BackButtonActivity
-        implements OnPostPaymentListener, OnPaymentValidationListener, PaymentTxnInfoAware, PaymentMethodsView.OnPaymentOptionSelectionListener {
+        implements OnPostPaymentListener, OnPaymentValidationListener, PaymentTxnInfoAware,
+        PaymentMethodsView.OnPaymentOptionSelectionListener, PaymentOptionsKnowMoreDialogCallback {
 
     private static final java.lang.String IS_PREPAYMENT_TASK_PAUSED = "is_prepayment_task_paused";
     private static final java.lang.String IS_PREPAYMENT_TASK_STARTED = "is_prepayment_task_started";
@@ -99,9 +113,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mOrderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
         if (mOrderDetails == null) return;
         renderPaymentDetails();
-        setUpNewCheckoutFlowMsg();
         renderFooter(false);
-        trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
         MoEngageWrapper.suppressInAppMessageHere(moEHelper);
         if (savedInstanceState != null) {
             if (mOrdersCreated == null) {
@@ -121,6 +133,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 startPrepaymentProcessing(savedInstanceState);
             }
 
+        } else {
+            trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
         }
     }
 
@@ -141,50 +155,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             outState.putBoolean(IS_PREPAYMENT_ABORT_INITIATED, mIsPrepaymentAbortInitiated);
         }
         super.onSaveInstanceState(outState);
-    }
-
-    private void setUpNewCheckoutFlowMsg() {
-        final String newFlowUrl = getIntent().getStringExtra(Constants.NEW_FLOW_URL);
-        TextView txtNewCheckoutFlowMsg = (TextView) findViewById(R.id.txtNewCheckoutFlow);
-        txtNewCheckoutFlowMsg.setTypeface(faceRobotoRegular);
-
-        TextView lblKnowMore = (TextView) findViewById(R.id.lblKnowMore);
-        if (TextUtils.isEmpty(newFlowUrl)) {
-            lblKnowMore.setVisibility(View.GONE);
-        } else {
-            SpannableString spannableString = new SpannableString(lblKnowMore.getText());
-            spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
-                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            lblKnowMore.setText(spannableString);
-            lblKnowMore.setTypeface(faceRobotoRegular);
-            lblKnowMore.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    trackEvent(TrackingAware.PLACE_ORDER_KNOW_MORE_LINK_CLICKED, null);
-                    Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                    intent.putExtra(Constants.WEBVIEW_URL, newFlowUrl);
-                    intent.putExtra(Constants.WEBVIEW_TITLE, "");
-                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                }
-            });
-        }
-
-        String prefix = getString(R.string.newStr) + "\n";
-        String msg = getString(R.string.newCheckoutFlowMsg);
-
-        SpannableString spannableString = new SpannableString(prefix + msg);
-        spannableString.setSpan(new ForegroundColorSpan(getResources()
-                        .getColor(R.color.uiv3_dialog_header_text_bkg)),
-                0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new StyleSpan(Typeface.BOLD),
-                0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        txtNewCheckoutFlowMsg.setText(spannableString);
-    }
-
-    private void toggleNewCheckoutFlowMsg(boolean show) {
-        View layoutKnowMore = findViewById(R.id.layoutKnowMore);
-        layoutKnowMore.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -275,15 +245,31 @@ public class PaymentSelectionActivity extends BackButtonActivity
             layoutCheckoutFooter.setOnClickListener(new DuplicateClickAware(mElapsedTime) {
                 @Override
                 public void onActualClick(View view) {
-                    placeOrder();
+                    if (TextUtils.isEmpty(mSelectedPaymentMethod)) {
+                        showToast(getString(R.string.missingPaymentMethod));
+                        return;
+                    }
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
                     map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                     trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
+
+                    SharedPreferences prefs =
+                            PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    if(isCreditCardPayment()
+                            && prefs.getBoolean(Constants.SHOW_PAYMENT_OPTIONS_KNOW_MORE, true)) {
+                        PaymentOrderInfoDialog dialog = PaymentOrderInfoDialog.newInstance(
+                                Constants.KNOW_MORE_DIALOG_ID,
+                                getIntent().getStringExtra(Constants.NEW_FLOW_URL));
+                        dialog.show(getSupportFragmentManager(), getScreenTag()+"#KnowmoreDialog");
+                    } else {
+                        placeOrder();
+                    }
                 }
             });
         }
     }
+
 
     private void renderPaymentDetails() {
         mActiveVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
@@ -579,10 +565,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void placeOrder() {
-        if (TextUtils.isEmpty(mSelectedPaymentMethod)) {
-            showToast(getString(R.string.missingPaymentMethod));
-            return;
-        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
                 false);
@@ -823,8 +805,25 @@ public class PaymentSelectionActivity extends BackButtonActivity
     @Override
     public void onPaymentOptionSelected(String paymentTypeValue) {
         mSelectedPaymentMethod = paymentTypeValue;
-        toggleNewCheckoutFlowMsg(isCreditCardPayment());
         renderFooter(true);
+    }
+
+    @Override
+    public void onKnowMoreConfirmed(int id, boolean isPositive) {
+        if (id == Constants.KNOW_MORE_DIALOG_ID) {
+            if (isPositive) {
+                placeOrder();
+            } else {
+                trackEvent(PLACE_ORDER_KNOW_MORE_DIALOG_CANCEL_CLICKED, null);
+            }
+        }
+    }
+
+    @Override
+    public void onKnowMoreCancelled(int id) {
+        if (id == Constants.KNOW_MORE_DIALOG_ID){
+            trackEvent(PLACE_ORDER_KNOW_MORE_DIALOG_CANCELLED, null);
+        }
     }
 
     private class OnShowAvailableVouchersListener implements View.OnClickListener {
@@ -836,4 +835,161 @@ public class PaymentSelectionActivity extends BackButtonActivity
             startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
         }
     }
+
+
+
+    public static class PaymentOrderInfoDialog extends DialogFragment
+            implements Dialog.OnClickListener {
+
+        private static final String ARG_DIALOG_IDENTIFIER = "arg_dialog_identifier";
+        private static final String ARG_KNOW_MORE_URL = "arg_know_more_url";
+
+        private CheckBox mDonotShowCheckbox;
+        private PaymentOptionsKnowMoreDialogCallback callback;
+        private String mKnowMoreUrl;
+
+        public static PaymentOrderInfoDialog newInstance(Fragment parentFragment, int dialogId,
+                                                         String knowMoreUrl) {
+
+            Bundle args = new Bundle();
+            args.putInt(ARG_DIALOG_IDENTIFIER, dialogId);
+            args.putString(ARG_KNOW_MORE_URL, knowMoreUrl);
+
+            PaymentOrderInfoDialog fragment = new PaymentOrderInfoDialog();
+            fragment.setArguments(args);
+            fragment.setTargetFragment(parentFragment, dialogId);
+            return fragment;
+        }
+
+        public static PaymentOrderInfoDialog newInstance(int dialogId,
+                                                         String knowMoreUrl) {
+            return newInstance(null, dialogId, knowMoreUrl);
+        }
+
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            updateCallBack();
+        }
+
+        @Override
+        public void setTargetFragment(Fragment fragment, int requestCode) {
+            super.setTargetFragment(fragment, requestCode);
+            updateCallBack();
+        }
+
+        private void updateCallBack(){
+            if(getTargetFragment() instanceof PaymentOptionsKnowMoreDialogCallback) {
+                callback = (PaymentOptionsKnowMoreDialogCallback) getTargetFragment();
+            } else if( getActivity() instanceof PaymentOptionsKnowMoreDialogCallback){
+                callback = (PaymentOptionsKnowMoreDialogCallback)getActivity();
+            } else {
+                callback = null;
+            }
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            TextView msg = (TextView)getDialog().findViewById(R.id.message);
+            msg.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
+
+            SpannableStringBuilder spannableBuilder =
+                    new SpannableStringBuilder(getString(R.string.payment_order_info));
+
+            mKnowMoreUrl = null;
+
+            if(getArguments() != null) {
+                mKnowMoreUrl = getArguments().getString(ARG_KNOW_MORE_URL);
+            }
+            if(!TextUtils.isEmpty(mKnowMoreUrl)){
+                spannableBuilder.append(' ');
+                ClickableSpan knowMoreClickable = new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        Activity activity = getActivity();
+                        if(activity == null){
+                            return;
+                        }
+                        if(activity instanceof TrackingAware) {
+                            ((TrackingAware)activity).trackEvent(
+                                    TrackingAware.PLACE_ORDER_KNOW_MORE_LINK_CLICKED, null);
+                        }
+                        Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
+                        intent.putExtra(Constants.WEBVIEW_URL, mKnowMoreUrl);
+                        intent.putExtra(Constants.WEBVIEW_TITLE, "");
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void updateDrawState(TextPaint ds) {
+                        ds.setColor(getResources().getColor(R.color.uiv3_link_color));
+                        ds.setUnderlineText(true);
+                    }
+                };
+                int start = spannableBuilder.length();
+                spannableBuilder.append(getString(R.string.know_more));
+                spannableBuilder.setSpan(knowMoreClickable, start, spannableBuilder.length(),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            msg.setText(spannableBuilder);
+            msg.setMovementMethod(LinkMovementMethod.getInstance());
+
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            //NOTE: DO NOT USE getLayoutInflater(savedInstanceState), causes StackOverflowError
+            View view = getActivity().getLayoutInflater().inflate(
+                    R.layout.fragment_payment_order_info, null, false);
+            mDonotShowCheckbox = (CheckBox)view.findViewById(R.id.dont_show_check_box);
+
+            AlertDialog.Builder alertDiaBuilder = new AlertDialog.Builder(getActivity())
+                    .setView(view)
+                    .setPositiveButton(R.string.lblContinue, this)
+                    .setNegativeButton(R.string.cancel, this);
+
+            AlertDialog dialog = alertDiaBuilder.create();
+            WindowManager.LayoutParams attrs = dialog.getWindow().getAttributes();
+            attrs.gravity = Gravity.BOTTOM | Gravity.RIGHT | Gravity.END;
+            dialog.getWindow().setBackgroundDrawableResource(R.color.white);
+            return dialog;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            Activity activity = getActivity();
+            if(activity == null){
+                return;
+            }
+            if(which == AlertDialog.BUTTON_POSITIVE) {
+                if(mDonotShowCheckbox != null && mDonotShowCheckbox.isChecked()){
+                    SharedPreferences prefs =
+                            PreferenceManager.getDefaultSharedPreferences(
+                                    activity.getApplicationContext());
+                    prefs.edit().putBoolean(Constants.SHOW_PAYMENT_OPTIONS_KNOW_MORE, false).apply();
+                }
+            }
+            if(callback != null){
+                Bundle args = getArguments();
+                callback.onKnowMoreConfirmed(
+                        args != null ? args.getInt(ARG_DIALOG_IDENTIFIER, 0): 0,
+                        which == AlertDialog.BUTTON_POSITIVE);
+            }
+        }
+
+        @Override
+        public void onCancel(DialogInterface dialog) {
+            super.onCancel(dialog);
+            if(callback != null){
+                Bundle args = getArguments();
+                callback.onKnowMoreCancelled(
+                        args != null ? args.getInt(ARG_DIALOG_IDENTIFIER, 0): 0);
+            }
+        }
+    }
+
 }

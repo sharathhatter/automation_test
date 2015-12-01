@@ -664,4 +664,6 @@ public class Constants {
     // App Indexing params
     public static final String HTTP_HOST = "bigbasket.com";
     public static final String PAYTM_TRANS_ID_KEY = "ORDER_ID";
+    public static final String SHOW_PAYMENT_OPTIONS_KNOW_MORE = "show_payment_options_know_more";
+    public static final int KNOW_MORE_DIALOG_ID = 8008;
 }

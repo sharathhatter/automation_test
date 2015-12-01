@@ -162,6 +162,8 @@ public interface TrackingAware {
     String BASKET_ADD_PROMO_BUNDLE = "Promo.Add Bundle";
     String CHECKOUT_KNOW_MORE_LINK_CLICKED = "Order Thank You.Know More Link Clicked";
     String PLACE_ORDER_KNOW_MORE_LINK_CLICKED = "Place Order.Know More Link Clicked";
+    String PLACE_ORDER_KNOW_MORE_DIALOG_CANCEL_CLICKED = "Place Order.Know More Dialog Cancel Clicked";
+    String PLACE_ORDER_KNOW_MORE_DIALOG_CANCELLED = "Place Order.Know More Dialog Cancelled";
 
     //eVoucher
     String EVOUCHER_SHOWN = "EVocuher.Shown";

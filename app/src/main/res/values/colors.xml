@@ -37,7 +37,8 @@
     <color name="uiv3_list_bkg_light_color">#F9F9F9</color>
     <color name="uiv3_secondary_text_color">#929292</color>
     <color name="uiv3_ok_label_color">#FF9100</color>
-    <color name="uiv3_link_color">#66009688</color>
+    <color name="uiv3_link_color">@color/uiv3_primary_btn_bkg</color>
+    <color name="uiv3_link_color_pressed">@color/uiv3_primary_btn_pressed_bkg</color>
     <color name="uiv3_dark_bkg">#333333</color>
     <color name="uiv3_orange">#E7685D</color>
     <color name="uiv3_grey_status_bar_color">#bdbdbd</color>
