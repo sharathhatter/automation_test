@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/txtSaveAddress"
         android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_normal"
+        android:paddingBottom="@dimen/padding_normal"
         android:background="@color/white"
         android:scrollbars="none">
 
@@ -291,10 +292,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/margin_small"
         android:gravity="right|center_vertical"
         android:paddingBottom="@dimen/padding_small"
-        android:paddingLeft="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_normal"
         android:paddingRight="@dimen/padding_normal"
         android:paddingTop="@dimen/padding_small"
         android:text="@string/save"

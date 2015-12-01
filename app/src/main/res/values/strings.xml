@@ -313,7 +313,7 @@
     <!-- order invoice -->
     <string name="multi_order_place_txt">You will receive the orders in multiple deliveries</string>
     <string name="continue_shopping">CONTINUE SHOPPING!</string>
-    <string name="know_more">Know More</string>
+    <string name="know_more">Know more</string>
 
     <string name="expressDelAvailable">\u0020 Express Delivery may be available</string>
     <string name="my_basket_header">My Basket</string>
@@ -351,7 +351,7 @@
     <string name="enable">Enable</string>
     <string name="locationSettingError">Unable to open location window.\nPlease enable it by going to settings.</string>
 
-    <string name="newCheckoutFlowMsg">When you click on Place Order &amp; Pay - Your order will be placed first &amp; then you will be taken to complete the payment.</string>
+    <string name="payment_order_info">Your order will be placed first &amp; then you will be taken to complete the payment.</string>
     <string name="newStr">New</string>
     <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.\nPlease don\'t press back button.</string>
 
@@ -432,4 +432,5 @@
     <string name="evoucher_applied_format">"eVoucher: %1$s Applied!"</string>
     <string name="abort_payment_transaction_confirmation">The order has been already created. It will be automatically converted to Cash on Delivery in a short while.\n\nCancel payment transaction and make the payment on delivery?</string>
     <string name="cancel_transaction">Cancel transaction</string>
+    <string name="dont_not_show_this_message">Do not show this message again</string>
 </resources>
