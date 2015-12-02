@@ -156,19 +156,19 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     private void startPayNow(double total) {
         mFinalTotal = total;
         mPayNowPrepaymentProcessingTask = new PayNowPrepaymentProcessingTask<PayNowActivity>(this,
-                null, mOrderId, mSelectedPaymentMethod, true, false){
+                null, mOrderId, mSelectedPaymentMethod, true, false) {
             @Override
             protected void onPostExecute(Boolean success) {
                 super.onPostExecute(success);
-                if(isPaused() || isCancelled() || isSuspended()){
+                if (isPaused() || isCancelled() || isSuspended()) {
                     return;
                 }
-                if(!success){
-                    if(errorResponse != null) {
-                        if(errorResponse.isException()){
+                if (!success) {
+                    if (errorResponse != null) {
+                        if (errorResponse.isException()) {
                             //TODO: Possible network error retry
                             getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
-                        } else if( errorResponse.getCode() > 0) {
+                        } else if (errorResponse.getCode() > 0) {
                             getHandler().handleHttpError(errorResponse.getCode(),
                                     errorResponse.getMessage(), false);
                         } else {
@@ -195,7 +195,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mPayNowPrepaymentProcessingTask != null){
+        if (mPayNowPrepaymentProcessingTask != null) {
             mPayNowPrepaymentProcessingTask.cancel(true);
         }
     }
@@ -289,7 +289,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void displayPaymentMethods(ArrayList<PaymentType> paymentTypeList) {
-        PaymentMethodsView paymentMethodsView = (PaymentMethodsView)findViewById(R.id.layoutPaymentOptions);
+        PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
     }
 

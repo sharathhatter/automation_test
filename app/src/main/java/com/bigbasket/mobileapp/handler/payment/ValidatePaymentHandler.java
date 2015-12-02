@@ -38,13 +38,13 @@ public class ValidatePaymentHandler<T extends AppOperationAware> {
             public void onSuccess(ApiResponse<ValidateOrderPaymentApiResponse> validateOrderPaymentResponse) {
                 switch (validateOrderPaymentResponse.status) {
                     case 0:
-                        if(ctx instanceof OnPaymentValidationListener) {
+                        if (ctx instanceof OnPaymentValidationListener) {
                             ((OnPaymentValidationListener) ctx).onPaymentValidated(true, null,
                                     validateOrderPaymentResponse.apiResponseContent.orders);
                         }
                         break;
                     case ApiErrorCodes.PAYMENT_ERROR:
-                        if(ctx instanceof OnPaymentValidationListener) {
+                        if (ctx instanceof OnPaymentValidationListener) {
                             ((OnPaymentValidationListener) ctx).onPaymentValidated(false,
                                     validateOrderPaymentResponse.message,
                                     validateOrderPaymentResponse.apiResponseContent.orders);

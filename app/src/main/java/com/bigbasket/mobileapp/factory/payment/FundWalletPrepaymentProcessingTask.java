@@ -14,6 +14,7 @@ import retrofit.Call;
 public class FundWalletPrepaymentProcessingTask<T extends AppOperationAware>
         extends AbstractPrepaymentProcessingTask<T> {
     private String amount;
+
     public FundWalletPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
                                               String paymentMethod, boolean isPayNow,
                                               boolean isFundWallet, String amount) {

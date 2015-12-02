@@ -87,7 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Crashlytics.logException(e);
             }
         }
-        if(oldVersion < 16){
+        if (oldVersion < 16) {
             upgradeTo16(db);
         }
     }

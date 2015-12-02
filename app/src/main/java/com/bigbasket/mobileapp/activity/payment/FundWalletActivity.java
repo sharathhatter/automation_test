@@ -101,7 +101,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mFundWalletPrepaymentProcessingTask != null){
+        if (mFundWalletPrepaymentProcessingTask != null) {
             mFundWalletPrepaymentProcessingTask.cancel(true);
         }
     }
@@ -167,7 +167,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             }
         });
 
-        PaymentMethodsView paymentMethodsView = (PaymentMethodsView)findViewById(R.id.layoutPaymentOptions);
+        PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
     }
 
@@ -194,15 +194,15 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                     @Override
                     protected void onPostExecute(Boolean success) {
                         super.onPostExecute(success);
-                        if(isPaused() || isCancelled() || isSuspended()){
+                        if (isPaused() || isCancelled() || isSuspended()) {
                             return;
                         }
-                        if(!success){
-                            if(errorResponse != null) {
-                                if(errorResponse.isException()){
+                        if (!success) {
+                            if (errorResponse != null) {
+                                if (errorResponse.isException()) {
                                     //TODO: Possible network error retry
                                     getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
-                                } else if( errorResponse.getCode() > 0) {
+                                } else if (errorResponse.getCode() > 0) {
                                     getHandler().handleHttpError(errorResponse.getCode(),
                                             errorResponse.getMessage(), false);
                                 } else {
