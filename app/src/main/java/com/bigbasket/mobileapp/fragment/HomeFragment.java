@@ -263,18 +263,22 @@ public class HomeFragment extends BaseSectionFragment {
             editor.apply();
             getCurrentActivity().launchAppDeepLink(pendingDeepLink);
         } else {
-            String pendingFragmentCode = preferences.getString(Constants.FRAGMENT_CODE, null);
-            if (!TextUtils.isEmpty(pendingFragmentCode)) {
+            int pendingFragmentCode;
+            try {
+                pendingFragmentCode = preferences.getInt(Constants.FRAGMENT_CODE, -1);
+            } catch (ClassCastException e) {
+                // Can come during a upgrade app scenario, so a defensive catch block
+                preferences.edit().remove(Constants.FRAGMENT_CODE).apply();
+                pendingFragmentCode = -1;
+            }
+            if (pendingFragmentCode > -1) {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.remove(Constants.FRAGMENT_CODE);
                 editor.apply();
-                if (TextUtils.isDigitsOnly(pendingFragmentCode)) {
-                    int fragmentCode = Integer.parseInt(pendingFragmentCode);
-                    if (fragmentCode == NavigationCodes.GO_TO_BASKET) {
-                        getCurrentActivity().launchViewBasketScreen();
-                    } else if (getCurrentActivity() instanceof BBActivity) {
-                        ((BBActivity) getCurrentActivity()).startFragment(fragmentCode);
-                    }
+                if (pendingFragmentCode == NavigationCodes.GO_TO_BASKET) {
+                    getCurrentActivity().launchViewBasketScreen();
+                } else if (getCurrentActivity() instanceof BBActivity) {
+                    ((BBActivity) getCurrentActivity()).startFragment(pendingFragmentCode);
                 }
             }
         }

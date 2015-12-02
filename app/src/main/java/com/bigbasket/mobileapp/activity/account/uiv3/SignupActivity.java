@@ -55,6 +55,11 @@ public class SignupActivity extends BackButtonActivity {
         return R.layout.uiv3_signup;
     }
 
+    @Override
+    public void handleIntent(Bundle savedInstanceState) {
+        // This activity doesn't support fragment operations
+    }
+
     private void renderSignUp() {
         ((TextView) findViewById(R.id.txtOrSeparator)).setTypeface(faceRobotoRegular);
         ((TextView) findViewById(R.id.lblConnectUsing)).setTypeface(faceRobotoLight);

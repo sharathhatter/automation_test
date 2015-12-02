@@ -155,7 +155,8 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 }
             }
         });
-        setNavDrawer(toolbar, savedInstanceState);
+        setNavDrawer();
+        handleIntent(savedInstanceState);
         setViewBasketFloatingButton();
         if (CityManager.isAreaPinInfoDataStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
@@ -252,7 +253,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         return (Toolbar) findViewById(R.id.toolbarMain);
     }
 
-    public void setNavDrawer(final Toolbar toolbar, Bundle savedInstanceState) {
+    public void setNavDrawer() {
         mDrawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -290,7 +291,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        handleIntent(savedInstanceState);
     }
 
     @Override

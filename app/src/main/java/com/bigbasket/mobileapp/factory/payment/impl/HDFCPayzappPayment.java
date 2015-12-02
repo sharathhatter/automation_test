@@ -19,7 +19,8 @@ public class HDFCPayzappPayment {
                     + ", payzappPostParams: " + payzappPostParams);
         }
         if (activity instanceof PaymentTxnInfoAware) {
-            ((PaymentTxnInfoAware) activity).setTxnId(payzappPostParams.getTxnId());
+            ((PaymentTxnInfoAware) activity).setTxnDetails(payzappPostParams.getTxnId(),
+                    payzappPostParams.getAmount());
         }
         WPayInitRequest wPayInitRequest = new WPayInitRequest();
 

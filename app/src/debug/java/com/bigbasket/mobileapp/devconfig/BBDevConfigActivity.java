@@ -127,7 +127,7 @@ public class BBDevConfigActivity extends SocialLoginActivity
 
     @Override
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    protected boolean onLogoutComplete(boolean success) {
+    protected void postLogout(boolean success) {
         if (success) {
             PreferenceManager.getDefaultSharedPreferences(this).edit()
                     .remove(Constants.VISITOR_ID_KEY).commit();
@@ -137,12 +137,10 @@ public class BBDevConfigActivity extends SocialLoginActivity
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
-            return true;
         } else {
             showServerPreferencesFragment(null);
         }
         mNewServerName = null;
-        return false;
     }
 
     /**
