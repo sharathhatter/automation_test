@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -148,6 +147,7 @@ public class PaymentMethodsView extends LinearLayout {
 
     /**
      * saving the instance state
+     *
      * @return saved state
      */
     @Override

@@ -219,15 +219,15 @@ public class BasketOperationTask<T extends AppOperationAware> {
         switch (basketOperation) {
             case BasketOperation.INC:
                 call = bigBasketApiService.incrementCartItem(navigationCtx, searchTerm, reqProdId, qty,
-                        basketQueryMap != null ? basketQueryMap.get(): null);
+                        basketQueryMap != null ? basketQueryMap.get() : null);
                 break;
             case BasketOperation.DEC:
                 call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty,
-                        basketQueryMap != null ? basketQueryMap.get(): null);
+                        basketQueryMap != null ? basketQueryMap.get() : null);
                 break;
             case BasketOperation.DELETE_ITEM:
                 call = bigBasketApiService.setCartItem(navigationCtx, null, reqProdId, "0",
-                        basketQueryMap != null ? basketQueryMap.get(): null);
+                        basketQueryMap != null ? basketQueryMap.get() : null);
                 break;
         }
         if (call != null) {

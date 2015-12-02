@@ -17,8 +17,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiR
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
-import com.bigbasket.mobileapp.apiservice.models.response.PayzappPrePaymentParamsResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.PrePaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
@@ -27,12 +25,14 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PayzappPrePaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostGiftItemsResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PrePaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
@@ -350,7 +350,7 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("pay-now/")
     Call<ApiResponse<PrePaymentParamsResponse>> postPayNowDetails(@Field(Constants.ORDER_ID) String orderId,
-                                                                   @Field(Constants.PAYMENT_METHOD) String paymentMethod);
+                                                                  @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @FormUrlEncoded
     @POST("pay-now/")
@@ -367,7 +367,7 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("fund-wallet/")
     Call<ApiResponse<PrePaymentParamsResponse>> postFundWallet(@Field(Constants.PAYMENT_METHOD) String payment_method,
-                                                                @Field(Constants.AMOUNT) String amount);
+                                                               @Field(Constants.AMOUNT) String amount);
 
     @FormUrlEncoded
     @POST("fund-wallet/")

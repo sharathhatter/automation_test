@@ -5,5 +5,6 @@ package com.bigbasket.mobileapp.interfaces.payment;
  */
 public interface PaymentOptionsKnowMoreDialogCallback {
     void onKnowMoreConfirmed(int id, boolean isPositive);
+
     void onKnowMoreCancelled(int id);
 }

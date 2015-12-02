@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -149,7 +148,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (mSelectedPaymentMethod != null) {
             outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
         }
-        if(mOrderPrepaymentProcessingTask != null) {
+        if (mOrderPrepaymentProcessingTask != null) {
             outState.putBoolean(IS_PREPAYMENT_TASK_STARTED, mIsPrepaymentProcessingStarted);
             outState.putBoolean(IS_PREPAYMENT_TASK_PAUSED, mOrderPrepaymentProcessingTask.isPaused());
             outState.putBoolean(IS_PREPAYMENT_ABORT_INITIATED, mIsPrepaymentAbortInitiated);
@@ -161,7 +160,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     public void onResume() {
         super.onResume();
         processMobikWikResponse();
-        if(mOrderPrepaymentProcessingTask != null && !mIsPrepaymentAbortInitiated){
+        if (mOrderPrepaymentProcessingTask != null && !mIsPrepaymentAbortInitiated) {
             mOrderPrepaymentProcessingTask.resume();
         }
     }
@@ -169,7 +168,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     @Override
     protected void onPause() {
         super.onPause();
-        if(mOrderPrepaymentProcessingTask != null){
+        if (mOrderPrepaymentProcessingTask != null) {
             mOrderPrepaymentProcessingTask.pause();
         }
     }
@@ -177,15 +176,15 @@ public class PaymentSelectionActivity extends BackButtonActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mOrderPrepaymentProcessingTask != null){
+        if (mOrderPrepaymentProcessingTask != null) {
             mOrderPrepaymentProcessingTask.cancel(true);
         }
     }
 
     @Override
     public void onBackPressed() {
-        if(isPaymentPending()) {
-            if(mOrderPrepaymentProcessingTask != null){
+        if (isPaymentPending()) {
+            if (mOrderPrepaymentProcessingTask != null) {
                 mOrderPrepaymentProcessingTask.pause();
             }
             showAlertDialog(null, getString(R.string.abort_payment_transaction_confirmation),
@@ -256,12 +255,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
                     SharedPreferences prefs =
                             PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    if(isCreditCardPayment()
+                    if (isCreditCardPayment()
                             && prefs.getBoolean(Constants.SHOW_PAYMENT_OPTIONS_KNOW_MORE, true)) {
                         PaymentOrderInfoDialog dialog = PaymentOrderInfoDialog.newInstance(
                                 Constants.KNOW_MORE_DIALOG_ID,
                                 getIntent().getStringExtra(Constants.NEW_FLOW_URL));
-                        dialog.show(getSupportFragmentManager(), getScreenTag()+"#KnowmoreDialog");
+                        dialog.show(getSupportFragmentManager(), getScreenTag() + "#KnowmoreDialog");
                     } else {
                         placeOrder();
                     }
@@ -662,7 +661,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mOrderPrepaymentProcessingTask =
                 new OrderPrepaymentProcessingTask<PaymentSelectionActivity>(this,
                         mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
-                        mSelectedPaymentMethod, false, false){
+                        mSelectedPaymentMethod, false, false) {
                     @Override
                     protected void onPreExecute() {
                         super.onPreExecute();
@@ -672,16 +671,16 @@ public class PaymentSelectionActivity extends BackButtonActivity
                     @Override
                     protected void onPostExecute(Boolean success) {
                         super.onPostExecute(success);
-                        if(isPaused() || isCancelled() || isSuspended()){
+                        if (isPaused() || isCancelled() || isSuspended()) {
                             return;
                         }
                         mIsPrepaymentProcessingStarted = false;
-                        if(!success){
-                            if(errorResponse != null) {
-                                if(errorResponse.isException()){
+                        if (!success) {
+                            if (errorResponse != null) {
+                                if (errorResponse.isException()) {
                                     //TODO: Possible network error retry
                                     getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
-                                } else if( errorResponse.getCode() > 0) {
+                                } else if (errorResponse.getCode() > 0) {
                                     getHandler().handleHttpError(errorResponse.getCode(),
                                             errorResponse.getMessage(), false);
                                 } else {
@@ -697,8 +696,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
                         mOrderPrepaymentProcessingTask = null;
                     }
                 };
-        if(savedInstanceState != null
-                && savedInstanceState.getBoolean(IS_PREPAYMENT_TASK_PAUSED, false)){
+        if (savedInstanceState != null
+                && savedInstanceState.getBoolean(IS_PREPAYMENT_TASK_PAUSED, false)) {
             mOrderPrepaymentProcessingTask.pause();
         } else {
             mOrderPrepaymentProcessingTask.setMinDuration(5000);
@@ -749,14 +748,14 @@ public class PaymentSelectionActivity extends BackButtonActivity
             case Constants.PREPAYMENT_ABORT_CONFIRMATION_DIALOG:
                 String txnId = null;
                 mIsPrepaymentAbortInitiated = false;
-                if(mOrderPrepaymentProcessingTask != null) {
+                if (mOrderPrepaymentProcessingTask != null) {
                     mOrderPrepaymentProcessingTask.cancel(true);
                     txnId = mOrderPrepaymentProcessingTask.getTransactionId();
                     mOrderPrepaymentProcessingTask = null;
                 }
                 mIsPrepaymentProcessingStarted = false;
                 String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-                if(!TextUtils.isEmpty(txnId)) {
+                if (!TextUtils.isEmpty(txnId)) {
                     new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
                 } else {
                     showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
@@ -770,12 +769,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     @Override
     protected void onNegativeButtonClicked(int requestCode, Bundle data) {
-        switch (requestCode){
+        switch (requestCode) {
             case Constants.PREPAYMENT_ABORT_CONFIRMATION_DIALOG:
                 mIsPrepaymentAbortInitiated = false;
-                if(mOrderPrepaymentProcessingTask != null
+                if (mOrderPrepaymentProcessingTask != null
                         && mOrderPrepaymentProcessingTask.isPaused()
-                        && !mOrderPrepaymentProcessingTask.isCancelled()){
+                        && !mOrderPrepaymentProcessingTask.isCancelled()) {
                     mOrderPrepaymentProcessingTask.resume();
                 } else {
                     startPrepaymentProcessing(null);
@@ -816,7 +815,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     @Override
     public void onKnowMoreCancelled(int id) {
-        if (id == Constants.KNOW_MORE_DIALOG_ID){
+        if (id == Constants.KNOW_MORE_DIALOG_ID) {
             trackEvent(PLACE_ORDER_KNOW_MORE_DIALOG_CANCELLED, null);
         }
     }
@@ -830,7 +829,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
         }
     }
-
 
 
     public static class PaymentOrderInfoDialog extends DialogFragment
@@ -874,11 +872,11 @@ public class PaymentSelectionActivity extends BackButtonActivity
             updateCallBack();
         }
 
-        private void updateCallBack(){
-            if(getTargetFragment() instanceof PaymentOptionsKnowMoreDialogCallback) {
+        private void updateCallBack() {
+            if (getTargetFragment() instanceof PaymentOptionsKnowMoreDialogCallback) {
                 callback = (PaymentOptionsKnowMoreDialogCallback) getTargetFragment();
-            } else if( getActivity() instanceof PaymentOptionsKnowMoreDialogCallback){
-                callback = (PaymentOptionsKnowMoreDialogCallback)getActivity();
+            } else if (getActivity() instanceof PaymentOptionsKnowMoreDialogCallback) {
+                callback = (PaymentOptionsKnowMoreDialogCallback) getActivity();
             } else {
                 callback = null;
             }
@@ -887,7 +885,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         @Override
         public void onStart() {
             super.onStart();
-            TextView msg = (TextView)getDialog().findViewById(R.id.message);
+            TextView msg = (TextView) getDialog().findViewById(R.id.message);
             msg.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
 
             SpannableStringBuilder spannableBuilder =
@@ -895,20 +893,20 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
             mKnowMoreUrl = null;
 
-            if(getArguments() != null) {
+            if (getArguments() != null) {
                 mKnowMoreUrl = getArguments().getString(ARG_KNOW_MORE_URL);
             }
-            if(!TextUtils.isEmpty(mKnowMoreUrl)){
+            if (!TextUtils.isEmpty(mKnowMoreUrl)) {
                 spannableBuilder.append(' ');
                 ClickableSpan knowMoreClickable = new ClickableSpan() {
                     @Override
                     public void onClick(View widget) {
                         Activity activity = getActivity();
-                        if(activity == null){
+                        if (activity == null) {
                             return;
                         }
-                        if(activity instanceof TrackingAware) {
-                            ((TrackingAware)activity).trackEvent(
+                        if (activity instanceof TrackingAware) {
+                            ((TrackingAware) activity).trackEvent(
                                     TrackingAware.PLACE_ORDER_KNOW_MORE_LINK_CLICKED, null);
                         }
                         Intent intent = new Intent(getActivity(), BackButtonActivity.class);
@@ -940,7 +938,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             //NOTE: DO NOT USE getLayoutInflater(savedInstanceState), causes StackOverflowError
             View view = getActivity().getLayoutInflater().inflate(
                     R.layout.fragment_payment_order_info, null, false);
-            mDonotShowCheckbox = (CheckBox)view.findViewById(R.id.dont_show_check_box);
+            mDonotShowCheckbox = (CheckBox) view.findViewById(R.id.dont_show_check_box);
 
             AlertDialog.Builder alertDiaBuilder = new AlertDialog.Builder(getActivity())
                     .setView(view)
@@ -957,21 +955,21 @@ public class PaymentSelectionActivity extends BackButtonActivity
         @Override
         public void onClick(DialogInterface dialog, int which) {
             Activity activity = getActivity();
-            if(activity == null){
+            if (activity == null) {
                 return;
             }
-            if(which == AlertDialog.BUTTON_POSITIVE) {
-                if(mDonotShowCheckbox != null && mDonotShowCheckbox.isChecked()){
+            if (which == AlertDialog.BUTTON_POSITIVE) {
+                if (mDonotShowCheckbox != null && mDonotShowCheckbox.isChecked()) {
                     SharedPreferences prefs =
                             PreferenceManager.getDefaultSharedPreferences(
                                     activity.getApplicationContext());
                     prefs.edit().putBoolean(Constants.SHOW_PAYMENT_OPTIONS_KNOW_MORE, false).apply();
                 }
             }
-            if(callback != null){
+            if (callback != null) {
                 Bundle args = getArguments();
                 callback.onKnowMoreConfirmed(
-                        args != null ? args.getInt(ARG_DIALOG_IDENTIFIER, 0): 0,
+                        args != null ? args.getInt(ARG_DIALOG_IDENTIFIER, 0) : 0,
                         which == AlertDialog.BUTTON_POSITIVE);
             }
         }
@@ -979,10 +977,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
         @Override
         public void onCancel(DialogInterface dialog) {
             super.onCancel(dialog);
-            if(callback != null){
+            if (callback != null) {
                 Bundle args = getArguments();
                 callback.onKnowMoreCancelled(
-                        args != null ? args.getInt(ARG_DIALOG_IDENTIFIER, 0): 0);
+                        args != null ? args.getInt(ARG_DIALOG_IDENTIFIER, 0) : 0);
             }
         }
     }

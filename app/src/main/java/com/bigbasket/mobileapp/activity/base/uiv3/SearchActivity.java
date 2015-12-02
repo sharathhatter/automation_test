@@ -82,7 +82,7 @@ public class SearchActivity extends BBActivity {
     }
 
     protected void doSearchByCategory(String categoryName, String categoryUrl,
-                                    String categorySlug, String navigationCtx) {
+                                      String categorySlug, String navigationCtx) {
         MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
         mostSearchesDbHelper.update(categoryName, categoryUrl);
 
