@@ -657,11 +657,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             getSupportActionBar().hide();
         }
 
-        final int totalDuration = 5000;
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setMax(totalDuration);
-        progressBar.setProgress(0);
-
         ((TextView) findViewById(R.id.lblOrderPlaced)).setTypeface(faceRobotoRegular);
 
         mOrderPrepaymentProcessingTask =
