@@ -17,6 +17,7 @@
         android:textSize="@dimen/primary_text_size" />
 
     <RatingBar
+        android:theme="@style/BaseAppTheme.RatingBar"
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

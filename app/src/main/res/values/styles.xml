@@ -6,13 +6,32 @@
     -->
     <!-- Application theme. -->
 
-    <style name="BaseAppTheme.SearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="searchIcon">@drawable/ic_search_white_24dp</item>
-        <item name="closeIcon">@drawable/ic_clear_white_24dp</item>
+    <style name="BaseAppTheme.DialogTheme.Input" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorControlNormal">@color/secondary_text_default_material_light</item>
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
     </style>
 
+    <style name="BaseAppTheme.SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@null</item>
+        <item name="closeIcon">@drawable/ic_close_grey600_24dp</item>
+        <item name="queryHint">@string/search</item>
+        <item name="iconifiedByDefault">false</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="BaseAppTheme.AlertDialogNegativeButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="colorAccent">@color/dark_black</item>
+        <item name="android:textColor">@color/dark_black</item>
+    </style>
+
+    <style name="BaseAppTheme.AlertDialogPositiveButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+        <item name="android:textColor">@color/uiv3_action_bar_background</item>
+    </style>
     <style name="BaseAppTheme.AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
+        <item name="buttonBarNegativeButtonStyle">@style/BaseAppTheme.AlertDialogNegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/BaseAppTheme.AlertDialogPositiveButtonStyle</item>
     </style>
 
     <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -22,6 +41,14 @@
         <item name="searchViewStyle">@style/BaseAppTheme.SearchViewStyle</item>
         <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
     </style>
+
+    <style name="BaseAppTheme.SearchToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+        <item name="searchViewStyle">@style/BaseAppTheme.SearchViewStyle</item>
+        <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
+    </style>
+
+    <!--<style name="BaseAppTheme."-->
 
     <style name="BackButtonTheme" parent="BaseAppTheme" />
 
@@ -52,6 +79,11 @@
         <item name="textAllCaps">false</item>
     </style>
 
+    <style name="BaseAppTheme.RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/uiv3_action_bar_background</item>
+        <item name="colorControlActivated">@color/uiv3_action_bar_background</item>
+    </style>
+
     <style name="LandingPageTheme.DialogTheme" parent="BaseAppTheme.AlertDialogStyle">
         <item name="colorControlNormal">@color/uiv3_action_bar_background</item>
         <item name="colorControlHighlight">@color/uiv3_status_bar_background</item>
@@ -67,10 +99,6 @@
     <style name="BBNavDrawerTheme" parent="BaseAppTheme" />
 
     <style name="BBNavDrawerTheme.SpinnerDatePickerTheme" parent="BaseAppTheme" />
-
-    <style name="FilterTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorAccent">@color/uiv3_action_bar_background</item>
-    </style>
 
     <style name="BaseAppTheme.SearchViewTheme" parent="BBNavDrawerTheme" />
 
@@ -97,6 +125,10 @@
     <style name="BBEditTextStyle" parent="android:Widget.EditText">
         <item name="android:background">@drawable/apptheme_edit_text_holo_light</item>
         <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="BBLoginTextInputLayoutStyle" parent="Widget.Design.TextInputLayout">
+        <item name="colorControlActivated">@color/white</item>
     </style>
 
     <style name="BBTextStyle.Gift" parent="android:Widget.TextView">
@@ -128,6 +160,18 @@
         <item name="android:paddingLeft">@dimen/padding_normal</item>
         <item name="android:paddingRight">@dimen/padding_normal</item>
         <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="RoundedFormButtonStyle" parent="@style/FormButtonStyle">
+        <item name="android:background">@drawable/red_login_button</item>
+    </style>
+
+    <style name="RoundedFormButtonStyle.Location" parent="@style/FormButtonStyle">
+        <item name="android:background">@drawable/red_primary_btn</item>
+    </style>
+
+    <style name="CancelFormButtonStyle" parent="@style/FormButtonStyle">
+        <item name="android:background">@drawable/cancel_btn</item>
     </style>
 
     <style name="MoreButtonStyle" parent="@style/DefaultButtonStyle">
@@ -165,7 +209,6 @@
         <item name="android:layout_margin">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">@dimen/padding_small</item>
-
         <item name="android:background">@color/uiv3_large_list_item_bck</item>
         <item name="android:textColor">@color/red_color</item>
         <item name="android:drawableRight">@drawable/ic_keyboard_arrow_right_white_36dp</item>
@@ -180,7 +223,7 @@
         <item name="android:layout_marginRight">@dimen/margin_normal</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">@dimen/secondary_text_size</item>
-        <item name="android:textColor">@color/nav_text_color</item>
+        <item name="android:textColor">@color/uiv3_main_nav_item_color</item>
     </style>
 
     <style name="NavHeaderTxtStyle" parent="NavTxtStyle">
@@ -195,7 +238,7 @@
         <item name="android:layout_marginRight">@dimen/margin_normal</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">@dimen/secondary_text_size</item>
-        <item name="android:textColor">@color/nav_text_color</item>
+        <item name="android:textColor">@color/uiv3_main_nav_item_color</item>
     </style>
 
     <style name="SectionHeaderTextStyle">
@@ -228,7 +271,6 @@
         <item name="android:textColor">@color/uiv3_primary_text_color</item>
         <item name="android:textSize">@dimen/large_text_size</item>
     </style>
-
 
     <style name="EmptyPageButtonStyle" parent="@style/DefaultButtonStyle">
         <item name="android:layout_width">wrap_content</item>
@@ -263,4 +305,16 @@
         <item name="insetForeground">#4000</item>
     </style>
 
+    <style name="RippleStyle">
+        <item name="android:background">@drawable/default_button_clicks</item>
+    </style>
+
+    <style name="BottomButtonStyle">
+        <item name="android:background">@drawable/main_btn_bkg_not_rounded</item>
+    </style>
+
+    <style name="LoginScreenTheme" parent="BaseAppTheme">
+        <item name="colorPrimaryDark">@color/primary_dark_material_light</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
 </resources>

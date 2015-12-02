@@ -13,11 +13,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
@@ -36,7 +38,6 @@ import android.widget.Toast;
 import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.HomeActivity;
-import com.bigbasket.mobileapp.activity.SplashActivity;
 import com.bigbasket.mobileapp.activity.TutorialActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
@@ -44,21 +45,20 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
+import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.fragment.base.ProgressDialogFragment;
+import com.bigbasket.mobileapp.fragment.dialogs.ConfirmationDialogFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
-import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
+import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.account.City;
@@ -74,6 +74,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
+import com.crashlytics.android.Crashlytics;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.moengage.addon.ubox.UnifiedInboxActivity;
@@ -89,9 +90,9 @@ import java.util.Map;
 import java.util.Random;
 
 public abstract class BaseActivity extends AppCompatActivity implements
-        CancelableAware, ProgressIndicationAware, ActivityAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware, HandlerAware,
-        LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware {
+        AppOperationAware, TrackingAware, ApiErrorAware,
+        LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware,
+        LaunchStoreListAware, ConfirmationDialogFragment.ConfirmationDialogCallback {
 
     public static Typeface faceRupee;
     protected static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
@@ -103,6 +104,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private AppEventsLogger fbLogger;
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
+
+    private String PROGRESS_DIALOG_TAG;
 
     public static void showKeyboard(final View view) {
         (new Handler()).postDelayed(new Runnable() {
@@ -123,11 +126,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }, 100);
     }
 
-    public static void hideKeyboard(BaseActivity context, View view) {
-        if (context == null || context.isSuspended()) return;
+    public static void hideKeyboard(Context context, View view) {
+        if (context == null || view == null) return;
+        IBinder token = view.getWindowToken();
+        if (token == null) return;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(token, 0);
     }
 
     @Override
@@ -156,12 +161,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return DataUtil.isInternetAvailable(getCurrentActivity());
     }
 
-    @Nullable
-    @Override
-    public ProgressDialog getProgressDialog() {
-        return progressDialog;
-    }
-
     @Override
     public void showProgressDialog(String msg) {
         showProgressDialog(msg, true);
@@ -174,29 +173,49 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
-        if (progressDialog != null && progressDialog.isShowing()) return;
-        progressDialog = new ProgressDialog(this);
-        if (isDeterminate) {
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setIndeterminate(false);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                progressDialog.setProgressNumberFormat(null);
-                progressDialog.setProgressPercentFormat(null);
+        if (isSuspended()) return;
+        String progressDialogTag = getProgressDialogTag();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(progressDialogTag);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if (fragment != null) {
+            ft.remove(fragment);
+        }
+        fragment = ProgressDialogFragment.newInstance(msg, cancelable, isDeterminate);
+        ft.add(fragment, progressDialogTag);
+        if (!isSuspended()) {
+            try {
+                ft.commitAllowingStateLoss();
+            } catch (IllegalStateException ex) {
+                Crashlytics.logException(ex);
             }
         }
-        progressDialog.setCancelable(cancelable);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setMessage(msg);
-        if (isSuspended()) return;
-        progressDialog.show();
     }
 
     @Override
     public void hideProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-            progressDialog = null;
+        String progressDialogTag = getProgressDialogTag();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(progressDialogTag);
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            try {
+                ft.remove(fragment);
+            } finally {
+                if (!isSuspended()) {
+                    ft.commitAllowingStateLoss();
+                }
+            }
         }
+    }
+
+    private String getProgressDialogTag() {
+        if (PROGRESS_DIALOG_TAG == null) {
+            synchronized (this) {
+                if (PROGRESS_DIALOG_TAG == null) {
+                    PROGRESS_DIALOG_TAG = getScreenTag() + "#ProgressDilog";
+                }
+            }
+        }
+        return PROGRESS_DIALOG_TAG;
     }
 
     @Override
@@ -236,7 +255,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
         super.onPause();
         isActivitySuspended = true;
         MoEngageWrapper.onPause(moEHelper, getCurrentActivity());
-        LocalyticsWrapper.onPause();
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            LocalyticsWrapper.onPause();
+        }
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
@@ -253,9 +274,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
         super.onResume();
         isActivitySuspended = false;
         if (isPendingGoToHome()) {
-            goToHome(isPendingReloadApp());
+            goToHome();
             return;
         }
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            LocalyticsWrapper.onResume();
+        }
+
         MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
         FacebookEventTrackWrapper.activateApp(getCurrentActivity());
     }
@@ -267,7 +292,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
             startActivity(communicationHunIntent);
         } else {
             showToast(getString(R.string.loginToContinue));
-            launchLogin(getCurrentNavigationContext(), FragmentCodes.START_COMMUNICATION_HUB);
+            Bundle bundle = new Bundle(1);
+            bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_COMMUNICATION_HUB);
+            launchLogin(getCurrentNavigationContext(), bundle, true);
         }
 
         Map<String, String> eventAttribs = new HashMap<>();
@@ -276,27 +303,47 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showAlertDialog(String title, String msg) {
-        showAlertDialog(title, msg, null);
+        showAlertDialog(title, msg, -1);
     }
 
-    public void showAlertDialog(String title, String msg, String sourceName) {
-        showAlertDialog(title, msg, sourceName, null);
+    public void showAlertDialog(String title, String msg, int requestCode) {
+        showAlertDialog(title, msg, requestCode, null);
     }
 
-    public void showAlertDialog(String title, String msg, final String sourceName, final Object valuePassed) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity())
-                .setTitle(title == null ? "BigBasket" : title)
-                .setMessage(msg)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onPositiveButtonClicked(dialog, sourceName, valuePassed);
-                    }
-                })
-                .setCancelable(false);
+    public void showAlertDialog(String title, String msg, final int requestCode, final Bundle valuePassed) {
+
         if (isSuspended())
             return;
-        builder.create().show();
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
+                requestCode, title == null ? "BigBasket" : title, msg, getString(R.string.ok),
+                null, false);
+        try {
+            dialogFragment.show(getSupportFragmentManager(), getScreenTag() + "#AlertDialog");
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+        }
+    }
+
+    @Override
+    public final void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive) {
+        if (isPositive) {
+            if (data != null && data.getBoolean(Constants.FINISH_ACTIVITY, false)) {
+                if (data.containsKey(Constants.ACTIVITY_RESULT_CODE)) {
+                    setResult(data.getInt(Constants.ACTIVITY_RESULT_CODE, RESULT_OK));
+                }
+                finish();
+            } else {
+                onPositiveButtonClicked(reqCode, data);
+            }
+        } else {
+            onNegativeButtonClicked(reqCode, data);
+        }
+    }
+
+
+    @Override
+    public final void onDialogCancelled(int reqCode) {
+
     }
 
     public void showAlertDialogFinish(String title, String msg) {
@@ -304,23 +351,19 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showAlertDialogFinish(String title, String msg, final int resultCode) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity())
-                .setTitle(title == null ? "BigBasket" : title)
-                .setMessage(msg)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (resultCode > -1) {
-                            getCurrentActivity().setResult(resultCode);
-                        }
-                        dialog.dismiss();
-                        getCurrentActivity().finish();
-                    }
-                })
-                .setCancelable(false);
         if (isSuspended())
             return;
-        builder.create().show();
+        Bundle data = new Bundle(2);
+        data.putBoolean(Constants.FINISH_ACTIVITY, true);
+        data.putInt(Constants.ACTIVITY_RESULT_CODE, resultCode);
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
+                0, title == null ? getString(R.string.app_name) : title, msg, getString(R.string.ok),
+                null, data, false);
+        try {
+            dialogFragment.show(getSupportFragmentManager(), getScreenTag() + "#AlertDialog");
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+        }
     }
 
     public void showAlertDialog(String msg) {
@@ -329,69 +372,78 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public void showAlertDialog(String title,
                                 String msg, @DialogButton.ButtonType int dialogButton,
-                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName) {
-        showAlertDialog(title, msg, dialogButton, nxtDialogButton, sourceName, null, null);
+                                @DialogButton.ButtonType int nxtDialogButton, final int requestCode) {
+        showAlertDialog(title, msg, dialogButton, nxtDialogButton, requestCode, null, null);
     }
 
     public void showAlertDialog(String title,
                                 String msg, @DialogButton.ButtonType int dialogButton,
-                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName,
-                                final String passedValue) {
-        showAlertDialog(title, msg, dialogButton, nxtDialogButton, sourceName, passedValue, null);
+                                @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
+                                final Bundle passedValue) {
+        showAlertDialog(title, msg, dialogButton, nxtDialogButton, requestCode, passedValue, null);
     }
 
     public void showAlertDialog(String title,
                                 String msg, @DialogButton.ButtonType int dialogButton,
-                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName,
-                                final Object passedValue, String positiveBtnText) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
-        builder.setTitle(title);
-        builder.setMessage(msg);
-        builder.setCancelable(false);
+                                @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
+                                final Bundle passedValue, String positiveBtnText) {
+        String negativeButtonText = null;
+
         if (dialogButton != DialogButton.NONE && nxtDialogButton != DialogButton.NONE) {
             if (dialogButton == DialogButton.YES || dialogButton == DialogButton.OK) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
                     int textId = dialogButton == DialogButton.YES ? R.string.yesTxt : R.string.ok;
                     positiveBtnText = getString(textId);
                 }
-                builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        onPositiveButtonClicked(dialogInterface, sourceName, passedValue);
-                    }
-                });
             }
             if (nxtDialogButton == DialogButton.NO || nxtDialogButton == DialogButton.CANCEL) {
                 int textId = nxtDialogButton == DialogButton.NO ? R.string.noTxt : R.string.cancel;
-                builder.setNegativeButton(textId, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        onNegativeButtonClicked(dialogInterface, sourceName);
-                    }
-                });
+                negativeButtonText = getString(textId);
             }
         }
-        AlertDialog alertDialog = builder.create();
         if (isSuspended())
             return;
-        alertDialog.setOnShowListener(new OnDialogShowListener());
-        alertDialog.show();
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
+                requestCode, title == null ? getString(R.string.app_name) : title, msg, positiveBtnText,
+                negativeButtonText, passedValue, false);
+        try {
+            dialogFragment.show(getSupportFragmentManager(), getScreenTag() + "#AlertDialog");
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+        }
+    }
+
+    public void showAlertDialog(String title,
+                                String msg, String positiveBtnText,
+                                String negativeBtnText, final int requestCode,
+                                final Bundle passedValue) {
+
+        if (isSuspended())
+            return;
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
+                requestCode, title, msg, positiveBtnText,
+                negativeBtnText, passedValue, false);
+        try {
+            dialogFragment.show(getSupportFragmentManager(), getScreenTag() + "#AlertDialog");
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+        }
     }
 
     public void showAlertDialog(String title,
                                 String msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton) {
-        showAlertDialog(title, msg, dialogButton, nxtDialogButton, null);
+        showAlertDialog(title, msg, dialogButton, nxtDialogButton, 0);
     }
 
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null) {
-            switch (sourceName) {
-                case NavigationCodes.GO_TO_LOGIN:
-                    launchLogin(getCurrentNavigationContext(), valuePassed);
-                    break;
-            }
+    protected void onPositiveButtonClicked(int sourceName,
+                                           Bundle valuePassed) {
+        switch (sourceName) {
+            case NavigationCodes.GO_TO_LOGIN:
+                launchLogin(getCurrentNavigationContext(), valuePassed, true);
+                break;
         }
+
     }
 
     public void launchViewBasketScreen() {
@@ -399,7 +451,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    protected void onNegativeButtonClicked(DialogInterface dialogInterface, String sourceName) {
+    protected void onNegativeButtonClicked(int requestCode, Bundle data) {
 
     }
 
@@ -411,8 +463,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
         if (resultCode == NavigationCodes.GO_TO_HOME) {
-            boolean reloadApp = (data != null && data.getBooleanExtra(Constants.RELOAD_APP, false));
-            goToHome(reloadApp, resultCode);
+            goToHome();
         } else if (resultCode == NavigationCodes.GO_TO_QC) {
             setResult(NavigationCodes.GO_TO_QC);
             finish();
@@ -437,53 +488,41 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return !TextUtils.isEmpty(val) ? val : "";
     }
 
-    public void goToHome(boolean reloadApp) {
-        goToHome(reloadApp, NavigationCodes.GO_TO_HOME);
-    }
-
-    public void goToHome(boolean reloadApp, int resultCode) {
+    public void goToHome() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            Intent intent;
-            if (reloadApp) {
-                intent = new Intent(getCurrentActivity(), SplashActivity.class);
-                intent.putExtra(Constants.RELOAD_APP, true);
-            } else {
-                intent = new Intent(getCurrentActivity(), HomeActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
-            }
+            Intent intent = new Intent(getCurrentActivity(), HomeActivity.class);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         } else {
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
             editor.putBoolean(Constants.IS_PENDING_GO_TO_HOME, true);
-            editor.putBoolean(Constants.RELOAD_APP, reloadApp);
             editor.apply();
 
             Intent data = new Intent();
-            data.putExtra(Constants.RELOAD_APP, reloadApp);
-            setResult(resultCode, data);
+            setResult(NavigationCodes.GO_TO_HOME, data);
             getCurrentActivity().finish();
         }
     }
 
-    private void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode,
+    private void setAreaPinCode(String areaName, AreaPinInfoDbHelper areaPinInfoDbHelper, EditText editTextPincode,
                                 String cityName) {
         if (!TextUtils.isEmpty(areaName)) {
-            String pinCode = areaPinInfoAdapter.getAreaPin(areaName, cityName);
+            String pinCode = areaPinInfoDbHelper.getAreaPin(areaName, cityName);
             editTextPincode.setText(pinCode);
         }
     }
 
     protected void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode,
                                   final String cityName) {
-        final AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(getCurrentActivity());
-        ArrayList<String> areaPinArrayList = areaPinInfoAdapter.getPinList(cityName);
+        final AreaPinInfoDbHelper areaPinInfoDbHelper = new AreaPinInfoDbHelper(getCurrentActivity());
+        ArrayList<String> areaPinArrayList = areaPinInfoDbHelper.getPinList(cityName);
         ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(getCurrentActivity(),
                 android.R.layout.select_dialog_item, areaPinArrayList);
         editTextPincode.setThreshold(1);
         editTextPincode.setAdapter(pinAdapter);
 
-        ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaNameList(cityName);
+        ArrayList<String> areaNameArrayList = areaPinInfoDbHelper.getAreaNameList(cityName);
         final ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(getCurrentActivity(),
                 android.R.layout.select_dialog_item, areaNameArrayList);
         editTextArea.setThreshold(1);
@@ -494,7 +533,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 editTextArea.setText("");
                 String pinCode = editTextPincode.getText().toString();
-                ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaName(pinCode, cityName);
+                ArrayList<String> areaNameArrayList = areaPinInfoDbHelper.getAreaName(pinCode, cityName);
                 if (areaNameArrayList.size() > 1) {
                     areaAdapter.clear();
                     for (String areaName : areaNameArrayList)
@@ -513,14 +552,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 String areaName = editTextArea.getText().toString();
-                setAreaPinCode(areaName, areaPinInfoAdapter, editTextPincode, cityName);
+                setAreaPinCode(areaName, areaPinInfoDbHelper, editTextPincode, cityName);
             }
         });
     }
 
     @Override
     public boolean isSuspended() {
-        return isActivitySuspended;
+        return isActivitySuspended || isFinishing();
     }
 
     @Override
@@ -682,8 +721,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, String sourceName, Object valuePassed) {
-        showAlertDialog(title, message, sourceName, valuePassed);
+    public void showApiErrorDialog(@Nullable String title, String message, int requestCode, Bundle valuePassed) {
+        showAlertDialog(title, message, requestCode, valuePassed);
     }
 
     @Override
@@ -738,7 +777,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void removePendingGoToHome() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.remove(Constants.IS_PENDING_GO_TO_HOME);
-        editor.remove(Constants.RELOAD_APP);
         editor.apply();
     }
 
@@ -748,11 +786,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         editor.remove(Constants.DEEP_LINK);
         editor.apply();
         removePendingGoToHome();
-    }
-
-    protected boolean isPendingReloadApp() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        return preferences.getBoolean(Constants.RELOAD_APP, false);
     }
 
     protected void togglePasswordView(EditText passwordEditText, boolean show) {
@@ -783,24 +816,25 @@ public abstract class BaseActivity extends AppCompatActivity implements
         trackEvent(TrackingAware.SHOW_PASSWORD_ENABLED, eventAttribs);
     }
 
-    public void launchLogin(String navigationCtx) {
-        launchLogin(navigationCtx, null);
+    public void launchLogin(String navigationCtx, boolean shouldGoBackToHomePage) {
+        launchLogin(navigationCtx, null, shouldGoBackToHomePage);
     }
 
-    public void launchLogin(String navigationCtx, Object params) {
+    public void launchLogin(String navigationCtx, Bundle params, boolean shouldGoBackToHomePage) {
         Intent loginIntent = new Intent(this, SignInActivity.class);
         loginIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        loginIntent.putExtra(Constants.GO_TO_HOME, shouldGoBackToHomePage);
         if (params != null) {
-            if (params instanceof Uri) {
-                loginIntent.putExtra(Constants.DEEP_LINK, params.toString());
-            } else {
-                loginIntent.putExtra(Constants.FRAGMENT_CODE, params.toString());
+            if (params.containsKey(Constants.DEEPLINK_URL)) {
+                loginIntent.putExtra(Constants.DEEP_LINK, params.getString(Constants.DEEPLINK_URL));
+            } else if (params.containsKey(Constants.FRAGMENT_CODE)) {
+                loginIntent.putExtra(Constants.FRAGMENT_CODE, params.getInt(Constants.FRAGMENT_CODE));
             }
         }
         startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    protected void changeCity(City city, boolean reopenLandingPage) {
+    protected void changeCity(City city) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.CITY, city.getName())
@@ -808,16 +842,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 .putBoolean(Constants.HAS_USER_CHOSEN_CITY, true)
                 .apply();
 
-        SectionManager.clearAllSectionData(this);
+        DynamicPageDbHelper.clearAll(getCurrentActivity());
         AppDataDynamic.reset(this);
-
-        if (!reopenLandingPage) {
-            goToHome(true);
-        }
     }
 
     protected void launchRegistrationPage() {
-        //trackEvent(TrackingAware.NEW_USER_REGISTER_CLICKED, null);
         Intent intent = new Intent(this, SignupActivity.class);
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
         intent.putExtra(Constants.FRAGMENT_CODE, getIntent().getStringExtra(Constants.FRAGMENT_CODE));
@@ -834,6 +863,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
             if (!TextUtils.isEmpty(title)) {
                 intent.putExtra(Constants.TITLE, title);
             }
+            getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        }
+    }
+
+    @Override
+    public void launchStoreList(String destinationSlug) {
+        if (!TextUtils.isEmpty(destinationSlug)) {
+            Intent intent = new Intent(getCurrentActivity(), BBSpecialityShopsActivity.class);
+            intent.putExtra(Constants.CATEGORY, destinationSlug);
             getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
@@ -857,7 +895,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        if (intent != null) {
+            intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        }
         super.startActivityForResult(intent, requestCode);
     }
 
@@ -879,7 +919,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void handleTutorialResponse(int resultCode) {
         switch (resultCode) {
             case NavigationCodes.LAUNCH_LOGIN:
-                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
+                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, true);
                 break;
             case NavigationCodes.LAUNCH_CITY:
                 showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, false);

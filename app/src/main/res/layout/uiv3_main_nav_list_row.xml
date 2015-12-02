@@ -3,6 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/relativeLayoutRow"
     android:background="@drawable/nav_item_background"
     android:paddingBottom="@dimen/padding_normal"
     android:paddingTop="@dimen/padding_normal">
@@ -25,7 +26,7 @@
         android:layout_marginRight="@dimen/margin_normal"
         android:adjustViewBounds="true"
         android:contentDescription="@string/alt_placeholder"
-        android:src="@drawable/nav_image_src" />
+        android:src="@drawable/ic_arrow_drop_down_right_grey600_24dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

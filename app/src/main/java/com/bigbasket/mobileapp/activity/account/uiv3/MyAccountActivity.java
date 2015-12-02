@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +23,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccountType;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
@@ -34,19 +36,26 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ImageViewCircular;
 import com.facebook.AccessToken;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class MyAccountActivity extends BackButtonActivity {
+public class MyAccountActivity extends BackButtonActivity implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+
+    private static final String TAG = "MyAccountActivity";
     private UpdateProfileModel updateProfileModel;
     private ImageViewCircular circularImageView;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +65,22 @@ public class MyAccountActivity extends BackButtonActivity {
         getMemberDetails();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
     private void getMemberDetails() {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
             handler.sendOfflineError(true);
@@ -63,9 +88,10 @@ public class MyAccountActivity extends BackButtonActivity {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getMemberProfileData(new Callback<ApiResponse<UpdateProfileApiResponse>>() {
+        Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.getMemberProfileData();
+        call.enqueue(new BBNetworkCallback<ApiResponse<UpdateProfileApiResponse>>(this, true) {
             @Override
-            public void success(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback, Response response) {
+            public void onSuccess(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback) {
                 hideProgressDialog();
                 if (memberProfileDataCallback.status == 0) {
                     updateProfileModel = memberProfileDataCallback.apiResponseContent.memberDetails;
@@ -79,12 +105,13 @@ public class MyAccountActivity extends BackButtonActivity {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                handler.handleRetrofitError(error, true);
-                Map<String, String> eventAttribs = new HashMap<>();
-                eventAttribs.put(TrackEventkeys.FAILURE_REASON, error.toString());
-                trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
             }
         });
     }
@@ -140,10 +167,11 @@ public class MyAccountActivity extends BackButtonActivity {
         txtMemberName.setText(updateProfileModel.getFirstName() + " " + updateProfileModel.getLastName());
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String profileImageUrl = sharedPreferences.getString(Constants.UPDATE_PROFILE_IMG_URL, null);
-        if (TextUtils.isEmpty(sharedPreferences.getString(Constants.UPDATE_PROFILE_IMG_URL, null)))
+        if (TextUtils.isEmpty(profileImageUrl)) {
             loadProfileImage();
-        else
+        } else {
             renderProfileImage(profileImageUrl);
+        }
 
 
         TextView txtEmailId = (TextView) view.findViewById(R.id.txtEmailId);
@@ -252,8 +280,7 @@ public class MyAccountActivity extends BackButtonActivity {
                 && checkInternetConnection()) {
             switch (socialAccountType) {
                 case SocialAccountType.GP:
-                    initializeGooglePlusSignIn();
-                    initiatePlusClientConnect();
+                    loadGPlusImage();
                     break;
                 case SocialAccountType.FB:
                     onFacebookSignIn(AccessToken.getCurrentAccessToken());
@@ -266,6 +293,56 @@ public class MyAccountActivity extends BackButtonActivity {
 
     private void renderProfileImage(String url) {
         UIUtil.displayAsyncImage(circularImageView, url);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        if (mGoogleApiClient != null) {
+            try {
+                loadGPlusImage(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
+            } catch (Exception ex) {
+                Log.e(TAG, "Failed to find the current person");
+                loadDefaultPic();
+            }
+            mGoogleApiClient.disconnect();
+            mGoogleApiClient = null;
+        } else {
+            loadDefaultPic();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.e(TAG, "Failed to find the current person");
+        loadDefaultPic();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(TAG, "Google api client connection failed");
+        loadDefaultPic();
+    }
+
+    /**
+     * This is called only once to find the image URL, once the image URL is found this will not invoked
+     */
+    private void loadGPlusImage() {
+        /**
+         * This is called only once to find the image URL, once the image URL is found
+         * this will not invoked
+         *
+         * Invoking SignInViaGplus will try to resolve errors may ask for account chooser.
+         * To avoid automatic error resolutions and error display use local client here
+         */
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Plus.API)
+                    .addScope(new Scope(Scopes.PROFILE))
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+        mGoogleApiClient.connect();
     }
 
     private void loadGPlusImage(Person person) {

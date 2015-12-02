@@ -20,6 +20,11 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.click.OnBrandPageListener;
+import com.bigbasket.mobileapp.handler.click.OnPromoClickListener;
+import com.bigbasket.mobileapp.handler.click.OnSpecialityShopIconClickListener;
+import com.bigbasket.mobileapp.handler.click.basket.OnProductBasketActionListener;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -39,13 +44,12 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class ProductDetailFragment extends BaseFragment implements ShoppingListNamesAware {
@@ -99,15 +103,10 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         setNextScreenNavigationContext("pd." + (productId != null ? productId : eanCode));
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.productDetails(productId, eanCode, new Callback<ProductDetailApiResponse>() {
+        Call<ProductDetailApiResponse> call = bigBasketApiService.productDetails(productId, eanCode);
+        call.enqueue(new BBNetworkCallback<ProductDetailApiResponse>(this, true) {
             @Override
-            public void success(ProductDetailApiResponse productDetailApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ProductDetailApiResponse productDetailApiResponse) {
                 switch (productDetailApiResponse.status) {
                     case Constants.OK:
                         mProduct = productDetailApiResponse.product;
@@ -121,14 +120,13 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error, true);
             }
         });
     }
@@ -162,15 +160,35 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
-        ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
+        AppDataDynamic appDataDynamic = AppDataDynamic.getInstance(getActivity());
+        ProductViewHolder productViewHolder = new ProductViewHolder(productRow);
+        productViewHolder.setSpecialityShopIconClickListener(
+                new OnSpecialityShopIconClickListener<>(this, appDataDynamic.getSpecialityStoreDetailList()));
+        productViewHolder.setPromoClickListener(new OnPromoClickListener<>(this));
+        productViewHolder.setBrandPageListener(new OnBrandPageListener<>(this));
+        productViewHolder.setBasketIncActionListener(new OnProductBasketActionListener(BasketOperation.INC, this));
+        productViewHolder.setBasketDecActionListener(new OnProductBasketActionListener(BasketOperation.DEC, this));
+        ProductView.setProductView(productViewHolder,
+                mProduct, null, productViewDisplayDataHolder,
                 false, this, getNextScreenNavigationContext(), null, "none",
-                AppDataDynamic.getInstance(getActivity()).getStoreAvailabilityMap());
+                appDataDynamic.getStoreAvailabilityMap(),
+                appDataDynamic.getSpecialityStoreDetailList());
 
         if (mProduct.getProductPromoInfo() == null ||
                 !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {
             productRow.findViewById(R.id.layoutPromoInfoBox).setVisibility(View.GONE);
         }
         layoutProductDetail.addView(productRow);
+
+        TextView txtVariableWeightMsg = (TextView) productRow.findViewById(R.id.txtVariableWeightMsg);
+        String variableWeightMsg = mProduct.getVariableWeightMsg();
+        if (!TextUtils.isEmpty(variableWeightMsg)) {
+            txtVariableWeightMsg.setTypeface(faceRobotoRegular);
+            txtVariableWeightMsg.setText(variableWeightMsg);
+            txtVariableWeightMsg.setVisibility(View.VISIBLE);
+        } else {
+            txtVariableWeightMsg.setVisibility(View.GONE);
+        }
 
         ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();
         if (productAdditionalInfos != null && productAdditionalInfos.size() > 0) {
@@ -281,12 +299,17 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView, View viewDecQty,
-                                                    View viewIncQty, View btnAddToBasket, Product product,
-                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
-                                                    @Nullable EditText editTextQty) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
-                viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
+                                                    Product product, String qty,
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextViewRef, viewDecQtyRef,
+                viewIncQtyRef, btnAddToBasketRef, product, qty, productViewRef, cartInfoMapRef, editTextQtyRef);
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
             productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());

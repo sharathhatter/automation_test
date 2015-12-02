@@ -29,6 +29,10 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponse
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.click.OnBrandPageListener;
+import com.bigbasket.mobileapp.handler.click.OnPromoClickListener;
+import com.bigbasket.mobileapp.handler.click.ProductDetailOnClickListener;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -50,9 +54,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class PromoDetailFragment extends BaseFragment {
@@ -95,11 +97,10 @@ public class PromoDetailFragment extends BaseFragment {
         if (promoId > -1) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
             showProgressView();
-            bigBasketApiService.getPromoDetail(String.valueOf(promoId), new Callback<ApiResponse<PromoDetailApiResponseContent>>() {
+            Call<ApiResponse<PromoDetailApiResponseContent>> call = bigBasketApiService.getPromoDetail(String.valueOf(promoId));
+            call.enqueue(new BBNetworkCallback<ApiResponse<PromoDetailApiResponseContent>>(this, true) {
                 @Override
-                public void success(ApiResponse<PromoDetailApiResponseContent> promoDetailApiResponseContentApiResponse, Response response) {
-                    if (isSuspended()) return;
-                    hideProgressView();
+                public void onSuccess(ApiResponse<PromoDetailApiResponseContent> promoDetailApiResponseContentApiResponse) {
                     int status = promoDetailApiResponseContentApiResponse.status;
                     if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
                             || status == ApiErrorCodes.INVALID_INPUT) {
@@ -124,10 +125,9 @@ public class PromoDetailFragment extends BaseFragment {
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
-                    if (isSuspended()) return;
+                public boolean updateProgress() {
                     hideProgressView();
-                    handler.handleRetrofitError(error, true);
+                    return true;
                 }
             });
         }
@@ -298,10 +298,14 @@ public class PromoDetailFragment extends BaseFragment {
             LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             productRowParams.setMargins(8, 8, 8, 0);
-
-            ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
-                    null, productViewDisplayDataHolder, false, getCurrentActivity(), getNextScreenNavigationContext(), null, "none",
-                    null);
+            ProductViewHolder productViewHolder = new ProductViewHolder(base);
+            productViewHolder.setPromoClickListener(new OnPromoClickListener<>(this));
+            productViewHolder.setProductDetailOnClickListener(new ProductDetailOnClickListener<>(this));
+            productViewHolder.setBrandPageListener(new OnBrandPageListener<>(this));
+            ProductView.setProductView(productViewHolder,
+                    freeProduct, promoDetail.getBaseImgUrl(),
+                    productViewDisplayDataHolder, false, getCurrentActivity(), getNextScreenNavigationContext(), null, "none",
+                    null, null);
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }
@@ -352,6 +356,7 @@ public class PromoDetailFragment extends BaseFragment {
 
         TextView txtValNeeded = (TextView) base.findViewById(R.id.txtValueNeed);
         txtValNeeded.setTypeface(faceRobotoRegular);
+        txtValNeeded.setVisibility(View.GONE);
 
         TextView txtValInBasket = (TextView) base.findViewById(R.id.txtValueInBasket);
         txtValInBasket.setTypeface(faceRobotoRegular);

@@ -12,7 +12,7 @@ import android.widget.EditText;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 
 public class InputDialog<T> {
     private T context;
@@ -65,7 +65,7 @@ public class InputDialog<T> {
     }
 
     public void show() {
-        final BaseActivity activity = ((ActivityAware) context).getCurrentActivity();
+        final BaseActivity activity = ((AppOperationAware) context).getCurrentActivity();
         View base = activity.getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
         final EditText editTextDialog = (EditText) base.findViewById(R.id.editTextDialog);
         editTextDialog.setHint(hint);

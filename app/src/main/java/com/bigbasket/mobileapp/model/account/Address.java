@@ -132,7 +132,8 @@ public class Address extends AddressSummary {
 
     @Override
     public String toString() {
-        return (!TextUtils.isEmpty(houseNumber) ? houseNumber + "\n" : "") +
+        return (!TextUtils.isEmpty(getAddressNickName()) ? getAddressNickName() + " - " : "") +
+                (!TextUtils.isEmpty(houseNumber) ? houseNumber + "\n" : "") +
                 (!TextUtils.isEmpty(street) ? street + "\n" : "") +
                 (!TextUtils.isEmpty(getArea()) ? getArea() + "\n" : "") +
                 (!TextUtils.isEmpty(residentialComplex) ? residentialComplex + "\n" : "") +

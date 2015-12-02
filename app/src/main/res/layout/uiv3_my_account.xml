@@ -181,6 +181,7 @@
 
             <TextView
                 android:id="@+id/txtViewAll"
+                style="@style/RippleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -252,7 +253,7 @@
                 android:paddingLeft="@dimen/margin_small"
                 android:paddingRight="@dimen/margin_small"
                 android:paddingTop="@dimen/margin_mini"
-                android:text="@string/addAddress"
+                android:text="@string/addWithSpace"
                 android:textColor="@color/text_color_myaccount"
                 android:textSize="@dimen/primary_text_size" />
 

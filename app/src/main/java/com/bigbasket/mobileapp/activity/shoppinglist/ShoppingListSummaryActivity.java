@@ -24,7 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -34,6 +34,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummary
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.section.Section;
@@ -51,11 +52,9 @@ import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class ShoppingListSummaryActivity extends BBActivity {
+public class ShoppingListSummaryActivity extends SearchActivity {
 
     private String baseImgUrl;
     @Nullable
@@ -133,45 +132,40 @@ public class ShoppingListSummaryActivity extends BBActivity {
         setTitle(null);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getShoppingListSummary(getCurrentNavigationContext(),
-                mShoppingListName.getSlug(), new Callback<ApiResponse<GetShoppingListSummaryResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
+        Call<ApiResponse<GetShoppingListSummaryResponse>> call = bigBasketApiService.getShoppingListSummary(
+                getCurrentNavigationContext(), mShoppingListName.getSlug());
+        call.enqueue(new BBNetworkCallback<ApiResponse<GetShoppingListSummaryResponse>>(this, true) {
+            @Override
+            public void onSuccess(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse) {
+                switch (getShoppingListSummaryApiResponse.status) {
+                    case 0:
+                        if (mShoppingListName != null) {
+                            mShoppingListName.setAsSystem(getShoppingListSummaryApiResponse.apiResponseContent.isSystem);
                         }
-                        switch (getShoppingListSummaryApiResponse.status) {
-                            case 0:
-                                if (mShoppingListName != null) {
-                                    mShoppingListName.setAsSystem(getShoppingListSummaryApiResponse.apiResponseContent.isSystem);
-                                }
-                                renderShoppingListSummary(mShoppingListName,
-                                        getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
-                                        getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl,
-                                        getShoppingListSummaryApiResponse.apiResponseContent.headerSection,
-                                        getShoppingListSummaryApiResponse.apiResponseContent.headerSelectedOn);
-                                break;
-                            default:
-                                handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
-                                        getShoppingListSummaryApiResponse.message, true);
-                                break;
-                        }
-                    }
+                        renderShoppingListSummary(mShoppingListName,
+                                getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
+                                getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl,
+                                getShoppingListSummaryApiResponse.apiResponseContent.headerSection,
+                                getShoppingListSummaryApiResponse.apiResponseContent.headerSelectedOn);
+                        break;
+                    default:
+                        handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
+                                getShoppingListSummaryApiResponse.message, true);
+                        break;
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error, true);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
+
     }
 
     private void showNoShoppingListView(ViewGroup contentView) {
@@ -189,7 +183,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
             @Override
             public void onClick(View v) {
                 if (getCurrentActivity() == null) return;
-                getCurrentActivity().goToHome(false);
+                getCurrentActivity().goToHome();
             }
         });
         contentView.addView(base);
@@ -223,6 +217,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
                                            final ArrayList<ShoppingListSummary> shoppingListSummaries,
                                            String baseImgUrl, @Nullable Section headerSection,
                                            int headerSelectedOn) {
+        // Refresh the options menu
+        invalidateOptionsMenu();
         this.baseImgUrl = baseImgUrl;
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
@@ -327,9 +323,11 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     msg += numTabs > 1 ? " from " + shoppingListSummary.getFacetName()
                             + " " + getString(R.string.toBasket) : "?";
                     msg += "\n" + getString(R.string.outOfStockExcluded);
+                    Bundle data = new Bundle(1);
+                    data.putParcelable(SHOPPING_LIST, shoppingListSummary);
                     showAlertDialog(null, msg,
-                            DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
-                            shoppingListSummary,
+                            DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL_DIALOG_REQUEST,
+                            data,
                             getString(R.string.yesTxt));
                 }
             }
@@ -390,15 +388,15 @@ public class ShoppingListSummaryActivity extends BBActivity {
 
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (!TextUtils.isEmpty(sourceName) && sourceName.equalsIgnoreCase(Constants.ADD_ALL)) {
+    protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        if (sourceName == Constants.ADD_ALL_DIALOG_REQUEST) {
             if (!checkInternetConnection()) {
                 handler.sendOfflineError();
                 return;
             }
-            addAllItemsToBasket((ShoppingListSummary) valuePassed);
+            addAllItemsToBasket((ShoppingListSummary) valuePassed.getParcelable(SHOPPING_LIST));
         } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+            super.onPositiveButtonClicked(sourceName, valuePassed);
         }
     }
 
@@ -427,75 +425,70 @@ public class ShoppingListSummaryActivity extends BBActivity {
         String shoppingListSlug = mShoppingListName.getSlug();
         if (shoppingListSlug.equals(Constants.SMART_BASKET_SLUG)) {
             trackEvent(TrackingAware.SMART_BASKET + "." + shoppingListSummary.getFacetName() + " Add All", null);
-            bigBasketApiService.addAllToBasketSmartBasket(shoppingListSlug,
-                    shoppingListSummary.getFacetSlug(),
-                    new Callback<AddAllShoppingListItemResponse>() {
-                        @Override
-                        public void success(AddAllShoppingListItemResponse addAllToBasketSmartBasketCallBack, Response response) {
-                            if (isSuspended()) return;
-                            hideProgressView();
-                            switch (addAllToBasketSmartBasketCallBack.status) {
-                                case Constants.OK:
-                                    setCartSummary(addAllToBasketSmartBasketCallBack);
-                                    updateUIForCartInfo();
-                                    markBasketDirty();
-                                    if (viewPager != null) {
-                                        setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
-                                                shoppingListSummary);
-                                    } else {
-                                        loadShoppingListSummary();
-                                    }
-
-                                    break;
-                                case Constants.ERROR:
-                                    handler.sendEmptyMessage(addAllToBasketSmartBasketCallBack.getErrorTypeAsInt(),
-                                            addAllToBasketSmartBasketCallBack.message, false);
-                                    break;
+            Call<AddAllShoppingListItemResponse> call = bigBasketApiService.addAllToBasketSmartBasket(
+                    shoppingListSlug, shoppingListSummary.getFacetSlug());
+            call.enqueue(new BBNetworkCallback<AddAllShoppingListItemResponse>(this) {
+                @Override
+                public void onSuccess(AddAllShoppingListItemResponse addAllToBasketSmartBasketCallBack) {
+                    switch (addAllToBasketSmartBasketCallBack.status) {
+                        case Constants.OK:
+                            setCartSummary(addAllToBasketSmartBasketCallBack);
+                            updateUIForCartInfo();
+                            markBasketDirty();
+                            if (viewPager != null) {
+                                setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
+                                        shoppingListSummary);
+                            } else {
+                                loadShoppingListSummary();
                             }
-                        }
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (isSuspended()) return;
-                            hideProgressView();
-                            handler.handleRetrofitError(error, true);
-                        }
-                    });
+                            break;
+                        case Constants.ERROR:
+                            handler.sendEmptyMessage(addAllToBasketSmartBasketCallBack.getErrorTypeAsInt(),
+                                    addAllToBasketSmartBasketCallBack.message, false);
+                            break;
+                    }
+                }
+
+                @Override
+                public boolean updateProgress() {
+                    hideProgressView();
+                    return true;
+                }
+            });
+
         } else {
             trackEvent(TrackingAware.SHOPPING_LIST + "." + shoppingListSummary.getFacetName() + " Add All", null);
-            bigBasketApiService.addAllToBasketShoppingList(shoppingListSlug,
-                    shoppingListSummary.getFacetSlug(),
-                    new Callback<AddAllShoppingListItemResponse>() {
-                        @Override
-                        public void success(AddAllShoppingListItemResponse addAllToBasketShoppingListCallBack, Response response) {
-                            if (isSuspended()) return;
-                            hideProgressView();
-                            switch (addAllToBasketShoppingListCallBack.status) {
-                                case Constants.OK:
-                                    setCartSummary(addAllToBasketShoppingListCallBack);
-                                    updateUIForCartInfo();
-                                    markBasketDirty();
-                                    if (viewPager != null) {
-                                        setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
-                                                shoppingListSummary);
-                                    } else {
-                                        loadShoppingListSummary();
-                                    }
-                                    break;
-                                case Constants.ERROR:
-                                    handler.sendEmptyMessage(addAllToBasketShoppingListCallBack.getErrorTypeAsInt(),
-                                            addAllToBasketShoppingListCallBack.message, false);
-                                    break;
+            Call<AddAllShoppingListItemResponse> call = bigBasketApiService.addAllToBasketShoppingList(
+                    shoppingListSlug, shoppingListSummary.getFacetSlug());
+            call.enqueue(new BBNetworkCallback<AddAllShoppingListItemResponse>(this) {
+                @Override
+                public void onSuccess(AddAllShoppingListItemResponse addAllToBasketShoppingListCallBack) {
+                    switch (addAllToBasketShoppingListCallBack.status) {
+                        case Constants.OK:
+                            setCartSummary(addAllToBasketShoppingListCallBack);
+                            updateUIForCartInfo();
+                            markBasketDirty();
+                            if (viewPager != null) {
+                                setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
+                                        shoppingListSummary);
+                            } else {
+                                loadShoppingListSummary();
                             }
-                        }
+                            break;
+                        case Constants.ERROR:
+                            handler.sendEmptyMessage(addAllToBasketShoppingListCallBack.getErrorTypeAsInt(),
+                                    addAllToBasketShoppingListCallBack.message, false);
+                            break;
+                    }
+                }
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (isSuspended()) return;
-                            hideProgressView();
-                            handler.handleRetrofitError(error, true);
-                        }
-                    });
+                @Override
+                public boolean updateProgress() {
+                    hideProgressView();
+                    return true;
+                }
+            });
         }
     }
 
@@ -515,10 +508,11 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 if (getCurrentActivity() == null) return;
                 if (!UIUtil.isAlphaNumericString(inputText.trim())) {
                     showAlertDialog(getResources().getString(R.string.shoppingListNameAlphaNumeric));
-                } else if (mShoppingListName.getName().equalsIgnoreCase(inputText.trim()))
+                } else if (mShoppingListName != null && mShoppingListName.getName().equalsIgnoreCase(inputText.trim()))
                     showAlertDialog("Shopping List with name \"" + inputText.trim() + "\" already exits");
-                else
+                else {
                     editShoppingListName(mShoppingListName, inputText);
+                }
             }
         }.show();
     }
@@ -556,15 +550,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private void editShoppingListName(ShoppingListName shoppingListName, String newName) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.editShoppingList(shoppingListName.getSlug(), newName, new Callback<OldBaseApiResponse>() {
+        Call<OldBaseApiResponse> call = bigBasketApiService.editShoppingList(shoppingListName.getSlug(), newName);
+        call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(this) {
             @Override
-            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(OldBaseApiResponse oldBaseApiResponse) {
                 switch (oldBaseApiResponse.status) {
                     case Constants.OK:
                         Toast.makeText(getCurrentActivity(), getString(R.string.shoppingListUpdated),
@@ -580,14 +569,13 @@ public class ShoppingListSummaryActivity extends BBActivity {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
             }
         });
     }
@@ -595,15 +583,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private void deleteShoppingList(final ShoppingListName shoppingListName) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.deleteShoppingList(shoppingListName.getSlug(), new Callback<OldBaseApiResponse>() {
+        Call<OldBaseApiResponse> call = bigBasketApiService.deleteShoppingList(shoppingListName.getSlug());
+        call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(this) {
             @Override
-            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(OldBaseApiResponse oldBaseApiResponse) {
                 switch (oldBaseApiResponse.status) {
                     case Constants.OK:
                         String msg = "\"" + shoppingListName.getName() + "\" was deleted successfully";
@@ -619,14 +602,13 @@ public class ShoppingListSummaryActivity extends BBActivity {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
             }
         });
     }
@@ -639,7 +621,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
     @Override
     public void onBasketChanged(Intent data) {
         super.onBasketChanged(data);
-        handleIntent(getIntent());
+        handleIntent(null);
     }
 
     @Override
@@ -657,5 +639,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
     public void launchShoppingList(ShoppingListName shoppingListName) {
         mShoppingListName = shoppingListName;
         loadShoppingListSummary();
+    }
+
+    @Override
+    protected String getCategoryId() {
+        return getString(R.string.my_basket_header);
     }
 }

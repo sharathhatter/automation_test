@@ -2,9 +2,7 @@ package com.bigbasket.mobileapp.fragment.order;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -23,12 +21,14 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
+import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
@@ -57,9 +57,7 @@ import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware,
@@ -106,15 +104,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         mSelectedAddress = null; // Reset
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.getDeliveryAddresses(new Callback<ApiResponse<GetDeliveryAddressApiResponseContent>>() {
+        Call<ApiResponse<GetDeliveryAddressApiResponseContent>> call = bigBasketApiService.getDeliveryAddresses();
+        call.enqueue(new BBNetworkCallback<ApiResponse<GetDeliveryAddressApiResponseContent>>(this, true) {
             @Override
-            public void success(ApiResponse<GetDeliveryAddressApiResponseContent> getDeliveryAddressApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressView();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<GetDeliveryAddressApiResponseContent> getDeliveryAddressApiResponse) {
                 switch (getDeliveryAddressApiResponse.status) {
                     case 0:
                         mAddressArrayList = getDeliveryAddressApiResponse.apiResponseContent.addresses;
@@ -131,14 +124,9 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressView();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error, true);
+            public boolean updateProgress() {
+                hideProgressView();
+                return true;
             }
         });
     }
@@ -290,15 +278,14 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                               ArrayList<QCErrorData> qcErrorDatas) {
         new BasketDeltaDialog<>().show(this, title, msg, hasQcError, qcErrorDatas, addressId,
                 getString(R.string.reviewBasket), lat, lng, area);
+        markBasketChanged(null);
     }
 
     @Override
-    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries) {
+    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries, String selectedAddressId) {
         if (getCurrentActivity() == null) return;
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.putString(Constants.FRAGMENT_CODE, String.valueOf(NavigationCodes.GO_TO_BASKET));
-        editor.apply();
-        ((BBActivity) getActivity()).onAddressChanged(addressSummaries);
+        ((BBActivity) getActivity()).onAddressChanged(addressSummaries, selectedAddressId);
+        finish(); // Go back to previous page (which happens to be basket)
     }
 
     @Override
@@ -381,6 +368,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             }
             // Forcefully calling get-app-data-dynamic, as user might have change location
             AppDataDynamic.reset(getActivity());
+            DynamicPageDbHelper.clearAll(getCurrentActivity());
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
             postDeliveryAddress();
         } else {

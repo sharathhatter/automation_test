@@ -4,19 +4,14 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ValidateOrderPaymentApiResponse;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class ValidatePaymentHandler<T> {
+public class ValidatePaymentHandler<T extends AppOperationAware> {
     private T ctx;
     private String potentialOrderId;
     private String txnId;
@@ -31,47 +26,45 @@ public class ValidatePaymentHandler<T> {
     }
 
     public void start() {
-        if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendOfflineError();
+        if (!ctx.checkInternetConnection()) {
+            ctx.getHandler().sendOfflineError();
             return;
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
-        ((ProgressIndicationAware) ctx).showProgressDialog("Validating Payment...");
-        bigBasketApiService.validateOrderPayment(txnId, potentialOrderId, fullOrderId, new Callback<ApiResponse<ValidateOrderPaymentApiResponse>>() {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(ctx.getCurrentActivity());
+        ctx.showProgressDialog("Validating Payment...");
+        Call<ApiResponse<ValidateOrderPaymentApiResponse>> call = bigBasketApiService.validateOrderPayment(txnId, potentialOrderId, fullOrderId);
+        call.enqueue(new BBNetworkCallback<ApiResponse<ValidateOrderPaymentApiResponse>>(ctx) {
             @Override
-            public void success(ApiResponse<ValidateOrderPaymentApiResponse> validateOrderPaymentResponse, Response response) {
-                if (((CancelableAware) ctx).isSuspended()) return;
-                try {
-                    ((ProgressIndicationAware) ctx).hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(ApiResponse<ValidateOrderPaymentApiResponse> validateOrderPaymentResponse) {
                 switch (validateOrderPaymentResponse.status) {
                     case 0:
-                        ((OnPaymentValidationListener) ctx).onPaymentValidated(true, null,
-                                validateOrderPaymentResponse.apiResponseContent.orders);
+                        if(ctx instanceof OnPaymentValidationListener) {
+                            ((OnPaymentValidationListener) ctx).onPaymentValidated(true, null,
+                                    validateOrderPaymentResponse.apiResponseContent.orders);
+                        }
                         break;
                     case ApiErrorCodes.PAYMENT_ERROR:
-                        ((OnPaymentValidationListener) ctx).onPaymentValidated(false,
-                                validateOrderPaymentResponse.message,
-                                validateOrderPaymentResponse.apiResponseContent.orders);
+                        if(ctx instanceof OnPaymentValidationListener) {
+                            ((OnPaymentValidationListener) ctx).onPaymentValidated(false,
+                                    validateOrderPaymentResponse.message,
+                                    validateOrderPaymentResponse.apiResponseContent.orders);
+                        }
                         break;
                     default:
-                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(validateOrderPaymentResponse.status,
+                        ctx.getHandler().sendEmptyMessage(validateOrderPaymentResponse.status,
                                 validateOrderPaymentResponse.message);
                         break;
                 }
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (((CancelableAware) ctx).isSuspended()) return;
+            public boolean updateProgress() {
                 try {
-                    ((ProgressIndicationAware) ctx).hideProgressDialog();
+                    ctx.hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
             }
         });
     }

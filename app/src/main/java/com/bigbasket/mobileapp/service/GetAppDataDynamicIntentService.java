@@ -2,16 +2,16 @@ package com.bigbasket.mobileapp.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 
+import com.bigbasket.mobileapp.adapter.db.AppDataDynamicDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
-import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetAppDataDynamicResponse;
-import com.bigbasket.mobileapp.model.AppDataDynamic;
-import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 
-import retrofit.RetrofitError;
+import java.io.IOException;
+
 
 public class GetAppDataDynamicIntentService extends IntentService {
     private static final String TAG = "GetAppDynamicService";
@@ -22,35 +22,24 @@ public class GetAppDataDynamicIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        String url = MobileApiUrl.getMobileApiUrl(this) + "get-app-data-dynamic/";
+        Request request = new Request.Builder()
+                .url(url)
+                .method("POST", RequestBody.create(null, new byte[0]))
+                .build();
+        OkHttpClient client = BigBasketApiAdapter.getHttpClient(this);
+        String responseJson;
         try {
-            ApiResponse<GetAppDataDynamicResponse> getDynamicPageApiResponse = bigBasketApiService.getAppDataDynamic();
-            if (getDynamicPageApiResponse.status == 0) {
-                AppDataDynamic.updateInstance(this,
-                        getDynamicPageApiResponse.apiResponseContent.addToBasketPostParams,
-                        getDynamicPageApiResponse.apiResponseContent.addressSummaries,
-                        getDynamicPageApiResponse.apiResponseContent.isContextualMode,
-                        getDynamicPageApiResponse.apiResponseContent.expressAvailability,
-                        getDynamicPageApiResponse.apiResponseContent.abModeName,
-                        getDynamicPageApiResponse.apiResponseContent.storeAvailabilityMap);
-                sendSuccessBroadcast();
+            com.squareup.okhttp.Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                responseJson = response.body().string();
             } else {
-                sendErrorBroadcast();
+                responseJson = "";
             }
-        } catch (RetrofitError e) {
-            sendErrorBroadcast();
+        } catch (IOException e) {
+            responseJson = "";
         }
-    }
-
-    private void sendSuccessBroadcast() {
-        Intent addressChangedIntent = new Intent(Constants.ADDRESS_SYNC_BROADCAST_ACTION)
-                .putExtra(Constants.STATUS, true);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(addressChangedIntent);
-    }
-
-    private void sendErrorBroadcast() {
-        Intent addressChangedIntent = new Intent(Constants.ADDRESS_SYNC_BROADCAST_ACTION)
-                .putExtra(Constants.STATUS, false);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(addressChangedIntent);
+        AppDataDynamicDbHelper appDataDynamicDbHelper = new AppDataDynamicDbHelper(this);
+        appDataDynamicDbHelper.save(responseJson);
     }
 }

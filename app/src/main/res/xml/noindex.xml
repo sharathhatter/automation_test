@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search-engine>
+    <!-- custom URI scheme-->
+    <noindex uriPrefix="bigbasket://promo" />
+    <noindex uriPrefix="bigbasket://feedback" />
+    <noindex uriPrefix="bigbasket://order" />
+    <noindex uriPrefix="bigbasket://wallet" />
+    <noindex uriPrefix="bigbasket://order_items" />
+    <noindex uriPrefix="bigbasket://sl" />
+    <noindex uriPrefix="bigbasket://sl_summary" />
+    <noindex uriPrefix="bigbasket://basket" />
+    <noindex uriPrefix="bigbasket://inbox" />
+    <noindex uriPrefix="bigbasket://home" />
+
+</search-engine>

@@ -17,6 +17,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
@@ -30,9 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public class CategoryLandingFragment extends BaseSectionFragment {
@@ -76,11 +75,10 @@ public class CategoryLandingFragment extends BaseSectionFragment {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.getSubCategoryData(categorySlug, version, new Callback<ApiResponse<SubCategoryApiResponse>>() {
+        Call<ApiResponse<SubCategoryApiResponse>> call = bigBasketApiService.getSubCategoryData(categorySlug, version);
+        call.enqueue(new BBNetworkCallback<ApiResponse<SubCategoryApiResponse>>(this, true) {
             @Override
-            public void success(ApiResponse<SubCategoryApiResponse> subCategoryCallback, Response response) {
-                if (isSuspended()) return;
-                hideProgressView();
+            public void onSuccess(ApiResponse<SubCategoryApiResponse> subCategoryCallback) {
                 SubCategoryModel subCategoryModel = null;
                 if (subCategoryCallback.status == 0) {
                     String responseVersion = subCategoryCallback.apiResponseContent.responseVersion;
@@ -101,10 +99,9 @@ public class CategoryLandingFragment extends BaseSectionFragment {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public boolean updateProgress() {
                 hideProgressView();
-                handler.handleRetrofitError(error, true);
+                return true;
             }
         });
     }

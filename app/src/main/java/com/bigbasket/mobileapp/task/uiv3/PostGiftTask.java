@@ -8,21 +8,17 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostGiftItemsResponseContent;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class PostGiftTask<T> {
+public class PostGiftTask<T extends AppOperationAware> {
     private T ctx;
     private String potentialOrderId;
     private Gift gift;
@@ -40,42 +36,35 @@ public class PostGiftTask<T> {
 
     public void startTask() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(
-                ((ActivityAware) ctx).getCurrentActivity());
-        ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
+                ctx.getCurrentActivity());
+        ctx.showProgressDialog("Please wait...");
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         String giftsJson = gift != null ? gson.toJson(gift) : null;
-        bigBasketApiService.postGifts(potentialOrderId, giftsJson,
-                new Callback<ApiResponse<PostGiftItemsResponseContent>>() {
-                    @Override
-                    public void success(ApiResponse<PostGiftItemsResponseContent> postGiftItemsResponseContent, Response response) {
-                        if (((CancelableAware) ctx).isSuspended()) return;
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (postGiftItemsResponseContent.status) {
-                            case 0:
-                                onPostGifts(postGiftItemsResponseContent.apiResponseContent);
-                                break;
-                            default:
-                                ((HandlerAware) ctx).getHandler().sendEmptyMessage(postGiftItemsResponseContent.status,
-                                        postGiftItemsResponseContent.message, true);
-                                break;
-                        }
-                    }
+        Call<ApiResponse<PostGiftItemsResponseContent>> call = bigBasketApiService.postGifts(potentialOrderId, giftsJson);
+        call.enqueue(new BBNetworkCallback<ApiResponse<PostGiftItemsResponseContent>>(ctx, true) {
+            @Override
+            public void onSuccess(ApiResponse<PostGiftItemsResponseContent> postGiftItemsResponseContent) {
+                switch (postGiftItemsResponseContent.status) {
+                    case 0:
+                        onPostGifts(postGiftItemsResponseContent.apiResponseContent);
+                        break;
+                    default:
+                        ctx.getHandler().sendEmptyMessage(postGiftItemsResponseContent.status,
+                                postGiftItemsResponseContent.message, true);
+                        break;
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (((CancelableAware) ctx).isSuspended()) return;
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error, true);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    ctx.hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
     }
 
     public void setHasGift(boolean hasGift) {
@@ -83,7 +72,7 @@ public class PostGiftTask<T> {
     }
 
     private void onPostGifts(PostGiftItemsResponseContent postGiftItemsResponseContent) {
-        Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(),
+        Intent intent = new Intent(ctx.getCurrentActivity(),
                 ShipmentSelectionActivity.class);
         intent.putParcelableArrayListExtra(Constants.SHIPMENTS, postGiftItemsResponseContent.shipments);
         intent.putExtra(Constants.ORDER_DETAILS, postGiftItemsResponseContent.orderDetails);
@@ -97,8 +86,8 @@ public class PostGiftTask<T> {
                     new Gson().toJson(postGiftItemsResponseContent.toggleShipmentActions));
         }
         intent.putExtra(Constants.HAS_GIFTS, hasGift);
-        ((ActivityAware) ctx).getCurrentActivity().setNextScreenNavigationContext(nc);
-        ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent,
+        ctx.getCurrentActivity().setNextScreenNavigationContext(nc);
+        ctx.getCurrentActivity().startActivityForResult(intent,
                 NavigationCodes.GO_TO_HOME);
     }
 }

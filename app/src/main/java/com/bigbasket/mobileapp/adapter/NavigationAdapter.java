@@ -9,20 +9,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
-import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
+import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.SectionItem;
+import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
+import com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements NavigationSelectedValueAware {
 
     private static final int VIEW_TYPE_SECTION_ITEM = 0;
     private static final int VIEW_TYPE_HEADER = 1;
@@ -36,31 +40,54 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private String screenName;
     private String baseImgUrl;
 
+    private String selectedCategoryString;
+    private String selectedSubCategoryString;
+
     @Nullable
     private HashMap<Integer, Renderer> rendererHashMap;
     @Nullable
     private SectionItem parentSectionItem;
+    private BBNavigationMenu mainMenuView;
 
     public NavigationAdapter(Context context, Typeface typeface,
                              ArrayList<SectionNavigationItem> sectionNavigationItems,
                              String screenName, @Nullable String baseImgUrl,
-                             @Nullable HashMap<Integer, Renderer> rendererHashMap) {
+                             @Nullable HashMap<Integer, Renderer> rendererHashMap,
+                             BBNavigationMenu mainMenuView) {
         this.context = context;
         this.typeface = typeface;
         this.sectionNavigationItems = sectionNavigationItems;
         this.screenName = screenName;
         this.baseImgUrl = baseImgUrl;
         this.rendererHashMap = rendererHashMap;
+        this.mainMenuView = mainMenuView;
     }
 
     public NavigationAdapter(Context context, Typeface typeface,
                              ArrayList<SectionNavigationItem> sectionNavigationItems,
                              String screenName, @Nullable String baseImgUrl,
                              @Nullable HashMap<Integer, Renderer> rendererHashMap,
-                             @Nullable SectionItem parentSectionItem) {
+                             @Nullable SectionItem parentSectionItem,
+                             BBNavigationMenu mainMenuView) {
         this(context, typeface, sectionNavigationItems, screenName, baseImgUrl,
-                rendererHashMap);
+                rendererHashMap, mainMenuView);
         this.parentSectionItem = parentSectionItem;
+    }
+
+    public String getSelectedCategoryString() {
+        return selectedCategoryString;
+    }
+
+    public void setSelectedCategoryString(String selectedCategoryString) {
+        this.selectedCategoryString = selectedCategoryString;
+    }
+
+    public String getSelectedSubCategoryString() {
+        return selectedSubCategoryString;
+    }
+
+    public void setSelectedSubCategoryString(String selectedSubCategoryString) {
+        this.selectedSubCategoryString = selectedSubCategoryString;
     }
 
     @Override
@@ -92,11 +119,22 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         int viewType = getItemViewType(position);
         if (viewType == VIEW_TYPE_SECTION_ITEM) {
             NavViewHolder navViewHolder = (NavViewHolder) holder;
+            RelativeLayout relativeLayoutRow = navViewHolder.getRelativeLayoutRow();
             TextView txtNavListRow = navViewHolder.getTxtNavListRow();
             ImageView imgNavItem = navViewHolder.getImgNavItem();
             ImageView imgNavItemExpand = navViewHolder.getImgNavItemExpand();
             TextView txtNavListRowSubTitle = navViewHolder.getTxtNavListRowSubTitle();
             SectionItem sectionItem = sectionNavigationItem.getSectionItem();
+
+            /**
+             * checking for the selected category and sub category and
+             * then highlighting the row accordingly
+             */
+            if (getSelectionComparisonStatus(getSelectedSubCategoryString(), sectionItem) || getSelectionComparisonStatus(getSelectedCategoryString(), sectionItem)) {
+                relativeLayoutRow.setPressed(true);
+            } else {
+                relativeLayoutRow.setPressed(false);
+            }
             if (sectionItem.getTitle() != null &&
                     !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtNavListRow.setText(sectionItem.getTitle().getText());
@@ -164,7 +202,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavMainItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((SubNavigationAware) context).onSubNavigationHideRequested(true);
+                        mainMenuView.onSubNavigationHideRequested(true);
                     }
                 });
             } else {
@@ -180,7 +218,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavMainItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((SubNavigationAware) context).onSubNavigationHideRequested(true);
+                        mainMenuView.onSubNavigationHideRequested(true);
                     }
                 });
             } else {
@@ -220,6 +258,23 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return sectionNavigationItems.size();
     }
 
+    @Override
+    public void setSelectedNavigationCategory(String name) {
+        setSelectedCategoryString(name);
+        notifyDataSetChanged();
+    }
+
+    private boolean getSelectionComparisonStatus(String selectedCategoryString, SectionItem sectionItem) {
+        if (!TextUtils.isEmpty(selectedCategoryString) && sectionItem != null
+                && sectionItem.getTitle() != null) {
+            SectionTextItem sectionTextItem = sectionItem.getTitle();
+            if (!TextUtils.isEmpty(sectionTextItem.getText())) {
+                return sectionTextItem.getText().replaceAll(" ", "").equalsIgnoreCase(selectedCategoryString.replaceAll(" ", ""));
+            }
+        }
+        return false;
+    }
+
     private class NavViewHeaderHolder extends RecyclerView.ViewHolder {
         private TextView txtNavListRowHeader;
 
@@ -242,10 +297,18 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private TextView txtNavListRow;
         private TextView txtNavListRowSubTitle;
         private ImageView imgNavItemExpand;
+        private RelativeLayout relativeLayoutRow;
 
         public NavViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
+        }
+
+        public RelativeLayout getRelativeLayoutRow() {
+            if (relativeLayoutRow == null) {
+                relativeLayoutRow = (RelativeLayout) itemView.findViewById(R.id.relativeLayoutRow);
+            }
+            return relativeLayoutRow;
         }
 
         public ImageView getImgNavItem() {
@@ -286,11 +349,16 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (!sectionNavigationItem.isHeader()) {
                     if (sectionNavigationItem.getSectionItem() != null && sectionNavigationItem.getSectionItem().getSubSectionItems() != null
                             && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
-                        ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
+                        mainMenuView.onSubNavigationRequested(sectionNavigationItem.getSection(),
                                 sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
                     } else {
-                        new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
-                                sectionNavigationItem.getSectionItem(), screenName).onClick(v);
+                        if (getSelectionComparisonStatus(getSelectedCategoryString(), sectionNavigationItem.getSectionItem())) {
+                            ((NavigationDrawerAware) context).closeDrawer();
+                            notifyDataSetChanged();
+                        } else {
+                            new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
+                                    sectionNavigationItem.getSectionItem(), screenName).onClick(v);
+                        }
                     }
                 }
             }

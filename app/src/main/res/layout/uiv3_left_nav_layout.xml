@@ -1,34 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.internal.ScrimInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/left_drawer"
     style="@style/NavDrawer"
     android:layout_height="match_parent"
     android:layout_gravity="left"
     android:background="@color/white"
     android:clickable="true"
-    app:insetForeground="#4000">
+    app:insetForeground="@color/uiv3_main_menu_inset_foreground">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/uiv3_left_nav_header" />
+        <include
+            android:id="@+id/layoutNavHeader"
+            layout="@layout/uiv3_left_nav_header" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/listNavigation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutNavHeader" />
 
         <ListView
             android:id="@+id/lstMyAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/layoutNavHeader"
             android:divider="@null"
             android:dividerHeight="0dp"
             android:visibility="gone" />
-    </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBarMenu"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutNavHeader"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout
         android:id="@+id/layoutSubNavigationItems"
@@ -43,4 +57,4 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout>
-</android.support.design.internal.ScrimInsetsFrameLayout>
+</merge>

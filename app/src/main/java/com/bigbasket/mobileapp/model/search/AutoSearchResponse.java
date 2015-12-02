@@ -3,7 +3,7 @@ package com.bigbasket.mobileapp.model.search;
 import android.database.Cursor;
 import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.adapter.db.SearchSuggestionAdapter;
+import com.bigbasket.mobileapp.adapter.db.SearchSuggestionDbHelper;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -36,16 +36,16 @@ public class AutoSearchResponse {
     private String createdOn;
 
     public AutoSearchResponse(Cursor cursor) {
-        this.query = cursor.getString(cursor.getColumnIndex(SearchSuggestionAdapter.COLUMN_QUERY));
-        String termsStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionAdapter.COLUMN_TERMS));
-        String categoriesStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionAdapter.COLUMN_CATEGORIES));
-        String categoriesUrlStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionAdapter.COLUMN_CATEGORY_URLS));
-        String suggestedTermsStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionAdapter.COLUMN_SUGGESTED_TERMS));
+        this.query = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_QUERY));
+        String termsStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_TERMS));
+        String categoriesStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_CATEGORIES));
+        String categoriesUrlStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_CATEGORY_URLS));
+        String suggestedTermsStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_SUGGESTED_TERMS));
         this.terms = TextUtils.isEmpty(termsStr) ? null : termsStr.split(",");
         this.categories = TextUtils.isEmpty(categoriesStr) ? null : categoriesStr.split(",");
         this.categoriesUrl = TextUtils.isEmpty(categoriesUrlStr) ? null : categoriesUrlStr.split(",");
         this.suggestedTerm = TextUtils.isEmpty(suggestedTermsStr) ? null : suggestedTermsStr.split(",");
-        this.createdOn = cursor.getString(cursor.getColumnIndex(SearchSuggestionAdapter.COLUMN_CREATED_ON));
+        this.createdOn = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_CREATED_ON));
     }
 
     public String getQuery() {

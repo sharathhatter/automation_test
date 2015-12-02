@@ -6,9 +6,8 @@ public interface NavigationCodes {
     int VOUCHER_APPLIED = 1336;
     int ADDRESS_CREATED_MODIFIED = 1001;
     int GO_TO_QC = 1345;
-    String GO_TO_LOGIN = "goToLogin";
+    int GO_TO_LOGIN = 1360;
     int FILTER_APPLIED = 1346;
-    int START_SEARCH = 1347;
     int LAUNCH_FRAGMENT = 1348;
     int SHOPPING_LIST_CHANGED = 1349;
     int TUTORIAL_SEEN = 1350;

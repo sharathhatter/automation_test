@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 /**
  * When you want to make your own slider view, you must extends from this class.
@@ -237,27 +238,46 @@ public abstract class BaseSliderView {
                 break;
         }
 
-        rq.into(targetImageView,new Callback() {
-            @Override
-            public void onSuccess() {
-                if(v.findViewById(R.id.loading_bar) != null){
-                    v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
-                }
-            }
-
-            @Override
-            public void onError() {
-                if(mLoadListener != null){
-                    mLoadListener.onEnd(false,me);
-                }
-                if(v.findViewById(R.id.loading_bar) != null){
-                    v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
-                }
-            }
-        });
+        rq.into(targetImageView, new OnImageDownloadedListener(v, this, mLoadListener));
     }
 
+    private static class OnImageDownloadedListener implements Callback {
 
+        private WeakReference<View> sliderViewWeakRef;
+        private WeakReference<BaseSliderView> baseSliderViewWeakRef;
+        private WeakReference<ImageLoadListener> imageLoadListenerWeakRef;
+
+        public OnImageDownloadedListener(View sliderView, BaseSliderView baseSliderView,
+                                         ImageLoadListener imageLoadListener) {
+            sliderViewWeakRef = new WeakReference<>(sliderView);
+            baseSliderViewWeakRef = new WeakReference<>(baseSliderView);
+            imageLoadListenerWeakRef = new WeakReference<>(imageLoadListener);
+        }
+
+        @Override
+        public void onSuccess() {
+            if (sliderViewWeakRef != null && sliderViewWeakRef.get() != null) {
+                View loadingBar = sliderViewWeakRef.get().findViewById(R.id.loading_bar);
+                if (loadingBar != null) {
+                    loadingBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+
+        @Override
+        public void onError() {
+            if (imageLoadListenerWeakRef != null && imageLoadListenerWeakRef.get() != null
+                    && baseSliderViewWeakRef != null && baseSliderViewWeakRef.get() != null) {
+                imageLoadListenerWeakRef.get().onEnd(false, baseSliderViewWeakRef.get());
+            }
+            if (sliderViewWeakRef != null && sliderViewWeakRef.get() != null) {
+                View loadingBar = sliderViewWeakRef.get().findViewById(R.id.loading_bar);
+                if (loadingBar != null) {
+                    loadingBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+    }
 
     public BaseSliderView setScaleType(ScaleType type){
         mScaleType = type;

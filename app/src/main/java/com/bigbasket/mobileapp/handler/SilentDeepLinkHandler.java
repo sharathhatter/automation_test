@@ -1,14 +1,14 @@
 package com.bigbasket.mobileapp.handler;
 
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.HashMap;
 
-import retrofit.RetrofitError;
-
-public class SilentDeepLinkHandler<T> extends BigBasketMessageHandler {
+public class SilentDeepLinkHandler<T extends AppOperationAware & ApiErrorAware>
+        extends BigBasketMessageHandler {
 
     private T ctx;
 
@@ -23,26 +23,26 @@ public class SilentDeepLinkHandler<T> extends BigBasketMessageHandler {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.ERROR_CODE, String.valueOf(what));
         map.put(TrackEventkeys.ERROR_MSG, message);
-        ((ActivityAware) ctx).getCurrentActivity().trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
-        ((ActivityAware) ctx).getCurrentActivity().goToHome(false);
+        ctx.getCurrentActivity().trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
+        ctx.getCurrentActivity().goToHome();
     }
 
     @Override
-    public void handleRetrofitError(RetrofitError error, String sourceName, boolean finish) {
-        logNotificationEvent(error);
-        ((ActivityAware) ctx).getCurrentActivity().goToHome(false);
+    public void handleRetrofitError(Throwable t, boolean finish) {
+        logNotificationEvent(0, "Network Error");
+        ctx.getCurrentActivity().goToHome();
     }
 
-    private void logNotificationEvent(RetrofitError error) {
+    public void handleHttpError(int errorCode, String reasonPhrase, boolean finish) {
+        logNotificationEvent(errorCode, reasonPhrase);
+        ctx.getCurrentActivity().goToHome();
+    }
+
+    private void logNotificationEvent(int code, String msg) {
         HashMap<String, String> map = new HashMap<>();
-        if (error.getResponse() != null) {
-            map.put(TrackEventkeys.ERROR_CODE, String.valueOf(error.getResponse().getStatus()));
-            map.put(TrackEventkeys.ERROR_MSG, String.valueOf(error.getResponse().getReason()));
-        } else {
-            map.put(TrackEventkeys.ERROR_CODE, String.valueOf(error.getKind()));
-            map.put(TrackEventkeys.ERROR_MSG, error.getMessage());
-        }
-        ((ActivityAware) ctx).getCurrentActivity().trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
+        map.put(TrackEventkeys.ERROR_CODE, String.valueOf(code));
+        map.put(TrackEventkeys.ERROR_MSG, String.valueOf(msg));
+        ctx.getCurrentActivity().trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
     }
 
 }

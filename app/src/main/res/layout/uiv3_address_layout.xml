@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/margin_normal"
     android:layout_marginRight="@dimen/margin_normal"
-    android:background="@color/uiv3_large_list_item_bck"
+    android:background="@drawable/clickable_white"
+    android:clickable="true"
     android:paddingBottom="@dimen/padding_12"
     android:paddingLeft="@dimen/padding_normal"
     android:paddingRight="@dimen/padding_12"
@@ -15,6 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
         android:clickable="false" />
 
     <ImageView
@@ -28,6 +30,7 @@
         android:src="@drawable/ic_edit" />
 
     <RelativeLayout
+        android:id="@+id/address_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/imgEditIcon"
@@ -58,6 +61,21 @@
             android:textSize="@dimen/small_text_size" />
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/partial_address_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/address_layout"
+        android:layout_marginTop="@dimen/dimen_5"
+        android:drawablePadding="@dimen/dimen_2"
+        android:drawableRight="@drawable/ic_warning_red"
+        android:gravity="center"
+        android:padding="@dimen/dimen_2"
+        android:text="@string/incomplete"
+        android:textColor="@color/uiv3_action_bar_background"
+        android:textSize="@dimen/small_text_size" />
 
 
 </RelativeLayout>

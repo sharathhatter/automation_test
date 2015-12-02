@@ -10,62 +10,74 @@
     <!-- As the main content view, the view below consumes the entire
          space available using match_parent in both dimensions. -->
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/layoutFilterSort"
-            layout="@layout/filter_sort_layout" />
-
-
-        <android.support.design.widget.CoordinatorLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/layoutFilterSort">
+            android:layout_height="match_parent">
 
-            <android.support.design.widget.AppBarLayout
-                android:id="@+id/appBarLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <include
+                android:id="@+id/layoutFilterSort"
+                layout="@layout/filter_sort_layout" />
 
-                <include layout="@layout/uiv3_tool_layout" />
-
-                <android.support.design.widget.TabLayout
-                    android:id="@+id/slidingTabs"
-                    style="@style/BaseAppTheme.TabStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:tabMode="scrollable" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/uiv3_divider_color" />
-            </android.support.design.widget.AppBarLayout>
-
-            <FrameLayout
-                android:id="@+id/content_frame"
+            <android.support.design.widget.CoordinatorLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                android:layout_above="@id/layoutFilterSort">
 
-        </android.support.design.widget.CoordinatorLayout>
+                <android.support.design.widget.AppBarLayout
+                    android:id="@+id/appBarLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
-            android:id="@+id/btnViewBasket"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/layoutFilterSort"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="@dimen/margin_normal"
-            android:layout_marginRight="@dimen/margin_small"
-            android:src="@drawable/filled_basket"
-            app:fab_colorNormal="@color/uiv3_action_bar_background"
-            app:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
+                    <include
+                        android:id="@+id/toolbarMain"
+                        layout="@layout/uiv3_tool_layout" />
 
-        <include layout="@layout/uiv3_header_dropdown_layout" />
-    </RelativeLayout>
+                    <android.support.design.widget.TabLayout
+                        android:id="@+id/slidingTabs"
+                        style="@style/BaseAppTheme.TabStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:tabMode="scrollable" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/uiv3_divider_color" />
+                </android.support.design.widget.AppBarLayout>
+
+                <FrameLayout
+                    android:id="@+id/content_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+            </android.support.design.widget.CoordinatorLayout>
+
+            <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
+                android:id="@+id/btnViewBasket"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/layoutFilterSort"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_small"
+                android:src="@drawable/filled_basket"
+                app:fab_colorNormal="@color/uiv3_action_bar_background"
+                app:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
+
+            <include layout="@layout/uiv3_header_dropdown_layout" />
+        </RelativeLayout>
+
+        <com.bigbasket.mobileapp.view.uiv3.search.BBSearchableToolbarView
+            android:id="@+id/bbSearchView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <!-- android:layout_gravity="start" tells DrawerLayout to treat
          this as a sliding drawer on the left side for left-to-right
@@ -74,5 +86,12 @@
          the container. A solid background is used for contrast
          with the content view. -->
 
-    <include layout="@layout/uiv3_left_nav_layout" />
+    <com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu
+        android:id="@+id/left_drawer"
+        style="@style/NavDrawer"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="@color/white"
+        android:clickable="true"
+        app:insetForeground="@color/uiv3_main_menu_inset_foreground" />
 </com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>

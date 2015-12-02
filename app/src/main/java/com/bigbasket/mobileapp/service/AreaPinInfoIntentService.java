@@ -1,10 +1,15 @@
 package com.bigbasket.mobileapp.service;
 
 import android.app.IntentService;
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.OperationApplicationException;
+import android.os.RemoteException;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
+import com.bigbasket.mobileapp.adapter.db.DatabaseContentProvider;
 import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -12,12 +17,15 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAreaInfoResponse;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.account.City;
+import com.crashlytics.android.Crashlytics;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.RetrofitError;
+import retrofit.Call;
+import retrofit.Response;
 
 
 /**
@@ -36,10 +44,16 @@ public class AreaPinInfoIntentService extends IntentService {
         if (intent == null) return;
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         try {
-            ArrayList<City> cities = bigBasketApiService.listCitySynchronously();
-            CityManager.storeCities(AreaPinInfoIntentService.this, cities);
-            fetchPinCodes(cities);
-        } catch (RetrofitError e) {
+            Call<ArrayList<City>> call = bigBasketApiService.listCities();
+            Response<ArrayList<City>> response = call.execute();
+            if (response.isSuccess()) {
+                ArrayList<City> cities = response.body();
+                CityManager.storeCities(AreaPinInfoIntentService.this, cities);
+                fetchPinCodes(cities);
+            } else {
+                Log.d(TAG, "Oops! An error occurred while fetching pin-codes");
+            }
+        } catch (IOException e) {
             Log.d(TAG, "Oops! An error occurred while fetching pin-codes");
         }
     }
@@ -51,41 +65,63 @@ public class AreaPinInfoIntentService extends IntentService {
         HashMap<City, HashMap<String, ArrayList<String>>> downloadedDataMap = new HashMap<>();
         for (City city : cities) {
             try {
-                ApiResponse<GetAreaInfoResponse> response = bigBasketApiService.getAreaInfo(String.valueOf(city.getId()));
-                if (response.status == 0) {
-                    downloadedDataMap.put(city, response.apiResponseContent.pinCodeMaps);
+                Call<ApiResponse<GetAreaInfoResponse>> call = bigBasketApiService.getAreaInfo(String.valueOf(city.getId()));
+                Response<ApiResponse<GetAreaInfoResponse>> apiResponse = call.execute();
+                if (apiResponse.isSuccess()) {
+                    ApiResponse<GetAreaInfoResponse> response = apiResponse.body();
+                    if (response.status == 0) {
+                        downloadedDataMap.put(city, response.apiResponseContent.pinCodeMaps);
+                    }
+                } else {
+                    success = false;
+                    Log.d(TAG, "Oops! An error occurred while fetching pin-codes");
                 }
-            } catch (RetrofitError r) {
+            } catch (IOException r) {
                 success = false;
                 Log.d(TAG, "Oops! An error occurred while fetching pin-codes");
                 break;
             }
         }
         if (success && downloadedDataMap.size() > 0) {
-            AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(this);
+            DatabaseHelper.getInstance(this).open(this);
             DatabaseHelper.db.beginTransaction();
-            areaPinInfoAdapter.deleteData();
+            ArrayList<ContentProviderOperation> contentProviderOperations = new ArrayList<>();
+            contentProviderOperations.add(ContentProviderOperation
+                    .newDelete(AreaPinInfoDbHelper.CONTENT_URI).build());
 
             for (Map.Entry<City, HashMap<String, ArrayList<String>>> pinCodeEntrySet :
                     downloadedDataMap.entrySet()) {
-                insertPinCodes(areaPinInfoAdapter,
-                        pinCodeEntrySet.getKey(), pinCodeEntrySet.getValue());
+                City city = pinCodeEntrySet.getKey();
+                HashMap<String, ArrayList<String>> pinCodeMaps = pinCodeEntrySet.getValue();
+                for (Map.Entry<String, ArrayList<String>> pincodeAreaEntrySet : pinCodeMaps.entrySet()) {
+                    String pinCode = pincodeAreaEntrySet.getKey();
+                    ArrayList<String> areas = pincodeAreaEntrySet.getValue();
+                    for (String areaName : areas) {
+                        ContentValues cv = new ContentValues();
+
+                        cv.put(AreaPinInfoDbHelper.COLUMN_PIN, pinCode);
+                        cv.put(AreaPinInfoDbHelper.COLUMN_AREA, areaName);
+                        cv.put(AreaPinInfoDbHelper.COLUMN_CITY, city.getName());
+                        cv.put(AreaPinInfoDbHelper.COLUMN_CITY_ID, city.getId());
+                        contentProviderOperations
+                                .add(ContentProviderOperation
+                                        .newInsert(AreaPinInfoDbHelper.CONTENT_URI)
+                                        .withValues(cv)
+                                        .build());
+                    }
+                }
             }
-
-            DatabaseHelper.db.setTransactionSuccessful();
-            DatabaseHelper.db.endTransaction();
-            Log.d(TAG, "Successfully fetched all pin-codes");
-            CityManager.setAreaPinInfoDate(this);
-        }
-    }
-
-    private void insertPinCodes(AreaPinInfoAdapter areaPinInfoAdapter,
-                                City city, HashMap<String, ArrayList<String>> pinCodeMaps) {
-        for (Map.Entry<String, ArrayList<String>> pincodeAreaEntrySet : pinCodeMaps.entrySet()) {
-            String pinCode = pincodeAreaEntrySet.getKey();
-            ArrayList<String> areas = pincodeAreaEntrySet.getValue();
-            for (String areaName : areas) {
-                areaPinInfoAdapter.insert(areaName, pinCode, city.getName(), city.getId());
+            try {
+                getContentResolver().applyBatch(DatabaseContentProvider.AUTHORITY,
+                        contentProviderOperations);
+                CityManager.setAreaPinInfoDate(this);
+                DatabaseHelper.db.setTransactionSuccessful();
+                Log.d(TAG, "Successfully fetched all pin-codes");
+            } catch (RemoteException | OperationApplicationException e) {
+                Log.e(TAG, "Failed to insert pin-codes", e);
+                Crashlytics.logException(e);
+            } finally {
+                DatabaseHelper.db.endTransaction();
             }
         }
     }

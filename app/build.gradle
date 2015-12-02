@@ -6,30 +6,47 @@ buildscript {
 
     dependencies {
         classpath "com.newrelic.agent.android:agent-gradle-plugin:5.+"
-        classpath 'io.fabric.tools:gradle:1.19.2'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 
 repositories {
     mavenCentral()
-    maven { url 'https://maven.fabric.io/public' }
+    maven {
+        url 'https://maven.fabric.io/public'
+    }
 }
 
 repositories {
     mavenCentral()
-
     maven {
         url "http://dl.bintray.com/journeyapps/maven"
     }
 }
 
+repositories {
+    jcenter()
+    maven { url 'http://maven.localytics.com/public' }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'newrelic'
+import com.android.build.OutputFile
 
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+
+    signingConfigs {
+        bigbasket {
+            storeFile file(project.KEY_STORE_FILE)
+            storePassword project.STORE_PASSWD
+            keyAlias project.KEY_ALIAS
+            keyPassword project.KEY_PASSWD
+        }
+    }
+
     defaultConfig {
         applicationId "com.bigbasket.mobileapp"
         minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
@@ -37,12 +54,20 @@ android {
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
         manifestPlaceholders = [crashlytics_id: "d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827"]
+        //Does not work on gradle build tool version 1.3.0 https://code.google.com/p/android/issues/detail?id=182016
+        setProperty("archivesBaseName", "Bigbasket-" + versionName);
     }
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
+            signingConfig signingConfigs.bigbasket
+        }
+        debug {
+            multiDexEnabled true
+            signingConfig signingConfigs.bigbasket
         }
     }
     compileOptions {
@@ -55,75 +80,77 @@ android {
     }
     dexOptions {
         jumboMode true
+        javaMaxHeapSize "2g"
     }
 
-//    Uncomment at the time of deployment, but don't commit the uncommented version to VCS.
-//    This is because build time increases significantly, due to which development time becomes slow
-//    (1.5 minutes on avg)
+    lintOptions {
+        abortOnError false
+    }
 
-//    splits {
-//        density {
-//            enable true
-//            exclude "ldpi", "tvdpi"
-//            compatibleScreens 'small', 'normal', 'large', 'xlarge'
-//        }
-//    }
-//
-//    productFlavors {
-//        flavourMdpi {
-//            versionCode calculateVersionCodeFromDpi(160)
-//        }
-//
-//        flavourHdpi {
-//            versionCode calculateVersionCodeFromDpi(240)
-//        }
-//
-//        flavourXHdpi {
-//            versionCode calculateVersionCodeFromDpi(320)
-//        }
-//
-//        flavourXXHdpi {
-//            versionCode calculateVersionCodeFromDpi(480)
-//        }
-//
-//        flavourXXXHdpi {
-//            versionCode calculateVersionCodeFromDpi(640)
-//        }
-//    }
+    splits {
+        density {
+            enable project.ENABLE_SPLITS != null ? project.ENABLE_SPLITS.toBoolean() : false;
+            exclude "ldpi", "tvdpi"
+            compatibleScreens 'small', 'normal', 'large', 'xlarge'
+        }
+    }
+
 
 }
 
-int calculateVersionCodeFromDpi(int dpi) {
+ext.versionCodes = [mdpi   : calculateVersionCodeFromDpi(160, 0),
+                    hdpi   : calculateVersionCodeFromDpi(240, 0),
+                    xhdpi  : calculateVersionCodeFromDpi(320, 0),
+                    xxhdpi : calculateVersionCodeFromDpi(480, 0),
+                    xxxhdpi: calculateVersionCodeFromDpi(640, 0),
+                    all    : calculateVersionCodeFromDpi(160, -1)]
+
+android.applicationVariants.all { variant ->
+    // assign different version code for each output
+    variant.outputs.each { output ->
+        def key = output.getFilter(OutputFile.DENSITY) == null ? "all" : output.getFilter(OutputFile.DENSITY)
+        output.versionCodeOverride = project.ext.versionCodes.get(key)
+    }
+}
+
+int calculateVersionCodeFromDpi(int dpi, int delta) {
     int minSdk = Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
-    int versionCode = Integer.parseInt(project.VERSION_CODE)
+    int versionCode = Integer.parseInt(project.VERSION_CODE) + delta
     return ("" + minSdk + (dpi / 10) + versionCode).toInteger()
 }
 
+
 dependencies {
     compile files('libs/localytics.jar')
+    //compile 'com.localytics.android:library:3.5+'
     compile project(':androidImageSlider')
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.android.support:design:22.2.1'
-    compile 'com.android.support:recyclerview-v7:22.2.1'
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'com.google.android.gms:play-services-ads:7.0.0'
-    compile 'com.google.android.gms:play-services-plus:7.0.0'
-    compile 'com.google.android.gms:play-services-gcm:7.0.0'
-    compile 'com.google.android.gms:play-services-location:7.0.0'
-    compile 'com.newrelic.agent.android:android-agent:5.+'
-    compile 'com.facebook.android:facebook-android-sdk:4.4.0'
-    provided 'com.squareup.okhttp:okhttp:2.3.0'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.1@aar') {
+    provided 'com.squareup.okhttp:okhttp:2.6.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.3@aar') {
         transitive = true;
     }
-    compile 'com.journeyapps:zxing-android-embedded:3.0.1@aar'
-    compile 'com.google.zxing:core:3.2.0'
     compile project(':wibmoSDK')
     compile files('libs/AF-Android-SDK-v2.3.1.17.jar')
     compile project(':moe-addon-ubox')
-    compile 'com.moengage:moe-android-sdk:5.3.05'
     compile project(':mobikwik_Payment_Android_SDK')
     compile files('libs/pgsdk.jar')
     compile project(':payuSdkUi')
     compile files('libs/GoogleConversionTrackingSdk-2.2.4.jar')
+    compile "com.squareup.picasso:picasso:${picassoLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
+    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+    compile "com.google.android.gms:play-services-ads:${playServicesLibVersion}"
+    compile "com.google.android.gms:play-services-plus:${playServicesLibVersion}"
+    compile "com.google.android.gms:play-services-gcm:${playServicesLibVersion}"
+    compile "com.google.android.gms:play-services-location:${playServicesLibVersion}"
+    compile 'com.newrelic.agent.android:android-agent:5.+'
+    compile 'com.facebook.android:facebook-android-sdk:4.4.0'
+    compile 'com.journeyapps:zxing-android-embedded:3.0.1@aar'
+    compile 'com.google.zxing:core:3.2.0'
+    compile 'com.moengage:moe-android-sdk:5.3.14'
+    compile "com.android.support:support-v4:${supportLibVersion}"
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
+    debugCompile 'com.android.support:multidex:1.0.1'
 }

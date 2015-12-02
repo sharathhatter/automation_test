@@ -1,10 +1,9 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
@@ -12,14 +11,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.internal.VersionUtils;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -30,8 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,14 +35,12 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.SearchableActivity;
-import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
+import com.bigbasket.mobileapp.adapter.db.AppDataDynamicDbHelper;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.FlatPageFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
-import com.bigbasket.mobileapp.fragment.account.AccountView;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
@@ -59,93 +53,79 @@ import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.BasketDeltaUserActionListener;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
-import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
-import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
-import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
-import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.product.Product;
-import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.section.DestinationInfo;
-import com.bigbasket.mobileapp.model.section.Renderer;
-import com.bigbasket.mobileapp.model.section.Section;
-import com.bigbasket.mobileapp.model.section.SectionData;
-import com.bigbasket.mobileapp.model.section.SectionItem;
-import com.bigbasket.mobileapp.model.section.SectionTextItem;
-import com.bigbasket.mobileapp.model.section.SubSectionItem;
-import com.bigbasket.mobileapp.receivers.DynamicAppDataBroadcastReceiver;
+import com.bigbasket.mobileapp.receivers.DynamicScreenLoaderCallback;
 import com.bigbasket.mobileapp.service.AreaPinInfoIntentService;
 import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
-import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.LeakCanaryObserver;
+import com.bigbasket.mobileapp.util.LoaderIds;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.SectionCursorHelper;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
-import com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
+import com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu;
 import com.bigbasket.mobileapp.view.uiv3.BasketDeltaDialog;
 import com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
-        CartInfoAware, HandlerAware, SubNavigationAware, FloatingBasketUIAware,
-        OnAddressChangeListener, BasketDeltaUserActionListener {
+public abstract class BBActivity extends SocialLoginActivity implements BasketOperationAware,
+        CartInfoAware, AppOperationAware, FloatingBasketUIAware,
+        OnAddressChangeListener, BasketDeltaUserActionListener, NavigationSelectionAware,
+        NavigationDrawerAware, BBNavigationMenu.Callback {
 
     protected BigBasketMessageHandler handler;
     protected String mTitle;
     @Nullable
-    protected DynamicAppDataBroadcastReceiver mDynamicAppDataBroadcastReceiver;
     private ActionBarDrawerToggle mDrawerToggle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartSummary = new CartSummary();
+    @Nullable
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
-    private RecyclerView mNavRecyclerView;
-    private AnimatedRelativeLayout mSubNavLayout;
+    @Nullable
+    private BBNavigationMenu mMainMenuView;
+    @Nullable
     private FloatingBadgeCountView mBtnViewBasket;
-    private RecyclerView mListSubNavigation;
-    private boolean mSyncNeeded;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getMainLayout());
 
-        mNavRecyclerView = (RecyclerView) findViewById(R.id.listNavigation);
-        if (mNavRecyclerView != null) {
-            mNavRecyclerView.setHasFixedSize(false);
-            mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        }
-
-        mListSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
-        if (mListSubNavigation != null) {
-            // Assign a layout manager as soon as RecyclerView is inflated to prevent onDestroy crash
-            mListSubNavigation.setHasFixedSize(false);
-            mListSubNavigation.setLayoutManager(new LinearLayoutManager(this));
+        mMainMenuView = (BBNavigationMenu) findViewById(R.id.left_drawer);
+        if (mMainMenuView != null) {
+            mMainMenuView.setCallback(this);
+            mMainMenuView.attachAppOperationAware(this);
         }
 
         handler = new BigBasketMessageHandler<>(this);
@@ -180,21 +160,47 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (CityManager.isAreaPinInfoDataStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
         }
-
-        mDynamicAppDataBroadcastReceiver = new DynamicAppDataBroadcastReceiver<>(this);
     }
 
-    public void onDataSynced(boolean isManuallyTriggered) {
+    public void readAppDataDynamic() {
+        getSupportLoaderManager().restartLoader(LoaderIds.APP_DATA_DYNAMIC_ID, null,
+                new LoaderManager.LoaderCallbacks<Cursor>() {
+                    @Override
+                    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                        return new CursorLoader(getCurrentActivity(), AppDataDynamicDbHelper.CONTENT_URI,
+                                AppDataDynamicDbHelper.getDefaultProjection(), null, null, null);
+                    }
+
+                    @Override
+                    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                        AppDataDynamic appDataDynamic = AppDataDynamic.getInstance(getCurrentActivity());
+                        boolean success = appDataDynamic.updateInstance(getCurrentActivity(), data);
+                        if (success) {
+                            onDataSynced();
+                        } else {
+                            onDataSyncFailure();
+                        }
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<Cursor> loader) {
+
+                    }
+                });
+    }
+
+    public void onDataSynced() {
         ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
-        if (addressSummaries == null || addressSummaries.size() == 0) return;
-
-        AddressSummary defaultAddress = addressSummaries.get(0);
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString(Constants.CITY, defaultAddress.getCityName());
-        editor.putString(Constants.CITY_ID, String.valueOf(defaultAddress.getCityId()));
-        editor.apply();
-
-        setCityText(defaultAddress.toString());
+        if (addressSummaries != null && addressSummaries.size() > 0) {
+            AddressSummary defaultAddress = addressSummaries.get(0);
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            editor.putString(Constants.CITY, defaultAddress.getCityName());
+            editor.putString(Constants.CITY_ID, String.valueOf(defaultAddress.getCityId()));
+            editor.apply();
+            if (mMainMenuView != null) {
+                mMainMenuView.setCityText(defaultAddress.toString());
+            }
+        }
 
         HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager()
                 .findFragmentByTag(HomeFragment.class.getName());
@@ -254,30 +260,29 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                setTitle(formatToolbarTitle(mTitle));
+                /**
+                 * commenting this line BB-6889-Title text wrong when selecting a category
+                 * title text was showing the previous category title even when the user navigates to new category
+                 * the value for getting overidden here
+                 */
+//                setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
-                if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
-                    onSubNavigationHideRequested(false);
-                }
-                if (mNavRecyclerView != null) {
-                    if (mNavRecyclerView.getVisibility() != View.VISIBLE) {
-                        // User was in settings menu, now restore the default state to avoid confusion
-                        ImageView imgSwitchNav = (ImageView) findViewById(R.id.imgSwitchNav);
-                        if (imgSwitchNav != null) {
-                            toggleNavigationArea(imgSwitchNav);
-                        }
-                    }
-                    mNavRecyclerView.scrollToPosition(0);
+                if (mMainMenuView != null) {
+                    mMainMenuView.onDrawerClosed();
                 }
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+
                 Map<String, String> eventAttribs = new HashMap<>();
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
+                if (mMainMenuView != null) {
+                    mMainMenuView.onDrawerOpened();
+                }
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -285,10 +290,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        loadNavigationItems();
-        Intent intent = getIntent();
-        handleIntent(intent, savedInstanceState);
+        handleIntent(savedInstanceState);
     }
 
     @Override
@@ -323,8 +325,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
-    //method for add bundle
-
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
         if (fragment == null) return;
         UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
@@ -354,9 +354,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         return super.onCreateOptionsMenu(menu);
     }
 
-    protected void setOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.action_menu, menu);
-    }
+    protected abstract void setOptionsMenu(Menu menu);
 
     @Override
     public void setTitle(CharSequence title) {
@@ -451,8 +449,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 break;
             case FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT:
                 String orderId = getIntent().getStringExtra(Constants.ORDER_ID);
+                String orderNumber = getIntent().getStringExtra(Constants.ORDER_NUMBER);
                 Bundle orderProductListBundle = new Bundle();
                 orderProductListBundle.putString(Constants.ORDER_ID, orderId);
+                orderProductListBundle.putString(Constants.ORDER_NUMBER, orderNumber);
                 orderProductListBundle.putString(TrackEventkeys.NAVIGATION_CTX,
                         getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
                 ShopFromOrderFragment shopFromOrderFragment = new ShopFromOrderFragment();
@@ -495,10 +495,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             return true;
         }
         switch (item.getItemId()) {
-            case R.id.action_search:
-                Intent searchIntent = new Intent(this, SearchableActivity.class);
-                startActivityForResult(searchIntent, NavigationCodes.START_SEARCH);
-                return false;
             case android.R.id.home:
                 finish();
                 return true;
@@ -512,11 +508,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries) {
+    public void onAddressChanged(ArrayList<AddressSummary> addressSummaries, String selectedAddressId) {
         if (addressSummaries != null && addressSummaries.size() > 0) {
             City newCity = new City(addressSummaries.get(0).getCityName(),
                     addressSummaries.get(0).getCityId());
-            changeCity(newCity, false);
+            changeCity(newCity);
+            startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
         } else {
             showToast(getString(R.string.unknownError));
         }
@@ -553,16 +550,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == NavigationCodes.START_SEARCH) {
-            if (data != null) {
-                String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
-                String nc = data.getStringExtra(TrackEventkeys.NAVIGATION_CTX);
-                if (!TextUtils.isEmpty(searchQuery)) {
-                    doSearch(searchQuery.trim(), nc);
-                    return;
-                }
-            }
-        } else if (resultCode == NavigationCodes.LAUNCH_FRAGMENT && data != null) {
+        if (resultCode == NavigationCodes.LAUNCH_FRAGMENT && data != null) {
             createFragmentFromName(data.getStringExtra(Constants.FRAGMENT_CLASS_NAME), data.getExtras(),
                     data.getStringExtra(Constants.FRAGMENT_TAG));
             return;
@@ -597,23 +585,29 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                   View viewDecQty, View viewIncQty, View btnAddToBasket,
-                                                   Product product, String qty,
-                                                   String errorType, @Nullable View productView,
-                                                   @Nullable EditText editTextQty) {
+    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation,
+                                                   @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                   @Nullable WeakReference<View> viewDecQtyRef,
+                                                   @Nullable WeakReference<View> viewIncQtyRef,
+                                                   @Nullable WeakReference<View> btnAddToBasketRef,
+                                                   Product product, String qty, String errorType,
+                                                   @Nullable WeakReference<View> productViewRef,
+                                                   @Nullable WeakReference<EditText> editTextQtyRef) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
                                                     Product product, String qty,
-                                                    @Nullable View productView,
-                                                    @Nullable HashMap<String, Integer> cartInfoMap,
-                                                    @Nullable EditText editTextQty) {
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
 
         Log.d("BB", "BB ACTIVITY updateUIAfterBasketOperationSuccess");
 
@@ -624,45 +618,47 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
         if (productQtyInBasket == 0) {
-            if (viewDecQty != null) {
-                viewDecQty.setVisibility(View.GONE);
+            if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
+                viewDecQtyRef.get().setVisibility(View.GONE);
             }
-            if (viewIncQty != null) {
-                viewIncQty.setVisibility(View.GONE);
+            if (viewIncQtyRef != null && viewIncQtyRef.get() != null) {
+                viewIncQtyRef.get().setVisibility(View.GONE);
             }
-            if (btnAddToBasket != null) {
-                btnAddToBasket.setVisibility(View.VISIBLE);
+            if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
+                btnAddToBasketRef.get().setVisibility(View.VISIBLE);
             }
-            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
-                editTextQty.setText("1");
-                editTextQty.setVisibility(View.VISIBLE);
+            if (editTextQtyRef != null && editTextQtyRef.get() != null
+                    && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQtyRef.get().setText("1");
+                editTextQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (basketCountTextView != null) {
-                basketCountTextView.setVisibility(View.GONE);
+            if (basketCountTextViewRef != null && basketCountTextViewRef.get() != null) {
+                basketCountTextViewRef.get().setVisibility(View.GONE);
             }
         } else {
-            if (viewDecQty != null) {
-                viewDecQty.setVisibility(View.VISIBLE);
+            if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
+                viewDecQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (viewIncQty != null) {
-                viewIncQty.setVisibility(View.VISIBLE);
+            if (viewIncQtyRef != null && viewIncQtyRef.get() != null) {
+                viewIncQtyRef.get().setVisibility(View.VISIBLE);
             }
-            if (btnAddToBasket != null) {
-                btnAddToBasket.setVisibility(View.GONE);
+            if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
+                btnAddToBasketRef.get().setVisibility(View.GONE);
             }
-            if (basketCountTextView != null) {
-                basketCountTextView.setText(String.valueOf(productQtyInBasket));
-                basketCountTextView.setVisibility(View.VISIBLE);
+            if (basketCountTextViewRef != null && basketCountTextViewRef.get() != null) {
+                basketCountTextViewRef.get().setText(String.valueOf(productQtyInBasket));
+                basketCountTextViewRef.get().setVisibility(View.VISIBLE);
             }
-            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
-                editTextQty.setVisibility(View.GONE);
+            if (editTextQtyRef != null && editTextQtyRef.get() != null
+                    && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQtyRef.get().setVisibility(View.GONE);
             }
         }
 
         if (product != null) {
             product.setNoOfItemsInCart(productQtyInBasket);
-            if (cartInfoMap != null) {
-                cartInfoMap.put(product.getSku(), productQtyInBasket);
+            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
+                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
             }
         }
 
@@ -729,34 +725,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         return handler;
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
-    }
-
-    public void handleIntent(Intent intent) {
-        handleIntent(intent, null);
-    }
-
-    public void handleIntent(Intent intent, Bundle savedInstanceState) {
+    public void handleIntent(Bundle savedInstanceState) {
         currentFragmentTag = savedInstanceState != null ?
                 savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
         if (TextUtils.isEmpty(currentFragmentTag) ||
                 getSupportFragmentManager().findFragmentByTag(currentFragmentTag) == null) {
             startFragment();
         }
-    }
-
-    public void doSearch(String searchQuery, String referrer) {
-        Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
-        nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
-        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-        intent.putExtra(Constants.TITLE, searchQuery);
-        setNextScreenNavigationContext(referrer);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     public void onChangeTitle(String title) {
@@ -778,22 +753,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         return spannableString;
     }
 
-    @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (!TextUtils.isEmpty(sourceName)) {
-            switch (sourceName) {
-                case Constants.LOGOUT:
-                    onLogoutRequested();
-                    break;
-                default:
-                    super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
-                    break;
-            }
-        } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
-        }
-    }
-
     public void setTxtNavSalutation() {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
@@ -804,71 +763,37 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @SuppressWarnings("unchecked")
-    private void loadNavigationItems() {
-        if (mNavRecyclerView == null || mDrawerLayout == null) return;
-        TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
-        txtNavSalutation.setTypeface(faceRobotoMedium);
-        ((TextView) findViewById(R.id.lblWelcome)).setTypeface(faceRobotoMedium);
-        ImageView imgSwitchNav = (ImageView) findViewById(R.id.imgSwitchNav);
+    protected void loadNavigationItems() {
+        if (mMainMenuView == null || mDrawerLayout == null) return;
+        getSupportLoaderManager().initLoader(LoaderIds.MAIN_MENU_ID, null,
+                new DynamicScreenLoaderCallback(this) {
+                    @Override
+                    public void onCursorNonEmpty(Cursor data) {
+                        mMainMenuView.showMenuLoading(false);
+                        mMainMenuView.displayHeader();
+                        SectionCursorHelper.getNavigationAdapterAsync(getCurrentActivity(), data,
+                                getCategoryId(), mMainMenuView,
+                                new SectionCursorHelper.NavigationCallback() {
+                                    @Override
+                                    public void onNavigationAdapterCreated(NavigationAdapter navigationAdapter) {
+                                        mMainMenuView.setNavigationAdapter(navigationAdapter);
+                                    }
+                                });
+                    }
 
-        AuthParameters authParameters = AuthParameters.getInstance(this);
-
-        ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
-        if (addressSummaries != null && addressSummaries.size() > 0) {
-            setCityText(addressSummaries.get(0).toString());
-        } else {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            setCityText(preferences.getString(Constants.CITY, ""));
-        }
-        if (!authParameters.isAuthTokenEmpty()) {
-            txtNavSalutation.setText(!TextUtils.isEmpty(authParameters.getMemberFullName()) ?
-                    authParameters.getMemberFullName() : authParameters.getMemberEmail());
-        } else {
-            txtNavSalutation.setText(getString(R.string.bigbasketeer));
-        }
-
-        imgSwitchNav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleNavigationArea((ImageView) v);
-            }
-        });
-
-        Object[] data = getSectionNavigationItems();
-        ArrayList<SectionNavigationItem> sectionNavigationItems = (ArrayList<SectionNavigationItem>) data[0];
-        String baseImgUrl = (String) data[1];
-        HashMap<Integer, Renderer> rendererHashMap = (HashMap<Integer, Renderer>) data[2];
-
-        ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
-        new AccountView<>(this, lstMyAccount);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
-                sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
-        mNavRecyclerView.setAdapter(navigationAdapter);
+                    @Override
+                    public void onCursorLoadingInProgress() {
+                        mMainMenuView.showMenuLoading(true);
+                    }
+                });
     }
 
-    private void setCityText(String text) {
-        TextView txtCityName = (TextView) findViewById(R.id.txtCityName);
-        if (txtCityName == null) return;
-        txtCityName.setTypeface(faceRobotoMedium);
-
-        AuthParameters authParameters = AuthParameters.getInstance(this);
-
-        if (authParameters.isAuthTokenEmpty() || authParameters.isMultiCityEnabled()) {
-            txtCityName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    changeAddressRequested();
-                }
-            });
-            txtCityName.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.address_white), null,
-                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.ic_edit_white_24dp), null);
-        } else {
-            txtCityName.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(getCurrentActivity(), R.drawable.address_white),
-                    null, null, null);
+    @Override
+    public void doLogout() {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawers();
         }
-        txtCityName.setText(text);
+        super.doLogout();
     }
 
     public void changeAddressRequested() {
@@ -882,133 +807,16 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
-    private void toggleNavigationArea(ImageView imgSwitchNav) {
-        if (mNavRecyclerView == null) return;
-
-        ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
-
-        int drawableId;
-        if (mNavRecyclerView.getVisibility() == View.VISIBLE) {
-            mNavRecyclerView.setVisibility(View.GONE);
-            lstMyAccount.setVisibility(View.VISIBLE);
-            drawableId = R.drawable.ic_menu_white_36dp;
-        } else {
-            lstMyAccount.setVisibility(View.GONE);
-            mNavRecyclerView.setVisibility(View.VISIBLE);
-            drawableId = R.drawable.settings;
-        }
-        imgSwitchNav.setImageDrawable(ContextCompat.getDrawable(this, drawableId));
+    /**
+     * @return the category selected by the user
+     * method to be overridden in classes extending BBActivity
+     */
+    protected String getCategoryId() {
+        return null;
     }
 
-    private Object[] getSectionNavigationItems() {
-        ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        sectionNavigationItems.addAll(getPreBakedNavigationItems());
-
-        SectionManager sectionManager = new SectionManager(this, SectionManager.MAIN_MENU);
-        SectionData sectionData = sectionManager.getStoredSectionData(true);
-        if (sectionData != null && sectionData.getSections() != null && sectionData.getSections().size() > 0) {
-            for (Section section : sectionData.getSections()) {
-                if (section == null || section.getSectionItems() == null || section.getSectionItems().size() == 0)
-                    continue;
-                if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-                    sectionNavigationItems.add(new SectionNavigationItem(section));
-                }
-                setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
-                        section);
-            }
-        }
-        return new Object[]{sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null,
-                sectionData != null ? sectionData.getRenderersMap() : null};
-    }
-
-    private static <T extends SectionItem> void
-    setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
-                                 ArrayList<T> sectionItems,
-                                 Section section) {
-        for (int i = 0; i < sectionItems.size(); i++) {
-            SectionItem sectionItem = sectionItems.get(i);
-            if ((sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText()))
-                    || (sectionItem instanceof SubSectionItem && ((SubSectionItem) sectionItem).isLink())) {
-                if (i == 0 && ((sectionItem instanceof SubSectionItem) && !((SubSectionItem) sectionItem).isLink())) {
-                    // Duplicate the first element as it'll be used to display the back arrow
-                    sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
-                }
-                sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
-            }
-        }
-    }
-
-    private ArrayList<SectionNavigationItem> getPreBakedNavigationItems() {
-        ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-
-        // Home
-        SectionItem homeSectionItem = new SectionItem(new SectionTextItem(getString(R.string.home), 0),
-                null, null, -1, new DestinationInfo(DestinationInfo.HOME, null));
-        ArrayList<SectionItem> homeSectionItems = new ArrayList<>();
-        homeSectionItems.add(homeSectionItem);
-        Section homeSection = new Section(null, null, Section.MSG, homeSectionItems, null);
-        sectionNavigationItems.add(new SectionNavigationItem<>(homeSection, homeSectionItem));
-
-        // My Basket
-        SectionItem myBasketSectionItem = new SectionItem(new SectionTextItem(getString(R.string.my_basket_header), 0),
-                null, null, -1, new DestinationInfo(DestinationInfo.BASKET, null));
-        ArrayList<SectionItem> myBasketSectionItems = new ArrayList<>();
-        myBasketSectionItems.add(myBasketSectionItem);
-        Section myBasketSection = new Section(null, null, Section.MSG, myBasketSectionItems, null);
-        sectionNavigationItems.add(new SectionNavigationItem<>(myBasketSection, myBasketSectionItem));
-
-        // Smart Basket
-        String smartBasketDeepLink = "bigbasket://smart-basket/";
-        SectionItem smartBasketSectionItem = new SectionItem(new SectionTextItem(getString(R.string.smartBasket), 0),
-                null, null, -1, new DestinationInfo(DestinationInfo.DEEP_LINK, smartBasketDeepLink));
-        ArrayList<SectionItem> smartBasketSectionItems = new ArrayList<>();
-        smartBasketSectionItems.add(smartBasketSectionItem);
-        Section smartBasketSection = new Section(null, null, Section.MSG, smartBasketSectionItems, null);
-        sectionNavigationItems.add(new SectionNavigationItem<>(smartBasketSection, smartBasketSectionItem));
-
-        // Shopping List
-        String shoppingListDeepLink = "bigbasket://sl/";
-        SectionItem shoppingListSectionItem = new SectionItem(new SectionTextItem(getString(R.string.shoppingList), 0),
-                null, null, -1, new DestinationInfo(DestinationInfo.DEEP_LINK, shoppingListDeepLink));
-        ArrayList<SectionItem> shoppingListSections = new ArrayList<>();
-        shoppingListSections.add(shoppingListSectionItem);
-        Section shoppingListSection = new Section(null, null, Section.MSG, shoppingListSections, null);
-        sectionNavigationItems.add(new SectionNavigationItem<>(shoppingListSection, shoppingListSectionItem));
-        return sectionNavigationItems;
-    }
-
-    @Override
-    public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
-                                         HashMap<Integer, Renderer> rendererHashMap) {
-        ArrayList<SubSectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
-        if (subNavigationSectionItems == null || subNavigationSectionItems.size() == 0) return;
-
-        if (mSubNavLayout == null) {
-            mSubNavLayout = (AnimatedRelativeLayout) findViewById(R.id.layoutSubNavigationItems);
-        }
-
-        if (mListSubNavigation == null) {
-            mListSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
-            mListSubNavigation.setHasFixedSize(false);
-            mListSubNavigation.setLayoutManager(new LinearLayoutManager(this));
-        }
-        ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
-                sectionNavigationItems,
-                SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
-        mListSubNavigation.setAdapter(navigationAdapter);
-        mSubNavLayout.setVisibility(View.VISIBLE, true);
-    }
-
-    @Override
-    public void onSubNavigationHideRequested(boolean animated) {
-        if (mListSubNavigation != null) {
-            mListSubNavigation.setAdapter(null);
-        }
-        if (mSubNavLayout != null) {
-            mSubNavLayout.setVisibility(View.GONE, animated);
-        }
+    protected String getSubCategoryId() {
+        return null;
     }
 
     @Override
@@ -1030,21 +838,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (mDynamicAppDataBroadcastReceiver != null) {
-            IntentFilter addressSyncIntentFilter = new IntentFilter(Constants.ADDRESS_SYNC_BROADCAST_ACTION);
-            LocalBroadcastManager.getInstance(this).registerReceiver(mDynamicAppDataBroadcastReceiver,
-                    addressSyncIntentFilter);
-        }
-
-        // Also manually trigger it once to sync address-change in case receiver got unregistered
-        onDataSynced(true);
-
         FragmentManager sfm = getSupportFragmentManager();
         if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {
             LocalyticsWrapper.tagScreen(getScreenTag());
         }
-        LocalyticsWrapper.onResume();
 
         if (isBasketDirty()) {
             syncBasket();
@@ -1052,27 +849,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             syncCartInfoFromPreference();
         }
 
-        if (mSyncNeeded) {
-            mSyncNeeded = false;
-            loadNavigationItems();
-        } else {
-            syncMainMenuIfNeeded();
-        }
-
+        readAppDataDynamic();
         if (AppDataDynamic.isStale(getCurrentActivity())) {
             startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
         }
-    }
-
-    private void syncMainMenuIfNeeded() {
-        SectionManager sectionManager = new SectionManager(getCurrentActivity(), SectionManager.MAIN_MENU);
-        SectionData sectionData = sectionManager.getStoredSectionData();
-        if (sectionData == null || sectionData.getSections() == null || sectionData.getSections().size() == 0) {
-            if (!checkInternetConnection()) return;
-            // Need to refresh
-            mSyncNeeded = true;
-            new GetDynamicPageTask<>(getCurrentActivity(), SectionManager.MAIN_MENU, false, false, true, true).startTask();
-        }
+        loadNavigationItems();
     }
 
     @Override
@@ -1080,13 +861,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         super.onPause();
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
-        }
-
-        if (mDynamicAppDataBroadcastReceiver != null) {
-            try {
-                LocalBroadcastManager.getInstance(this).unregisterReceiver(mDynamicAppDataBroadcastReceiver);
-            } catch (IllegalArgumentException e) {
-            }
         }
     }
 
@@ -1104,14 +878,46 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
-                mSubNavLayout.setVisibility(View.GONE, true);
-            } else {
-                mDrawerLayout.closeDrawers();
-            }
-        } else {
-            super.onBackPressed();
+        if (mMainMenuView != null) {
+            boolean status = mMainMenuView.onBackPressed(mDrawerLayout);
+            if (status) return;
+        }
+        super.onBackPressed();
+    }
+
+    /**
+     * @param name: name of the category user has selected in the navigation drawer
+     *              passing the selected category name to the adapter
+     */
+    @Override
+    public void onNavigationSelection(String name) {
+        if (mMainMenuView != null) {
+            mMainMenuView.onNavigationSelection(name);
+        }
+    }
+
+    @Override
+    public void closeDrawer() {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawers();
+        }
+    }
+
+    @Override
+    public void onChangeAddressRequested() {
+        changeAddressRequested();
+    }
+
+    @Override
+    public String onSubCategoryIdRequested() {
+        return getSubCategoryId();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mMainMenuView != null) {
+            LeakCanaryObserver.Factory.observe(mMainMenuView);
         }
     }
 }

@@ -1,9 +1,6 @@
 package com.bigbasket.mobileapp.activity;
 
 
-import android.graphics.PorterDuff;
-import android.graphics.drawable.LayerDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -22,12 +19,11 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 public class CustomerFeedbackActivity extends BackButtonActivity {
 
@@ -57,12 +53,6 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
 
         final RatingBar ratingBar = (RatingBar) base.findViewById(R.id.ratingBar);
         ratingBar.setProgress(0);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && ratingBar.getProgressDrawable() instanceof LayerDrawable) {
-            LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
-            stars.getDrawable(2).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
-            stars.getDrawable(1).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
-            stars.getDrawable(0).setColorFilter(getResources().getColor(R.color.uiv3_action_bar_background), PorterDuff.Mode.SRC_ATOP);
-        }
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,43 +90,39 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
         String comments = editTextComments.getText().toString().trim();
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        bigBasketApiService.postCaseFeedback(caseId, String.valueOf(Math.round(ratingBar.getRating())),
-                comments, new Callback<ApiResponse<PostFeedbackApiResponseContent>>() {
-                    @Override
-                    public void success(ApiResponse<PostFeedbackApiResponseContent> postFeedbackApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
+        Call<ApiResponse<PostFeedbackApiResponseContent>> call =
+                bigBasketApiService.postCaseFeedback(caseId, String.valueOf(Math.round(ratingBar.getRating())),
+                        comments);
+        call.enqueue(new BBNetworkCallback<ApiResponse<PostFeedbackApiResponseContent>>(this) {
+            @Override
+            public void onSuccess(ApiResponse<PostFeedbackApiResponseContent> postFeedbackApiResponse) {
+                switch (postFeedbackApiResponse.status) {
+                    case 0:
+                        if (postFeedbackApiResponse.apiResponseContent.success) {
+                            showToast("You feedback was submitted successfully!");
+                            finish();
+                        } else {
+                            showAlertDialog(null, "Failed to submit your feedback. Please try later");
                         }
-                        switch (postFeedbackApiResponse.status) {
-                            case 0:
-                                if (postFeedbackApiResponse.apiResponseContent.success) {
-                                    showToast("You feedback was submitted successfully!");
-                                    finish();
-                                } else {
-                                    showAlertDialog(null, "Failed to submit your feedback. Please try later");
-                                }
-                                break;
-                            default:
-                                handler.sendEmptyMessage(postFeedbackApiResponse.status,
-                                        postFeedbackApiResponse.message);
-                                break;
-                        }
-                    }
+                        break;
+                    default:
+                        handler.sendEmptyMessage(postFeedbackApiResponse.status,
+                                postFeedbackApiResponse.message);
+                        break;
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
+
     }
 
     @Override

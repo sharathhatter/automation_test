@@ -27,6 +27,8 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/margin_small"
         android:layout_marginRight="@dimen/margin_small"
+        android:clickable="false"
+        android:focusableInTouchMode="false"
         android:visibility="gone" />
 
     <TextView

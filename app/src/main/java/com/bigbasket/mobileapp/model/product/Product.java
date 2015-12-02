@@ -65,10 +65,15 @@ public class Product extends BaseProduct {
     private ArrayList<HashMap<String, String>> storeAvailability;
     @SerializedName(Constants.GIFT_MSG)
     private String giftMsg;
+    @SerializedName(Constants.VARIABLE_WEIGHT_MSG)
+    private String variableWeightMsg;
+    @SerializedName(Constants.STORE_IDS)
+    private List<String> storeIds;
 
     public Product(Parcel source) {
         super(source);
         boolean isSellPriceNull = source.readByte() == (byte) 1;
+
         if (!isSellPriceNull) {
             sellPrice = source.readString();
         }
@@ -120,6 +125,18 @@ public class Product extends BaseProduct {
         if (!isGiftMsgNull) {
             giftMsg = source.readString();
         }
+
+        boolean isWeightMsgNull = source.readByte() == (byte) 1;
+        if (!isWeightMsgNull) {
+            variableWeightMsg = source.readString();
+        }
+        boolean isStoreIdsNull = source.readByte() == (byte) 1;
+        if (!isStoreIdsNull) {
+            String storeId = source.readString();
+            Type type = new TypeToken<List<String>>() {
+            }.getType();
+            storeIds = new Gson().fromJson(storeId, type);
+        }
     }
 
     public Product() {
@@ -139,10 +156,12 @@ public class Product extends BaseProduct {
         for (Product product : productList) {
             if (product != null) {
                 if (product.getStoreAvailability() != null && product.getStoreAvailability().size() > 0) {
-                    for (HashMap<String, String> availabilityMap : product.getStoreAvailability())
-                        if (availabilityMap.get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A")) {
+                    for (HashMap<String, String> availabilityMap : product.getStoreAvailability()) {
+                        if (availabilityMap.get(Constants.PRODUCT_STATUS) != null &&
+                                availabilityMap.get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A")) {
                             return false;
                         }
+                    }
                 } else if (!TextUtils.isEmpty(product.getProductStatus())
                         && product.getProductStatus().equals("A")) {
                     return false;
@@ -215,6 +234,17 @@ public class Product extends BaseProduct {
         dest.writeByte(isGiftMsgNull ? (byte) 1 : (byte) 0);
         if (!isGiftMsgNull) {
             dest.writeString(giftMsg);
+        }
+
+        boolean isWeightMsgNull = variableWeightMsg == null;
+        dest.writeByte(isWeightMsgNull ? (byte) 1 : (byte) 0);
+        if (!isWeightMsgNull) {
+            dest.writeString(variableWeightMsg);
+        }
+        boolean isStoredIdsNull = storeIds == null;
+        dest.writeByte(isStoredIdsNull ? (byte) 1 : (byte) 0);
+        if (!isStoredIdsNull) {
+            dest.writeList(storeIds);
         }
     }
 
@@ -310,5 +340,15 @@ public class Product extends BaseProduct {
     @Nullable
     public ArrayList<HashMap<String, String>> getStoreAvailability() {
         return storeAvailability;
+    }
+
+    @Nullable
+    public String getVariableWeightMsg() {
+        return variableWeightMsg;
+    }
+
+    @Nullable
+    public List<String> getStoreIds() {
+        return storeIds;
     }
 }

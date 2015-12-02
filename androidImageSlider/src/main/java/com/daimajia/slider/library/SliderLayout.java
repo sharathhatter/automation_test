@@ -95,12 +95,13 @@ public class SliderLayout extends RelativeLayout {
     /**
      * the duration between animation.
      */
-    private long mSliderDuration = 4000;
+    private long mSliderDuration = 2000;
 
     /**
      * Visibility of {@link com.daimajia.slider.library.Indicators.PagerIndicator}
      */
     private PagerIndicator.IndicatorVisibility mIndicatorVisibility = PagerIndicator.IndicatorVisibility.Visible;
+
 
     public SliderLayout(Context context) {
         this(context, null);
@@ -181,9 +182,22 @@ public class SliderLayout extends RelativeLayout {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (sliderLayoutRef != null) {
+            if (sliderLayoutRef != null && sliderLayoutRef.get() != null) {
                 sliderLayoutRef.get().moveNextPosition(true);
             }
+        }
+    }
+
+    private static class AutoCycleTimerTask extends TimerTask {
+        private AutoCycleHandler autoCycleHandler;
+
+        public AutoCycleTimerTask(AutoCycleHandler autoCycleHandler) {
+            this.autoCycleHandler = autoCycleHandler;
+        }
+
+        @Override
+        public void run() {
+            autoCycleHandler.sendEmptyMessage(0);
         }
     }
 
@@ -206,12 +220,7 @@ public class SliderLayout extends RelativeLayout {
         mSliderDuration = duration;
         mCycleTimer = new Timer();
         mAutoRecover = autoRecover;
-        mCycleTask = new TimerTask() {
-            @Override
-            public void run() {
-                mh.sendEmptyMessage(0);
-            }
-        };
+        mCycleTask = new AutoCycleTimerTask(mh);
         mCycleTimer.schedule(mCycleTask, delay, mSliderDuration);
         mCycling = true;
         mAutoCycle = true;
@@ -240,6 +249,7 @@ public class SliderLayout extends RelativeLayout {
      * stop the auto circle
      */
     public void stopAutoCycle() {
+
         if (mCycleTask != null) {
             mCycleTask.cancel();
         }

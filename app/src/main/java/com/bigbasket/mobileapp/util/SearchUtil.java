@@ -9,24 +9,30 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.adapter.db.SearchSuggestionAdapter;
+import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.adapter.db.SearchSuggestionDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
 
+import java.io.IOException;
+
+import retrofit.Call;
+import retrofit.Response;
+
 public class SearchUtil {
 
-    //public static final String SEARCH_LEFT_ICON = "s";
     public static final String TOP_SEARCH_TERM = "t";
     public static final String HISTORY_TERM = "h";
+    public static final String SUGGESTION_TERM = "s";
 
     public static Cursor searchQueryCall(String query, Context context) {
         if (TextUtils.isEmpty(query.trim()) || (query.trim().length() < 3)) return null;
 
-        SearchSuggestionAdapter searchSuggestionAdapter = new SearchSuggestionAdapter(context);
-        AutoSearchResponse autoSearchResponse = searchSuggestionAdapter.getStoredResponse(query);
+        SearchSuggestionDbHelper searchSuggestionDbHelper = new SearchSuggestionDbHelper(context);
+        AutoSearchResponse autoSearchResponse = searchSuggestionDbHelper.getStoredResponse(query);
 
         // If not present in local db or is older than a day
         if (autoSearchResponse == null || autoSearchResponse.isStale()) {
@@ -34,12 +40,20 @@ public class SearchUtil {
             // Get the results by querying server
             if (DataUtil.isInternetAvailable(context)) {
                 BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
-                ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = bigBasketApiService.autoSearch(query);
-                switch (autoSearchApiResponse.status) {
-                    case 0:
-                        autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
-                        searchSuggestionAdapter.insertAsync(autoSearchResponse);
-                        break;
+                try {
+                    Call<ApiResponse<AutoSearchApiResponseContent>> call = bigBasketApiService.autoSearch(query);
+                    Response<ApiResponse<AutoSearchApiResponseContent>> response = call.execute();
+                    if (response.isSuccess()) {
+                        ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = response.body();
+                        switch (autoSearchApiResponse.status) {
+                            case 0:
+                                autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
+                                searchSuggestionDbHelper.insertAsync(autoSearchResponse);
+                                break;
+                        }
+                    }
+                } catch (IOException e) {
+                    // Fail silently
                 }
             }
         }
@@ -52,9 +66,10 @@ public class SearchUtil {
             //String[] topSearchesArray = autoSearchResponse.getTopSearches();
             if ((termsArray != null && termsArray.length > 0) || (categoriesArray != null && categoriesArray.length > 0)) {
                 matrixCursor = getMatrixCursorForArray(autoSearchResponse.getTerms(), autoSearchResponse.getCategories(),
-                        autoSearchResponse.getCategoriesUrl());
+                        autoSearchResponse.getCategoriesUrl(), context);
             } else if (suggestedTermsArray != null && suggestedTermsArray.length > 0) {
-                matrixCursor = getMatrixCursorForArray(autoSearchResponse.getSuggestedTerm(), "Suggestion", false);
+                matrixCursor = getMatrixCursorForArray(autoSearchResponse.getSuggestedTerm(),
+                        context.getString(R.string.suggestion), false);
             }
         }
         if (matrixCursor == null) {
@@ -66,15 +81,16 @@ public class SearchUtil {
     }
 
 
-    private static void populateTopSearch(MatrixCursor matrixCursor, Context context) {
+    public static void populateTopSearch(MatrixCursor matrixCursor, Context context) {
         String[] topSearchArrayString = getTopSearches(context);
         if (topSearchArrayString != null && topSearchArrayString.length > 0) {
             int i = 0;
-            matrixCursor.addRow(new String[]{String.valueOf(i++), "Popular Searches", null, null, null, "Popular Searches", null});
+            matrixCursor.addRow(new String[]{String.valueOf(i++), context.getString(R.string.popularSearches),
+                    null, null, null, context.getString(R.string.popularSearches), null});
             for (String term : topSearchArrayString)
                 matrixCursor.addRow(new String[]{String.valueOf(i++), term,
                         null, null, null,
-                        null, null});
+                        null, SearchUtil.TOP_SEARCH_TERM});
         }
     }
 
@@ -82,7 +98,7 @@ public class SearchUtil {
     private static String[] getTopSearches(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String topSearchCommaSeparatedString = preferences.getString(Constants.TOP_SEARCHES, null);
-        if (topSearchCommaSeparatedString == null) return null;
+        if (TextUtils.isEmpty(topSearchCommaSeparatedString)) return null;
         return topSearchCommaSeparatedString.split(",");
     }
 
@@ -94,7 +110,7 @@ public class SearchUtil {
             matrixCursor.addRow(new String[]{String.valueOf(startVal++), heading, null, null, null, heading, null});
         for (int i = startVal; i < array.length; i++) {
             matrixCursor.addRow(new String[]{String.valueOf(i), array[i], null, array[i], array[i],
-                    null, null});
+                    null, SearchUtil.SUGGESTION_TERM});
         }
         return matrixCursor;
     }
@@ -107,18 +123,19 @@ public class SearchUtil {
     }
 
     private static MatrixCursor getMatrixCursorForArray(String[] termsArray, String[] categoriesArray,
-                                                        String[] categoryUrlArray) {
+                                                        String[] categoryUrlArray,
+                                                        Context context) {
         MatrixCursor matrixCursor = instantiateMatrixCursor();
         int i = 0;
         if (termsArray != null && termsArray.length > 0) {
             for (i = 0; i < termsArray.length; i++) {
                 matrixCursor.addRow(new String[]{String.valueOf(i), termsArray[i], null, null, termsArray[i],
-                        null, null});
+                        null, SearchUtil.SUGGESTION_TERM});
             }
         }
         if (categoriesArray != null && categoriesArray.length > 0) {
-            matrixCursor.addRow(new String[]{String.valueOf(i), "Popular Categories", null, null,
-                    null, "Popular Categories", null});
+            matrixCursor.addRow(new String[]{String.valueOf(i), context.getString(R.string.popularCategories), null, null,
+                    null, context.getString(R.string.popularCategories), null});
             for (int j = 0; j < categoriesArray.length; j++) {
                 String categoryName = null;
                 String categoryUrl = null;

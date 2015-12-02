@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.view.uiv2;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
@@ -22,36 +21,27 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
+import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
-import com.bigbasket.mobileapp.handler.OnBrandPageListener;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
-import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
-import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.FragmentCodes;
-import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
@@ -61,18 +51,18 @@ import java.util.Map;
 
 public final class ProductView {
 
-    public static <T> void setProductView(final ProductViewHolder productViewHolder,
-                                          final Product product, String baseImgUrl,
-                                          ProductDetailOnClickListener productDetailOnClickListener,
-                                          ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                          final boolean skipChildDropDownRendering,
-                                          final T productDataAware, String navigationCtx,
-                                          @Nullable HashMap<String, Integer> cartInfo,
-                                          String tabName,
-                                          HashMap<String, String> appDataStoreAvailabilityMap) {
-        setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
-        setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
-                productDetailOnClickListener, productDataAware);
+    public static <T extends AppOperationAware> void setProductView(final ProductViewHolder productViewHolder,
+                                                                    final Product product, String baseImgUrl,
+                                                                    ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                                    final boolean skipChildDropDownRendering,
+                                                                    final T productDataAware, String navigationCtx,
+                                                                    @Nullable HashMap<String, Integer> cartInfo,
+                                                                    String tabName,
+                                                                    HashMap<String, String> appDataStoreAvailabilityMap,
+                                                                    HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap) {
+        setProductImage(productViewHolder, product, baseImgUrl);
+        setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
+        setStoreDetails(specialityStoreInfoHashMap, productViewHolder, product);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
         setExpressMsg(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, tabName, navigationCtx, appDataStoreAvailabilityMap,
@@ -80,23 +70,24 @@ public final class ProductView {
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
-                    productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap);
+                    productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap,
+                    specialityStoreInfoHashMap);
         }
     }
 
-    private static void setProductImage(ProductViewHolder productViewHolder, Product product, String baseImgUrl,
-                                        ProductDetailOnClickListener productDetailOnClickListener) {
+    private static void setProductImage(ProductViewHolder productViewHolder, Product product, String baseImgUrl) {
         ImageView imgProduct = productViewHolder.getImgProduct();
         UIUtil.displayProductImage(baseImgUrl, product.getImageUrl(), imgProduct);
-        imgProduct.setOnClickListener(productDetailOnClickListener);
+        imgProduct.setTag(R.id.sku_id, product.getSku());
     }
 
-    private static <T> void setChildProducts(final ProductViewHolder productViewHolder, final Product product,
-                                             final String baseImgUrl,
-                                             final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                             final T productDataAware, final String navigationCtx,
-                                             @Nullable HashMap<String, Integer> cartInfo,
-                                             @Nullable String tabName, HashMap<String, String> AppDataStoreAvailabilityMap) {
+    private static <T extends AppOperationAware> void setChildProducts(final ProductViewHolder productViewHolder, final Product product,
+                                                                       final String baseImgUrl,
+                                                                       final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                                       final T productDataAware, final String navigationCtx,
+                                                                       @Nullable HashMap<String, Integer> cartInfo,
+                                                                       @Nullable String tabName, HashMap<String, String> AppDataStoreAvailabilityMap,
+                                                                       HashMap<String, SpecialityStoresInfoModel> specialityStoresInfoHashMap) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         final Button btnMorePackSizes = productViewHolder.getBtnMorePackSizes();
@@ -118,7 +109,7 @@ public final class ProductView {
                             childProductInBasket = childProduct;
                             listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
                                     product, productViewHolder, baseImgUrl, navigationCtx, cartInfo,
-                                    tabName, AppDataStoreAvailabilityMap);
+                                    tabName, AppDataStoreAvailabilityMap, specialityStoresInfoHashMap);
                             listener.setCurrentProduct(childProductInBasket);
                             break;
                         }
@@ -128,7 +119,7 @@ public final class ProductView {
             if (listener == null) {
                 listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
                         product, productViewHolder, baseImgUrl, navigationCtx, cartInfo, tabName,
-                        AppDataStoreAvailabilityMap);
+                        AppDataStoreAvailabilityMap, specialityStoresInfoHashMap);
             } else {
                 // There is a child product that is in basket
                 // Manually trigger click to change to that product
@@ -144,7 +135,6 @@ public final class ProductView {
 
     private static <T> void setProductDesc(ProductViewHolder productViewHolder, Product product,
                                            ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                           ProductDetailOnClickListener productDetailOnClickListener,
                                            final T productDataAware) {
         TextView txtProductDesc = productViewHolder.getTxtProductDesc();
         TextView txtProductBrand = productViewHolder.getTxtProductBrand();
@@ -173,13 +163,12 @@ public final class ProductView {
             txtProductBrand.setText(product.getBrand());
             txtProductBrand.setVisibility(View.VISIBLE);
             if (!TextUtils.isEmpty(product.getBrandSlug())) {
-                txtProductBrand.setOnClickListener(new OnBrandPageListener((LaunchProductListAware) productDataAware,
-                        product.getBrandSlug()));
+                txtProductBrand.setTag(R.id.brand_slug, product.getBrandSlug());
             }
         } else {
             txtProductBrand.setVisibility(View.GONE);
         }
-        txtProductDesc.setOnClickListener(productDetailOnClickListener);
+        txtProductDesc.setTag(R.id.sku_id, product.getSku());
     }
 
     private static void setPrice(ProductViewHolder productViewHolder, Product product,
@@ -222,12 +211,12 @@ public final class ProductView {
         return elementsWithTextCount > 1;
     }
 
-    private static <T> void setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
-                                          final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                          final T productDataAware,
-                                          final String tabName, final String navigationCtx,
-                                          @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap,
-                                          final @Nullable HashMap<String, Integer> cartInfo) {
+    private static <T extends AppOperationAware> void setExpressMsg(final ProductViewHolder productViewHolder, final Product product,
+                                                                    final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                                    final T productDataAware,
+                                                                    final String tabName, final String navigationCtx,
+                                                                    @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap,
+                                                                    final @Nullable HashMap<String, Integer> cartInfo) {
 
         final ArrayList<HashMap<String, String>> storeAvailabilityArrayList = product.getStoreAvailability();
         ViewGroup layoutExpressMsg = productViewHolder.getLayoutExpressMsg();
@@ -244,7 +233,7 @@ public final class ProductView {
                     productDataAware, navigationCtx, cartInfo, tabName, null, null);
             return;
         }
-        Context context = ((ActivityAware) productDataAware).getCurrentActivity();
+        Context context = productDataAware.getCurrentActivity();
         boolean isContextualMode = AppDataDynamic.getInstance(context).isContextualMode();
 
         if (productViewDisplayDataHolder.useRadioButtonsForContextual() && isContextualMode
@@ -352,7 +341,38 @@ public final class ProductView {
         return !TextUtils.isEmpty(availabilityInfoId) ? allStoreAvailabilityMap.get(availabilityInfoId) : null;
     }
 
-    private static <T> void setPromo(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
+    private static <T extends AppOperationAware> void setStoreDetails(HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap,
+                                                                      ProductViewHolder productViewHolder,
+                                                                      Product product) {
+
+        RelativeLayout storeIconLayout = productViewHolder.getStoreIconLayout();
+        ImageView imgStoreIcon = productViewHolder.getImgStoreIcon();
+        boolean hasStores = false;
+        if (specialityStoreInfoHashMap != null && specialityStoreInfoHashMap.size() > 0) {
+            List<String> storeIds = product.getStoreIds();
+            if (storeIds != null && storeIds.size() > 0) {
+                for (String pStoreId : storeIds) {
+                    if (!specialityStoreInfoHashMap.containsKey(pStoreId) || specialityStoreInfoHashMap.get(pStoreId) == null)
+                        continue;
+                    final SpecialityStoresInfoModel specialityStoresInfoModel = specialityStoreInfoHashMap.get(pStoreId);
+                    if (TextUtils.isEmpty(specialityStoresInfoModel.getStoreName()) ||
+                            (TextUtils.isEmpty(specialityStoresInfoModel.getStoreDesc()) &&
+                                    TextUtils.isEmpty(specialityStoresInfoModel.getStoreLogo())))
+                        continue;
+                    hasStores = true;
+                    storeIconLayout.setVisibility(View.VISIBLE);
+                    imgStoreIcon.setImageResource(R.drawable.store_icon);
+                    imgStoreIcon.setTag(R.id.speciality_store_id, pStoreId);
+                }
+            }
+        }
+        if (!hasStores) {
+            storeIconLayout.setVisibility(View.GONE);
+        }
+    }
+
+    private static <T> void setPromo(ProductViewHolder productViewHolder, Product product,
+                                     ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                      final T activityAware) {
         ImageView imgPromoStar = productViewHolder.getImgPromoStar();
         TextView txtPromoDesc = productViewHolder.getTxtPromoDesc();
@@ -388,17 +408,8 @@ public final class ProductView {
             txtPromoDesc.setVisibility(View.VISIBLE);
             txtPromoDesc.setText(promoDesc);
             final int promoId = product.getProductPromoInfo().getId();
-            View.OnClickListener promoOnClickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent promoDetailIntent = new Intent(((ActivityAware) activityAware).getCurrentActivity(), BackButtonActivity.class);
-                    promoDetailIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
-                    promoDetailIntent.putExtra(Constants.PROMO_ID, promoId);
-                    ((ActivityAware) activityAware).getCurrentActivity().startActivityForResult(promoDetailIntent, NavigationCodes.GO_TO_HOME);
-                }
-            };
-            txtPromoDesc.setOnClickListener(promoOnClickListener);
-            imgPromoStar.setOnClickListener(promoOnClickListener);
+            txtPromoDesc.setTag(R.id.promo_id, promoId);
+            imgPromoStar.setTag(R.id.promo_id, promoId);
         } else {
             imgPromoStar.setVisibility(View.GONE);
             txtPromoDesc.setVisibility(View.GONE);
@@ -419,9 +430,9 @@ public final class ProductView {
         }
     }
 
-    private static <T> void setProductAdditionalActionMenu(ProductViewHolder productViewHolder, final Product product,
-                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                           final T shoppingListNamesAware, String storeAvailability) {
+    private static <T extends AppOperationAware> void setProductAdditionalActionMenu(ProductViewHolder productViewHolder, final Product product,
+                                                                                     final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                                                     final T shoppingListNamesAware, String storeAvailability) {
         final ImageView imgProductOverflowAction = productViewHolder.getImgProductOverflowAction();
         if ((productViewDisplayDataHolder.isShowShoppingListBtn() || productViewDisplayDataHolder.showShopListDeleteBtn())
                 && productViewDisplayDataHolder.isLoggedInMember()
@@ -430,25 +441,26 @@ public final class ProductView {
                     R.drawable.delete_product : R.drawable.add_to_shopping_list;
             if (productViewDisplayDataHolder.showShopListDeleteBtn()) {
                 imgProductOverflowAction.setImageDrawable(
-                        ContextCompat.getDrawable(((ActivityAware) shoppingListNamesAware).getCurrentActivity(), imageDrawableId));
+                        ContextCompat.getDrawable(shoppingListNamesAware.getCurrentActivity(), imageDrawableId));
             }
             imgProductOverflowAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (productViewDisplayDataHolder.showShopListDeleteBtn()) {
                         android.support.v7.app.AlertDialog.Builder builder =
-                                new android.support.v7.app.AlertDialog.Builder(((ActivityAware) shoppingListNamesAware).getCurrentActivity());
+                                new android.support.v7.app.AlertDialog.Builder(shoppingListNamesAware.getCurrentActivity());
                         builder.setTitle(R.string.app_name)
                                 .setMessage(R.string.deleteProductFromShoppingList)
                                 .setCancelable(false)
                                 .setPositiveButton(R.string.yesTxt, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
+                                        if (shoppingListNamesAware.checkInternetConnection()) {
                                             List<ShoppingListName> shoppingListNames = new ArrayList<>();
                                             shoppingListNames.add(productViewDisplayDataHolder.getShoppingListName());
                                             ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
-                                                    new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware, shoppingListNames, ShoppingListOption.DELETE_ITEM);
+                                                    new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware,
+                                                            shoppingListNames, ShoppingListOption.DELETE_ITEM);
                                             ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
                                             shoppingListDoAddDeleteTask.startTask();
                                         } else {
@@ -466,7 +478,7 @@ public final class ProductView {
                         alertDialog.setOnShowListener(new OnDialogShowListener());
                         alertDialog.show();
                     } else {
-                        if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
+                        if (shoppingListNamesAware.checkInternetConnection()) {
                             ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.ADD_TO_SHOPPING_LIST, null);
                             ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
                             new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
@@ -492,12 +504,12 @@ public final class ProductView {
         return noOfItemsInCart;
     }
 
-    private static <T> void setBasketAndAvailabilityViews(final ProductViewHolder productViewHolder, final Product product,
-                                                          final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                          final T basketOperationAware, final String navigationCtx,
-                                                          @Nullable final HashMap<String, Integer> cartInfo,
-                                                          final String tabName, String storeAvailability,
-                                                          @Nullable HashMap<String, String> productStoreAvailabilityMap) {
+    private static <T extends AppOperationAware> void setBasketAndAvailabilityViews(final ProductViewHolder productViewHolder, final Product product,
+                                                                                    final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                                                    final T basketOperationAware, final String navigationCtx,
+                                                                                    @Nullable final HashMap<String, Integer> cartInfo,
+                                                                                    final String tabName, String storeAvailability,
+                                                                                    @Nullable HashMap<String, String> productStoreAvailabilityMap) {
         final ImageView imgAddToBasket = productViewHolder.getImgAddToBasket();
         final View viewDecBasketQty = productViewHolder.getViewDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
@@ -510,8 +522,8 @@ public final class ProductView {
         editTextQty.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
         editTextQty.setText("1");
 
-        ArrayList<String> addToBasketPostParamsArrayList = AppDataDynamic.getInstance(((ActivityAware) basketOperationAware)
-                .getCurrentActivity()).getAddToBasketPostParams();
+        ArrayList<String> addToBasketPostParamsArrayList =
+                AppDataDynamic.getInstance(basketOperationAware.getCurrentActivity()).getAddToBasketPostParams();
         final Map<String, String> basketQueryMap = new HashMap<>();
         if (addToBasketPostParamsArrayList != null && addToBasketPostParamsArrayList.size() > 0
                 && productStoreAvailabilityMap != null && productStoreAvailabilityMap.size() > 0) {
@@ -548,66 +560,36 @@ public final class ProductView {
                     }
                 }
 
-                viewIncBasketQty.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection()) {
-                            BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
-                                    BasketOperation.INC, product,
-                                    txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
-                                    TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView, cartInfo,
-                                    editTextQty, tabName, basketQueryMap);
-                            basketOperationTask.startTask();
-                        } else {
-                            productViewDisplayDataHolder.getHandler().sendOfflineError();
-                        }
-                    }
-                });
+                viewIncBasketQty.setTag(R.id.basket_op_product_tag_id, product);
+                viewIncBasketQty.setTag(R.id.basket_op_qty_tag_id, null);
+                viewIncBasketQty.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_INCREMENT);
+                viewIncBasketQty.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
+                viewIncBasketQty.setTag(R.id.basket_op_tabname_tag_id, tabName);
+                viewIncBasketQty.setTag(R.id.basket_op_read_input_qty_tag_id, null);
+                viewIncBasketQty.setTag(R.id.basket_op_product_view_holder_tag_id, productViewHolder);
+                viewIncBasketQty.setTag(R.id.basket_op_additional_query_map_tag_id, basketQueryMap);
+                viewIncBasketQty.setTag(R.id.basket_op_cart_info_map_tag_id, cartInfo);
 
-                viewDecBasketQty.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection()) {
-                            BasketOperationTask<T> myTask = new BasketOperationTask<>(basketOperationAware,
-                                    BasketOperation.DEC,
-                                    product, txtInBasket, viewDecBasketQty, viewIncBasketQty,
-                                    imgAddToBasket, TrackingAware.BASKET_DECREMENT,
-                                    navigationCtx, productViewHolder.itemView, cartInfo, editTextQty,
-                                    tabName, basketQueryMap);
-                            myTask.startTask();
-                        } else {
-                            productViewDisplayDataHolder.getHandler().sendOfflineError();
-                        }
-                    }
+                viewDecBasketQty.setTag(R.id.basket_op_product_tag_id, product);
+                viewDecBasketQty.setTag(R.id.basket_op_qty_tag_id, null);
+                viewDecBasketQty.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_DECREMENT);
+                viewDecBasketQty.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
+                viewDecBasketQty.setTag(R.id.basket_op_tabname_tag_id, tabName);
+                viewDecBasketQty.setTag(R.id.basket_op_read_input_qty_tag_id, null);
+                viewDecBasketQty.setTag(R.id.basket_op_product_view_holder_tag_id, productViewHolder);
+                viewDecBasketQty.setTag(R.id.basket_op_additional_query_map_tag_id, basketQueryMap);
+                viewDecBasketQty.setTag(R.id.basket_op_cart_info_map_tag_id, cartInfo);
 
-                });
+                imgAddToBasket.setTag(R.id.basket_op_product_tag_id, product);
+                imgAddToBasket.setTag(R.id.basket_op_qty_tag_id, "1");
+                imgAddToBasket.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_DECREMENT);
+                imgAddToBasket.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
+                imgAddToBasket.setTag(R.id.basket_op_tabname_tag_id, tabName);
+                imgAddToBasket.setTag(R.id.basket_op_read_input_qty_tag_id, productViewDisplayDataHolder.isShowQtyInput());
+                imgAddToBasket.setTag(R.id.basket_op_product_view_holder_tag_id, productViewHolder);
+                imgAddToBasket.setTag(R.id.basket_op_additional_query_map_tag_id, basketQueryMap);
+                imgAddToBasket.setTag(R.id.basket_op_cart_info_map_tag_id, cartInfo);
 
-                imgAddToBasket.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection()) {
-                            String qty = "1";
-                            if (productViewDisplayDataHolder.isShowQtyInput()) {
-                                String txt = editTextQty.getText().toString();
-                                if (TextUtils.isEmpty(txt)) {
-                                    Toast.makeText(((ActivityAware) basketOperationAware).getCurrentActivity(), "Quantity shouldn\'t be blank", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                BaseActivity.hideKeyboard(((ActivityAware) basketOperationAware).getCurrentActivity(),
-                                        editTextQty);
-                                qty = txt;
-                            }
-                            BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
-                                    BasketOperation.INC, product,
-                                    txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
-                                    qty, TrackingAware.BASKET_ADD, navigationCtx, productViewHolder.itemView,
-                                    cartInfo, editTextQty, tabName, basketQueryMap);
-                            basketOperationTask.startTask();
-                        } else {
-                            productViewDisplayDataHolder.getHandler().sendOfflineError();
-                        }
-                    }
-                });
                 txtOutOfStockORNotForSale.setVisibility(View.GONE);
             } else {
                 txtInBasket.setVisibility(View.GONE);
@@ -639,7 +621,7 @@ public final class ProductView {
         }
     }
 
-    public static class OnShowChildProductDropdownClickListener<T> implements View.OnClickListener {
+    public static class OnShowChildProductDropdownClickListener<T extends AppOperationAware> implements View.OnClickListener {
 
         private T productDataAware;
         private ProductViewDisplayDataHolder productViewDisplayDataHolder;
@@ -652,12 +634,14 @@ public final class ProductView {
         private HashMap<String, Integer> cartInfo;
         private String tabName;
         private HashMap<String, String> AppDataStoreAvailabilityMap;
+        private HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap;
 
         public OnShowChildProductDropdownClickListener(T productDataAware, ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                        Product product, ProductViewHolder productViewHolder,
                                                        String baseImgUrl, String navigationCtx,
                                                        @Nullable HashMap<String, Integer> cartInfo,
-                                                       String tabName, HashMap<String, String> AppDataStoreAvailabilityMap) {
+                                                       String tabName, HashMap<String, String> AppDataStoreAvailabilityMap,
+                                                       HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap) {
             this.productDataAware = productDataAware;
             this.productViewDisplayDataHolder = productViewDisplayDataHolder;
             this.product = product;
@@ -669,15 +653,17 @@ public final class ProductView {
             this.cartInfo = cartInfo;
             this.tabName = tabName;
             this.AppDataStoreAvailabilityMap = AppDataStoreAvailabilityMap;
+            this.specialityStoreInfoHashMap = specialityStoreInfoHashMap;
         }
 
         @Override
         public void onClick(View v) {
             final Button btnMorePackSizes = (Button) v;
-            AlertDialog.Builder builder = new AlertDialog.Builder(((ActivityAware) productDataAware).getCurrentActivity());
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(productDataAware.getCurrentActivity());
             final AlertDialog dialog = builder.create();
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            View childDropdown = ((ActivityAware) productDataAware).getCurrentActivity().getLayoutInflater()
+            View childDropdown = productDataAware.getCurrentActivity().getLayoutInflater()
                     .inflate(R.layout.uiv3_list_dialog, null);
             ListView listView = (ListView) childDropdown.findViewById(R.id.lstDialog);
 
@@ -686,7 +672,7 @@ public final class ProductView {
             txtChildDropdownTitle.setText("Select Pack Size");
 
             final ProductListSpinnerAdapter productListSpinnerAdapter =
-                    new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
+                    new ProductListSpinnerAdapter(productDataAware.getCurrentActivity(),
                             childProducts, productViewDisplayDataHolder.getSerifTypeface(),
                             productViewDisplayDataHolder.getRupeeTypeface(), product);
             productListSpinnerAdapter.setCurrentProduct(currentProduct);
@@ -715,9 +701,8 @@ public final class ProductView {
             btnMorePackSizes.setText(childProduct.getWeightAndPackDesc());
             currentProduct = childProduct;
             setProductView(productViewHolder, childProduct, baseImgUrl,
-                    new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
                     productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo,
-                    tabName, AppDataStoreAvailabilityMap);
+                    tabName, AppDataStoreAvailabilityMap, specialityStoreInfoHashMap);
         }
 
         public void setCurrentProduct(Product currentProduct) {

@@ -2,33 +2,82 @@ package com.bigbasket.mobileapp.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Typeface;
+import android.support.annotation.Nullable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.Filterable;
+import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.SearchableActivity;
-import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.OnSearchTermActionCallback;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.SearchUtil;
+import com.bigbasket.mobileapp.util.UIUtil;
 
-public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
+import java.lang.ref.WeakReference;
+
+public class SearchViewAdapter<T> extends CursorAdapter {
+
 
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_ITEM = 1;
     private LayoutInflater inflater;
     private FontHolder fontHolder;
+    private SearchTermActionListener searchTermActionListener;
 
-    public SearchViewAdapter(T context, Cursor contactCursor) {
-        super(((ActivityAware) context).getCurrentActivity(), contactCursor, false);
-        this.inflater = LayoutInflater.from(((ActivityAware) context).getCurrentActivity());
-        this.fontHolder = FontHolder.getInstance(((ActivityAware) context).getCurrentActivity());
+    public SearchViewAdapter(T context, Cursor contactCursor, OnSearchTermActionCallback onSearchTermActionCallback) {
+        super(((AppOperationAware) context).getCurrentActivity(), contactCursor, false);
+        this.inflater = LayoutInflater.from(((AppOperationAware) context).getCurrentActivity());
+        this.fontHolder = FontHolder.getInstance(((AppOperationAware) context).getCurrentActivity());
+        this.searchTermActionListener = new SearchTermActionListener(onSearchTermActionCallback,
+                ((AppOperationAware) context).getCurrentActivity());
+    }
+
+    private static class SearchTermActionListener implements View.OnClickListener {
+        private OnSearchTermActionCallback onSearchTermActionCallback;
+        private Context context;
+
+        public SearchTermActionListener(OnSearchTermActionCallback onSearchTermActionCallback, Context context) {
+            this.onSearchTermActionCallback = onSearchTermActionCallback;
+            this.context = context;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Object tagVal = v.getTag(R.id.search_history_term_tag_id);
+            if (tagVal != null) {
+                deleteTerm(String.valueOf(tagVal));
+            } else {
+                tagVal = v.getTag(R.id.search_suggestion_term_tag_id);
+                if (tagVal != null) {
+                    fillTerm(String.valueOf(tagVal));
+                }
+            }
+        }
+
+        private void deleteTerm(String term) {
+            if (!TextUtils.isEmpty(term)) {
+                MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(context);
+                mostSearchesDbHelper.deleteTerm(term);
+                onSearchTermActionCallback.onSearchTermDeleted();
+            }
+        }
+
+        private void fillTerm(String term) {
+            if (!TextUtils.isEmpty(term)) {
+                onSearchTermActionCallback.setSearchText(term);
+            }
+        }
     }
 
     @Override
@@ -39,26 +88,45 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
         if (viewType == VIEW_TYPE_ITEM) {
             RowViewHolder rowViewHolder = (RowViewHolder) view.getTag();
             TextView txtTerm = rowViewHolder.getTxtTerm();
-            txtTerm.setText(termString.trim());
-
-
-            ImageView imgRemoveTerm = rowViewHolder.getImgRemoveTerm();
-            if (getItemRightIcon(cursor) != null && getItemRightIcon(cursor).equals(SearchUtil.HISTORY_TERM)) {
-                imgRemoveTerm.setVisibility(View.VISIBLE);
-                imgRemoveTerm.setTag(termString);
-                imgRemoveTerm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String deleteTerm = String.valueOf(v.getTag());
-                        if (!TextUtils.isEmpty(deleteTerm)) {
-                            MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(context);
-                            mostSearchesAdapter.deleteTerm(deleteTerm);
-                            ((SearchableActivity) context).notifySearchTermAdapter();
-                        }
-                    }
-                });
+            String term = termString.trim();
+            int termLength = term.length();
+            String constraint = getFilterQuery();
+            if (!TextUtils.isEmpty(constraint)) {
+                int startIndx = term.indexOf(constraint);
+                int endIndx = startIndx > -1 ? startIndx + constraint.length() - 1 : -1;
+                if (endIndx > 0) {
+                    endIndx = Math.min(endIndx, termLength - 1);
+                }
+                if (endIndx > startIndx) {
+                    SpannableString spannableString = new SpannableString(term);
+                    spannableString.setSpan(new StyleSpan(Typeface.BOLD),
+                            startIndx, endIndx + 1,
+                            Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                    txtTerm.setText(spannableString);
+                } else {
+                    txtTerm.setText(term);
+                }
             } else {
-                imgRemoveTerm.setVisibility(View.GONE);
+                txtTerm.setText(term);
+            }
+
+            ImageView imgSearchTermAction = rowViewHolder.getImgSearchTermAction();
+            String itemRightIconKey = getItemRightIcon(cursor);
+            if (!TextUtils.isEmpty(itemRightIconKey)) {
+                int drawableResId;
+                if (itemRightIconKey.equals(SearchUtil.HISTORY_TERM)) {
+                    imgSearchTermAction.setTag(R.id.search_history_term_tag_id, term);
+                    imgSearchTermAction.setTag(R.id.search_suggestion_term_tag_id, null); // Reset
+                    drawableResId = R.drawable.delete_product;
+                } else {
+                    imgSearchTermAction.setTag(R.id.search_history_term_tag_id, null); // Reset
+                    imgSearchTermAction.setTag(R.id.search_suggestion_term_tag_id, term);
+                    drawableResId = R.drawable.ic_arrow_angled_grey_24dp;
+                }
+                UIUtil.displayAsyncImage(imgSearchTermAction, drawableResId);
+                imgSearchTermAction.setVisibility(View.VISIBLE);
+            } else {
+                imgSearchTermAction.setVisibility(View.GONE);
             }
 
         } else {
@@ -79,6 +147,19 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
             return VIEW_TYPE_HEADER;
         }
         return VIEW_TYPE_ITEM;
+    }
+
+    @Nullable
+    private String getFilterQuery() {
+        if (getFilterQueryProvider() instanceof SearchFilterQueryProvider) {
+            return ((SearchFilterQueryProvider) getFilterQueryProvider()).getConstraint();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return getItemViewType(position) == VIEW_TYPE_ITEM;
     }
 
     public String getItemRightIcon(Cursor cursor) {
@@ -109,7 +190,7 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
     private class RowViewHolder {
         private TextView txtTerm;
         private View itemRow;
-        private ImageView imgRemoveTerm;
+        private ImageView imgSearchTermAction;
 
         private RowViewHolder(View itemRow) {
             this.itemRow = itemRow;
@@ -123,19 +204,13 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
             return txtTerm;
         }
 
-        public ImageView getImgRemoveTerm() {
-            if (imgRemoveTerm == null) {
-                imgRemoveTerm = (ImageView) itemRow.findViewById(R.id.imgRemoveTerm);
+        public ImageView getImgSearchTermAction() {
+            if (imgSearchTermAction == null) {
+                imgSearchTermAction = (ImageView) itemRow.findViewById(R.id.imgSearchTermAction);
+                imgSearchTermAction.setOnClickListener(searchTermActionListener);
             }
-            return imgRemoveTerm;
+            return imgSearchTermAction;
         }
-
-//        public ImageView getImgSearchListIcon() {
-//            if (imgSearchListIcon == null) {
-//                imgSearchListIcon = (ImageView) itemRow.findViewById(R.id.imgSearchListIcon);
-//            }
-//            return imgSearchListIcon;
-//        }
     }
 
     private class HeaderViewHolder {
@@ -151,9 +226,33 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
         public TextView getTxtTermHeader() {
             if (txtTermHeader == null) {
                 txtTermHeader = (TextView) itemRow.findViewById(R.id.txtTermHeader);
-                txtTermHeader.setTypeface(fontHolder.getFaceRobotoRegular());
             }
             return txtTermHeader;
+        }
+    }
+
+    public static class SearchFilterQueryProvider implements FilterQueryProvider {
+
+        private String constraint;
+        private WeakReference<Context> context;
+
+        @Nullable
+        public String getConstraint() {
+            return constraint;
+        }
+
+        public SearchFilterQueryProvider(Context context) {
+            this.context = new WeakReference<>(context);
+        }
+
+        @Override
+        public Cursor runQuery(CharSequence constraint) {
+            if (context != null && context.get() != null && constraint != null) {
+                this.constraint = constraint.toString();
+                return SearchUtil.searchQueryCall(constraint.toString(),
+                        context.get().getApplicationContext());
+            }
+            return null;
         }
     }
 }

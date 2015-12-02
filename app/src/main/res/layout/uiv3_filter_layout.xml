@@ -8,7 +8,7 @@
 
     <include
         android:id="@+id/toolbarMain"
-        layout="@layout/uiv3_dark_tool_layout" />
+        layout="@layout/uiv3_tool_layout" />
 
     <include
         android:id="@+id/layoutFilterButtons"

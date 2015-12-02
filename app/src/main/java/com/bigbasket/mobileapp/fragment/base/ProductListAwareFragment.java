@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
@@ -34,19 +35,19 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
 public abstract class ProductListAwareFragment extends BaseSectionFragment implements
@@ -109,11 +110,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             mNameValuePairs.put(Constants.TAB_TYPE, new Gson().toJson(new String[]{mTabType}));
 
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
-            bigBasketApiService.productNextPage(mNameValuePairs, new Callback<ApiResponse<ProductNextPageResponse>>() {
+            Call<ApiResponse<ProductNextPageResponse>> call =
+                    bigBasketApiService.productNextPage(mNameValuePairs);
+            call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
                 @Override
-                public void success(ApiResponse<ProductNextPageResponse> productNextPageApiResponse, Response response) {
+                public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {
                     setNextPageLoading(false);
-                    if (isSuspended()) return;
                     if (productNextPageApiResponse.status == 0) {
                         mProductInfo.setCurrentPage(nextPage);
                         HashMap<String, ArrayList<Product>> productMap = productNextPageApiResponse.apiResponseContent.productListMap;
@@ -127,10 +129,24 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
+                public void onFailure(int httpErrorCode, String msg) {
+                    failure();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    failure();
+                }
+
+                public void failure() {
                     setNextPageLoading(false);
                     mProductListRecyclerAdapter.setLoadingFailed(true);
                     mProductListRecyclerAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public boolean updateProgress() {
+                    return true;
                 }
             });
         }
@@ -347,18 +363,36 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView, View viewDecQty,
-                                                    View viewIncQty, View btnAddToBasket, Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
-                                                    @Nullable EditText editTextQty) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
-        if (cartInfoMap != null) {
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
+                                                    Product product, String qty,
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextViewRef, viewDecQtyRef, viewIncQtyRef,
+                btnAddToBasketRef, product, qty, productViewRef, cartInfoMapRef, editTextQtyRef);
+        if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
             if (getActivity() instanceof BasketOperationAware) {
                 ((BasketOperationAware) getActivity()).setBasketOperationResponse(basketOperationResponse);
                 ((BasketOperationAware) getActivity()).updateUIAfterBasketOperationSuccess(basketOperation,
-                        null, null, null, null, product, qty, null, cartInfoMap, editTextQty);
+                        null, null, null, null, product, qty, null, cartInfoMapRef, editTextQtyRef);
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mProductListRecyclerAdapter = null;  // Clear this
+        // Now setup a leak-canary observer
+        LeakCanaryObserver.Factory.observe(this);
+    }
+
+    @Override
+    protected void observeMemoryLeak() {
+        // Do nothing for this fragment, as this fragment registers ref-watcher for itself after cleaning-up
     }
 }

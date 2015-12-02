@@ -11,7 +11,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.DeepLinkHandler;
 import com.bigbasket.mobileapp.handler.SilentDeepLinkHandler;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
@@ -20,7 +20,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
-        HandlerAware {
+        AppOperationAware {
 
     protected BigBasketMessageHandler handler;
 
@@ -51,7 +51,15 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         int resultCode = DeepLinkHandler.handleDeepLink(this, uri);
         if (resultCode == DeepLinkHandler.LOGIN_REQUIRED) {
             showToast(getString(R.string.login_required));
-            launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, uri);
+            Bundle data = new Bundle(1);
+            data.putString(Constants.DEEPLINK_URL, uri.toString());
+            launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, data, true);
+        } else if (resultCode == DeepLinkHandler.REGISTER_DEVICE_REQUIRED) {
+            /**
+             * launch splash activity for visitor registration
+             */
+            launchSplashActivity();
+
         } else if (resultCode == DeepLinkHandler.FAILED) {
             showDefaultError();
         }
@@ -68,10 +76,24 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         // if user minimize app isFromBckGround=> False
         if (sourceName != null && sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION)
                 && isFromBckGround) {
-            goToHome(false);
+            goToHome();
         } else {
             finish();
         }
+    }
+
+    /**
+     * launching the splashactivity for registering the visitor id
+     * passing the current intent with the key Constants.REDIRECT_INTENT
+     */
+    private void launchSplashActivity() {
+        Intent intent = getIntent();
+        intent.setClass(this, getClass());
+        Intent splashActivityIntent = new Intent(this, SplashActivity.class);
+        splashActivityIntent.putExtra(Constants.REDIRECT_INTENT, intent);
+        startActivity(splashActivityIntent);
+        finish();
+
     }
 
 //    private void setAppInBackGround(final Context context) {

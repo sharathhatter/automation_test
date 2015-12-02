@@ -41,6 +41,7 @@
     <string name="placeorder">Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
+    <string name="ordernumberWithSpace">Order No:\u0020</string>
     <string name="vat">VAT</string>
     <string name="action">Action</string>
     <string name="item">Item</string>
@@ -115,7 +116,6 @@
     <string name="please_wait">Please wait...</string>
     <string name="placeOrderPleaseWait">Please wait while we place your order and transfer you to payment gateway.</string>
     <string name="email">E-mail</string>
-    <string name="emailNewPassword">Email new password</string>
     <string name="oldPassword">Old password</string>
     <string name="newPassword">New Password</string>
     <string name="confirmPassword">Confirm Password</string>
@@ -149,8 +149,10 @@
     <string name="deliveryCharges">Delivery Charges</string>
     <string name="noOrdersPlaced">You haven\'t placed any orders yet</string>
 
+
     <!-- Shopping list -->
     <string name="change">Change</string>
+    <string name="changeAllCaps">CHANGE</string>
     <string name="deleteShoppingListText">Are you sure, that you want to delete this shopping list?</string>
     <string name="delete">Delete</string>
     <string name="deleteQuestion">Delete?</string>
@@ -169,6 +171,7 @@
     <string name="change_password">Change Password</string>
     <string name="wallet_activity">My Wallet</string>
     <string name="delivery_time">Delivery Time:</string>
+    <string name="delivery_time_with_space">Delivery Time:\u0020</string>
     <string name="delivery_charges">Delivery Charges:</string>
     <string name="past_label">past</string>
     <string name="deleteShoppingList">Delete Shopping List</string>
@@ -235,7 +238,6 @@
     <string name="weAreDown">We are down for maintenance!</string>
 
     <string name="networkError">Network Error</string>
-    <string name="communicationError">Failed to connect to the server</string>
     <string name="otherError">An error occurred</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
@@ -261,6 +263,8 @@
     <string name="nowShoppingListMsg1">You have not created any shopping list yet.</string>
     <string name="nowShoppingListMsg2">Start creating now for easy shopping.</string>
     <string name="adAddresCaps">ADD ADDRESS</string>
+    <string name="addAddress">Add Address</string>
+    <string name="updateAddress">Update Address</string>
 
     <string name="noSmartBasketProducts">You haven\'t placed any orders yet, hence your Smart Basket is currently empty</string>
     <string name="skip">Skip</string>
@@ -280,13 +284,15 @@
     <string name="createNewList">Create New List</string>
     <string name="connectUsing">You can connect using</string>
     <string name="tutorial">Tutorial</string>
+    <string name="promotions">Promotions</string>
+    <string name="quantity">Quantity:&#160;</string>
 
     <!-- myaccount -->
     <string name="phone">Phone</string>
     <string name="birthday">Birthday</string>
     <string name="address">Address</string>
     <string name="default_address">Default Address</string>
-    <string name="addAddress">\u0020 Add</string>
+    <string name="addWithSpace">\u0020 Add</string>
     <string name="viewAll">\u0020 View All</string>
 
     <!-- address -->
@@ -294,9 +300,11 @@
     <string name="delivery_add">Delivery Address:</string>
     <string name="other_address">Other Addresses:</string>
     <string name="addAnAddress"> \u0020 Add an Address</string>
+    <string name="addNewAddress">ADD NEW ADDRESS</string>
     <string name="save">SAVE</string>
     <string name="saveAndContinue">Save and Continue</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
+    <string name="incomplete">Incomplete</string>
 
     <!-- Show cart tabs -->
     <string name="exp_delivery">Express Delivery</string>
@@ -305,7 +313,7 @@
     <!-- order invoice -->
     <string name="multi_order_place_txt">You will receive the orders in multiple deliveries</string>
     <string name="continue_shopping">CONTINUE SHOPPING!</string>
-    <string name="know_more">Know More</string>
+    <string name="know_more">Know more</string>
 
     <string name="expressDelAvailable">\u0020 Express Delivery may be available</string>
     <string name="my_basket_header">My Basket</string>
@@ -322,7 +330,6 @@
 
     <string name="add_bundle">ADD BUNDLE</string>
     <string name="error">Error!</string>
-    <string name="emailBlank">Please enter an email address</string>
     <string name="payNow">Pay Now</string>
     <string name="order_pay_now_amount">Amount:</string>
     <string name="payNowThankyou">Your payment was successful!</string>
@@ -344,7 +351,7 @@
     <string name="enable">Enable</string>
     <string name="locationSettingError">Unable to open location window.\nPlease enable it by going to settings.</string>
 
-    <string name="newCheckoutFlowMsg">When you click on Place Order &amp; Pay - Your order will be placed first &amp; then you will be taken to complete the payment.</string>
+    <string name="payment_order_info">Your order will be placed first &amp; then you will be taken to complete the payment.</string>
     <string name="newStr">New</string>
     <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.\nPlease don\'t press back button.</string>
 
@@ -359,6 +366,7 @@
     <string name="unknownError">An unknown error occurred</string>
     <string name="saveThisLocation">USE THIS LOCATION</string>
     <string name="changeMyLocation">CHANGE MY LOCATION</string>
+
     <string name="changeMyAddress">CHANGE MY ADDRESS</string>
     <string name="preparingBasket">Preparing basket</string>
     <string name="status">Status</string>
@@ -398,4 +406,31 @@
     <string name="totalCostOfGiftWrapping">Total cost of gift wrapping</string>
     <string name="willBeAddedToFinalAmount">(will be added to final amount)</string>
     <string name="noAddGiftWrap">No additional gift wrap required.</string>
+    <string name="history">History</string>
+    <string name="popularSearches">Popular Searches</string>
+    <string name="popularCategories">Popular Categories</string>
+    <string name="suggestion">Suggestion</string>
+    <string name="lblContinue">Continue</string>
+    <string name="quantity_missing">Quantity shouldn\'t be blank</string>
+
+    <!-- Speciality Stores -->
+    <string name="speciality_shop_title">Speciality Shop</string>
+    <string name="createNewAddress">Create new address</string>
+    <string name="addressAdded">Address added successfully</string>
+    <string name="addressUpdated">Address updated successfully</string>
+    <string name="newAddressNotAllowed">We regret to inform that an address\' city can\'t be changed. Hence, when you click on \"Save\" we will create a new address.</string>
+    <string name="your_loc">\u0020your location</string>
+    <string name="store_empty">Sorry, Currently we do not have any speciality stores for\u0020</string>
+    <string name="available_in">\u0020available \nin </string>
+    <string name="adding_newStores">\n\nWe will be adding new stores in this location soon.Mean while, please checkout other categories.\nThanks!</string>
+    <string name="visit_store">VISIT STORE</string>
+    <string name="dismiss_">DISMISS</string>
+    <string name="order_details">Order Details</string>
+    <string name="empty_email_address_error">Please enter your e-mail address</string>
+    <string name="empty_password_error">Please enter your password</string>
+    <string name="remainig_seconds_format">%1$ds</string>
+    <string name="evoucher_applied_format">"eVoucher: %1$s Applied!"</string>
+    <string name="abort_payment_transaction_confirmation">The order has been already created. It will be automatically converted to Cash on Delivery in a short while.\n\nCancel payment transaction and make the payment on delivery?</string>
+    <string name="cancel_transaction">Cancel transaction</string>
+    <string name="dont_not_show_this_message">Do not show this message again</string>
 </resources>

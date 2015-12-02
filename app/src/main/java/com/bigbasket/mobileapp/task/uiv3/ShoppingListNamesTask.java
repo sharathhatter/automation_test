@@ -3,19 +3,14 @@ package com.bigbasket.mobileapp.task.uiv3;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.util.Constants;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class ShoppingListNamesTask<T> {
+public class ShoppingListNamesTask<T extends AppOperationAware> {
     private T ctx;
     private boolean showSystem;
 
@@ -25,51 +20,41 @@ public class ShoppingListNamesTask<T> {
     }
 
     public void startTask() {
-        if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendOfflineError();
+        if (!ctx.checkInternetConnection()) {
+            ctx.getHandler().sendOfflineError();
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
-                getApiService(((ActivityAware) ctx).getCurrentActivity());
-        ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        bigBasketApiService.getShoppingLists(showSystem ? "1" : "0", new Callback<GetShoppingListsApiResponse>() {
-            @Override
-            public void success(GetShoppingListsApiResponse getShoppingListsApiResponse, Response response) {
+                getApiService(ctx.getCurrentActivity());
+        ctx.showProgressDialog("Please wait...");
+        Call<GetShoppingListsApiResponse> call = bigBasketApiService.getShoppingLists(showSystem ? "1" : "0");
+        call.enqueue(new BBNetworkCallback<GetShoppingListsApiResponse>(ctx, true) {
+                         @Override
+                         public void onSuccess(GetShoppingListsApiResponse getShoppingListsApiResponse) {
+                             switch (getShoppingListsApiResponse.status) {
+                                 case Constants.OK:
+                                     ((ShoppingListNamesAware) ctx).onShoppingListFetched(getShoppingListsApiResponse.shoppingListNames);
+                                     break;
+                                 default:
+                                     ctx.getHandler().sendEmptyMessage(getShoppingListsApiResponse.getErrorTypeAsInt(),
+                                             getShoppingListsApiResponse.message, true);
+                                     break;
+                             }
+                         }
 
-                if (((CancelableAware) ctx).isSuspended()) {
-                    return;
-                } else {
-                    try {
-                        ((ProgressIndicationAware) ctx).hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
-                    }
-                }
-                switch (getShoppingListsApiResponse.status) {
-                    case Constants.OK:
-                        ((ShoppingListNamesAware) ctx).onShoppingListFetched(getShoppingListsApiResponse.shoppingListNames);
-                        break;
-                    default:
-                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(getShoppingListsApiResponse.getErrorTypeAsInt(),
-                                getShoppingListsApiResponse.message, true);
-                        break;
-                }
-            }
+                         @Override
+                         public boolean updateProgress() {
+                             try {
+                                 ctx.hideProgressDialog();
+                                 return true;
+                             } catch (IllegalArgumentException e) {
+                                 return false;
+                             }
+                         }
 
-            @Override
-            public void failure(RetrofitError error) {
-                if (((CancelableAware) ctx).isSuspended()) {
-                    return;
-                } else {
-                    try {
-                        ((ProgressIndicationAware) ctx).hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
-                    }
-                }
-                ((HandlerAware) ctx).getHandler().handleRetrofitError(error, true);
-            }
-        });
+                     }
+
+        );
     }
 }
 

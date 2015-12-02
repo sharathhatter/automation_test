@@ -11,11 +11,15 @@
         android:layout_above="@+id/layoutCheckoutFooter"
         android:layout_alignParentTop="true" />
 
-    <FrameLayout
-        android:id="@+id/frame_show_cart"
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/empty_cart"
+        layout="@layout/uiv3_empty_data_text"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/coordinator_layout" />
+        android:layout_above="@+id/layoutCheckoutFooter"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/margin_large"
+        android:visibility="gone" />
 
     <include
         android:id="@+id/layoutCheckoutFooter"

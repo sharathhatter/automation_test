@@ -14,13 +14,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.CarouselAdapter;
-import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
@@ -162,7 +163,7 @@ public class SectionView {
 
     private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, parent, false);
-        SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
+        final SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
         ViewGroup.LayoutParams bannerLayoutParams = bannerSlider.getLayoutParams();
         if (bannerLayoutParams != null && !isHelp) {
             bannerLayoutParams.height = section.getWidgetHeight(context, mSectionData.getRenderersMap(), true);
@@ -186,6 +187,21 @@ public class SectionView {
                     continue;
                 }
                 sliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+                /**
+                 * adding globalLayoutListener to track if the banner pager is visible to user or not
+                 * and stopping/starting the auto play based on that
+                 */
+                bannerSlider.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (!bannerSlider.isShown())
+                            bannerSlider.stopAutoCycle();
+                        else
+                            bannerSlider.startAutoCycle();
+                    }
+
+
+                });
                 bannerSlider.addSlider(sliderView);
             }
 
@@ -672,6 +688,11 @@ public class SectionView {
         view.setOnClickListener(new OnSectionItemClickListener<>(context, section, moreSectionItem, screenName));
     }
 
+    @Nullable
+    public ArrayList<Integer> getDynamicTiles() {
+        return dynamicTiles;
+    }
+
     private class SectionRowAdapter extends RecyclerView.Adapter<SectionRowHolder> {
 
         @Override
@@ -723,10 +744,5 @@ public class SectionView {
         public ViewGroup getRow() {
             return (ViewGroup) itemView;
         }
-    }
-
-    @Nullable
-    public ArrayList<Integer> getDynamicTiles() {
-        return dynamicTiles;
     }
 }

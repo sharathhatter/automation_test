@@ -25,8 +25,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
+import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -35,8 +36,10 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
+import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
@@ -63,16 +66,15 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
 
-public class ProductListActivity extends BBActivity implements ProductListDataAware, LazyProductListAware {
+public class ProductListActivity extends SearchActivity implements ProductListDataAware, LazyProductListAware {
 
     private ArrayList<NameValuePair> mNameValuePairs;
     @Nullable
@@ -88,18 +90,19 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private HashMap<String, Integer> mCartInfo;
     private String tabType;
     private ArrayList<String> mTabNameWithEmptyProductView;
+    private HeaderSpinnerView mHeaderSpinnerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getProducts(0);
+        getProducts();
     }
 
-    private void getProducts(int currentTabIndex) {
+    private void getProducts() {
         mTitlePassedViaIntent = getIntent().getStringExtra(Constants.TITLE);
         setTitle(mTitlePassedViaIntent);
         mNameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
-        loadProductTabs(currentTabIndex, false);
+        loadProductTabs(false);
     }
 
     @Override
@@ -116,7 +119,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         return R.layout.uiv3_product_list_layout;
     }
 
-    private void loadProductTabs(int currentTabIndex, boolean isFilterOrSortApplied) {
+    private void loadProductTabs(boolean isFilterOrSortApplied) {
         if (mNameValuePairs == null || mNameValuePairs.size() == 0) {
             return;
         }
@@ -129,7 +132,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
         setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
-        new ProductListTask<>(this, paramMap, getCurrentNavigationContext(), currentTabIndex,
+        new ProductListTask<>(this, paramMap, getCurrentNavigationContext(),
                 isFilterOrSortApplied).startTask();
     }
 
@@ -169,11 +172,22 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
-    public void setProductTabData(ProductTabData productTabData, int currentTabIndex,
-                                  boolean isFilterOrSortApplied) {
-        if (currentTabIndex < 0) {
-            currentTabIndex = 0;
+    protected String getSubCategoryId() {
+        if (mHeaderSpinnerView != null && mHeaderSpinnerView.getSelectedItem() != null && mHeaderSpinnerView.getSelectedItem().getTitle() != null) {
+            return mHeaderSpinnerView.getSelectedItem().getTitle().getText().split("\\(")[0];
         }
+        return null;
+    }
+
+    @Override
+    public void setProductTabData(ProductTabData productTabData, boolean isFilterOrSortApplied) {
+
+        if (productTabData.getProductTabInfos().size() > 0) {
+            ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(productTabData.getScreenName());
+        } else {
+            ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(mTitlePassedViaIntent);
+        }
+
 
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawers();
@@ -205,12 +219,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (hasProducts) {
             // Setup content
             int numTabs = productTabData.getProductTabInfos().size();
-            if (currentTabIndex >= numTabs) {
-                currentTabIndex = 0;
-            }
             if (numTabs > 1) {
                 findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
-                displayProductTabs(productTabData, contentFrame, currentTabIndex, true);
+                displayProductTabs(productTabData, contentFrame, true);
             } else if (isFilterOrSortApplied) {
                 //header
                 renderHeaderDropDown(productTabData.getProductTabInfos().get(0).getHeaderSection(),
@@ -228,7 +239,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     mMapForTabWithNoProducts = new HashMap<>();
                 }
                 mMapForTabWithNoProducts.put(tabType, products);
-                renderFilterAndSortProductList(productTabInfo, tabType, currentTabIndex);
+                renderFilterAndSortProductList(productTabInfo, tabType);
             } else {
                 // When only one product tab
                 findViewById(R.id.slidingTabs).setVisibility(View.GONE);
@@ -251,6 +262,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
                             productTabInfo.getTabName() : mTitlePassedViaIntent;
                     setTitle(title);
+
                 }
                 logProductListingShownEvent(productTabInfo.getTabType());
                 setCurrentTabSortAndFilter(productTabInfo.getFilterOptionItems(),
@@ -311,7 +323,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     private void displayProductTabs(final ProductTabData productTabData, ViewGroup contentFrame,
-                                    final int currentTabIndex, final boolean hasProducts) {
+                                    final boolean hasProducts) {
         mViewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
         if (mViewPager == null) return;
 
@@ -343,8 +355,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         TabPagerAdapterWithFragmentRegistration statePagerAdapter =
                 new TabPagerAdapterWithFragmentRegistration(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
-        ProductTabInfo productTabInfo = productTabData.getProductTabInfos() != null ?
-                productTabData.getProductTabInfos().get(currentTabIndex) : null;
+        ProductTabInfo productTabInfo = productTabData.getProductTabInfos() != null &&
+                productTabData.getProductTabInfos().size() > 0 ?
+                productTabData.getProductTabInfos().get(0) : null;
 
         if (productTabInfo != null) {
             setCurrentTabSortAndFilter(productTabInfo.getFilterOptionItems(), productTabInfo.getFilteredOn(),
@@ -355,8 +368,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
         TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
         pagerSlidingTabStrip.setupWithViewPager(mViewPager);
-
-        mViewPager.setCurrentItem(currentTabIndex);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -435,39 +446,50 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
             newNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(tabTypeWithNoProducts)));
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-            bigBasketApiService.productNextPage(NameValuePair.toMap(newNameValuePairs),
-                    new Callback<ApiResponse<ProductNextPageResponse>>() {
-                        @Override
-                        public void success(ApiResponse<ProductNextPageResponse> productNextPageApiResponse, Response response) {
-                            if (isSuspended()) return;
-                            if (productNextPageApiResponse.status == 0) {
-                                if (mMapForTabWithNoProducts != null) {
-                                    if (productNextPageApiResponse.apiResponseContent.productListMap != null) {
-                                        mMapForTabWithNoProducts.putAll(productNextPageApiResponse.apiResponseContent.productListMap);
-                                    }
-                                } else {
-                                    mMapForTabWithNoProducts = productNextPageApiResponse.apiResponseContent.productListMap;
-                                }
-                                setUpProductsInEmptyFragments();
-                            } else {
-                                notifyEmptyFragmentAboutFailure();
+            Call<ApiResponse<ProductNextPageResponse>> call =
+                    bigBasketApiService.productNextPage(NameValuePair.toMap(newNameValuePairs));
+            call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
+                @Override
+                public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {
+                    if (productNextPageApiResponse.status == 0) {
+                        if (mMapForTabWithNoProducts != null) {
+                            if (productNextPageApiResponse.apiResponseContent.productListMap != null) {
+                                mMapForTabWithNoProducts.putAll(productNextPageApiResponse.apiResponseContent.productListMap);
                             }
+                        } else {
+                            mMapForTabWithNoProducts = productNextPageApiResponse.apiResponseContent.productListMap;
                         }
+                        setUpProductsInEmptyFragments();
+                    } else {
+                        notifyEmptyFragmentAboutFailure();
+                    }
+                }
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (isSuspended()) return;
-                            notifyEmptyFragmentAboutFailure();
-                        }
-                    });
+                @Override
+                public boolean updateProgress() {
+                    return true;
+                }
+
+                @Override
+                public void onFailure(int httpErrorCode, String msg) {
+                    super.onFailure(httpErrorCode, msg);
+                    notifyEmptyFragmentAboutFailure();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    super.onFailure(t);
+                    notifyEmptyFragmentAboutFailure();
+                }
+            });
         }
     }
 
     private void renderFilterAndSortProductList(ProductTabInfo productTabInfo,
-                                                String filterAndSortTabName, int currentTabIndex) {
+                                                String filterAndSortTabName) {
         if (filterAndSortTabName == null || mViewPager == null || productTabInfo == null
                 || productTabInfo.getProductInfo() == null) return;
-        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(currentTabIndex);
+        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(0);
         if (fragment != null) {
             ArrayList<Product> products = productTabInfo.getProductInfo().getProducts();
             if (products == null) {
@@ -556,19 +578,37 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
-    public void doSearch(String searchQuery, String referrer) {
+    protected void doSearch(String searchQuery, String referrer) {
         if (!TextUtils.isEmpty(searchQuery)) {
             mTitlePassedViaIntent = searchQuery;
             mNameValuePairs = new ArrayList<>();
             mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
             mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
-            if (getSupportFragmentManager().getFragments() != null &&
-                    getSupportFragmentManager().getFragments().size() > 0) {
-                // New product list is requested over current page, so change nc by copying next-nc
-                setCurrentNavigationContext(referrer);
-            }
-            loadProductTabs(mViewPager != null ? mViewPager.getCurrentItem() : 0, false);
+            refreshProductList(referrer);
         }
+    }
+
+    protected void doSearchByCategory(String categoryName, String categoryUrl,
+                                      String categorySlug, String navigationCtx) {
+        // Re-use the same activity for pc calls via search instead of creating a new one
+        if (!TextUtils.isEmpty(categorySlug)) {
+            mTitlePassedViaIntent = categoryName;
+            MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
+            mostSearchesDbHelper.update(categoryName, categoryUrl);
+            mNameValuePairs = new ArrayList<>();
+            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
+            mNameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
+            refreshProductList(navigationCtx);
+        }
+    }
+
+    private void refreshProductList(String navigationCtx) {
+        if (getSupportFragmentManager().getFragments() != null &&
+                getSupportFragmentManager().getFragments().size() > 0) {
+            // New product list is requested over current page, so change nc by copying next-nc
+            setCurrentNavigationContext(navigationCtx);
+        }
+        loadProductTabs(false);
     }
 
     private void setProductListForFragmentAtPosition(int position) {
@@ -628,21 +668,23 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             mToolbarTextDropdown = (TextView) getLayoutInflater().
                     inflate(R.layout.uiv3_product_header_text, toolbar, false);
         }
-        new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
-                .withCtx(this)
-                .withDefaultSelectedIdx(mHeaderSelectedIdx)
-                .withFallbackHeaderTitle(!TextUtils.isEmpty(mTitlePassedViaIntent) ? mTitlePassedViaIntent : screenName)
-                .withHeadSection(headSection)
-                .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
-                .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
-                .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
-                .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
-                .withToolbar(getToolbar())
-                .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
-                .withTxtToolbarDropdown(mToolbarTextDropdown)
-                .withTypeface(faceRobotoRegular)
-                .build()
-                .setView();
+        if (mHeaderSpinnerView == null) {
+            mHeaderSpinnerView = new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
+                    .withCtx(this)
+                    .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
+                    .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
+                    .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
+                    .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
+                    .withToolbar(getToolbar())
+                    .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
+                    .withTxtToolbarDropdown(mToolbarTextDropdown)
+                    .withTypeface(faceRobotoRegular)
+                    .build();
+        }
+        mHeaderSpinnerView.setDefaultSelectedIdx(mHeaderSelectedIdx);
+        mHeaderSpinnerView.setFallbackHeaderTitle(!TextUtils.isEmpty(mTitlePassedViaIntent) ? mTitlePassedViaIntent : screenName);
+        mHeaderSpinnerView.setHeadSection(headSection);
+        mHeaderSpinnerView.setView();
     }
 
     @Override
@@ -667,7 +709,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             // New product list is requested over current page, so change nc by copying next-nc
             setCurrentNavigationContext(getNextScreenNavigationContext());
         }
-        loadProductTabs(mViewPager != null ? mViewPager.getCurrentItem() : 0, false);
+        loadProductTabs(false);
     }
 
     public void onFooterViewClicked(View v) {
@@ -741,15 +783,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             }
             applyFilter(filteredOns);
         } else if (resultCode == NavigationCodes.SHOPPING_LIST_MODIFIED) {
-            getProducts(mViewPager != null ? mViewPager.getCurrentItem() : 0);
+            getProducts();
         } else if (resultCode == NavigationCodes.BASKET_CHANGED) {
             if (data != null && !TextUtils.isEmpty(data.getStringExtra(Constants.SKU_ID)) &&
-                    data.getIntExtra(Constants.PRODUCT_NO_ITEM_IN_CART, 0) > 0) {
+                    data.getIntExtra(Constants.PRODUCT_NO_ITEM_IN_CART, 0) > 0 && mCartInfo != null) {
                 mCartInfo.put(data.getStringExtra(Constants.SKU_ID),
                         data.getIntExtra(Constants.PRODUCT_NO_ITEM_IN_CART, 0));
                 setCartInfo(mCartInfo);
             } else {
-                getProducts(mViewPager != null ? mViewPager.getCurrentItem() : 0);
+                getProducts();
             }
 
         } else {
@@ -811,7 +853,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         ArrayList<String> sortAndFilterArrayList = new ArrayList<>();
         sortAndFilterArrayList.add(tabType);
         mNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(sortAndFilterArrayList)));
-        loadProductTabs(mViewPager != null ? mViewPager.getCurrentItem() : 0, true);
+        loadProductTabs(true);
     }
 
     private void trackSortByEvent(String sortedOn) {
@@ -883,7 +925,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         @Override
         protected void onPostExecute(Map<String, String> map) {
             super.onPostExecute(map);
-            ((ActivityAware) context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
+            ((AppOperationAware) context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
                     null, null, false);
         }
     }
@@ -906,31 +948,28 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, View btnAddToBasket, Product product,
-                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
-                                                    @Nullable EditText editTextQty) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
-                viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
-        if (cartInfoMap != null) {
-            // Sync local cartInfoMap with this one
-            //mCartInfo = cartInfoMap;
-            setCartInfo(cartInfoMap);
-            // Update in-memory fragments
-//            if (mViewPager != null) { // if list page don't have tabs
-//                if(mViewPager.getCurrentItem() == 1){
-//                    redrawFragment(0);
-//                }else {
-//                    setProductListForFragmentAtPosition(mViewPager.getCurrentItem() - 1);
-//                }
-//                setProductListForFragmentAtPosition(mViewPager.getCurrentItem() + 1);
-//            }
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
+                                                    @Nullable WeakReference<TextView> basketCountTextViewRef,
+                                                    @Nullable WeakReference<View> viewDecQtyRef,
+                                                    @Nullable WeakReference<View> viewIncQtyRef,
+                                                    @Nullable WeakReference<View> btnAddToBasketRef,
+                                                    Product product, String qty,
+                                                    @Nullable WeakReference<View> productViewRef,
+                                                    @Nullable WeakReference<HashMap<String, Integer>> cartInfoMapRef,
+                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextViewRef, viewDecQtyRef,
+                viewIncQtyRef, btnAddToBasketRef, product, qty, productViewRef, cartInfoMapRef, editTextQtyRef);
+        if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
+            setCartInfo(cartInfoMapRef.get());
         }
     }
 
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName != null && Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST.equals(sourceName)) {
+    @Override
+    protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
+        if (sourceName == Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST_DIALOG) {
             new CreateShoppingListTask<>(this).showDialog();
+        } else {
+            super.onPositiveButtonClicked(sourceName, valuePassed);
         }
     }
 
@@ -967,4 +1006,17 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         }
     }
 
+    @Override
+    protected void showSearchUI() {
+        if (mBbSearchableToolbarView != null && mNameValuePairs != null) {
+            HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
+            String type = paramMap.get(Constants.TYPE);
+            String slug = paramMap.get(Constants.SLUG);
+            if (type != null && type.equals(ProductListType.SEARCH)
+                    && !TextUtils.isEmpty(slug)) {
+                mBbSearchableToolbarView.setSearchText(slug);
+            }
+            mBbSearchableToolbarView.show();
+        }
+    }
 }

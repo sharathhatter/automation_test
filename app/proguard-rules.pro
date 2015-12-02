@@ -47,6 +47,7 @@
 -keep interface android.support.** { *; }
 
 # Retrofit & OkHttp
+-dontwarn retrofit.**
 -keep class retrofit.** { *; }
 -keep class com.squareup.okhttp.** { *; }
 -keep interface com.squareup.okhttp.** { *; }
@@ -133,7 +134,6 @@
  *;
 }
 
-# PayU
 -keepclassmembers class * {
  @android.webkit.JavascriptInterface <methods>;
 }
@@ -158,7 +158,6 @@
 }
 
 -keep class com.paymentsdk.android.model.** { *; }
-
 
 
 #moengage

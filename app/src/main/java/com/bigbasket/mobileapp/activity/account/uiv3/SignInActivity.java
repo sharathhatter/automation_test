@@ -1,11 +1,9 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
-import android.text.InputType;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -24,12 +22,13 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
-import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
+import com.bigbasket.mobileapp.handler.click.OnCompoundDrawableClickListener;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
@@ -37,8 +36,7 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
+import retrofit.Call;
 
 public class SignInActivity extends BackButtonActivity {
 
@@ -104,7 +102,7 @@ public class SignInActivity extends BackButtonActivity {
             @Override
             public void onClick(View v) {
                 trackEvent(TrackingAware.FORGOT_PASSWORD_CLICKED, null);
-                showForgotPasswordDialog();
+                onForgotPasswordClick();
             }
         });
 
@@ -181,6 +179,8 @@ public class SignInActivity extends BackButtonActivity {
         UIUtil.resetFormInputField(textInputEmail);
         UIUtil.resetFormInputField(textInputPasswd);
 
+        hideKeyboard(getCurrentActivity(), mEmailView);
+
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString().trim();
         String password = mPasswordView.getText().toString().trim();
@@ -190,13 +190,11 @@ public class SignInActivity extends BackButtonActivity {
 
         // Check for a valid password
         if (TextUtils.isEmpty(password)) {
-            UIUtil.reportFormInputFieldError(textInputPasswd, "Please enter your password");
+            UIUtil.reportFormInputFieldError(textInputPasswd, getString(R.string.empty_password_error));
             focusView = textInputEmail;
             cancel = true;
-        }
-
-        // Check for a valid password length
-        if (!TextUtils.isEmpty(password) && password.length() < 6) {
+        } else if (password.length() < 6) {
+            // Check for a valid password length
             UIUtil.reportFormInputFieldError(textInputPasswd,
                     getString(R.string.psswordMst6Digit));
             focusView = mPasswordView;
@@ -205,7 +203,7 @@ public class SignInActivity extends BackButtonActivity {
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            UIUtil.reportFormInputFieldError(textInputEmail, "Please enter your e-mail address");
+            UIUtil.reportFormInputFieldError(textInputEmail, getString(R.string.empty_email_address_error));
             focusView = mEmailView;
             cancel = true;
         } else if (!UIUtil.isValidEmail(email)) {
@@ -213,6 +211,7 @@ public class SignInActivity extends BackButtonActivity {
             focusView = mEmailView;
             cancel = true;
         }
+
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -232,44 +231,34 @@ public class SignInActivity extends BackButtonActivity {
      */
     private void startLogin(String email, String password) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        bigBasketApiService.login(email, password,
-                new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked(),
-                        Constants.SIGN_IN_ACCOUNT_TYPE, null));
+        Call<ApiResponse<LoginApiResponse>> call = bigBasketApiService.login(email, password);
+        call.enqueue(new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked(),
+                Constants.SIGN_IN_ACCOUNT_TYPE, null));
     }
 
-    @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (!TextUtils.isEmpty(sourceName)) {
-            switch (sourceName) {
-                case Constants.FORGOT_PASSWORD_DIALOG:
-                    showForgotPasswordDialog();
-                    break;
-            }
-        } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+    private void onForgotPasswordClick() {
+        TextInputLayout textInputEmail = (TextInputLayout) findViewById(R.id.textInputEmail);
+        TextInputLayout textInputPasswd = (TextInputLayout) findViewById(R.id.textInputPasswd);
+        UIUtil.resetFormInputField(textInputEmail);
+        UIUtil.resetFormInputField(textInputPasswd);
+
+        String email = mEmailView.getText().toString().trim();
+        boolean isValid = true;
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            UIUtil.reportFormInputFieldError(textInputEmail, getString(R.string.empty_email_address_error));
+            isValid = false;
+        } else if (!UIUtil.isValidEmail(email)) {
+            UIUtil.reportFormInputFieldError(textInputEmail, getString(R.string.error_invalid_email));
+            isValid = false;
         }
-    }
+        if (!isValid) {
+            mEmailView.requestFocus();
+            return;
+        }
 
-    private void showForgotPasswordDialog() {
-        new InputDialog<SignInActivity>(this, R.string.emailNewPassword, R.string.cancel,
-                R.string.forgotPasswd, R.string.email, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
-            @Override
-            public void onPositiveButtonClicked(String inputEmail) {
-                if (TextUtils.isEmpty(inputEmail)) {
-                    showAlertDialog(
-                            getResources().getString(R.string.error), getResources().getString(R.string.emailBlank),
-                            DialogButton.OK, DialogButton.CANCEL, Constants.FORGOT_PASSWORD_DIALOG);
-                    return;
-                }
-                if (!UIUtil.isValidEmail(inputEmail)) {
-                    showAlertDialog(
-                            getResources().getString(R.string.error), getResources().getString(R.string.error_invalid_email),
-                            DialogButton.OK, DialogButton.CANCEL, Constants.FORGOT_PASSWORD_DIALOG);
-                    return;
-                }
-                requestNewPassword(inputEmail);
-            }
-        }.show();
+        hideKeyboard(getCurrentActivity(), mEmailView);
+        requestNewPassword(email);
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         trackEvent(TrackingAware.FORGOT_PASSWORD_DIALOG_SHOWN, eventAttribs);
@@ -279,15 +268,10 @@ public class SignInActivity extends BackButtonActivity {
     private void requestNewPassword(String email) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.forgotPassword(email, new Callback<OldBaseApiResponse>() {
+        Call<OldBaseApiResponse> call = bigBasketApiService.forgotPassword(email);
+        call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(this) {
             @Override
-            public void success(OldBaseApiResponse forgotPasswordApiResponse, retrofit.client.Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(OldBaseApiResponse forgotPasswordApiResponse) {
                 switch (forgotPasswordApiResponse.status) {
                     case Constants.OK:
                         showToast(getString(R.string.newPasswordSent));
@@ -300,15 +284,19 @@ public class SignInActivity extends BackButtonActivity {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
+            public void onFailure(int httpErrorCode, String msg) {
+                super.onFailure(httpErrorCode, msg);
+                logForgotPasswordFailure(msg);
+            }
+
+            @Override
+            public boolean updateProgress() {
                 try {
                     hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                handler.handleRetrofitError(error);
-                logForgotPasswordFailure(error.toString());
             }
         });
     }

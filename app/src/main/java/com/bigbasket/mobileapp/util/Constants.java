@@ -12,7 +12,6 @@ public class Constants {
     public static final String CURRENT_PAGE = "page";
     public static final String TOTAL_PAGES = "tot_pages";
 
-    public static final String SEARCH_QUERY = "q";
     public static final String PRODUCT_QUERY = "productQuery";
     public static final String PRODUCT_COUNT = "p_count";
     public static final String FACET_NAME = "facet_name";
@@ -33,6 +32,8 @@ public class Constants {
     public static final String PRODUCT_BRAND = "p_brand";
     public static final String BRAND_SLUG = "brand_slug";
     public static final String GIFT_MSG = "gift_msg";
+    public static final String VARIABLE_WEIGHT_MSG = "v_weight_msg";
+    public static final String VARIABLE_WEIGHT_LINK = "v_weight_link";
     public static final String PRODUCT_DESC = "p_desc";
     public static final String PACKAGE_DESC = "pack_desc";
     public static final String PRODUCT_STATUS = "pstat";
@@ -87,7 +88,6 @@ public class Constants {
     //sub category
     public static final String SUB_CATEGORY_ITEMS = "items";
     public static final String DISPLAY_NAME = "display_name";
-    public static final String DISPLAY_VALUE = "display_value";
     public static final String ORDER_TYPE = "order_type";
     public static final String ORDER_STATE = "order_state";
     public static final String TOTAL_PAGE = "total_pages";
@@ -114,8 +114,6 @@ public class Constants {
     public static final String FILTER_VALUES_SLUG = "filter_value_slug";
 
     public static final String STORE_AVAILABILITY = "store_availability";
-    //public static final String STORE_ID = "store_id";
-    public static final String AVAILABILITY = "availability";
     public static final String EXPRESS = "express";
     public static final String AVAILABILITY_INFO_ID = "availability_info_id";
 
@@ -171,7 +169,6 @@ public class Constants {
     public static final String OS_PREFERENCE_KEY = "os";
 
     public static final String TOP_MENU_SLUG = "top-menu";
-    public static final String TOP_CAT_SLUG = "top_category_slug";
     public static final String TOP_MENU = "Top Menu";
     public static final String CATEGORY_SLUG = "category_slug";
 
@@ -220,9 +217,6 @@ public class Constants {
     public static final String SLUG_PARAM = "&slug=";
 
     public static final String POST_PARAMS = "post_params";
-    public static final String PAYU_GATEWAY_URL = "pg_server_url";
-    public static final String SUCCESS_CAPTURE_URL = "scurl";
-    public static final String FAILURE_CAPTURE_URL = "fcurl";
     public static final String TXN_ID = "txn_id";
     public static final String P_ORDER_ID = "p_order_id";
     public static final String SUPPORT_CC = "support_cc";
@@ -230,9 +224,9 @@ public class Constants {
     public static final String PAY_NOW = "pay_now";
     public static final String HDFC_POWER_PAY = "hdfc-power-pay";
     public static final String PAYTM_WALLET = "paytm_wallet";
+    public static final String PAYUMONEY_WALLET = "payumoney_wallet";
     public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
     public static final String PAYTM_HASH_GENERATION_URL = "GURL";
-    public static final String SOURCE_PLACE_ORDER = "placeOrder";
     public static final String WALLET_USED = "wallet_used";
     public static final String AMT_PAYABLE = "amount_payable";
     public static final String WALLET_REMAINING = "wallet_remaining";
@@ -274,6 +268,7 @@ public class Constants {
     public static final String IS_EXPRESS = "is_express";
     public static final String IS_SELECTED = "is_selected";
     public static final String IS_LINK = "is_link";
+    public static final String OFFER_MSG = "offer_msg";
 
     public static final String SLOT_ID = "slot_id";
     public static final String SLOT_DATE = "slot_date";
@@ -319,11 +314,9 @@ public class Constants {
     public static final String FLAT_PAGE = "flat_page";
     public static final String EVOUCHER_CODE = "evoucher_code";
     public static final String NEW_FLOW_URL = "new_flow_url";
-    public static final String REMOVE_VOUCHER = "remove_voucher";
 
     public static final String ORDER = "order";
     public static final String WALLET = "wallet";
-    public static final String EMPTY_BASKET = "emptyBasket";
 
     public static final String SKU_ID = "sku_id";
     public static final String APP_EXPIRED_DIALOG_FLAG = "app_expired";
@@ -366,7 +359,6 @@ public class Constants {
     public static final String SHOPPING_LIST_SUMMARY = "shoplist_summary";
     public static final String SL_NAME = "name";
     public static final String IS_PUBLIC = "is_public";
-    public static final String ADD_ALL = "add_all";
 
     //otp
     //public static final String IMAGE_URLS = "image_urls/";
@@ -374,7 +366,6 @@ public class Constants {
     public static final String FRAGMENT_CODE = "fragmentCode";
     public static final String FRAGMENT_TAG = "fragmentTag";
     public static final String FRAGMENT_STATE = "fragmentState";
-    public static final String LOGOUT = "logout";
     public static final String REMEMBER_ME_PREF = "CHECKBOX"; // Sybrant gave this name, can't change it for compatibility with older versions
     public static final String EMAIL_PREF = "NAME";
     public static final String PASSWD_PREF = "PWD";
@@ -492,7 +483,6 @@ public class Constants {
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
     public static final String AUTH_TOKEN = "auth_token";
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
-    public static final String SOCIAL_LOGOUT = "social_logout";
     public static final int SOCIAL_ACCOUNT_NOT_LINKED = 1835;
     public static final String REOPEN_LANDING_PAGE = "reopen_landing";
 
@@ -500,7 +490,6 @@ public class Constants {
     public static final String SIGN_IN_ACCOUNT_TYPE = "signIn";
     public static final String REGISTER_ACCOUNT_TYPE = "register";
 
-    public static final String GOOGLE_PLAY_SERVICES = "googlePlayServices";
     public static final String BUNDLE_PACK = "bundle-pack";
     public static final String NOW_AT_BB = "nowatbb";
     public static final String NEW_AT_BB = "new_launches";
@@ -520,7 +509,6 @@ public class Constants {
     public static final String AUTH = "auth";
     public static final String INBOX = "inbox";
     public static final String IS_PENDING_GO_TO_HOME = "isPendingGoToHome";
-    public static final String RELOAD_APP = "reloadApp";
     public static final String HAS_USER_CHOSEN_CITY = "has_user_chosen_city";
 
     public static final String MERCHANT_ID = "mer_id";
@@ -538,6 +526,7 @@ public class Constants {
     public static final String SUPPORT_POWER_PAY = "support_pp";
     public static final String SUPPORT_MOBIKWIK = "support_mk";
     public static final String SUPPORT_PAYTM = "support_pm";
+    public static final String SUPPORT_PAYUMONEY = "support_pum";
     public static final String ERR_RES_CODE = "err_res_code";
     public static final String ERR_RES_DESC = "err_res_desc";
     public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";
@@ -551,7 +540,6 @@ public class Constants {
     public static final String HEADER_SEL = "header_sel";
     public static final String TAB_INFO = "tab_info";
     public static final String TAB_NAME = "tab_name";
-    public static final String TAB_IMG = "tab_img";
     public static final String CONTENT_SECTION = "content_section";
     public static final String CART_INFO = "cart_info";
 
@@ -587,28 +575,24 @@ public class Constants {
     public static final String DEFAULT_ACTIONS = "default_actions";
     public static final String ON_TOGGLE_ACTIONS = "on_action_trigger";
 
-    public static final String NOT_ALPHANUMERIC_TXT_SHOPPING_LIST = "aplhaNumericTxt";
+    public static final int NOT_ALPHANUMERIC_TXT_SHOPPING_LIST_DIALOG = 868686;
 
-    public static final String FORGOT_PASSWORD_DIALOG = "FPassDialog";
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
     public static final String FIRSE_TIME_USER = "fst_tm_user";
+    public static final String DISCOUNT_PAGE = "Discount Page";
+    public static final String GO_TO_HOME = "go_to_home";
 
     //mobikwik
     public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
     public static final String MOBIKWIKSDK = "MobikwikSDK";
-    public static final String MOBIKWIK_ORDER_ID = "orderid";
-    public static final String MOBIKWIK_STATUS_CODE = "statuscode";
     public static final String MOBIKWIK_MODE = "mode";
     public static final String MOBIKWIK_SDK_SIGN = "sdksign";
     public static final String MOBIKWIK_REDIRECT_ANDROID_CLASS_NAME = "redirecturl";
     public static final String MOBIKWIK_RESPONSE_HANDLER_CLASS = "com.bigbasket.mobileapp.activity.payment.MobiKwikResponseHandlerActivity";
     public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
     public static final String MOBIKWIK_PAYMENT_MW = "mw";
-    public static final String MOBIKWIK_STATUS = "status";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
-
-    public static final String ADDRESS_SYNC_BROADCAST_ACTION = "com.bigbasket.mobileapp.broadcase.AddressSync";
 
     // Sku Tabs
     public static final String SKU_TYPE_EXPRESS = "express";
@@ -618,6 +602,7 @@ public class Constants {
     public static final String IS_CONTEXTUAL_MODE = "is_contextual_mode";
     public static final String EXPRESS_AVAILABILITY = "express_availability";
     public static final String STORE_AVAILABILITY_MAP = "store_availability_map";
+    public static final String SPECIALITY_STORES_INFO = "speciality_stores_info";
     public static final String APP_LAUNCH = "appLaunch";
 
     // Gift items
@@ -634,9 +619,51 @@ public class Constants {
     public static final String HAS_GIFTS = "has_gifts";
     public static final String INDIVIDUAL_MSG = "individual_msg";
 
+    // Speciality Stores
+    public static final String CATEGORY = "category";
+    public static final String STORE_IMG = "image_name";
+    public static final String DELIVERY_TIME = "delivery_time";
+    public static final String STORE_TIMINGS = "op_time";
+    public static final String STORE_LIST = "store_list";
+    public static final String STORE_IDS = "store_ids";
+    public static final String STORES = "stores";
+
+    // Basket page
     public static final String ITEM_SCROLL_POSITION = "itemScrollPosition";
     public static final String CURRENT_TAB_INDEX = "currentTabIndex";
     public static final int STANDARD_TAB_INDEX = 0;
     public static final int EXPRESS_TAB_INDEX = 1;
     public static final int DEFAULT_TAB_INDEX = 0;
+
+    //storeInfo
+    public static final String STORE_CATEGORY = "category";
+    public static final String STORE_ID = "store_id";
+    public static final String STORE_URL = "store_url";
+    public static final String STORE_ADD1 = "address1";
+    public static final String STORE_ADD2 = "address2";
+    public static final String STORE_NAME = "store_name";
+    public static final String STORE_LOGO = "store_logo";
+    public static final String STORE_DESC = "store_description";
+
+    //Bundle params
+    public static final String DEEPLINK_URL = "deep_link_url";
+    public static final String FINISH_ACTIVITY = "__bb_finish_activity__"; //special boolean dialog argument
+    public static final String ACTIVITY_RESULT_CODE = "__bb_activity_result_code__";
+    public static final String REDIRECT_INTENT = "redirect_intent";
+
+
+    public static final int UPDATE_ADDRESS_DIALOG_REQUEST = 8000;
+    public static final int ADD_ALL_DIALOG_REQUEST = 8001;
+    public static final int SOURCE_PLACE_ORDER_DIALOG_REQUEST = 8002;
+    public static final int REMOVE_VOUCHER_DIALOG_REQUEST = 8003;
+    public static final int EMPTY_BASKET_DIALOG_QUEST = 8004;
+    public static final int LOCATION_DIALOG_REQUEST = 8005;
+    public static final int PREPAYMENT_ABORT_CONFIRMATION_DIALOG = 8006;
+    public static final int SOURCE_ABORT_DIALOG_REQUEST = 8007;
+
+    // App Indexing params
+    public static final String HTTP_HOST = "bigbasket.com";
+    public static final String PAYTM_TRANS_ID_KEY = "ORDER_ID";
+    public static final String SHOW_PAYMENT_OPTIONS_KNOW_MORE = "show_payment_options_know_more";
+    public static final int KNOW_MORE_DIALOG_ID = 8008;
 }

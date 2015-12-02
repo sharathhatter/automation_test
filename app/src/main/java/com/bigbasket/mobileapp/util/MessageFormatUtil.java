@@ -12,7 +12,7 @@ import android.view.View;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.general.MessageParamInfo;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class MessageFormatUtil<T> {
         str = str.replaceAll("\\s*\\]\\s*", "]");
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(str);
         int idx1 = str.indexOf("[");
-        int idx2 = 0;
+        int idx2;
         int index = 0;
 
 
@@ -78,7 +78,7 @@ public class MessageFormatUtil<T> {
         str = str.replaceAll("\\s*\\]\\s*", "]");
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(str);
         int idx1 = str.indexOf("[");
-        int idx2 = 0;
+        int idx2;
         int index = 0;
         while (idx1 != -1) {
             idx2 = str.indexOf("]", idx1) + 1;
@@ -116,7 +116,7 @@ public class MessageFormatUtil<T> {
                                                                          final ArrayList<Class<?>> activityArrayList,
                                                                          final ArrayList<Integer> fragmentCodeArrayList) {
         SpannableString spannableString = null;
-        int replacedStringIndex = 0;
+        int replacedStringIndex;
         ArrayList<Integer> arrayListIndex = new ArrayList<>();
 
         while (msgStr.contains("{") && msgStr.contains("}")) {
@@ -132,16 +132,17 @@ public class MessageFormatUtil<T> {
             spannableString = new SpannableString(msgStr);
             // change str to link color
             int postIndex = preIndexOfFormatStr + messageParamInfoList.get(replacedStringIndex).getDisplayName().length();
-            spannableString.setSpan(new ForegroundColorSpan(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.link_color)),
+            spannableString.setSpan(new ForegroundColorSpan(((AppOperationAware) ctx).getCurrentActivity().getResources().getColor(R.color.link_color)),
                     preIndexOfFormatStr, postIndex, 0);
         }
+        if (spannableString == null) return null;
         if (activityArrayList != null && activityArrayList.size() > 0) {
             return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
-                    ((ActivityAware) ctx).getCurrentActivity(), messageParamInfoList, activityArrayList,
+                    ((AppOperationAware) ctx).getCurrentActivity(), messageParamInfoList, activityArrayList,
                     arrayListIndex, fragmentCodeArrayList);
         } else {
             return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
-                    ((ActivityAware) ctx).getCurrentActivity(), messageParamInfoList,
+                    ((AppOperationAware) ctx).getCurrentActivity(), messageParamInfoList,
                     arrayListIndex);
         }
 

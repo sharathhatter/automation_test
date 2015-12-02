@@ -11,20 +11,26 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
-import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.section.SectionData;
-import com.bigbasket.mobileapp.task.GetDynamicPageTask;
+import com.bigbasket.mobileapp.model.section.SectionUtil;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.RetrofitError;
+import retrofit.Call;
 
-public class DynamicScreenFragment extends BaseSectionFragment implements DynamicScreenAware {
+
+public class DynamicScreenFragment extends BaseSectionFragment {
 
     @Nullable
     @Override
@@ -35,11 +41,52 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String screenName = getArguments().getString(Constants.SCREEN);
+        final String screenName = getArguments().getString(Constants.SCREEN);
         if (TextUtils.isEmpty(screenName)) {
             return;
         }
-        new GetDynamicPageTask<>(this, screenName, true, true).startTask();
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        Call<ApiResponse<GetDynamicPageApiResponse>> call = bigBasketApiService.getDynamicPage(Constants.ANDROID,
+                DataUtil.getAppVersion(getActivity()), screenName);
+        call.enqueue(new BBNetworkCallback<ApiResponse<GetDynamicPageApiResponse>>(this) {
+            @Override
+            public void onSuccess(ApiResponse<GetDynamicPageApiResponse> getDynamicPageApiResponse) {
+                switch (getDynamicPageApiResponse.status) {
+                    case 0:
+                        SectionData sectionData = getDynamicPageApiResponse.apiResponseContent.sectionData;
+                        if (sectionData != null) {
+                            sectionData.setSections(SectionUtil.preserveMemory(sectionData.getSections()));
+                        }
+                        onDynamicScreenSuccess(screenName, sectionData);
+                        break;
+                    default:
+                        onDynamicScreenFailure(getDynamicPageApiResponse.status,
+                                getDynamicPageApiResponse.message);
+                        break;
+                }
+            }
+
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressView();
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void onFailure(int httpErrorCode, String msg) {
+                onDynamicScreenHttpFailure(httpErrorCode, msg);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                onDynamicScreenFailure(t);
+            }
+        });
     }
 
     protected void loadDynamicScreen() {
@@ -84,7 +131,6 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
         return DynamicScreenFragment.class.getName();
     }
 
-    @Override
     public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {
         setSectionData(sectionData);
         setScreenName(screenName);
@@ -97,13 +143,15 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
         trackEvent(TrackingAware.DYNAMIC_SCREEN_SHOWN, screenNameMap);
     }
 
-    @Override
-    public void onDynamicScreenFailure(RetrofitError error) {
-        handler.handleRetrofitError(error, true);
+    public void onDynamicScreenFailure(Throwable t) {
+        handler.handleRetrofitError(t, true);
     }
 
-    @Override
     public void onDynamicScreenFailure(int error, String msg) {
         handler.sendEmptyMessage(error, msg, true);
+    }
+
+    public void onDynamicScreenHttpFailure(int error, String msg) {
+        handler.handleHttpError(error, msg, true);
     }
 }

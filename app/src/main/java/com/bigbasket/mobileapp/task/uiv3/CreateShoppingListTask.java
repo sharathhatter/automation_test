@@ -7,23 +7,18 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
 
-public class CreateShoppingListTask<T> {
+public class CreateShoppingListTask<T extends AppOperationAware> {
     private T ctx;
 
     public CreateShoppingListTask(T ctx) {
@@ -39,10 +34,10 @@ public class CreateShoppingListTask<T> {
                     startTask(inputText);
                 } else {
                     ((ApiErrorAware) ctx).showApiErrorDialog(
-                            ((ActivityAware) ctx).getCurrentActivity().
-                                    getResources().getString(R.string.error), ((ActivityAware) ctx).getCurrentActivity().
+                            ctx.getCurrentActivity().
+                                    getResources().getString(R.string.error), ctx.getCurrentActivity().
                                     getResources().getString(R.string.shoppingListNameAlphaNumeric),
-                            Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST, null);
+                            Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST_DIALOG, null);
                 }
             }
         }.show();
@@ -50,45 +45,39 @@ public class CreateShoppingListTask<T> {
 
     private void startTask(final String shoppingListName) {
         if (TextUtils.isEmpty(shoppingListName)) {
-            Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),
+            Toast.makeText(ctx.getCurrentActivity(),
                     "Please enter a valid name", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendOfflineError();
+        if (!ctx.checkInternetConnection()) {
+            ctx.getHandler().sendOfflineError();
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
-        ((ProgressIndicationAware) ctx).showProgressDialog(((ActivityAware) ctx).getCurrentActivity().getString(R.string.please_wait));
-        bigBasketApiService.createShoppingList(shoppingListName, "1", new Callback<OldBaseApiResponse>() {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(ctx.getCurrentActivity());
+        ctx.showProgressDialog(ctx.getCurrentActivity().getString(R.string.please_wait));
+        Call<OldBaseApiResponse> call = bigBasketApiService.createShoppingList(shoppingListName, "1");
+        call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(ctx, true) {
             @Override
-            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                if (((CancelableAware) ctx).isSuspended()) return;
-                try {
-                    ((ProgressIndicationAware) ctx).hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
+            public void onSuccess(OldBaseApiResponse oldBaseApiResponse) {
                 switch (oldBaseApiResponse.status) {
                     case Constants.OK:
                         ((TrackingAware) ctx).trackEvent(TrackingAware.SHOP_LST_CREATED, null);
                         ((ShoppingListNamesAware) ctx).onNewShoppingListCreated(shoppingListName);
                         break;
                     default:
-                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
+                        ctx.getHandler().sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
                                 oldBaseApiResponse.message, true);
                         break;
                 }
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (((CancelableAware) ctx).isSuspended()) return;
+            public boolean updateProgress() {
                 try {
-                    ((ProgressIndicationAware) ctx).hideProgressDialog();
+                    ctx.hideProgressDialog();
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    return;
+                    return false;
                 }
-                ((HandlerAware) ctx).getHandler().handleRetrofitError(error, true);
             }
         });
     }

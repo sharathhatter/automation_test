@@ -28,6 +28,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="card_img_content_margin">8dp</dimen>
     <dimen name="fulfillment_image_size">12dp</dimen>
+    <dimen name="search_suggestion_row_left_margin">72dp</dimen>
 
     <dimen name="vertical_tile_min_height">120dp</dimen>
     <dimen name="horizontal_tile_min_height">75dp</dimen>
@@ -49,5 +50,12 @@
 
     <dimen name="nav_text_margin_top">18dp</dimen>
     <dimen name="nav_img_margin_top">16dp</dimen>
+
+    <!-- dimenision for payment option view-->
+    <dimen name="dimen_2">2dp</dimen>
+    <dimen name="dimen_20">20dp</dimen>
+    <dimen name="dimen_5">5dp</dimen>
+    <dimen name="dimen_10">10dp</dimen>
+    <dimen name="dimen_15">15dp</dimen>
 
 </resources>

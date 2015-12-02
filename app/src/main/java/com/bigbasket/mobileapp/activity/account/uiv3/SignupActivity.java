@@ -16,11 +16,12 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.handler.OnCompoundDrawableClickListener;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
+import com.bigbasket.mobileapp.handler.click.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
-import com.bigbasket.mobileapp.receivers.DynamicAppDataBroadcastReceiver;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -28,6 +29,8 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+
+import retrofit.Call;
 
 public class SignupActivity extends BackButtonActivity {
 
@@ -45,7 +48,6 @@ public class SignupActivity extends BackButtonActivity {
         setTitle(getString(R.string.signUpCapsVerb));
 
         renderSignUp();
-        mDynamicAppDataBroadcastReceiver = new DynamicAppDataBroadcastReceiver<>(this);
     }
 
     @Override
@@ -238,18 +240,16 @@ public class SignupActivity extends BackButtonActivity {
         userDetailsJsonObj.addProperty(Constants.NEWSLETTER_SUBSCRIPTION, true);
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        bigBasketApiService.registerMember(userDetailsJsonObj.toString(),
-                new LoginApiResponseCallback(email, passwd, true,
-                        Constants.REGISTER_ACCOUNT_TYPE, null));
+        Call<ApiResponse<LoginApiResponse>> call = bigBasketApiService.registerMember(userDetailsJsonObj.toString());
+        call.enqueue(new LoginApiResponseCallback(email, passwd, true,
+                Constants.REGISTER_ACCOUNT_TYPE, null));
     }
 
     @Override
-    public void onDataSynced(boolean isManuallyTriggered) {
-        super.onDataSynced(isManuallyTriggered);
-        if (!isManuallyTriggered) {
-            showLocationView();
-            hideProgressDialog();
-        }
+    public void onDataSynced() {
+        super.onDataSynced();
+        showLocationView();
+        hideProgressDialog();
     }
 
     @Override

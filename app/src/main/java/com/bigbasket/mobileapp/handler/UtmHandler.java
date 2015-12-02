@@ -5,15 +5,17 @@ import android.net.Uri;
 
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.util.DataUtil;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import retrofit.RetrofitError;
+import retrofit.Call;
 
 public class UtmHandler {
     public static void postUtm(Context context, Uri uri) {
@@ -43,9 +45,10 @@ public class UtmHandler {
             @Override
             public void run() {
                 try {
-                    bigBasketApiService.postUtmParams(utmQueryMapHolder);
-                } catch (RetrofitError e) {
-
+                    Call<BaseApiResponse> call = bigBasketApiService.postUtmParams(utmQueryMapHolder);
+                    call.execute();
+                } catch (IOException e) {
+                    // Fail silently
                 }
             }
         }.start();

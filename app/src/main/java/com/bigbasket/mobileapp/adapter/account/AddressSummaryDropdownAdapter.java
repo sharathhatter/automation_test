@@ -2,10 +2,11 @@ package com.bigbasket.mobileapp.adapter.account;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,7 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
     @SuppressWarnings("unchecked")
     public View getView(int position, View convertView, ViewGroup parent) {
         if (getSpinnerViewType(position) == VIEW_TYPE_ADDRESS) {
-            convertView = getAddressRow(false, position, convertView, parent);
+            convertView = getAddressRow(false, position, convertView, parent, R.color.white);
         } else {
             convertView = getChangeAddressRow(parent);
         }
@@ -76,7 +77,7 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         if (getSpinnerViewType(position) == VIEW_TYPE_ADDRESS) {
-            convertView = getAddressRow(true, position, convertView, parent);
+            convertView = getAddressRow(true, position, convertView, parent, R.color.dark_black);
         } else {
             convertView = getChangeAddressRow(parent);
         }
@@ -89,16 +90,12 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
         TextView txtChangeCity = (TextView) convertView;
         txtChangeCity.setTypeface(faceRobotLight);
         txtChangeCity.setText(changeAddressTxt);
-        /************Setting different color for gingerbread and below******/
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-            txtChangeCity.setTextColor(getContext().getResources().getColor(R.color.dark_black));
-        }
         return convertView;
     }
 
     @SuppressWarnings("unchecked")
     private View getAddressRow(boolean showSlotTime, int position, View convertView,
-                               ViewGroup parent) {
+                               ViewGroup parent, int color) {
         AddressSummary addressSummary = addressSummaries.get(position);
         AddressViewHolder addressViewHolder;
         if (convertView == null || convertView.getTag() == null) {
@@ -109,68 +106,63 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
         } else {
             addressViewHolder = (AddressViewHolder) convertView.getTag();
         }
-        String nick = addressSummary.getAddressNickName();
-        /************Setting different color for gingerbread and below******/
 
-        TextView txtCityName = addressViewHolder.getTxtCityName();
-        TextView txtAreaName = addressViewHolder.getTxtAreaName();
-        TextView txtSlotTime = addressViewHolder.getTxtSlotTime();
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-            txtAreaName.setTextColor(getContext().getResources().getColor(R.color.dark_black));
-            txtCityName.setTextColor(getContext().getResources().getColor(R.color.dark_black));
-            txtSlotTime.setTextColor(getContext().getResources().getColor(R.color.dark_black));
-        }
+        TextView txtAddress = addressViewHolder.getTxtAddress();
+        txtAddress.setTextColor(getContext().getResources().getColor(color));
+
+        String area = TextUtils.isEmpty(addressSummary.getArea()) ? "" :
+                addressSummary.getArea() + "\n";
+
+        String nick = addressSummary.getAddressNickName();
         if (TextUtils.isEmpty(nick)) {
-            txtAreaName.setText(addressSummary.getArea());
+            nick = "";
         } else {
-            SpannableString spannableString = new SpannableString(nick + " - " +
-                    addressSummary.getArea());
+            area = " - " + area;
+        }
+        String cityName = addressSummary.getCityName();
+        String slot = !showSlotTime || TextUtils.isEmpty(addressSummary.getSlot()) ? "" :
+                "\n" + addressSummary.getSlot();
+        if (showSlotTime) {
+            txtAddress.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        }
+
+        SpannableString spannableString = new SpannableString(nick + area + cityName + slot);
+        if (!TextUtils.isEmpty(nick)) {
             spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoBold), 0,
                     nick.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            txtAreaName.setText(spannableString);
         }
-        txtCityName.setText(addressSummary.getCityName());
-        String slot = addressSummary.getSlot();
-        if (!TextUtils.isEmpty(slot) && showSlotTime) {
-            txtSlotTime.setText(slot);
-            txtSlotTime.setVisibility(View.VISIBLE);
-        } else {
-            txtSlotTime.setVisibility(View.GONE);
+        spannableString.setSpan(new AbsoluteSizeSpan(12, true),
+                nick.length() + area.length(), spannableString.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        if (!TextUtils.isEmpty(cityName)) {
+            spannableString.setSpan(new CustomTypefaceSpan("", faceRobotLight),
+                    nick.length() + area.length(), nick.length() + area.length() + cityName.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
+        if (!TextUtils.isEmpty(slot)) {
+            spannableString.setSpan(new StyleSpan(Typeface.ITALIC),
+                    nick.length() + area.length() + cityName.length(),
+                    spannableString.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        txtAddress.setText(spannableString);
         return convertView;
     }
 
     private class AddressViewHolder {
         private View itemView;
-        private TextView txtAreaName;
-        private TextView txtCityName;
-        private TextView txtSlotTime;
+        private TextView txtAddress;
 
         public AddressViewHolder(View itemView) {
             this.itemView = itemView;
         }
 
-        public TextView getTxtAreaName() {
-            if (txtAreaName == null) {
-                txtAreaName = (TextView) itemView.findViewById(R.id.txtAreaName);
-                txtAreaName.setTypeface(faceRobotoRegular);
+        public TextView getTxtAddress() {
+            if (txtAddress == null) {
+                txtAddress = (TextView) itemView.findViewById(R.id.txtAddress);
+                txtAddress.setTypeface(faceRobotoRegular);
             }
-            return txtAreaName;
-        }
-
-        public TextView getTxtCityName() {
-            if (txtCityName == null) {
-                txtCityName = (TextView) itemView.findViewById(R.id.txtCityName);
-                txtCityName.setTypeface(faceRobotLight);
-            }
-            return txtCityName;
-        }
-
-        public TextView getTxtSlotTime() {
-            if (txtSlotTime == null) {
-                txtSlotTime = (TextView) itemView.findViewById(R.id.txtSlotTime);
-            }
-            return txtSlotTime;
+            return txtAddress;
         }
     }
 }

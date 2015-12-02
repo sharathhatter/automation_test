@@ -9,7 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.account.AddressSummaryDropdownAdapter;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -23,7 +23,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class HomeActivity extends BBActivity {
+public class HomeActivity extends SearchActivity {
 
     private Spinner mSpinnerArea;
     private ProgressBar mProgressBarArea;
@@ -53,6 +53,7 @@ public class HomeActivity extends BBActivity {
     }
 
     private void setUpAddressSpinner() {
+        mCurrentSpinnerIdx = 0;
         final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();
 
         boolean isGuest = AuthParameters.getInstance(this).isAuthTokenEmpty();
@@ -103,6 +104,7 @@ public class HomeActivity extends BBActivity {
         super.onNoBasketUpdate();
         if (mSpinnerArea != null && mSpinnerArea.getAdapter() != null
                 && mSpinnerArea.getAdapter().getCount() > 0) {
+            mCurrentSpinnerIdx = 0;
             mSpinnerArea.setSelection(0);
         }
     }
@@ -124,8 +126,8 @@ public class HomeActivity extends BBActivity {
     }
 
     @Override
-    public void onDataSynced(boolean isManuallyTriggered) {
-        super.onDataSynced(isManuallyTriggered);
+    public void onDataSynced() {
+        super.onDataSynced();
         setUpAddressSpinner();
     }
 
@@ -151,5 +153,22 @@ public class HomeActivity extends BBActivity {
     public void onResume() {
         super.onResume();
         setNextScreenNavigationContext(TrackEventkeys.HOME);
+        // Check if spinner's index is set to "CHANGE MY LOCATION"
+        // In case it is True, then reset it to 0, and ensure that spinner's on item-selection
+        // even is NOT triggered
+        if (mSpinnerArea != null && mSpinnerArea.getSelectedItemPosition() > 0
+                && mSpinnerArea.getAdapter() instanceof AddressSummaryDropdownAdapter) {
+            AddressSummaryDropdownAdapter adapter = (AddressSummaryDropdownAdapter) mSpinnerArea.getAdapter();
+            if (adapter.getSpinnerViewType(mSpinnerArea.getSelectedItemPosition())
+                    == AddressSummaryDropdownAdapter.VIEW_TYPE_CHANGE) {
+                mCurrentSpinnerIdx = 0;
+                mSpinnerArea.setSelection(0);
+            }
+        }
+    }
+
+    @Override
+    protected String getCategoryId() {
+        return getString(R.string.home);
     }
 }

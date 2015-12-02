@@ -50,7 +50,8 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
+import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -58,7 +59,6 @@ import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.managers.CityManager;
-import com.bigbasket.mobileapp.managers.SectionManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
@@ -242,7 +242,8 @@ public class UIUtil {
     }
 
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
-        SectionManager.clearAllSectionData(ctx);
+        DynamicPageDbHelper.clearAll(ctx);
+
         AppDataSyncHandler.reset(ctx);
         AppDataDynamic.reset(ctx);
 
@@ -257,7 +258,7 @@ public class UIUtil {
         if (!TextUtils.isEmpty(cityId) &&
                 !cityId.equals(String.valueOf(userDetails.analytics.cityId))) {
             editor.remove(Constants.AREA_INFO_CALL_LAST);
-            new AreaPinInfoAdapter(ctx).deleteData();
+            AreaPinInfoDbHelper.clearAll(ctx);
         }
 
         if (userDetails.analytics != null) {
@@ -420,7 +421,7 @@ public class UIUtil {
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BaseActivity) context).goToHome(false);
+                ((BaseActivity) context).goToHome();
             }
         });
         parent.addView(emptyPageView);
@@ -725,11 +726,6 @@ public class UIUtil {
             args.putString(TrackEventkeys.NAVIGATION_CTX, nc);
             fragment.setArguments(args);
         }
-    }
-
-    public static RadioButton getPaymentOptionRadioButton(ViewGroup parent, Context context, LayoutInflater inflater) {
-        return getPaymentOptionRadioButton(parent, context, inflater,
-                (int) context.getResources().getDimension(R.dimen.margin_small));
     }
 
     public static RadioButton getPaymentOptionRadioButton(ViewGroup parent, Context context, LayoutInflater inflater,

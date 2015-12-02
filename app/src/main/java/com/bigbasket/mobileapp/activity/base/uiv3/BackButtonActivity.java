@@ -18,7 +18,6 @@ public class BackButtonActivity extends BBActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDynamicAppDataBroadcastReceiver = null; // We don't want any receiver here
     }
 
     @Override
@@ -42,7 +41,12 @@ public class BackButtonActivity extends BBActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
         Intent intent = getIntent();
-        handleIntent(intent, savedInstanceState);
+        handleIntent(savedInstanceState);
+    }
+
+    @Override
+    protected void loadNavigationItems() {
+        // Do nothing here
     }
 
     @Override

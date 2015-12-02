@@ -8,7 +8,7 @@ import com.bigbasket.mobileapp.model.order.QCErrorData;
 import java.util.ArrayList;
 
 public interface OnAddressChangeListener {
-    void onAddressChanged(ArrayList<AddressSummary> addressSummaries);
+    void onAddressChanged(ArrayList<AddressSummary> addressSummaries, @Nullable String selectedAddressId);
 
     void onAddressNotSupported(String msg);
 

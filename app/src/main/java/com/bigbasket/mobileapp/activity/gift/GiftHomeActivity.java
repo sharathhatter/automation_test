@@ -129,7 +129,6 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
     }
 
     private void postGift(boolean useCommonMsg) {
-        showProgressDialog(getString(R.string.please_wait));
         if (useCommonMsg) {
             for (GiftItem giftItem : gift.getGiftItems()) {
                 giftItem.setMessage(null);

@@ -7,18 +7,21 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
+import com.bigbasket.mobileapp.activity.payment.FundWalletActivity;
+import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.activity.product.DiscountActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
@@ -31,28 +34,62 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+
+import retrofit.Call;
 
 public class DeepLinkHandler {
     public static final int SUCCESS = 1;
     public static final int FAILED = 2;
     public static final int LOGIN_REQUIRED = 3;
+    public static final int REGISTER_DEVICE_REQUIRED = 4;
+    public static final String PATH_MY_WALLET = "/member/credit/";
+    public static final String PATH_FUND_WALLET = "/payment/wallet/";
+    public static final String REGEX_PATH_MY_WALLET = "^" + PATH_MY_WALLET + "$";
+    public static final String REGEX_PATH_FUND_WALLET = "^" + PATH_FUND_WALLET + "$";
+    public static final String REGEX_PATH_PAY_NOW = "^/payment/pay_now/\\d+/$";
 
-    public static int handleDeepLink(ActivityAware context, Uri uri) {
+    public static int handleDeepLink(AppOperationAware context, Uri uri) {
         if (uri == null) {
             return FAILED;
         }
 
         AuthParameters authParameters = AuthParameters.getInstance(context.getCurrentActivity());
-        if (getLoginRequiredUrls().contains(uri.getHost()) && authParameters.isAuthTokenEmpty()) {
-            return LOGIN_REQUIRED;
+
+        /**
+         * checking if the visitorId is empty/null
+         * empty/null means the app hasn't registered the device with server
+         */
+        if (TextUtils.isEmpty(authParameters.getVisitorId())) {
+            return REGISTER_DEVICE_REQUIRED;
         }
+        if (authParameters.isAuthTokenEmpty()) {
+            if (uri.getHost().contains(Constants.HTTP_HOST)) {
+                String path = uri.getPath();
+                if (!TextUtils.isEmpty(path)) {
+                    for (Iterator<String> iterator = getHttpLoginRequiredUrls().iterator(); iterator.hasNext(); ) {
+                        String pathPattern = iterator.next();
+                        if (path.matches(pathPattern)) {
+                            return LOGIN_REQUIRED;
+                        }
+                    }
+                } else return FAILED;
+            }
+            if (getLoginRequiredUrls().contains(uri.getHost())) {
+                return LOGIN_REQUIRED;
+            }
+        }
+
         UtmHandler.postUtm(context.getCurrentActivity(), uri);
+        if (uri.getHost().endsWith(Constants.HTTP_HOST)) {
+            return handleHttpLinks(context, uri);
+        }
         switch (uri.getHost()) {
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
-                    Intent intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+                    Intent intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
                     intent.putExtra(Constants.PROMO_ID, Integer.parseInt(id));
                     context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -72,8 +109,9 @@ public class DeepLinkHandler {
                 id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id)) {
                     BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context.getCurrentActivity());
-                    ((ProgressIndicationAware) context).showProgressDialog("Please wait!");
-                    bigBasketApiService.getInvoice(id, new CallbackOrderInvoice<>(context.getCurrentActivity()));
+                    context.showProgressDialog("Please wait!");
+                    Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(id);
+                    call.enqueue(new CallbackOrderInvoice<>(context));
                     return SUCCESS;
                 }
                 return FAILED;
@@ -153,7 +191,7 @@ public class DeepLinkHandler {
                 }
                 return FAILED;
             case Constants.PROMO_LIST:
-                intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+                intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
@@ -182,14 +220,14 @@ public class DeepLinkHandler {
                 return FAILED;
             case Constants.DYNAMIC_PAGE:
                 String screenName = uri.getQueryParameter(Constants.SCREEN);
-                intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+                intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
                 intent.putExtra(Constants.SCREEN, screenName);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_DYNAMIC_SCREEN);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
             case Constants.AUTH:
                 if (authParameters.isAuthTokenEmpty()) {
-                    context.getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_DEEP_LINK);
+                    context.getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_DEEP_LINK, true);
                     return SUCCESS;
                 }
                 return FAILED;
@@ -204,8 +242,15 @@ public class DeepLinkHandler {
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
             case Constants.HOME:
-                context.getCurrentActivity().goToHome(false);
+                context.getCurrentActivity().goToHome();
                 return SUCCESS;
+            case Constants.STORE_LIST:
+                String category = uri.getQueryParameter(Constants.CATEGORY);
+                if (!TextUtils.isEmpty(category) && !category.equalsIgnoreCase("null")) {
+                    context.getCurrentActivity().launchStoreList(category);
+                    return SUCCESS;
+                }
+                return FAILED;
             default:
                 return FAILED;
         }
@@ -221,6 +266,38 @@ public class DeepLinkHandler {
         loginRequiredUrls.add(Constants.ALL_SL);
         loginRequiredUrls.add(Constants.SMART_BASKET_SLUG);
         loginRequiredUrls.add(Constants.INBOX);
+        return loginRequiredUrls;
+    }
+
+    private static int handleHttpLinks(AppOperationAware context, Uri uri) {
+        String path = uri.getPath();
+        if (!TextUtils.isEmpty(path)) {
+            if (path.equalsIgnoreCase(PATH_MY_WALLET)) {
+                Intent intent = new Intent(context.getCurrentActivity(), DoWalletActivity.class);
+                context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                return SUCCESS;
+            } else if (path.equalsIgnoreCase(PATH_FUND_WALLET)) {
+                Intent intent = new Intent(context.getCurrentActivity(), FundWalletActivity.class);
+                context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                return SUCCESS;
+            } else if (path.matches(REGEX_PATH_PAY_NOW)) {
+                String orderId = uri.getLastPathSegment();
+                if (!TextUtils.isEmpty(orderId) && !orderId.equalsIgnoreCase(Constants.PAY_NOW)) {
+                    Intent intent = new Intent(context.getCurrentActivity(), PayNowActivity.class);
+                    intent.putExtra(Constants.ORDER_ID, orderId);
+                    context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    return SUCCESS;
+                }
+            }
+        }
+        return FAILED;
+    }
+
+    private static Set<String> getHttpLoginRequiredUrls() {
+        Set<String> loginRequiredUrls = new HashSet<>();
+        loginRequiredUrls.add(REGEX_PATH_MY_WALLET);
+        loginRequiredUrls.add(REGEX_PATH_FUND_WALLET);
+        loginRequiredUrls.add(REGEX_PATH_PAY_NOW);
         return loginRequiredUrls;
     }
 }
