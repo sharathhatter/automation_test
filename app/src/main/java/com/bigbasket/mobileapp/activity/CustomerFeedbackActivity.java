@@ -38,6 +38,7 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
             showAlertDialog(null, "No case-id provided");
             return;
         }
+        setTitle(getString(R.string.feedback));
         showFeedbackLayout();
     }
 
