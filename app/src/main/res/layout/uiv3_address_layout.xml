@@ -34,7 +34,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/imgEditIcon"
-        android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/imgEditIcon"
         android:layout_toRightOf="@id/radioBtnSelectedAddress">
 
@@ -63,7 +62,7 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/partial_address_textview"
+        android:id="@+id/txtPartialAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

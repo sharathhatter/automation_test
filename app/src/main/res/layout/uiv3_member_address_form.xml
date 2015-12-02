@@ -11,13 +11,13 @@
         android:layout_above="@+id/txtSaveAddress"
         android:layout_alignParentTop="true"
         android:paddingTop="@dimen/padding_normal"
-        android:paddingBottom="@dimen/padding_normal"
         android:background="@color/white"
         android:scrollbars="none">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/padding_normal">
 
             <TextView
                 android:id="@+id/lblNeedMoreAddressInfo"
