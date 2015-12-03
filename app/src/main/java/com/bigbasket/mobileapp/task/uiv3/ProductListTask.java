@@ -17,13 +17,15 @@ public class ProductListTask<T extends AppOperationAware> {
     private String navigationCtx;
     private HashMap<String, String> paramMap;
     private boolean isFilterOrSortApplied;
+    private int currentTabIndx;
 
     public ProductListTask(T ctx, HashMap<String, String> paramMap, String navigationCtx,
-                           boolean isFilterOrSortApplied) {
+                           boolean isFilterOrSortApplied, int currentTabIndx) {
         this.ctx = ctx;
         this.paramMap = paramMap;
         this.navigationCtx = navigationCtx;
         this.isFilterOrSortApplied = isFilterOrSortApplied;
+        this.currentTabIndx = currentTabIndx;
     }
 
 
@@ -39,6 +41,7 @@ public class ProductListTask<T extends AppOperationAware> {
         ctx.showProgressDialog("Please wait...");
         Call<ApiResponse<ProductTabData>> call =
                 bigBasketApiService.productList(navigationCtx, paramMap);
-        call.enqueue(new ProductListApiResponseCallback<>(ctx, false, isFilterOrSortApplied));
+        call.enqueue(new ProductListApiResponseCallback<>(ctx, false, isFilterOrSortApplied,
+                currentTabIndx));
     }
 }

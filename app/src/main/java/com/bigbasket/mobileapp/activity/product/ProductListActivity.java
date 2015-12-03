@@ -102,7 +102,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         mTitlePassedViaIntent = getIntent().getStringExtra(Constants.TITLE);
         setTitle(mTitlePassedViaIntent);
         mNameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
-        loadProductTabs(false);
+        loadProductTabs(false, 0);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         return R.layout.uiv3_product_list_layout;
     }
 
-    private void loadProductTabs(boolean isFilterOrSortApplied) {
+    private void loadProductTabs(boolean isFilterOrSortApplied, int currentTabIndx) {
         if (mNameValuePairs == null || mNameValuePairs.size() == 0) {
             return;
         }
@@ -128,12 +128,13 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             mViewPager = null;
             mMapForTabWithNoProducts = null;
             mArrayTabTypeAndFragmentPosition = null;
+            mTabNameWithEmptyProductView = null;
         }
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
         setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
         new ProductListTask<>(this, paramMap, getCurrentNavigationContext(),
-                isFilterOrSortApplied).startTask();
+                isFilterOrSortApplied, currentTabIndx).startTask();
     }
 
     @Override
@@ -180,7 +181,8 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     }
 
     @Override
-    public void setProductTabData(ProductTabData productTabData, boolean isFilterOrSortApplied) {
+    public void setProductTabData(ProductTabData productTabData, boolean isFilterOrSortApplied,
+                                  int currentTabIndx) {
 
         if (productTabData.getProductTabInfos().size() > 0) {
             ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(productTabData.getScreenName());
@@ -239,7 +241,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                     mMapForTabWithNoProducts = new HashMap<>();
                 }
                 mMapForTabWithNoProducts.put(tabType, products);
-                renderFilterAndSortProductList(productTabInfo, tabType);
+                renderFilterAndSortProductList(productTabInfo, tabType, currentTabIndx);
             } else {
                 // When only one product tab
                 findViewById(R.id.slidingTabs).setVisibility(View.GONE);
@@ -486,10 +488,12 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     }
 
     private void renderFilterAndSortProductList(ProductTabInfo productTabInfo,
-                                                String filterAndSortTabName) {
+                                                String filterAndSortTabName,
+                                                int currentTabIndx) {
         if (filterAndSortTabName == null || mViewPager == null || productTabInfo == null
                 || productTabInfo.getProductInfo() == null) return;
-        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(0);
+        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter())
+                .getRegisteredFragment(currentTabIndx);
         if (fragment != null) {
             ArrayList<Product> products = productTabInfo.getProductInfo().getProducts();
             if (products == null) {
@@ -608,7 +612,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             // New product list is requested over current page, so change nc by copying next-nc
             setCurrentNavigationContext(navigationCtx);
         }
-        loadProductTabs(false);
+        loadProductTabs(false, 0);
     }
 
     private void setProductListForFragmentAtPosition(int position) {
@@ -709,7 +713,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             // New product list is requested over current page, so change nc by copying next-nc
             setCurrentNavigationContext(getNextScreenNavigationContext());
         }
-        loadProductTabs(false);
+        loadProductTabs(false, 0);
     }
 
     public void onFooterViewClicked(View v) {
@@ -853,7 +857,8 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         ArrayList<String> sortAndFilterArrayList = new ArrayList<>();
         sortAndFilterArrayList.add(tabType);
         mNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(sortAndFilterArrayList)));
-        loadProductTabs(true);
+        loadProductTabs(true,
+                mViewPager != null && mViewPager.getCurrentItem() >= 0 ? mViewPager.getCurrentItem() : 0);
     }
 
     private void trackSortByEvent(String sortedOn) {
