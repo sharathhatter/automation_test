@@ -130,7 +130,7 @@ dependencies {
     compile project(':wibmoSDK')
     compile files('libs/AF-Android-SDK-v2.3.1.17.jar')
     compile project(':moe-addon-ubox')
-    compile project(':mobikwik_Payment_Android_SDK')
+    compile project(':mobikwik-sdk')
     compile files('libs/pgsdk.jar')
     compile project(':payuSdkUi')
     compile files('libs/GoogleConversionTrackingSdk-2.2.4.jar')

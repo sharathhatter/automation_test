@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -38,10 +39,10 @@ import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseC
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.factory.payment.OrderPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.factory.payment.impl.MobikwikPayment;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
-import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -66,6 +67,8 @@ import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.crashlytics.android.Crashlytics;
 import com.enstage.wibmo.sdk.WibmoSDK;
+import com.mobikwik.sdk.MobikwikSDK;
+import com.mobikwik.sdk.lib.MKTransactionResponse;
 import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
@@ -164,7 +167,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     @Override
     public void onResume() {
         super.onResume();
-        processMobikWikResponse();
         if (mOrderPrepaymentProcessingTask != null && !mIsPrepaymentAbortInitiated) {
             mOrderPrepaymentProcessingTask.resume();
         }
@@ -206,16 +208,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 && mOrdersCreated != null;
     }
 
-    private void processMobikWikResponse() {
-        String txnId = MobikwikResponseHandler.getLastTransactionID();
-        if (!TextUtils.isEmpty(txnId)) {
-            if (mOrdersCreated != null) {
-                new PostPaymentProcessor<>(this, txnId)
-                        .withPotentialOrderId(mPotentialOrderId)
-                        .withOrderId(mOrdersCreated.get(0).getOrderNumber())
-                        .processPayment();
-            }
-            MobikwikResponseHandler.clear();
+    private void processMobikWikResponse(String txnId) {
+        if (mOrdersCreated != null) {
+            new PostPaymentProcessor<>(this, txnId)
+                    .withPotentialOrderId(mPotentialOrderId)
+                    .withOrderId(mOrdersCreated.get(0).getOrderNumber())
+                    .processPayment();
         }
     }
 
@@ -273,7 +271,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             });
         }
     }
-
 
     private void renderPaymentDetails() {
         mActiveVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
@@ -547,6 +544,27 @@ public class PaymentSelectionActivity extends BackButtonActivity
                     .withPotentialOrderId(mPotentialOrderId)
                     .withOrderId(mOrdersCreated.get(0).getOrderNumber())
                     .processPayment();
+        } else if (requestCode == MobikwikPayment.MOBIKWIK_REQ_CODE) {
+            if (data != null) {
+                MKTransactionResponse response = (MKTransactionResponse) data.getSerializableExtra(MobikwikSDK.EXTRA_TRANSACTION_RESPONSE);
+                if (response != null) {
+                    if (!TextUtils.isEmpty(response.orderId)) {
+                        try {
+                            if (BuildConfig.DEBUG) {
+                                processMobikWikResponse(String.valueOf(Integer.parseInt(response.orderId) / 5000));
+                            } else {
+                                processMobikWikResponse(response.orderId);
+                            }
+                        } catch (NumberFormatException e) {
+                            Crashlytics.logException(e);
+                        }
+                    } else {
+                        Crashlytics.logException(new IllegalArgumentException());
+                    }
+                } else {
+                    Crashlytics.logException(new IllegalArgumentException());
+                }
+            }
         } else {
             switch (resultCode) {
                 case NavigationCodes.VOUCHER_APPLIED:
@@ -609,7 +627,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
         } else {
             showOrderThankyou(orders, addMoreLink, addMoreMsg);
         }
-
     }
 
     private void showOrderThankyou(ArrayList<Order> orders, String addMoreLink, String addMoreMsg) {
@@ -771,7 +788,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             default:
                 super.onPositiveButtonClicked(sourceName, valuePassed);
         }
-
     }
 
     @Override
@@ -826,17 +842,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             trackEvent(PLACE_ORDER_KNOW_MORE_DIALOG_CANCELLED, null);
         }
     }
-
-    private class OnShowAvailableVouchersListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            Intent availableVoucherListActivity = new Intent(getCurrentActivity(),
-                    AvailableVoucherListActivity.class);
-            availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
-            startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
-        }
-    }
-
 
     public static class PaymentOrderInfoDialog extends DialogFragment
             implements Dialog.OnClickListener {
@@ -989,6 +994,16 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 callback.onKnowMoreCancelled(
                         args != null ? args.getInt(ARG_DIALOG_IDENTIFIER, 0) : 0);
             }
+        }
+    }
+
+    private class OnShowAvailableVouchersListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Intent availableVoucherListActivity = new Intent(getCurrentActivity(),
+                    AvailableVoucherListActivity.class);
+            availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
+            startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
         }
     }
 
