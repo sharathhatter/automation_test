@@ -15,14 +15,16 @@ import com.paytm.pgsdk.PaytmPGService;
 import java.util.HashMap;
 
 public class PaytmPayment {
-
+    public static final String TXN_ID = "ORDER_ID";
+    private static final String TXN_AMOUNT = "TXN_AMOUNT";
     public static void startPaymentGateway(HashMap<String, String> paymentParams, Activity ctx,
                                            @Nullable String potentialOrderId,
                                            @Nullable String fullOrderId,
                                            boolean isPayNow, boolean isFundWallet) {
 
         if (ctx instanceof PaymentTxnInfoAware) {
-            ((PaymentTxnInfoAware) ctx).setTxnId(paymentParams.get(Constants.PAYTM_TRANS_ID_KEY));
+            ((PaymentTxnInfoAware) ctx).setTxnDetails(paymentParams.get(TXN_ID),
+                    paymentParams.get(TXN_AMOUNT));
         }
         PaytmPGService paytmPGService = BuildConfig.DEBUG ? PaytmPGService.getStagingService() :
                 PaytmPGService.getProductionService();

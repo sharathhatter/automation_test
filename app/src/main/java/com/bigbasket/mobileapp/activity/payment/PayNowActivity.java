@@ -53,7 +53,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     @Nullable
     private String mOrderId;
     @Nullable
-    private String mHDFCPayzappTxnId;
+    private String mTxnId;
     private double mFinalTotal;
     private PayNowPrepaymentProcessingTask<PayNowActivity> mPayNowPrepaymentProcessingTask;
 
@@ -75,8 +75,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (mHDFCPayzappTxnId != null) {
-            outState.putString(Constants.TXN_ID, mHDFCPayzappTxnId);
+        if (mTxnId != null) {
+            outState.putString(Constants.TXN_ID, mTxnId);
         }
         if (mSelectedPaymentMethod != null) {
             outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
@@ -90,8 +90,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (mHDFCPayzappTxnId == null) {
-            mHDFCPayzappTxnId = savedInstanceState.getString(Constants.TXN_ID);
+        if (mTxnId == null) {
+            mTxnId = savedInstanceState.getString(Constants.TXN_ID);
         }
         if (mSelectedPaymentMethod == null) {
             mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
@@ -217,7 +217,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            new PostPaymentProcessor<>(this, mHDFCPayzappTxnId)
+            new PostPaymentProcessor<>(this, mTxnId)
                     .withOrderId(mOrderId)
                     .withIsPayNow(true)
                     .processPayzapp(data, resultCode, UIUtil.formatAsMoney(mFinalTotal));
@@ -247,8 +247,9 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     @Override
-    public void setTxnId(String txnId) {
-        mHDFCPayzappTxnId = txnId;
+    public void setTxnDetails(String txnId, String amount) {
+        mTxnId = txnId;
+        mFinalTotal = Double.parseDouble(amount);
     }
 
     @Override

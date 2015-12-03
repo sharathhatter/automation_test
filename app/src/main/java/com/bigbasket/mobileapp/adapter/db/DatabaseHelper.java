@@ -95,6 +95,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void upgradeTo16(SQLiteDatabase db) {
         db.execSQL(DynamicPageDbHelper.CREATE_TABLE);
         db.execSQL(AppDataDynamicDbHelper.CREATE_TABLE);
+        db.execSQL(CategoryAdapter.CREATE_TABLE);
+        db.execSQL(SubCategoryAdapter.CREATE_TABLE);
+        db.execSQL(AreaPinInfoDbHelper.CREATE_TABLE);
     }
 
     private void createTable(SQLiteDatabase db) {

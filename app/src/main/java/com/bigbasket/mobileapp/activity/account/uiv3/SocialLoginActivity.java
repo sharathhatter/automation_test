@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
@@ -178,7 +179,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, "");
         if (!checkInternetConnection()) {
             handler.sendOfflineError();
-            onLogoutComplete(false);
+            postLogout(false);
             return;
         }
         if (!TextUtils.isEmpty(socialAccountType) && SocialAccountType.getSocialLoginTypes().contains(socialAccountType)) {
@@ -206,8 +207,9 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     /**
      * Return true to consume logout event and block defaut post logout operation
      */
-    protected boolean onLogoutComplete(boolean success) {
-        return false;
+    protected void postLogout(boolean success) {
+        Toast.makeText(getCurrentActivity(), getString(R.string.loggedOut),
+                Toast.LENGTH_SHORT).show();
     }
 
     @SuppressWarnings("unchecked")
@@ -256,9 +258,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         }
         moEHelper.logoutUser();
         mIsInLogoutMode = false;
-        if (!onLogoutComplete(true)) {
-            // do nothing
-        }
+        postLogout(true);
     }
 
     public void saveLoginUserDetailInPreference(LoginApiResponse loginApiResponse, String socialAccountType,
@@ -295,10 +295,16 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             editor.putString(Constants.DEEP_LINK, deepLink);
             editor.apply();
         } else {
-            String fragmentCode = getIntent().getStringExtra(Constants.FRAGMENT_CODE);
-            if (!TextUtils.isEmpty(fragmentCode)) {
+            int fragmentCode;
+            try {
+                fragmentCode = getIntent().getIntExtra(Constants.FRAGMENT_CODE, -1);
+            } catch (ClassCastException e) {
+                // Defensive catch
+                fragmentCode = -1;
+            }
+            if (fragmentCode > -1) {
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-                editor.putString(Constants.FRAGMENT_CODE, fragmentCode);
+                editor.putInt(Constants.FRAGMENT_CODE, fragmentCode);
                 editor.apply();
             }
         }

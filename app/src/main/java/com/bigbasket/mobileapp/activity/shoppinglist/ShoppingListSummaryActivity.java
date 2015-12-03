@@ -619,6 +619,13 @@ public class ShoppingListSummaryActivity extends SearchActivity {
     }
 
     @Override
+    protected void postLogout(boolean success) {
+        super.postLogout(success);
+        // In case of shopping-list, take the user back to home-page
+        goToHome();
+    }
+
+    @Override
     public void onBasketChanged(Intent data) {
         super.onBasketChanged(data);
         handleIntent(null);

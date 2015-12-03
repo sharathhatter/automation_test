@@ -89,6 +89,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mAppliedVoucherCode;
     private String mSelectedPaymentMethod;
     private OrderDetails mOrderDetails;
+    @Nullable
+    private String mOrderAmount; // Only applicable for Payzapp
     private String mTxnId;
     private ArrayList<Order> mOrdersCreated;
     private String mAddMoreLink;
@@ -131,7 +133,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             if (isPaymentPending()) {
                 startPrepaymentProcessing(savedInstanceState);
             }
-
+            mOrderAmount = savedInstanceState.getString(Constants.AMOUNT);
         } else {
             trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
         }
@@ -152,6 +154,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
             outState.putBoolean(IS_PREPAYMENT_TASK_STARTED, mIsPrepaymentProcessingStarted);
             outState.putBoolean(IS_PREPAYMENT_TASK_PAUSED, mOrderPrepaymentProcessingTask.isPaused());
             outState.putBoolean(IS_PREPAYMENT_ABORT_INITIATED, mIsPrepaymentAbortInitiated);
+        }
+        if (mOrderAmount != null) {
+            outState.putString(Constants.AMOUNT, mOrderAmount);
         }
         super.onSaveInstanceState(outState);
     }
@@ -188,7 +193,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 mOrderPrepaymentProcessingTask.pause();
             }
             showAlertDialog(null, getString(R.string.abort_payment_transaction_confirmation),
-                    getString(R.string.cancel_transaction), getString(R.string.noTxt),
+                    getString(R.string.yesTxt), getString(R.string.noTxt),
                     Constants.PREPAYMENT_ABORT_CONFIRMATION_DIALOG, null);
             mIsPrepaymentAbortInitiated = true;
         } else {
@@ -536,7 +541,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
             new PostPaymentProcessor<>(this, mTxnId)
                     .withPotentialOrderId(mPotentialOrderId)
-                    .processPayzapp(data, resultCode, mOrderDetails.getFormattedFinalTotal());
+                    .processPayzapp(data, resultCode, mOrderAmount);
         } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
             new PostPaymentProcessor<>(this, mTxnId)
                     .withPotentialOrderId(mPotentialOrderId)
@@ -643,6 +648,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mAddMoreLink = null;
         mAddMoreMsg = null;
         mElapsedTime = null;
+        mOrderAmount = null;
 
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
@@ -706,8 +712,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void setTxnId(String txnId) {
+    public void setTxnDetails(String txnId, String amount) {
         mTxnId = txnId;
+        mOrderAmount = amount;
     }
 
     @Override

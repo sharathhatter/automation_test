@@ -134,7 +134,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                     key = MobikwikResponseHandler.KEY_TRANS_ID;
                     break;
                 case Constants.PAYTM_WALLET:
-                    key = Constants.PAYTM_TRANS_ID_KEY;
+                    key = PaytmPayment.TXN_ID;
                     break;
             }
             if (!TextUtils.isEmpty(key)) {
