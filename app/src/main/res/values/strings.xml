@@ -419,7 +419,7 @@
     <string name="createNewAddress">Create new address</string>
     <string name="addressAdded">Address added successfully</string>
     <string name="addressUpdated">Address updated successfully</string>
-    <string name="newAddressNotAllowed">We regret to inform that an address\' city can\'t be changed. Hence, when you click on \"Save\" we will create a new address.</string>
+    <string name="newAddressNotAllowed">We regret to inform that an address\' city can\'t be changed. Hence, when you click on \"Continue\" we will create a new address.</string>
     <string name="your_loc">\u0020your location</string>
     <string name="store_empty">Sorry, Currently we do not have any speciality stores for\u0020</string>
     <string name="available_in">\u0020available \nin </string>
