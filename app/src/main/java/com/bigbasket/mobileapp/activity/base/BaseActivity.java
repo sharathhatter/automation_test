@@ -388,20 +388,24 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                 final Bundle passedValue, String positiveBtnText) {
         String negativeButtonText = null;
 
-        if (dialogButton != DialogButton.NONE && nxtDialogButton != DialogButton.NONE) {
-            if (dialogButton == DialogButton.YES || dialogButton == DialogButton.OK) {
-                if (TextUtils.isEmpty(positiveBtnText)) {
-                    int textId = dialogButton == DialogButton.YES ? R.string.yesTxt : R.string.ok;
-                    positiveBtnText = getString(textId);
-                }
+        if (dialogButton != DialogButton.NONE &&
+                (dialogButton == DialogButton.YES || dialogButton == DialogButton.OK)) {
+            if (TextUtils.isEmpty(positiveBtnText)) {
+                int textId = dialogButton == DialogButton.YES ? R.string.yesTxt : R.string.ok;
+                positiveBtnText = getString(textId);
             }
-            if (nxtDialogButton == DialogButton.NO || nxtDialogButton == DialogButton.CANCEL) {
-                int textId = nxtDialogButton == DialogButton.NO ? R.string.noTxt : R.string.cancel;
-                negativeButtonText = getString(textId);
-            }
+        }
+        if (nxtDialogButton != DialogButton.NONE &&
+                (nxtDialogButton == DialogButton.NO || nxtDialogButton == DialogButton.CANCEL)) {
+            int textId = nxtDialogButton == DialogButton.NO ? R.string.noTxt : R.string.cancel;
+            negativeButtonText = getString(textId);
         }
         if (isSuspended())
             return;
+        // Defensive check
+        if (TextUtils.isEmpty(positiveBtnText) && TextUtils.isEmpty(negativeButtonText)) {
+            positiveBtnText = getString(R.string.ok);
+        }
         ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
                 requestCode, title == null ? getString(R.string.app_name) : title, msg, positiveBtnText,
                 negativeButtonText, passedValue, false);

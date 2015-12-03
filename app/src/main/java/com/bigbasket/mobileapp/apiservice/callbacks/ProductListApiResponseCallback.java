@@ -17,13 +17,16 @@ public class ProductListApiResponseCallback<T extends AppOperationAware> extends
     private T ctx;
     private boolean isInlineProgressBar;
     private boolean isFilterOrSortApplied;
+    private int currentTabIndx;
 
     public ProductListApiResponseCallback(T ctx, boolean isInlineProgressBar,
-                                          boolean isFilterOrSortApplied) {
+                                          boolean isFilterOrSortApplied,
+                                          int currentTabIndx) {
         super(ctx, true);
         this.ctx = ctx;
         this.isInlineProgressBar = isInlineProgressBar;
         this.isFilterOrSortApplied = isFilterOrSortApplied;
+        this.currentTabIndx = currentTabIndx;
     }
 
     @Override
@@ -60,7 +63,7 @@ public class ProductListApiResponseCallback<T extends AppOperationAware> extends
                 }
             }
             ((ProductListDataAware) ctx).setProductTabData(productTabData,
-                    isFilterOrSortApplied);
+                    isFilterOrSortApplied, currentTabIndx);
 
         } else {
             ctx.getHandler().sendEmptyMessage(productListDataApiResponse.status,
