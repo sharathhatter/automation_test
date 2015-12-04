@@ -4,7 +4,7 @@
     android:layout_height="wrap_content">
 
     <include
-        android:id="@+id/coordinator_layout"
+        android:id="@+id/tabLayout"
         layout="@layout/uiv3_swipe_tab_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -40,7 +40,7 @@ android {
 
     signingConfigs {
         bigbasket {
-            storeFile file(project.KEY_STORE_FILE)
+            storeFile project.KEY_STORE_FILE != "NONE" ? file(project.KEY_STORE_FILE) : null
             storePassword project.STORE_PASSWD
             keyAlias project.KEY_ALIAS
             keyPassword project.KEY_PASSWD
@@ -63,7 +63,7 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
-            signingConfig signingConfigs.bigbasket
+            signingConfig signingConfigs.bigbasket.storeFile != null ? signingConfigs.bigbasket : null
         }
         debug {
             multiDexEnabled true

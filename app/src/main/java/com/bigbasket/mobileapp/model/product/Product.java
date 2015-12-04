@@ -132,10 +132,8 @@ public class Product extends BaseProduct {
         }
         boolean isStoreIdsNull = source.readByte() == (byte) 1;
         if (!isStoreIdsNull) {
-            String storeId = source.readString();
-            Type type = new TypeToken<List<String>>() {
-            }.getType();
-            storeIds = new Gson().fromJson(storeId, type);
+            storeIds = new ArrayList<>();
+            source.readStringList(storeIds);
         }
     }
 
@@ -244,7 +242,7 @@ public class Product extends BaseProduct {
         boolean isStoredIdsNull = storeIds == null;
         dest.writeByte(isStoredIdsNull ? (byte) 1 : (byte) 0);
         if (!isStoredIdsNull) {
-            dest.writeList(storeIds);
+            dest.writeStringList(storeIds);
         }
     }
 

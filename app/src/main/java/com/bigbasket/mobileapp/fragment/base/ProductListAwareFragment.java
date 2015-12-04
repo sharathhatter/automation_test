@@ -140,8 +140,10 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
                 public void failure() {
                     setNextPageLoading(false);
-                    mProductListRecyclerAdapter.setLoadingFailed(true);
-                    mProductListRecyclerAdapter.notifyDataSetChanged();
+                    if (mProductListRecyclerAdapter != null) {
+                        mProductListRecyclerAdapter.setLoadingFailed(true);
+                        mProductListRecyclerAdapter.notifyDataSetChanged();
+                    }
                 }
 
                 @Override

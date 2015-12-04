@@ -84,6 +84,7 @@ public class DynamicScreenFragment extends BaseSectionFragment {
 
             @Override
             public void onFailure(Throwable t) {
+                if (isSuspended()) return;
                 onDynamicScreenFailure(t);
             }
         });

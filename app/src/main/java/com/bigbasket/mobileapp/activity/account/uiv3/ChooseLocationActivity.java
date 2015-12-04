@@ -78,6 +78,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     private void renderLocation() {
+        if (isSuspended()) return;
         if (!DataUtil.isLocationServiceEnabled(this)) {
             showAlertDialog(getString(R.string.enableLocationHeading),
                     getString(R.string.enableLocation),
