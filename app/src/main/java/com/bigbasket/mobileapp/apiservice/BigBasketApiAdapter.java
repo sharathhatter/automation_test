@@ -2,9 +2,11 @@ package com.bigbasket.mobileapp.apiservice;
 
 import android.content.Context;
 
+import com.bigbasket.mobileapp.devconfig.DeveloperConfigs;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
@@ -60,6 +62,13 @@ public class BigBasketApiAdapter {
         okHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
         okHttpClient.interceptors().add(new BigBasketApiInterceptor(authParameters.getVisitorId(),
                 DataUtil.getAppVersion(context), authParameters.getBbAuthToken()));
+
+        Interceptor loggingInterceptor = DeveloperConfigs.getHttpLoggingInterceptor(context);
+
+        if(loggingInterceptor != null) {
+            okHttpClient.interceptors().add(loggingInterceptor);
+            okHttpClient.networkInterceptors().add(loggingInterceptor);
+        }
         return okHttpClient;
     }
 }
