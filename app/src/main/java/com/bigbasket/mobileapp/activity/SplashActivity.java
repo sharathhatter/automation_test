@@ -235,6 +235,7 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
 
             @Override
             public void onFailure(Throwable t) {
+                if (isSuspended()) return;
                 showNoInternetConnectionView(getString(R.string.networkError));
             }
 

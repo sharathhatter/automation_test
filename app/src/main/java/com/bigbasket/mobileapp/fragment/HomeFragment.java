@@ -155,6 +155,7 @@ public class HomeFragment extends BaseSectionFragment {
 
             @Override
             public void onFailure(Throwable t) {
+                if (isSuspended()) return;
                 displayHomePageError(getString(R.string.networkError), R.drawable.empty_no_internet);
             }
 
@@ -187,11 +188,13 @@ public class HomeFragment extends BaseSectionFragment {
                         SectionCursorHelper.getSectionDataAsync(data, new SectionCursorHelper.Callback() {
                             @Override
                             public void onParseSuccess(@Nullable GetDynamicPageApiResponse getDynamicPageApiResponse) {
+                                if (isSuspended() || isDetached()) return;
                                 handleHomePageResponse(getDynamicPageApiResponse);
                             }
 
                             @Override
                             public void onParseFailure() {
+                                if (isSuspended() || isDetached()) return;
                                 displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
                             }
                         });

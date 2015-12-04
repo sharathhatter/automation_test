@@ -475,12 +475,14 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 @Override
                 public void onFailure(int httpErrorCode, String msg) {
                     super.onFailure(httpErrorCode, msg);
+                    if (isSuspended()) return;
                     notifyEmptyFragmentAboutFailure();
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
                     super.onFailure(t);
+                    if (isSuspended()) return;
                     notifyEmptyFragmentAboutFailure();
                 }
             });
