@@ -18,8 +18,8 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
 import com.bigbasket.mobileapp.factory.payment.FundWalletPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.factory.payment.impl.MobikwikPayment;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
-import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
@@ -33,6 +33,8 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.crashlytics.android.Crashlytics;
 import com.enstage.wibmo.sdk.WibmoSDK;
+import com.mobikwik.sdk.MobikwikSDK;
+import com.mobikwik.sdk.lib.MKTransactionResponse;
 import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
@@ -95,7 +97,6 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     @Override
     public void onResume() {
         super.onResume();
-        processMobikWikResponse();
     }
 
     @Override
@@ -106,15 +107,11 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         }
     }
 
-    private void processMobikWikResponse() {
-        String txnId = MobikwikResponseHandler.getLastTransactionID();
-        if (!TextUtils.isEmpty(txnId)) {
-            if (MobikwikResponseHandler.wasTransactionSuccessful()) {
-                onFundWalletSuccess();
-            } else {
-                onFundWalletFailure();
-            }
-            MobikwikResponseHandler.clear();
+    private void processMobikWikResponse(int status) {
+        if (status == 0) {
+            onFundWalletSuccess();
+        } else {
+            onFundWalletFailure();
         }
     }
 
@@ -232,6 +229,17 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                 onFundWalletSuccess();
             } else {
                 onFundWalletFailure();
+            }
+        } else if (requestCode == MobikwikPayment.MOBIKWIK_REQ_CODE) {
+            if (data != null) {
+                MKTransactionResponse response = (MKTransactionResponse) data.getSerializableExtra(MobikwikSDK.EXTRA_TRANSACTION_RESPONSE);
+                if (response != null) {
+                    try {
+                        processMobikWikResponse(Integer.parseInt(response.statusCode));
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

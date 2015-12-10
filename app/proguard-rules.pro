@@ -153,12 +153,7 @@
 }
 
 # Mobikwik
--keepclassmembers class com.paymentsdk.android.PGWebView$MyJavaScriptInterface{
-   public *;
-}
-
--keep class com.paymentsdk.android.model.** { *; }
-
+-keep class com.mobikwik.sdk.**{ *; }
 
 #moengage
 -keep class com.moe.** { *; }

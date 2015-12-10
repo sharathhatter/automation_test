@@ -617,11 +617,6 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.payment.MobiKwikResponseHandlerActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BackButtonTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
             android:name=".activity.payment.PayNowActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"

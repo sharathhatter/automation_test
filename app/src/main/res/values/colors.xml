@@ -81,5 +81,6 @@
     <color name="uiv3_default_button_click_bck">#fafafa</color>
 
     <color name="uiv3_bbShops_circle">#84c225</color>
+    <color name="uic_btn_disable">#c2c1c1</color>
 
 </resources>
