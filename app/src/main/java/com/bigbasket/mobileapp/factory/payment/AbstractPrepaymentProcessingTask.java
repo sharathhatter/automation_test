@@ -71,12 +71,12 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         this.minDuation = minDuration;
     }
 
-    public void clearMinDuration(){
-        if(minDuation > 0 && minDurationCountDownTimer != null){
-            if(!minDurationCountDownTimer.isFinished()){
+    public void clearMinDuration() {
+        if (minDuation > 0 && minDurationCountDownTimer != null) {
+            if (!minDurationCountDownTimer.isFinished()) {
                 minDurationCountDownTimer.cancel();
                 minDurationCountDownTimer = null;
-                if(countDownLatch != null){
+                if (countDownLatch != null) {
                     countDownLatch.countDown();
                 }
             }
@@ -87,15 +87,16 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         this.callback = callback;
     }
 
-    public synchronized void pause(){
+    public synchronized void pause() {
         isPaused = true;
     }
+
     //Must be called from main thread
-    public synchronized void resume(){
-        if(Looper.getMainLooper() != Looper.myLooper()){
+    public synchronized void resume() {
+        if (Looper.getMainLooper() != Looper.myLooper()) {
             throw new IllegalStateException("Must be called from main thread");
         }
-        if(isPaused){
+        if (isPaused) {
             isPaused = false;
             Boolean result = null;
             try {
@@ -104,7 +105,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                     | TimeoutException | CancellationException e) {
                 //Ignore
             }
-            if(result != null) {
+            if (result != null) {
                 onPostExecute(result);
             }
         }
@@ -114,13 +115,15 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         return isPaused;
     }
 
-    public synchronized @Nullable String getTransactionId(){
-        if(payzappPrePaymentParamsResponse != null
-                && payzappPrePaymentParamsResponse.payzappPostParams != null){
+    public synchronized
+    @Nullable
+    String getTransactionId() {
+        if (payzappPrePaymentParamsResponse != null
+                && payzappPrePaymentParamsResponse.payzappPostParams != null) {
             return payzappPrePaymentParamsResponse.payzappPostParams.getTxnId();
         }
 
-        if(prePaymentParamsResponse != null && prePaymentParamsResponse.postParams != null){
+        if (prePaymentParamsResponse != null && prePaymentParamsResponse.postParams != null) {
             String key = null;
             switch (paymentMethod) {
                 case Constants.PAYU:
@@ -131,10 +134,10 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                     key = MobikwikResponseHandler.KEY_TRANS_ID;
                     break;
                 case Constants.PAYTM_WALLET:
-                    key = Constants.PAYTM_TRANS_ID_KEY;
+                    key = PaytmPayment.TXN_ID;
                     break;
             }
-            if(!TextUtils.isEmpty(key)) {
+            if (!TextUtils.isEmpty(key)) {
                 return prePaymentParamsResponse.postParams.get(key);
             }
         }
@@ -145,8 +148,8 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if(minDuation > 0) {
-            minDurationCountDownTimer = new MinDurationCountDownTimer(minDuation, 500){
+        if (minDuation > 0) {
+            minDurationCountDownTimer = new MinDurationCountDownTimer(minDuation, 500) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     super.onTick(millisUntilFinished);
@@ -165,7 +168,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     @Override
     protected void onProgressUpdate(Long... values) {
         super.onProgressUpdate(values);
-        if(callback != null){
+        if (callback != null) {
             callback.onMicDelayTick(values[0]);
         }
     }
@@ -174,17 +177,17 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     protected Boolean doInBackground(Void... voids) {
         boolean result = false;
         Context context;
-        if(ctx.getCurrentActivity() != null){
+        if (ctx.getCurrentActivity() != null) {
             context = ctx.getCurrentActivity().getApplicationContext();
         } else {
-            if(minDurationCountDownTimer != null){
+            if (minDurationCountDownTimer != null) {
                 minDurationCountDownTimer.cancel();
             }
-          return result;
+            return result;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
         countDownLatch = new CountDownLatch(2);
-        if(minDurationCountDownTimer != null) {
+        if (minDurationCountDownTimer != null) {
             minDurationCountDownTimer.start();
         } else {
             countDownLatch.countDown();
@@ -194,8 +197,8 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                 Call<ApiResponse<PayzappPrePaymentParamsResponse>> call =
                         getPayzappPrepaymentParamsApiCall(bigBasketApiService);
                 Response<ApiResponse<PayzappPrePaymentParamsResponse>> response = call.execute();
-                if(response.isSuccess()){
-                    if(response.body().status == 0) {
+                if (response.isSuccess()) {
+                    if (response.body().status == 0) {
                         synchronized (this) {
                             payzappPrePaymentParamsResponse = response.body().apiResponseContent;
                         }
@@ -217,8 +220,8 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                 Call<ApiResponse<PrePaymentParamsResponse>> call =
                         getPrepaymentParamsApiCall(bigBasketApiService);
                 Response<ApiResponse<PrePaymentParamsResponse>> response = call.execute();
-                if(response.isSuccess()){
-                    if(response.body().status == 0) {
+                if (response.isSuccess()) {
+                    if (response.body().status == 0) {
                         synchronized (this) {
                             prePaymentParamsResponse = response.body().apiResponseContent;
                         }
@@ -233,13 +236,13 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                             response.errorBody());
                 }
             }
-        } catch (IOException ex){
+        } catch (IOException ex) {
             Crashlytics.logException(ex);
             errorResponse = new ErrorResponse(ex);
         }
-        if(!result){
+        if (!result) {
             countDownLatch.countDown(); // countdown for network operation
-            if(minDurationCountDownTimer != null){
+            if (minDurationCountDownTimer != null) {
                 minDurationCountDownTimer.cancel();
                 countDownLatch.countDown(); //For delay timer
             }
@@ -257,18 +260,18 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     @Override
     protected void onPostExecute(Boolean success) {
         super.onPostExecute(success);
-        if(isCancelled() || ctx.isSuspended() || isPaused()){
+        if (isCancelled() || ctx.isSuspended() || isPaused()) {
             return;
         }
-        if(success){
+        if (success) {
             try {
                 openGateway();
-            } catch (IllegalStateException | IllegalArgumentException ex){
+            } catch (IllegalStateException | IllegalArgumentException ex) {
                 errorResponse = new ErrorResponse(ex);
                 success = false;
             }
         }
-        if(callback != null) {
+        if (callback != null) {
             if (success) {
                 callback.onSuccess();
             } else {
@@ -276,20 +279,21 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
             }
         }
     }
-    protected void openGateway(){
-        HashMap<String, String> paymentParams = null ;
+
+    protected void openGateway() {
+        HashMap<String, String> paymentParams = null;
         Activity activity = ctx.getCurrentActivity();
         if (Constants.HDFC_POWER_PAY.equals(paymentMethod)) {
-            if(payzappPrePaymentParamsResponse == null ||
-                    payzappPrePaymentParamsResponse.payzappPostParams == null){
+            if (payzappPrePaymentParamsResponse == null ||
+                    payzappPrePaymentParamsResponse.payzappPostParams == null) {
                 throw new IllegalStateException("Payzapp prepayment params are null");
             }
         } else {
-            if(prePaymentParamsResponse == null ||
-                    prePaymentParamsResponse.postParams == null){
+            if (prePaymentParamsResponse == null ||
+                    prePaymentParamsResponse.postParams == null) {
                 throw new IllegalStateException("Prepayment params are null");
             } else {
-                paymentParams  = prePaymentParamsResponse.postParams;
+                paymentParams = prePaymentParamsResponse.postParams;
             }
         }
         switch (paymentMethod) {
@@ -358,7 +362,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
             this.throwable = throwable;
         }
 
-        public boolean isException(){
+        public boolean isException() {
             return throwable != null;
         }
 
@@ -381,7 +385,9 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
 
     public interface Callback {
         void onSuccess();
+
         void onFailure(ErrorResponse errorResponse);
+
         void onMicDelayTick(long millisUntilFinished);
     }
 }

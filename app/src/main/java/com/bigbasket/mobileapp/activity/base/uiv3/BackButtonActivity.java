@@ -1,11 +1,9 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 
@@ -35,13 +33,11 @@ public class BackButtonActivity extends BBActivity {
     }
 
     @Override
-    public void setNavDrawer(Toolbar toolbar, Bundle savedInstanceState) {
+    public void setNavDrawer() {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
-        Intent intent = getIntent();
-        handleIntent(savedInstanceState);
     }
 
     @Override

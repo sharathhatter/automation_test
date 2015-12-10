@@ -81,8 +81,8 @@ public class SearchActivity extends BBActivity {
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    private void doSearchByCategory(String categoryName, String categoryUrl,
-                                    String categorySlug, String navigationCtx) {
+    protected void doSearchByCategory(String categoryName, String categoryUrl,
+                                      String categorySlug, String navigationCtx) {
         MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
         mostSearchesDbHelper.update(categoryName, categoryUrl);
 
@@ -108,7 +108,7 @@ public class SearchActivity extends BBActivity {
         trackEvent(TrackingAware.SEARCH, map, null, null, false, true);
     }
 
-    public void doSearch(String searchQuery, String referrer) {
+    protected void doSearch(String searchQuery, String referrer) {
         logSearchEvent(searchQuery);
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();

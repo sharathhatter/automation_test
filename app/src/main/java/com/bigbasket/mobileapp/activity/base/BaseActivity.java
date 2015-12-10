@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity.base;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -255,7 +254,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         super.onPause();
         isActivitySuspended = true;
         MoEngageWrapper.onPause(moEHelper, getCurrentActivity());
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             LocalyticsWrapper.onPause();
         }
         if (progressDialog != null && progressDialog.isShowing()) {
@@ -277,7 +276,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             goToHome();
             return;
         }
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             LocalyticsWrapper.onResume();
         }
 
@@ -389,20 +388,24 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                 final Bundle passedValue, String positiveBtnText) {
         String negativeButtonText = null;
 
-        if (dialogButton != DialogButton.NONE && nxtDialogButton != DialogButton.NONE) {
-            if (dialogButton == DialogButton.YES || dialogButton == DialogButton.OK) {
-                if (TextUtils.isEmpty(positiveBtnText)) {
-                    int textId = dialogButton == DialogButton.YES ? R.string.yesTxt : R.string.ok;
-                    positiveBtnText = getString(textId);
-                }
+        if (dialogButton != DialogButton.NONE &&
+                (dialogButton == DialogButton.YES || dialogButton == DialogButton.OK)) {
+            if (TextUtils.isEmpty(positiveBtnText)) {
+                int textId = dialogButton == DialogButton.YES ? R.string.yesTxt : R.string.ok;
+                positiveBtnText = getString(textId);
             }
-            if (nxtDialogButton == DialogButton.NO || nxtDialogButton == DialogButton.CANCEL) {
-                int textId = nxtDialogButton == DialogButton.NO ? R.string.noTxt : R.string.cancel;
-                negativeButtonText = getString(textId);
-            }
+        }
+        if (nxtDialogButton != DialogButton.NONE &&
+                (nxtDialogButton == DialogButton.NO || nxtDialogButton == DialogButton.CANCEL)) {
+            int textId = nxtDialogButton == DialogButton.NO ? R.string.noTxt : R.string.cancel;
+            negativeButtonText = getString(textId);
         }
         if (isSuspended())
             return;
+        // Defensive check
+        if (TextUtils.isEmpty(positiveBtnText) && TextUtils.isEmpty(negativeButtonText)) {
+            positiveBtnText = getString(R.string.ok);
+        }
         ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
                 requestCode, title == null ? getString(R.string.app_name) : title, msg, positiveBtnText,
                 negativeButtonText, passedValue, false);

@@ -47,7 +47,6 @@ public class AccountView<T extends AppOperationAware> {
             final String[] itemDetails = {
                     ctx.getResources().getString(R.string.action_sign_in),
                     ctx.getResources().getString(R.string.bbCommHub),
-                    ctx.getResources().getString(R.string.changeCityMenuTxt),
                     ctx.getResources().getString(R.string.rateTheApp)};
             MyAccountListAdapter myAccountListAdapter = new MyAccountListAdapter(itemDetails);
             lstMyAccount.setAdapter(myAccountListAdapter);
@@ -137,10 +136,6 @@ public class AccountView<T extends AppOperationAware> {
                     ctx.launchMoEngageCommunicationHub();
                     break;
                 case 2:
-                    ctx.trackEvent(TrackingAware.HOME_CHANGE_CITY, map);
-                    ctx.showChangeCity(false, TrackEventkeys.ACCOUNT_MENU, false);
-                    break;
-                case 3:
                     ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, map);
                     try {
                         ctx.startActivity(new Intent(Intent.ACTION_VIEW,

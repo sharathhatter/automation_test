@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.SplashActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.util.Constants;
@@ -36,7 +37,7 @@ import com.bigbasket.mobileapp.util.Constants;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class BBDevConfigActivity extends SocialLoginActivity
-        implements OnServerChangeListener {
+        implements OnConfigChangeListener {
     String mNewServerName;
 
     @Override
@@ -126,8 +127,14 @@ public class BBDevConfigActivity extends SocialLoginActivity
     }
 
     @Override
+    public void onHttpLoggingLevelChanged(String newValue) {
+        BigBasketApiAdapter.reset();
+        DeveloperConfigs.saveHttpLoggingLevel(getApplicationContext(), newValue);
+    }
+
+    @Override
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    protected boolean onLogoutComplete(boolean success) {
+    protected void postLogout(boolean success) {
         if (success) {
             PreferenceManager.getDefaultSharedPreferences(this).edit()
                     .remove(Constants.VISITOR_ID_KEY).commit();
@@ -137,12 +144,10 @@ public class BBDevConfigActivity extends SocialLoginActivity
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
-            return true;
         } else {
             showServerPreferencesFragment(null);
         }
         mNewServerName = null;
-        return false;
     }
 
     /**
@@ -154,6 +159,7 @@ public class BBDevConfigActivity extends SocialLoginActivity
             implements Preference.OnPreferenceChangeListener {
 
         private String mSavedServerAddress;
+        private String mSavedHttpLogLevel;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -161,12 +167,17 @@ public class BBDevConfigActivity extends SocialLoginActivity
             getPreferenceManager().setSharedPreferencesName(DeveloperConfigs.DEVELOPER_PREF_FILE);
             addPreferencesFromResource(R.xml.pref_server_config);
             setHasOptionsMenu(true);
+            mSavedServerAddress = DeveloperConfigs.getMapiServerAddress(getActivity());
+            mSavedHttpLogLevel = String.valueOf(DeveloperConfigs.getHttpLoggingLevel(getActivity()));
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference(DeveloperConfigs.MAPI_SERVER_ADDRESS));
+            bindPreferenceSummaryToValue(findPreference(DeveloperConfigs.MAPI_SERVER_ADDRESS),
+                    mSavedServerAddress);
+            bindPreferenceSummaryToValue(findPreference(DeveloperConfigs.HTTP_LOGGING_LEVEL),
+                    mSavedHttpLogLevel);
         }
 
         @Override
@@ -188,15 +199,18 @@ public class BBDevConfigActivity extends SocialLoginActivity
          * immediately updated upon calling this method. The exact display format is
          * dependent on the type of preference.
          */
-        private void bindPreferenceSummaryToValue(Preference preference) {
+        private void bindPreferenceSummaryToValue(Preference preference, Object defaultValue) {
+            if(preference == null){
+                return;
+            }
             // Set the listener to watch for value changes.
             preference.setOnPreferenceChangeListener(this);
 
             Context context = preference.getContext();
             // Trigger the listener immediately with the preference's
             // current value.
-            mSavedServerAddress = DeveloperConfigs.getMapiServerAddress(context);
-            onPreferenceChange(preference, mSavedServerAddress);
+            onPreferenceChange(preference, defaultValue);
+
         }
 
         /**
@@ -224,15 +238,22 @@ public class BBDevConfigActivity extends SocialLoginActivity
                 // simple string representation.
                 preference.setSummary(stringValue);
             }
-            if (preference.getKey() != null &&
-                    DeveloperConfigs.MAPI_SERVER_ADDRESS.equals(preference.getKey())) {
-                //Logout and reload application
-                if (getActivity() instanceof OnServerChangeListener
-                        && (mSavedServerAddress == null ||
-                        !mSavedServerAddress.equalsIgnoreCase(stringValue))) {
-                    ((OnServerChangeListener) getActivity()).onServerChanged(stringValue);
+            if (preference.getKey() != null && getActivity() instanceof OnConfigChangeListener) {
+                switch (preference.getKey()) {
+                    case DeveloperConfigs.MAPI_SERVER_ADDRESS:
+                        //Logout and reload application
+                        if ((mSavedServerAddress == null ||
+                                !mSavedServerAddress.equalsIgnoreCase(stringValue))) {
+                            ((OnConfigChangeListener) getActivity()).onServerChanged(stringValue);
+                        }
+                        return false;
+                    case DeveloperConfigs.HTTP_LOGGING_LEVEL:
+                        if ((!mSavedHttpLogLevel.equalsIgnoreCase(stringValue))) {
+                            ((OnConfigChangeListener) getActivity()).onHttpLoggingLevelChanged(stringValue);
+                            mSavedHttpLogLevel = stringValue;
+                        }
+                        return false;
                 }
-                return false;
             }
             return true;
         }

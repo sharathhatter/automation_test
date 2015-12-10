@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
+import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -101,7 +102,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         mTitlePassedViaIntent = getIntent().getStringExtra(Constants.TITLE);
         setTitle(mTitlePassedViaIntent);
         mNameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
-        loadProductTabs(false);
+        loadProductTabs(false, 0);
     }
 
     @Override
@@ -118,7 +119,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         return R.layout.uiv3_product_list_layout;
     }
 
-    private void loadProductTabs(boolean isFilterOrSortApplied) {
+    private void loadProductTabs(boolean isFilterOrSortApplied, int currentTabIndx) {
         if (mNameValuePairs == null || mNameValuePairs.size() == 0) {
             return;
         }
@@ -127,12 +128,13 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             mViewPager = null;
             mMapForTabWithNoProducts = null;
             mArrayTabTypeAndFragmentPosition = null;
+            mTabNameWithEmptyProductView = null;
         }
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
         setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
         new ProductListTask<>(this, paramMap, getCurrentNavigationContext(),
-                isFilterOrSortApplied).startTask();
+                isFilterOrSortApplied, currentTabIndx).startTask();
     }
 
     @Override
@@ -179,7 +181,8 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     }
 
     @Override
-    public void setProductTabData(ProductTabData productTabData, boolean isFilterOrSortApplied) {
+    public void setProductTabData(ProductTabData productTabData, boolean isFilterOrSortApplied,
+                                  int currentTabIndx) {
 
         if (productTabData.getProductTabInfos().size() > 0) {
             ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(productTabData.getScreenName());
@@ -238,7 +241,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                     mMapForTabWithNoProducts = new HashMap<>();
                 }
                 mMapForTabWithNoProducts.put(tabType, products);
-                renderFilterAndSortProductList(productTabInfo, tabType);
+                renderFilterAndSortProductList(productTabInfo, tabType, currentTabIndx);
             } else {
                 // When only one product tab
                 findViewById(R.id.slidingTabs).setVisibility(View.GONE);
@@ -472,12 +475,14 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 @Override
                 public void onFailure(int httpErrorCode, String msg) {
                     super.onFailure(httpErrorCode, msg);
+                    if (isSuspended()) return;
                     notifyEmptyFragmentAboutFailure();
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
                     super.onFailure(t);
+                    if (isSuspended()) return;
                     notifyEmptyFragmentAboutFailure();
                 }
             });
@@ -485,10 +490,12 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     }
 
     private void renderFilterAndSortProductList(ProductTabInfo productTabInfo,
-                                                String filterAndSortTabName) {
+                                                String filterAndSortTabName,
+                                                int currentTabIndx) {
         if (filterAndSortTabName == null || mViewPager == null || productTabInfo == null
                 || productTabInfo.getProductInfo() == null) return;
-        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter()).getRegisteredFragment(0);
+        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter())
+                .getRegisteredFragment(currentTabIndx);
         if (fragment != null) {
             ArrayList<Product> products = productTabInfo.getProductInfo().getProducts();
             if (products == null) {
@@ -577,19 +584,37 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     }
 
     @Override
-    public void doSearch(String searchQuery, String referrer) {
+    protected void doSearch(String searchQuery, String referrer) {
         if (!TextUtils.isEmpty(searchQuery)) {
             mTitlePassedViaIntent = searchQuery;
             mNameValuePairs = new ArrayList<>();
             mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
             mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
-            if (getSupportFragmentManager().getFragments() != null &&
-                    getSupportFragmentManager().getFragments().size() > 0) {
-                // New product list is requested over current page, so change nc by copying next-nc
-                setCurrentNavigationContext(referrer);
-            }
-            loadProductTabs(false);
+            refreshProductList(referrer);
         }
+    }
+
+    protected void doSearchByCategory(String categoryName, String categoryUrl,
+                                      String categorySlug, String navigationCtx) {
+        // Re-use the same activity for pc calls via search instead of creating a new one
+        if (!TextUtils.isEmpty(categorySlug)) {
+            mTitlePassedViaIntent = categoryName;
+            MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
+            mostSearchesDbHelper.update(categoryName, categoryUrl);
+            mNameValuePairs = new ArrayList<>();
+            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
+            mNameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
+            refreshProductList(navigationCtx);
+        }
+    }
+
+    private void refreshProductList(String navigationCtx) {
+        if (getSupportFragmentManager().getFragments() != null &&
+                getSupportFragmentManager().getFragments().size() > 0) {
+            // New product list is requested over current page, so change nc by copying next-nc
+            setCurrentNavigationContext(navigationCtx);
+        }
+        loadProductTabs(false, 0);
     }
 
     private void setProductListForFragmentAtPosition(int position) {
@@ -690,7 +715,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             // New product list is requested over current page, so change nc by copying next-nc
             setCurrentNavigationContext(getNextScreenNavigationContext());
         }
-        loadProductTabs(false);
+        loadProductTabs(false, 0);
     }
 
     public void onFooterViewClicked(View v) {
@@ -834,7 +859,8 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         ArrayList<String> sortAndFilterArrayList = new ArrayList<>();
         sortAndFilterArrayList.add(tabType);
         mNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(sortAndFilterArrayList)));
-        loadProductTabs(true);
+        loadProductTabs(true,
+                mViewPager != null && mViewPager.getCurrentItem() >= 0 ? mViewPager.getCurrentItem() : 0);
     }
 
     private void trackSortByEvent(String sortedOn) {

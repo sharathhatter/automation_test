@@ -24,7 +24,8 @@ public class PayuPayment {
         // Copying into another hash-map
         HashMap<String, String> paymentParamsMap = new HashMap<>(paymentParamsInput);
         if (ctx instanceof PaymentTxnInfoAware) {
-            ((PaymentTxnInfoAware) ctx).setTxnId(paymentParamsMap.get(PayuConstants.TXNID));
+            ((PaymentTxnInfoAware) ctx).setTxnDetails(paymentParamsMap.get(PayuConstants.TXNID),
+                    paymentParamsMap.get(PayuConstants.AMOUNT));
         }
 
         PaymentParams paymentParams = new PaymentParams();

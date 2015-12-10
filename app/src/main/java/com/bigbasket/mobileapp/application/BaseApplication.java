@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.google.ads.conversiontracking.AdWordsConversionReporter;
+import com.localytics.android.Localytics;
 import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
 import com.moe.pushlibrary.MoEHelper;
 
@@ -51,7 +52,7 @@ public class BaseApplication extends Application {
         AuthParameters.reset();
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             registerActivityLifecycleCallbacks(
                     new LocalyticsActivityLifecycleCallbacks(this));
         } else {
@@ -61,6 +62,8 @@ public class BaseApplication extends Application {
         if (!BuildConfig.DEBUG) {
             AdWordsConversionReporter.reportWithConversionId(this.getApplicationContext(),
                     "990877306", "wqThCIz2ql8Q-qy-2AM", "0.00", false);
+        } else {
+            Localytics.setLoggingEnabled(true);
         }
     }
 }

@@ -46,7 +46,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     @Nullable
     private String mSelectedPaymentMethod;
     @Nullable
-    private String mHDFCPayzappTxnId;
+    private String mTxnId;
     private double mFinalTotal;
     private FundWalletPrepaymentProcessingTask<FundWalletActivity> mFundWalletPrepaymentProcessingTask;
 
@@ -66,8 +66,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (mHDFCPayzappTxnId != null) {
-            outState.putString(Constants.TXN_ID, mHDFCPayzappTxnId);
+        if (mTxnId != null) {
+            outState.putString(Constants.TXN_ID, mTxnId);
         }
         if (mSelectedPaymentMethod != null) {
             outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
@@ -81,8 +81,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (mHDFCPayzappTxnId == null) {
-            mHDFCPayzappTxnId = savedInstanceState.getString(Constants.TXN_ID);
+        if (mTxnId == null) {
+            mTxnId = savedInstanceState.getString(Constants.TXN_ID);
         }
         if (mSelectedPaymentMethod == null) {
             mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
@@ -101,7 +101,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mFundWalletPrepaymentProcessingTask != null){
+        if (mFundWalletPrepaymentProcessingTask != null) {
             mFundWalletPrepaymentProcessingTask.cancel(true);
         }
     }
@@ -167,7 +167,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             }
         });
 
-        PaymentMethodsView paymentMethodsView = (PaymentMethodsView)findViewById(R.id.layoutPaymentOptions);;
+        PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
     }
 
@@ -194,15 +194,15 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                     @Override
                     protected void onPostExecute(Boolean success) {
                         super.onPostExecute(success);
-                        if(isPaused() || isCancelled() || isSuspended()){
+                        if (isPaused() || isCancelled() || isSuspended()) {
                             return;
                         }
-                        if(!success){
-                            if(errorResponse != null) {
-                                if(errorResponse.isException()){
+                        if (!success) {
+                            if (errorResponse != null) {
+                                if (errorResponse.isException()) {
                                     //TODO: Possible network error retry
                                     getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
-                                } else if( errorResponse.getCode() > 0) {
+                                } else if (errorResponse.getCode() > 0) {
                                     getHandler().handleHttpError(errorResponse.getCode(),
                                             errorResponse.getMessage(), false);
                                 } else {
@@ -224,7 +224,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            new PostPaymentProcessor<FundWalletActivity>(this, mHDFCPayzappTxnId)
+            new PostPaymentProcessor<>(this, mTxnId)
                     .withIsFundWallet(true)
                     .processPayzapp(data, resultCode, UIUtil.formatAsMoney(mFinalTotal));
         } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
@@ -251,8 +251,9 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     @Override
-    public void setTxnId(String txnId) {
-        mHDFCPayzappTxnId = txnId;
+    public void setTxnDetails(String txnId, String amount) {
+        mTxnId = txnId;
+        mFinalTotal = Double.parseDouble(amount);
     }
 
     @Override

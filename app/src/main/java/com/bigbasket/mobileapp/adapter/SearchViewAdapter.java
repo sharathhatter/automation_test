@@ -117,7 +117,7 @@ public class SearchViewAdapter<T> extends CursorAdapter {
                 if (itemRightIconKey.equals(SearchUtil.HISTORY_TERM)) {
                     imgSearchTermAction.setTag(R.id.search_history_term_tag_id, term);
                     imgSearchTermAction.setTag(R.id.search_suggestion_term_tag_id, null); // Reset
-                    drawableResId = R.drawable.ic_close_grey600_24dp;
+                    drawableResId = R.drawable.delete_product;
                 } else {
                     imgSearchTermAction.setTag(R.id.search_history_term_tag_id, null); // Reset
                     imgSearchTermAction.setTag(R.id.search_suggestion_term_tag_id, term);

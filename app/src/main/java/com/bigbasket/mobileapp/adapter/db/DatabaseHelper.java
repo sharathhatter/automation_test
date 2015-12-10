@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Version 16: Added "app_data_dynamic" table
      */
-    protected static final int DATABASE_VERSION = 16;
+    protected static final int DATABASE_VERSION = 17;
     public static SQLiteDatabase db = null;
     private static volatile DatabaseHelper dbAdapter = null;
     private static boolean isConnectionOpen = false;
@@ -87,14 +87,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Crashlytics.logException(e);
             }
         }
-        if(oldVersion < 16){
+        if (oldVersion < 16) {
             upgradeTo16(db);
+        }
+        if (oldVersion < 17) {
+            upgradeTo17(db);
         }
     }
 
     private void upgradeTo16(SQLiteDatabase db) {
         db.execSQL(DynamicPageDbHelper.CREATE_TABLE);
         db.execSQL(AppDataDynamicDbHelper.CREATE_TABLE);
+        db.execSQL(CategoryAdapter.CREATE_TABLE);
+        db.execSQL(SubCategoryAdapter.CREATE_TABLE);
+        db.execSQL(AreaPinInfoDbHelper.CREATE_TABLE);
+    }
+
+    private void upgradeTo17(SQLiteDatabase db) {
+        try {
+            db.execSQL(SearchSuggestionDbHelper.CREATE_TABLE);
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+        }
+        try {
+            db.execSQL(MostSearchesDbHelper.CREATE_TABLE);
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+        }
     }
 
     private void createTable(SQLiteDatabase db) {

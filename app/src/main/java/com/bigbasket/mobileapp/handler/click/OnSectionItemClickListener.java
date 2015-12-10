@@ -449,11 +449,11 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         HashMap<String, String> eventAttribs = new HashMap<>();
         StringBuilder sectionItemNameBuilder = new StringBuilder();
         String sectionName = getSectionName();
-        if (!TextUtils.isEmpty(sectionName)){
+        if (!TextUtils.isEmpty(sectionName)) {
             sectionItemNameBuilder.append(sectionName).append('.');
         }
         String itemName = getSectionItemName(true);
-        if (!TextUtils.isEmpty(itemName)){
+        if (!TextUtils.isEmpty(itemName)) {
             sectionItemNameBuilder.append(itemName);
         }
         if (!TextUtils.isEmpty(sectionItemNameBuilder)) {

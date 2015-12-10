@@ -35,6 +35,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -139,8 +140,10 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
                 public void failure() {
                     setNextPageLoading(false);
-                    mProductListRecyclerAdapter.setLoadingFailed(true);
-                    mProductListRecyclerAdapter.notifyDataSetChanged();
+                    if (mProductListRecyclerAdapter != null) {
+                        mProductListRecyclerAdapter.setLoadingFailed(true);
+                        mProductListRecyclerAdapter.notifyDataSetChanged();
+                    }
                 }
 
                 @Override
@@ -380,5 +383,18 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                         null, null, null, null, product, qty, null, cartInfoMapRef, editTextQtyRef);
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mProductListRecyclerAdapter = null;  // Clear this
+        // Now setup a leak-canary observer
+        LeakCanaryObserver.Factory.observe(this);
+    }
+
+    @Override
+    protected void observeMemoryLeak() {
+        // Do nothing for this fragment, as this fragment registers ref-watcher for itself after cleaning-up
     }
 }

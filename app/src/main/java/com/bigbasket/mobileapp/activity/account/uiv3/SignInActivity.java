@@ -138,6 +138,11 @@ public class SignInActivity extends BackButtonActivity {
         return R.layout.uiv3_login;
     }
 
+    @Override
+    public void handleIntent(Bundle savedInstanceState) {
+        // This activity doesn't support fragment operations
+    }
+
     private void logRememberMeEnabled(String enabled) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ENABLED, enabled);
