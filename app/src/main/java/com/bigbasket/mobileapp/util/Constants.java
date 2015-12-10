@@ -659,7 +659,6 @@ public class Constants {
     public static final int EMPTY_BASKET_DIALOG_QUEST = 8004;
     public static final int LOCATION_DIALOG_REQUEST = 8005;
     public static final int PREPAYMENT_ABORT_CONFIRMATION_DIALOG = 8006;
-    public static final int SOURCE_ABORT_DIALOG_REQUEST = 8007;
 
     // App Indexing params
     public static final String HTTP_HOST = "bigbasket.com";

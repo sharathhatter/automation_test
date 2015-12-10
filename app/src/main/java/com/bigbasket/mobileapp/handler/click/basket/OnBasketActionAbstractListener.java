@@ -55,9 +55,9 @@ public abstract class OnBasketActionAbstractListener implements View.OnClickList
             if (TextUtils.isEmpty(qty)) {
                 Toast.makeText(v.getContext(),
                         v.getContext().getString(R.string.quantity_missing), Toast.LENGTH_SHORT).show();
+                return;
             }
             BaseActivity.hideKeyboard(v.getContext(), productViewHolder.getEditTextQty());
-            return;
         }
         BasketOperationTask.Builder builder =
                 new BasketOperationTask.Builder<>(appOperationAware, basketOperation, product)
