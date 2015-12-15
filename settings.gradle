@@ -1,2 +1,1 @@
-include ':app', ':androidImageSlider', ':wibmosdklib', ':wibmoSDK', ':moe-addon-ubox', ':PayU-release', ':payuSdkUi', ':CustomBrowser-release'
-include ':mobikwik_Payment_Android_SDK'
+include ':app', ':androidImageSlider', ':wibmosdklib', ':wibmoSDK', ':moe-addon-ubox', ':PayU-release', ':payuSdkUi', ':CustomBrowser-release', ':mobikwik-sdk'

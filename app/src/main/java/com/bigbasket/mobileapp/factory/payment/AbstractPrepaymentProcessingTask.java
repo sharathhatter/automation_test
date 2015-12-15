@@ -18,7 +18,6 @@ import com.bigbasket.mobileapp.factory.payment.impl.HDFCPayzappPayment;
 import com.bigbasket.mobileapp.factory.payment.impl.MobikwikPayment;
 import com.bigbasket.mobileapp.factory.payment.impl.PaytmPayment;
 import com.bigbasket.mobileapp.factory.payment.impl.PayuPayment;
-import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
@@ -47,15 +46,14 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     protected String orderId;
     protected boolean isPayNow;
     protected boolean isFundWallet;
-    private MinDurationCountDownTimer minDurationCountDownTimer;
-    private CountDownLatch countDownLatch;
-    private long minDuation;
     protected ErrorResponse errorResponse;
     protected PrePaymentParamsResponse prePaymentParamsResponse;
     protected PayzappPrePaymentParamsResponse payzappPrePaymentParamsResponse;
     protected Callback callback;
+    private MinDurationCountDownTimer minDurationCountDownTimer;
+    private CountDownLatch countDownLatch;
+    private long minDuation;
     private boolean isPaused;
-
 
     public AbstractPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
                                             String paymentMethod, boolean isPayNow, boolean isFundWallet) {
@@ -131,7 +129,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                     key = PayuConstants.TXNID;
                     break;
                 case Constants.MOBIKWIK_PAYMENT:
-                    key = MobikwikResponseHandler.KEY_TRANS_ID;
+                    key = MobikwikPayment.MOBIKWIK_ORDERID;
                     break;
                 case Constants.PAYTM_WALLET:
                     key = PaytmPayment.TXN_ID;
@@ -323,6 +321,14 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     protected abstract Call<ApiResponse<PrePaymentParamsResponse>> getPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService);
 
+    public interface Callback {
+        void onSuccess();
+
+        void onFailure(ErrorResponse errorResponse);
+
+        void onMicDelayTick(long millisUntilFinished);
+    }
+
     private static class MinDurationCountDownTimer extends CountDownTimer {
 
         private boolean isFinished;
@@ -381,13 +387,5 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         public Throwable getThrowable() {
             return throwable;
         }
-    }
-
-    public interface Callback {
-        void onSuccess();
-
-        void onFailure(ErrorResponse errorResponse);
-
-        void onMicDelayTick(long millisUntilFinished);
     }
 }

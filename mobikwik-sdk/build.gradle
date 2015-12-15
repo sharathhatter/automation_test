@@ -1,0 +1,2 @@
+configurations.create("default")
+artifacts.add("default", file('mobikwik-sdk-1_05.aar'))

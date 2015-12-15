@@ -6,10 +6,9 @@
     <TextView
         android:id="@+id/txtProductBrand"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:text="Hampi Organic"
         android:layout_gravity="center"
+        android:layout_weight="1"
         android:textColor="@color/uiv3_secondary_text_color"
         android:textSize="@dimen/secondary_text_size" />
 

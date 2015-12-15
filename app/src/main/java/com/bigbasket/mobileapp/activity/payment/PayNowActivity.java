@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -17,8 +18,8 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
 import com.bigbasket.mobileapp.factory.payment.PayNowPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.factory.payment.impl.MobikwikPayment;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
-import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
@@ -34,6 +35,8 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.crashlytics.android.Crashlytics;
 import com.enstage.wibmo.sdk.WibmoSDK;
+import com.mobikwik.sdk.MobikwikSDK;
+import com.mobikwik.sdk.lib.MKTransactionResponse;
 import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
@@ -189,7 +192,6 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     @Override
     public void onResume() {
         super.onResume();
-        processMobikWikResponse();
     }
 
     @Override
@@ -200,18 +202,13 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         }
     }
 
-    private void processMobikWikResponse() {
-        String txnId = MobikwikResponseHandler.getLastTransactionID();
-        if (!TextUtils.isEmpty(txnId)) {
-            if (MobikwikResponseHandler.wasTransactionSuccessful()) {
-                onPayNowSuccess();
-            } else {
-                onPayNowFailure();
-            }
-            MobikwikResponseHandler.clear();
+    private void processMobikWikResponse(int status) {
+        if (status == 0) {
+            onPayNowSuccess();
+        } else {
+            onPayNowFailure();
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -227,6 +224,27 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
             } else {
                 onPayNowFailure();
             }
+        } else if (requestCode == MobikwikPayment.MOBIKWIK_REQ_CODE) {
+            if (data != null) {
+                MKTransactionResponse response = (MKTransactionResponse) data.getSerializableExtra(MobikwikSDK.EXTRA_TRANSACTION_RESPONSE);
+                if (response != null) {
+                    if (!TextUtils.isEmpty(response.orderId)) {
+                        try {
+                            if (BuildConfig.DEBUG) {
+                                processMobikWikResponse(Integer.parseInt(response.statusCode));
+                            } else {
+                                processMobikWikResponse(Integer.parseInt(response.statusCode));
+                            }
+                        } catch (NumberFormatException e) {
+                            Crashlytics.logException(e);
+                        }
+                    } else {
+                        Crashlytics.logException(new IllegalArgumentException());
+                    }
+                } else {
+                    Crashlytics.logException(new IllegalArgumentException());
+                }
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -236,7 +254,6 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         HashMap<String, String> attrs = new HashMap<>();
         attrs.put(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
         trackEvent(TrackingAware.PAY_NOW_DONE, attrs);
-
         Intent intent = new Intent(this, PayNowThankyouActivity.class);
         intent.putExtra(Constants.ORDER_ID, mOrderId);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
