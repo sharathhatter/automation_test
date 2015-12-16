@@ -9,9 +9,12 @@ import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
+import com.bigbasket.mobileapp.adapter.product.AbstractProductItem;
+import com.bigbasket.mobileapp.adapter.product.NormalProductItem;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
@@ -19,6 +22,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -71,15 +75,18 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         contentView.removeAllViews();
 
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
-
+        ArrayList<AbstractProductItem> productItems = new ArrayList<>(shoppingListSummary.getProducts().size());
+        for(Product p: shoppingListSummary.getProducts()){
+            productItems.add(new NormalProductItem(p));
+        }
         if (cartInfo != null) {
-            productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
+            productListAdapter = new ProductListRecyclerAdapter(productItems,
                     baseImgUrl,
                     getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(),
                     getNextScreenNavigationContext(),
                     cartInfo, tabName);
         } else {
-            productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
+            productListAdapter = new ProductListRecyclerAdapter(productItems,
                     baseImgUrl,
                     getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(),
                     getNextScreenNavigationContext(), tabName);

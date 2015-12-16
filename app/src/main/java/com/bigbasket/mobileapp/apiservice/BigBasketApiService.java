@@ -49,6 +49,7 @@ import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
+import com.bigbasket.mobileapp.model.ads.AdAnalyticsData;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.product.ProductTabData;
@@ -61,10 +62,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import retrofit.Call;
+import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
+import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.Query;
 import retrofit.http.QueryMap;
@@ -96,6 +99,23 @@ public interface BigBasketApiService {
     @GET("product-list/")
     Call<ApiResponse<ProductTabData>> productList(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                   @QueryMap Map<String, String> productQueryMap);
+
+    @GET("sponsored-items/")
+    Call<ApiResponse<GetDynamicPageApiResponse>> getSponsoredProducts(
+            @Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+            @Query(Constants.TYPE) String type,
+            @Query(Constants.SLUG) String slug,
+            @Query(Constants.TAB_TYPE) String tabType,
+            @QueryMap Map<String, String> productQueryMap);
+
+    /**
+     *
+     * @return
+     */
+    @Headers({"Content-Type: application/json"})
+    @POST("ads-analytics/")
+    Call<BaseApiResponse> postAdAnalytics(@Body AdAnalyticsData[] adAnalyticsData);
+
 
     @GET("store-list/")
     Call<ApiResponse<SpecialityShopsListData>> getSpecialityShops(@Query(Constants.CATEGORY) String categoryValue);

@@ -14,7 +14,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,11 +21,13 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.CarouselAdapter;
 import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
+import com.bigbasket.mobileapp.slider.Indicators.PagerIndicator;
 import com.bigbasket.mobileapp.slider.SliderLayout;
 import com.bigbasket.mobileapp.slider.SliderTypes.BaseSliderView;
 import com.bigbasket.mobileapp.slider.SliderTypes.DefaultSliderView;
@@ -58,6 +59,7 @@ public class SectionView {
         this.eightDp = (int) context.getResources().getDimension(R.dimen.margin_small);
         this.sixteenDp = (int) context.getResources().getDimension(R.dimen.margin_normal);
         this.marginBetweenWidgets = (int) context.getResources().getDimension(R.dimen.margin_mini);
+        parseRendererColors();
     }
 
     public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName, boolean isHelp) {
@@ -86,7 +88,6 @@ public class SectionView {
     public View getView() {
         if (mSectionData == null || mSectionData.getSections() == null || mSectionData.getSections().size() == 0)
             return null;
-        parseRendererColors();
         LinearLayout mainLayout = new LinearLayout(context);
         mainLayout.setOrientation(LinearLayout.VERTICAL);
         mainLayout.setBackgroundColor(context.getResources().getColor(R.color.uiv3_list_bkg_color));
@@ -97,7 +98,7 @@ public class SectionView {
             View sectionView;
             try {
                 Section section = sections.get(i);
-                sectionView = getViewToRender(section, inflater, mainLayout, i);
+                sectionView = getViewToRender(section, inflater, mainLayout, i, null);
                 if (sectionView == null || sectionView.getLayoutParams() == null) {
                     continue;
                 }
@@ -132,17 +133,17 @@ public class SectionView {
     }
 
     @Nullable
-    private View getViewToRender(Section section, LayoutInflater inflater, ViewGroup mainLayout,
-                                 int position) {
+    public View getViewToRender(Section section, LayoutInflater inflater, ViewGroup mainLayout,
+                                 int position, OnSectionItemClickListener sectionItemClickListener) {
         switch (section.getSectionType()) {
             case Section.BANNER:
-                return getBannerView(section, inflater, mainLayout);
+                return getBannerView(section, inflater, mainLayout, sectionItemClickListener);
             case Section.SALUTATION:
-                return getSalutationView(section, inflater, mainLayout);
+                return getSalutationView(section, inflater, mainLayout, sectionItemClickListener);
             case Section.TILE:
-                return getTileView(section, inflater, mainLayout, false, position);
+                return getTileView(section, inflater, mainLayout, false, position, sectionItemClickListener);
             case Section.GRID:
-                return getGridLayoutView(section, inflater, mainLayout, position);
+                return getGridLayoutView(section, inflater, mainLayout, position, sectionItemClickListener);
             case Section.PRODUCT_CAROUSEL:
                 return getCarouselView(section, inflater, mainLayout);
             case Section.NON_PRODUCT_CAROUSEL:
@@ -150,7 +151,7 @@ public class SectionView {
             case Section.INFO_WIDGET:
                 return getInfoWidgetView(section);
             case Section.AD_IMAGE:
-                return getTileView(section, inflater, mainLayout, true, position);
+                return getTileView(section, inflater, mainLayout, true, position, sectionItemClickListener);
             case Section.SALUTATION_TITLE:
                 return getMsgView(section, inflater);
             case Section.MSG:
@@ -161,7 +162,8 @@ public class SectionView {
         return null;
     }
 
-    private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent) {
+    private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent,
+                               OnSectionItemClickListener sectionItemClickListener) {
         View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, parent, false);
         final SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
         ViewGroup.LayoutParams bannerLayoutParams = bannerSlider.getLayoutParams();
@@ -169,6 +171,7 @@ public class SectionView {
             bannerLayoutParams.height = section.getWidgetHeight(context, mSectionData.getRenderersMap(), true);
             bannerSlider.setLayoutParams(bannerLayoutParams);
         }
+        boolean hasImage = false;
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem.hasImage()) {
                 BaseSliderView sliderView;
@@ -183,37 +186,48 @@ public class SectionView {
                             .setHeight(sectionItem.getActualHeight(context))
                             .image(sectionItem.getImage());
                 } else if (!TextUtils.isEmpty(sectionItem.getImageName())) {
+                    String imageUrl ;
+                    if(sectionItem.getImageName().startsWith("http://")
+                            || sectionItem.getImageName().startsWith("https://")){
+                        imageUrl = sectionItem.getImageName();
+                    } else {
+                        imageUrl = mSectionData.getBaseImgUrl() +
+                                UIUtil.getScreenDensity(context) + "/" + sectionItem.getImageName();
+                    }
                     sliderView.setWidth(sectionItem.getActualWidth(context))
                             .setHeight(sectionItem.getActualHeight(context))
-                            .image(mSectionData.getBaseImgUrl() +
-                                    UIUtil.getScreenDensity(context) + "/" + sectionItem.getImageName());
+                            .image(imageUrl);
                 } else {
                     continue;
                 }
-                sliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
-                /**
-                 * adding globalLayoutListener to track if the banner pager is visible to user or not
-                 * and stopping/starting the auto play based on that
-                 */
-                bannerSlider.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        if (!bannerSlider.isShown())
-                            bannerSlider.stopAutoCycle();
-                        else
-                            bannerSlider.startAutoCycle();
-                    }
-
-
-                });
+                hasImage = true;
+                if(sectionItemClickListener == null){
+                    sectionItemClickListener = new OnSectionItemClickListener<>((AppOperationAware)context,
+                            section, sectionItem, screenName);
+                }
+                sliderView.setTag(R.id.section_item_tag_id, sectionItem);
+                sliderView.setOnSliderClickListener(sectionItemClickListener);
                 bannerSlider.addSlider(sliderView);
             }
 
         }
+
+        if(section.getSectionItems().size() > 1 && hasImage) {
+            bannerSlider.setAutoCycle(true);
+        } else {
+            bannerSlider.setAutoCycle(false);
+            if(section.getSectionItems().size() <= 1) {
+                bannerSlider.setIndicatorVisibility(PagerIndicator.IndicatorVisibility.Invisible);
+            } else {
+                bannerSlider.setIndicatorVisibility(PagerIndicator.IndicatorVisibility.Visible);
+            }
+        }
+
         return baseSlider;
     }
 
-    private View getSalutationView(Section section, LayoutInflater inflater, ViewGroup parent) {
+    private View getSalutationView(Section section, LayoutInflater inflater, ViewGroup parent,
+                                   OnSectionItemClickListener sectionItemClickListener) {
         View baseSalutation = inflater.inflate(R.layout.uiv3_salutation_box, parent, false);
         formatSection(baseSalutation, R.id.txtSalutationTitle, section);
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
@@ -248,16 +262,23 @@ public class SectionView {
                     imgSalutationItem = (ImageView) baseSalutation.findViewById(R.id.imgSalutationItem1);
                     break;
             }
+            if(sectionItemClickListener == null) {
+                sectionItemClickListener = new OnSectionItemClickListener<>(
+                        (AppOperationAware)context, section, sectionItem, screenName);
+            }
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtSalutationItem.setTypeface(faceRobotoRegular);
                 txtSalutationItem.setText(sectionItem.getTitle().getText());
-                txtSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+                txtSalutationItem.setTag(R.id.section_item_tag_id, sectionItem);
+                txtSalutationItem.setOnClickListener(sectionItemClickListener);
                 layoutSalutationItem.setVisibility(View.VISIBLE);
             }
             if (sectionItem.hasImage()) {
                 layoutSalutationItem.setVisibility(View.VISIBLE);
-                sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgSalutationItem, R.drawable.loading_small);
-                imgSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+                sectionItem.displayImage(context, mSectionData.getBaseImgUrl(),
+                        imgSalutationItem, R.drawable.loading_small);
+                imgSalutationItem.setTag(R.id.section_item_tag_id, sectionItem);
+                imgSalutationItem.setOnClickListener(sectionItemClickListener);
             }
         }
         return baseSalutation;
@@ -338,7 +359,8 @@ public class SectionView {
                         true, true, true, applyBottom);
             }
             txtVw.setText(sectionItem.getTitle().getText());
-            txtVw.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+            txtVw.setOnClickListener(new OnSectionItemClickListener<>(
+                    (AppOperationAware)context, section, sectionItem, screenName));
             txtVw.setTypeface(faceRobotoRegular);
             linearLayout.addView(view);
         }
@@ -417,7 +439,8 @@ public class SectionView {
             }
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
-            itemView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+            itemView.setOnClickListener(new OnSectionItemClickListener<>(
+                    (AppOperationAware)context, section, sectionItem, screenName));
             View viewSeparator = itemView.findViewById(R.id.viewSeparator);
             viewSeparator.setVisibility(i == numItems - 1 ? View.GONE : View.VISIBLE);
             menuContainer.addView(itemView);
@@ -426,7 +449,7 @@ public class SectionView {
     }
 
     private View getGridLayoutView(final Section section, LayoutInflater inflater, ViewGroup parent,
-                                   int position) {
+                                   int position, OnSectionItemClickListener sectionItemClickListener) {
 
         ArrayList<ArrayList<SectionItem>> sectionItemRows = new ArrayList<>();
         int numCols = context.getResources().getInteger(R.integer.numGridCols);
@@ -462,14 +485,15 @@ public class SectionView {
 
             LinearLayout tileContainer = (LinearLayout) tileBase.findViewById(R.id.layoutTileContainer);
             addTilesToParent(tileContainer, false, section, sectionItems, inflater, false,
-                    position);
+                    position, sectionItemClickListener);
             layoutGridContainer.addView(tileBase);
         }
         return base;
     }
 
     private View getTileView(Section section, LayoutInflater inflater, ViewGroup parent,
-                             boolean isVertical, int position) {
+                             boolean isVertical, int position,
+                             OnSectionItemClickListener sectionItemClickListener) {
         View base = inflater.inflate(R.layout.uiv3_tile_container, parent, false);
         formatSection(base, R.id.txtListTitle, section);
         setViewMoreBehaviour(base.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
@@ -480,14 +504,15 @@ public class SectionView {
         }
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
         addTilesToParent(tileContainer, isVertical, section, sectionItems, inflater, true,
-                position);
+                position, sectionItemClickListener);
         return base;
     }
 
     private void addTilesToParent(ViewGroup tileContainer, boolean isVertical,
                                   Section section, ArrayList<SectionItem> sectionItems,
                                   LayoutInflater inflater,
-                                  boolean stretchImage, int postion) {
+                                  boolean stretchImage, int postion,
+                                  OnSectionItemClickListener sectionItemClickListener) {
         boolean hasSectionTitle = section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText());
         int numSectionItems = sectionItems.size();
         Typeface titleTypeface = isVertical ? FontHolder.getInstance(context).getFaceRobotoMedium() : faceRobotoRegular;
@@ -636,8 +661,13 @@ public class SectionView {
                 }
             }
             view.setLayoutParams(layoutParams);
+            view.setTag(R.id.section_item_tag_id, sectionItem);
+            if(sectionItemClickListener == null) {
+                sectionItemClickListener = new OnSectionItemClickListener<>(
+                        (AppOperationAware) context, section, sectionItem, screenName);
+            }
 
-            view.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+            view.setOnClickListener(sectionItemClickListener);
             tileContainer.addView(view);
         }
     }
@@ -694,7 +724,8 @@ public class SectionView {
                 ((TextView) view).setText(moreSectionItem.getTitle().getText());
             }
         }
-        view.setOnClickListener(new OnSectionItemClickListener<>(context, section, moreSectionItem, screenName));
+        view.setOnClickListener(new OnSectionItemClickListener<>(
+                (AppOperationAware)context, section, moreSectionItem, screenName));
     }
 
     @Nullable
@@ -719,7 +750,7 @@ public class SectionView {
 
             try {
                 View sectionView = getViewToRender(section, LayoutInflater.from(context),
-                        sectionViewHolderRow, position);
+                        sectionViewHolderRow, position, null);
                 if (sectionView == null || sectionView.getLayoutParams() == null) {
                     return;
                 }

@@ -31,6 +31,8 @@ public class SectionData implements Parcelable, Serializable {
     private String screenName;
     @SerializedName(Constants.BASE_IMG_URL)
     private String baseImgUrl;
+    @SerializedName(Constants.ANALYTICS_ATTRS)
+    private HashMap<String, Map<String, String>> analyticsAttrs;
 
     public SectionData(Parcel source) {
         boolean wasSectionsNull = source.readByte() == (byte) 1;
@@ -56,6 +58,29 @@ public class SectionData implements Parcelable, Serializable {
         if (!wasBaseImgUrlNull) {
             baseImgUrl = source.readString();
         }
+        int analyticsAttrSize = source.readInt();
+        analyticsAttrs = new HashMap<>(analyticsAttrSize);
+
+        for(int i = 0 ; i < analyticsAttrSize ; i++) {
+            String key = source.readString();
+            int valMapLen = source.readInt();
+            if(valMapLen <= 0) {
+                analyticsAttrs.put(key, null);
+            } else {
+                Map<String, String> valueMap = new HashMap<>(valMapLen);
+                for(int j =0; j< valMapLen; j++){
+                    String valKey = source.readString();
+                    boolean wasValueNull = source.readByte() == (byte) 1;
+                    if(!wasValueNull){
+                        valueMap.put(valKey, source.readString());
+                    } else {
+                        valueMap.put(valKey, null);
+                    }
+                }
+                analyticsAttrs.put(key, valueMap);
+            }
+        }
+
     }
 
     @Override
@@ -89,6 +114,30 @@ public class SectionData implements Parcelable, Serializable {
         if (!wasBaseImgUrl) {
             dest.writeString(baseImgUrl);
         }
+
+        if(analyticsAttrs != null && !analyticsAttrs.isEmpty()){
+            dest.writeInt(analyticsAttrs.size());
+            for (Map.Entry<String, Map<String, String>> entry: analyticsAttrs.entrySet()){
+                dest.writeString(entry.getKey()); //FIXME: Assumption key is not null
+                Map<String, String> value = entry.getValue();
+                if(value != null && !value.isEmpty()){
+                    dest.writeInt(value.size());
+                    for(Map.Entry<String, String> valEntry:value.entrySet()){
+                        dest.writeString(valEntry.getKey());
+                        boolean wasValueNull = valEntry.getValue() == null;
+                        dest.writeByte(wasValueNull ? (byte) 1 : (byte) 0);
+                        if(!wasValueNull) {
+                            dest.writeString(valEntry.getValue());
+                        }
+                    }
+                } else {
+                    dest.writeInt(0);
+                }
+            }
+        } else {
+            dest.writeInt(0);
+        }
+
     }
 
     public ArrayList<Section> getSections() {
@@ -109,5 +158,12 @@ public class SectionData implements Parcelable, Serializable {
 
     public void setSections(ArrayList<Section> sections) {
         this.sections = sections;
+    }
+
+    public Map<String, String> getAnalyticsAttrs(String sectionItemId){
+        if(analyticsAttrs != null){
+            return analyticsAttrs.get(sectionItemId);
+        }
+        return null;
     }
 }

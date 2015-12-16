@@ -11,5 +11,5 @@
         android:id="@+id/imgSlider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/banner_slider_height"
-        app:auto_cycle="true" />
+        app:auto_cycle="false" />
 </LinearLayout>

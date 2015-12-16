@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -97,7 +98,7 @@ public class StoreDetailsDialogFragment extends AbstractDialogFragment {
                         DestinationInfo destinationInfo = new DestinationInfo(DestinationInfo.STORE_LIST, storeCategory);
                         if (getDialog().isShowing())
                             getDialog().dismiss();
-                        new OnSectionItemClickListener<>(getActivity()).handleDestinationClick(destinationInfo);
+                        new OnSectionItemClickListener<>((AppOperationAware)getActivity()).handleDestinationClick(destinationInfo);
                     }
                 }
             });

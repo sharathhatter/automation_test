@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.adapter.product.AbstractProductItem;
+import com.bigbasket.mobileapp.adapter.product.NormalProductItem;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -291,13 +293,16 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         layoutPromoProductList.removeAllViews();
 
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, layoutPromoProductList);
-
+        ArrayList<AbstractProductItem> productItems = new ArrayList<>(products.size());
+        for(Product p: products){
+            productItems.add(new NormalProductItem(p));
+        }
         if (cartInfo == null) {
-            productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
+            productListAdapter = new ProductListRecyclerAdapter(productItems, baseImgUrl,
                     getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
                     TrackEventkeys.SINGLE_TAB_NAME);
         } else {
-            productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
+            productListAdapter = new ProductListRecyclerAdapter(productItems, baseImgUrl,
                     getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
                     cartInfo, TrackEventkeys.SINGLE_TAB_NAME);
         }

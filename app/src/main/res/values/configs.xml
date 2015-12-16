@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Number of products to display between two sponsored items in the product list-->
+    <integer name="default_sponsored_items_window">10</integer>
+</resources>
