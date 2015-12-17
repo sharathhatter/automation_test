@@ -1,6 +1,8 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,7 +35,8 @@ public class SearchActivity extends BBActivity {
         super.onCreate(savedInstanceState);
         mBbSearchableToolbarView =
                 (BBSearchableToolbarView) findViewById(R.id.bbSearchView);
-        mBbSearchableToolbarView.attachActivity(getCurrentActivity());
+        if (mBbSearchableToolbarView != null)
+            mBbSearchableToolbarView.attachActivity(getCurrentActivity());
         if (mBbSearchableToolbarView != null) {
             mBbSearchableToolbarView.setOnSearchEventListener(new OnSearchEventListener() {
 
@@ -102,6 +105,8 @@ public class SearchActivity extends BBActivity {
     }
 
     private void logSearchEvent(String query) {
+        if (mBbSearchableToolbarView != null)
+            mBbSearchableToolbarView.hide();
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.TERM, query);
         map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.PS);
@@ -140,5 +145,30 @@ public class SearchActivity extends BBActivity {
     public void onBackPressed() {
         if (mBbSearchableToolbarView != null && mBbSearchableToolbarView.onBackPressed()) return;
         super.onBackPressed();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Constants.PERMISSION_REQUEST_CODE_CAPTURE_CAMERA:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.CAMERA)
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (mBbSearchableToolbarView != null)
+                        mBbSearchableToolbarView.launchScanner();
+                }
+                break;
+            case Constants.PERMISSION_REQUEST_CODE_RECORD_AUDIO:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.RECORD_AUDIO)
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (mBbSearchableToolbarView != null)
+                        mBbSearchableToolbarView.launchVoiceSearch();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }

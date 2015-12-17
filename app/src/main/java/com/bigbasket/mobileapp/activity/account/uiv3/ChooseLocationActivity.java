@@ -1,8 +1,10 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -47,6 +49,8 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     private AddressSummary mChosenAddressSummary;
     private boolean mIsFirstTime;
     private boolean mIsViaOnActivityResult;
+    private boolean setAsCurrentAddressBoolean;
+    private boolean autoModeBoolean;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     private void triggerLocationFetching() {
+
         int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
         switch (playServicesAvailable) {
             case ConnectionResult.SUCCESS:
@@ -77,6 +82,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         }
     }
 
+
     private void renderLocation() {
         if (isSuspended()) return;
         if (!DataUtil.isLocationServiceEnabled(this)) {
@@ -85,6 +91,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                     DialogButton.YES, DialogButton.CANCEL, Constants.LOCATION_DIALOG_REQUEST, null,
                     getString(R.string.enable));
         } else {
+
             showProgressDialog(getString(R.string.readingYourCurrentLocation));
             if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
                 updateLastKnownLocation(false, false);
@@ -93,6 +100,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
             }
         }
     }
+
 
     @Override
     protected void setOptionsMenu(Menu menu) {
@@ -148,22 +156,42 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     private void updateLastKnownLocation(boolean setAsCurrentAddress, boolean autoMode) {
         if (mGoogleApiClient == null) return;
-        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (lastLocation != null) {
-            LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-            if (setAsCurrentAddress) {
-                updateLocation(latLng,
-                        mChosenAddressSummary != null ? mChosenAddressSummary.getArea() : null);
+        setAsCurrentAddressBoolean = setAsCurrentAddress;
+        autoModeBoolean = autoMode;
+        if (handlePermission(Manifest.permission.ACCESS_FINE_LOCATION, Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION)) {
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (lastLocation != null) {
+                LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+                if (setAsCurrentAddress) {
+                    updateLocation(latLng,
+                            mChosenAddressSummary != null ? mChosenAddressSummary.getArea() : null);
+                } else {
+                    getCurrentLocationDetail(latLng);
+                }
             } else {
-                getCurrentLocationDetail(latLng);
+                if (autoMode) {
+                    triggerLocationFetching();
+                } else {
+                    hideProgressDialog();
+                    onLocationReadFailure();
+                }
             }
-        } else {
-            if (autoMode) {
-                triggerLocationFetching();
-            } else {
-                hideProgressDialog();
-                onLocationReadFailure();
-            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        updateLastKnownLocation(setAsCurrentAddressBoolean,autoModeBoolean);
+                    }
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

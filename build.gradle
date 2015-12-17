@@ -18,8 +18,8 @@ allprojects {
         jcenter()
     }
     ext {
-        supportLibVersion = '22.2.1'
-        playServicesLibVersion = '7.5.0'
+        supportLibVersion = '23.1.1'
+        playServicesLibVersion = '8.1.0'
         picassoLibVersion = '2.5.2'
     }
 }

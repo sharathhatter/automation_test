@@ -1,10 +1,12 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
@@ -14,6 +16,7 @@ import android.util.Log;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.util.Constants;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -70,12 +73,6 @@ public abstract class PlusBaseActivity extends BaseActivity {
     /* Is there a ConnectionResult resolution in progress? */
     private boolean mIsResolving = false;
     // [END resolution_variables]
-
-    /**
-     * Email scope for Google APIs,
-     * replace this with Scopes.EMAIL after updating play services lib version to 8.x.x
-     */
-    private static final String SCOPE_EMAIL = "https://www.googleapis.com/auth/userinfo.email";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +170,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Plus.API)
                 .addScope(new Scope(Scopes.PROFILE))
-                .addScope(new Scope(SCOPE_EMAIL))
+                .addScope(new Scope(Scopes.EMAIL))
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(Bundle bundle) {
@@ -256,13 +253,31 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     private void signIn() {
+        if (handlePermission(Manifest.permission.GET_ACCOUNTS, Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS)) {
+            signinUser();
+        }
+    }
+    private void signinUser() {
         try {
-            //TODO: Requires GET_ACCOUNTS permission, Resolve this permission on "M"
             String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
             fetchAuthToken(accountName);
         } catch (Exception e) {
             Crashlytics.logException(e);
             showToast(getString(R.string.unknownError));
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.GET_ACCOUNTS)
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    signinUser();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -491,7 +506,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
             AuthTokenResult result = new AuthTokenResult();
             try {
                 result.setAuthToken(GoogleAuthUtil.getToken(activity, params[0],
-                        "oauth2:" + Scopes.PROFILE + " " + SCOPE_EMAIL));
+                        "oauth2:" + Scopes.PROFILE + " " + Scopes.EMAIL));
             } catch (Exception e) {
                 result.setAuthException(e);
             }

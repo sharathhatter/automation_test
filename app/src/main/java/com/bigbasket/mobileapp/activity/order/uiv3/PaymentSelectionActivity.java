@@ -1,10 +1,12 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -265,7 +267,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
                                 getIntent().getStringExtra(Constants.NEW_FLOW_URL));
                         dialog.show(getSupportFragmentManager(), getScreenTag() + "#KnowmoreDialog");
                     } else {
-                        placeOrder();
+                        if ((mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY))) {
+                            if (handlePermission(Manifest.permission.READ_PHONE_STATE, Constants.PERMISSION_REQUEST_CODE_READ_PHONE_STATE))
+                                placeOrder();
+                        } else {
+                            placeOrder();
+                        }
                     }
                 }
             });
@@ -829,7 +836,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
     public void onKnowMoreConfirmed(int id, boolean isPositive) {
         if (id == Constants.KNOW_MORE_DIALOG_ID) {
             if (isPositive) {
-                placeOrder();
+                if ((mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY))) {
+                    if (handlePermission(Manifest.permission.READ_PHONE_STATE, Constants.PERMISSION_REQUEST_CODE_READ_PHONE_STATE))
+                        placeOrder();
+                } else {
+                    placeOrder();
+                }
             } else {
                 trackEvent(PLACE_ORDER_KNOW_MORE_DIALOG_CANCEL_CLICKED, null);
             }
@@ -840,6 +852,24 @@ public class PaymentSelectionActivity extends BackButtonActivity
     public void onKnowMoreCancelled(int id) {
         if (id == Constants.KNOW_MORE_DIALOG_ID) {
             trackEvent(PLACE_ORDER_KNOW_MORE_DIALOG_CANCELLED, null);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Constants.PERMISSION_REQUEST_CODE_READ_PHONE_STATE:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.READ_PHONE_STATE)) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        placeOrder();
+                    } else {
+                        showToast(getString(R.string.select_different_payment_method));
+                    }
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

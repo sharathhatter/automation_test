@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -16,6 +17,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -38,6 +40,7 @@ import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.HomeActivity;
 import com.bigbasket.mobileapp.activity.TutorialActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.BBUnifiedInboxActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
@@ -76,7 +79,6 @@ import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
-import com.moengage.addon.ubox.UnifiedInboxActivity;
 import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
@@ -97,9 +99,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
             faceRobotoBold;
     protected BigBasketMessageHandler handler;
+    protected MoEHelper moEHelper;
     private boolean isActivitySuspended;
     private ProgressDialog progressDialog = null;
-    protected MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
@@ -287,7 +289,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void launchMoEngageCommunicationHub() {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (!authParameters.isAuthTokenEmpty()) {
-            Intent communicationHunIntent = new Intent(this, UnifiedInboxActivity.class);
+            Intent communicationHunIntent = new Intent(this, BBUnifiedInboxActivity.class);
             startActivity(communicationHunIntent);
         } else {
             showToast(getString(R.string.loginToContinue));
@@ -939,5 +941,28 @@ public abstract class BaseActivity extends AppCompatActivity implements
         intent.putExtra(Constants.IS_FIRST_TIME, isFirstTime);
         intent.putExtra(Constants.REOPEN_LANDING_PAGE, reopenLandingPage);
         getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    }
+
+    /**************
+     * code for Android M Support
+     ******************/
+
+    public boolean handlePermission(String permission, int requestCode) {
+        if (hasPermissionGranted(permission)) {
+            return true;
+        } else {
+            requestPermission(permission, requestCode);
+        }
+        return false;
+    }
+
+    private boolean hasPermissionGranted(String permission) {
+        int result = ContextCompat.checkSelfPermission(this, permission);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+
+    private void requestPermission(String permission, int requestCode) {
+        ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
     }
 }

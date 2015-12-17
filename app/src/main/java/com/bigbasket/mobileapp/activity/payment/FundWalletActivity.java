@@ -1,6 +1,8 @@
 package com.bigbasket.mobileapp.activity.payment;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -185,6 +187,19 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             showAlertDialog(getString(R.string.invalidAmount));
             return;
         }
+        if ((mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY))) {
+            if (handlePermission(Manifest.permission.READ_PHONE_STATE, Constants.PERMISSION_REQUEST_CODE_READ_PHONE_STATE)) {
+                initFundWalletPrepaymentProcessingTask(amount);
+            }
+        } else {
+            initFundWalletPrepaymentProcessingTask(amount);
+        }
+
+
+    }
+
+
+    public void initFundWalletPrepaymentProcessingTask(String amount) {
         mFundWalletPrepaymentProcessingTask =
                 new FundWalletPrepaymentProcessingTask<FundWalletActivity>(this, null, null,
                         mSelectedPaymentMethod, false, true, amount) {
@@ -215,6 +230,25 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                     }
                 };
         mFundWalletPrepaymentProcessingTask.execute();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        switch (requestCode) {
+            case Constants.PERMISSION_REQUEST_CODE_READ_PHONE_STATE:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.READ_PHONE_STATE)) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        initFundWalletPrepaymentProcessingTask(String.valueOf(mFinalTotal));
+                    } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                        showToast(getString(R.string.select_different_payment_method));
+                    }
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override
@@ -283,4 +317,5 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     public void onPaymentOptionSelected(String paymentTypeValue) {
         mSelectedPaymentMethod = paymentTypeValue;
     }
+
 }
