@@ -21,7 +21,6 @@
 
     <!-- PAYU -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
 
     <!-- Area -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />

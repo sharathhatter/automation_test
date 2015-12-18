@@ -1,10 +1,13 @@
 package com.payu.payuui;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,11 +25,13 @@ import com.payu.india.Model.PayuHashes;
 import com.payu.india.Model.PostData;
 import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
+import com.payu.india.Payu.PayuUtils;
 import com.payu.india.PostParams.PaymentPostParams;
 
 
 public class PayUCreditDebitCardActivity extends AppCompatActivity implements View.OnClickListener {
 
+    int storeOneClickHash;
     private Button payNowButton;
     private EditText cardNameEditText;
     private EditText cardNumberEditText;
@@ -35,35 +40,32 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
     private EditText cardExpiryYearEditText;
     private Bundle bundle;
     private CheckBox saveCardCheckBox;
-
+    private CheckBox enableOneClickPaymentCheckBox;
     private String cardName;
     private String cardNumber;
     private String cvv;
     private String expiryMonth;
     private String expiryYear;
-
     private PayuHashes mPayuHashes;
     private PaymentParams mPaymentParams;
     private PostData postData;
     private Toolbar toolbar;
-
     private TextView amountTextView;
     private TextView transactionIdTextView;
     private PayuConfig payuConfig;
-
+    private PayuUtils payuUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card);
 
-        // todo lets set the toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
-        
+
         (payNowButton = (Button) findViewById(R.id.button_card_make_payment)).setOnClickListener(this);
 
         cardNameEditText = (EditText) findViewById(R.id.edit_text_name_on_card);
@@ -72,6 +74,13 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
         cardExpiryMonthEditText = (EditText) findViewById(R.id.edit_text_expiry_month);
         cardExpiryYearEditText = (EditText) findViewById(R.id.edit_text_expiry_year);
         saveCardCheckBox = (CheckBox) findViewById(R.id.check_box_save_card);
+        enableOneClickPaymentCheckBox = (CheckBox) findViewById(R.id.check_box_enable_one_click_payment);
+
+        bundle = getIntent().getExtras();
+
+        storeOneClickHash = bundle.getInt(PayuConstants.STORE_ONE_CLICK_HASH);
+        if (storeOneClickHash == PayuConstants.STORE_ONE_CLICK_HASH_NONE)
+            enableOneClickPaymentCheckBox.setVisibility(View.GONE);
 
         bundle = getIntent().getExtras();
 
@@ -86,10 +95,54 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
         (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(PayuConstants.TXNID + ": " + mPaymentParams.getTxnId());
 
         // lets not show the save card check box if user credentials is not found!
-        if(null == mPaymentParams.getUserCredentials())
+        if (null == mPaymentParams.getUserCredentials()) {
             saveCardCheckBox.setVisibility(View.GONE);
-        else
+            enableOneClickPaymentCheckBox.setVisibility(View.GONE);
+        } else {
             saveCardCheckBox.setVisibility(View.VISIBLE);
+        }
+
+        payuUtils = new PayuUtils();
+
+
+        cardNumberEditText.addTextChangedListener(new TextWatcher() {
+            String issuer;
+            Drawable issuerDrawable;
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 5) { // to confirm rupay card we need min 6 digit.
+                    if (null == issuer) issuer = payuUtils.getIssuer(charSequence.toString());
+                    if (issuer != null && issuer.length() > 1 && issuerDrawable == null) {
+                        issuerDrawable = getIssuerDrawable(issuer);
+                        if (issuer.contentEquals(PayuConstants.SMAE)) { // hide cvv and expiry
+                            cardExpiryMonthEditText.setVisibility(View.GONE);
+                            cardExpiryYearEditText.setVisibility(View.GONE);
+                            cardCvvEditText.setVisibility(View.GONE);
+                        } else { //show cvv and expiry
+                            cardExpiryMonthEditText.setVisibility(View.VISIBLE);
+                            cardExpiryYearEditText.setVisibility(View.VISIBLE);
+                            cardCvvEditText.setVisibility(View.VISIBLE);
+                        }
+                    }
+                } else {
+                    issuer = null;
+                    issuerDrawable = null;
+                }
+                cardNumberEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, issuerDrawable, null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+
+            }
+        });
 
         /*******************setting status bar color**************/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -98,12 +151,11 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(this.getResources().getColor(R.color.uiv3_status_bar_background));
         }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_card, menu);
         return true;
     }
 
@@ -113,8 +165,7 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        if(id == android.R.id.home){
+        if (id == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);
@@ -130,7 +181,19 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
             // do i have to store the card
             if (saveCardCheckBox.isChecked()) {
                 mPaymentParams.setStoreCard(1);
+            } else {
+                mPaymentParams.setStoreCard(0);
             }
+
+
+            // do i have to store the cvv
+            if (enableOneClickPaymentCheckBox.isChecked()) {
+                mPaymentParams.setEnableOneClickPayment(1);
+            } else {
+                mPaymentParams.setEnableOneClickPayment(0);
+            }
+
+
             // setup the hash
             mPaymentParams.setHash(mPayuHashes.getPaymentHash());
 
@@ -158,7 +221,9 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
                 payuConfig.setData(postData.getResult());
                 Intent intent = new Intent(this, PaymentsActivity.class);
                 intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
+                intent.putExtra(PayuConstants.STORE_ONE_CLICK_HASH, storeOneClickHash);
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
+
             } else {
                 Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
             }
@@ -167,19 +232,75 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode==RESULT_OK) {
+        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode == RESULT_OK) {
             setResult(resultCode, data);
             finish();
-        }
-        else {
-            if(data!=null) {
+        } else {
+            if (data != null) {
                 data.putExtra("transaction_status", false);
             }
             setResult(resultCode, data);
             finish();
+        }
+        setResult(resultCode, data);
+        finish();
+    }
 
+
+    private Drawable getIssuerDrawable(String issuer) {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            switch (issuer) {
+                case PayuConstants.VISA:
+                    return getResources().getDrawable(R.drawable.visa);
+                case PayuConstants.LASER:
+                    return getResources().getDrawable(R.drawable.laser);
+                case PayuConstants.DISCOVER:
+                    return getResources().getDrawable(R.drawable.discover);
+                case PayuConstants.MAES:
+                    return getResources().getDrawable(R.drawable.maestro);
+                case PayuConstants.MAST:
+                    return getResources().getDrawable(R.drawable.master);
+                case PayuConstants.AMEX:
+                    return getResources().getDrawable(R.drawable.amex);
+                case PayuConstants.DINR:
+                    return getResources().getDrawable(R.drawable.diner);
+                case PayuConstants.JCB:
+                    return getResources().getDrawable(R.drawable.jcb);
+                case PayuConstants.SMAE:
+                    return getResources().getDrawable(R.drawable.maestro);
+                case PayuConstants.RUPAY:
+                    return getResources().getDrawable(R.drawable.rupay);
+            }
+            return null;
+        } else {
+
+            switch (issuer) {
+                case PayuConstants.VISA:
+                    return getResources().getDrawable(R.drawable.visa, null);
+                case PayuConstants.LASER:
+                    return getResources().getDrawable(R.drawable.laser, null);
+                case PayuConstants.DISCOVER:
+                    return getResources().getDrawable(R.drawable.discover, null);
+                case PayuConstants.MAES:
+                    return getResources().getDrawable(R.drawable.maestro, null);
+                case PayuConstants.MAST:
+                    return getResources().getDrawable(R.drawable.master, null);
+                case PayuConstants.AMEX:
+                    return getResources().getDrawable(R.drawable.amex, null);
+                case PayuConstants.DINR:
+                    return getResources().getDrawable(R.drawable.diner, null);
+                case PayuConstants.JCB:
+                    return getResources().getDrawable(R.drawable.jcb, null);
+                case PayuConstants.SMAE:
+                    return getResources().getDrawable(R.drawable.maestro, null);
+                case PayuConstants.RUPAY:
+                    return getResources().getDrawable(R.drawable.rupay, null);
+            }
+            return null;
         }
     }
 }

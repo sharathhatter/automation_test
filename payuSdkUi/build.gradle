@@ -3,7 +3,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
-    useLibrary 'org.apache.http.legacy'
 
 
     defaultConfig {
@@ -23,7 +22,8 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    compile project(':PayU-release')
-    compile project(':CustomBrowser-release')
+    compile 'com.payu.india:payu-sdk:4.3.1'
+    compile 'com.payu.magicretry:magicretry:1.0.1'
+    compile 'com.payu.custombrowser:payu-custom-browser:5.3.1'
 
 }

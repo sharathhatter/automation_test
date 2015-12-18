@@ -61,6 +61,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     private String mTxnId;
     private double mFinalTotal;
     private PayNowPrepaymentProcessingTask<PayNowActivity> mPayNowPrepaymentProcessingTask;
+    private boolean isPayUOptionVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -171,7 +172,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
 
     public void initPayNowPrepaymentProcessingTask() {
         mPayNowPrepaymentProcessingTask = new PayNowPrepaymentProcessingTask<PayNowActivity>(this,
-                null, mOrderId, mSelectedPaymentMethod, true, false) {
+                null, mOrderId, mSelectedPaymentMethod, true, false, isPayUOptionVisible) {
             @Override
             protected void onPostExecute(Boolean success) {
                 super.onPostExecute(success);
@@ -338,6 +339,12 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void displayPaymentMethods(ArrayList<PaymentType> paymentTypeList) {
+        for (PaymentType paymentType : paymentTypeList) {
+            if (paymentType.getValue().equals(Constants.PAYUMONEY_WALLET)) {
+                isPayUOptionVisible = true;
+                break;
+            }
+        }
         PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
     }

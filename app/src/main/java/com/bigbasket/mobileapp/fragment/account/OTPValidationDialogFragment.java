@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.fragment.account;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,7 +22,6 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
@@ -197,7 +195,7 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
             Crashlytics.logException(e);
         }
     }
-    
+
     @Override
     public void onDestroyView() {
         unregisterBroadcastForSMS();

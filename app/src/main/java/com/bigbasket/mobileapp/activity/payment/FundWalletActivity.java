@@ -53,6 +53,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     private String mTxnId;
     private double mFinalTotal;
     private FundWalletPrepaymentProcessingTask<FundWalletActivity> mFundWalletPrepaymentProcessingTask;
+    private boolean isPayUOptionVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -165,7 +166,12 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                 initiateWalletFunding(txtAmount.getText().toString());
             }
         });
-
+        for (PaymentType paymentType : paymentTypeList) {
+            if (paymentType.getValue().equals(Constants.PAYUMONEY_WALLET)) {
+                isPayUOptionVisible = true;
+                break;
+            }
+        }
         PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
     }
@@ -198,11 +204,10 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
 
     }
 
-
     public void initFundWalletPrepaymentProcessingTask(String amount) {
         mFundWalletPrepaymentProcessingTask =
                 new FundWalletPrepaymentProcessingTask<FundWalletActivity>(this, null, null,
-                        mSelectedPaymentMethod, false, true, amount) {
+                        mSelectedPaymentMethod, false, true, amount, isPayUOptionVisible) {
                     @Override
                     protected void onPostExecute(Boolean success) {
                         super.onPostExecute(success);

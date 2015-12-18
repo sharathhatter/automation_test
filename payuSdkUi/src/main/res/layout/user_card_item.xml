@@ -42,14 +42,15 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:visibility="visible">
+
             <EditText
                 android:id="@+id/edit_text_cvv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="7"
+                android:hint="Cvv"
                 android:inputType="number"
-                android:maxLength="4"
-                android:hint="Cvv" />
+                android:maxLength="4" />
 
             <Button
                 android:id="@+id/button_pay_now"
@@ -61,6 +62,13 @@
                 android:textSize="8sp" />
 
         </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/check_box_enable_one_click_payment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable one click payment"
+            android:visibility="gone" />
 
     </LinearLayout>
 

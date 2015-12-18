@@ -15,8 +15,8 @@ public class OrderPrepaymentProcessingTask<T extends AppOperationAware>
         extends AbstractPrepaymentProcessingTask<T> {
     public OrderPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
                                          String paymentMethod, boolean isPayNow,
-                                         boolean isFundWallet) {
-        super(ctx, potentialOrderId, orderId, paymentMethod, isPayNow, isFundWallet);
+                                         boolean isFundWallet,boolean isPayUOptionVisible) {
+        super(ctx, potentialOrderId, orderId, paymentMethod, isPayNow, isFundWallet,isPayUOptionVisible);
     }
 
     @Override
@@ -31,4 +31,3 @@ public class OrderPrepaymentProcessingTask<T extends AppOperationAware>
         return bigBasketApiService.getOrderPaymentParams(potentialOrderId);
     }
 }
-

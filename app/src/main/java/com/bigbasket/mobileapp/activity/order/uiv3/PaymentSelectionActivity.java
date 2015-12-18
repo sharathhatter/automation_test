@@ -104,6 +104,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private boolean mIsPrepaymentProcessingStarted;
     private OrderPrepaymentProcessingTask<PaymentSelectionActivity> mOrderPrepaymentProcessingTask;
     private boolean mIsPrepaymentAbortInitiated;
+    private boolean isPayUOptionVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -381,6 +382,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
             }
             isInHDFCPayMode = hasHdfc;
         }
+        for (PaymentType paymentType : paymentTypeList) {
+            if (paymentType.getValue().equals(Constants.PAYUMONEY_WALLET)) {
+                isPayUOptionVisible = true;
+                break;
+            }
+        }
+
         PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.removeAllViews();
 
@@ -691,7 +699,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mOrderPrepaymentProcessingTask =
                 new OrderPrepaymentProcessingTask<PaymentSelectionActivity>(this,
                         mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
-                        mSelectedPaymentMethod, false, false) {
+                        mSelectedPaymentMethod, false, false, isPayUOptionVisible) {
                     @Override
                     protected void onPreExecute() {
                         super.onPreExecute();

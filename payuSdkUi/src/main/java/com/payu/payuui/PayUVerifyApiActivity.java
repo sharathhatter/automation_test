@@ -3,7 +3,6 @@ package com.payu.payuui;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -11,12 +10,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,17 +23,18 @@ import android.widget.Toast;
 
 import com.payu.india.Extras.PayUChecksum;
 import com.payu.india.Interfaces.DeleteCardApiListener;
+import com.payu.india.Interfaces.DeleteCvvApiListener;
 import com.payu.india.Interfaces.EditCardApiListener;
 import com.payu.india.Interfaces.GetCardInformationApiListener;
 import com.payu.india.Interfaces.GetIbiboCodesApiListener;
 import com.payu.india.Interfaces.GetOfferStatusApiListener;
-import com.payu.india.Interfaces.GetTransactionInfoApiListener;
 import com.payu.india.Interfaces.GetStoredCardApiListener;
+import com.payu.india.Interfaces.GetTransactionInfoApiListener;
 import com.payu.india.Interfaces.SaveCardApiListener;
 import com.payu.india.Interfaces.ValueAddedServiceApiListener;
 import com.payu.india.Interfaces.VerifyPaymentApiListener;
 import com.payu.india.Model.MerchantWebService;
-import com.payu.india.Model.PaymentDefaultParams;
+import com.payu.india.Model.PaymentDetails;
 import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
 import com.payu.india.Model.PayuHashes;
@@ -46,6 +46,7 @@ import com.payu.india.Payu.PayuErrors;
 import com.payu.india.Payu.PayuUtils;
 import com.payu.india.PostParams.MerchantWebServicePostParams;
 import com.payu.india.Tasks.DeleteCardTask;
+import com.payu.india.Tasks.DeleteCvvTask;
 import com.payu.india.Tasks.EditCardTask;
 import com.payu.india.Tasks.GetCardInformationTask;
 import com.payu.india.Tasks.GetIbiboCodesTask;
@@ -60,7 +61,7 @@ import java.util.ArrayList;
 
 public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnClickListener, GetStoredCardApiListener,
         SaveCardApiListener, EditCardApiListener, DeleteCardApiListener, GetCardInformationApiListener,
-        GetIbiboCodesApiListener, ValueAddedServiceApiListener, GetTransactionInfoApiListener, GetOfferStatusApiListener, VerifyPaymentApiListener {
+        GetIbiboCodesApiListener, ValueAddedServiceApiListener, GetTransactionInfoApiListener, GetOfferStatusApiListener, VerifyPaymentApiListener, DeleteCvvApiListener {
 
     private Bundle bundle;
 
@@ -74,16 +75,22 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
     private Button getTransactionInformationButton;
     private Button getOfferStatusButton;
     private Button verifyTransactionButton;
+    private Button deleteCvvButton;
 
     private PayuHashes mPayuHashes;
     private MerchantWebService merchantWebService;
     private PaymentParams mPaymentParams;
     private PostData postData;
 
+//    private PayuResponse mPayuResponse;
+
     private Boolean getUserCard = false;
     private Boolean editUserCard = false;
     private Boolean deleteUserCard = false;
     private StoredCard selectedUserCard;
+
+    private ArrayList<StoredCard> storedCardsList;
+    private ArrayList<PaymentDetails> netBankingList;
 
     private PayuConfig payuConfig;
 
@@ -92,12 +99,20 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_api);
 
+        netBankingList = new ArrayList<PaymentDetails>();
+        storedCardsList = new ArrayList<StoredCard>();
+
         // get the bundle variables
         bundle = getIntent().getExtras();
         mPayuHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
         mPaymentParams = bundle.getParcelable(PayuConstants.PAYMENT_PARAMS);
         payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
+
+        netBankingList = bundle.getParcelableArrayList(PayuConstants.NETBANKING);
+        storedCardsList = bundle.getParcelableArrayList(PayuConstants.STORED_CARD);
+
         payuConfig = null != payuConfig ? payuConfig : new PayuConfig();
+//        mPayuResponse = bundle.getParcelable(PayuConstants.PAYU_RESPONSE);
 
         // setup buttons
         (storeUserCardButton = (Button) findViewById(R.id.button_store_user_card)).setOnClickListener(this);
@@ -110,13 +125,10 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
         (getTransactionInformationButton = (Button) findViewById(R.id.button_get_transaction_information)).setOnClickListener(this);
         (getOfferStatusButton = (Button) findViewById(R.id.button_get_offer_status)).setOnClickListener(this);
         (verifyTransactionButton = (Button) findViewById(R.id.button_verify_transaction)).setOnClickListener(this);
-/*******************setting status bar color**************/
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = this.getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(this.getResources().getColor(R.color.uiv3_status_bar_background));
-        }
+        (deleteCvvButton = (Button) findViewById(R.id.button_delete_cvv)).setOnClickListener(this);
+
+        (deleteCvvButton = (Button) findViewById(R.id.button_delete_cvv)).setOnClickListener(this);
+
 
     }
 
@@ -145,36 +157,38 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
-         if(v.getId() == R.id.button_store_user_card){
+        if (v.getId() == R.id.button_store_user_card) {
             saveUserCard();
-         }else if(v.getId() == R.id.button_delete_user_card){
-             deleteUserCard = true;
-             editUserCard = false;
-             getUserCard = false;
-             deleteUserCard();
-         }else if(v.getId() == R.id.button_edit_user_card){
-             deleteUserCard = false;
-             editUserCard = true;
-             getUserCard = false;
-             editUserCard();
-         }else if(v.getId() == R.id.button_get_user_cards){
-             deleteUserCard = false;
-             editUserCard = false;
-             getUserCard = true;
-             getUserCard();
-         }else if(v.getId() == R.id.button_get_card_information) {
-             getCardInformation();
-         }else if(v.getId() == R.id.button_get_ibibo_codes){
-             getIbiboCodes();
-         }else if(v.getId() == R.id.button_get_value_added_services) {
+        } else if (v.getId() == R.id.button_delete_user_card) {
+            deleteUserCard = true;
+            editUserCard = false;
+            getUserCard = false;
+            deleteUserCard();
+        } else if (v.getId() == R.id.button_edit_user_card) {
+            deleteUserCard = false;
+            editUserCard = true;
+            getUserCard = false;
+            editUserCard();
+        } else if (v.getId() == R.id.button_get_user_cards) {
+            deleteUserCard = false;
+            editUserCard = false;
+            getUserCard = true;
+            getUserCard();
+        } else if (v.getId() == R.id.button_get_card_information) {
+            getCardInformation();
+        } else if (v.getId() == R.id.button_get_ibibo_codes) {
+            getIbiboCodes();
+        } else if (v.getId() == R.id.button_get_value_added_services) {
             getValueAddedService();
-         }else if(v.getId() == R.id.button_get_transaction_information) {
+        } else if (v.getId() == R.id.button_get_transaction_information) {
             getTransactionInformation();
-         }else if(v.getId() == R.id.button_get_offer_status){
-             getOfferStatus();
-         }else if(v.getId() == R.id.button_verify_transaction){
-             verifyPayment();
-         }
+        } else if (v.getId() == R.id.button_get_offer_status) {
+            getOfferStatus();
+        } else if (v.getId() == R.id.button_verify_transaction) {
+            verifyPayment();
+        } else if (v.getId() == R.id.button_delete_cvv) {
+            deleteCvv();
+        }
     }
 
 
@@ -291,7 +305,7 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
         builder.setView(viewDeleteUserCard).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if (null != selectedUserCard){
+                if (null != selectedUserCard) {
                     MerchantWebService merchantWebService = new MerchantWebService();
                     merchantWebService.setKey(mPaymentParams.getKey());
                     merchantWebService.setCommand(PayuConstants.DELETE_USER_CARD);
@@ -302,7 +316,7 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
                     postData = null;
                     postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
 
-                    if(postData.getCode() == PayuErrors.NO_ERROR){
+                    if (postData.getCode() == PayuErrors.NO_ERROR) {
                         // ok we got the post params, let make an api call to payu to fetch the payment related details
 
                         payuConfig.setData(postData.getResult());
@@ -310,7 +324,7 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
                         DeleteCardTask deleteCardTask = new DeleteCardTask(PayUVerifyApiActivity.this);
                         deleteCardTask.execute(payuConfig);
                     } else {
-                        Toast.makeText(PayUVerifyApiActivity.this, postData.getResult() , Toast.LENGTH_LONG).show();
+                        Toast.makeText(PayUVerifyApiActivity.this, postData.getResult(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -349,7 +363,7 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedUserCard = (StoredCard) adapterView.getSelectedItem();
                 // oops i dont have the card number. user have to type the card number.
-//                cardNumberEditText.setText(selectedUserCard.getMaskedCardNumber());
+                cardNumberEditText.setHint(selectedUserCard.getMaskedCardNumber());
                 cardHolderNameEditText.setText(selectedUserCard.getNameOnCard());
                 cardNameEditText.setText(selectedUserCard.getCardName());
                 cardExpiryMonthEditText.setText(selectedUserCard.getExpiryMonth());
@@ -424,13 +438,13 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(viewUserCards)
-            // Add action buttons
-            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
+                // Add action buttons
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
 
-                }
-            }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -494,8 +508,8 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
         });
     }
 
-    private void showValueAddedServiceResponse(PayuResponse payuResponse){
-        if(null != payuResponse && (payuResponse.isIssuingBankStatusAvailable() || payuResponse.isNetBankingStatusAvailable())) {
+    private void showValueAddedServiceResponse(PayuResponse payuResponse) {
+        if (null != payuResponse && (payuResponse.isIssuingBankStatusAvailable() || payuResponse.isNetBankingStatusAvailable())) {
             StringBuffer issuingBankStatus = new StringBuffer();
             for (String key : payuResponse.getIssuingBankStatus().keySet()) {
                 issuingBankStatus.append("Bank code: " + key + "\n");
@@ -510,14 +524,14 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
 
                         }
                     }).show();
-        }else if (null != payuResponse && null != payuResponse.getResponseStatus()){
+        } else if (null != payuResponse && null != payuResponse.getResponseStatus()) {
             Toast.makeText(PayUVerifyApiActivity.this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
-        }else{
+        } else {
             Toast.makeText(PayUVerifyApiActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
         }
     }
 
-    private void getIbiboCodes(){
+    private void getIbiboCodes() {
         MerchantWebService merchantWebService = new MerchantWebService();
         merchantWebService.setKey(mPaymentParams.getKey());
         merchantWebService.setCommand(PayuConstants.GET_MERCHANT_IBIBO_CODES);
@@ -525,11 +539,11 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
         merchantWebService.setHash(mPayuHashes.getMerchantIbiboCodesHash());
 
         PostData postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
-        if(postData.getCode() == PayuErrors.NO_ERROR){
+        if (postData.getCode() == PayuErrors.NO_ERROR) {
             payuConfig.setData(postData.getResult());
             GetIbiboCodesTask getIbiboCodesTask = new GetIbiboCodesTask(this);
             getIbiboCodesTask.execute(payuConfig);
-        }else{
+        } else {
             Toast.makeText(PayUVerifyApiActivity.this, postData.getResult(), Toast.LENGTH_LONG).show();
         }
     }
@@ -543,16 +557,16 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
         merchantWebService.setVar2(PayuConstants.DEFAULT);
         merchantWebService.setVar3(PayuConstants.DEFAULT);
 
-        if((postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams()) != null&& postData.getCode() == PayuErrors.NO_ERROR ){
+        if ((postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams()) != null && postData.getCode() == PayuErrors.NO_ERROR) {
             payuConfig.setData(postData.getResult());
             ValueAddedServiceTask valueAddedServiceTask = new ValueAddedServiceTask(this);
             valueAddedServiceTask.execute(payuConfig);
-        }else{
+        } else {
             Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
         }
     }
 
-    private void getTransactionInformation(){ // TODO gotta fix, not working, ui visibility is gone now.
+    private void getTransactionInformation() { // TODO gotta fix, not working, ui visibility is gone now.
         // lets create a popup
 
         LayoutInflater layoutInflater = getLayoutInflater();
@@ -614,19 +628,67 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
         });
     }
 
-    private void getOfferStatus(){
+    private void getOfferStatus() {
         LayoutInflater layoutInflater = getLayoutInflater();
         View viewOfferStatus = layoutInflater.inflate(R.layout.layout_get_offer_status, null);
 
-        final EditText offerKeyEditText = (EditText) viewOfferStatus.findViewById(R.id.edit_text_offer_key);
-        offerKeyEditText.setText(mPaymentParams.getOfferKey());
-        final EditText offerAmountEditText = (EditText) viewOfferStatus.findViewById(R.id.edit_text_offer_amount);
-        final EditText offerCategoryEditText = (EditText) viewOfferStatus.findViewById(R.id.edit_text_offer_category);
-        final EditText offerBankCodeEditText = (EditText) viewOfferStatus.findViewById(R.id.edit_text_offer_bank_code);
         final EditText offerCardNumberEditText = (EditText) viewOfferStatus.findViewById(R.id.edit_text_offer_card_number);
         final EditText offerNameOnCardEditText = (EditText) viewOfferStatus.findViewById(R.id.edit_text_offer_name_on_card);
-        final EditText offerPhoneNumberEditText = (EditText) viewOfferStatus.findViewById(R.id.edit_text_offer_phone_number);
-        final EditText offerEmailEditText = (EditText) viewOfferStatus.findViewById(R.id.edit_text_offer_email);
+        final EditText offerPaymentModeEditText = (EditText) viewOfferStatus.findViewById(R.id.edit_text_offer_card_mode);
+
+        final LinearLayout newCardLinearLayout = (LinearLayout) viewOfferStatus.findViewById(R.id.linear_layout_new_card);
+        final LinearLayout netBankingLinearLayout = (LinearLayout) viewOfferStatus.findViewById(R.id.linear_layout_netbanking);
+        final LinearLayout storedCardLinearLayout = (LinearLayout) viewOfferStatus.findViewById(R.id.linear_layout_stored_card);
+
+
+        Spinner selectOfferModeSpinner = (Spinner) viewOfferStatus.findViewById(R.id.spinner_select_offer_mode);
+
+        final Spinner netBankingSpinner = (Spinner) viewOfferStatus.findViewById(R.id.spinner_netbanking);
+        final Spinner storedCardSpinner = (Spinner) viewOfferStatus.findViewById(R.id.spinner_stored_cards);
+
+        // lets setup offer mode spinner.
+
+        selectOfferModeSpinner.setAdapter(ArrayAdapter.createFromResource(this, R.array.offer_modes, android.R.layout.simple_spinner_item));
+        selectOfferModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0: // new card
+                        newCardLinearLayout.setVisibility(View.VISIBLE);
+                        storedCardLinearLayout.setVisibility(View.GONE);
+                        netBankingLinearLayout.setVisibility(View.GONE);
+                        break;
+                    case 1: // stored card
+                        newCardLinearLayout.setVisibility(View.GONE);
+                        storedCardLinearLayout.setVisibility(View.VISIBLE);
+                        netBankingLinearLayout.setVisibility(View.GONE);
+                        break;
+                    case 2: // net banking
+                        newCardLinearLayout.setVisibility(View.GONE);
+                        storedCardLinearLayout.setVisibility(View.GONE);
+                        netBankingLinearLayout.setVisibility(View.VISIBLE);
+                        break;
+                    default: // new card
+                        newCardLinearLayout.setVisibility(View.VISIBLE);
+                        storedCardLinearLayout.setVisibility(View.GONE);
+                        netBankingLinearLayout.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // setup net banking spinner.
+        BaseAdapter netBankingAdapter = new PayUNetBankingAdapter(this, netBankingList);
+        netBankingSpinner.setAdapter(netBankingAdapter);
+
+        // setup stored card spinner.
+        final BaseAdapter storedCardsAdapter = new UserCardsAdapter(this, storedCardsList);
+        storedCardSpinner.setAdapter(storedCardsAdapter);
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -648,22 +710,47 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
         getOfferDetailsDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Common for all the flow.
                 merchantWebService = new MerchantWebService();
                 merchantWebService.setKey(mPaymentParams.getKey());
                 merchantWebService.setCommand(PayuConstants.CHECK_OFFER_STATUS);
                 merchantWebService.setHash(mPayuHashes.getCheckOfferStatusHash());
                 merchantWebService.setVar1(mPaymentParams.getOfferKey());
-                merchantWebService.setVar2(offerAmountEditText.getText().toString());
-                merchantWebService.setVar3(offerCategoryEditText.getText().toString());
-                merchantWebService.setVar4(offerCardNumberEditText.getText().toString().startsWith("4") ? "VISA" : "MAST");
-                merchantWebService.setVar5(offerCardNumberEditText.getText().toString());
-                merchantWebService.setVar6(offerNameOnCardEditText.getText().toString());
-                merchantWebService.setVar7(offerPhoneNumberEditText.getText().toString());
-                merchantWebService.setVar8(offerEmailEditText.getText().toString());
+                merchantWebService.setVar2(mPaymentParams.getAmount());
 
+                if (netBankingLinearLayout.getVisibility() == View.VISIBLE) { // its netbanking flow.
+                    merchantWebService.setVar3("NB"); // mode
+                    merchantWebService.setVar4(netBankingList.get(netBankingSpinner.getSelectedItemPosition()).getBankCode());
+                }
+
+                if (newCardLinearLayout.getVisibility() == View.VISIBLE) {
+
+                    merchantWebService.setVar3(offerPaymentModeEditText.getText().toString());
+                    merchantWebService.setVar4(offerCardNumberEditText.getText().toString().startsWith("4") ? "VISA" : "MAST");
+                    // Required only for new card
+                    merchantWebService.setVar5(offerCardNumberEditText.getText().toString());
+                    // Optional
+                    merchantWebService.setVar6(offerNameOnCardEditText.getText().toString());
+
+                } else {
+                    merchantWebService.setVar5("");
+                    merchantWebService.setVar6("");
+                }
+
+                merchantWebService.setVar7(mPaymentParams.getPhone());
+                merchantWebService.setVar8(mPaymentParams.getEmail());
+                merchantWebService.setVar9("");
+
+                // Needed only in case of stored card
+                if (storedCardLinearLayout.getVisibility() == View.VISIBLE) {
+                    merchantWebService.setVar3(storedCardsList.get(storedCardSpinner.getSelectedItemPosition()).getCardMode());
+                    merchantWebService.setVar4(storedCardsList.get(storedCardSpinner.getSelectedItemPosition()).getCardBin().startsWith("4") ? "VISA" : "MAST");
+                    merchantWebService.setVar10(mPaymentParams.getUserCredentials());
+                    merchantWebService.setVar11(storedCardsList.get(storedCardSpinner.getSelectedItemPosition()).getCardToken());
+                }
                 postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
 
-                if(postData.getCode() == PayuErrors.NO_ERROR) {
+                if (postData.getCode() == PayuErrors.NO_ERROR) {
                     payuConfig.setData(postData.getResult());
 
                     GetOfferStatusTask getOfferStatusTask = new GetOfferStatusTask(PayUVerifyApiActivity.this);
@@ -671,14 +758,14 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
 
                     // lets cancel the dialog.
                     getOfferDetailsDialog.dismiss();
-                }else{
+                } else {
                     Toast.makeText(PayUVerifyApiActivity.this, postData.getResult(), Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-    private void verifyPayment(){
+    private void verifyPayment() {
         LayoutInflater layoutInflater = getLayoutInflater();
         View layoutVerifyPayment = layoutInflater.inflate(R.layout.layout_verify_payment, null);
 
@@ -711,13 +798,13 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
                 // var 1 is from date
                 payUChecksum.setVar1(verifyPaymentTransactionIdEditText.getText().toString());
                 payUChecksum.setSalt(bundle.getString(PayuConstants.SALT));
-                if((postData = payUChecksum.getHash()) != null && postData.getCode() == PayuErrors.NO_ERROR ){
+                if ((postData = payUChecksum.getHash()) != null && postData.getCode() == PayuErrors.NO_ERROR) {
                     MerchantWebService merchantWebService = new MerchantWebService();
                     merchantWebService.setKey(mPaymentParams.getKey());
                     merchantWebService.setCommand(PayuConstants.VERIFY_PAYMENT);
                     merchantWebService.setHash(postData.getResult());
                     merchantWebService.setVar1(verifyPaymentTransactionIdEditText.getText().toString());
-                    if((postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams()) != null && postData.getCode() == PayuErrors.NO_ERROR ){
+                    if ((postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams()) != null && postData.getCode() == PayuErrors.NO_ERROR) {
                         payuConfig.setData(postData.getResult());
 
                         // lets make api call
@@ -726,14 +813,67 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
 
                         verifyPaymentDialog.dismiss();
 
-                    }else{
+                    } else {
                         Toast.makeText(PayUVerifyApiActivity.this, postData.getResult(), Toast.LENGTH_LONG).show();
                     }
-                }else{
+                } else {
                     Toast.makeText(PayUVerifyApiActivity.this, postData.getResult(), Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+
+    private void deleteCvv() {
+        LayoutInflater layoutInflater = getLayoutInflater();
+        View viewDeleteCardCvv = layoutInflater.inflate(R.layout.layout_delete_stored_card_cvv, null);
+        ListView deleteCardCvvListView = (ListView) viewDeleteCardCvv.findViewById(R.id.list_view_delete_stored_card_cvv);
+
+        UserCardsAdapter userCardsAdapter = new UserCardsAdapter(this, storedCardsList);
+        deleteCardCvvListView.setAdapter(userCardsAdapter);
+
+        deleteCardCvvListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedUserCard = (StoredCard) parent.getItemAtPosition(position);
+            }
+        });
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(viewDeleteCardCvv).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (null != selectedUserCard) {
+                    MerchantWebService merchantWebService = new MerchantWebService();
+                    merchantWebService.setKey(mPaymentParams.getKey());
+                    merchantWebService.setCommand(PayuConstants.DELETE_STORE_CARD_CVV);
+                    merchantWebService.setVar1(mPaymentParams.getUserCredentials());
+                    merchantWebService.setVar2(selectedUserCard.getCardToken());
+                    merchantWebService.setHash(mPayuHashes.getDeleteStoreCardCvv());
+
+                    postData = null;
+                    postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
+
+                    if (postData.getCode() == PayuErrors.NO_ERROR) {
+                        // ok we got the post params, let make an api call to payu to fetch the payment related details
+
+                        payuConfig.setData(postData.getResult());
+
+                        DeleteCvvTask deleteCvvTask = new DeleteCvvTask(PayUVerifyApiActivity.this);
+                        deleteCvvTask.execute(payuConfig);
+                    } else {
+                        Toast.makeText(PayUVerifyApiActivity.this, postData.getResult(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        AlertDialog deleteUserCardDialog = builder.create();
+        deleteUserCardDialog.show();
     }
 
     @Override
@@ -769,9 +909,9 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onGetCardInformationResponse(PayuResponse payuResponse) {
-        if(payuResponse.isCardInformationAvailable()){
-            Toast.makeText(PayUVerifyApiActivity.this, "Is Domestic: " + payuResponse.getCardInformation().getIsDomestic() + " Issuing Bank: " + payuResponse.getCardInformation().getIssuingBank() + " Card Type: " + payuResponse.getCardInformation().getCardType() + " Card Category: " + payuResponse.getCardInformation().getCardCategory() , Toast.LENGTH_LONG).show();
-        }else {
+        if (payuResponse.isCardInformationAvailable()) {
+            Toast.makeText(PayUVerifyApiActivity.this, "Is Domestic: " + payuResponse.getCardInformation().getIsDomestic() + " Issuing Bank: " + payuResponse.getCardInformation().getIssuingBank() + " Card Type: " + payuResponse.getCardInformation().getCardType() + " Card Category: " + payuResponse.getCardInformation().getCardCategory(), Toast.LENGTH_LONG).show();
+        } else {
             Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
         }
     }
@@ -794,12 +934,17 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onGetOfferStatusApiResponse(PayuResponse payuResponse) {
-        Toast.makeText(this, "Response status: " + payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Response status: " + payuResponse.getResponseStatus().getResult() + ": Discount = " + payuResponse.getPayuOffer().getDiscount(), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onVerifyPaymentResponse(PayuResponse payuResponse) {
         Toast.makeText(this, "Response status:" + payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onDeleteCvvApiResponse(PayuResponse payuResponse) {
+
     }
 
 
@@ -814,7 +959,7 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
 
         @Override
         public int getCount() {
-            if(null != mUserCards && mUserCards.size() != 0)
+            if (null != mUserCards && mUserCards.size() != 0)
                 return mUserCards.size();
             return 0;
         }
@@ -830,13 +975,30 @@ public class PayUVerifyApiActivity extends AppCompatActivity implements View.OnC
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                LayoutInflater layoutInflater = LayoutInflater.from(mContext);
-                convertView = layoutInflater.inflate(android.R.layout.simple_list_item_1, null);
+        public View getDropDownView(int position, View view, ViewGroup parent) {
+            if (view == null || !view.getTag().toString().equals("DROPDOWN")) {
+                view = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+                view.setTag("DROPDOWN");
             }
-            ((TextView) convertView.findViewById(android.R.id.text1)).setText(mUserCards.get(position).getCardName());
-            return convertView;
+
+            TextView textView = (TextView) view.findViewById(android.R.id.text1);
+            textView.setText(getTitle(position));
+
+            return view;
+        }
+
+        public View getView(int position, View view, ViewGroup parent) {
+            if (view == null || !view.getTag().toString().equals("NON_DROPDOWN")) {
+                view = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+                view.setTag("NON_DROPDOWN");
+            }
+            TextView textView = (TextView) view.findViewById(android.R.id.text1);
+            textView.setText(getTitle(position));
+            return view;
+        }
+
+        private String getTitle(int position) {
+            return position >= 0 && position < mUserCards.size() ? mUserCards.get(position).getCardName() : "";
         }
     }
 }
