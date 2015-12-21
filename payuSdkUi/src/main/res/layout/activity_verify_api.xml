@@ -43,45 +43,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="Get card Information"/>
-        
+            android:text="Get card Information" />
+
         <Button
             android:id="@+id/button_get_ibibo_codes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="Get IBIBO Codes"/>
+            android:text="Get IBIBO Codes" />
 
         <Button
             android:id="@+id/button_get_value_added_services"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="Get Value added services"/>
+            android:text="Get Value added services" />
 
         <!--TODO write the response -->
         <Button
-            android:enabled="false"
-            android:visibility="gone"
             android:id="@+id/button_get_transaction_information"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="Get transaction information"/>
+            android:enabled="false"
+            android:text="Get transaction information"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/button_get_offer_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="Get offer status"/>
+            android:text="Get offer status" />
 
         <Button
             android:id="@+id/button_verify_transaction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="Verify Transaction"/>
+            android:text="Verify Transaction" />
+
+        <Button
+            android:id="@+id/button_delete_cvv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Delete cvv" />
 
     </LinearLayout>
 

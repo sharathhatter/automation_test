@@ -19,6 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,23 +61,29 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
     private TextView transactionIdTextView;
 
     private PayuConfig payuConfig;
+    private PayuUtils payuUtils;
+    private int storeOneClickHash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_cards);
 
-        // TODO lets set the toolbar
+
         toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
 
         storedCardListView = (ListView) findViewById(R.id.list_view_user_card);
 
         // lets get the required data form bundle
         bundle = getIntent().getExtras();
 
+        storeOneClickHash = bundle.getInt(PayuConstants.STORE_ONE_CLICK_HASH);
+
+        payuUtils = new PayuUtils();
 
         if (bundle != null && bundle.getParcelableArrayList(PayuConstants.STORED_CARD) != null) {
             storedCardList = new ArrayList<StoredCard>();
@@ -94,10 +101,12 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
         payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
         payuConfig = null != payuConfig ? payuConfig : new PayuConfig();
 
-        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(PayuConstants.AMOUNT + ": " + mPaymentParams.getAmount());
-        (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(PayuConstants.TXNID + ": " + mPaymentParams.getTxnId());
+        amountTextView = (TextView) findViewById(R.id.text_view_amount);
+        transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id);
 
-        /*******************setting status bar color**************/
+        amountTextView.setText(PayuConstants.AMOUNT + ": " + mPaymentParams.getAmount());
+        transactionIdTextView.setText(PayuConstants.TXNID + ": " + mPaymentParams.getTxnId());
+/*******************setting status bar color**************/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = this.getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -105,12 +114,11 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
             window.setStatusBarColor(this.getResources().getColor(R.color.uiv3_status_bar_background));
         }
 
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_user_cards, menu);
         return true;
     }
 
@@ -120,7 +128,7 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if(id == android.R.id.home){
+        if (id == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);
@@ -161,18 +169,21 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
     public void onGetStoredCardApiResponse(PayuResponse payuResponse) {
         Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
         payUStoredCardsAdapter = null;
-        payUStoredCardsAdapter = new PayUStoredCardsAdapter(this, storedCardList=payuResponse.getStoredCards());
+//        payUStoredCardsAdapter = new PayUStoredCardsAdapter(this, storedCardList=payuResponse.getStoredCards());
+        // Dont display  cvvless cards.
+        storedCardList = null;
+        storedCardList = new PayuUtils().getStoredCard(this, payuResponse.getStoredCards()).get(PayuConstants.STORED_CARD);
+        payUStoredCardsAdapter = new PayUStoredCardsAdapter(this, storedCardList);
         storedCardListView.setAdapter(payUStoredCardsAdapter);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode==RESULT_OK) {
+        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode == RESULT_OK) {
             setResult(resultCode, data);
             finish();
-        }
-        else {
-            if(data!=null) {
+        } else {
+            if (data != null) {
                 data.putExtra("transaction_status", false);
             }
             setResult(resultCode, data);
@@ -181,6 +192,109 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
         }
     }
 
+    private void makePayment(StoredCard storedCard, String cvv) {
+        PostData postData = new PostData();
+        // lets try to get the post params
+        postData = null;
+        storedCard.setCvv(cvv); // make sure that you set the cvv also
+        mPaymentParams.setHash(payuHashes.getPaymentHash()); // make sure that you set payment hash
+        mPaymentParams.setCardToken(storedCard.getCardToken());
+        mPaymentParams.setCvv(cvv);
+        mPaymentParams.setNameOnCard(storedCard.getNameOnCard());
+        mPaymentParams.setCardName(storedCard.getCardName());
+        mPaymentParams.setExpiryMonth(storedCard.getExpiryMonth());
+        mPaymentParams.setExpiryYear(storedCard.getExpiryYear());
+
+        postData = new PaymentPostParams(mPaymentParams, PayuConstants.CC).getPaymentPostParams();
+
+        if (postData.getCode() == PayuErrors.NO_ERROR) {
+            payuConfig.setData(postData.getResult());
+            Intent intent = new Intent(this, PaymentsActivity.class);
+            intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
+            startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
+        } else {
+            Toast.makeText(this, postData.getResult(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void makePayment(StoredCard storedCard, String cvv, Boolean oneClickPaymentEnabled) {
+        PostData postData = new PostData();
+        // lets try to get the post params
+        postData = null;
+        storedCard.setCvv(cvv); // make sure that you set the cvv also
+        mPaymentParams.setHash(payuHashes.getPaymentHash()); // make sure that you set payment hash
+        mPaymentParams.setCardToken(storedCard.getCardToken());
+
+        mPaymentParams.setNameOnCard(storedCard.getNameOnCard());
+        mPaymentParams.setCardName(storedCard.getCardName());
+        mPaymentParams.setExpiryMonth(storedCard.getExpiryMonth());
+        mPaymentParams.setExpiryYear(storedCard.getExpiryYear());
+
+
+//        String merchantHash;
+//        if(storeOneClickHash == PayuConstants.STORE_ONE_CLICK_HASH_SERVER)
+//            merchantHash = oneClickCardTokens.get(storedCard.getCardToken());
+//        else
+//            merchantHash = payuUtils.getFromSharedPreferences(PayUOneClickPaymentActivity.this, storedCard.getCardToken());
+//        String merchantHash = payuUtils.getFromSharedPreferences(PayUOneClickPaymentActivity.this, storedCard.getCardToken());
+//
+//        if(null != merchantHash)
+//            mPaymentParams.setCardCvvMerchant(merchantHash);
+//
+//
+//
+//        String merchantHash = payuUtils.getFromSharedPreferences(PayUStoredCardsActivity.this, storedCard.getCardToken());
+//
+//        if(storedCard.getEnableOneClickPayment() == 1 && !merchantHash.contentEquals(PayuConstants.DEFAULT)){
+//            mPaymentParams.setCardCvvMerchant(merchantHash);
+//        }else{
+//
+//        }
+
+
+        mPaymentParams.setCvv(cvv);
+
+        if (oneClickPaymentEnabled)
+            mPaymentParams.setEnableOneClickPayment(1);
+
+        postData = new PaymentPostParams(mPaymentParams, PayuConstants.CC).getPaymentPostParams();
+
+        if (postData.getCode() == PayuErrors.NO_ERROR) {
+            payuConfig.setData(postData.getResult());
+            Intent intent = new Intent(this, PaymentsActivity.class);
+            intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
+            intent.putExtra(PayuConstants.STORE_ONE_CLICK_HASH, storeOneClickHash);
+            startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
+        } else {
+            Toast.makeText(this, postData.getResult(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void deleteCard(StoredCard storedCard) {
+        MerchantWebService merchantWebService = new MerchantWebService();
+        merchantWebService.setKey(mPaymentParams.getKey());
+        merchantWebService.setCommand(PayuConstants.DELETE_USER_CARD);
+        merchantWebService.setVar1(mPaymentParams.getUserCredentials());
+        merchantWebService.setVar2(storedCard.getCardToken());
+        merchantWebService.setHash(payuHashes.getDeleteCardHash());
+
+        PostData postData = null;
+        postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
+
+        if (postData.getCode() == PayuErrors.NO_ERROR) {
+            // ok we got the post params, let make an api call to payu to fetch
+            // the payment related details
+            payuConfig.setData(postData.getResult());
+            payuConfig.setEnvironment(payuConfig.getEnvironment());
+
+            DeleteCardTask deleteCardTask = new DeleteCardTask(this);
+            deleteCardTask.execute(payuConfig);
+        } else {
+            Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+        }
+    }
 
     //Adaptor
     public class PayUStoredCardsAdapter extends BaseAdapter { // todo rename to storedcardAdapter
@@ -188,12 +302,9 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
         private ArrayList<StoredCard> mStoredCards;
         private Context mContext;
 
-        private PayuUtils payuUtils;
-
         public PayUStoredCardsAdapter(Context context, ArrayList<StoredCard> StoredCards) {
             mContext = context;
             mStoredCards = StoredCards;
-            payuUtils = new PayuUtils();
         }
 
         private void viewHolder(ViewHolder holder, int position) {
@@ -235,11 +346,22 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
 
             holder.cardNumberTextView.setText(mStoredCards.get(position).getMaskedCardNumber());
             holder.cardNameTextView.setText(mStoredCards.get(position).getCardName());
+
+//            if(mStoredCards.get(position).getEnableOneClickPayment() == 1 && !payuUtils.getFromSharedPreferences(PayUStoredCardsActivity.this, mStoredCards.get(position).getCardToken()).contentEquals(PayuConstants.DEFAULT)){ // The cvv is stored so we can hide the cvv box.
+//                holder.cvvEditText.setVisibility(View.GONE);
+//                holder.paynNowButton.setEnabled(true);
+//            }else if(storeOneClickHash != 0){
+//                holder.enableOneClickPaymentCheckBox.setVisibility(View.VISIBLE);
+//            }
+
+            if (storeOneClickHash != 0) {
+                holder.enableOneClickPaymentCheckBox.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
         public int getCount() {
-            if(mStoredCards != null)
+            if (mStoredCards != null)
                 return mStoredCards.size();
             else
                 return 0;
@@ -247,7 +369,7 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
 
         @Override
         public Object getItem(int index) {
-            if(null != mStoredCards) return mStoredCards.get(index);
+            if (null != mStoredCards) return mStoredCards.get(index);
             else return 0;
         }
 
@@ -286,10 +408,8 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
             LinearLayout rowLinearLayout;
             Button paynNowButton;
             EditText cvvEditText;
+            CheckBox enableOneClickPaymentCheckBox;
 
-            public void setPosition(int position) {
-                this.position = position;
-            }
 
             public ViewHolder(View itemView) {
 
@@ -301,6 +421,7 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
                 cvvPayNowLinearLayout = (LinearLayout) itemView.findViewById(R.id.linear_layout_cvv_paynow);
                 paynNowButton = (Button) itemView.findViewById(R.id.button_pay_now);
                 cvvEditText = (EditText) itemView.findViewById(R.id.edit_text_cvv);
+                enableOneClickPaymentCheckBox = (CheckBox) itemView.findViewById(R.id.check_box_enable_one_click_payment);
 
                 // lets restrict the user not from typing alpha characters.
 
@@ -335,6 +456,10 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
                 });
             }
 
+            public void setPosition(int position) {
+                this.position = position;
+            }
+
             @Override
             public void onClick(View view) {
                 if (cvvPayNowLinearLayout.getVisibility() == View.VISIBLE) {
@@ -345,61 +470,12 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
                 if (view.getId() == R.id.image_view_card_trash) {
                     deleteCard(storedCardList.get(position));
                 } else if (view.getId() == R.id.button_pay_now) {
-                    makePayment(storedCardList.get(position), cvvEditText.getText().toString());
+                    makePayment(storedCardList.get(position), cvvEditText.getText().toString(), enableOneClickPaymentCheckBox.isChecked());
                 }
             }
         }
     }
 
-    private void makePayment(StoredCard storedCard, String cvv) {
-        PostData postData = new PostData();
-        // lets try to get the post params
-        postData = null;
-        storedCard.setCvv(cvv); // make sure that you set the cvv also
-        mPaymentParams.setHash(payuHashes.getPaymentHash()); // make sure that you set payment hash
-        mPaymentParams.setCardToken(storedCard.getCardToken());
-        mPaymentParams.setCvv(cvv);
-        mPaymentParams.setNameOnCard(storedCard.getNameOnCard());
-        mPaymentParams.setCardName(storedCard.getCardName());
-        mPaymentParams.setExpiryMonth(storedCard.getExpiryMonth());
-        mPaymentParams.setExpiryYear(storedCard.getExpiryYear());
-
-        postData = new PaymentPostParams(mPaymentParams, PayuConstants.CC).getPaymentPostParams();
-
-        if (postData.getCode() == PayuErrors.NO_ERROR) {
-            payuConfig.setData(postData.getResult());
-            Intent intent = new Intent(this, PaymentsActivity.class);
-            intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
-            startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
-        } else {
-            Toast.makeText(this, postData.getResult(), Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    private void deleteCard(StoredCard storedCard) {
-        MerchantWebService merchantWebService = new MerchantWebService();
-        merchantWebService.setKey(mPaymentParams.getKey());
-        merchantWebService.setCommand(PayuConstants.DELETE_USER_CARD);
-        merchantWebService.setVar1(mPaymentParams.getUserCredentials());
-        merchantWebService.setVar2(storedCard.getCardToken());
-        merchantWebService.setHash(payuHashes.getDeleteCardHash());
-
-        PostData postData = null;
-        postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
-
-        if (postData.getCode() == PayuErrors.NO_ERROR) {
-            // ok we got the post params, let make an api call to payu to fetch
-            // the payment related details
-            payuConfig.setData(postData.getResult());
-            payuConfig.setEnvironment(payuConfig.getEnvironment());
-
-            DeleteCardTask deleteCardTask = new DeleteCardTask(this);
-            deleteCardTask.execute(payuConfig);
-        } else {
-            Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
-        }
-    }
 }
 
 

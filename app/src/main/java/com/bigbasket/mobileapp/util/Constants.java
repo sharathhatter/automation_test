@@ -1,5 +1,7 @@
 package com.bigbasket.mobileapp.util;
 
+import android.Manifest;
+
 public class Constants {
 
     // connection parameters
@@ -659,11 +661,20 @@ public class Constants {
     public static final int LOCATION_DIALOG_REQUEST = 8005;
     public static final int PREPAYMENT_ABORT_CONFIRMATION_DIALOG = 8006;
 
+
+
     // App Indexing params
     public static final String HTTP_HOST = "bigbasket.com";
     public static final String SHOW_PAYMENT_OPTIONS_KNOW_MORE = "show_payment_options_know_more";
     public static final int KNOW_MORE_DIALOG_ID = 8008;
 
     public static final String USER_SELECTED_ADDRESS = "selected_address";
+    //Android M Support Permissions codes
+    public static final int PERMISSION_REQUEST_CODE_READ_PHONE_STATE = 101;
+    public static final int PERMISSION_REQUEST_CODE_ACCESS_LOCATION = 102;
+    public static final int PERMISSION_REQUEST_CODE_RECORD_AUDIO = 103;
+    public static final int PERMISSION_REQUEST_CODE_CAPTURE_CAMERA = 104;
+    public static final int PERMISSION_REQUEST_CODE_GET_ACCOUNTS = 105;
+    public static final int PERMISSION_REQUEST_CODE_RECEIVE_SMS = 106;
 
 }

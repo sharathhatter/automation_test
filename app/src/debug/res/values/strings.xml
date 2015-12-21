@@ -19,6 +19,6 @@
         <item>HEADERS</item>
         <item>BODY</item>
     </string-array>
-    <string name="pref_default_server_address" translatable="false">http://qa.bigbasket.com</string>
+    <string name="pref_default_server_address" translatable="false">https://testaws.bigbasket.com</string>
 
 </resources>

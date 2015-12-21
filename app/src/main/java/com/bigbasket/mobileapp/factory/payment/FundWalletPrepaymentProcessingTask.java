@@ -17,8 +17,8 @@ public class FundWalletPrepaymentProcessingTask<T extends AppOperationAware>
 
     public FundWalletPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
                                               String paymentMethod, boolean isPayNow,
-                                              boolean isFundWallet, String amount) {
-        super(ctx, potentialOrderId, orderId, paymentMethod, isPayNow, isFundWallet);
+                                              boolean isFundWallet, String amount,boolean showPayUOption) {
+        super(ctx, potentialOrderId, orderId, paymentMethod, isPayNow, isFundWallet,showPayUOption);
         this.amount = amount;
     }
 

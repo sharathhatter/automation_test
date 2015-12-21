@@ -10,21 +10,21 @@
         layout="@layout/layout_toolbar" />
 
     <!--<ScrollView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_below="@+id/toolbarMain">-->
-        <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_below="@+id/toolbarMain">-->
+    <!--<RelativeLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
     <ImageView
         android:id="@+id/mbblogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bb_logo_transparent_bkg"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/toolbarMain"
-        android:layout_margin="20dp"/>
+        android:layout_margin="20dp"
+        android:background="@drawable/bb_logo_transparent_bkg" />
 
 
     <LinearLayout
@@ -38,10 +38,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="@drawable/layout_background"
             android:layout_margin="30dp"
+            android:background="@drawable/layout_background"
+            android:gravity="center"
+            android:orientation="vertical"
             android:padding="20dp">
 
             <TextView
@@ -50,14 +50,14 @@
                 android:layout_height="wrap_content"
                 android:text="Rs."
                 android:textAppearance="@android:style/TextAppearance.Medium"
-                android:textColor="@color/amt_txn_textColor"/>
+                android:textColor="@color/amt_txn_textColor" />
 
             <TextView
                 android:id="@+id/text_view_transaction_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Transaction id : "
-                android:textColor="@color/amt_txn_textColor"/>
+                android:textColor="@color/amt_txn_textColor" />
         </LinearLayout>
 
         <LinearLayout
@@ -71,13 +71,13 @@
                 android:id="@+id/list_view_cash_card"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="30dp"
                 android:background="@drawable/layout_background"
-                android:dividerHeight="1dp"
                 android:divider="@drawable/list_divider"
-                android:layout_margin="30dp"/>
+                android:dividerHeight="1dp" />
         </LinearLayout>
     </LinearLayout>
 
-        <!--</RelativeLayout>-->
+    <!--</RelativeLayout>-->
     <!--</ScrollView>-->
 </RelativeLayout>

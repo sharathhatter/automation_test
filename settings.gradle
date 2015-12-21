@@ -1,1 +1,1 @@
-include ':app', ':androidImageSlider', ':wibmosdklib', ':wibmoSDK', ':moe-addon-ubox', ':PayU-release', ':payuSdkUi', ':CustomBrowser-release', ':mobikwik-sdk'
+include ':app', ':androidImageSlider', ':wibmosdklib', ':wibmoSDK', ':moe-addon-ubox',':payuSdkUi', ':mobikwik-sdk'

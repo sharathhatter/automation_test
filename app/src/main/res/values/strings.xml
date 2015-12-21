@@ -439,4 +439,5 @@
     <string name="abort_payment_transaction_confirmation">Order is already placed. Convert payment to "Cash on Delivery" and cancel the transaction?</string>
     <string name="dont_not_show_this_message">Do not show this message again</string>
 
+    <string name="select_different_payment_method">Please select another payment method</string>
 </resources>

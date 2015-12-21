@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
@@ -17,7 +18,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.internal.VersionUtils;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -135,7 +135,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
         Toolbar toolbar = getToolbar();
         setSupportActionBar(toolbar);
-        if (VersionUtils.isAtLeastL() && getSupportActionBar() != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && getSupportActionBar() != null) {
             getSupportActionBar().setElevation(20);
         }
 

@@ -38,7 +38,7 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
     PayUCashCardAdapter payUCashCardAdapter;
     ArrayList<PaymentDetails> mCashCardList;
     Bundle bundle;
-//    PaymentDefaultParams mPaymentDefaultParams;
+    //    PaymentDefaultParams mPaymentDefaultParams;
     PaymentParams mPaymentParams;
     PayuHashes mPayuHashes;
     private Toolbar toolbar;
@@ -52,7 +52,6 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cash_card);
 
-        // TODO lets set the toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -74,7 +73,7 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
         (txnIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(PayuConstants.TXNID + ":" + mPaymentParams.getTxnId());
 
         // lets get the list of cash card from bundle.
-        if(bundle.getParcelableArrayList(PayuConstants.CASHCARD) != null) {
+        if (bundle.getParcelableArrayList(PayuConstants.CASHCARD) != null) {
             mCashCardList = bundle.getParcelableArrayList(PayuConstants.CASHCARD);
             payUCashCardAdapter = new PayUCashCardAdapter(this, R.layout.cash_card_list_item, mCashCardList);
             cashCardListView.setAdapter(payUCashCardAdapter);
@@ -82,8 +81,10 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
             // lets set the mandatory params
 
         } else {
-            Toast.makeText(this, "Cash card not found", Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "Cash card not found", Toast.LENGTH_LONG).show();
         }
+
+
         /*******************setting status bar color**************/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = this.getWindow();
@@ -96,8 +97,6 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_cash_card, menu);
         return true;
     }
 
@@ -107,8 +106,7 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        if(id == android.R.id.home) {
+        if (id == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);
@@ -122,36 +120,34 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
         mPaymentParams.setBankCode(mCashCardList.get(position).getBankCode());
         PostData postData = new PaymentPostParams(mPaymentParams, PayuConstants.CASH).getPaymentPostParams();
 
-        if(postData.getCode() == PayuErrors.NO_ERROR){
+        if (postData.getCode() == PayuErrors.NO_ERROR) {
             // launch webview
             payuConfig.setData(postData.getResult());
             Intent intent = new Intent(this, PaymentsActivity.class);
             intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
             startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
-        }else{
-            Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+        } else {
+//            Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode==RESULT_OK) {
+        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode == RESULT_OK) {
             setResult(resultCode, data);
             finish();
-        }
-        else {
-            if(data!=null) {
+        } else {
+            if (data != null) {
                 data.putExtra("transaction_status", false);
             }
             setResult(resultCode, data);
             finish();
-
         }
     }
 
 }
 
-class PayUCashCardAdapter extends ArrayAdapter<PaymentDetails>{
+class PayUCashCardAdapter extends ArrayAdapter<PaymentDetails> {
     Context mContext;
     ArrayList<PaymentDetails> mCashCardList;
 
@@ -163,19 +159,19 @@ class PayUCashCardAdapter extends ArrayAdapter<PaymentDetails>{
 
     @Override
     public int getCount() {
-        if(null != mCashCardList) return mCashCardList.size();
+        if (null != mCashCardList) return mCashCardList.size();
         else return 0;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         CashCardViewHolder cashCardViewHolder = null;
-        if(convertView == null){
+        if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = mInflater.inflate(R.layout.cash_card_list_item, null);
             cashCardViewHolder = new CashCardViewHolder(convertView);
             convertView.setTag(cashCardViewHolder);
-        }else{
+        } else {
             cashCardViewHolder = (CashCardViewHolder) convertView.getTag();
         }
 
@@ -189,6 +185,7 @@ class PayUCashCardAdapter extends ArrayAdapter<PaymentDetails>{
 
     class CashCardViewHolder {
         TextView cashCardTextView;
+
         CashCardViewHolder(View view) {
             cashCardTextView = (TextView) view.findViewById(R.id.text_view_cash_card);
         }

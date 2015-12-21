@@ -1,10 +1,15 @@
 package com.bigbasket.mobileapp.fragment.account;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.telephony.SmsMessage;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +25,16 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
+import com.crashlytics.android.Crashlytics;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class OTPValidationDialogFragment extends AbstractDialogFragment {
 
     private TextView txtErrorValidateNumber, txtResendNumber;
     private EditText editTextMobileCode;
+    private BroadcastReceiver broadcastReceiver;
 
     public OTPValidationDialogFragment() {
     }
@@ -117,7 +127,9 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
                 }
             });
         }
+        registerBroadcastForSMS();
         ((TrackingAware) getActivity()).trackEvent(TrackingAware.OTP_DIALOG_SHOWN, null);
+
     }
 
     public void showErrorText(String errorMsg) {
@@ -137,5 +149,56 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.OTP_SCREEN;
+    }
+
+    private void registerBroadcastForSMS() {
+        IntentFilter smsOTPintentFilter = new IntentFilter();
+        smsOTPintentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        smsOTPintentFilter.setPriority(2147483647);//setting high priority for dual sim support
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final Bundle bundle = intent.getExtras();
+                if (bundle != null) {
+                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
+                    if (pdusObj == null) return;
+                    for (Object aPduObj : pdusObj) {
+                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) aPduObj);
+                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
+                        String message = currentMessage.getDisplayMessageBody();
+
+                        /**
+                         * checking that the message received is from BigBasket
+                         * and it contains the word verification
+                         */
+                        if ((phoneNumber.toUpperCase().contains("BIG") &&
+                                (message.toLowerCase().contains("verification")))) {
+                            final Pattern p = Pattern.compile("(\\d{4})");
+                            final Matcher m = p.matcher(message);
+                            if (m.find() && this!= null
+                                    && isVisible()) {
+                                resendOrConfirmOTP(m.group(0));
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        getActivity().registerReceiver(broadcastReceiver, smsOTPintentFilter);
+    }
+
+    private void unregisterBroadcastForSMS() {
+        if (broadcastReceiver == null) return;
+        try {
+           getActivity().unregisterReceiver(broadcastReceiver);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        unregisterBroadcastForSMS();
+        super.onDestroyView();
     }
 }

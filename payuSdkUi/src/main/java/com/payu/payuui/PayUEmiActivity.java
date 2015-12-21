@@ -35,7 +35,7 @@ import com.payu.india.PostParams.PaymentPostParams;
 import java.util.ArrayList;
 
 
-public class PayUEmiActivity extends AppCompatActivity implements View.OnClickListener{
+public class PayUEmiActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Spinner bankNameSpinner;
     private Spinner emiDurationSpinner;
@@ -66,13 +66,12 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emi);
 
-        // Todo lets set the toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
-        
+
         bundle = getIntent().getExtras();
 
         bankNameSpinner = (Spinner) findViewById(R.id.spinner_emi_bank_name);
@@ -96,8 +95,8 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
         (emiPayNowButton = (Button) findViewById(R.id.button_emi_pay_now)).setOnClickListener(this);
         (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(PayuConstants.AMOUNT + ": " + mPaymentParams.getAmount());
         (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(PayuConstants.TXNID + ": " + mPaymentParams.getTxnId());
-        
-        if(bundle.getParcelableArrayList(PayuConstants.EMI) != null){
+
+        if (bundle.getParcelableArrayList(PayuConstants.EMI) != null) {
             // okay we have emi now!
             // lets setup emi name adapter.
             emiArrayList = bundle.getParcelableArrayList(PayuConstants.EMI);
@@ -130,33 +129,32 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
 
                 }
             });
-        }else{
+        } else {
             Toast.makeText(this, "Could not find emil list from the privious activity", Toast.LENGTH_LONG).show();
         }
-/*******************setting status bar color**************/
+
+        /*******************setting status bar color**************/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = this.getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(this.getResources().getColor(R.color.uiv3_status_bar_background));
         }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_emi, menu);
         return true;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode==RESULT_OK) {
+        if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode == RESULT_OK) {
             setResult(resultCode, data);
             finish();
-        }
-        else {
-            if(data!=null) {
+        } else {
+            if (data != null) {
                 data.putExtra("transaction_status", false);
             }
             setResult(resultCode, data);
@@ -171,8 +169,7 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        if(id == android.R.id.home) {
+        if (id == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);
@@ -180,7 +177,7 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.button_emi_pay_now){// paynow button is clicked.
+        if (v.getId() == R.id.button_emi_pay_now) {// paynow button is clicked.
 
             // card details
             mPaymentParams.setNameOnCard(nameOnCardEditText.getText().toString());
@@ -194,13 +191,13 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
 
             PostData postData = new PaymentPostParams(mPaymentParams, PayuConstants.EMI).getPaymentPostParams();
 
-            if(postData.getCode() == PayuErrors.NO_ERROR){
+            if (postData.getCode() == PayuErrors.NO_ERROR) {
                 // launch webview
                 payuConfig.setData(postData.getResult());
                 Intent intent = new Intent(this, PaymentsActivity.class);
                 intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
-            }else{
+            } else {
                 Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
             }
 
@@ -208,18 +205,19 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
     }
 }
 
-class PayUEmiNameAdapter extends BaseAdapter{
+class PayUEmiNameAdapter extends BaseAdapter {
 
     Context mContext;
     ArrayList<Emi> mEmiList;
-    public PayUEmiNameAdapter(Context context, ArrayList<Emi> emiList){
+
+    public PayUEmiNameAdapter(Context context, ArrayList<Emi> emiList) {
         mContext = context;
         mEmiList = emiList;
     }
 
     @Override
     public int getCount() {
-        if (null != mEmiList ) return mEmiList.size();
+        if (null != mEmiList) return mEmiList.size();
         else return 0;
     }
 
@@ -236,16 +234,16 @@ class PayUEmiNameAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         PayUEmiVH emiViewHolder = null;
-        if(convertView == null){
+        if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = mInflater.inflate(R.layout.emi_list_item, null);
             emiViewHolder = new PayUEmiVH(convertView);
             convertView.setTag(emiViewHolder);
-        }else{
+        } else {
             emiViewHolder = (PayUEmiVH) convertView.getTag();
         }
 
-        Emi emi  = getItem(position);
+        Emi emi = getItem(position);
 
         // set text here
         emiViewHolder.emiNameTextView.setText(emi.getBankName());
@@ -253,21 +251,21 @@ class PayUEmiNameAdapter extends BaseAdapter{
     }
 }
 
-class PayUEmiDurationAdapter extends BaseAdapter{
+class PayUEmiDurationAdapter extends BaseAdapter {
 
     Context mContext;
     ArrayList<Emi> mEmiList;
     Emi mEmi;
     ArrayList<Emi> mSelectedEmiList;
 
-    public PayUEmiDurationAdapter(Context context, ArrayList<Emi> emiList, Emi emi){
+    public PayUEmiDurationAdapter(Context context, ArrayList<Emi> emiList, Emi emi) {
         mContext = context;
         mEmiList = emiList;
         mEmi = emi;
         mSelectedEmiList = null;
         mSelectedEmiList = new ArrayList<>();
-        for(int i = 0; i < emiList.size(); i++){
-            if(emiList.get(i).getBankName().contentEquals(emi.getBankName())){ // we found the current bank and bank is common in the list
+        for (int i = 0; i < emiList.size(); i++) {
+            if (emiList.get(i).getBankName().contentEquals(emi.getBankName())) { // we found the current bank and bank is common in the list
                 mSelectedEmiList.add(emiList.get(i));
             }
         }
@@ -275,13 +273,13 @@ class PayUEmiDurationAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        if(null != mSelectedEmiList) return mSelectedEmiList.size();
+        if (null != mSelectedEmiList) return mSelectedEmiList.size();
         else return 0;
     }
 
     @Override
     public Emi getItem(int position) {
-        return mSelectedEmiList.get(position) ;
+        return mSelectedEmiList.get(position);
     }
 
     @Override
@@ -292,16 +290,16 @@ class PayUEmiDurationAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         PayUEmiVH emiViewHolder = null;
-        if(convertView == null){
+        if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = mInflater.inflate(R.layout.emi_list_item, null);
             emiViewHolder = new PayUEmiVH(convertView);
             convertView.setTag(emiViewHolder);
-        }else{
+        } else {
             emiViewHolder = (PayUEmiVH) convertView.getTag();
         }
 
-        Emi emi  = getItem(position);
+        Emi emi = getItem(position);
         // set text here
         emiViewHolder.emiNameTextView.setText(emi.getBankTitle());
         return convertView;
@@ -310,6 +308,7 @@ class PayUEmiDurationAdapter extends BaseAdapter{
 
 class PayUEmiVH {
     TextView emiNameTextView;
+
     PayUEmiVH(View view) {
         emiNameTextView = (TextView) view.findViewById(R.id.text_view_emi_list);
     }

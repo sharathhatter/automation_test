@@ -1,10 +1,12 @@
 package com.bigbasket.mobileapp.activity.order;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -49,6 +51,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.InstantAutoCompleteTextView;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -147,7 +150,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         txtSaveAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadAddress(null);
+                if (handlePermission(Manifest.permission.RECEIVE_SMS, Constants.PERMISSION_REQUEST_CODE_RECEIVE_SMS))
+                    uploadAddress(null);
             }
         });
         if (mAddress != null) {
@@ -462,59 +466,25 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         if (editTextPincode != null) {
             hideKeyboard(this, editTextPincode);
         }
-        /**
-         * unregistering the sms broadcast receiver
-         *
-         */
-        unregisterBroadcastForSMS();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerBroadcastForSMS();
-
     }
 
-    private void registerBroadcastForSMS() {
-        IntentFilter smsOTPintentFilter = new IntentFilter();
-        smsOTPintentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
-        smsOTPintentFilter.setPriority(2147483647);//setting high priority for dual sim support
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                final Bundle bundle = intent.getExtras();
-                if (bundle != null) {
-                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
-                    if (pdusObj == null) return;
-                    for (Object aPduObj : pdusObj) {
-                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) aPduObj);
-                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-                        String message = currentMessage.getDisplayMessageBody();
-
-                        /**
-                         * checking that the message received is from BigBasket
-                         * and it contains the word verification
-                         */
-                        if ((phoneNumber.toUpperCase().contains("BIG") &&
-                                (message.toLowerCase().contains("verification")))) {
-                            final Pattern p = Pattern.compile("(\\d{4})");
-                            final Matcher m = p.matcher(message);
-                            if (m.find() && otpValidationDialogFragment != null
-                                    && otpValidationDialogFragment.isVisible()) {
-                                otpValidationDialogFragment.resendOrConfirmOTP(m.group(0));
-                            }
-                        }
-                    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Constants.PERMISSION_REQUEST_CODE_RECEIVE_SMS:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.RECEIVE_SMS)) {
+                    uploadAddress(null);
                 }
-            }
-        };
-        registerReceiver(broadcastReceiver, smsOTPintentFilter);
-    }
-
-    private void unregisterBroadcastForSMS() {
-        if (broadcastReceiver == null) return;
-        unregisterReceiver(broadcastReceiver);
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private class CreateUpdateAddressApiCallback extends BBNetworkCallback<ApiResponse<CreateUpdateAddressApiResponseContent>> {

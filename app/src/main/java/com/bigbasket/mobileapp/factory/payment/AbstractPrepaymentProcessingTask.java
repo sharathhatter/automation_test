@@ -54,15 +54,18 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     private CountDownLatch countDownLatch;
     private long minDuation;
     private boolean isPaused;
+    private boolean  isPayUOptionVisible;
 
     public AbstractPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
-                                            String paymentMethod, boolean isPayNow, boolean isFundWallet) {
+                                            String paymentMethod, boolean isPayNow, boolean isFundWallet,boolean isPayUOptionVisible) {
+
         this.ctx = ctx;
         this.potentialOrderId = potentialOrderId;
         this.paymentMethod = paymentMethod;
         this.orderId = orderId;
         this.isPayNow = isPayNow;
         this.isFundWallet = isFundWallet;
+        this.isPayUOptionVisible= isPayUOptionVisible;
     }
 
     public void setMinDuration(long minDuration) {
@@ -296,8 +299,10 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         }
         switch (paymentMethod) {
             case Constants.PAYU:
+                PayuPayment.startPaymentGateway(paymentParams, activity,isPayUOptionVisible,false);
+                break;
             case Constants.PAYUMONEY_WALLET:
-                PayuPayment.startPaymentGateway(paymentParams, activity);
+                PayuPayment.startPaymentGateway(paymentParams, activity,isPayUOptionVisible,true);
                 break;
             case Constants.MOBIKWIK_PAYMENT:
                 MobikwikPayment.startPaymentGateway(paymentParams, activity);

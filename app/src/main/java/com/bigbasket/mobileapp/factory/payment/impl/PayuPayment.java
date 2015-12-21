@@ -10,6 +10,7 @@ import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
 import com.payu.india.Model.PayuHashes;
 import com.payu.india.Payu.PayuConstants;
+import com.payu.payuui.Constants;
 import com.payu.payuui.PayUBaseActivity;
 
 import java.lang.reflect.Field;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class PayuPayment {
 
     public static void startPaymentGateway(HashMap<String, String> paymentParamsInput,
-                                           Activity ctx) {
+                                           Activity ctx, boolean isPayUOptionVisible, boolean isPayUSelected) {
 
         // Copying into another hash-map
         HashMap<String, String> paymentParamsMap = new HashMap<>(paymentParamsInput);
@@ -99,6 +100,8 @@ public class PayuPayment {
         intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
         intent.putExtra(PayuConstants.PAYMENT_PARAMS, paymentParams);
         intent.putExtra(PayuConstants.PAYU_HASHES, payuHashes);
+        intent.putExtra(Constants.SHOW_PAYU, isPayUOptionVisible);
+        intent.putExtra(Constants.PAYU_SELECTED, isPayUSelected);
 
         ctx.startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
     }
