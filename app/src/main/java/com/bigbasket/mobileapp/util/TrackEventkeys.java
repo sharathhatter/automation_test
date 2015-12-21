@@ -71,6 +71,7 @@ public final class TrackEventkeys {
     //ACCOUNT
     public static final String ACCOUNT_SCREEN = "My Account";
     public static final String ACCOUNT_CHANGE_PASSWORD_SCREEN = "Change Password";
+    public static final String ACCOUNT_FORGOT_PASSWORD_SCREEN = "Forgot Password";
     public static final String ACCOUNT_MEMBER_ORDER_SCREEN = "Orders List";
     public static final String ACCOUNT_UPDATE_PROFILE_SCREEN = "Update Profile";
     public static final String ACCOUNT_WALLET_SCREEN = "Wallet Summary";
@@ -126,27 +127,21 @@ public final class TrackEventkeys {
     public static final String ACCOUNT = NAVIGATION_CTX_MY_ACCOUNT;
     public static final String NC_ORDER_DETAIL = "order-detail";
     public static final String NC_SPLASH_SCREEN = "splash";
-    public static final String NC_ENTRY_SCREEN = "entry-page";
     public static final String NC_TUTORIAL_SCREEN = "tutorial";
     public static final String NC_LOGIN_SCREEN = "login";
-    public static final String NC_CITY_SELECTION_SCREEN = "city-selection";
+    public static final String NC_FORGOT_PASSWORD_OTP = "forgot-pass-otp";
     public static final String NC_SIGNUP_SCREEN = "signup";
     public static final String NC_DISCOUNT_SCREEN = "discount";
     public static final String NC_PROMO_CAT_LISTING = "promo-listing";
     public static final String NC_PROMO_DETAIL = "promo-detail";
     public static final String NC_PROMO_PRODUCT_LISTING = "promo-set";
-    public static final String NC_ACCOUNT_ADDRESS = "account-address";
     public static final String CO_INVOICE = "co.invoice";
     public static final String TERM = "term";
     public static final String PS_VOICE = "ps.voice";
     public static final String PS_SCAN = "ps.scan";
     public static final String PS = "ps";
     public static final String PS_C_PL = "ps.c.pl";
-    public static final String PS_T_PL = "ps.t.pl";
-    public static final String PS_H_PL = "ps.h.pl";
     public static final String URL = "url";
-    public static final String FILTER_ON = "filter_on";
-    public static final String SORT_ON = "sort_on";
     public static final String SELECTED_SLOT = "selected_slot";
     public static final String PROMO_NAME = "promo_name";
     public static final String ITEM_TAB = "order_item";

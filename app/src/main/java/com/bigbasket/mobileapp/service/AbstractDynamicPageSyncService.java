@@ -33,8 +33,12 @@ public abstract class AbstractDynamicPageSyncService extends IntentService {
         } else {
             urlSuffix = "get-main-menu/";
         }
+        String appVersion = DataUtil.getAppVersion(this);
+        if(appVersion.endsWith("-dev")){
+            appVersion = appVersion.substring(0, appVersion.indexOf("-dev"));
+        }
         urlSuffix += "?" + Constants.OS + "=android&" + Constants.APP_VERSION
-                + "=" + DataUtil.getAppVersion(this);
+                + "=" + appVersion;
         Request request = new Request.Builder()
                 .url(MobileApiUrl.getMobileApiUrl(this) + urlSuffix)
                 .build();

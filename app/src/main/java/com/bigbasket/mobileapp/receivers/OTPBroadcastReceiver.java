@@ -29,17 +29,15 @@ public class OTPBroadcastReceiver extends BroadcastReceiver {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void onReceive(Context context, Intent intent) {
         final Bundle bundle = intent.getExtras();
         if (bundle != null) {
             final Object[] pdusObj = (Object[]) bundle.get("pdus");
             if (pdusObj == null) return;
             for (Object aPduObj : pdusObj) {
-                SmsMessage currentMessage;
+                SmsMessage currentMessage ;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     String msgFormat = bundle.getString("format");
-                    // This method is only present in Android M and onwards
                     currentMessage = SmsMessage.createFromPdu((byte[]) aPduObj, msgFormat);
                 } else {
                     currentMessage = SmsMessage.createFromPdu((byte[]) aPduObj);

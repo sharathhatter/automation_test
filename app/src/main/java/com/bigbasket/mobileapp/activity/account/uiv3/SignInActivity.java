@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -31,11 +32,11 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.click.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.account.OtpResponse;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -337,35 +338,30 @@ public class SignInActivity extends SocialLoginActivity {
         }
 
         hideKeyboard(getCurrentActivity(), mEmailView);
-        requestNewPassword(email);
+        requestOtp(email);
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
-        trackEvent(TrackingAware.FORGOT_PASSWORD_DIALOG_SHOWN, eventAttribs);
         LocalyticsWrapper.tagScreen(TrackEventkeys.FORGOT_PASSWORD_SCREEN);
+        trackEvent(TrackingAware.FORGOT_PASSWORD_CLICKED, eventAttribs);
     }
 
-    private void requestNewPassword(String email) {
+    private void requestOtp(final String email) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        Call<OldBaseApiResponse> call = bigBasketApiService.forgotPassword(email);
-        call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(this) {
+        Call<ApiResponse<OtpResponse>> call = bigBasketApiService.getForgotPasswordOtp(
+                getCurrentScreenName(), email);
+        call.enqueue(new BBNetworkCallback<ApiResponse<OtpResponse>>(this) {
             @Override
-            public void onSuccess(OldBaseApiResponse forgotPasswordApiResponse) {
-                switch (forgotPasswordApiResponse.status) {
-                    case Constants.OK:
-                        showToast(getString(R.string.newPasswordSent));
-                        break;
-                    default:
-                        logForgotPasswordFailure(forgotPasswordApiResponse.message);
-                        handler.sendEmptyMessage(forgotPasswordApiResponse.getErrorTypeAsInt(), forgotPasswordApiResponse.message);
-                        break;
+            public void onSuccess(ApiResponse<OtpResponse> otpResponse) {
+                if (otpResponse.status == 0) {
+                    Intent intent = new Intent(getCurrentActivity(), ForgotPasswordActivity.class);
+                    intent.putExtra(Constants.EMAIL, email);
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                } else {
+                    logForgotPasswordFailure(otpResponse.message);
+                    handler.sendEmptyMessage(otpResponse.status,
+                            otpResponse.message);
                 }
-            }
-
-            @Override
-            public void onFailure(int httpErrorCode, String msg) {
-                super.onFailure(httpErrorCode, msg);
-                logForgotPasswordFailure(msg);
             }
 
             @Override
@@ -377,13 +373,19 @@ public class SignInActivity extends SocialLoginActivity {
                     return false;
                 }
             }
+
+            @Override
+            public void onFailure(int httpErrorCode, String msg) {
+                super.onFailure(httpErrorCode, msg);
+                logForgotPasswordFailure(msg);
+            }
         });
     }
 
     private void logForgotPasswordFailure(String reason) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.FAILURE_REASON, reason);
-        trackEvent(TrackingAware.FORGOT_PASSWORD_EMAIL_CLICKED, eventAttribs);
+        trackEvent(TrackingAware.FORGOT_PASSWORD_FAILED, eventAttribs);
     }
 
     @Override

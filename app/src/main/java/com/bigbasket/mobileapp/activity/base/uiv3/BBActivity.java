@@ -474,6 +474,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 flatPageFragment.setArguments(bundle);
                 addToMainLayout(flatPageFragment);
                 break;
+
         }
     }
 
