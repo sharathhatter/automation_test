@@ -41,11 +41,12 @@ import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.FlatPageFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
+import com.bigbasket.mobileapp.fragment.account.ChangeAddressFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.GiftOptionsFragment;
-import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
+import com.bigbasket.mobileapp.fragment.order.ViewDeliveryAddressFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
@@ -61,6 +62,7 @@ import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
+import com.bigbasket.mobileapp.interfaces.OnBasketDeltaListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -101,7 +103,7 @@ import java.util.Map;
 public abstract class BBActivity extends SocialLoginActivity implements BasketOperationAware,
         CartInfoAware, AppOperationAware, FloatingBasketUIAware,
         OnAddressChangeListener, BasketDeltaUserActionListener, NavigationSelectionAware,
-        NavigationDrawerAware, BBNavigationMenu.Callback {
+        NavigationDrawerAware, OnBasketDeltaListener, BBNavigationMenu.Callback {
 
     protected BigBasketMessageHandler handler;
     protected String mTitle;
@@ -405,14 +407,18 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 addToMainLayout(giftOptionsFragment);
                 break;
             case FragmentCodes.START_VIEW_DELIVERY_ADDRESS:
-                MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
+                ViewDeliveryAddressFragment viewDeliveryAddressFragment = new ViewDeliveryAddressFragment();
                 Bundle addressbundle = new Bundle();
-                addressbundle.putInt(Constants.ADDRESS_PAGE_MODE,
-                        getIntent().getIntExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.CHECKOUT));
                 addressbundle.putString(Constants.TOTAL_BASKET_VALUE,
                         getIntent().getStringExtra(Constants.TOTAL_BASKET_VALUE));
-                memberAddressListFragment.setArguments(addressbundle);
-                addToMainLayout(memberAddressListFragment);
+                viewDeliveryAddressFragment.setArguments(addressbundle);
+                addToMainLayout(viewDeliveryAddressFragment);
+                break;
+            case FragmentCodes.CHANGE_ADDRESS_FRAGMENT:
+                ChangeAddressFragment changeAddressFragment = new ChangeAddressFragment();
+                Bundle addressBundle = getIntent().getExtras();
+                changeAddressFragment.setArguments(addressBundle);
+                addToMainLayout(changeAddressFragment);
                 break;
             case FragmentCodes.START_COMMUNICATION_HUB:
                 launchMoEngageCommunicationHub();
@@ -801,7 +807,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             showChangeCity(false, getNextScreenNavigationContext(), false);
         } else {
             Intent intent = new Intent(this, BackButtonActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.CHANGE_ADDRESS_FRAGMENT);
             intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ADDRESS_SELECT);
             startActivityForResult(intent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
         }

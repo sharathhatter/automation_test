@@ -200,6 +200,17 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
         intent.putExtra(Constants.TOTAL_BASKET_VALUE, cartTotal);
+        boolean hasGifts = false;
+        if (cartItemLists != null && cartItemLists.size() > 0) {
+            for (CartItemList cartItemList : cartItemLists) {
+                for (CartItem item : cartItemList.getCartItems())
+                    if (!TextUtils.isEmpty(item.getGiftMsg())) {
+                        hasGifts = true;
+                        break;
+                    }
+            }
+        }
+        intent.putExtra(Constants.HAS_GIFTS, hasGifts);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

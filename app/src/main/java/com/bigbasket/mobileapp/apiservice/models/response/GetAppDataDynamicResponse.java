@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.apiservice.models.response;
 
+import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -28,4 +29,7 @@ public class GetAppDataDynamicResponse {
 
     @SerializedName(Constants.SPECIALITY_STORES_INFO)
     public HashMap<String, SpecialityStoresInfoModel> specialityStoresInfo;
+
+    @SerializedName(Constants.USER_SELECTED_ADDRESS)
+    public Address userSelectedAddress;
 }

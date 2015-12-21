@@ -11,11 +11,12 @@ import com.bigbasket.mobileapp.apiservice.models.response.SetAddressTransientRes
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
+import com.bigbasket.mobileapp.interfaces.OnBasketDeltaListener;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 
 import retrofit.Call;
 
-public class ChangeAddressTask<T extends OnAddressChangeListener & AppOperationAware> {
+public class ChangeAddressTask<T extends OnBasketDeltaListener & OnAddressChangeListener & AppOperationAware> {
     private T ctx;
     @Nullable
     private String addressId;

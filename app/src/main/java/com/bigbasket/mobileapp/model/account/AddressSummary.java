@@ -60,6 +60,10 @@ public class AddressSummary implements Parcelable {
         }
     }
 
+    public AddressSummary() {
+
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
@@ -112,6 +116,10 @@ public class AddressSummary implements Parcelable {
         return cityId;
     }
 
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
+    }
+
     public String getArea() {
         return area;
     }
@@ -122,6 +130,10 @@ public class AddressSummary implements Parcelable {
 
     public String getCityName() {
         return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
     public String getPincode() {
@@ -142,6 +154,10 @@ public class AddressSummary implements Parcelable {
 
     public String getSlot() {
         return slot;
+    }
+
+    public void setIsPartial(boolean isPartial) {
+        this.isPartial = isPartial;
     }
 
     public boolean isPartial() {

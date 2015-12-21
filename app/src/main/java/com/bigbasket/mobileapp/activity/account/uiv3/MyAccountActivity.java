@@ -228,7 +228,7 @@ public class MyAccountActivity extends BackButtonActivity implements
 
     public void renderAddressActivity(View view) {
         Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.CHANGE_ADDRESS_FRAGMENT);
         intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ACCOUNT);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         HashMap<String, String> map = new HashMap<>();
