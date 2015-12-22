@@ -151,7 +151,6 @@ dependencies {
     compile 'com.moengage:moe-android-sdk:5.3.14'
     compile "com.android.support:support-v4:${supportLibVersion}"
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
     debugCompile 'com.android.support:multidex:1.0.1'
     debugCompile 'com.squareup.okhttp:logging-interceptor:2.6.0'
 }
