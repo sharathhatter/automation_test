@@ -39,12 +39,12 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
+import com.bigbasket.mobileapp.slider.SliderTypes.BaseSliderView;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 
 import java.util.ArrayList;
 import java.util.HashMap;

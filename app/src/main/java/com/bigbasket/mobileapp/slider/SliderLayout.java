@@ -1,4 +1,4 @@
-package com.daimajia.slider.library;
+package com.bigbasket.mobileapp.slider;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,12 +13,11 @@ import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.RelativeLayout;
 
-import com.daimajia.slider.library.Indicators.PagerIndicator;
-import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.Transformers.BaseTransformer;
-import com.daimajia.slider.library.Tricks.FixedSpeedScroller;
-import com.daimajia.slider.library.Tricks.InfinitePagerAdapter;
-import com.daimajia.slider.library.Tricks.InfiniteViewPager;
+import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.slider.Indicators.PagerIndicator;
+
+import com.bigbasket.mobileapp.slider.SliderTypes.BaseSliderView;
+import com.bigbasket.mobileapp.slider.Transformers.BaseTransformer;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -26,7 +25,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * SliderLayout is compound layout. This is combined with {@link com.daimajia.slider.library.Indicators.PagerIndicator}
+ * SliderLayout is compound layout. This is combined with {@link PagerIndicator}
  * <p/>
  * There is some properties you can set in XML:
  * <p/>
@@ -98,7 +97,7 @@ public class SliderLayout extends RelativeLayout {
     private long mSliderDuration = 2000;
 
     /**
-     * Visibility of {@link com.daimajia.slider.library.Indicators.PagerIndicator}
+     * Visibility of {@link PagerIndicator}
      */
     private PagerIndicator.IndicatorVisibility mIndicatorVisibility = PagerIndicator.IndicatorVisibility.Visible;
 

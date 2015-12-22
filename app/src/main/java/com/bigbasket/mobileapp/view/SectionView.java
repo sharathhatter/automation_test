@@ -27,12 +27,12 @@ import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
+import com.bigbasket.mobileapp.slider.SliderLayout;
+import com.bigbasket.mobileapp.slider.SliderTypes.BaseSliderView;
+import com.bigbasket.mobileapp.slider.SliderTypes.DefaultSliderView;
+import com.bigbasket.mobileapp.slider.SliderTypes.HelpSliderView;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.daimajia.slider.library.SliderLayout;
-import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
-import com.daimajia.slider.library.SliderTypes.HelpSliderView;
 
 import java.util.ArrayList;
 
@@ -179,10 +179,14 @@ public class SectionView {
                     sliderView.setScaleType(BaseSliderView.ScaleType.CenterInside);
                 }
                 if (!TextUtils.isEmpty(sectionItem.getImage())) {
-                    sliderView.image(sectionItem.getImage());
+                    sliderView.setWidth(sectionItem.getActualWidth(context))
+                            .setHeight(sectionItem.getActualHeight(context))
+                            .image(sectionItem.getImage());
                 } else if (!TextUtils.isEmpty(sectionItem.getImageName())) {
-                    sliderView.image(mSectionData.getBaseImgUrl() +
-                            UIUtil.getScreenDensity(context) + "/" + sectionItem.getImageName());
+                    sliderView.setWidth(sectionItem.getActualWidth(context))
+                            .setHeight(sectionItem.getActualHeight(context))
+                            .image(mSectionData.getBaseImgUrl() +
+                                    UIUtil.getScreenDensity(context) + "/" + sectionItem.getImageName());
                 } else {
                     continue;
                 }
@@ -567,12 +571,16 @@ public class SectionView {
 
             if (imgInRow != null) {
                 if (sectionItem.hasImage()) {
+                    int targetImgWidth = 0;
+                    int targetImgHeight = 0;
                     if (isVertical) {
                         ViewGroup.LayoutParams lp = imgInRow.getLayoutParams();
                         if (lp != null) {
                             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
                             imgInRow.setLayoutParams(lp);
                         }
+                        targetImgWidth = sectionItem.getActualWidth(context);
+                        targetImgHeight = sectionItem.getActualHeight(context);
                     } else if (!stretchImage) {
                         // By default images are stretched
                         ViewGroup.LayoutParams lp = imgInRow.getLayoutParams();
@@ -582,7 +590,8 @@ public class SectionView {
                         }
                     }
                     sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow,
-                            stretchImage ? R.drawable.loading_large : R.drawable.loading_small);
+                            stretchImage ? R.drawable.loading_large : R.drawable.loading_small,
+                            false, targetImgWidth, targetImgHeight);
                 } else {
                     imgInRow.setVisibility(View.GONE);
                 }

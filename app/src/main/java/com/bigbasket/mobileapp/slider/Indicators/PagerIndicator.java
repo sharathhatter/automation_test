@@ -1,4 +1,4 @@
-package com.daimajia.slider.library.Indicators;
+package com.bigbasket.mobileapp.slider.Indicators;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -14,8 +14,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.daimajia.slider.library.R;
-import com.daimajia.slider.library.Tricks.InfinitePagerAdapter;
+import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.slider.SliderAdapter;
+import com.bigbasket.mobileapp.slider.InfinitePagerAdapter;
 
 import java.util.ArrayList;
 
@@ -56,7 +57,7 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
     private Drawable mUnselectedDrawable;
 
     /**
-     * This value is from {@link com.daimajia.slider.library.SliderAdapter} getRealCount() represent
+     * This value is from {@link SliderAdapter} getRealCount() represent
      * <p/>
      * the indicator count that we should draw.
      */
