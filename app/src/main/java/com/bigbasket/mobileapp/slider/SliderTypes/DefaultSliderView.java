@@ -1,11 +1,12 @@
-package com.daimajia.slider.library.SliderTypes;
+package com.bigbasket.mobileapp.slider.SliderTypes;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.daimajia.slider.library.R;
+import com.bigbasket.mobileapp.R;
+
 
 /**
  * a simple slider view, which just show an image. If you want to make your own slider view,

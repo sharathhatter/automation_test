@@ -1,4 +1,4 @@
-package com.daimajia.slider.library.Transformers;
+package com.bigbasket.mobileapp.slider.Transformers;
 
 import android.os.Build;
 import android.support.v4.view.ViewPager;

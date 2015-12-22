@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -386,7 +387,11 @@ public class UIUtil {
             } else {
                 url = baseImgUrl + productImgUrl;
             }
-            UIUtil.displayAsyncImage(imgProduct, url);
+            Resources res = imgProduct.getContext().getResources();
+            UIUtil.displayAsyncImage(imgProduct, url, false,
+                    R.drawable.loading_small,
+                    (int) res.getDimension(R.dimen.product_image_width),
+                    (int) res.getDimension(R.dimen.product_image_height));
         } else {
             imgProduct.setImageResource(R.drawable.noimage);
         }
@@ -402,11 +407,21 @@ public class UIUtil {
 
     public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
                                          @DrawableRes int placeHolderDrawableId) {
+        displayAsyncImage(imageView, url, animate, placeHolderDrawableId, 0, 0);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
+                                         @DrawableRes int placeHolderDrawableId,
+                                         int targetImageWidth, int targetImageHeight) {
         Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
         Picasso picasso = Picasso.with(imageView.getContext());
         RequestCreator requestCreator = picasso.load(url)
                 .error(R.drawable.noimage)
                 .placeholder(placeHolderDrawableId);
+        if (targetImageWidth > 0 && targetImageHeight > 0) {
+            requestCreator.resize(targetImageWidth, targetImageHeight)
+                    .onlyScaleDown();
+        }
         if (!animate) {
             requestCreator.noFade();
         }

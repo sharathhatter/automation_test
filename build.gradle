@@ -21,5 +21,6 @@ allprojects {
         supportLibVersion = '23.1.1'
         playServicesLibVersion = '8.1.0'
         picassoLibVersion = '2.5.2'
+        leakCanaryLibVersion = '1.3.1'
     }
 }

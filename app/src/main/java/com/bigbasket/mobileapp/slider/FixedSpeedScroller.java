@@ -1,4 +1,4 @@
-package com.daimajia.slider.library.Tricks;
+package com.bigbasket.mobileapp.slider;
 
 import android.content.Context;
 import android.view.animation.Interpolator;

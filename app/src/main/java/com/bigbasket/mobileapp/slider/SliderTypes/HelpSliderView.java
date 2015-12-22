@@ -1,11 +1,11 @@
-package com.daimajia.slider.library.SliderTypes;
+package com.bigbasket.mobileapp.slider.SliderTypes;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.daimajia.slider.library.R;
+import com.bigbasket.mobileapp.R;
 
 public class HelpSliderView extends BaseSliderView {
 

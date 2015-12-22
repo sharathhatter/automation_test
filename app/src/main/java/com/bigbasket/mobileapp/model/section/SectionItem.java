@@ -232,6 +232,14 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     public void displayImage(Context context, @Nullable String baseImgUrl, ImageView imageView,
                              @DrawableRes int placeHolderDrawableResId,
                              boolean animate) {
+        displayImage(context, baseImgUrl, imageView, placeHolderDrawableResId, animate,
+                0, 0);
+    }
+
+    public void displayImage(Context context, @Nullable String baseImgUrl, ImageView imageView,
+                             @DrawableRes int placeHolderDrawableResId,
+                             boolean animate, int targetImgWidth, int targetImgHeight) {
+
         imageView.setVisibility(View.VISIBLE);
         if (!TextUtils.isEmpty(image)) {
             if (image.startsWith(Constants.LOCAL_RES_PREFIX)) {
@@ -250,11 +258,13 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                     imageView.setVisibility(View.GONE);
                 }
             } else {
-                UIUtil.displayAsyncImage(imageView, image, animate, placeHolderDrawableResId);
+                UIUtil.displayAsyncImage(imageView, image, animate, placeHolderDrawableResId,
+                        targetImgWidth, targetImgHeight);
             }
         } else if (!TextUtils.isEmpty(imageName) && !TextUtils.isEmpty(baseImgUrl)) {
             UIUtil.displayAsyncImage(imageView,
-                    constructImageUrl(context, baseImgUrl), animate, placeHolderDrawableResId);
+                    constructImageUrl(context, baseImgUrl), animate, placeHolderDrawableResId,
+                    targetImgWidth, targetImgHeight);
         } else {
             imageView.setImageDrawable(null);
             imageView.setVisibility(View.GONE);
@@ -333,7 +343,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return 0;
     }
 
-    private int getActualHeight(Context context) {
+    public int getActualHeight(Context context) {
         if (imageParams != null) {
             return (int) (imageParams.getHeight() * UIUtil.getDpiCoefficient(context));
         }

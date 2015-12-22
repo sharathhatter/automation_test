@@ -1,10 +1,11 @@
-package com.daimajia.slider.library;
+package com.bigbasket.mobileapp.slider;
 
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.bigbasket.mobileapp.slider.SliderTypes.BaseSliderView;
+import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 
 import java.util.ArrayList;
 
@@ -50,6 +51,7 @@ public class SliderAdapter extends PagerAdapter implements BaseSliderView.ImageL
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
+        LeakCanaryObserver.Factory.observe(object);
     }
 
     @Override
