@@ -52,6 +52,10 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
             return new SectionItem[size];
         }
     };
+
+    @SerializedName(Constants.ID)
+    private String id;
+
     private String image;
 
     @SerializedName(Constants.IMAGE_NAME)
@@ -86,6 +90,10 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
 
     public SectionItem(Parcel source) {
         super(source);
+        boolean _wasIdNull = source.readByte() == (byte) 1;
+        if (!_wasIdNull) {
+            id = source.readString();
+        }
         boolean _wasImageNull = source.readByte() == (byte) 1;
         if (!_wasImageNull) {
             image = source.readString();
@@ -150,6 +158,10 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         }
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getImage() {
         return image;
     }
@@ -186,6 +198,11 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
+        boolean _wasIdNull = id == null;
+        dest.writeByte(_wasIdNull ? (byte) 1 : (byte) 0);
+        if (!_wasIdNull) {
+            dest.writeString(id);
+        }
         boolean _wasImageNull = image == null;
         dest.writeByte(_wasImageNull ? (byte) 1 : (byte) 0);
         if (!_wasImageNull) {

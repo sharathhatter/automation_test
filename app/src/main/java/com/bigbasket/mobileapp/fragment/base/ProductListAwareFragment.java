@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.adapter.product.AbstractProductItem;
+import com.bigbasket.mobileapp.adapter.product.NormalProductItem;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
+import com.bigbasket.mobileapp.adapter.product.SponsoredProductInfo;
+import com.bigbasket.mobileapp.adapter.product.SponsoredProductItem;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -30,6 +36,7 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductInfo;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
@@ -44,6 +51,7 @@ import com.google.gson.Gson;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,6 +70,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     private String mTabType;
     private boolean mHasProductLoadingFailed;
     private boolean mHasSingleTab;
+    private SponsoredProductInfo mSponsoredSectionInfo;
+    private RecyclerView mProductRecyclerView;
+    private int mInjectWindowRetries;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,6 +100,137 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             setProductListView();
         }
     }
+
+    public void setSponsoredSectionData(SectionData sponsoredSectionData) {
+        if(sponsoredSectionData == null || sponsoredSectionData.getSections() == null
+                || sponsoredSectionData.getSections().isEmpty()){
+            if(mSponsoredSectionInfo != null){
+                mSponsoredSectionInfo.reset();
+            }
+            return;
+        }
+        if(mSponsoredSectionInfo == null) {
+            mSponsoredSectionInfo = new SponsoredProductInfo(sponsoredSectionData);
+        } else {
+            mSponsoredSectionInfo.reset(sponsoredSectionData);
+        }
+        mInjectWindowRetries = 0;
+
+        injectSponsoredProducts();
+    }
+
+    private void injectSponsoredProducts(){
+        if(getCurrentActivity() == null || mSponsoredSectionInfo == null
+                || !mSponsoredSectionInfo.hasMoreItems()) {
+            return;
+        }
+        if(mSponsoredSectionInfo.getInjectionWindow() <= 0) {
+            //Determine injection window
+            if(mProductRecyclerView != null && mProductRecyclerView.getLayoutManager() != null){
+                RecyclerView.LayoutManager layoutManager = mProductRecyclerView.getLayoutManager();
+                int lastVisiblePosition = RecyclerView.NO_POSITION;
+                int firstVisiblePosition = RecyclerView.NO_POSITION;
+                if(layoutManager instanceof LinearLayoutManager) {
+                    firstVisiblePosition = ((LinearLayoutManager)layoutManager)
+                            .findFirstVisibleItemPosition();
+                    lastVisiblePosition = ((LinearLayoutManager)layoutManager)
+                            .findLastVisibleItemPosition();
+                } else if (layoutManager instanceof StaggeredGridLayoutManager){
+                    int[] pos = ((StaggeredGridLayoutManager) layoutManager)
+                            .findFirstVisibleItemPositions(null);
+                    if(pos != null && pos.length > 0){
+                        Arrays.sort(pos);
+                        firstVisiblePosition = pos[0];
+                    }
+                    pos = ((StaggeredGridLayoutManager)layoutManager)
+                            .findLastVisibleItemPositions(null);
+                    if(pos != null && pos.length > 0){
+                        Arrays.sort(pos);
+                        lastVisiblePosition = pos[pos.length - 1];
+                    }
+                } else {
+                    //unknown layoutmanager, Use hard coded positions
+                    firstVisiblePosition = 0;
+                    try {
+                        lastVisiblePosition = getResources()
+                                .getInteger(R.integer.default_sponsored_items_window);
+                    } catch (IllegalStateException ex){
+                        //Ignore
+                    }
+                }
+
+                if(firstVisiblePosition != RecyclerView.NO_POSITION
+                        && lastVisiblePosition != RecyclerView.NO_POSITION) {
+                    //Injection window is hardcoded 4 visible pages on the screen
+                    mSponsoredSectionInfo.setInjectionWindow(
+                            (lastVisiblePosition - firstVisiblePosition) * 4);
+                    //Set the last injected positions as first visible item,
+                    // so that the next inject position will firstVisiblePosition + injectionWindow
+                    mSponsoredSectionInfo.setLastInjectedPosition(firstVisiblePosition);
+                } else {
+                    if(mInjectWindowRetries >= 5) {
+                        //Could not determine after 5 retries, use hard coded window values
+                        firstVisiblePosition = 0;
+                        try {
+                            lastVisiblePosition = getResources()
+                                    .getInteger(R.integer.default_sponsored_items_window);
+                        } catch (IllegalStateException ex){
+                            //Ignore
+                        }
+                        mSponsoredSectionInfo.setInjectionWindow(
+                                lastVisiblePosition - firstVisiblePosition);
+                        //Set the last injected positions as first visible item,
+                        // so that the next inject position will firstVisiblePosition + injectionWindow
+                        mSponsoredSectionInfo.setLastInjectedPosition(firstVisiblePosition);
+                    } else {
+                        //UI is not ready, try again after 500ms
+                        mProductRecyclerView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                injectSponsoredProducts();
+                            }
+                        }, 500);
+                        mInjectWindowRetries++;
+                        return;
+                    }
+                }
+            }
+        }
+
+        List<AbstractProductItem> existingProducts = mProductListRecyclerAdapter.getProducts();
+        if(existingProducts != null) {
+            int nextInjectPosition = mSponsoredSectionInfo.getNextInjectPosition();
+            while (mSponsoredSectionInfo.getNextSponsoredItem() != null
+                    && nextInjectPosition != RecyclerView.NO_POSITION
+                    && nextInjectPosition <= existingProducts.size()) {
+                SponsoredProductItem spItem = new SponsoredProductItem(
+                        mSponsoredSectionInfo.getSectionData(),
+                        mSponsoredSectionInfo.getNextSponsoredItemIndex());
+
+                if (nextInjectPosition > 0 && (nextInjectPosition) < existingProducts.size()) {
+                    existingProducts.add(nextInjectPosition, spItem);
+                } else {
+                    existingProducts.add(spItem);
+                    nextInjectPosition = existingProducts.size();
+                }
+                if(mProductListRecyclerAdapter != null) {
+                    mProductListRecyclerAdapter.setSponsoredItemsSize(
+                            mSponsoredSectionInfo.getTotalItems()
+                                    - mSponsoredSectionInfo.getRemainingItems());
+                }
+                mProductListRecyclerAdapter.notifyItemInserted(nextInjectPosition);
+                mSponsoredSectionInfo.setLastInjectedPosition(nextInjectPosition);
+                mSponsoredSectionInfo.setRemainingItems(
+                        mSponsoredSectionInfo.getRemainingItems() - 1);
+                nextInjectPosition = mSponsoredSectionInfo.getNextInjectPosition();
+            }
+
+            //TODO: Reached the end of productlist and still some sponsored items left unseen,
+            //Decided to ignore such sponsored items for now
+        }
+
+    }
+
 
     @Override
     public void retryNextPage() {
@@ -156,10 +298,15 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     private void updateProductList(ArrayList<Product> products) {
         if (products == null || products.size() == 0) return;
-        List<Product> existingProductList = mProductListRecyclerAdapter.getProducts();
+        List<AbstractProductItem> existingProductList = mProductListRecyclerAdapter.getProducts();
         int insertedAt = existingProductList.size();
-        existingProductList.addAll(products);
+        for(Product p: products){
+            existingProductList.add(new NormalProductItem(p));
+        }
         mProductListRecyclerAdapter.notifyItemRangeInserted(insertedAt, products.size());
+        if(mSponsoredSectionInfo != null && mSponsoredSectionInfo.hasMoreItems()) {
+            injectSponsoredProducts();
+        }
     }
 
     public void insertProductList(@Nullable ArrayList<Product> products) {
@@ -200,9 +347,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             }
         }
         if (products != null && products.size() > 0) {
-            RecyclerView productRecyclerView = (RecyclerView) getActivity().
+            mProductRecyclerView = (RecyclerView) getActivity().
                     getLayoutInflater().inflate(R.layout.uiv3_recyclerview, contentView, false);
-            UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
+            UIUtil.configureRecyclerView(mProductRecyclerView, getActivity(), 1, 1);
 
             // Set product-list data
             AuthParameters authParameters = AuthParameters.getInstance(getActivity());
@@ -217,13 +364,16 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     .setShowShopListDeleteBtn(false)
                     .showQtyInput(authParameters.isKirana())
                     .build();
-            mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, mBaseImgUrl,
+            List<AbstractProductItem> productItems = new ArrayList<>(products.size());
+            for(Product p: products){
+                productItems.add(new NormalProductItem(p));
+            }
+            mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productItems, mBaseImgUrl,
                     productViewDisplayDataHolder, this, mProductInfo.getProductCount(),
                     getNextScreenNavigationContext(), cartInfo,
                     mHasSingleTab ? TrackEventkeys.SINGLE_TAB_NAME : mTabType);
-
-            productRecyclerView.setAdapter(mProductListRecyclerAdapter);
-            contentView.addView(productRecyclerView);
+            mProductRecyclerView.setAdapter(mProductListRecyclerAdapter);
+            contentView.addView(mProductRecyclerView);
         } else {
             if (mHasProductLoadingFailed) {
                 UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.productTabErrorMsg),

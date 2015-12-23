@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
@@ -356,7 +357,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             ((NavigationDrawerAware) context).closeDrawer();
                             notifyDataSetChanged();
                         } else {
-                            new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
+                            new OnSectionItemClickListener<AppOperationAware>((AppOperationAware)context,
+                                    sectionNavigationItem.getSection(),
                                     sectionNavigationItem.getSectionItem(), screenName).onClick(v);
                         }
                     }

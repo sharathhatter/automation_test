@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.slider.SliderTypes;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -49,6 +50,7 @@ public abstract class BaseSliderView {
     private String mDescription;
     private int mImgWidth;
     private int mImgHeight;
+    private SparseArray<Object> mKeyedTags ;
 
     /**
      * Scale type of the image.
@@ -63,6 +65,27 @@ public abstract class BaseSliderView {
         mContext = context;
         this.mBundle = new Bundle();
     }
+
+    public void setTag(int key, Object tag) {
+        // If the package id is 0x00 or 0x01, it's either an undefined package
+        // or a framework id
+        if ((key >>> 24) < 2) {
+            throw new IllegalArgumentException("The key must be an application-specific "
+                    + "resource id.");
+        }
+        if(mKeyedTags == null){
+            mKeyedTags = new SparseArray<>(2);
+        }
+        mKeyedTags.put(key, tag);
+    }
+
+    public Object getTag(int key) {
+        if(mKeyedTags != null) {
+            return mKeyedTags.get(key);
+        }
+        return null;
+    }
+
 
     /**
      * the placeholder image when loading image from url or file.

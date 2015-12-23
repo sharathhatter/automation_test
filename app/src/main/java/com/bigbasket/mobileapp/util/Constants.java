@@ -480,6 +480,13 @@ public class Constants {
     public static final String MARGIN = "margin";
     public static final String ALIGNMENT = "alignment";
     public static final String RENDERERS = "renderers";
+    public static final String TEXT_STYLE = "text_style";
+    public static final String ANALYTICS_ATTRS = "analytics_attr";
+
+    //Analytics
+    public static final String CLICKS = "clicks";
+    public static final String IMPRESSIONS = "imps";
+
 
     //fb login and register
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";

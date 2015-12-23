@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.adapter.product.AbstractProductItem;
+import com.bigbasket.mobileapp.adapter.product.NormalProductItem;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -164,8 +166,11 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                     .showQtyInput(authParameters.isKirana())
                     .build();
 
-
-            productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
+            ArrayList<AbstractProductItem> productItems = new ArrayList<>(mProducts.size());
+            for(Product p: mProducts){
+                productItems.add(new NormalProductItem(p));
+            }
+            productListRecyclerAdapter = new ProductListRecyclerAdapter(productItems, null,
                     productViewDisplayDataHolder, this, mProducts.size(),
                     getNextScreenNavigationContext(), TrackEventkeys.SINGLE_TAB_NAME);
 

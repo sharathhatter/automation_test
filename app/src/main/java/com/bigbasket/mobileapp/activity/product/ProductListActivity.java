@@ -28,9 +28,12 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
+import com.bigbasket.mobileapp.adapter.product.ProductListTabPagerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.callbacks.ProductListApiResponseCallback;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
@@ -55,8 +58,8 @@ import com.bigbasket.mobileapp.model.product.ProductTabInfo;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
+import com.bigbasket.mobileapp.task.ApiCallCancelRunnable;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
-import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -65,6 +68,7 @@ import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -72,6 +76,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 
 public class ProductListActivity extends SearchActivity implements ProductListDataAware, LazyProductListAware {
@@ -91,6 +98,8 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     private String tabType;
     private ArrayList<String> mTabNameWithEmptyProductView;
     private HeaderSpinnerView mHeaderSpinnerView;
+    private Call<ApiResponse<GetDynamicPageApiResponse>> mSponsoredProductsCall;
+    private Call<ApiResponse<ProductTabData>> mProductListCall;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,11 +139,32 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             mArrayTabTypeAndFragmentPosition = null;
             mTabNameWithEmptyProductView = null;
         }
+        if(mProductListCall != null){
+            new Thread(new ApiCallCancelRunnable(mProductListCall)).start();
+            mProductListCall = null;
+        }
+        if(mSponsoredProductsCall != null) {
+            new Thread(new ApiCallCancelRunnable(mSponsoredProductsCall)).start();
+            mSponsoredProductsCall = null;
+        }
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
         setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
-        new ProductListTask<>(this, paramMap, getCurrentNavigationContext(),
-                isFilterOrSortApplied, currentTabIndx).startTask();
+        if (!checkInternetConnection()) {
+            getHandler().sendOfflineError(true);
+            return;
+        }
+        if(isSuspended()){
+            return;
+        }
+
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
+                getApiService(getApplicationContext());
+        showProgressDialog("Please wait...");
+        mProductListCall = bigBasketApiService.productList(getCurrentNavigationContext(), paramMap);
+        mProductListCall.enqueue(new ProductListApiResponseCallback<>(this, false, isFilterOrSortApplied,
+                currentTabIndx));
+
     }
 
     @Override
@@ -220,7 +250,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         mCartInfo = productTabData.getCartInfo();
         if (hasProducts) {
             // Setup content
-            int numTabs = productTabData.getProductTabInfos().size();
+            final int numTabs = productTabData.getProductTabInfos().size();
             if (numTabs > 1) {
                 findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
                 displayProductTabs(productTabData, contentFrame, true);
@@ -271,6 +301,55 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                         productTabInfo.getFilteredOn(), productTabInfo.getSortOptions(),
                         productTabInfo.getSortedOn(), true);
             }
+            //Fixme: Following should be ideally made in the each fragment
+            HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
+            BigBasketApiService apiService = BigBasketApiAdapter.getApiService(getApplicationContext());
+            String[] tabTypes = new String[numTabs];
+            for(int i =0; i < numTabs; i ++) {
+                tabTypes[i] = productTabData.getProductTabInfos().get(i).getTabType();
+            }
+            Gson gson = new GsonBuilder().create();
+            mSponsoredProductsCall =
+                    apiService.getSponsoredProducts(getCurrentNavigationContext(),
+                            paramMap.remove(Constants.TYPE),
+                            paramMap.remove(Constants.SLUG),
+                            gson.toJson(tabTypes),
+                            paramMap);
+            mSponsoredProductsCall.enqueue(new Callback<ApiResponse<GetDynamicPageApiResponse>>() {
+                @Override
+                public void onResponse(Response<ApiResponse<GetDynamicPageApiResponse>> response,
+                                       Retrofit retrofit) {
+                    if(response != null && response.isSuccess()){
+                        //Set section data for all tabs for now
+                        SectionData sponsoredSectionData = response.body().apiResponseContent.sectionData;
+                        if(numTabs > 1 && mViewPager != null){
+                            ProductListTabPagerAdapter adapter =
+                                    (ProductListTabPagerAdapter) mViewPager.getAdapter();
+                            adapter.setSponsoredProducts(sponsoredSectionData);
+                            for(int i =0; i < numTabs; i ++) {
+                                Fragment fragment = adapter.getRegisteredFragment(i);
+                                if(fragment != null && fragment instanceof ProductListAwareFragment){
+                                    ((ProductListAwareFragment)fragment).setSponsoredSectionData(sponsoredSectionData);
+                                }
+                            }
+
+                        } else {
+                            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+                            if(fragment != null && fragment instanceof ProductListAwareFragment){
+                                ((ProductListAwareFragment)fragment).setSponsoredSectionData(sponsoredSectionData);
+                            }
+                        }
+                    } else {
+                        //Ignore, No sponsored items for this page
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    //TODO: Ignore and log error
+
+                }
+            });
         } else if (contentSectionView == null) {
             findViewById(R.id.slidingTabs).setVisibility(View.GONE);
             UIUtil.showEmptyProductsView(this, contentFrame, getString(R.string.noProducts),
@@ -354,8 +433,8 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             }
         }
 
-        TabPagerAdapterWithFragmentRegistration statePagerAdapter =
-                new TabPagerAdapterWithFragmentRegistration(this, getSupportFragmentManager(), bbTabs);
+        ProductListTabPagerAdapter statePagerAdapter =
+                new ProductListTabPagerAdapter(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
         ProductTabInfo productTabInfo = productTabData.getProductTabInfos() != null &&
                 productTabData.getProductTabInfos().size() > 0 ?

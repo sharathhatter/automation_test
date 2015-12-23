@@ -7,7 +7,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.devconfig.DeveloperConfigs;
 
 public final class MobileApiUrl {
-    private static final String API_PATH = "/mapi/v2.3.0/";
+    private static final String API_PATH = "/mapi/v2.3.1/";
 
     private MobileApiUrl() {
     }

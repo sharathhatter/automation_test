@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.slider;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
@@ -10,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.Interpolator;
 import android.widget.RelativeLayout;
 
@@ -65,7 +67,7 @@ import java.util.TimerTask;
  * <p/>
  * pager_animation_span
  */
-public class SliderLayout extends RelativeLayout {
+public class SliderLayout extends RelativeLayout implements ViewTreeObserver.OnGlobalLayoutListener {
 
     /**
      * InfiniteViewPager is extended from ViewPagerEx. As the name says, it can scroll without bounder.
@@ -152,8 +154,51 @@ public class SliderLayout extends RelativeLayout {
         setPresetIndicator(PresetIndicators.Center_Bottom);
         setSliderTransformDuration(transformerSpan, null);
         setIndicatorVisibility(mIndicatorVisibility);
-        if (mAutoCycle) {
+
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        try {
+            getViewTreeObserver().addOnGlobalLayoutListener(this);
+        } catch (IllegalStateException ex) {
+            //Ignore
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onDetachedFromWindow() {
+        try {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            } else {
+                getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            }
+        } catch (IllegalStateException ex) {
+            //Ignore
+        }
+        super.onDetachedFromWindow();
+    }
+
+    @Override
+    public void onGlobalLayout() {
+        if(mAutoCycle) {
+            if (!isShown()) {
+                stopAutoCycle();
+            } else {
+                startAutoCycle();
+            }
+        }
+    }
+
+    public void setAutoCycle(boolean autoCycle) {
+        this.mAutoCycle = autoCycle;
+        if(autoCycle){
             startAutoCycle();
+        } else {
+            stopAutoCycle();
         }
     }
 
@@ -211,7 +256,7 @@ public class SliderLayout extends RelativeLayout {
      * @param duration    animation duration time.
      * @param autoRecover if recover after user touches the slider.
      */
-    public void startAutoCycle(long delay, long duration, boolean autoRecover) {
+    private void startAutoCycle(long delay, long duration, boolean autoRecover) {
         if (mCycleTimer != null) mCycleTimer.cancel();
         if (mCycleTask != null) mCycleTask.cancel();
         if (mResumingTask != null) mResumingTask.cancel();
@@ -222,7 +267,6 @@ public class SliderLayout extends RelativeLayout {
         mCycleTask = new AutoCycleTimerTask(mh);
         mCycleTimer.schedule(mCycleTask, delay, mSliderDuration);
         mCycling = true;
-        mAutoCycle = true;
     }
 
     /**
@@ -247,7 +291,7 @@ public class SliderLayout extends RelativeLayout {
     /**
      * stop the auto circle
      */
-    public void stopAutoCycle() {
+    private void stopAutoCycle() {
 
         if (mCycleTask != null) {
             mCycleTask.cancel();
@@ -261,7 +305,6 @@ public class SliderLayout extends RelativeLayout {
         if (mResumingTask != null) {
             mResumingTask.cancel();
         }
-        mAutoCycle = false;
         mCycling = false;
     }
 
