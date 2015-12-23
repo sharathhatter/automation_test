@@ -363,7 +363,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             ((NavigationDrawerAware) context).closeDrawer();
                             notifyDataSetChanged();
                         } else {
-                            new OnSectionItemClickListener<AppOperationAware>((AppOperationAware)context,
+                            new OnSectionItemClickListener<>((AppOperationAware)context,
                                     sectionNavigationItem.getSection(),
                                     sectionNavigationItem.getSectionItem(), screenName).onClick(v);
                         }

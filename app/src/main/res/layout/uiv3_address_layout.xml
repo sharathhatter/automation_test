@@ -44,6 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/txtName"
             android:layout_marginLeft="@dimen/margin_normal"
+            android:contentDescription="@string/location"
             android:layout_marginTop="@dimen/margin_small"
             android:paddingTop="@dimen/padding_mini"
             android:src="@drawable/ic_location_on_black_18dp" />

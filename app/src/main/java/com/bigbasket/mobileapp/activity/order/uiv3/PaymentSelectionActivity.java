@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -293,10 +294,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private void renderPaymentMethodsAndSummary(@Nullable ArrayList<CreditDetails> creditDetails) {
         // Show invoice and other order details
         LayoutInflater inflater = getLayoutInflater();
-        int normalColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        int secondaryColor = getResources().getColor(R.color.uiv3_secondary_text_color);
-        int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        int orderTotalValueColor = getResources().getColor(R.color.uiv3_ok_label_color);
+        int normalColor = ContextCompat.getColor(this, R.color.uiv3_primary_text_color);
+        int secondaryColor = ContextCompat.getColor(this, R.color.uiv3_secondary_text_color);
+        int orderTotalLabelColor = ContextCompat.getColor(this, R.color.uiv3_primary_text_color);
+        int orderTotalValueColor = ContextCompat.getColor(this, R.color.uiv3_ok_label_color);
         LinearLayout layoutOrderSummaryInfo = (LinearLayout) findViewById(R.id.layoutOrderSummaryInfo);
         layoutOrderSummaryInfo.removeAllViews();
 
@@ -968,7 +969,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
                     @Override
                     public void updateDrawState(TextPaint ds) {
-                        ds.setColor(getResources().getColor(R.color.uiv3_link_color));
+                        ds.setColor(ContextCompat.getColor(getActivity(), R.color.uiv3_link_color));
                         ds.setUnderlineText(true);
                     }
                 };

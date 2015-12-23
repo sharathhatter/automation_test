@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -474,7 +475,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         txtPromoNameDesc.setVisibility(View.VISIBLE);
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
-        txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.red_color));
+        txtPromoNameDesc.setTextColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.red_color));
 
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -503,9 +504,9 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
         if (context instanceof ShowCartActivity) {
-            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
+            txtPromoNameDesc.setTextColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.promo_txt_green_color));
         } else {
-            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.link_color));
+            txtPromoNameDesc.setTextColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.link_color));
         }
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -528,9 +529,9 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                         + separator.length(), regularQtyStr.length() + separator.length() + 1,
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE
         );
-        regularSpannable.setSpan(new ForegroundColorSpan(context.getCurrentActivity().getResources().getColor(R.color.tabDark)), regularSalePriceStr.length() - 1,
+        regularSpannable.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context.getCurrentActivity(), R.color.tabDark)), regularSalePriceStr.length() - 1,
                 regularQtyStr.length() + separator.length() + regularSalePriceStr.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        regularSpannable.setSpan(new ForegroundColorSpan(context.getCurrentActivity().getResources().getColor(R.color.medium_grey)), 0,
+        regularSpannable.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context.getCurrentActivity(), R.color.medium_grey)), 0,
                 regularQtyStr.length() + separator.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         txtRegularPriceAndQty.setText(regularSpannable);
 
@@ -559,9 +560,9 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
         if (context instanceof ShowCartActivity) {
-            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
+            txtPromoNameDesc.setTextColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.promo_txt_green_color));
         } else {
-            txtPromoNameDesc.setTextColor(context.getCurrentActivity().getResources().getColor(R.color.link_color));
+            txtPromoNameDesc.setTextColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.link_color));
         }
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));

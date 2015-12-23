@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -72,7 +73,7 @@ public class SectionView {
 
     private void parseRendererColors() {
         if (mSectionData == null || mSectionData.getRenderersMap() == null) return;
-        int defaultTextColor = context.getResources().getColor(R.color.uiv3_secondary_text_color);
+        int defaultTextColor = ContextCompat.getColor(context, R.color.uiv3_secondary_text_color);
         for (Renderer renderer : mSectionData.getRenderersMap().values()) {
             if (!TextUtils.isEmpty(renderer.getBackgroundColor())) {
                 renderer.setNativeBkgColor(UIUtil.parseAsNativeColor(renderer.getBackgroundColor(), Color.WHITE));
@@ -93,7 +94,7 @@ public class SectionView {
             return null;
         LinearLayout mainLayout = new LinearLayout(context);
         mainLayout.setOrientation(LinearLayout.VERTICAL);
-        mainLayout.setBackgroundColor(context.getResources().getColor(R.color.uiv3_list_bkg_color));
+        mainLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.uiv3_list_bkg_color));
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ArrayList<Section> sections = mSectionData.getSections();
         int marginBetweenWidgets = (int) context.getResources().getDimension(R.dimen.margin_mini);
@@ -183,8 +184,14 @@ public class SectionView {
                     sliderView = new DefaultSliderView(context);
                     sliderView.setScaleType(BaseSliderView.ScaleType.CenterInside);
                 }
+                int targetWidth = sectionItem.getActualWidth(context);
+                int targetHeight = sectionItem.getActualHeight(context);
+                targetHeight = adjustHeightForScreenWidth(targetWidth, targetHeight, availableScreenWidth);
+                targetWidth = availableScreenWidth;
                 if (!TextUtils.isEmpty(sectionItem.getImage())) {
-                    sliderView.image(sectionItem.getImage());
+                    sliderView.setWidth(targetWidth)
+                            .setHeight(targetHeight)
+                            .image(sectionItem.getImage());
                 } else if (!TextUtils.isEmpty(sectionItem.getImageName())) {
                     String imageUrl;
                     if (sectionItem.getImageName().startsWith("http://")
@@ -194,7 +201,9 @@ public class SectionView {
                         imageUrl = mSectionData.getBaseImgUrl() +
                                 UIUtil.getScreenDensity(context) + "/" + sectionItem.getImageName();
                     }
-                    sliderView.image(imageUrl);
+                    sliderView.setWidth(targetWidth)
+                            .setHeight(targetHeight)
+                            .image(imageUrl);
                 } else {
                     continue;
                 }
@@ -414,7 +423,7 @@ public class SectionView {
             if (itemRenderer != null) {
                 itemRenderer.setRendering(itemView, 0, 0);
             } else {
-                itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
+                itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
             }
 
             int layoutMenuTxtPadding = sectionItem.hasDescription() && sectionItem.hasTitle() ? eightDp : sixteenDp;
@@ -615,8 +624,8 @@ public class SectionView {
                     if (isVertical && stretchImage) {
                         // It is an ad-image
                         if (targetImgWidth > 0 && targetImgHeight > 0 && availableScreenWidth > 0) {
-                            double aspectRatio = (double) targetImgWidth / (double) targetImgHeight;
-                            targetImgHeight = (int) ((double) availableScreenWidth / aspectRatio);
+                            targetImgHeight =
+                                    adjustHeightForScreenWidth(targetImgWidth, targetImgHeight, availableScreenWidth);
                             targetImgWidth = availableScreenWidth;
                         }
                     }
@@ -676,6 +685,12 @@ public class SectionView {
             view.setOnClickListener(sectionItemClickListener);
             tileContainer.addView(view);
         }
+    }
+
+    private static int adjustHeightForScreenWidth(int originalWidth, int originalHeight,
+                                                  int totalWidthAvailable) {
+        double aspectRatio = (double) originalWidth / (double) originalHeight;
+        return (int) ((double) totalWidthAvailable / aspectRatio);
     }
 
     private void formatSection(View parent, @IdRes int txtViewId, Section section) {

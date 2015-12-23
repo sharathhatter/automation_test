@@ -213,7 +213,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                 SectionItem sectionItem = spItem.getSection().getSectionItems().get(0);
                 sectionId = sectionItem.getId();
                 analyticsAttrs = spItem.getSectionData().getAnalyticsAttrs(sectionId);
-                clickListener = new OnSponsoredItemClickListener<AppOperationAware>(
+                clickListener = new OnSponsoredItemClickListener<>(
                         activityAware, spItem.getSection(),
                         sectionItem,
                         spItem.getSectionData().getScreenName(),

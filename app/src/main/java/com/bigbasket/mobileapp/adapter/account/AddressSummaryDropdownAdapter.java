@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.adapter.account;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -108,7 +109,7 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
         }
 
         TextView txtAddress = addressViewHolder.getTxtAddress();
-        txtAddress.setTextColor(getContext().getResources().getColor(color));
+        txtAddress.setTextColor(ContextCompat.getColor(getContext(), color));
 
         String area = TextUtils.isEmpty(addressSummary.getArea()) ? "" :
                 addressSummary.getArea() + "\n";

@@ -10,7 +10,6 @@
         4a77ed943c8630492e4885d-d8efb860-3507-11e5-62e9-00736b041834
     </string>
     <string name="google_geo_api_key" templateMergeStrategy="preserve">AIzaSyCb8JEc_JPPQ6kGbVwbVXf2C-fWpz8NskE</string>
-    <string name="mobikwik_sdk_sign">aead83c772d44fb48eace92beab20c8a</string>
     <string name="mobikwik_mode">1</string>
 
     <string name="pref_default_server_address" translate="false">https://bigbasket.com</string>

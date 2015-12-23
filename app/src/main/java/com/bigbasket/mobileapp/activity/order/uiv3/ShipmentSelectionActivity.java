@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableString;
@@ -180,11 +181,11 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                                 applyBottom = i != 0;
                             }
                             mSelectedShipmentIndx.add(i);
-                            shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
+                            shipmentView.setBackgroundColor(ContextCompat.getColor(this, R.color.uiv3_large_list_item_bck));
                             break;
                         case Constants.DISABLED:
                             applyBottom = i != 0;
-                            shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck_disabled));
+                            shipmentView.setBackgroundColor(ContextCompat.getColor(this, R.color.uiv3_large_list_item_bck_disabled));
                             break;
                     }
                 }
@@ -203,7 +204,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 if (isAdjacentShipmentDisabled(i, shipmentActionHashMap)) {
                     applyBottom = i != 0;
                 }
-                shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
+                shipmentView.setBackgroundColor(ContextCompat.getColor(this, R.color.uiv3_large_list_item_bck));
                 switchToggleDelivery.setVisibility(View.GONE);
                 mSelectedShipmentIndx.add(i);
             }
@@ -301,7 +302,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 SpannableString spannableString = new SpannableString(prefix + msg);
                 spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoMedium), 0, prefix.length(),
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_dialog_header_text_bkg)),
+                spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.uiv3_dialog_header_text_bkg)),
                         0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 txtDeliverablesHeading.setText(spannableString);
             }

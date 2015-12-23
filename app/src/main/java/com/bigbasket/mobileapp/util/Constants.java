@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.util;
 
-import android.Manifest;
-
 public class Constants {
 
     // connection parameters
@@ -229,9 +227,6 @@ public class Constants {
     public static final String PAYUMONEY_WALLET = "payumoney_wallet";
     public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
     public static final String PAYTM_HASH_GENERATION_URL = "GURL";
-    public static final String WALLET_USED = "wallet_used";
-    public static final String AMT_PAYABLE = "amount_payable";
-    public static final String WALLET_REMAINING = "wallet_remaining";
 
     public static final String HOME = "home";
     public static final String ADDRESSES = "addresses";
@@ -593,13 +588,6 @@ public class Constants {
     public static final String GO_TO_HOME = "go_to_home";
 
     //mobikwik
-    public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
-    public static final String MOBIKWIKSDK = "MobikwikSDK";
-    public static final String MOBIKWIK_MODE = "mode";
-    public static final String MOBIKWIK_SDK_SIGN = "sdksign";
-    public static final String MOBIKWIK_REDIRECT_ANDROID_CLASS_NAME = "redirecturl";
-    public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
-    public static final String MOBIKWIK_PAYMENT_MW = "mw";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
 
     // Sku Tabs
@@ -667,7 +655,6 @@ public class Constants {
     public static final int EMPTY_BASKET_DIALOG_QUEST = 8004;
     public static final int LOCATION_DIALOG_REQUEST = 8005;
     public static final int PREPAYMENT_ABORT_CONFIRMATION_DIALOG = 8006;
-
 
 
     // App Indexing params

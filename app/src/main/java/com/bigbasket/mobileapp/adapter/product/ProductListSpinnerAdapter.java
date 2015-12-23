@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.adapter.product;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
@@ -39,8 +40,8 @@ public class ProductListSpinnerAdapter extends BaseAdapter {
         this.dp16 = (int) ctx.getResources().getDimension(R.dimen.padding_normal);
         this.dp32 = (int) ctx.getResources().getDimension(R.dimen.padding_large);
         this.currentProduct = currentProduct;
-        this.unSelectedTextColor = ctx.getResources().getColor(R.color.uiv3_secondary_text_color);
-        this.selectedTextColor = ctx.getResources().getColor(R.color.uiv3_dialog_header_text_bkg);
+        this.unSelectedTextColor = ContextCompat.getColor(ctx, R.color.uiv3_secondary_text_color);
+        this.selectedTextColor = ContextCompat.getColor(ctx, R.color.uiv3_dialog_header_text_bkg);
     }
 
     @Override

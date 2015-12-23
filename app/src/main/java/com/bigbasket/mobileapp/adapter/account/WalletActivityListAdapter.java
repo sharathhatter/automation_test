@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.adapter.account;
 
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -99,7 +100,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
             String mrpStr = UIUtil.formatAsMoney(amount) + " ";
             int prefixLen = prefix.length();
             spannableCredit = new SpannableString(prefix + mrpStr);
-            holder.creditedHolder.setBackgroundColor(((AppOperationAware) ctx).getCurrentActivity().getResources().getColor(R.color.dark_green));
+            holder.creditedHolder.setBackgroundColor(ContextCompat.getColor(((AppOperationAware) ctx).getCurrentActivity(), R.color.dark_green));
             spannableCredit.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         } else {
@@ -107,7 +108,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
             String prefix = ((AppOperationAware) ctx).getCurrentActivity().getString(R.string.debited) + " `";
             String mrpStr = UIUtil.formatAsMoney(amount) + " ";
             int prefixLen = prefix.length();
-            holder.creditedHolder.setBackgroundColor(((AppOperationAware) ctx).getCurrentActivity().getResources().getColor(R.color.red_color));
+            holder.creditedHolder.setBackgroundColor(ContextCompat.getColor(((AppOperationAware) ctx).getCurrentActivity(), R.color.red_color));
             spannableCredit = new SpannableString(prefix + mrpStr);
             spannableCredit.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -122,8 +123,8 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
             int mrpStrIdLen = mrpStrId.length();
             SpannableString spannableId = new SpannableString(prefixId + mrpStrId);
 
-            spannableId.setSpan(new ForegroundColorSpan(((AppOperationAware) ctx).getCurrentActivity().getResources().
-                    getColor(R.color.dark_blue)), prefixIdLen - 1, prefixIdLen + mrpStrIdLen, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            spannableId.setSpan(new ForegroundColorSpan(ContextCompat.getColor(((AppOperationAware) ctx).getCurrentActivity(),
+                    R.color.dark_blue)), prefixIdLen - 1, prefixIdLen + mrpStrIdLen, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
             holder.orderIdHolder.setText(spannableId);
         } else {
             holder.orderIdHolder.setText(primaryReason);
