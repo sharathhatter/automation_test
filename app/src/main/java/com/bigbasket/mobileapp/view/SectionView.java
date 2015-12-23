@@ -51,11 +51,12 @@ public class SectionView {
     private boolean isHelp;
     private ArrayList<Integer> dynamicTiles;
     private int availableScreenWidth;
+    private boolean skipImageMemoryCache;
 
-    public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName) {
+    public SectionView(Context context, Typeface faceRobotoRegular, SectionData sectionData, String screenName) {
         this.context = context;
         this.faceRobotoRegular = faceRobotoRegular;
-        this.mSectionData = mSectionData;
+        this.mSectionData = sectionData;
         this.screenName = screenName;
         this.fourDp = (int) context.getResources().getDimension(R.dimen.margin_mini);
         this.eightDp = (int) context.getResources().getDimension(R.dimen.margin_small);
@@ -66,9 +67,12 @@ public class SectionView {
         parseRendererColors();
     }
 
-    public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName, boolean isHelp) {
-        this(context, faceRobotoRegular, mSectionData, screenName);
+
+    public SectionView(Context context, Typeface faceRobotoRegular, SectionData sectionData,
+                       String screenName, boolean isHelp, boolean skipImageMemoryCache) {
+        this(context, faceRobotoRegular, sectionData, screenName);
         this.isHelp = isHelp;
+        this.skipImageMemoryCache = skipImageMemoryCache;
     }
 
     private void parseRendererColors() {
@@ -631,7 +635,7 @@ public class SectionView {
                     }
                     sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow,
                             stretchImage ? R.drawable.loading_large : R.drawable.loading_small,
-                            false, targetImgWidth, targetImgHeight);
+                            false, targetImgWidth, targetImgHeight, skipImageMemoryCache);
                 } else {
                     imgInRow.setVisibility(View.GONE);
                 }

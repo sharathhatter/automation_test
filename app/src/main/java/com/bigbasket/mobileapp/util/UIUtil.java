@@ -73,6 +73,7 @@ import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -414,10 +415,21 @@ public class UIUtil {
     public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
                                          @DrawableRes int placeHolderDrawableId,
                                          int targetImageWidth, int targetImageHeight) {
+        displayAsyncImage(imageView, url, animate, placeHolderDrawableId, targetImageWidth,
+                targetImageHeight, false);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
+                                         @DrawableRes int placeHolderDrawableId,
+                                         int targetImageWidth, int targetImageHeight,
+                                         boolean skipMemoryCache) {
         Picasso picasso = Picasso.with(imageView.getContext());
         RequestCreator requestCreator = picasso.load(url)
                 .error(R.drawable.noimage)
                 .placeholder(placeHolderDrawableId);
+        if (skipMemoryCache) {
+            requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE);
+        }
         if (targetImageWidth > 0 && targetImageHeight > 0) {
             requestCreator.resize(targetImageWidth, targetImageHeight)
                     .onlyScaleDown();
