@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.adapter.order;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -158,12 +159,12 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
                 txtSlotTime.setVisibility(View.VISIBLE);
             } else if (order.getOrderState() == 1) { //delivered
                 txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(((AppOperationAware) context).getCurrentActivity().getResources().getColor(R.color.uiv3_large_list_item_bck));
+                layoutOrderData.setBackgroundColor(ContextCompat.getColor(((AppOperationAware) context).getCurrentActivity(), R.color.uiv3_large_list_item_bck));
                 imgOrderType.setImageResource(R.drawable.complete_order);
                 txtSlotTime.setVisibility(View.GONE);
             } else { //cancel
                 txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(((AppOperationAware) context).getCurrentActivity().getResources().getColor(R.color.uiv3_large_list_item_bck));
+                layoutOrderData.setBackgroundColor(ContextCompat.getColor(((AppOperationAware) context).getCurrentActivity(), R.color.uiv3_large_list_item_bck));
                 imgOrderType.setImageResource(R.drawable.order_cancel);
                 txtSlotTime.setVisibility(View.GONE);
             }

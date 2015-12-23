@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:layout_centerInParent="true"
         android:id="@+id/daimajia_slider_image"
         android:layout_width="wrap_content"

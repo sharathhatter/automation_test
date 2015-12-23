@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.util.location;
 
 import android.app.Activity;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -61,8 +62,8 @@ public class LocationAutoSuggestHelper<T extends LocationAutoSuggestListener> {
         Activity activity = ((AppOperationAware) ctx).getCurrentActivity();
         placeAutoSuggestAdapter = new BBArrayAdapter<>(activity, android.R.layout.simple_list_item_1,
                 FontHolder.getInstance(activity).getFaceRobotoRegular(),
-                activity.getResources().getColor(R.color.uiv3_primary_text_color),
-                activity.getResources().getColor(R.color.uiv3_primary_text_color));
+                ContextCompat.getColor(activity, R.color.uiv3_primary_text_color),
+                ContextCompat.getColor(activity, R.color.uiv3_primary_text_color));
         aEditTextChooseArea.setAdapter(placeAutoSuggestAdapter);
         aEditTextChooseArea.setThreshold(2);
         aEditTextChooseArea.addTextChangedListener(new TextWatcher() {

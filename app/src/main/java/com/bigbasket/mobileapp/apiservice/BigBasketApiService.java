@@ -108,10 +108,6 @@ public interface BigBasketApiService {
             @Query(Constants.TAB_TYPE) String tabType,
             @QueryMap Map<String, String> productQueryMap);
 
-    /**
-     *
-     * @return
-     */
     @Headers({"Content-Type: application/json"})
     @POST("ads-analytics/")
     Call<BaseApiResponse> postAdAnalytics(@Body AdAnalyticsData[] adAnalyticsData);

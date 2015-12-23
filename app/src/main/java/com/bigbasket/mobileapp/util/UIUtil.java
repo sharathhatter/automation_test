@@ -51,7 +51,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
@@ -71,12 +70,6 @@ import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.ControllerListener;
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.image.ImageInfo;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
@@ -122,7 +115,7 @@ public class UIUtil {
                 scaleToScreenIndependentPixel(2, context), scaleToScreenIndependentPixel(10, context),
                 scaleToScreenIndependentPixel(5, context));
         textView.setLayoutParams(layoutParams);
-        textView.setTextColor(context.getResources().getColor(R.color.redColor));
+        textView.setTextColor(ContextCompat.getColor(context, R.color.redColor));
         textView.setTextSize(scaleToScreenIndependentPixel(14, context));
         return textView;
     }
@@ -421,7 +414,6 @@ public class UIUtil {
     public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
                                          @DrawableRes int placeHolderDrawableId,
                                          int targetImageWidth, int targetImageHeight) {
-        Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
         Picasso picasso = Picasso.with(imageView.getContext());
         RequestCreator requestCreator = picasso.load(url)
                 .error(R.drawable.noimage)
@@ -429,6 +421,9 @@ public class UIUtil {
         if (targetImageWidth > 0 && targetImageHeight > 0) {
             requestCreator.resize(targetImageWidth, targetImageHeight)
                     .onlyScaleDown();
+            Log.i(imageView.getContext().getClass().getName(), "Loading image (" + targetImageWidth + "," + targetImageHeight + ") = " + url);
+        } else {
+            Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
         }
         if (!animate) {
             requestCreator.noFade();
@@ -437,37 +432,6 @@ public class UIUtil {
             requestCreator.into(imageView);
         } catch (OutOfMemoryError e) {
             System.gc();
-        }
-    }
-
-    public static void displayAsyncImage(SimpleDraweeView simpleDraweeView,
-                                         Uri uri,
-                                         @DrawableRes int placeHolderDrawableId,
-                                         @DrawableRes int failureDrawableId,
-                                         @Nullable ControllerListener<ImageInfo> downloadListener) {
-        GenericDraweeHierarchyBuilder builder =
-                new GenericDraweeHierarchyBuilder(simpleDraweeView.getContext().getResources());
-        if (placeHolderDrawableId != 0) {
-            builder.setPlaceholderImage(ContextCompat.getDrawable(simpleDraweeView.getContext(),
-                    placeHolderDrawableId));
-        }
-        if (failureDrawableId != 0) {
-            builder.setFailureImage(ContextCompat.getDrawable(simpleDraweeView.getContext(),
-                    failureDrawableId));
-        } else {
-            builder.setFailureImage(ContextCompat.getDrawable(simpleDraweeView.getContext(),
-                    R.drawable.noimage));
-        }
-        simpleDraweeView.setHierarchy(builder.build());
-        if (downloadListener != null) {
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setUri(uri)
-                    .setOldController(simpleDraweeView.getController())
-                    .setControllerListener(downloadListener)
-                    .build();
-            simpleDraweeView.setController(controller);
-        } else {
-            simpleDraweeView.setImageURI(uri);
         }
     }
 
@@ -845,7 +809,7 @@ public class UIUtil {
             TextView txtMsg = (TextView) dlg.findViewById(R.id.txtMsg);
             int dp16 = (int) activity.getResources().getDimension(R.dimen.padding_normal);
             txtMsg.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            txtMsg.setTextColor(activity.getResources().getColor(android.R.color.black));
+            txtMsg.setTextColor(ContextCompat.getColor(activity, android.R.color.black));
             String prefix = activity.getString(R.string.txnFailureMsgPrefix) + " ";
             String suffix = activity.getString(R.string.txnFailureMsgSuffix) + " ";
             final String csEmail = "customerservice@bigbasket.com";

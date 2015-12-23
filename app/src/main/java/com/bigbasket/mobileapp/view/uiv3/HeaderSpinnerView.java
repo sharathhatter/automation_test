@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.view.uiv3;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -92,7 +93,8 @@ public class HeaderSpinnerView<T> {
 
             BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(((AppOperationAware) ctx).getCurrentActivity(),
                     R.layout.uiv3_product_header_list_item, headSection.getSectionItems(),
-                    typeface, ((AppOperationAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_primary_text_color), Color.WHITE);
+                    typeface, ContextCompat.getColor(((AppOperationAware) ctx).getCurrentActivity(),
+                    R.color.uiv3_primary_text_color), Color.WHITE);
             bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             listHeaderDropdown.setAdapter(bbArrayAdapter);
 

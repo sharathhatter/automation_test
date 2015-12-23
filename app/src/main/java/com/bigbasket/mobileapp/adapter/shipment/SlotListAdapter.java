@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.adapter.shipment;
 
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
@@ -89,7 +90,7 @@ public class SlotListAdapter<T> extends BaseAdapter {
         if (row == null) {
             row = activity.getLayoutInflater().inflate(R.layout.uiv3_list_title, parent, false);
             slotHeaderViewHolder = new SlotHeaderViewHolder(row);
-            row.setBackgroundColor(activity.getResources().getColor(R.color.uiv3_list_bkg_light_color));
+            row.setBackgroundColor(ContextCompat.getColor(activity, R.color.uiv3_list_bkg_light_color));
             row.setTag(slotHeaderViewHolder);
         } else {
             slotHeaderViewHolder = (SlotHeaderViewHolder) row.getTag();
@@ -106,7 +107,7 @@ public class SlotListAdapter<T> extends BaseAdapter {
         if (row == null) {
             int layoutId = R.layout.uiv3_slot_list_row;
             row = activity.getLayoutInflater().inflate(layoutId, parent, false);
-            row.setBackgroundColor(activity.getResources().getColor(R.color.uiv3_list_bkg_light_color));
+            row.setBackgroundColor(ContextCompat.getColor(activity, R.color.uiv3_list_bkg_light_color));
             slotViewHolder = new SlotViewHolder(row);
             row.setTag(slotViewHolder);
         } else {
@@ -131,11 +132,11 @@ public class SlotListAdapter<T> extends BaseAdapter {
                 && slot.getSlotDate().equals(selectedSlot.getSlotDate())) {
             itemTick.setChecked(true);
             itemTick.setVisibility(View.VISIBLE);
-            row.setBackgroundColor(activity.getResources().getColor(R.color.uiv3_list_bkg_color));
+            row.setBackgroundColor(ContextCompat.getColor(activity, R.color.uiv3_list_bkg_color));
         } else {
             itemTick.setChecked(false);
             itemTick.setVisibility(View.INVISIBLE);
-            row.setBackgroundColor(activity.getResources().getColor(R.color.uiv3_list_bkg_light_color));
+            row.setBackgroundColor(ContextCompat.getColor(activity, R.color.uiv3_list_bkg_light_color));
         }
         return row;
     }

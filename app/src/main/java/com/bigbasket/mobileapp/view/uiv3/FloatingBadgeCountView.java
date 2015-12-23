@@ -232,7 +232,7 @@ public class FloatingBadgeCountView extends FrameLayout {
     }
 
     private int getColor(@ColorRes int id) {
-        return getResources().getColor(id);
+        return ContextCompat.getColor(getContext(), id);
     }
 
     private int getDimension(@DimenRes int id) {

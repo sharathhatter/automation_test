@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.adapter.gift;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -91,7 +92,7 @@ public class GiftItemMessageRecyclerAdapter<T> extends RecyclerView.Adapter<Recy
         CustomTypefaceSpan typefaceSpan = new CustomTypefaceSpan("", FontHolder.getInstance(context).getFaceRobotoLight());
         AbsoluteSizeSpan ab14 = new AbsoluteSizeSpan(sp14);
         AbsoluteSizeSpan ab12 = new AbsoluteSizeSpan(sp12);
-        ForegroundColorSpan colorSpan = new ForegroundColorSpan(context.getResources().getColor(R.color.uiv3_secondary_text_color));
+        ForegroundColorSpan colorSpan = new ForegroundColorSpan(ContextCompat.getColor(context, R.color.uiv3_secondary_text_color));
 
         String commonMsg = context.getString(R.string.commonMsg) + "\n";
         String commonMsgDesc = context.getString(R.string.commonMsgDesc);

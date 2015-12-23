@@ -6,16 +6,12 @@ import android.content.Context;
 import android.os.Build;
 
 import com.bigbasket.mobileapp.BuildConfig;
-import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 import com.bigbasket.mobileapp.util.MultiDexHandler;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
-import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.localytics.android.Localytics;
 import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
@@ -80,15 +76,10 @@ public class BaseApplication extends Application {
                 .memoryCache(new LruCache(getMemCacheSize()))
                 .build();
         Picasso.setSingletonInstance(p);
-        
-        ImagePipelineConfig frescoImagePipelineConfig = OkHttpImagePipelineConfigFactory
-                .newBuilder(this, BigBasketApiAdapter.getBaseHttpClient())
-                .build();
-        Fresco.initialize(this, frescoImagePipelineConfig);
     }
 
     private int getMemCacheSize() {
-        ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         boolean largeHeap = (getApplicationInfo().flags & FLAG_LARGE_HEAP) != 0;
         int memoryClass = am.getMemoryClass();
         if (largeHeap && SDK_INT >= HONEYCOMB) {

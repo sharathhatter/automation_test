@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.model.section;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
@@ -10,13 +9,11 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -40,14 +37,10 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     public static final int VIEW_IMG_TITLE_DESC_HORIZONTAL = 6;
     public static final int VIEW_TITLE_DESC_HORIZONTAL = 7;
     public static final int VIEW_IMG = 8;
-    public static final int VIEW_DRAWEE = 9;
-    public static final int VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY = 10;
-    public static final int VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY = 11;
-    public static final int VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY = 12;
-    public static final int VIEW_TITLE_DESC_DRAWEE_VERTICAL_OVERLAY = 13;
-    public static final int VIEW_TITLE_DRAWEE_DESC_VERTICAL_OVERLAY = 14;
-    public static final int VIEW_DRAWEE_TITLE_DESC_VERTICAL_OVERLAY = 15;
-    public static final int VIEW_UNKNOWN = 16;
+    public static final int VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY = 9;
+    public static final int VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY = 10;
+    public static final int VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY = 11;
+    public static final int VIEW_UNKNOWN = 12;
     public static final Parcelable.Creator<SectionItem> CREATOR = new Parcelable.Creator<SectionItem>() {
         @Override
         public SectionItem createFromParcel(Parcel source) {
@@ -154,20 +147,12 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                 return R.layout.section_img_text_desc_horizontal;
             case VIEW_IMG:
                 return R.layout.section_img;
-            case VIEW_DRAWEE:
-                return R.layout.section_drawee;
             case VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY:
                 return R.layout.section_img_text_desc_overlay;
             case VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY:
                 return R.layout.section_text_desc_img_overlay;
             case VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY:
                 return R.layout.section_text_img_desc_overlay;
-            case VIEW_DRAWEE_TITLE_DESC_VERTICAL_OVERLAY:
-                return R.layout.section_drawee_text_desc_overlay;
-            case VIEW_TITLE_DESC_DRAWEE_VERTICAL_OVERLAY:
-                return R.layout.section_text_desc_drawee_overlay;
-            case VIEW_TITLE_DRAWEE_DESC_VERTICAL_OVERLAY:
-                return R.layout.section_text_drawee_desc_overlay;
             default:
                 return 0;
         }
@@ -290,37 +275,16 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                     imageView.setVisibility(View.GONE);
                 }
             } else {
-                if (imageView instanceof SimpleDraweeView) {
-                    setHeightOfFullSimpleDraweeView((SimpleDraweeView) imageView, targetImgHeight);
-                    UIUtil.displayAsyncImage((SimpleDraweeView) imageView,
-                            Uri.parse(image), placeHolderDrawableResId, 0, null);
-                } else {
-                    UIUtil.displayAsyncImage(imageView, image, animate, placeHolderDrawableResId,
-                            targetImgWidth, targetImgHeight);
-                }
-            }
-        } else if (!TextUtils.isEmpty(imageName) && !TextUtils.isEmpty(baseImgUrl)) {
-            if (imageView instanceof SimpleDraweeView) {
-                setHeightOfFullSimpleDraweeView((SimpleDraweeView) imageView, targetImgHeight);
-                UIUtil.displayAsyncImage((SimpleDraweeView) imageView,
-                        Uri.parse(constructImageUrl(context, baseImgUrl)),
-                        placeHolderDrawableResId, 0, null);
-            } else {
-                UIUtil.displayAsyncImage(imageView,
-                        constructImageUrl(context, baseImgUrl), animate, placeHolderDrawableResId,
+                UIUtil.displayAsyncImage(imageView, image, animate, placeHolderDrawableResId,
                         targetImgWidth, targetImgHeight);
             }
+        } else if (!TextUtils.isEmpty(imageName) && !TextUtils.isEmpty(baseImgUrl)) {
+            UIUtil.displayAsyncImage(imageView,
+                    constructImageUrl(context, baseImgUrl), animate, placeHolderDrawableResId,
+                    targetImgWidth, targetImgHeight);
         } else {
             imageView.setImageDrawable(null);
             imageView.setVisibility(View.GONE);
-        }
-    }
-
-    private void setHeightOfFullSimpleDraweeView(SimpleDraweeView simpleDraweeView, int height) {
-        if (height > 0) {
-            ViewGroup.LayoutParams lp = simpleDraweeView.getLayoutParams();
-            lp.height = height;
-            simpleDraweeView.setLayoutParams(lp);
         }
     }
 
@@ -335,50 +299,29 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                     return VIEW_TITLE_DESC_VERTICAL;
                 } else if ((getTitle() == null || TextUtils.isEmpty(getTitle().getText())) &&
                         (getDescription() == null || TextUtils.isEmpty(getDescription().getText()))) {
-                    return sectionType.equals(Section.AD_IMAGE) || sectionType.equals(Section.BANNER) ?
-                            VIEW_DRAWEE : VIEW_IMG;
+                    return VIEW_IMG;
                 }
-                if (TextUtils.isEmpty(renderer.getOrdering()) ||
-                        renderer.getOrdering().equals(Renderer.IMG_TITLE_DESC)) {
-                    switch (sectionType) {
-                        case Section.PRODUCT_CAROUSEL:
-                            return VIEW_IMG_TITLE_DESC_VERTICAL;
-                        case Section.AD_IMAGE:
-                        case Section.BANNER:
-                            return VIEW_DRAWEE_TITLE_DESC_VERTICAL_OVERLAY;
-                        default:
-                            return VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY;
-                    }
+                if (TextUtils.isEmpty(renderer.getOrdering())) {
+                    return sectionType.equals(Section.PRODUCT_CAROUSEL) ?
+                            VIEW_IMG_TITLE_DESC_VERTICAL : VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY;
                 }
                 switch (renderer.getOrdering()) {
+                    case Renderer.IMG_TITLE_DESC:
+                        return sectionType.equals(Section.PRODUCT_CAROUSEL) ?
+                                VIEW_IMG_TITLE_DESC_VERTICAL : VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY;
                     case Renderer.TITLE_DESC_IMG:
-                        switch (sectionType) {
-                            case Section.PRODUCT_CAROUSEL:
-                                return VIEW_TITLE_DESC_IMG_VERTICAL;
-                            case Section.AD_IMAGE:
-                            case Section.BANNER:
-                                return VIEW_TITLE_DESC_DRAWEE_VERTICAL_OVERLAY;
-                            default:
-                                return VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY;
-                        }
+                        return sectionType.equals(Section.PRODUCT_CAROUSEL) ?
+                                VIEW_TITLE_DESC_IMG_VERTICAL : VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY;
                     case Renderer.TITLE_IMG_DESC:
-                        switch (sectionType) {
-                            case Section.PRODUCT_CAROUSEL:
-                                return VIEW_TITLE_IMG_DESC_VERTICAL;
-                            case Section.AD_IMAGE:
-                            case Section.BANNER:
-                                return VIEW_TITLE_DRAWEE_DESC_VERTICAL_OVERLAY;
-                            default:
-                                return VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY;
-                        }
+                        return sectionType.equals(Section.PRODUCT_CAROUSEL) ?
+                                VIEW_TITLE_IMG_DESC_VERTICAL : VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY;
                 }
             } else if (renderer.getOrientation() == Renderer.HORIZONTAL) {
                 if (!hasImage()) {
                     return VIEW_TITLE_DESC_HORIZONTAL;
                 } else if ((getTitle() == null || TextUtils.isEmpty(getTitle().getText())) &&
                         (getDescription() == null || TextUtils.isEmpty(getDescription().getText()))) {
-                    return sectionType.equals(Section.AD_IMAGE) || sectionType.equals(Section.BANNER) ?
-                            VIEW_DRAWEE : VIEW_IMG;
+                    return VIEW_IMG;
                 }
                 if (TextUtils.isEmpty(renderer.getOrdering())) {
                     return VIEW_TITLE_IMG_DESC_HORIZONTAL;
@@ -397,27 +340,17 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                 return VIEW_TITLE_DESC_VERTICAL;
             } else if ((getTitle() == null || TextUtils.isEmpty(getTitle().getText())) &&
                     (getDescription() == null || TextUtils.isEmpty(getDescription().getText()))) {
-                return sectionType.equals(Section.AD_IMAGE) || sectionType.equals(Section.BANNER) ?
-                        VIEW_DRAWEE : VIEW_IMG;
+                return VIEW_IMG;
             }
-            switch (sectionType) {
-                case Section.PRODUCT_CAROUSEL:
-                    return VIEW_IMG_TITLE_DESC_VERTICAL;
-                case Section.AD_IMAGE:
-                case Section.BANNER:
-                    return VIEW_DRAWEE_TITLE_DESC_VERTICAL_OVERLAY;
-                default:
-                    return VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY;
-            }
+            return sectionType.equals(Section.PRODUCT_CAROUSEL) ?
+                    VIEW_IMG_TITLE_DESC_VERTICAL : VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY;
         }
         return VIEW_UNKNOWN;
     }
 
     public boolean isOverlayWithAdjacentTitleDesc(int viewType) {
         return viewType == VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY ||
-                viewType == VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY ||
-                viewType == VIEW_DRAWEE_TITLE_DESC_VERTICAL_OVERLAY ||
-                viewType == VIEW_TITLE_DESC_DRAWEE_VERTICAL_OVERLAY;
+                viewType == VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY;
     }
 
     public int getActualWidth(Context context) {

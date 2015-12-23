@@ -296,16 +296,12 @@
 
     <!-- address -->
     <string name="expressAvailable"> \u0020 Express Delivery is available!</string>
-    <string name="delivery_add">Delivery Address:</string>
     <string name="delivery_address">Delivery Address</string>
-    <string name="other_address">Other Addresses:</string>
-    <string name="addAnAddress"> \u0020 Add an Address</string>
     <string name="addNewAddress">Add New Address</string>
     <string name="save">SAVE</string>
     <string name="saveAndContinue">Save and Continue</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
     <string name="incomplete">Incomplete</string>
-    <string name="pickAnAddress">Pick an address</string>
     <string name="chooseAddress">Choose address</string>
     <string name="chooseDelAddress">Choose delivery address</string>
     <string name="notSignedIn">You are not signed in.\nPlease sign-in to continue</string>
@@ -356,7 +352,6 @@
     <string name="locationSettingError">Unable to open location window.\nPlease enable it by going to settings.</string>
 
     <string name="payment_order_info">Your order will be placed first &amp; then you will be taken to complete the payment.</string>
-    <string name="newStr">New</string>
     <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.\nPlease don\'t press back button.</string>
 
     <string name="pleaseChooseLocationToProceed">Please choose a location to proceed further</string>
@@ -434,10 +429,11 @@
     <string name="order_details">Order Details</string>
     <string name="empty_email_address_error">Please enter your e-mail address</string>
     <string name="empty_password_error">Please enter your password</string>
-    <string name="remainig_seconds_format">%1$ds</string>
     <string name="evoucher_applied_format">"eVoucher: %1$s Applied!"</string>
     <string name="abort_payment_transaction_confirmation">Order is already placed. Convert payment to "Cash on Delivery" and cancel the transaction?</string>
     <string name="dont_not_show_this_message">Do not show this message again</string>
 
     <string name="select_different_payment_method">Please select another payment method</string>
+    <string name="store_img">Store Image</string>
+    <string name="store_icon">Store Icon</string>
 </resources>

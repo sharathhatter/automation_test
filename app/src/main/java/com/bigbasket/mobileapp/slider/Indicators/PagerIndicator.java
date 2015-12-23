@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -207,12 +208,12 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
         if (selected == 0) {
             mSelectedDrawable = mSelectedLayerDrawable;
         } else {
-            mSelectedDrawable = mContext.getResources().getDrawable(mUserSetSelectedIndicatorResId);
+            mSelectedDrawable = ContextCompat.getDrawable(mContext, mUserSetSelectedIndicatorResId);
         }
         if (unselected == 0) {
             mUnselectedDrawable = mUnSelectedLayerDrawable;
         } else {
-            mUnselectedDrawable = mContext.getResources().getDrawable(mUserSetUnSelectedIndicatorResId);
+            mUnselectedDrawable = ContextCompat.getDrawable(mContext, mUserSetUnSelectedIndicatorResId);
         }
 
         resetDrawable();
@@ -307,7 +308,7 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
             throw new IllegalStateException("Viewpager does not have adapter instance");
         }
         mPager = pager;
-        mPager.setOnPageChangeListener(this);
+        mPager.addOnPageChangeListener(this);
         ((InfinitePagerAdapter) mPager.getAdapter()).getRealAdapter().registerDataSetObserver(dataChangeObserver);
     }
 

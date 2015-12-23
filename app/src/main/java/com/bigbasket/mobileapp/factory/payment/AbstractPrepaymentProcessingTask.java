@@ -131,7 +131,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                 case Constants.PAYUMONEY_WALLET:
                     key = PayuConstants.TXNID;
                     break;
-                case Constants.MOBIKWIK_PAYMENT:
+                case Constants.MOBIKWIK_WALLET:
                     key = MobikwikPayment.MOBIKWIK_ORDERID;
                     break;
                 case Constants.PAYTM_WALLET:
@@ -304,7 +304,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
             case Constants.PAYUMONEY_WALLET:
                 PayuPayment.startPaymentGateway(paymentParams, activity,isPayUOptionVisible,true);
                 break;
-            case Constants.MOBIKWIK_PAYMENT:
+            case Constants.MOBIKWIK_WALLET:
                 MobikwikPayment.startPaymentGateway(paymentParams, activity);
                 break;
             case Constants.PAYTM_WALLET:

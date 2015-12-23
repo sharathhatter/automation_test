@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.view;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -59,8 +60,8 @@ public class ShowFulfillmentInfo<T> {
                 if (!TextUtils.isEmpty(fulfillmentInfo.getFulfilledByInfoPage())) {
                     SpannableString content = new SpannableString(prefix + postFix);
                     int prefixLen = prefix.length();
-                    content.setSpan(new ForegroundColorSpan(((AppOperationAware) ctx).getCurrentActivity()
-                                    .getResources().getColor(R.color.link_color)),
+                    content.setSpan(new ForegroundColorSpan(ContextCompat.getColor(((AppOperationAware) ctx).getCurrentActivity()
+                                    , R.color.link_color)),
                             prefixLen - 1, content.length(), 0);
                     txtFulfilledBy.setVisibility(View.VISIBLE);
                     txtFulfilledBy.setText(content);
