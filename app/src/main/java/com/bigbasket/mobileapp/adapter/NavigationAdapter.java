@@ -188,9 +188,15 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             if (sectionItem.hasImage()) {
                 imgNavItem.setVisibility(View.VISIBLE);
+                int width = mainMenuView.getWidth();
+                int height = sectionNavigationItem.getSection().getWidgetHeight(
+                        imgNavItem.getContext(),
+                        rendererHashMap,
+                        true, width > 0 ? width : -1);
                 sectionNavigationItem.getSectionItem().displayImage(context, baseImgUrl, imgNavItem,
-                        R.drawable.loading_nav_header, true);
+                        R.drawable.loading_nav_header, true, width, height);
             } else {
+                imgNavItem.setImageBitmap(null); //Release the bitmap
                 imgNavItem.setVisibility(View.GONE);
             }
 

@@ -49,6 +49,7 @@ public class SectionView {
     private int marginBetweenWidgets;
     private boolean isHelp;
     private ArrayList<Integer> dynamicTiles;
+    private int availableScreenWidth;
 
     public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName) {
         this.context = context;
@@ -59,6 +60,8 @@ public class SectionView {
         this.eightDp = (int) context.getResources().getDimension(R.dimen.margin_small);
         this.sixteenDp = (int) context.getResources().getDimension(R.dimen.margin_normal);
         this.marginBetweenWidgets = (int) context.getResources().getDimension(R.dimen.margin_mini);
+        this.availableScreenWidth = context.getResources().getDisplayMetrics().widthPixels;
+        this.availableScreenWidth -= marginBetweenWidgets;
         parseRendererColors();
     }
 
@@ -126,7 +129,6 @@ public class SectionView {
     public RecyclerView getRecyclerView(ViewGroup parent) {
         if (mSectionData == null || mSectionData.getSections() == null || mSectionData.getSections().size() == 0)
             return null;
-        parseRendererColors();
         RecyclerView recyclerView = UIUtil.getResponsiveRecyclerView(context, 1, 1, parent);
         recyclerView.setAdapter(new SectionRowAdapter());
         return recyclerView;
@@ -134,7 +136,7 @@ public class SectionView {
 
     @Nullable
     public View getViewToRender(Section section, LayoutInflater inflater, ViewGroup mainLayout,
-                                 int position, OnSectionItemClickListener sectionItemClickListener) {
+                                int position, OnSectionItemClickListener sectionItemClickListener) {
         switch (section.getSectionType()) {
             case Section.BANNER:
                 return getBannerView(section, inflater, mainLayout, sectionItemClickListener);
@@ -182,27 +184,23 @@ public class SectionView {
                     sliderView.setScaleType(BaseSliderView.ScaleType.CenterInside);
                 }
                 if (!TextUtils.isEmpty(sectionItem.getImage())) {
-                    sliderView.setWidth(sectionItem.getActualWidth(context))
-                            .setHeight(sectionItem.getActualHeight(context))
-                            .image(sectionItem.getImage());
+                    sliderView.image(sectionItem.getImage());
                 } else if (!TextUtils.isEmpty(sectionItem.getImageName())) {
-                    String imageUrl ;
-                    if(sectionItem.getImageName().startsWith("http://")
-                            || sectionItem.getImageName().startsWith("https://")){
+                    String imageUrl;
+                    if (sectionItem.getImageName().startsWith("http://")
+                            || sectionItem.getImageName().startsWith("https://")) {
                         imageUrl = sectionItem.getImageName();
                     } else {
                         imageUrl = mSectionData.getBaseImgUrl() +
                                 UIUtil.getScreenDensity(context) + "/" + sectionItem.getImageName();
                     }
-                    sliderView.setWidth(sectionItem.getActualWidth(context))
-                            .setHeight(sectionItem.getActualHeight(context))
-                            .image(imageUrl);
+                    sliderView.image(imageUrl);
                 } else {
                     continue;
                 }
                 hasImage = true;
-                if(sectionItemClickListener == null){
-                    sectionItemClickListener = new OnSectionItemClickListener<>((AppOperationAware)context,
+                if (sectionItemClickListener == null) {
+                    sectionItemClickListener = new OnSectionItemClickListener<>((AppOperationAware) context,
                             section, sectionItem, screenName);
                 }
                 sliderView.setTag(R.id.section_item_tag_id, sectionItem);
@@ -212,11 +210,11 @@ public class SectionView {
 
         }
 
-        if(section.getSectionItems().size() > 1 && hasImage) {
+        if (section.getSectionItems().size() > 1 && hasImage) {
             bannerSlider.setAutoCycle(true);
         } else {
             bannerSlider.setAutoCycle(false);
-            if(section.getSectionItems().size() <= 1) {
+            if (section.getSectionItems().size() <= 1) {
                 bannerSlider.setIndicatorVisibility(PagerIndicator.IndicatorVisibility.Invisible);
             } else {
                 bannerSlider.setIndicatorVisibility(PagerIndicator.IndicatorVisibility.Visible);
@@ -262,9 +260,9 @@ public class SectionView {
                     imgSalutationItem = (ImageView) baseSalutation.findViewById(R.id.imgSalutationItem1);
                     break;
             }
-            if(sectionItemClickListener == null) {
+            if (sectionItemClickListener == null) {
                 sectionItemClickListener = new OnSectionItemClickListener<>(
-                        (AppOperationAware)context, section, sectionItem, screenName);
+                        (AppOperationAware) context, section, sectionItem, screenName);
             }
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtSalutationItem.setTypeface(faceRobotoRegular);
@@ -360,7 +358,7 @@ public class SectionView {
             }
             txtVw.setText(sectionItem.getTitle().getText());
             txtVw.setOnClickListener(new OnSectionItemClickListener<>(
-                    (AppOperationAware)context, section, sectionItem, screenName));
+                    (AppOperationAware) context, section, sectionItem, screenName));
             txtVw.setTypeface(faceRobotoRegular);
             linearLayout.addView(view);
         }
@@ -440,7 +438,7 @@ public class SectionView {
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
             itemView.setOnClickListener(new OnSectionItemClickListener<>(
-                    (AppOperationAware)context, section, sectionItem, screenName));
+                    (AppOperationAware) context, section, sectionItem, screenName));
             View viewSeparator = itemView.findViewById(R.id.viewSeparator);
             viewSeparator.setVisibility(i == numItems - 1 ? View.GONE : View.VISIBLE);
             menuContainer.addView(itemView);
@@ -614,6 +612,14 @@ public class SectionView {
                             imgInRow.setLayoutParams(lp);
                         }
                     }
+                    if (isVertical && stretchImage) {
+                        // It is an ad-image
+                        if (targetImgWidth > 0 && targetImgHeight > 0 && availableScreenWidth > 0) {
+                            double aspectRatio = (double) targetImgWidth / (double) targetImgHeight;
+                            targetImgHeight = (int) ((double) availableScreenWidth / aspectRatio);
+                            targetImgWidth = availableScreenWidth;
+                        }
+                    }
                     sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow,
                             stretchImage ? R.drawable.loading_large : R.drawable.loading_small,
                             false, targetImgWidth, targetImgHeight);
@@ -662,7 +668,7 @@ public class SectionView {
             }
             view.setLayoutParams(layoutParams);
             view.setTag(R.id.section_item_tag_id, sectionItem);
-            if(sectionItemClickListener == null) {
+            if (sectionItemClickListener == null) {
                 sectionItemClickListener = new OnSectionItemClickListener<>(
                         (AppOperationAware) context, section, sectionItem, screenName);
             }
@@ -725,7 +731,7 @@ public class SectionView {
             }
         }
         view.setOnClickListener(new OnSectionItemClickListener<>(
-                (AppOperationAware)context, section, moreSectionItem, screenName));
+                (AppOperationAware) context, section, moreSectionItem, screenName));
     }
 
     @Nullable

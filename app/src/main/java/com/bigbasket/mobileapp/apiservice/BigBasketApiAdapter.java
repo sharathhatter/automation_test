@@ -57,18 +57,23 @@ public class BigBasketApiAdapter {
 
     public static OkHttpClient getHttpClient(Context context) {
         final AuthParameters authParameters = AuthParameters.getInstance(context);
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
-        okHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
+        OkHttpClient okHttpClient = getBaseHttpClient();
         okHttpClient.interceptors().add(new BigBasketApiInterceptor(authParameters.getVisitorId(),
                 DataUtil.getAppVersion(context), authParameters.getBbAuthToken()));
 
         Interceptor loggingInterceptor = DeveloperConfigs.getHttpLoggingInterceptor(context);
 
-        if(loggingInterceptor != null) {
+        if (loggingInterceptor != null) {
             okHttpClient.interceptors().add(loggingInterceptor);
             okHttpClient.networkInterceptors().add(loggingInterceptor);
         }
+        return okHttpClient;
+    }
+
+    public static OkHttpClient getBaseHttpClient() {
+        OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
+        okHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
         return okHttpClient;
     }
 }

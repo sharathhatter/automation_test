@@ -1,22 +1,33 @@
 package com.bigbasket.mobileapp.application;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 
 import com.bigbasket.mobileapp.BuildConfig;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 import com.bigbasket.mobileapp.util.MultiDexHandler;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.localytics.android.Localytics;
 import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
 import com.moe.pushlibrary.MoEHelper;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.Picasso;
 
 import io.fabric.sdk.android.Fabric;
+
+import static android.content.pm.ApplicationInfo.FLAG_LARGE_HEAP;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.HONEYCOMB;
 
 public class BaseApplication extends Application {
 
@@ -65,5 +76,25 @@ public class BaseApplication extends Application {
         } else {
             Localytics.setLoggingEnabled(true);
         }
+        Picasso p = new Picasso.Builder(this)
+                .memoryCache(new LruCache(getMemCacheSize()))
+                .build();
+        Picasso.setSingletonInstance(p);
+        
+        ImagePipelineConfig frescoImagePipelineConfig = OkHttpImagePipelineConfigFactory
+                .newBuilder(this, BigBasketApiAdapter.getBaseHttpClient())
+                .build();
+        Fresco.initialize(this, frescoImagePipelineConfig);
+    }
+
+    private int getMemCacheSize() {
+        ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
+        boolean largeHeap = (getApplicationInfo().flags & FLAG_LARGE_HEAP) != 0;
+        int memoryClass = am.getMemoryClass();
+        if (largeHeap && SDK_INT >= HONEYCOMB) {
+            memoryClass = am.getLargeMemoryClass();
+        }
+        // Target ~10% of the available heap.
+        return 1024 * 1024 * memoryClass / 10;
     }
 }
