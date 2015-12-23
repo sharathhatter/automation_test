@@ -110,10 +110,17 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
 
     public int getWidgetHeight(Context context, HashMap<Integer, Renderer> rendererHashMap,
                                boolean adjustForScreen) {
+        return getWidgetHeight(context, rendererHashMap, adjustForScreen, -1);
+    }
+
+    public int getWidgetHeight(Context context, HashMap<Integer, Renderer> rendererHashMap,
+                               boolean adjustForScreen, int screenWidth) {
         if (sectionItems == null) return 0;
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int screenWidth = displayMetrics.widthPixels;
+        if(screenWidth == -1) {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            screenWidth = displayMetrics.widthPixels;
+        }
         int maxHeight = 0;
         for (SectionItem sectionItem : sectionItems) {
             Renderer renderer = rendererHashMap != null ? rendererHashMap.get(sectionItem.getRenderingId()) : null;

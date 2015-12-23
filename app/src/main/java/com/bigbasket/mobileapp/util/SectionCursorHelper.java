@@ -57,8 +57,8 @@ public final class SectionCursorHelper {
                         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
                             sectionNavigationItems.add(new SectionNavigationItem(section));
                         }
-                        setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
-                                section);
+                        setSectionNavigationItemList(sectionNavigationItems,
+                                section.getSectionItems(), section);
                     }
                 }
                 navigationCallback.onNavigationAdapterCreated(getNavigationAdapter(sectionData));

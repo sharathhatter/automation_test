@@ -1,15 +1,17 @@
 package com.bigbasket.mobileapp.slider.SliderTypes;
 
 import android.content.Context;
+import android.graphics.drawable.Animatable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.bigbasket.mobileapp.R;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
+import com.bigbasket.mobileapp.util.UIUtil;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -17,8 +19,6 @@ import java.lang.ref.WeakReference;
 /**
  * When you want to make your own slider view, you must extends from this class.
  * BaseSliderView provides some useful methods.
- * I provide two example: {@link DefaultSliderView} and
- * {@link TextSliderView}
  * if you want to show progressbar, you just need to set a progressbar id as @+id/loading_bar.
  */
 public abstract class BaseSliderView {
@@ -48,9 +48,7 @@ public abstract class BaseSliderView {
     private ImageLoadListener mLoadListener;
 
     private String mDescription;
-    private int mImgWidth;
-    private int mImgHeight;
-    private SparseArray<Object> mKeyedTags ;
+    private SparseArray<Object> mKeyedTags;
 
     /**
      * Scale type of the image.
@@ -73,14 +71,14 @@ public abstract class BaseSliderView {
             throw new IllegalArgumentException("The key must be an application-specific "
                     + "resource id.");
         }
-        if(mKeyedTags == null){
+        if (mKeyedTags == null) {
             mKeyedTags = new SparseArray<>(2);
         }
         mKeyedTags.put(key, tag);
     }
 
     public Object getTag(int key) {
-        if(mKeyedTags != null) {
+        if (mKeyedTags != null) {
             return mKeyedTags.get(key);
         }
         return null;
@@ -143,16 +141,6 @@ public abstract class BaseSliderView {
                     "you only have permission to call it once");
         }
         mUrl = url;
-        return this;
-    }
-
-    public BaseSliderView setWidth(int width) {
-        this.mImgWidth = width;
-        return this;
-    }
-
-    public BaseSliderView setHeight(int height) {
-        this.mImgHeight = height;
         return this;
     }
 
@@ -221,7 +209,7 @@ public abstract class BaseSliderView {
      * @param v               the whole view
      * @param targetImageView where to place image
      */
-    protected void bindEventAndShow(final View v, ImageView targetImageView) {
+    protected void bindEventAndShow(final View v, SimpleDraweeView targetImageView) {
         final BaseSliderView me = this;
 
         v.setOnClickListener(new View.OnClickListener() {
@@ -246,48 +234,19 @@ public abstract class BaseSliderView {
         }
 
         mLoadListener.onStart(me);
-
-        Picasso p = Picasso.with(mContext);
-        RequestCreator rq = null;
+        Uri uri;
         if (mUrl != null) {
-            rq = p.load(mUrl);
+            uri = Uri.parse(mUrl);
         } else if (mFile != null) {
-            rq = p.load(mFile);
+            uri = Uri.fromFile(mFile);
         } else {
             return;
         }
-
-        if (rq == null) {
-            return;
-        }
-
-        if (getEmpty() != 0) {
-            rq.placeholder(getEmpty());
-        }
-
-        if (getError() != 0) {
-            rq.error(getError());
-        }
-
-        if (mImgWidth > 0 && mImgHeight > 0) {
-            rq.resize(mImgWidth, mImgHeight).onlyScaleDown();
-        } else {
-            switch (mScaleType) {
-                case Fit:
-                    rq.fit();
-                    break;
-                case CenterCrop:
-                    rq.fit().centerCrop();
-                    break;
-                case CenterInside:
-                    rq.fit().centerInside();
-                    break;
-            }
-        }
-        rq.into(targetImageView, new OnImageDownloadedListener(v, this, mLoadListener));
+        UIUtil.displayAsyncImage(targetImageView, uri, 0, getError(),
+                new OnImageDownloadedListener(v, this, mLoadListener));
     }
 
-    private static class OnImageDownloadedListener implements Callback {
+    private static class OnImageDownloadedListener extends BaseControllerListener<ImageInfo> {
 
         private WeakReference<View> sliderViewWeakRef;
         private WeakReference<BaseSliderView> baseSliderViewWeakRef;
@@ -301,7 +260,8 @@ public abstract class BaseSliderView {
         }
 
         @Override
-        public void onSuccess() {
+        public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
+            super.onFinalImageSet(id, imageInfo, animatable);
             if (sliderViewWeakRef != null && sliderViewWeakRef.get() != null) {
                 View loadingBar = sliderViewWeakRef.get().findViewById(R.id.loading_bar);
                 if (loadingBar != null) {
@@ -311,7 +271,8 @@ public abstract class BaseSliderView {
         }
 
         @Override
-        public void onError() {
+        public void onFailure(String id, Throwable throwable) {
+            super.onFailure(id, throwable);
             if (imageLoadListenerWeakRef != null && imageLoadListenerWeakRef.get() != null
                     && baseSliderViewWeakRef != null && baseSliderViewWeakRef.get() != null) {
                 imageLoadListenerWeakRef.get().onEnd(false, baseSliderViewWeakRef.get());

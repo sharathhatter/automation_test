@@ -67,7 +67,7 @@ import java.util.TimerTask;
  * <p/>
  * pager_animation_span
  */
-public class SliderLayout extends RelativeLayout implements ViewTreeObserver.OnGlobalLayoutListener {
+public class SliderLayout extends RelativeLayout {
 
     /**
      * InfiniteViewPager is extended from ViewPagerEx. As the name says, it can scroll without bounder.
@@ -96,7 +96,7 @@ public class SliderLayout extends RelativeLayout implements ViewTreeObserver.OnG
     /**
      * the duration between animation.
      */
-    private long mSliderDuration = 2000;
+    private long mSliderDuration = 4000;
 
     /**
      * Visibility of {@link PagerIndicator}
@@ -158,47 +158,25 @@ public class SliderLayout extends RelativeLayout implements ViewTreeObserver.OnG
     }
 
     @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        try {
-            getViewTreeObserver().addOnGlobalLayoutListener(this);
-        } catch (IllegalStateException ex) {
-            //Ignore
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    protected void onDetachedFromWindow() {
-        try {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            } else {
-                getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            }
-        } catch (IllegalStateException ex) {
-            //Ignore
-        }
-        super.onDetachedFromWindow();
-    }
-
-    @Override
-    public void onGlobalLayout() {
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
         if(mAutoCycle) {
-            if (!isShown()) {
-                stopAutoCycle();
-            } else {
+            if (visibility == View.VISIBLE) {
                 startAutoCycle();
+            } else {
+                stopAutoCycle();
             }
         }
     }
 
     public void setAutoCycle(boolean autoCycle) {
         this.mAutoCycle = autoCycle;
-        if(autoCycle){
-            startAutoCycle();
-        } else {
-            stopAutoCycle();
+        if (isShown()) {
+            if (autoCycle) {
+                startAutoCycle();
+            } else {
+                stopAutoCycle();
+            }
         }
     }
 

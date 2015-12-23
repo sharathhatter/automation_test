@@ -22,6 +22,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
@@ -50,6 +51,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
@@ -69,6 +71,12 @@ import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
@@ -429,6 +437,37 @@ public class UIUtil {
             requestCreator.into(imageView);
         } catch (OutOfMemoryError e) {
             System.gc();
+        }
+    }
+
+    public static void displayAsyncImage(SimpleDraweeView simpleDraweeView,
+                                         Uri uri,
+                                         @DrawableRes int placeHolderDrawableId,
+                                         @DrawableRes int failureDrawableId,
+                                         @Nullable ControllerListener<ImageInfo> downloadListener) {
+        GenericDraweeHierarchyBuilder builder =
+                new GenericDraweeHierarchyBuilder(simpleDraweeView.getContext().getResources());
+        if (placeHolderDrawableId != 0) {
+            builder.setPlaceholderImage(ContextCompat.getDrawable(simpleDraweeView.getContext(),
+                    placeHolderDrawableId));
+        }
+        if (failureDrawableId != 0) {
+            builder.setFailureImage(ContextCompat.getDrawable(simpleDraweeView.getContext(),
+                    failureDrawableId));
+        } else {
+            builder.setFailureImage(ContextCompat.getDrawable(simpleDraweeView.getContext(),
+                    R.drawable.noimage));
+        }
+        simpleDraweeView.setHierarchy(builder.build());
+        if (downloadListener != null) {
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setUri(uri)
+                    .setOldController(simpleDraweeView.getController())
+                    .setControllerListener(downloadListener)
+                    .build();
+            simpleDraweeView.setController(controller);
+        } else {
+            simpleDraweeView.setImageURI(uri);
         }
     }
 
