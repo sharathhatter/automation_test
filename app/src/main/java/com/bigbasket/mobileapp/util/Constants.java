@@ -664,11 +664,10 @@ public class Constants {
 
     public static final String USER_SELECTED_ADDRESS = "selected_address";
     //Android M Support Permissions codes
-    public static final int PERMISSION_REQUEST_CODE_READ_PHONE_STATE = 101;
-    public static final int PERMISSION_REQUEST_CODE_ACCESS_LOCATION = 102;
-    public static final int PERMISSION_REQUEST_CODE_RECORD_AUDIO = 103;
-    public static final int PERMISSION_REQUEST_CODE_CAPTURE_CAMERA = 104;
-    public static final int PERMISSION_REQUEST_CODE_GET_ACCOUNTS = 105;
-    public static final int PERMISSION_REQUEST_CODE_RECEIVE_SMS = 106;
+    public static final int PERMISSION_REQUEST_CODE_ACCESS_LOCATION = 101;
+    public static final int PERMISSION_REQUEST_CODE_RECORD_AUDIO = 102;
+    public static final int PERMISSION_REQUEST_CODE_CAPTURE_CAMERA = 103;
+    public static final int PERMISSION_REQUEST_CODE_GET_ACCOUNTS = 104;
+    public static final int PERMISSION_REQUEST_CODE_RECEIVE_SMS = 105;
 
 }

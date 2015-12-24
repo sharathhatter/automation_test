@@ -38,8 +38,9 @@ import java.util.List;
 
 public class WibmoSDK {
 	private static final String TAG = WibmoSDK.class.getSimpleName();
-	
-	public static final int REQUEST_CODE_MPOS = 0x0000c0be; // Only use bottom 16 bits - 49342
+    public static final String VERSION = "1.2.0";
+
+    public static final int REQUEST_CODE_MPOS = 0x0000c0be; // Only use bottom 16 bits - 49342
     public static final int REQUEST_CODE_IAP_2FA  = 0x0000605f; // Only use bottom 16 bits - 24671
     public static final int REQUEST_CODE_IAP_PAY  = 0x00006060; // Only use bottom 16 bits - 24672
 
@@ -48,6 +49,8 @@ public class WibmoSDK {
 		"This application requires Wibmo Wallet. Would you like to install it?";
 	public static final String DEFAULT_YES = "Yes";
 	public static final String DEFAULT_NO = "No";
+
+    public static final boolean IS_PHONE_STATE_PERMISSION_REQ = false;
 
     private static String wibmoIntentActionPackage = "com.enstage.wibmo.sdk.inapp.main";
     private static String wibmoAppPackage;
@@ -66,6 +69,7 @@ public class WibmoSDK {
     }
 
     public static void startForInApp(Activity activity, WPayInitRequest wPayInitRequest) {
+        Log.i(TAG, "Called startForInApp");
         if(activity==null) {
             throw new IllegalArgumentException("Activity passed was null");
         }
@@ -118,7 +122,7 @@ public class WibmoSDK {
         Intent intent = new Intent(intentAction);
         //intent.addCategory(Intent.CATEGORY_DEFAULT);
 
-		PackageManager pm = activity.getPackageManager();
+		PackageManager pm = activity.getApplicationContext().getPackageManager();
 		List<ResolveInfo> availableApps = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         Log.v(TAG, "availableApps: "+availableApps.size());
 
@@ -147,7 +151,7 @@ public class WibmoSDK {
     }
     */
     public static boolean isPackageExisted(Activity activity, String targetPackage){
-        PackageManager pm = activity.getPackageManager();
+        PackageManager pm = activity.getApplicationContext().getPackageManager();
         try {
             PackageInfo info = pm.getPackageInfo(targetPackage, PackageManager.GET_META_DATA);
         } catch (PackageManager.NameNotFoundException e) {

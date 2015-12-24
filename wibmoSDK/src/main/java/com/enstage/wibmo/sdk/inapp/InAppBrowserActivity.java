@@ -17,12 +17,17 @@ package com.enstage.wibmo.sdk.inapp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -35,12 +40,12 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.enstage.wibmo.sdk.R;
 import com.enstage.wibmo.sdk.WibmoSDKConfig;
 import com.enstage.wibmo.sdk.inapp.pojo.W2faInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.W2faInitResponse;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitResponse;
+import com.enstage.wibmo.sdk.R;
 
 /**
  * Created by akshath on 20/10/14.
@@ -178,7 +183,7 @@ public class InAppBrowserActivity extends Activity {
                 Log.i(TAG, "progress: " + progress);
                 webViewProgressBar.setProgress(progress);
                 if(progress==100) {
-                    webViewProgressBar.setVisibility(View.INVISIBLE);
+                    webViewProgressBar.setVisibility(View.GONE);
                 } else if(webViewProgressBar.getVisibility()==View.INVISIBLE) {
                     webViewProgressBar.setVisibility(View.VISIBLE);
                 }
@@ -243,6 +248,33 @@ public class InAppBrowserActivity extends Activity {
                             */
                 }
                 _notifyCompletion();
+            }
+
+            @android.webkit.JavascriptInterface
+            @SuppressWarnings("unused")
+            public void toast(String msg) {
+                Log.d(TAG, "alert: " + msg);
+                showToast(msg);
+            }
+
+            @android.webkit.JavascriptInterface
+            @SuppressWarnings("unused")
+            public void alert(String msg) {
+                Log.d(TAG, "alert: "+msg);
+                showMsg(msg);
+            }
+
+            @android.webkit.JavascriptInterface
+            @SuppressWarnings("unused")
+            public void log(String msg) {
+                Log.v(TAG, "log: " + msg);
+            }
+
+            @android.webkit.JavascriptInterface
+            @SuppressWarnings("unused")
+            public void userCancel() {
+                Log.d(TAG, "userCancel");
+                onBackPressed();
             }
         }
         webView.addJavascriptInterface(new MyJavaScriptInterface(), "WibmoSDK");
@@ -343,8 +375,8 @@ public class InAppBrowserActivity extends Activity {
         finish();
     }
 
-    @Override
-    public void onBackPressed() {
+
+    public void processBackAction() {
         if(resultSet) {
             Log.v(TAG, "resultSet was true");
             _notifyCompletion();
@@ -352,39 +384,90 @@ public class InAppBrowserActivity extends Activity {
             Log.v(TAG, "resultSet was false");
             sendAbort();
         }
-        super.onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+        final Activity activity = this;
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage(
+                activity.getString(R.string.confirm_iap_cancel))
+                .setPositiveButton(
+                        activity.getString(R.string.title_yes),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(
+                                    DialogInterface dialog, int id) {
+                                processBackAction();
+                            }
+                        })
+                .setNegativeButton(
+                        activity.getString(R.string.title_no),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(
+                                    DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                                if (dialog != null) {
+                                    try {
+                                        dialog.dismiss();
+                                    } catch (IllegalArgumentException e) {
+                                        Log.e(TAG, "Error: " + e);
+                                    }
+                                }
+                            }
+                        });
+
+        Dialog dialog = builder.create();
+        try {
+            dialog.show();
+        } catch (Throwable e) {
+            Log.e(TAG, "Error: " + e, e);
+
+            processBackAction();
+        }
     }
 
     @SuppressLint("NewApi")
-    @Override
-    protected void onPause() {
-        super.onPause();
+    protected void showMsg(String msg) {
+        Log.d(TAG, msg);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(msg);
+        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.setIcon(android.R.drawable.ic_dialog_alert);
+
+        try {
+            alert.show();
+        } catch(Throwable e) {
+            Log.e(TAG, "error: " + e, e);
+            showToast(msg);
+        }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
+    private Handler handler = new Handler();
+    protected void showToast(final String msg) {
+        Log.i(TAG, "Show Toast: " + msg);
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
+        final Activity activity = this;
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast toast = Toast.makeText(activity, msg, Toast.LENGTH_LONG);
+                View view = toast.getView();
 
-
-    public void showWait(boolean flag) {
-
-    }
-
-    public void startWait() {
-
-    }
-
-    public void stopWait() {
-
-    }
-
-    public Activity getActivity() {
-        return this;
+                try {
+                    toast.show();
+                } catch(Throwable e) {
+                    Log.e(TAG, "error: " + e, e);
+                }
+            }
+        });
     }
 }
