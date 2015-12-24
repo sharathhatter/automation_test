@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
+import com.crashlytics.android.Crashlytics;
+
 /**
  * Fragment the displays progress dialog
  */
@@ -29,6 +31,20 @@ public class ProgressDialogFragment extends DialogFragment {
 
     public ProgressDialogFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onStart() {
+        try {
+            super.onStart();
+        } catch (Throwable t){
+            Crashlytics.logException(t);
+            try {
+                dismiss();
+            } catch (Exception ex) {
+                //Ignore
+            }
+        }
     }
 
     @Override

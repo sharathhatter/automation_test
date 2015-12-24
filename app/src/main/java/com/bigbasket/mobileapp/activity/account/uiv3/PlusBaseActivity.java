@@ -298,6 +298,9 @@ public abstract class PlusBaseActivity extends BaseActivity {
         Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
 
         if (requestCode == RC_RESOLVE_CONNECT_ERROR) {
+            if (mGoogleApiClient == null) {
+                initializeGoogleApiClient();
+            }
             mIsResolving = false;
             if (resultCode == RESULT_OK) {
                 // Make sure the app is not already connected or attempting to connect
@@ -317,6 +320,9 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 onGoogleClientConnectCancelled();
             }
         } else if (requestCode == RC_RESOLVE_AUTH_ERROR) {
+            if (mGoogleApiClient == null) {
+                initializeGoogleApiClient();
+            }
             if (resultCode == RESULT_OK) {
                 String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
                 if (!TextUtils.isEmpty(accountName)) {
