@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +18,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.payu.india.Model.PaymentDetails;
 import com.payu.india.Model.PaymentParams;
@@ -33,7 +31,7 @@ import com.payu.india.PostParams.PaymentPostParams;
 import java.util.ArrayList;
 
 
-public class PayUNetBankingActivity extends AppCompatActivity implements View.OnClickListener {
+public class PayUNetBankingActivity extends PaymentBaseActivity implements View.OnClickListener {
 
     private String bankcode;
     private Bundle bundle;
@@ -154,7 +152,8 @@ public class PayUNetBankingActivity extends AppCompatActivity implements View.On
                 intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
             } else {
-                Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+                /***error when the postdata for the netbanking entered is not correct***/
+                handleUnknownErrorCondition();
             }
         }
     }

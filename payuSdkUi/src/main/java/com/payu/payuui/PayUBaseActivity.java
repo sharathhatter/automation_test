@@ -3,8 +3,9 @@ package com.payu.payuui;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class PayUBaseActivity extends AppCompatActivity implements View.OnClickListener, PaymentRelatedDetailsListener {
+public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClickListener, PaymentRelatedDetailsListener {
 
     PayuResponse mPayuResponse;
     Intent mIntent;
@@ -140,17 +141,21 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
                 if (isPayUSelected) {
                     launchPayumoney();
                 } else {
-                    GetPaymentRelatedDetailsTask paymentRelatedDetailsForMobileSdkTask = new GetPaymentRelatedDetailsTask(this);
-                    paymentRelatedDetailsForMobileSdkTask.execute(payuConfig);
+                    fetchPaymentRelatedDetails();
                 }
             } else {
-//                Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+                /****error in getting merchant post params***/
                 // close the progress bar
                 findViewById(R.id.progress_bar).setVisibility(View.GONE);
+                handleUnknownErrorCondition();
             }
         }
+    }
 
 
+    private void fetchPaymentRelatedDetails() {
+        GetPaymentRelatedDetailsTask paymentRelatedDetailsForMobileSdkTask = new GetPaymentRelatedDetailsTask(this);
+        paymentRelatedDetailsForMobileSdkTask.execute(payuConfig);
     }
 
     @Override
@@ -166,7 +171,7 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            finish();
+            onBackPressed();
         }
 
         return super.onOptionsItemSelected(item);
@@ -174,7 +179,7 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data != null)
+        if (data != null) {
             if (data.hasExtra("transaction_status")) {
                 setResult(resultCode, data);
                 finish();
@@ -182,6 +187,10 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
                 setResult(resultCode, data);
                 finish();
             }
+        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode == RESULT_CANCELED) {
+            //some unknown error navigate to previous screen
+            finish();
+        }
     }
 
     @Override
@@ -242,7 +251,9 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
             intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
             startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
         } else {
-//            Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+            /*** error if the post data is not proper transaction wont go through***/
+            handleUnknownErrorCondition();
+
         }
     }
 
@@ -269,7 +280,6 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
         HashMap<String, ArrayList<StoredCard>> storedCardMap = new HashMap<>();
 
         switch (storeOneClickHash) {
-
             case PayuConstants.STORE_ONE_CLICK_HASH_MOBILE:
                 storedCardMap = new PayuUtils().getStoredCard(this, mPayuResponse.getStoredCards());
                 storedCards = storedCardMap.get(PayuConstants.STORED_CARD);
@@ -292,7 +302,9 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
 
 
         if (payuResponse.isResponseAvailable() && payuResponse.getResponseStatus().getCode() == PayuErrors.NO_ERROR) { // ok we are good to go
-//            Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
+
+            //making the view visible if payuresponse is success
+            findViewById(R.id.mOptionSelectionTextView).setVisibility(View.VISIBLE);
 
             if (payuResponse.isStoredCardsAvailable() && null != storedCards && storedCards.size() > 0) {
                 findViewById(R.id.linear_layout_stored_card).setVisibility(View.VISIBLE);
@@ -320,17 +332,61 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
                     findViewById(R.id.linear_layout_payumoney).setVisibility(View.VISIBLE);
             }
         } else {
-//            Toast.makeText(this, "Something went wrong : " + payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
+            /****error either the payu response is not available or the response code is not success***/
+
+            try {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                TransactionDialogFragment transactionDialogFragment = TransactionDialogFragment.newInstance(getString(R.string.retry_message), Constants.TRANSACTION_RETRY_CODE, getString(R.string.cancel), getString(R.string.retry));
+                transactionDialogFragment.show(fragmentManager, getClass().getName());
+            } catch (Exception e) {
+                Log.d(getClass().getName(), "fragment failed");
+            }
         }
 
         // no mater what response i get just show this button, so that we can go further.
         findViewById(R.id.linear_layout_verify_api).setVisibility(View.GONE);
     }
 
+    @Override
+    public void onDialogConfirmed(int reqCode, boolean isPositive) {
+
+        switch (reqCode) {
+            case Constants.BACKPRESSED_ERROR_CODE:
+                if (isPositive) {
+                    setTransactionIntentResult();
+                }
+                break;
+            case Constants.TRANSACTION_RETRY_CODE:
+                if (!isPositive) {
+                    findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+                    fetchPaymentRelatedDetails();
+                } else {
+                    setTransactionIntentResult();
+                }
+                break;
+            default:
+                super.onDialogConfirmed(reqCode, isPositive);
+        }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        try {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            TransactionDialogFragment transactionDialogFragment = TransactionDialogFragment.newInstance(getString(R.string.cancel_message), Constants.BACKPRESSED_ERROR_CODE, getString(R.string.ok), getString(R.string.cancel));
+            transactionDialogFragment.show(fragmentManager, getClass().getName());
+        } catch (Exception e) {
+            Log.d(getClass().getName(), "fragment failed");
+        }
+    }
+
+    private void setTransactionIntentResult() {
+        Intent intent = new Intent();
+        intent.putExtra("result", getString(R.string.transaction_cancelled_due_back_pressed));
+        intent.putExtra("transaction_status", false);
+        setResult(RESULT_CANCELED, intent);
+        finish();
+
+    }
 }
-
-
-
-
-
-

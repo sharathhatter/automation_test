@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,7 +16,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
@@ -29,7 +27,7 @@ import com.payu.india.Payu.PayuUtils;
 import com.payu.india.PostParams.PaymentPostParams;
 
 
-public class PayUCreditDebitCardActivity extends AppCompatActivity implements View.OnClickListener {
+public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements View.OnClickListener {
 
     int storeOneClickHash;
     private Button payNowButton;
@@ -225,10 +223,12 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
 
             } else {
-                Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+                /***error when the postdata for the card entered is not correct***/
+                handleUnknownErrorCondition();
             }
         } else {
-            Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+            /***error if the click from something else****/
+            handleUnknownErrorCondition();
         }
     }
 
@@ -245,8 +245,6 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
             setResult(resultCode, data);
             finish();
         }
-        setResult(resultCode, data);
-        finish();
     }
 
 
