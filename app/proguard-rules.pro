@@ -26,11 +26,6 @@
 -keep class com.bigbasket.mobileapp.model.** { *; }
 -keep class com.bigbasket.mobileapp.apiservice.models.response.** { *; }
 
-# Wibmo
--keep class com.enstage.wibmo.sdk.** { *; }
--keep class com.enstage.wibmo.sdk.inapp.InAppBrowserActivity$* { *; }
--keep class com.enstage.wibmo.util.** { *; }
--keepclassmembers class com.enstage.wibmo.sdk.inapp.pojo.** { *; }
 
 # New Relic
 -keep class com.newrelic.** { *; }

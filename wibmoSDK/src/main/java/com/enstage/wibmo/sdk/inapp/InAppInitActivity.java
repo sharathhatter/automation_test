@@ -15,9 +15,11 @@
  */
 package com.enstage.wibmo.sdk.inapp;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,6 +40,7 @@ import com.enstage.wibmo.sdk.inapp.pojo.W2faInitResponse;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitResponse;
 import com.google.gson.Gson;
+import android.support.v4.app.ActivityCompat;
 
 /**
  * Created by akshath on 17/10/14.
@@ -113,14 +116,43 @@ public class InAppInitActivity extends Activity {
         abortButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(asyncTask!=null) {
-                    asyncTask.cancel(true);
-                    asyncTask = null;
-                }
+                cancelIAP();
                 sendAbort();
             }
         });
 
+
+        if(WibmoSDK.IS_PHONE_STATE_PERMISSION_REQ) {
+            if (WibmoSDKPermissionUtil.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Log.w(TAG, "Permission not granted! READ_PHONE_STATE");
+
+                WibmoSDKPermissionUtil.showRequestPermissionRationalel(activity,
+                        getString(R.string.wibmosdk_phone_state_permission_rationale),
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                ActivityCompat.requestPermissions(activity,
+                                        new String[]{Manifest.permission.READ_PHONE_STATE},
+                                        WibmoSDKPermissionUtil.REQUEST_CODE_ASK_PERMISSION_PHONE_STATE);
+                            }
+                        },
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                WibmoSDKPermissionUtil.showPermissionMissingUI(activity, getString(R.string.wibmosdk_phone_state_permission_missing_msg));
+                                sendAbort("no permission ph state");
+                            }
+                        });
+
+                return;//we need this so can;t go on
+            }
+        }
+
+        doIAPStuff();
+    }
+
+    private void doIAPStuff() {
         if(InAppUtil.isWibmoInstalled(this)) {
             startInAppReadinessCheck(this);
         } else {
@@ -130,9 +162,16 @@ public class InAppInitActivity extends Activity {
         }
     }
 
+    private void cancelIAP() {
+        if(asyncTask!=null) {
+            asyncTask.cancel(true);
+            asyncTask = null;
+        }
+    }
+
     private void startIAP() {
         if (w2faInitRequest != null) {
-            w2faInitRequest.setDeviceInfo(InAppUtil.makeDeviceInfo(activity));
+            w2faInitRequest.setDeviceInfo(InAppUtil.makeDeviceInfo(activity, WibmoSDK.VERSION));
 
             w2faInitRequest.getDeviceInfo().setAppInstalled(isAppReady);
 
@@ -140,11 +179,27 @@ public class InAppInitActivity extends Activity {
         }
 
         if (wPayInitRequest != null) {
-            wPayInitRequest.setDeviceInfo(InAppUtil.makeDeviceInfo(activity));
+            wPayInitRequest.setDeviceInfo(InAppUtil.makeDeviceInfo(activity, WibmoSDK.VERSION));
 
             wPayInitRequest.getDeviceInfo().setAppInstalled(isAppReady);
 
             asyncTask = new InitPayReqTask().execute(wPayInitRequest);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == WibmoSDKPermissionUtil.REQUEST_CODE_ASK_PERMISSION_PHONE_STATE) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Got permission READ_PHONE_STATE");
+                // success!
+                doIAPStuff();
+            } else {
+                Log.w(TAG, "Permission not got! READ_PHONE_STATE");//we need this
+                WibmoSDKPermissionUtil.showPermissionMissingUI(activity, getString(R.string.wibmosdk_phone_state_permission_missing_msg));
+                sendAbort("no permission ph state");
+            }
+            return;
         }
     }
 
@@ -233,9 +288,13 @@ public class InAppInitActivity extends Activity {
     }
 
     private void sendAbort() {
+        sendAbort("user abort");
+    }
+
+    private void sendAbort(String reason) {
         Intent resultData = new Intent();
         resultData.putExtra("ResCode", "204");
-        resultData.putExtra("ResDesc", "user abort");
+        resultData.putExtra("ResDesc", reason);
         if(w2faInitResponse!=null) {
             resultData.putExtra("WibmoTxnId", w2faInitResponse.getWibmoTxnId());
             if(w2faInitResponse.getTransactionInfo()!=null) {
@@ -251,11 +310,19 @@ public class InAppInitActivity extends Activity {
         finish();
     }
 
+    private void sendFailure(String resCode, String resDesc) {
+        Intent resultData = new Intent();
+        resultData.putExtra("ResCode", resCode);
+        resultData.putExtra("ResDesc", resDesc);
+
+        setResult(Activity.RESULT_CANCELED, resultData);
+        finish();
+    }
     private void sendFailure(W2faInitResponse w2faInitResponse) {
         Intent resultData = new Intent();
         resultData.putExtra("ResCode", w2faInitResponse.getResCode());
         resultData.putExtra("ResDesc", w2faInitResponse.getResDesc());
-        if(w2faInitResponse!=null) {
+        if(w2faInitResponse.getWibmoTxnId()!=null) {
             resultData.putExtra("WibmoTxnId", w2faInitResponse.getWibmoTxnId());
             if(w2faInitResponse.getTransactionInfo()!=null) {
                 resultData.putExtra("MerTxnId", w2faInitResponse.getTransactionInfo().getMerTxnId());
@@ -268,7 +335,7 @@ public class InAppInitActivity extends Activity {
         Intent resultData = new Intent();
         resultData.putExtra("ResCode", wPayInitResponse.getResCode());
         resultData.putExtra("ResDesc", wPayInitResponse.getResDesc());
-        if(wPayInitResponse!=null) {
+        if(wPayInitResponse.getWibmoTxnId()!=null) {
             resultData.putExtra("WibmoTxnId", wPayInitResponse.getWibmoTxnId());
             if(wPayInitResponse.getTransactionInfo()!=null) {
                 resultData.putExtra("MerTxnId", wPayInitResponse.getTransactionInfo().getMerTxnId());
@@ -345,9 +412,55 @@ public class InAppInitActivity extends Activity {
         return this;
     }
 
+    private void processInit2FARes() {
+        String weburl = w2faInitResponse.getWebUrl();
+
+        if("000".equals(w2faInitResponse.getResCode())==false) {
+            sendFailure(w2faInitResponse);
+            return;
+        }
+
+        if(isAppReady) {
+            startInAppFlowInApp(activity, w2faInitRequest, w2faInitResponse);
+        } else {
+            startInAppFlowInBrowser(activity, w2faInitRequest, w2faInitResponse);
+            //Log.d(TAG, "Weburl: "+weburl);
+        }
+        mainView.setVisibility(View.INVISIBLE);
+    }
+
+
+
+    private void processInitPayRes() {
+        if("000".equals(wPayInitResponse.getResCode())==false) {
+            sendFailure(wPayInitResponse);
+            return;
+        }
+
+        String weburl = wPayInitResponse.getWebUrl();
+        Log.d(TAG, "Weburl: "+weburl);
+
+        if(isAppReady) {
+            startInAppFlowInApp(activity, wPayInitRequest, wPayInitResponse);
+        } else {
+            startInAppFlowInBrowser(activity, wPayInitRequest, wPayInitResponse);
+        }
+        mainView.setVisibility(View.INVISIBLE);
+    }
+
+    private void manageError(Throwable e) {
+        if(e!=null) {
+            Log.e(TAG, "Error: " + e, e);
+        }
+        Toast toast = Toast.makeText(activity,
+                "We had an error, please try after sometime",
+                Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+
     private class Init2FAReqTask extends AsyncTask<W2faInitRequest, Void, Void> {
         private boolean showError = false;
-
 
         @Override
         protected void onPreExecute() {
@@ -370,25 +483,10 @@ public class InAppInitActivity extends Activity {
             Log.v(TAG, "pl wait.. done");
 
             if (showError) {
-                Toast toast = Toast.makeText(activity,
-                        "We had an error, please try after sometime",
-                        Toast.LENGTH_LONG);
-                toast.show();
+                manageError(null);
+                sendFailure("051", "init failed with server error.. chk logs");
             } else {
-                String weburl = w2faInitResponse.getWebUrl();
-
-                if("000".equals(w2faInitResponse.getResCode())==false) {
-                    sendFailure(w2faInitResponse);
-                    return;
-                }
-
-                if(isAppReady) {
-                    startInAppFlowInApp(activity, w2faInitRequest, w2faInitResponse);
-                } else {
-                    startInAppFlowInBrowser(activity, w2faInitRequest, w2faInitResponse);
-                    //Log.d(TAG, "Weburl: "+weburl);
-                }
-                mainView.setVisibility(View.INVISIBLE);
+                processInit2FARes();
             }
         }
     }
@@ -425,25 +523,10 @@ public class InAppInitActivity extends Activity {
             Log.v(TAG, "pl wait.. done");
 
             if (showError) {
-                Toast toast = Toast.makeText(activity,
-                        "We had an error, please try after sometime",
-                        Toast.LENGTH_LONG);
-                toast.show();
+                manageError(null);
+                sendFailure("051", "init failed with server error.. chk logs");
             } else {
-                if("000".equals(wPayInitResponse.getResCode())==false) {
-                    sendFailure(wPayInitResponse);
-                    return;
-                }
-
-                String weburl = wPayInitResponse.getWebUrl();
-                Log.d(TAG, "Weburl: "+weburl);
-
-                if(isAppReady) {
-                    startInAppFlowInApp(activity, wPayInitRequest, wPayInitResponse);
-                } else {
-                    startInAppFlowInBrowser(activity, wPayInitRequest, wPayInitResponse);
-                }
-                mainView.setVisibility(View.INVISIBLE);
+                processInitPayRes();
             }
         }
     }

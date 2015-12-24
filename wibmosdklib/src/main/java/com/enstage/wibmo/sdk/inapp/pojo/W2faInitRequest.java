@@ -30,7 +30,9 @@ public class W2faInitRequest implements Serializable {
 	private CustomerInfo customerInfo;
 	private DeviceInfo deviceInfo;
 	private String msgHash;
-	
+
+	private CardInfo cardInfo;
+
 	public MerchantInfo getMerchantInfo() {
 		return merchantInfo;
 	}
@@ -69,5 +71,13 @@ public class W2faInitRequest implements Serializable {
 
 	public void setMsgHash(String msgHash) {
 		this.msgHash = msgHash;
+	}
+
+	public CardInfo getCardInfo() {
+		return cardInfo;
+	}
+
+	public void setCardInfo(CardInfo cardInfo) {
+		this.cardInfo = cardInfo;
 	}
 }

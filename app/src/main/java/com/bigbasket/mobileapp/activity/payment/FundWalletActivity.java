@@ -193,14 +193,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             showAlertDialog(getString(R.string.invalidAmount));
             return;
         }
-        if ((mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY))) {
-            if (handlePermission(Manifest.permission.READ_PHONE_STATE, Constants.PERMISSION_REQUEST_CODE_READ_PHONE_STATE)) {
-                initFundWalletPrepaymentProcessingTask(amount);
-            }
-        } else {
-            initFundWalletPrepaymentProcessingTask(amount);
-        }
-
+        initFundWalletPrepaymentProcessingTask(amount);
 
     }
 
@@ -235,25 +228,6 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                     }
                 };
         mFundWalletPrepaymentProcessingTask.execute();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
-        switch (requestCode) {
-            case Constants.PERMISSION_REQUEST_CODE_READ_PHONE_STATE:
-                if (grantResults.length > 0 && permissions.length > 0
-                        && permissions[0].equals(Manifest.permission.READ_PHONE_STATE)) {
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        initFundWalletPrepaymentProcessingTask(String.valueOf(mFinalTotal));
-                    } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                        showToast(getString(R.string.select_different_payment_method));
-                    }
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
     }
 
     @Override
