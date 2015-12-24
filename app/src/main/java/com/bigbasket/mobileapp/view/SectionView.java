@@ -179,6 +179,7 @@ public class SectionView {
             bannerSlider.setLayoutParams(bannerLayoutParams);
         }
         boolean hasImage = false;
+        ArrayList<BaseSliderView> sliderViews = new ArrayList<>(section.getSectionItems().size());
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem.hasImage()) {
                 BaseSliderView sliderView;
@@ -197,17 +198,10 @@ public class SectionView {
                             .setHeight(targetHeight)
                             .image(sectionItem.getImage());
                 } else if (!TextUtils.isEmpty(sectionItem.getImageName())) {
-                    String imageUrl;
-                    if (sectionItem.getImageName().startsWith("http://")
-                            || sectionItem.getImageName().startsWith("https://")) {
-                        imageUrl = sectionItem.getImageName();
-                    } else {
-                        imageUrl = mSectionData.getBaseImgUrl() +
-                                UIUtil.getScreenDensity(context) + "/" + sectionItem.getImageName();
-                    }
                     sliderView.setWidth(targetWidth)
                             .setHeight(targetHeight)
-                            .image(imageUrl);
+                            .image(sectionItem.constructImageUrl(
+                                    context, mSectionData.getBaseImgUrl()));
                 } else {
                     continue;
                 }
@@ -218,12 +212,13 @@ public class SectionView {
                 }
                 sliderView.setTag(R.id.section_item_tag_id, sectionItem);
                 sliderView.setOnSliderClickListener(sectionItemClickListener);
-                bannerSlider.addSlider(sliderView);
+                sliderViews.add(sliderView);
             }
 
         }
+        bannerSlider.addSlider(sliderViews);
 
-        if (section.getSectionItems().size() > 1 && hasImage) {
+        if (sliderViews.size() > 1) {
             bannerSlider.setAutoCycle(true);
         } else {
             bannerSlider.setAutoCycle(false);

@@ -290,7 +290,13 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     }
 
     public String constructImageUrl(Context context, String baseImgUrl) {
-        return baseImgUrl + UIUtil.getScreenDensity(context) + "/" + imageName;
+        //TODO: Use existing constants for schema"
+        if(imageName.startsWith("http://")
+                || imageName.startsWith("https://")) {
+            return imageName;
+        } else {
+            return baseImgUrl + UIUtil.getScreenDensity(context) + "/" + imageName;
+        }
     }
 
     public int getItemViewType(Renderer renderer, String sectionType) {

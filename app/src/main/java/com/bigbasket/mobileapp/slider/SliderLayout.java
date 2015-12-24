@@ -2,7 +2,7 @@ package com.bigbasket.mobileapp.slider;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
+import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
@@ -11,7 +11,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.Interpolator;
 import android.widget.RelativeLayout;
 
@@ -23,6 +22,7 @@ import com.bigbasket.mobileapp.slider.Transformers.BaseTransformer;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -98,6 +98,8 @@ public class SliderLayout extends RelativeLayout {
      */
     private long mSliderDuration = 4000;
 
+    private boolean mIsInfiniteScroll = true;
+
     /**
      * Visibility of {@link PagerIndicator}
      */
@@ -135,8 +137,22 @@ public class SliderLayout extends RelativeLayout {
         PagerAdapter wrappedAdapter = new InfinitePagerAdapter(mSliderAdapter);
 
         mViewPager = (InfiniteViewPager) findViewById(R.id.daimajia_slider_viewpager);
-        mViewPager.setAdapter(wrappedAdapter);
-
+        if(mIsInfiniteScroll) {
+            mViewPager.setAdapter(wrappedAdapter);
+        } else {
+            mViewPager.setAdapter(mSliderAdapter);
+            mSliderAdapter.registerDataSetObserver(new DataSetObserver() {
+                @Override
+                public void onChanged() {
+                    super.onChanged();
+                    if (mSliderAdapter.getCount() <= 10) {
+                        mViewPager.setOffscreenPageLimit(mSliderAdapter.getCount());
+                    } else {
+                        mViewPager.setOffscreenPageLimit(10);
+                    }
+                }
+            });
+        }
         mViewPager.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -191,6 +207,10 @@ public class SliderLayout extends RelativeLayout {
     }
 
     public <T extends BaseSliderView> void addSlider(T imageContent) {
+        mSliderAdapter.addSlider(imageContent);
+    }
+
+    public <T extends BaseSliderView> void addSlider(Collection<? extends T> imageContent) {
         mSliderAdapter.addSlider(imageContent);
     }
 
@@ -384,8 +404,11 @@ public class SliderLayout extends RelativeLayout {
 
     private SliderAdapter getRealAdapter() {
         PagerAdapter adapter = mViewPager.getAdapter();
-        if (adapter != null) {
+        if (adapter instanceof InfinitePagerAdapter) {
             return ((InfinitePagerAdapter) adapter).getRealAdapter();
+        }
+        if(adapter instanceof SliderAdapter) {
+            return (SliderAdapter) adapter;
         }
         return null;
     }
@@ -394,10 +417,19 @@ public class SliderLayout extends RelativeLayout {
      * move to next slide.
      */
     public void moveNextPosition(boolean smooth) {
-
-        if (getRealAdapter() == null)
+        SliderAdapter realAdapter = getRealAdapter();
+        if (realAdapter == null)
             throw new IllegalStateException("You did not set a slider adapter");
 
-        mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1, smooth);
+        int nextItem = mViewPager.getCurrentItem() + 1;
+        if(!mIsInfiniteScroll) {
+            int realCount = realAdapter.getCount();
+            if(nextItem >= realCount) {
+                nextItem = 0;
+                smooth = false;
+            }
+        }
+
+        mViewPager.setCurrentItem(nextItem, smooth);
     }
 }

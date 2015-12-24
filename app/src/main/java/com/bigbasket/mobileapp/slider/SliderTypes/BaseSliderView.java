@@ -256,13 +256,7 @@ public abstract class BaseSliderView {
         }
         Picasso p = Picasso.with(mContext);
         RequestCreator rq = null;
-        if (mUrl != null) {
-            rq = p.load(mUrl);
-        } else if (mFile != null) {
-            rq = p.load(mFile);
-        } else {
-            return;
-        }
+        rq = p.load(uri);
 
         if (rq == null) {
             return;
@@ -278,9 +272,10 @@ public abstract class BaseSliderView {
 
         if (mImgWidth > 0 && mImgHeight > 0) {
             rq.resize(mImgWidth, mImgHeight).onlyScaleDown();
-            Log.i(targetImageView.getContext().getClass().getName(), "Loading image (" + mImgWidth + "," + mImgHeight + ") = " + mUrl);
+            Log.i(getClass().getSimpleName(),
+                    "Loading image (" + mImgWidth + "," + mImgHeight + ") = " + mUrl);
         } else {
-            Log.i(targetImageView.getContext().getClass().getName(), "Loading image = " + mUrl);
+            Log.i(getClass().getSimpleName(), "Loading image = " + mUrl);
             switch (mScaleType) {
                 case Fit:
                     rq.fit();

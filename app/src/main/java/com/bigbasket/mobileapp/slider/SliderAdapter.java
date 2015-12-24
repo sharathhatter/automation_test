@@ -8,6 +8,7 @@ import com.bigbasket.mobileapp.slider.SliderTypes.BaseSliderView;
 import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A slider adapter
@@ -25,10 +26,20 @@ public class SliderAdapter extends PagerAdapter implements BaseSliderView.ImageL
         mImageContents.add(slider);
         notifyDataSetChanged();
     }
+    public <T extends BaseSliderView> void addSlider(Collection<? extends T> sliders) {
+        if(sliders == null){
+            return;
+        }
+        for(T slider: sliders){
+            slider.setOnImageLoadListener(this);
+        }
+        mImageContents.addAll(sliders);
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getItemPosition(Object object) {
-        return POSITION_NONE;
+        return POSITION_UNCHANGED;
     }
 
     public <T extends BaseSliderView> void removeSlider(T slider) {
