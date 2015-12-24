@@ -431,9 +431,9 @@ public class UIUtil {
             requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE);
         }
         if (targetImageWidth > 0 && targetImageHeight > 0) {
-            requestCreator.resize(targetImageWidth, targetImageHeight)
-                    .onlyScaleDown();
-            Log.i(imageView.getContext().getClass().getName(), "Loading image (" + targetImageWidth + "," + targetImageHeight + ") = " + url);
+            requestCreator.resize(targetImageWidth, targetImageHeight);
+            Log.i(imageView.getContext().getClass().getName(),
+                    "Loading image (" + targetImageWidth + "," + targetImageHeight + ") = " + url);
         } else {
             Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
         }

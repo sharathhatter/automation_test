@@ -290,11 +290,15 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
         if (mPager == null || mPager.getAdapter() == null) {
             return;
         }
-        InfinitePagerAdapter wrapper = (InfinitePagerAdapter) mPager.getAdapter();
-        PagerAdapter adapter = wrapper.getRealAdapter();
+        PagerAdapter adapter = mPager.getAdapter();
+        if(adapter instanceof InfinitePagerAdapter) {
+            InfinitePagerAdapter wrapper = (InfinitePagerAdapter) mPager.getAdapter();
+            adapter = wrapper.getRealAdapter();
+        }
         if (adapter != null) {
             adapter.unregisterDataSetObserver(dataChangeObserver);
         }
+        mPager.removeOnPageChangeListener(this);
         removeAllViews();
     }
 
@@ -307,9 +311,17 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
         if (pager.getAdapter() == null) {
             throw new IllegalStateException("Viewpager does not have adapter instance");
         }
+        if(mPager != null) {
+            mPager.removeOnPageChangeListener(this);
+        }
         mPager = pager;
         mPager.addOnPageChangeListener(this);
-        ((InfinitePagerAdapter) mPager.getAdapter()).getRealAdapter().registerDataSetObserver(dataChangeObserver);
+        if(mPager.getAdapter() instanceof InfinitePagerAdapter) {
+            ((InfinitePagerAdapter) mPager.getAdapter())
+                    .getRealAdapter().registerDataSetObserver(dataChangeObserver);
+        } else {
+            mPager.getAdapter().registerDataSetObserver(dataChangeObserver);
+        }
     }
 
 
@@ -388,7 +400,7 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
                 }
             }
             mItemCount = count;
-            mPager.setCurrentItem(mItemCount * 20 + mPager.getCurrentItem());
+            //mPager.setCurrentItem(mItemCount * 20 + mPager.getCurrentItem());
         }
 
         @Override

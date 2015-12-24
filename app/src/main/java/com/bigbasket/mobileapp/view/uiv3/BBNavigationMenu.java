@@ -110,8 +110,14 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
     public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
                                          HashMap<Integer, Renderer> rendererHashMap) {
         Typeface faceRobotoMedium = FontHolder.getInstance(getContext()).getFaceRobotoMedium();
-        ArrayList<SubSectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
-        if (subNavigationSectionItems == null || subNavigationSectionItems.size() == 0) return;
+        if (sectionItem.getSubSectionItems() == null
+                || sectionItem.getSubSectionItems().isEmpty()){
+            return;
+        }
+        ArrayList<SectionItem> subNavigationSectionItems = new ArrayList<>(
+                sectionItem.getSubSectionItems().size());
+        subNavigationSectionItems.addAll(sectionItem.getSubSectionItems());
+
 
         if (mListSubNavigationParent == null) {
             mListSubNavigationParent = (AnimatedRelativeLayout) findViewById(R.id.layoutSubNavigationItems);
@@ -123,6 +129,8 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
             mListSubNavigation.setLayoutManager(new LinearLayoutManager(getContext()));
         }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
+        section = new Section(sectionItem.getTitle(), sectionItem.getDescription(), Section.MENU,
+                subNavigationSectionItems, null);
         SectionCursorHelper.setSectionNavigationItemList(sectionNavigationItems,
                 subNavigationSectionItems, section);
         String selectedId = mCallback != null ? mCallback.onSubCategoryIdRequested() : null;

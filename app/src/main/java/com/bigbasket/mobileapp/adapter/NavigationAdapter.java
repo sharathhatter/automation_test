@@ -188,7 +188,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             if (sectionItem.hasImage()) {
                 imgNavItem.setVisibility(View.VISIBLE);
-                int width = mainMenuView.getWidth();
+                int width = mainMenuView.getWidth() ;
                 int height = sectionNavigationItem.getSection().getWidgetHeight(
                         imgNavItem.getContext(),
                         rendererHashMap,
@@ -212,6 +212,11 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         mainMenuView.onSubNavigationHideRequested(true);
                     }
                 });
+                if (sectionItem.hasImage()){
+                    txtNavMainItem.setBackgroundResource(R.drawable.bg_scrim_top);
+                } else {
+                    txtNavMainItem.setBackgroundResource(android.R.color.transparent);
+                }
             } else {
                 txtNavMainItem.setVisibility(View.GONE);
             }
