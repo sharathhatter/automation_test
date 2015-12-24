@@ -57,13 +57,18 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseDeliveryLocation));
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
+        if (savedInstanceState == null)
+            if (handlePermission(Manifest.permission.ACCESS_FINE_LOCATION, Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION)) {
+
+            }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if (mIsViaOnActivityResult) return;
-        triggerLocationFetching();
+        if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION))
+            triggerLocationFetching();
     }
 
     private void triggerLocationFetching() {
@@ -111,7 +116,8 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh) {
-            renderLocation();
+            if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION))
+                renderLocation();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -158,25 +164,25 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         if (mGoogleApiClient == null) return;
         setAsCurrentAddressBoolean = setAsCurrentAddress;
         autoModeBoolean = autoMode;
-        if (handlePermission(Manifest.permission.ACCESS_FINE_LOCATION, Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION)) {
-            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (lastLocation != null) {
-                LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-                if (setAsCurrentAddress) {
-                    updateLocation(latLng,
-                            mChosenAddressSummary != null ? mChosenAddressSummary.getArea() : null);
-                } else {
-                    getCurrentLocationDetail(latLng);
-                }
+
+        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (lastLocation != null) {
+            LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+            if (setAsCurrentAddress) {
+                updateLocation(latLng,
+                        mChosenAddressSummary != null ? mChosenAddressSummary.getArea() : null);
             } else {
-                if (autoMode) {
-                    triggerLocationFetching();
-                } else {
-                    hideProgressDialog();
-                    onLocationReadFailure();
-                }
+                getCurrentLocationDetail(latLng);
+            }
+        } else {
+            if (autoMode) {
+                triggerLocationFetching();
+            } else {
+                hideProgressDialog();
+                onLocationReadFailure();
             }
         }
+
     }
 
     @Override
@@ -186,7 +192,10 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                 if (grantResults.length > 0 && permissions.length > 0
                         && permissions[0].equals(Manifest.permission.ACCESS_COARSE_LOCATION)) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        updateLastKnownLocation(setAsCurrentAddressBoolean,autoModeBoolean);
+                        updateLastKnownLocation(setAsCurrentAddressBoolean, autoModeBoolean);
+                    } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                        hideProgressDialog();
+                        onLocationReadFailure();
                     }
                 }
                 break;
