@@ -93,6 +93,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu;
 import com.bigbasket.mobileapp.view.uiv3.BasketDeltaDialog;
 import com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView;
+import com.crashlytics.android.Crashlytics;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -888,7 +889,12 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             boolean status = mMainMenuView.onBackPressed(mDrawerLayout);
             if (status) return;
         }
-        super.onBackPressed();
+        try {
+            super.onBackPressed();
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+            finish();
+        }
     }
 
     /**

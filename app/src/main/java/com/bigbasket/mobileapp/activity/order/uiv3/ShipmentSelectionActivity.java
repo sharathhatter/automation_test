@@ -496,8 +496,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             }
             String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
             if (potentialOrderId == null) return;
-            new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId,
-                    TrackEventkeys.CO_DELIVERY_OPS).startTask();
+            PostShipmentTask.startTask(getCurrentActivity(), selectedShipments, potentialOrderId,
+                    TrackEventkeys.CO_DELIVERY_OPS);
             trackFinalShipmentEvent(mShipments, cityMode);
         }
     }

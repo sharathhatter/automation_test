@@ -19,20 +19,10 @@ import java.util.ArrayList;
 import retrofit.Call;
 
 public class PostShipmentTask<T extends AppOperationAware> {
-    private T ctx;
-    private ArrayList<SelectedShipment> selectedShipments;
-    private String potentialOrderId;
-    private String nc;
 
-    public PostShipmentTask(T ctx, ArrayList<SelectedShipment> selectedShipments, String potentialOrderId,
-                            String nc) {
-        this.ctx = ctx;
-        this.selectedShipments = selectedShipments;
-        this.potentialOrderId = potentialOrderId;
-        this.nc = nc;
-    }
-
-    public void startTask() {
+    public static <T extends AppOperationAware> void startTask(final T ctx, final ArrayList<SelectedShipment> selectedShipments,
+                          final String potentialOrderId,
+                          final String nc) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(
                 ctx.getCurrentActivity());
         ctx.showProgressDialog("Please wait...");
@@ -45,7 +35,7 @@ public class PostShipmentTask<T extends AppOperationAware> {
 
                 switch (postShipmentResponse.status) {
                     case 0:
-                        onPostShipment(postShipmentResponse.apiResponseContent);
+                        onPostShipment(ctx, potentialOrderId, nc, postShipmentResponse.apiResponseContent);
                         break;
                     default:
                         ctx.getHandler().sendEmptyMessage(postShipmentResponse.status,
@@ -66,7 +56,9 @@ public class PostShipmentTask<T extends AppOperationAware> {
         });
     }
 
-    private void onPostShipment(PostShipmentResponseContent postShipmentResponseContent) {
+    private static <T extends AppOperationAware> void onPostShipment(T ctx, String potentialOrderId,
+                                       String nc,
+                                       PostShipmentResponseContent postShipmentResponseContent) {
         Intent intent = new Intent(ctx.getCurrentActivity(),
                 PaymentSelectionActivity.class);
         intent.putExtra(Constants.P_ORDER_ID, potentialOrderId);
