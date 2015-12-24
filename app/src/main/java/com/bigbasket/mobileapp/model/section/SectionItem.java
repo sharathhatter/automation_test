@@ -250,12 +250,13 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                              @DrawableRes int placeHolderDrawableResId,
                              boolean animate) {
         displayImage(context, baseImgUrl, imageView, placeHolderDrawableResId, animate,
-                0, 0);
+                0, 0, false);
     }
 
     public void displayImage(Context context, @Nullable String baseImgUrl, ImageView imageView,
                              @DrawableRes int placeHolderDrawableResId,
-                             boolean animate, int targetImgWidth, int targetImgHeight) {
+                             boolean animate, int targetImgWidth, int targetImgHeight,
+                             boolean skipMemoryCache) {
 
         imageView.setVisibility(View.VISIBLE);
         if (!TextUtils.isEmpty(image)) {
@@ -276,12 +277,12 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                 }
             } else {
                 UIUtil.displayAsyncImage(imageView, image, animate, placeHolderDrawableResId,
-                        targetImgWidth, targetImgHeight);
+                        targetImgWidth, targetImgHeight, skipMemoryCache);
             }
         } else if (!TextUtils.isEmpty(imageName) && !TextUtils.isEmpty(baseImgUrl)) {
             UIUtil.displayAsyncImage(imageView,
                     constructImageUrl(context, baseImgUrl), animate, placeHolderDrawableResId,
-                    targetImgWidth, targetImgHeight);
+                    targetImgWidth, targetImgHeight, skipMemoryCache);
         } else {
             imageView.setImageDrawable(null);
             imageView.setVisibility(View.GONE);

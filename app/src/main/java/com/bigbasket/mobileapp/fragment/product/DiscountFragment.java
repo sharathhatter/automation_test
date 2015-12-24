@@ -42,7 +42,7 @@ public class DiscountFragment extends BaseFragment {
 
         if (sectionData != null) {
             RecyclerView recyclerView = new SectionView(getCurrentActivity(), faceRobotoRegular,
-                    sectionData, Constants.DISCOUNT_PAGE).getRecyclerView(contentLayout);
+                    sectionData, Constants.DISCOUNT_PAGE, false, true).getRecyclerView(contentLayout);
             if (recyclerView != null) {
                 contentLayout.addView(recyclerView);
             }
