@@ -1,33 +1,32 @@
-package com.bigbasket.mobileapp.fragment.account;
+package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.fragment.account.DatePickerFragment;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.task.OtpValidationHelper;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -42,77 +41,72 @@ import java.util.HashMap;
 
 import retrofit.Call;
 
-
-public class UpdateProfileFragment extends BaseFragment implements OtpDialogAware {
-
+public class UpdateProfileActivity extends BackButtonActivity implements OtpDialogAware {
     private EditText editTextEmail, editTextFirstName, editTextLastName, editTextDob,
             editTextMobileNumber,
             editTextTelNumber;
     private CheckBox chkReceivePromos;
-    private OTPValidationDialogFragment otpValidationDialogFragment;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_update_profile, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        UpdateProfileModel updateProfileModel = getArguments().getParcelable(Constants.UPDATE_PROFILE_OBJ);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        UpdateProfileModel updateProfileModel = getIntent().getParcelableExtra(Constants.UPDATE_PROFILE_OBJ);
         if (updateProfileModel == null) return;
+        setTitle(getString(R.string.update_profile));
         initiateUpdateProfileActivity(updateProfileModel);
     }
 
+    @Override
+    public int getMainLayout() {
+        return R.layout.uiv3_update_profile;
+    }
 
     private void initiateUpdateProfileActivity(UpdateProfileModel updateProfileModel) {
-        final View view = getContentView();
-        if (view == null) return;
-        editTextEmail = (EditText) view.findViewById(R.id.editTextEmail);
+        editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextEmail.setTypeface(faceRobotoRegular);
         editTextEmail.setText(updateProfileModel.getEmail());
 
-        editTextFirstName = (EditText) view.findViewById(R.id.editTextFirstName);
+        editTextFirstName = (EditText) findViewById(R.id.editTextFirstName);
         editTextFirstName.setTypeface(faceRobotoRegular);
         editTextFirstName.setNextFocusDownId(R.id.editTextLastName);
         editTextFirstName.setText(updateProfileModel.getFirstName());
 
-        editTextLastName = (EditText) view.findViewById(R.id.editTextLastName);
+        editTextLastName = (EditText) findViewById(R.id.editTextLastName);
         editTextLastName.setTypeface(faceRobotoRegular);
         editTextLastName.setText(updateProfileModel.getLastName());
 
-        editTextDob = (EditText) view.findViewById(R.id.editTextDob);
+        editTextDob = (EditText) findViewById(R.id.editTextDob);
         editTextDob.setTypeface(faceRobotoRegular);
         editTextDob.setText(updateProfileModel.getDateOfBirth());
 
-        editTextMobileNumber = (EditText) view.findViewById(R.id.editTextMobileNumber);
+        editTextMobileNumber = (EditText) findViewById(R.id.editTextMobileNumber);
         editTextMobileNumber.setTypeface(faceRobotoRegular);
         editTextMobileNumber.setText(updateProfileModel.getMobileNumber());
 
         InputFilter maxLengthFilter = new InputFilter.LengthFilter(10);
         editTextMobileNumber.setFilters(new InputFilter[]{maxLengthFilter});
 
-        editTextTelNumber = (EditText) view.findViewById(R.id.editTextTelNumber);
+        editTextTelNumber = (EditText) findViewById(R.id.editTextTelNumber);
         editTextTelNumber.setTypeface(faceRobotoRegular);
         editTextTelNumber.setText(updateProfileModel.getTelephoneNumber());
 
-        chkReceivePromos = (CheckBox) view.findViewById(R.id.chkReceivePromos);
+        chkReceivePromos = (CheckBox) findViewById(R.id.chkReceivePromos);
         chkReceivePromos.setChecked(updateProfileModel.isNewPaperSubscription());
 
-        TextView txtSave = (TextView) view.findViewById(R.id.txtUpdateProfile);
+        Button txtSave = (Button) findViewById(R.id.txtUpdateProfile);
         txtSave.setTypeface(faceRobotoMedium);
         txtSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validateOtp(null);
+                validateOtp(null, false);
             }
         });
 
-        ImageView imgCalc = (ImageView) view.findViewById(R.id.imgCalc);
+        ImageView imgCalc = (ImageView) findViewById(R.id.imgCalc);
         imgCalc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePickerDialog(view);
+                showDatePickerDialog(getContentView());
             }
         });
         trackEvent(TrackingAware.UPDATE_PROFILE_SHOWN, null);
@@ -120,43 +114,31 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
 
     private void showDatePickerDialog(View view) {
         DialogFragment newFragment = new DatePickerFragment(view);
-        newFragment.show(getFragmentManager(), Constants.DATE_PICKER);
+        newFragment.show(getSupportFragmentManager(), Constants.DATE_PICKER);
     }
 
-    private void validateOtp(int otp_flag, String errorMsg) {
+    private void handleMessage(int otp_flag, String errorMsg, boolean isResendOtpRequested) {
         switch (otp_flag) {
             case ApiErrorCodes.NUMBER_IN_USE:
-                showErrorMsg(errorMsg != null ? errorMsg : getResources().getString(R.string.numberUsedByAnotherMember));
+                showAlertDialog(errorMsg != null ? errorMsg : getResources().getString(R.string.numberUsedByAnotherMember));
                 break;
             case ApiErrorCodes.OTP_NEEDED:
-                validateMobileNumber(false, errorMsg);
+                if (isResendOtpRequested) {
+                    showToast(getString(R.string.resendOtpMsg));
+                }
+                OtpValidationHelper.requestOtpUI(this);
                 break;
             case ApiErrorCodes.OTP_INVALID:
-                validateMobileNumber(true, errorMsg);
+                OtpValidationHelper.reportError(this, errorMsg);
                 break;
         }
-    }
-
-    private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
-        if (otpValidationDialogFragment == null) {
-            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance();
-        }
-        if (otpValidationDialogFragment.isVisible()) {
-            if (txtErrorValidateNumberVisibility) {
-                otpValidationDialogFragment.showErrorText(errorMsg);
-            }
-        } else {
-            otpValidationDialogFragment.setTargetFragment(this, 0);
-            otpValidationDialogFragment.show(getFragmentManager(), Constants.OTP_DIALOG_FLAG);
-        }
-
     }
 
     private void updatePreferenceData() {
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefer.edit();
 
-        ((BaseActivity) getActivity()).showToast(getString(R.string.profileUpdated));
+        showToast(getString(R.string.profileUpdated));
         editor.putString(Constants.MEMBER_EMAIL_KEY, editTextEmail.getText().toString());
         editor.putString(Constants.FIRST_NAME_PREF, editTextFirstName.getText().toString());
         editor.putString(Constants.LASTNAME, editTextLastName.getText().toString());
@@ -171,16 +153,16 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
     }
 
     private void setResultCodeOnProfileUpdate() {
-        getActivity().setResult(NavigationCodes.ACCOUNT_UPDATED, null);
+        setResult(NavigationCodes.ACCOUNT_UPDATED, null);
         finish();
     }
 
     @Override
-    public void validateOtp(String otpCode) {
-        btnUpdateAfterSuccessNumberValidation(otpCode);
+    public void validateOtp(String otpCode, boolean isResendOtpRequested) {
+        btnUpdateAfterSuccessNumberValidation(otpCode, isResendOtpRequested);
     }
 
-    private void btnUpdateAfterSuccessNumberValidation(String otpCode) {
+    private void btnUpdateAfterSuccessNumberValidation(String otpCode, boolean isResendOtpRequested) {
         final View view = getContentView();
         if (view == null) return;
 
@@ -254,18 +236,18 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
 
         if (!TextUtils.isEmpty(editTextDob.getText().toString()) &&
                 !UIUtil.isValidDOB(editTextDob.getText().toString()) && !cancel) {
-            showErrorMsg(getString(R.string.error_dob_message));
-            editTextDob.requestFocus();
-            return;
+            UIUtil.reportFormInputFieldError(textInputDob, getString(R.string.error_dob_message));
+            focusView = editTextDob;
+            cancel = true;
         }
-
 
         if (cancel) {
             focusView.requestFocus();
+            hideKeyboard(this, focusView);
             return;
         }
         if (checkInternetConnection()) {
-            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
             String cityId = prefer.getString(Constants.CITY_ID, "");
             final JSONObject user_details = new JSONObject();
             try {
@@ -283,7 +265,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            postUserDetails(user_details.toString(), otpCode != null);
+            postUserDetails(user_details.toString(), otpCode != null, isResendOtpRequested);
         } else {
             handler.sendOfflineError();
         }
@@ -294,43 +276,35 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         trackEvent(TrackingAware.PROMO_MAILER_ENABLED, map);
     }
 
-    private void postUserDetails(String userDetails, final boolean hasOTP) {
-        if (!DataUtil.isInternetAvailable(getActivity())) {
+    private void postUserDetails(String userDetails, final boolean hasOTP, final boolean isResendOtpRequested) {
+        if (!DataUtil.isInternetAvailable(this)) {
             handler.sendOfflineError(false);
             return;
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.please_wait));
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(isResendOtpRequested ? getString(R.string.resending_otp) : getString(R.string.please_wait));
         Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.setUserDetailsData(userDetails);
         call.enqueue(new BBNetworkCallback<ApiResponse<UpdateProfileApiResponse>>(this) {
             @Override
             public void onSuccess(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback) {
                 if (memberProfileDataCallback.status == 0) {
-                    if (otpValidationDialogFragment != null) {
-                        if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode() != null)
-                            BaseActivity.hideKeyboard(getActivity(), otpValidationDialogFragment.getEditTextMobileCode());
-                        if (otpValidationDialogFragment.isVisible())
-                            otpValidationDialogFragment.dismiss();
-                    }
+                    OtpValidationHelper.dismiss();
                     updatePreferenceData();
                 } else {
                     int errorCode = memberProfileDataCallback.status;
                     if (errorCode == ApiErrorCodes.NUMBER_IN_USE ||
                             errorCode == ApiErrorCodes.OTP_NEEDED ||
                             errorCode == ApiErrorCodes.OTP_INVALID) {
-                        if (hasOTP)
+                        if (hasOTP) {
                             logUpdateProfileEvent(memberProfileDataCallback.message,
                                     TrackingAware.OTP_SUBMIT_BTN_CLICKED);
-                        validateOtp(errorCode, memberProfileDataCallback.message);
+                        }
+                        handleMessage(errorCode, memberProfileDataCallback.message, isResendOtpRequested);
                     } else {
                         handler.sendEmptyMessage(errorCode, memberProfileDataCallback.message);
                         logUpdateProfileEvent(memberProfileDataCallback.message,
                                 TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
-                        if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
-                            if (getCurrentActivity() != null)
-                                BaseActivity.hideKeyboard(getActivity(), getCurrentActivity().getCurrentFocus());
-                            otpValidationDialogFragment.dismiss();
-                        }
+                        OtpValidationHelper.dismiss();
                     }
                 }
             }
@@ -354,7 +328,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
             @Override
             public void onFailure(Throwable t) {
                 super.onFailure(t);
-                logUpdateProfileEvent("Network Error", TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
+                logUpdateProfileEvent(getString(R.string.networkError), TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
             }
         });
     }
@@ -373,23 +347,29 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         }
     }
 
-    public ViewGroup getContentView() {
-        return getView() != null ? (ViewGroup) getView().findViewById(R.id.layoutUpdateProfile) : null;
+    @Override
+    public BaseActivity getCurrentActivity() {
+        return this;
     }
 
     @Override
-    public String getTitle() {
-        return "Update Profile";
-    }
-
-    @NonNull
-    @Override
-    public String getFragmentTxnTag() {
-        return UpdateProfileFragment.class.getName();
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        boolean handled = OtpValidationHelper.onRequestPermissionsResult(this, requestCode,
+                permissions, grantResults);
+        if (!handled) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override
-    public String getScreenTag() {
-        return TrackEventkeys.ACCOUNT_UPDATE_PROFILE_SCREEN;
+    public void onNoFragmentsInLayout() {
+        OtpValidationHelper.onDestroy();
+        // No need to finish this Activity
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        OtpValidationHelper.onDestroy();
     }
 }

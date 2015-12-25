@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.task;
 
-import android.os.AsyncTask;
-
 import retrofit.Call;
 
 /**

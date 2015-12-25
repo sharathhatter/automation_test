@@ -526,6 +526,11 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
+            android:name=".activity.account.uiv3.UpdateProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
             android:name=".activity.shoppinglist.ShoppingListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
@@ -603,11 +608,6 @@
             android:name=".activity.base.uiv3.BackButtonWithBasketButtonActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
-            android:name=".activity.base.uiv3.BackButtonSpinnerDateActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BBNavDrawerTheme.SpinnerDatePickerTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.MyAccountActivity"

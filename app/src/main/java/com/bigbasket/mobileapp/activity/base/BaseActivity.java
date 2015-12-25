@@ -956,7 +956,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return false;
     }
 
-    protected boolean hasPermissionGranted(String permission) {
+    public boolean hasPermissionGranted(String permission) {
         int result = ContextCompat.checkSelfPermission(this, permission);
         return result == PackageManager.PERMISSION_GRANTED;
     }

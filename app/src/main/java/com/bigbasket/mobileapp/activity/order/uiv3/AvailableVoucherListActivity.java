@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -179,11 +180,11 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             TextView txtLblApply = activeVoucherViewHolder.getTxtLblApply();
 
             if (activeVouchers.canApply()) {
-                txtVoucherMsg.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
-                txtLblApply.setTextColor(getResources().getColor(R.color.uiv3_dialog_header_text_bkg));
+                txtVoucherMsg.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.uiv3_secondary_text_color));
+                txtLblApply.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.uiv3_dialog_header_text_bkg));
             } else {
-                txtVoucherMsg.setTextColor(getResources().getColor(R.color.dark_red));
-                txtLblApply.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
+                txtVoucherMsg.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.dark_red));
+                txtLblApply.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.uiv3_secondary_text_color));
             }
 
             txtVoucherCode.setText(activeVouchers.getCode());

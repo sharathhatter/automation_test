@@ -34,7 +34,6 @@ public class DiscountActivity extends SearchActivity {
         setNextScreenNavigationContext(TrackEventkeys.NC_DISCOUNT_SCREEN);
         setTitle(getString(R.string.discounts));
         getDiscountData();
-
     }
 
 

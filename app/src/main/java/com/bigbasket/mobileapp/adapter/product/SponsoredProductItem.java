@@ -1,9 +1,7 @@
 package com.bigbasket.mobileapp.adapter.product;
 
-import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
-import com.bigbasket.mobileapp.model.section.SectionItem;
 
 import java.util.ArrayList;
 

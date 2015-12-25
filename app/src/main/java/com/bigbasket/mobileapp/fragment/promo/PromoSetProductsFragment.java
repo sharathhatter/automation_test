@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.TextUtils;
@@ -257,14 +258,14 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         TextView txtNumCompletedOffer = (TextView) promoProductListView.findViewById(R.id.txtNumCompletedOffer);
         txtNumCompletedOffer.setTypeface(faceRobotoRegular);
         txtNumCompletedOffer.setText(PromoDetail.
-                getNumCompletedInBasketSpannable(getResources().getColor(R.color.promo_txt_green_color),
+                getNumCompletedInBasketSpannable(ContextCompat.getColor(getActivity(), R.color.promo_txt_green_color),
                         numPromoCompletedInBasket));
 
         TextView txtSaving = (TextView) promoProductListView.findViewById(R.id.txtSaving);
         txtSaving.setTypeface(faceRobotoRegular);
         String savingFormattedAmount = UIUtil.formatAsMoney(saving);
         txtSaving.setText(PromoDetail.
-                getSavingSpannable(getResources().getColor(R.color.promo_txt_green_color),
+                getSavingSpannable(ContextCompat.getColor(getActivity(), R.color.promo_txt_green_color),
                         savingFormattedAmount, faceRupee));
     }
 

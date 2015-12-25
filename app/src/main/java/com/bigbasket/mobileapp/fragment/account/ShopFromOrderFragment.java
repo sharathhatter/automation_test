@@ -1,4 +1,4 @@
-package com.bigbasket.mobileapp.activity.account.uiv3;
+package com.bigbasket.mobileapp.fragment.account;
 
 import android.content.Intent;
 import android.os.Bundle;

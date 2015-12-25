@@ -23,7 +23,6 @@ import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
-import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.service.AnalyticsIntentService;

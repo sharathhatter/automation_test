@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,7 +86,7 @@ public class StoreDetailsDialogFragment extends AbstractDialogFragment {
             txtDismiss.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    txtDismiss.setBackgroundColor(getResources().getColor(R.color.white));
+                    txtDismiss.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
                     if (getDialog().isShowing())
                         getDialog().dismiss();
                 }

@@ -1,144 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:background="@color/white">
 
-
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarOtp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_normal"
-        android:orientation="vertical">
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <TextView
-            android:id="@+id/txtDialogTitle"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imgCloseOtp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/close"
+                android:paddingBottom="@dimen/padding_normal"
+                android:paddingRight="@dimen/padding_normal"
+                android:paddingTop="@dimen/padding_normal"
+                android:src="@drawable/ic_arrow_back_white_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/imgCloseOtp"
+                android:text="@string/verify_mobile"
+                android:textColor="@color/white"
+                android:textSize="@dimen/large_text_size" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbarOtp"
+        android:scrollbars="none">
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_normal"
-            android:layout_marginTop="@dimen/margin_medium_large"
-            android:text="@string/confirmMobileNumber"
-            android:textSize="@dimen/large_text_size" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_margin="@dimen/margin_normal"
+            android:background="@drawable/grey_border_no_rounds"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/padding_normal">
 
             <TextView
                 android:id="@+id/txtHeaderMsg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:gravity="center"
                 android:text="@string/headerMsgForMobileConfirm"
+                android:textColor="@color/dark_grey"
+                android:textSize="@dimen/large_text_size" />
+
+            <ProgressBar
+                android:id="@+id/progressBarOtpSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtHeaderMsg"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal" />
+
+            <TextView
+                android:id="@+id/txtEnterOtpManually"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/progressBarOtpSmall"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:gravity="center"
+                android:text="@string/enter_otp_manually"
                 android:textColor="@color/dark_grey"
                 android:textSize="@dimen/primary_text_size" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/layoutInputOtp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/margin_mini">
-
-
-                <TextView
-                    android:id="@+id/txtResendCode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:gravity="center_vertical"
-                    android:paddingBottom="@dimen/padding_small"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingTop="@dimen/padding_small"
-                    android:text="@string/txtResendCodeStr"
-                    android:textColor="@color/dark_green"
-                    android:textSize="@dimen/primary_text_size" />
-
+                android:layout_below="@id/txtEnterOtpManually"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/editTextMobileCode"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@id/txtResendCode"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_toLeftOf="@id/txtResendCode"
+                    android:gravity="center"
                     android:hint="@string/txtConfirmNumberHint"
-                    android:inputType="number"
+                    android:imeActionLabel="@string/verify"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberSigned"
+                    android:minWidth="150dp"
                     android:paddingLeft="@dimen/padding_mini"
                     android:paddingRight="@dimen/padding_mini"
                     android:textColor="@color/uiv3_primary_text_color" />
 
-
-                <TextView
-                    android:id="@+id/txtResendNumber"
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/btnResendCode"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/editTextMobileCode"
-                    android:layout_marginLeft="@dimen/margin_mini"
-                    android:gravity="left"
-                    android:paddingTop="@dimen/padding_mini"
-                    android:text="@string/resendOtpMsg"
-                    android:textColor="@color/dark_green"
-                    android:textSize="@dimen/small_text_size"
-                    android:visibility="gone" />
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:text="@string/resend_code"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/secondary_text_size" />
+            </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtErrorValidateNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/txtResendNumber"
-                    android:layout_marginLeft="@dimen/margin_mini"
-                    android:gravity="center|left"
-                    android:paddingTop="@dimen/padding_mini"
-                    android:text="@string/otpCodeErrorMsg"
-                    android:textColor="@color/promo_red_color"
-                    android:textSize="@dimen/small_text_size"
-                    android:visibility="gone" />
+            <TextView
+                android:id="@+id/txtOtpErrorMsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/layoutInputOtp"
+                android:layout_below="@id/layoutInputOtp"
+                android:layout_marginTop="2dp"
+                android:textColor="?attr/colorAccent" />
 
-            </RelativeLayout>
-
-
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_normal"
-        android:layout_marginTop="@dimen/margin_normal"
-        android:gravity="center|right"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/txtCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingBottom="@dimen/padding_small"
-            android:paddingLeft="@dimen/padding_small"
-            android:paddingTop="@dimen/padding_small"
-            android:text="@string/CANCEL"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/primary_text_size" />
-
-        <TextView
-            android:id="@+id/txtConfirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/padding_normal"
-            android:gravity="center"
-            android:paddingBottom="@dimen/padding_small"
-            android:paddingLeft="@dimen/padding_small"
-            android:paddingTop="@dimen/padding_small"
-            android:text="@string/txtConfirm"
-            android:textColor="@color/red_color"
-            android:textSize="@dimen/primary_text_size" />
-    </LinearLayout>
-
-
-</LinearLayout>
+            <Button
+                android:id="@+id/btnConfirmOtp"
+                style="@style/FormButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtOtpErrorMsg"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:text="@string/verify_caps"
+                android:textSize="@dimen/primary_text_size" />
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.view.View;
 
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
-import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.service.AnalyticsIntentService;

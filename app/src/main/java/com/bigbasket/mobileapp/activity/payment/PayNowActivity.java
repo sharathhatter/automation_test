@@ -2,10 +2,10 @@ package com.bigbasket.mobileapp.activity.payment;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -160,6 +160,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void startPayNow(double total) {
+        if (mSelectedPaymentMethod == null) return;
         mFinalTotal = total;
         initPayNowPrepaymentProcessingTask();
     }
@@ -291,7 +292,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         LayoutInflater inflater = getLayoutInflater();
 
         // Show order & invoice details
-        int normalColor = getResources().getColor(R.color.uiv3_primary_text_color);
+        int normalColor = ContextCompat.getColor(this, R.color.uiv3_primary_text_color);
 
         ViewGroup layoutOrderSummaryInfo = (ViewGroup) findViewById(R.id.layoutOrderSummaryInfo);
 
