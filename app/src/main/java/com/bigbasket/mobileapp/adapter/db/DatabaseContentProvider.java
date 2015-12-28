@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.contentProvider.SectionItemAnalyticsData;
 import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
+import com.crashlytics.android.Crashlytics;
 
 public class DatabaseContentProvider extends ContentProvider {
     DatabaseHelper databaseHelper;
@@ -94,6 +96,28 @@ public class DatabaseContentProvider extends ContentProvider {
             return newUri;
         }
         return uri;
+    }
+
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        Log.d(TAG, "Running bulkInsert for uri = " + uri);
+        int insertedCount = 0;
+        SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
+        String tableName = getTableName(uri);
+        sqlDB.beginTransaction();
+        try {
+            for (ContentValues cv : values) {
+                long rowCount = sqlDB.insertOrThrow(tableName, null, cv);
+                insertedCount += rowCount;
+            }
+            sqlDB.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Crashlytics.logException(e);
+            Log.e(TAG, "Failed bulkInsert for uri = " + uri, e);
+        } finally {
+            sqlDB.endTransaction();
+        }
+        return insertedCount;
     }
 
     @Override

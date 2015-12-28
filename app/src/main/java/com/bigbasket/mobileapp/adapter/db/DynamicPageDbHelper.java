@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
@@ -95,18 +96,23 @@ public class DynamicPageDbHelper {
     }
 
     public static void clearAll(Context context) {
-//        ArrayList<ContentProviderOperation> contentProviderOperations = new ArrayList<>();
-        for (String dynamicScreenType : new String[]{AbstractDynamicPageSyncService.HOME_PAGE, AbstractDynamicPageSyncService.MAIN_MENU}) {
-            Uri uri = Uri.withAppendedPath(CONTENT_URI, dynamicScreenType);
-            context.getContentResolver().delete(uri, null, null);
-            //ContentProviderOperation contentProviderOperation = ContentProviderOperation.newDelete(uri).build();
-            //contentProviderOperations.add(contentProviderOperation);
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(new DynamicScreenResetRunnable(context));
+    }
+
+    private static class DynamicScreenResetRunnable implements Runnable {
+        private Context context; // Hard reference is needed
+
+        public DynamicScreenResetRunnable(Context context) {
+            this.context = context;
         }
-//        try {
-//            context.getContentResolver().applyBatch(DatabaseContentProvider.AUTHORITY, contentProviderOperations);
-//        } catch (RemoteException | OperationApplicationException e) {
-//            e.printStackTrace();
-//        }
+
+        @Override
+        public void run() {
+            for (String dynamicScreenType : new String[]{AbstractDynamicPageSyncService.HOME_PAGE, AbstractDynamicPageSyncService.MAIN_MENU}) {
+                Uri uri = Uri.withAppendedPath(CONTENT_URI, dynamicScreenType);
+                context.getContentResolver().delete(uri, null, null);
+            }
+        }
     }
 
     public static String[] getDefaultProjection() {
