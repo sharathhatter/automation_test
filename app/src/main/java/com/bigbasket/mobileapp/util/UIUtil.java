@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -389,11 +388,8 @@ public class UIUtil {
             } else {
                 url = baseImgUrl + productImgUrl;
             }
-            Resources res = imgProduct.getContext().getResources();
             UIUtil.displayAsyncImage(imgProduct, url, false,
-                    R.drawable.loading_small,
-                    (int) res.getDimension(R.dimen.product_image_width),
-                    (int) res.getDimension(R.dimen.product_image_height));
+                    R.drawable.loading_small);
         } else {
             imgProduct.setImageResource(R.drawable.noimage);
         }
