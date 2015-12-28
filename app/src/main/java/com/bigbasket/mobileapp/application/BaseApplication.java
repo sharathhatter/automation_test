@@ -80,7 +80,8 @@ public class BaseApplication extends Application {
 
     private int getMemCacheSize() {
         ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        boolean largeHeap = (getApplicationInfo().flags & FLAG_LARGE_HEAP) != 0;
+        // FLAG_LARGE_HEAP is available in API 11 and onwards hence checking for it first
+        boolean largeHeap = SDK_INT >= HONEYCOMB && (getApplicationInfo().flags & FLAG_LARGE_HEAP) != 0;
         int memoryClass = am.getMemoryClass();
         if (largeHeap && SDK_INT >= HONEYCOMB) {
             memoryClass = am.getLargeMemoryClass();

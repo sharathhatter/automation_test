@@ -36,7 +36,6 @@
     <string name="update">Update</string>
     <string name="updateDialogTitle">Update BigBasket App</string>
     <string name="UPDATE">UPDATE</string>
-    <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
     <string name="placeorder">Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
@@ -92,6 +91,7 @@
     <string name="pleaseNote">Please Note:</string>
     <string name="note">Note:</string>
     <string name="shopFromOrder">Shop from order</string>
+    <string name="update_profile">Update Profile</string>
 
     <style name="placeOrder">Place Order</style>
 
@@ -99,15 +99,17 @@
     <string name="appOutDatedMsg1">Please update BigBasket Mobile app to the latest version.</string>
     <string name="appOutDatedMsg2">To update, please touch UPDATE button.</string>
     <string name="appUpdatedMsg">A new version of App is available on Play Store, Please update to take advantage of latest features.</string>
-    <string name="confirmMobileNumber">Confirm your mobile number</string>
-    <string name="txtConfirm">CONFIRM</string>
-    <string name="txtResendCodeStr">RESEND</string>
-    <string name="headerMsgForMobileConfirm">Enter the OTP code that we send to your phone.</string>
+    <string name="resend_code">RESEND</string>
+    <string name="headerMsgForMobileConfirm">Please wait while we verify your mobile number</string>
+    <string name="headerMsgForMobileConfirmWhenPermissionDenied">Please enter the verification code sent to your mobile</string>
+    <string name="enter_otp_manually">(Enter the code below in case we fail to detect the SMS automatically)</string>
     <string name="txtConfirmNumberHint">Enter code</string>
     <string name="contactNoMin10">Enter a valid 10 digit mobile number.</string>
     <string name="otpCodeErrorMsg">Confirmation code entered is not valid.</string>
+    <string name="otpCodeMissing">Please enter the confirmation code</string>
     <string name="numberUsedByAnotherMember">This mobile number is already in use, please use another mobile number.</string>
     <string name="resendOtpMsg">Code has been resent</string>
+    <string name="resending_otp">Resending verification code</string>
     <string name="more">More</string>
     <string name="moreAllCaps">MORE</string>
     <string name="drawer_open">Open navigation</string>
@@ -305,6 +307,9 @@
     <string name="chooseAddress">Choose address</string>
     <string name="chooseDelAddress">Choose delivery address</string>
     <string name="notSignedIn">You are not signed in.\nPlease sign-in to continue</string>
+    <string name="verify_mobile">Verify number</string>
+    <string name="verify">Verify</string>
+    <string name="verify_caps">VERIFY</string>
 
     <!-- Show cart tabs -->
     <string name="exp_delivery">Express Delivery</string>
@@ -419,7 +424,7 @@
     <string name="createNewAddress">Create new address</string>
     <string name="addressAdded">Address added successfully</string>
     <string name="addressUpdated">Address updated successfully</string>
-    <string name="newAddressNotAllowed">We regret to inform that an address\' city can\'t be changed. Hence, when you click on \"Continue\" we will create a new address.</string>
+    <string name="newAddressNotAllowed">We regret to inform that city of an address can\'t be changed. Hence, when you click on \"Continue\" we will create a new address.</string>
     <string name="your_loc">\u0020your location</string>
     <string name="store_empty">Sorry, Currently we do not have any speciality stores for\u0020</string>
     <string name="available_in">\u0020available \nin </string>

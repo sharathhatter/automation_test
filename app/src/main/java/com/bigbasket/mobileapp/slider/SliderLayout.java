@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.slider.Indicators.PagerIndicator;
-
 import com.bigbasket.mobileapp.slider.SliderTypes.BaseSliderView;
 import com.bigbasket.mobileapp.slider.Transformers.BaseTransformer;
 
@@ -137,7 +136,7 @@ public class SliderLayout extends RelativeLayout {
         PagerAdapter wrappedAdapter = new InfinitePagerAdapter(mSliderAdapter);
 
         mViewPager = (InfiniteViewPager) findViewById(R.id.daimajia_slider_viewpager);
-        if(mIsInfiniteScroll) {
+        if (mIsInfiniteScroll) {
             mViewPager.setAdapter(wrappedAdapter);
         } else {
             mViewPager.setAdapter(mSliderAdapter);
@@ -176,7 +175,7 @@ public class SliderLayout extends RelativeLayout {
     @Override
     protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
-        if(mAutoCycle) {
+        if (mAutoCycle) {
             if (visibility == View.VISIBLE) {
                 startAutoCycle();
             } else {
@@ -383,7 +382,7 @@ public class SliderLayout extends RelativeLayout {
         private final String name;
         private final int id;
 
-        private PresetIndicators(String name, int id) {
+        PresetIndicators(String name, int id) {
             this.name = name;
             this.id = id;
         }
@@ -407,7 +406,7 @@ public class SliderLayout extends RelativeLayout {
         if (adapter instanceof InfinitePagerAdapter) {
             return ((InfinitePagerAdapter) adapter).getRealAdapter();
         }
-        if(adapter instanceof SliderAdapter) {
+        if (adapter instanceof SliderAdapter) {
             return (SliderAdapter) adapter;
         }
         return null;
@@ -422,9 +421,9 @@ public class SliderLayout extends RelativeLayout {
             throw new IllegalStateException("You did not set a slider adapter");
 
         int nextItem = mViewPager.getCurrentItem() + 1;
-        if(!mIsInfiniteScroll) {
+        if (!mIsInfiniteScroll) {
             int realCount = realAdapter.getCount();
-            if(nextItem >= realCount) {
+            if (nextItem >= realCount) {
                 nextItem = 0;
                 smooth = false;
             }

@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.fragment.base;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -66,8 +67,8 @@ public abstract class BaseFragment extends AbstractFragment implements
     private String progressDialogTag;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         handler = new BigBasketMessageHandler<>(this);
     }
 

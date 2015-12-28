@@ -59,7 +59,7 @@ public class DatabaseContentProvider extends ContentProvider {
             case SECTION_ITEM_ANALYTICS_DATA_ITEM:
                 String id = uri.getLastPathSegment();
                 String idSelection = SectionItemAnalyticsData.ID + " = '" + id + "'";
-                if(selection == null) {
+                if (selection == null) {
                     selection = idSelection;
                 } else {
                     selection += " AND " + idSelection;
@@ -113,7 +113,7 @@ public class DatabaseContentProvider extends ContentProvider {
             case SECTION_ITEM_ANALYTICS_DATA_ITEM:
                 String id = uri.getLastPathSegment();
                 String idSelection = SectionItemAnalyticsData.ID + " = '" + id + "'";
-                if(selection == null) {
+                if (selection == null) {
                     selection = idSelection;
                 } else {
                     selection += " AND " + idSelection;
@@ -138,7 +138,7 @@ public class DatabaseContentProvider extends ContentProvider {
             case SECTION_ITEM_ANALYTICS_DATA_ITEM:
                 String id = uri.getLastPathSegment();
                 String idSelection = SectionItemAnalyticsData.ID + " = '" + id + "'";
-                if(selection == null) {
+                if (selection == null) {
                     selection = idSelection;
                 } else {
                     selection += " AND " + idSelection;

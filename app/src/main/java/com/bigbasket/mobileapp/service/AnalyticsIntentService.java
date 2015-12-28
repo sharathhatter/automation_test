@@ -31,7 +31,7 @@ public class AnalyticsIntentService extends IntentService {
     private static final String EXTRA_ANALYTICS_ATTRIBUTES =
             "com.bigbasket.mobileapp.service.extra.ANALYTICS_ATTRIBUTES";
 
-    private static Object sAnalyticsEventLock = new Object();
+    private final static Object sAnalyticsEventLock = new Object();
 
     public AnalyticsIntentService() {
         super("AnalyticsIntentService");

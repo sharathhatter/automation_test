@@ -26,13 +26,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
+import com.bigbasket.mobileapp.fragment.account.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
@@ -43,7 +44,6 @@ import com.bigbasket.mobileapp.fragment.FlatPageFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangeAddressFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
-import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.GiftOptionsFragment;
 import com.bigbasket.mobileapp.fragment.order.ViewDeliveryAddressFragment;
@@ -389,14 +389,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         switch (fragmentCode) {
             case FragmentCodes.START_HOME:
                 addToMainLayout(new HomeFragment());
-                break;
-            case FragmentCodes.START_UPDATE_PROFILE:
-                UpdateProfileFragment updateProfileFragment = new UpdateProfileFragment();
-                Bundle updateProfileBundle = new Bundle();
-                updateProfileBundle.putParcelable(Constants.UPDATE_PROFILE_OBJ,
-                        getIntent().getParcelableExtra(Constants.UPDATE_PROFILE_OBJ));
-                updateProfileFragment.setArguments(updateProfileBundle);
-                addToMainLayout(updateProfileFragment);
                 break;
             case FragmentCodes.START_CHANGE_PASSWD:
                 addToMainLayout(new ChangePasswordFragment());
@@ -834,8 +826,8 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         super.onSaveInstanceState(outState);
     }
 
-    protected FrameLayout getContentView() {
-        return (FrameLayout) findViewById(R.id.content_frame);
+    protected ViewGroup getContentView() {
+        return (ViewGroup) findViewById(R.id.content_frame);
     }
 
     public String getScreenTag() {

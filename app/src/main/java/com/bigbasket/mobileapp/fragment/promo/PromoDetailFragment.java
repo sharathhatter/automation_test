@@ -2,9 +2,9 @@ package com.bigbasket.mobileapp.fragment.promo;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -66,7 +66,7 @@ public class PromoDetailFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.uiv3_list_container, container, false);
-        view.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
+        view.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.uiv3_list_bkg_light_color));
         return view;
     }
 
@@ -147,8 +147,6 @@ public class PromoDetailFragment extends BaseFragment {
 
         LinearLayout layoutMain = (LinearLayout) base.findViewById(R.id.layoutMain);
 
-        Resources resources = getResources();
-
         TextView txtPromoName = (TextView) base.findViewById(R.id.txtPromoName);
         txtPromoName.setTypeface(faceRobotoRegular);
         txtPromoName.setText(mPromoDetail.getPromoName());
@@ -204,12 +202,12 @@ public class PromoDetailFragment extends BaseFragment {
         TextView txtNumCompletedOffer = (TextView) base.findViewById(R.id.txtNumCompletedOffer);
         txtNumCompletedOffer.setTypeface(faceRobotoRegular);
         txtNumCompletedOffer.setText(PromoDetail.getNumCompletedInBasketSpannable(
-                resources.getColor(R.color.promo_txt_green_color), mPromoDetail.getNumPromoCompletedInBasket()));
+                ContextCompat.getColor(getActivity(), R.color.promo_txt_green_color), mPromoDetail.getNumPromoCompletedInBasket()));
 
         TextView txtSaving = (TextView) base.findViewById(R.id.txtSaving);
         txtSaving.setTypeface(faceRobotoRegular);
         String promoSavingFormatted = UIUtil.formatAsMoney(mPromoDetail.getSaving());
-        txtSaving.setText(PromoDetail.getSavingSpannable(resources.getColor(R.color.promo_txt_green_color),
+        txtSaving.setText(PromoDetail.getSavingSpannable(ContextCompat.getColor(getActivity(), R.color.promo_txt_green_color),
                 promoSavingFormatted, faceRupee));
 
         String promoType = mPromoDetail.getPromoType();
@@ -331,7 +329,7 @@ public class PromoDetailFragment extends BaseFragment {
     private View getFreePromoMsgView(boolean isRedeemed) {
         TextView txtDescription = new TextView(getActivity());
         txtDescription.setTextSize(14);
-        txtDescription.setTextColor(getResources().getColor(R.color.active_order_red_color));
+        txtDescription.setTextColor(ContextCompat.getColor(getActivity(), R.color.active_order_red_color));
         int fourDp = 4;
         txtDescription.setPadding(fourDp, 0, fourDp, 0);
         LinearLayout.LayoutParams txtDescParams = new
@@ -396,7 +394,7 @@ public class PromoDetailFragment extends BaseFragment {
                 break;
         }
 
-        txtValInBasket.setTextColor(getResources().getColor(isRedeemed ?
+        txtValInBasket.setTextColor(ContextCompat.getColor(getActivity(), isRedeemed ?
                 R.color.green_color : R.color.dark_black));
 
         ImageView imgTick = (ImageView) base.findViewById(R.id.imgTick);
@@ -426,7 +424,7 @@ public class PromoDetailFragment extends BaseFragment {
         TextView txtPromoCategoryName = (TextView) base.findViewById(R.id.txtHeaderMsg);
         txtPromoCategoryName.setTypeface(faceRobotoRegular);
         txtPromoCategoryName.setText(mPromoCategory.getName());
-        txtPromoCategoryName.setTextColor(getActivity().getResources().getColor(R.color.uiv3_primary_text_color));
+        txtPromoCategoryName.setTextColor(ContextCompat.getColor(getActivity(), R.color.uiv3_primary_text_color));
         txtPromoCategoryName.setTextSize(getActivity().getResources().getDimension(R.dimen.primary_text_size));
         PromoNameListAdapter promoNameListAdapter = new PromoNameListAdapter();
         lstPromoNames.setAdapter(promoNameListAdapter);
@@ -531,8 +529,8 @@ public class PromoDetailFragment extends BaseFragment {
         private float textSize;
 
         public PromoNameListAdapter() {
-            regularColor = getActivity().getResources().getColor(R.color.uiv3_primary_text_color);
-            highlightedColor = getActivity().getResources().getColor(R.color.uiv3_link_color);
+            regularColor = ContextCompat.getColor(getActivity(), R.color.uiv3_primary_text_color);
+            highlightedColor = ContextCompat.getColor(getActivity(), R.color.uiv3_link_color);
             textSize = getActivity().getResources().getDimension(R.dimen.primary_text_size);
         }
 

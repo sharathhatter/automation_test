@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -98,9 +99,9 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         }
 
         // Show order & invoice details
-        int normalColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        int orderTotalValueColor = getResources().getColor(R.color.uiv3_ok_label_color);
+        int normalColor = ContextCompat.getColor(getActivity(), R.color.uiv3_primary_text_color);
+        int orderTotalLabelColor = ContextCompat.getColor(getActivity(), R.color.uiv3_primary_text_color);
+        int orderTotalValueColor = ContextCompat.getColor(getActivity(), R.color.uiv3_ok_label_color);
 
         LinearLayout layoutOrderSummaryInfo = (LinearLayout) base.findViewById(R.id.layoutOrderSummaryInfo);
         OrderInvoiceDetails orderInvoiceDetails = orderInvoice.getOrderInvoiceDetails();

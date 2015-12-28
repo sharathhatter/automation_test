@@ -6,10 +6,11 @@
     android:background="@android:color/transparent">
 
     <ImageView
-        android:layout_centerInParent="true"
         android:id="@+id/daimajia_slider_image"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/app_name" />
 
     <ProgressBar
         android:id="@+id/loading_bar"
