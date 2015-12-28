@@ -96,12 +96,15 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                     DialogButton.YES, DialogButton.CANCEL, Constants.LOCATION_DIALOG_REQUEST, null,
                     getString(R.string.enable));
         } else {
-
-            showProgressDialog(getString(R.string.readingYourCurrentLocation));
-            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                updateLastKnownLocation(false, false);
+            if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                showProgressDialog(getString(R.string.readingYourCurrentLocation));
+                if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                    updateLastKnownLocation(false, false);
+                } else {
+                    buildGoogleApiClient();
+                }
             } else {
-                buildGoogleApiClient();
+                onLocationReadFailure();
             }
         }
     }
@@ -118,6 +121,8 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         if (item.getItemId() == R.id.action_refresh) {
             if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION))
                 renderLocation();
+            else
+                onLocationReadFailure();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -289,7 +294,10 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     public void onLocationButtonClicked(View v) {
         switch (v.getId()) {
             case R.id.btnToCurrentLocation:
-                updateLastKnownLocation(true, true);
+                if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    updateLastKnownLocation(true, true);
+                } else
+                    onLocationReadFailure();
                 break;
             case R.id.btnChooseLocation:
                 Intent intent = new Intent(this, PlacePickerApiActivity.class);
