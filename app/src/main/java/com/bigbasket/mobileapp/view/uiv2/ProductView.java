@@ -61,13 +61,13 @@ public final class ProductView {
                                                                     HashMap<String, String> appDataStoreAvailabilityMap,
                                                                     HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap) {
         setProductImage(productViewHolder, product, baseImgUrl);
-        setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
+        setProductDesc(productViewHolder, product, productViewDisplayDataHolder);
         setStoreDetails(specialityStoreInfoHashMap, productViewHolder, product);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
         setExpressMsg(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, tabName, navigationCtx, appDataStoreAvailabilityMap,
                 cartInfo);
-        setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
+        setPromo(productViewHolder, product, productViewDisplayDataHolder);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
                     productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap,
@@ -133,9 +133,8 @@ public final class ProductView {
         }
     }
 
-    private static <T> void setProductDesc(ProductViewHolder productViewHolder, Product product,
-                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                           final T productDataAware) {
+    private static void setProductDesc(ProductViewHolder productViewHolder, Product product,
+                                       ProductViewDisplayDataHolder productViewDisplayDataHolder) {
         TextView txtProductDesc = productViewHolder.getTxtProductDesc();
         TextView txtProductBrand = productViewHolder.getTxtProductBrand();
         TextView txtGiftMsg = productViewHolder.getTxtGiftMsg();
@@ -203,7 +202,7 @@ public final class ProductView {
                                    @Nullable final HashMap<String, String> allStoreAvailabilityMsgMap) {
         int elementsWithTextCount = 0;
         for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
-            String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+            String msg = getDeliveryTimeAnnotation(particularStoreMap, allStoreAvailabilityMsgMap);
             if (!TextUtils.isEmpty(msg)) {
                 elementsWithTextCount++;
             }
@@ -248,7 +247,7 @@ public final class ProductView {
             boolean isFirst = true;
             for (int i = 0; i < storeAvailabilityArrayList.size(); i++) {
                 HashMap<String, String> particularStoreMap = storeAvailabilityArrayList.get(i);
-                String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+                String msg = getDeliveryTimeAnnotation(particularStoreMap, allStoreAvailabilityMsgMap);
                 if (TextUtils.isEmpty(msg)) continue;
                 RadioButton rbtnAvailabilityType = UIUtil.getPaymentOptionRadioButton(radioGroupExpress, context,
                         LayoutInflater.from(context), (int) context.getResources().getDimension(R.dimen.margin_mini));
@@ -293,7 +292,7 @@ public final class ProductView {
             for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
                 if (particularStoreMap.containsKey(Constants.TAB_TYPE) &&
                         particularStoreMap.get(Constants.TAB_TYPE).equals(Constants.EXPRESS)) {
-                    msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+                    msg = getDeliveryTimeAnnotation(particularStoreMap, allStoreAvailabilityMsgMap);
                     if (!TextUtils.isEmpty(msg)) {
                         break;
                     }
@@ -310,7 +309,7 @@ public final class ProductView {
         } else {
             ArrayList<String> msgs = new ArrayList<>();
             for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
-                String msg = getExpressDisplayNameMsg(particularStoreMap, allStoreAvailabilityMsgMap);
+                String msg = getDeliveryTimeAnnotation(particularStoreMap, allStoreAvailabilityMsgMap);
                 if (!TextUtils.isEmpty(msg)) {
                     msgs.add(msg);
                     if (currentStoreMap == null) {
@@ -335,15 +334,20 @@ public final class ProductView {
     }
 
     @Nullable
-    private static String getExpressDisplayNameMsg(HashMap<String, String> particularStoreMap,
-                                                   HashMap<String, String> allStoreAvailabilityMap) {
-        String availabilityInfoId = particularStoreMap.get(Constants.AVAILABILITY_INFO_ID);
-        return !TextUtils.isEmpty(availabilityInfoId) ? allStoreAvailabilityMap.get(availabilityInfoId) : null;
+    private static String getDeliveryTimeAnnotation(HashMap<String, String> particularStoreMap,
+                                                    HashMap<String, String> allStoreAvailabilityMap) {
+        // Only if product is available for the given availability-info-id, return the annotation message
+        if (particularStoreMap.get(Constants.PRODUCT_STATUS) != null
+                && particularStoreMap.get(Constants.PRODUCT_STATUS).equalsIgnoreCase("A")) {
+            String availabilityInfoId = particularStoreMap.get(Constants.AVAILABILITY_INFO_ID);
+            return !TextUtils.isEmpty(availabilityInfoId) ? allStoreAvailabilityMap.get(availabilityInfoId) : null;
+        }
+        return null;
     }
 
-    private static <T extends AppOperationAware> void setStoreDetails(HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap,
-                                                                      ProductViewHolder productViewHolder,
-                                                                      Product product) {
+    private static void setStoreDetails(HashMap<String, SpecialityStoresInfoModel> specialityStoreInfoHashMap,
+                                        ProductViewHolder productViewHolder,
+                                        Product product) {
 
         RelativeLayout storeIconLayout = productViewHolder.getStoreIconLayout();
         ImageView imgStoreIcon = productViewHolder.getImgStoreIcon();
@@ -371,9 +375,8 @@ public final class ProductView {
         }
     }
 
-    private static <T> void setPromo(ProductViewHolder productViewHolder, Product product,
-                                     ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                     final T activityAware) {
+    private static void setPromo(ProductViewHolder productViewHolder, Product product,
+                                 ProductViewDisplayDataHolder productViewDisplayDataHolder) {
         ImageView imgPromoStar = productViewHolder.getImgPromoStar();
         TextView txtPromoDesc = productViewHolder.getTxtPromoDesc();
         TextView txtPromoAddSavings = productViewHolder.getTxtPromoAddSavings();
