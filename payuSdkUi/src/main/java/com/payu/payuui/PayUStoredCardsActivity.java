@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -47,7 +46,7 @@ import com.payu.india.Tasks.GetStoredCardTask;
 import java.util.ArrayList;
 
 
-public class PayUStoredCardsActivity extends AppCompatActivity implements DeleteCardApiListener, GetStoredCardApiListener {
+public class PayUStoredCardsActivity extends PaymentBaseActivity implements DeleteCardApiListener, GetStoredCardApiListener {
 
     private ListView storedCardListView;
     private PayUStoredCardsAdapter payUStoredCardsAdapter;
@@ -159,8 +158,13 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
                 GetStoredCardTask getStoredCardTask = new GetStoredCardTask(this);
                 getStoredCardTask.execute(payuConfig);
             } else {
-                Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+                /***error when the postdata for the card entered is not correct***/
+//                Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+                handleUnknownErrorCondition();
             }
+        } else {
+            /***error in deleting the card***/
+            handleUnknownErrorCondition();
 
         }
     }
@@ -213,7 +217,8 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
             intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
             startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
         } else {
-            Toast.makeText(this, postData.getResult(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, postData.getResult(), Toast.LENGTH_SHORT).show();
+            handleUnknownErrorCondition();
         }
 
     }
@@ -267,7 +272,8 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
             intent.putExtra(PayuConstants.STORE_ONE_CLICK_HASH, storeOneClickHash);
             startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
         } else {
-            Toast.makeText(this, postData.getResult(), Toast.LENGTH_SHORT).show();
+            /***error when the postdata for the card entered is not correct***/
+            handleUnknownErrorCondition();
         }
 
     }
@@ -292,7 +298,8 @@ public class PayUStoredCardsActivity extends AppCompatActivity implements Delete
             DeleteCardTask deleteCardTask = new DeleteCardTask(this);
             deleteCardTask.execute(payuConfig);
         } else {
-            Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+            /***error when the postdata for the card entered is not correct***/
+            handleUnknownErrorCondition();
         }
     }
 

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,7 +34,7 @@ import com.payu.india.PostParams.PaymentPostParams;
 import java.util.ArrayList;
 
 
-public class PayUEmiActivity extends AppCompatActivity implements View.OnClickListener {
+public class PayUEmiActivity extends PaymentBaseActivity implements View.OnClickListener {
 
     private Spinner bankNameSpinner;
     private Spinner emiDurationSpinner;
@@ -198,7 +197,8 @@ public class PayUEmiActivity extends AppCompatActivity implements View.OnClickLi
                 intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
             } else {
-                Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+                /***error when the postdata for the emi entered is not correct***/
+                handleUnknownErrorCondition();
             }
 
         }

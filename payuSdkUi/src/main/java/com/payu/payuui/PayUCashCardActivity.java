@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.payu.india.Model.PaymentDetails;
 import com.payu.india.Model.PaymentParams;
@@ -32,7 +30,7 @@ import com.payu.india.PostParams.PaymentPostParams;
 import java.util.ArrayList;
 
 
-public class PayUCashCardActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class PayUCashCardActivity extends PaymentBaseActivity implements AdapterView.OnItemClickListener {
 
     ListView cashCardListView;
     PayUCashCardAdapter payUCashCardAdapter;
@@ -81,7 +79,7 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
             // lets set the mandatory params
 
         } else {
-//            Toast.makeText(this, "Cash card not found", Toast.LENGTH_LONG).show();
+            handleUnknownErrorCondition();
         }
 
 
@@ -127,7 +125,8 @@ public class PayUCashCardActivity extends AppCompatActivity implements AdapterVi
             intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
             startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
         } else {
-//            Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
+            /*****if the cash card payment params has issue****/
+            handleUnknownErrorCondition();
         }
     }
 

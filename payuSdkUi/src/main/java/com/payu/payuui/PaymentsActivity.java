@@ -2,9 +2,7 @@ package com.payu.payuui;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -39,11 +37,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class PaymentsActivity extends AppCompatActivity implements MagicRetryFragment.ActivityCallback {
+public class PaymentsActivity extends AppCompatActivity implements MagicRetryFragment.ActivityCallback, TransactionDialogFragment.TransactionDialogListener {
 
     Bundle bundle;
     String url;
-    boolean cancelTransaction = false;
     PayuConfig payuConfig;
     MagicRetryFragment magicRetryFragment;
     String txnId = null;
@@ -388,8 +385,6 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_payments, menu);
         return true;
     }
 
@@ -399,48 +394,29 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-        if (cancelTransaction) {
-            cancelTransaction = false;
-            Intent intent = new Intent();
-            intent.putExtra("result", "Transaction canceled due to back pressed!");
-            intent.putExtra("transaction_status", false);
-            setResult(RESULT_CANCELED, intent);
-            super.onBackPressed();
-            return;
+        try {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            TransactionDialogFragment transactionDialogFragment = TransactionDialogFragment.newInstance(getString(R.string.cancel_message), Constants.BACKPRESSED_ERROR_CODE, getString(R.string.ok), getString(R.string.cancel));
+            transactionDialogFragment.show(fragmentManager, getClass().getName());
+        } catch (Exception e) {
+            Log.d(getClass().getName(), "fragment failed");
         }
+    }
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        ;
-        alertDialog.setCancelable(false);
-        alertDialog.setMessage("Do you really want to cancel the transaction ?");
-        alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                cancelTransaction = true;
-                dialog.dismiss();
-                onBackPressed();
-            }
-        });
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        alertDialog.show();
+    private void setTransactionIntentResult() {
+        Intent intent = new Intent();
+        intent.putExtra("result", getString(R.string.transaction_cancelled_due_back_pressed));
+        intent.putExtra("transaction_status", false);
+        setResult(RESULT_CANCELED, intent);
+        finish();
 
     }
+
 
     @Override
     public void onDestroy() {
@@ -489,7 +465,7 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
                 // Hide fragment
                 ft.hide(magicRetryFragment).commitAllowingStateLoss();
                 // ft.hide(magicRetryFragment);
-                Log.v("#### PAYU", "hidhing magic retry");
+                Log.v("#### PAYU", "hiding magic retry");
             }
         }
     }
@@ -504,4 +480,14 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
         toggleFragmentVisibility(Util.HIDE_FRAGMENT);
     }
 
+    @Override
+    public void onDialogConfirmed(int reqCode, boolean isPositive) {
+        switch (reqCode) {
+            case Constants.BACKPRESSED_ERROR_CODE:
+                if (isPositive) {
+                    setTransactionIntentResult();
+                }
+                break;
+        }
+    }
 }

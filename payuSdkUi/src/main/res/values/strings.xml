@@ -31,6 +31,12 @@
     <!-- Custom strings-->
     <string name="paymentviapayu">Payment via PayU</string>
     <string name="selectoptionforpayment">Please select your preferred option to continue!</string>
-
+    <string name="cancel_message">Do you really want to cancel the transaction ?</string>
+    <string name="unknown_error_message">Something went wrong. Transaction failed</string>
+    <string name="retry_message"> Something went wrong. Do you want to cancel?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="retry">Retry</string>
+    <string name="transaction_cancelled_due_back_pressed">Transaction canceled due to back pressed!</string>
 
 </resources>
