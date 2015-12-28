@@ -10,7 +10,6 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
-import com.newrelic.agent.android.NewRelic;
 
 
 public abstract class AbstractFragment extends Fragment implements AppOperationAware {
@@ -64,10 +63,6 @@ public abstract class AbstractFragment extends Fragment implements AppOperationA
         faceRupee = FontHolder.getInstance(getActivity()).getFaceRupee();
         faceRobotoRegular = FontHolder.getInstance(getActivity()).getFaceRobotoRegular();
         faceRobotoMedium = FontHolder.getInstance(getActivity()).getFaceRobotoMedium();
-
-        if (!isSuspended()) {
-            NewRelic.setInteractionName(getFragmentTxnTag());
-        }
     }
 
     @Override

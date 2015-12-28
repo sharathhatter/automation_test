@@ -442,4 +442,10 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
             }
         }
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "ViewDeliveryAddressFragment";
+    }
 }

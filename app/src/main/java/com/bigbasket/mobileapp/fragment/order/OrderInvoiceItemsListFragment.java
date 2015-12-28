@@ -97,4 +97,10 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
     public String getScreenTag() {
         return TrackEventkeys.ORDER_DETAILS_ITEMS_SCREEN;
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "OrderInvoiceItemsListFragment";
+    }
 }

@@ -156,7 +156,7 @@ public class CategoryLandingFragment extends BaseSectionFragment {
 
     @Override
     public String getTitle() {
-        return !TextUtils.isEmpty(topCatName) ? topCatName : "Browse by Category";
+        return !TextUtils.isEmpty(topCatName) ? topCatName : getString(R.string.browse_by_cat);
     }
 
     @NonNull
@@ -165,7 +165,14 @@ public class CategoryLandingFragment extends BaseSectionFragment {
         return CategoryLandingFragment.class.getName();
     }
 
+    @NonNull
     @Override
+    public String getInteractionName() {
+        return "CategoryLandingFragment";
+    }
+
+    @Override
+    @NonNull
     public String getScreenTag() {
         return TrackEventkeys.CATEGORY_LANDING_SCREEN;
     }

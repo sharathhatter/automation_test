@@ -155,4 +155,10 @@ public class DynamicScreenFragment extends BaseSectionFragment {
     public void onDynamicScreenHttpFailure(int error, String msg) {
         handler.handleHttpError(error, msg, true);
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "DynamicScreenFragment";
+    }
 }

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -49,6 +50,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.crashlytics.android.Crashlytics;
+import com.newrelic.agent.android.NewRelic;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -83,6 +85,10 @@ public abstract class BaseFragment extends AbstractFragment implements
         }
         mNavigationContext = getArguments() != null ?
                 getArguments().getString(TrackEventkeys.NAVIGATION_CTX) : null;
+        if (!isSuspended()) {
+            // Don't use class.getName() in getInteractionName(), as with Proguard it returns obfuscated name
+            NewRelic.setInteractionName(getActivity().getClass().getSimpleName() + "#" + getInteractionName());
+        }
     }
 
     @Override
@@ -618,4 +624,7 @@ public abstract class BaseFragment extends AbstractFragment implements
     protected void observeMemoryLeak() {
         LeakCanaryObserver.Factory.observe(this);
     }
+
+    @NonNull
+    public abstract String getInteractionName();  // Don't use class.getName(), as with Proguard it returns obfuscated value
 }

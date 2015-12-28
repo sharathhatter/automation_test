@@ -107,4 +107,10 @@ public class FlatPageFragment extends BaseFragment {
     public String getFragmentTxnTag() {
         return FlatPageFragment.class.getName();
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "FlatPageFragment";
+    }
 }

@@ -572,4 +572,10 @@ public class PromoDetailFragment extends BaseFragment {
             return row;
         }
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "PromoDetailFragment";
+    }
 }

@@ -135,6 +135,7 @@
     <string name="chooseShopList">Please select a shopping list</string>
     <string name="versionNoUpdated">Version Number Updated</string>
     <string name="selectAllSlotsErrMsg">You have not selected slots for all the orders.</string>
+    <string name="browse_by_cat">Browse by category</string>
 
     <!-- payment -->
     <string name="paymentMethod">Payment Options</string>

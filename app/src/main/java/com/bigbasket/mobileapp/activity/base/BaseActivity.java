@@ -150,7 +150,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         fbLogger = AppEventsLogger.newLogger(getApplicationContext());
         mNavigationContext = getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX);
-        NewRelic.setInteractionName(getCurrentActivity().getClass().getName());
+        NewRelic.setInteractionName(getCurrentActivity().getClass().getSimpleName());
     }
 
     public MoEHelper getMoEHelper() {

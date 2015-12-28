@@ -464,4 +464,10 @@ public class HomeFragment extends BaseSectionFragment {
             displayHomePageError(getString(R.string.lostInternetConnection), R.drawable.empty_no_internet);
         }
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "HomeFragment";
+    }
 }

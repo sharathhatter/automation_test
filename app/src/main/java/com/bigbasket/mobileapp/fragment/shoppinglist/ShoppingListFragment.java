@@ -371,4 +371,10 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
             }
         }
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "ShoppingListFragment";
+    }
 }

@@ -216,4 +216,10 @@ public class OTPValidationFragment extends BaseFragment implements OnOtpReceived
         unregisterBroadcastForSMS();
         super.onDestroyView();
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "OTPValidationFragment";
+    }
 }

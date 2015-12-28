@@ -322,4 +322,10 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             getActivity().setResult(NavigationCodes.BASKET_CHANGED, data);
         }
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "ProductDetailFragment";
+    }
 }

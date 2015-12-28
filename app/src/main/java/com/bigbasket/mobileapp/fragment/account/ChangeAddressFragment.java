@@ -317,4 +317,10 @@ public class ChangeAddressFragment extends BaseFragment implements AddressSelect
         if (getCurrentActivity() == null) return;
         ((BBActivity) getCurrentActivity()).onAddressNotSupported(msg);
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "ChangeAddressFragment";
+    }
 }

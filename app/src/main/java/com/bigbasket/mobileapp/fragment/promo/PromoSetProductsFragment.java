@@ -409,4 +409,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "PromoSetProductsFragment";
+    }
 }

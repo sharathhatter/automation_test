@@ -179,4 +179,9 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
         return TrackEventkeys.PROMO_CATEGORY_SCREEN;
     }
 
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "PromoCategoryFragment";
+    }
 }
