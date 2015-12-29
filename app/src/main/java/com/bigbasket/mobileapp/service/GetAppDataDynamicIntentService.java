@@ -101,7 +101,7 @@ public class GetAppDataDynamicIntentService extends IntentService {
                 // Dont just insert here, there may have ben some clicks or impressions recorded
                 // during the execution of above statements
                 for(SectionItemAnalyticsData sd: data) {
-                    AnalyticsIntentService.startUpdateSponsoredProductEvent(this,
+                    AnalyticsIntentService.startUpdateAnalyticsEvent(this,
                             sd.getClicks(),
                             sd.getImpressions(),
                             sd.getSectionId(),

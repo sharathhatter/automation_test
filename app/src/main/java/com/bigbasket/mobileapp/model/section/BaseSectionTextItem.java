@@ -66,4 +66,23 @@ public class BaseSectionTextItem implements Parcelable, Serializable {
             dest.writeParcelable(description, flags);
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BaseSectionTextItem that = (BaseSectionTextItem) o;
+
+        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        return !(description != null ? !description.equals(that.description) : that.description != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = title != null ? title.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        return result;
+    }
 }

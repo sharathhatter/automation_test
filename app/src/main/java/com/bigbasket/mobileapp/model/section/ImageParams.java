@@ -45,4 +45,23 @@ public class ImageParams implements Parcelable, Serializable {
             return new ImageParams[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ImageParams that = (ImageParams) o;
+
+        if (width != that.width) return false;
+        return height == that.height;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = width;
+        result = 31 * result + height;
+        return result;
+    }
 }

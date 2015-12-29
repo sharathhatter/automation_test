@@ -194,7 +194,7 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
             Log.e("StartActivity", "Error while creating device-properties json");
         }
 
-        String imei = UIUtil.getIMEI(this);
+        String imei = UIUtil.getUniqueDeviceIdentifier(this);
         Call<RegisterDeviceResponse> call = bigBasketApiService.registerDevice(imei, deviceID,
                 String.valueOf(city.getId()), devicePropertiesJsonObj.toString());
         call.enqueue(new BBNetworkCallback<RegisterDeviceResponse>(this, true) {

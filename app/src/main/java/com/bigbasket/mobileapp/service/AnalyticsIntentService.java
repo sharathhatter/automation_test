@@ -21,15 +21,19 @@ import java.util.List;
  */
 public class AnalyticsIntentService extends IntentService {
 
-    private static final String ACTION_UPDATE_SPONSORED_PRODUCT_EVENT =
-            "com.bigbasket.mobileapp.service.action.ACTION_UPDATE_SPONSORED_PRODUCT_IMPRESSION";
+    private static final String ACTION_UPDATE_ANALYTICS_EVENT =
+            "com.bigbasket.mobileapp.service.action.ACTION_UPDATE_ANALYTICS_EVENT";
 
-    private static final String EXTRA_CLICK_COUNT = "com.bigbasket.mobileapp.service.extra.CLICK_COUNT";
-    private static final String EXTRA_IMPS_COUNT = "com.bigbasket.mobileapp.service.extra.IMPS_COUNT";
-    private static final String EXTRA_SECTION_ID = "com.bigbasket.mobileapp.service.extra.SECTION_ID";
-    private static final String EXTRA_CITY_ID = "com.bigbasket.mobileapp.service.extra.CITY_ID";
+    private static final String EXTRA_CLICK_COUNT =
+            "com.bigbasket.mobileapp.analytics_service.extra.CLICK_COUNT";
+    private static final String EXTRA_IMPS_COUNT =
+            "com.bigbasket.mobileapp.analytics_service.extra.IMPS_COUNT";
+    private static final String EXTRA_SECTION_ID =
+            "com.bigbasket.mobileapp.analytics_service.extra.SECTION_ID";
+    private static final String EXTRA_CITY_ID =
+            "com.bigbasket.mobileapp.analytics_service.extra.CITY_ID";
     private static final String EXTRA_ANALYTICS_ATTRIBUTES =
-            "com.bigbasket.mobileapp.service.extra.ANALYTICS_ATTRIBUTES";
+            "com.bigbasket.mobileapp.analytics_service.extra.ANALYTICS_ATTRIBUTES";
 
     private final static Object sAnalyticsEventLock = new Object();
 
@@ -37,13 +41,13 @@ public class AnalyticsIntentService extends IntentService {
         super("AnalyticsIntentService");
     }
 
-    public static void startUpdateSponsoredProductEvent(Context context, int clickCount,
-                                                        int impressionsCount,
-                                                        String sectionId,
-                                                        String cityId,
-                                                        String analyticsAttributes) {
+    public static void startUpdateAnalyticsEvent(Context context, int clickCount,
+                                                 int impressionsCount,
+                                                 String sectionId,
+                                                 String cityId,
+                                                 String analyticsAttributes) {
         Intent intent = new Intent(context, AnalyticsIntentService.class);
-        intent.setAction(ACTION_UPDATE_SPONSORED_PRODUCT_EVENT);
+        intent.setAction(ACTION_UPDATE_ANALYTICS_EVENT);
         intent.putExtra(EXTRA_CLICK_COUNT, clickCount);
         intent.putExtra(EXTRA_IMPS_COUNT, impressionsCount);
         intent.putExtra(EXTRA_SECTION_ID, sectionId);
@@ -52,10 +56,10 @@ public class AnalyticsIntentService extends IntentService {
         context.startService(intent);
     }
 
-    public static void startUpdateSponsoredProductEvent(Context context, boolean isClickEvent,
-                                      String sectionId,
-                                      String cityId,
-                                      String analyticsAttributes) {
+    public static void startUpdateAnalyticsEvent(Context context, boolean isClickEvent,
+                                                 String sectionId,
+                                                 String cityId,
+                                                 String analyticsAttributes) {
         if(TextUtils.isEmpty(sectionId)) {
             return;
         }
@@ -66,15 +70,15 @@ public class AnalyticsIntentService extends IntentService {
         } else {
             imps++;
         }
-        startUpdateSponsoredProductEvent(context, clicks, imps, sectionId, cityId, analyticsAttributes);
+        startUpdateAnalyticsEvent(context, clicks, imps, sectionId, cityId, analyticsAttributes);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
-            if (ACTION_UPDATE_SPONSORED_PRODUCT_EVENT.equals(action)) {
-                handleUpdateSponsoredProductEvent(intent.getIntExtra(EXTRA_CLICK_COUNT, 0),
+            if (ACTION_UPDATE_ANALYTICS_EVENT.equals(action)) {
+                handleUpdateAnalyticsEvent(intent.getIntExtra(EXTRA_CLICK_COUNT, 0),
                         intent.getIntExtra(EXTRA_IMPS_COUNT, 0),
                         intent.getStringExtra(EXTRA_SECTION_ID),
                         intent.getStringExtra(EXTRA_CITY_ID),
@@ -87,11 +91,11 @@ public class AnalyticsIntentService extends IntentService {
      * Handle action Foo in the provided background thread with the provided
      * parameters.
      */
-    private void handleUpdateSponsoredProductEvent(int clicks,
-                                                   int impressions,
-                                                   String sectionId,
-                                                   String cityId,
-                                                   String analyticsAttributes) {
+    private void handleUpdateAnalyticsEvent(int clicks,
+                                            int impressions,
+                                            String sectionId,
+                                            String cityId,
+                                            String analyticsAttributes) {
         synchronized (sAnalyticsEventLock){
             if(TextUtils.isEmpty(sectionId)) {
                 return;
