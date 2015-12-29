@@ -2,8 +2,10 @@ package com.bigbasket.mobileapp.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -28,15 +30,20 @@ import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
+import com.bigbasket.mobileapp.service.AnalyticsIntentService;
 import com.bigbasket.mobileapp.slider.Indicators.PagerIndicator;
 import com.bigbasket.mobileapp.slider.SliderLayout;
 import com.bigbasket.mobileapp.slider.SliderTypes.BaseSliderView;
 import com.bigbasket.mobileapp.slider.SliderTypes.DefaultSliderView;
 import com.bigbasket.mobileapp.slider.SliderTypes.HelpSliderView;
+import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class SectionView {
 
@@ -178,7 +185,6 @@ public class SectionView {
             bannerLayoutParams.height = section.getWidgetHeight(context, mSectionData.getRenderersMap(), true);
             bannerSlider.setLayoutParams(bannerLayoutParams);
         }
-        boolean hasImage = false;
         ArrayList<BaseSliderView> sliderViews = new ArrayList<>(section.getSectionItems().size());
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem.hasImage()) {
@@ -205,10 +211,10 @@ public class SectionView {
                 } else {
                     continue;
                 }
-                hasImage = true;
+                Map<String, String> analyticsAttrs = mSectionData.getAnalyticsAttrs(sectionItem.getId());
                 if (sectionItemClickListener == null) {
                     sectionItemClickListener = new OnSectionItemClickListener<>((AppOperationAware) context,
-                            section, sectionItem, screenName);
+                            section, sectionItem, screenName, analyticsAttrs);
                 }
                 sliderView.setTag(R.id.section_item_tag_id, sectionItem);
                 sliderView.setOnSliderClickListener(sectionItemClickListener);
@@ -773,6 +779,31 @@ public class SectionView {
                         sectionViewHolderRow, position, null);
                 if (sectionView == null || sectionView.getLayoutParams() == null) {
                     return;
+                }
+                if(!section.isShown() && section.getSectionItems() != null) {
+                    section.setIsShown(true);
+                    //TODO: Improve the impression tracking, by actually updating imps' count
+                    // when a section item is really displayed,
+                    // For Ex: in case of banner 2nd item is displayed after 4sec and so on..
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(
+                            context.getApplicationContext());
+                    String cityId = preferences.getString(Constants.CITY_ID, null);
+                    Map<String, String> analyticsAttrs = null;
+                    Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+                    for(SectionItem sectionItem: section.getSectionItems()){
+                        if(TextUtils.isEmpty(sectionItem.getId())){
+                            continue;
+                        }
+                        analyticsAttrs = mSectionData.getAnalyticsAttrs(sectionItem.getId());
+                        if(analyticsAttrs != null && !analyticsAttrs.isEmpty()){
+                            AnalyticsIntentService.startUpdateAnalyticsEvent(
+                                    context,
+                                    false,
+                                    sectionItem.getId(),
+                                    cityId,
+                                    gson.toJson(analyticsAttrs));
+                        }
+                    }
                 }
                 if (section.getSectionType().equals(Section.SALUTATION))
                     return;

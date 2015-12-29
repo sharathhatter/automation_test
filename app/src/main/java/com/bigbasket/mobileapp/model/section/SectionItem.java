@@ -449,4 +449,43 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     public boolean isExpressDynamicTitle() {
         return !TextUtils.isEmpty(titleType) && titleType.equals("express_dynamic");
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        SectionItem that = (SectionItem) o;
+
+        if (renderingId != that.renderingId) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (image != null ? !image.equals(that.image) : that.image != null) return false;
+        if (imageName != null ? !imageName.equals(that.imageName) : that.imageName != null)
+            return false;
+        if (destinationInfo != null ? !destinationInfo.equals(that.destinationInfo) : that.destinationInfo != null)
+            return false;
+        if (helpDestinationInfo != null ? !helpDestinationInfo.equals(that.helpDestinationInfo) : that.helpDestinationInfo != null)
+            return false;
+        if (subSectionItems != null ? !subSectionItems.equals(that.subSectionItems) : that.subSectionItems != null)
+            return false;
+        if (imageParams != null ? !imageParams.equals(that.imageParams) : that.imageParams != null)
+            return false;
+        return !(titleType != null ? !titleType.equals(that.titleType) : that.titleType != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (image != null ? image.hashCode() : 0);
+        result = 31 * result + (imageName != null ? imageName.hashCode() : 0);
+        result = 31 * result + renderingId;
+        result = 31 * result + (destinationInfo != null ? destinationInfo.hashCode() : 0);
+        result = 31 * result + (helpDestinationInfo != null ? helpDestinationInfo.hashCode() : 0);
+        result = 31 * result + (subSectionItems != null ? subSectionItems.hashCode() : 0);
+        result = 31 * result + (imageParams != null ? imageParams.hashCode() : 0);
+        result = 31 * result + (titleType != null ? titleType.hashCode() : 0);
+        return result;
+    }
 }

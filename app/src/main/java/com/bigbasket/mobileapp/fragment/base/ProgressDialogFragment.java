@@ -2,11 +2,15 @@ package com.bigbasket.mobileapp.fragment.base;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
+import android.widget.ProgressBar;
 
+import com.bigbasket.mobileapp.R;
 import com.crashlytics.android.Crashlytics;
 
 /**
@@ -43,6 +47,18 @@ public class ProgressDialogFragment extends DialogFragment {
                 dismiss();
             } catch (Exception ex) {
                 //Ignore
+            }
+            return;
+        }
+        //FixMe: Progress bar background is fixed, but on android M, the color is taken from
+        // theme colorAccent, which is making the progressbar invisible on white background
+        // in login screen
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ProgressBar progressBar = (ProgressBar) progressDialog.findViewById(android.R.id.progress);
+            if (progressBar != null && progressBar.getIndeterminateDrawable() != null) {
+                progressBar.getIndeterminateDrawable().setColorFilter(
+                        ContextCompat.getColor(getActivity(), R.color.uiv3_action_bar_background),
+                        PorterDuff.Mode.SRC_IN);
             }
         }
     }

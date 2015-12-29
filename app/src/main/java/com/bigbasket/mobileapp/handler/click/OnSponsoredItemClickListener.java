@@ -20,12 +20,9 @@ import java.util.Map;
  */
 public class OnSponsoredItemClickListener<T extends AppOperationAware>
         extends OnSectionItemClickListener<T> {
-    private final Map<String, String> analyticsAttrs;
-    private String analyticsAttrsJsonString ;
 
     public OnSponsoredItemClickListener(T context) {
         super(context);
-        analyticsAttrs = null;
     }
 
     public OnSponsoredItemClickListener(T context, @Nullable Section section,
@@ -33,31 +30,10 @@ public class OnSponsoredItemClickListener<T extends AppOperationAware>
                                         @Nullable String screenName,
                                         Map<String, String> analyticsAttrs) {
         super(context, section, sectionItem, screenName);
-        this.analyticsAttrs = analyticsAttrs;
     }
 
     @Override
     protected String getAdditionalNcValue() {
         return "spons.promo";
-    }
-
-    @Override
-    protected void onSectionClick() {
-        super.onSectionClick();
-        if (context == null || context.getCurrentActivity() == null || context.isSuspended()) {
-            return;
-        }
-        Context appContext = context.getCurrentActivity().getApplicationContext();
-        if(analyticsAttrsJsonString == null && analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
-            Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
-            analyticsAttrsJsonString = gson.toJson(analyticsAttrs);
-        }
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        AnalyticsIntentService.startUpdateSponsoredProductEvent(
-                appContext,
-                true,
-                sectionItem.getId(),
-                preferences.getString(Constants.CITY_ID, null),
-                analyticsAttrsJsonString);
     }
 }

@@ -1,10 +1,13 @@
 package com.bigbasket.mobileapp.handler.click;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -39,15 +42,19 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
+import com.bigbasket.mobileapp.service.AnalyticsIntentService;
 import com.bigbasket.mobileapp.slider.SliderTypes.BaseSliderView;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class OnSectionItemClickListener<T extends AppOperationAware> implements View.OnClickListener, BaseSliderView.OnSliderClickListener {
     protected T context;
@@ -58,13 +65,24 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
     @Nullable
     protected String screenName;
 
+    protected Map<String, String> analyticsAttrs;
+    protected String analyticsAttrsJsonString ;
+
+
     public OnSectionItemClickListener(T context) {
-        this.context = context;
+        this(context, null, null, null, null);
     }
 
     public OnSectionItemClickListener(T context, @Nullable Section section,
                                       @Nullable SectionItem sectionItem,
                                       @Nullable String screenName) {
+        this(context, section, sectionItem, screenName, null);
+    }
+
+    public OnSectionItemClickListener(T context, @Nullable Section section,
+                                      @Nullable SectionItem sectionItem,
+                                      @Nullable String screenName,
+                                      Map<String, String> analyticsAttrs) {
         this.context = context;
         this.section = section;
         this.sectionItem = sectionItem;
@@ -107,8 +125,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             }
             if (sectionItem.getDestinationInfo() != null &&
                     sectionItem.getDestinationInfo().getDestinationType() != null) {
-                DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
-                handleDestinationClick(destinationInfo);
+                handleDestinationClick(sectionItem.getDestinationInfo());
             }
         }
     }
@@ -325,6 +342,20 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             logBannerEvent();
         } else if (screenName != null) {
             logItemClickEvent();
+        }
+        Context appContext = context.getCurrentActivity().getApplicationContext();
+        if(analyticsAttrsJsonString == null && analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
+            Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+            analyticsAttrsJsonString = gson.toJson(analyticsAttrs);
+        }
+        if(analyticsAttrsJsonString != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+            AnalyticsIntentService.startUpdateAnalyticsEvent(
+                    appContext,
+                    true,
+                    sectionItem.getId(),
+                    preferences.getString(Constants.CITY_ID, null),
+                    analyticsAttrsJsonString);
         }
     }
 

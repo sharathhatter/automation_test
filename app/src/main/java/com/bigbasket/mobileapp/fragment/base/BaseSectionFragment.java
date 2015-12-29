@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.interfaces.SectionAware;
+import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.view.SectionView;
@@ -19,6 +20,12 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
 
     private SectionData mSectionData;
     private String mScreenName;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        tryRestoreSectionState(savedInstanceState);
+    }
 
     @Nullable
     public View getSectionView(boolean isHelp) {
@@ -35,7 +42,9 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
         return new Pair<>(recyclerView, dynamicTiles);
     }
 
-    protected void retainSectionState(Bundle outState) {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         if (mSectionData != null) {
             outState.putParcelable(Constants.SECTIONS, mSectionData);
         }
@@ -62,6 +71,18 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
 
     @Override
     public void setSectionData(SectionData sectionData) {
+        if(mSectionData != null && sectionData != null
+                && mSectionData.getSections() != null
+                && sectionData.getSections() != null
+                && sectionData.getSections().size() == mSectionData.getSections().size()) {
+            ArrayList<Section> newSections = sectionData.getSections();
+            ArrayList<Section> oldSection = mSectionData.getSections();
+            for(int i = 0 ; i < newSections.size(); i++) {
+                if(newSections.get(i).equals(oldSection.get(i))) {
+                    newSections.get(i).setIsShown(oldSection.get(0).isShown());
+                }
+            }
+        }
         mSectionData = sectionData;
     }
 

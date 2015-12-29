@@ -775,7 +775,7 @@ public class UIUtil {
         return radioButton;
     }
 
-    public static String getIMEI(Context context) {
+    public static String getUniqueDeviceIdentifier(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo wInfo = wifiManager.getConnectionInfo();
         if (wInfo != null && !TextUtils.isEmpty(wInfo.getMacAddress()))

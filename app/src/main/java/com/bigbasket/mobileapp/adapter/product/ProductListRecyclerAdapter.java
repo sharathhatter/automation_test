@@ -234,7 +234,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
                         analyticsAttrsJsonString = gson.toJson(analyticsAttrs);
                     }
-                    AnalyticsIntentService.startUpdateSponsoredProductEvent(
+                    AnalyticsIntentService.startUpdateAnalyticsEvent(
                             activityAware.getCurrentActivity(),
                             false,
                             sectionId,

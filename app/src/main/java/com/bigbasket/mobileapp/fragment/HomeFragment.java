@@ -124,7 +124,7 @@ public class HomeFragment extends BaseSectionFragment {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        String imei = UIUtil.getIMEI(getActivity());
+        String imei = UIUtil.getUniqueDeviceIdentifier(getActivity());
         Call<ApiResponse<UpdateVersionInfoApiResponseContent>> call =
                 bigBasketApiService.updateVersionNumber(imei, preferences.getString(Constants.DEVICE_ID, null),
                         DataUtil.getAppVersion(getActivity()));
@@ -295,12 +295,6 @@ public class HomeFragment extends BaseSectionFragment {
     @Override
     public ViewGroup getContentView() {
         return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        retainSectionState(outState);
-        super.onSaveInstanceState(outState);
     }
 
     private void displayHomePageError(String msg, int errorDrawableId) {
