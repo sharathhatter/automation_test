@@ -145,5 +145,9 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "ShoppingListProductFragment";
+    }
 }

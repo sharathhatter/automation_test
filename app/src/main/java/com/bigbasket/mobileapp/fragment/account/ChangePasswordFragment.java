@@ -243,4 +243,10 @@ public class ChangePasswordFragment extends BaseFragment {
     public String getScreenTag() {
         return TrackEventkeys.ACCOUNT_CHANGE_PASSWORD_SCREEN;
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "ChangePasswordFragment";
+    }
 }

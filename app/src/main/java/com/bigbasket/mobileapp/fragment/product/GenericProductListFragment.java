@@ -16,4 +16,10 @@ public class GenericProductListFragment extends ProductListAwareFragment {
     public String getFragmentTxnTag() {
         return GenericProductListFragment.class.getName();
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "GenericProductListFragment";
+    }
 }

@@ -275,4 +275,10 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
     public String getScreenTag() {
         return TrackEventkeys.ORDER_DETAILS_SUMMARY_SCREEN;
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "OrderInvoiceSummaryFragment";
+    }
 }

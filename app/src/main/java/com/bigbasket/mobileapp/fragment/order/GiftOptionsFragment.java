@@ -166,4 +166,10 @@ public class GiftOptionsFragment extends BaseFragment {
     public String getFragmentTxnTag() {
         return GiftOptionsFragment.class.getName();
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "GiftOptionsFragment";
+    }
 }
