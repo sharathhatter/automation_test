@@ -9,24 +9,25 @@ import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PrePaymentParamsResponse implements Parcelable {
-
-    public static final Parcelable.Creator<PrePaymentParamsResponse> CREATOR = new Parcelable.Creator<PrePaymentParamsResponse>() {
+public class PlaceOrderApiPrePaymentResponseContent extends PlaceOrderReponseContent {
+    public static final Parcelable.Creator<PlaceOrderApiPrePaymentResponseContent> CREATOR = new Parcelable.Creator<PlaceOrderApiPrePaymentResponseContent>() {
         @Override
-        public PrePaymentParamsResponse[] newArray(int size) {
-            return new PrePaymentParamsResponse[size];
+        public PlaceOrderApiPrePaymentResponseContent[] newArray(int size) {
+            return new PlaceOrderApiPrePaymentResponseContent[size];
         }
 
         @Override
-        public PrePaymentParamsResponse createFromParcel(Parcel source) {
-            return new PrePaymentParamsResponse(source);
+        public PlaceOrderApiPrePaymentResponseContent createFromParcel(Parcel source) {
+            return new PlaceOrderApiPrePaymentResponseContent(source);
         }
     };
 
     @SerializedName(Constants.POST_PARAMS)
     public HashMap<String, String> postParams;
 
-    public PrePaymentParamsResponse(Parcel parcel) {
+
+    public PlaceOrderApiPrePaymentResponseContent(Parcel parcel) {
+        super(parcel);
         int postParamsSize = parcel.readInt();
         postParams = new HashMap<>(postParamsSize);
         for (int i = 0; i < postParamsSize; i++) {
@@ -40,17 +41,14 @@ public class PrePaymentParamsResponse implements Parcelable {
         }
     }
 
-    public PrePaymentParamsResponse(HashMap<String, String> postParams) {
-        this.postParams = postParams;
-    }
-
     @Override
     public int describeContents() {
-        return 0;
+        return super.describeContents();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
         if (postParams != null && !postParams.isEmpty()) {
             dest.writeInt(postParams.size());
             for (Map.Entry<String, String> valEntry : postParams.entrySet()) {
@@ -64,6 +62,5 @@ public class PrePaymentParamsResponse implements Parcelable {
         } else {
             dest.writeInt(0);
         }
-
     }
 }

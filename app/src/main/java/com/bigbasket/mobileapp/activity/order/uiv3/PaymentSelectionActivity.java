@@ -35,7 +35,8 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPayZappResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPrePaymentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.factory.payment.OrderPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
@@ -52,6 +53,7 @@ import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -63,7 +65,10 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.crashlytics.android.Crashlytics;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -76,6 +81,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private static final java.lang.String IS_PREPAYMENT_TASK_PAUSED = "is_prepayment_task_paused";
     private static final java.lang.String IS_PREPAYMENT_TASK_STARTED = "is_prepayment_task_started";
     private static final java.lang.String IS_PREPAYMENT_ABORT_INITIATED = "is_prepayment_abort_initiated";
+    private final String PAYMENT_PARAMS = "payment_params";
+    private final String PAYZAPP_PAYMENT_PARAMS = "payzapp_payment_params";
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private ArrayList<PaymentType> paymentTypeList;
     private String mPotentialOrderId;
@@ -96,6 +103,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private OrderPrepaymentProcessingTask<PaymentSelectionActivity> mOrderPrepaymentProcessingTask;
     private boolean mIsPrepaymentAbortInitiated;
     private boolean isPayUOptionVisible;
+    private PayzappPostParams mPayzappPostParams;
+    private HashMap<String, String> mPaymentParams;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -154,6 +163,14 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
         if (mOrderAmount != null) {
             outState.putString(Constants.AMOUNT, mOrderAmount);
+        }
+        if (mPaymentParams != null) {
+            Gson gson = new Gson();
+            String jsonPaymentParams = gson.toJson(mPaymentParams);
+            outState.putString(PAYMENT_PARAMS, jsonPaymentParams);
+        }
+        if (mPayzappPostParams != null) {
+            outState.putParcelable(PAYZAPP_PAYMENT_PARAMS, mPayzappPostParams);
         }
         super.onSaveInstanceState(outState);
     }
@@ -550,20 +567,38 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
+    /**
+     * checking the payment type and based on the calling placeOrder API.
+     */
     private void placeOrder() {
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
                 false);
-        Call<OldApiResponse<PlaceOrderApiResponseContent>> call = bigBasketApiService.placeOrder(mPotentialOrderId, mSelectedPaymentMethod);
-        call.enqueue(new BBNetworkCallback<OldApiResponse<PlaceOrderApiResponseContent>>(this) {
+        if (Constants.HDFC_POWER_PAY.equals(mSelectedPaymentMethod)) {
+            placeOrderWithPayZappPaymentMethod();
+        } else {
+            placeOrderWithPrePaymentMethod();
+        }
+    }
+
+    /**
+     * placing order with the payment method apart from PayZapp
+     */
+    private void placeOrderWithPrePaymentMethod() {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        Call<OldApiResponse<PlaceOrderApiPrePaymentResponseContent>> call =
+                bigBasketApiService.placeOrderWithPrePayment(mPotentialOrderId, mSelectedPaymentMethod);
+        call.enqueue(new BBNetworkCallback<OldApiResponse<PlaceOrderApiPrePaymentResponseContent>>(this) {
             @Override
-            public void onSuccess(OldApiResponse<PlaceOrderApiResponseContent> placeOrderApiResponse) {
-                if (placeOrderApiResponse.status.equals(Constants.OK)) {
-                    postOrderCreation(placeOrderApiResponse.apiResponseContent.orders,
-                            placeOrderApiResponse.apiResponseContent.addMoreLink,
-                            placeOrderApiResponse.apiResponseContent.addMoreMsg);
+            public void onSuccess(OldApiResponse<PlaceOrderApiPrePaymentResponseContent> placeOrderApiPrePaymentResponse) {
+                if (placeOrderApiPrePaymentResponse.status.equals(Constants.OK)) {
+                    if (placeOrderApiPrePaymentResponse.apiResponseContent.postParams != null) {
+                        mPaymentParams = placeOrderApiPrePaymentResponse.apiResponseContent.postParams;
+                    }
+                    postOrderCreation(placeOrderApiPrePaymentResponse.apiResponseContent.orders,
+                            placeOrderApiPrePaymentResponse.apiResponseContent.addMoreLink,
+                            placeOrderApiPrePaymentResponse.apiResponseContent.addMoreMsg);
                 } else {
-                    handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
+                    handler.sendEmptyMessage(placeOrderApiPrePaymentResponse.getErrorTypeAsInt(), placeOrderApiPrePaymentResponse.message);
                 }
             }
 
@@ -578,6 +613,41 @@ public class PaymentSelectionActivity extends BackButtonActivity
             }
         });
     }
+
+    /****
+     * method to order using PayZapp payment parameters
+     */
+    private void placeOrderWithPayZappPaymentMethod() {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        Call<OldApiResponse<PlaceOrderApiPayZappResponseContent>> call =
+                bigBasketApiService.placeOrderWithPayZapp(mPotentialOrderId, mSelectedPaymentMethod);
+        call.enqueue(new BBNetworkCallback<OldApiResponse<PlaceOrderApiPayZappResponseContent>>(this) {
+            @Override
+            public void onSuccess(OldApiResponse<PlaceOrderApiPayZappResponseContent> placeOrderApiPayZappResponseContent) {
+                if (placeOrderApiPayZappResponseContent.status.equals(Constants.OK)) {
+                    if (placeOrderApiPayZappResponseContent.apiResponseContent.payzappPostParams != null) {
+                        mPayzappPostParams = placeOrderApiPayZappResponseContent.apiResponseContent.payzappPostParams;
+                    }
+                    postOrderCreation(placeOrderApiPayZappResponseContent.apiResponseContent.orders,
+                            placeOrderApiPayZappResponseContent.apiResponseContent.addMoreLink,
+                            placeOrderApiPayZappResponseContent.apiResponseContent.addMoreMsg);
+                } else {
+                    handler.sendEmptyMessage(placeOrderApiPayZappResponseContent.getErrorTypeAsInt(), placeOrderApiPayZappResponseContent.message);
+                }
+            }
+
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
+    }
+
 
     private void postOrderCreation(ArrayList<Order> orders, String addMoreLink,
                                    String addMoreMsg) {
@@ -645,6 +715,28 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
         ((TextView) findViewById(R.id.lblOrderPlaced)).setTypeface(faceRobotoRegular);
 
+        //getting values from the bundle and setting the payment parameters
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(PAYMENT_PARAMS)) {
+                try {
+                    Gson gson = new Gson();
+                    Type stringStringMap = new TypeToken<HashMap<String, String>>() {
+                    }.getType();
+                    mPaymentParams = gson.fromJson(savedInstanceState.getString(PAYMENT_PARAMS), stringStringMap);
+                } catch (Exception e) {
+                    Crashlytics.logException(new ClassCastException(
+                            "Exception while getting values from bundle"));
+                }
+            }
+            if (savedInstanceState.containsKey(PAYZAPP_PAYMENT_PARAMS)) {
+                try {
+                    mPayzappPostParams = savedInstanceState.getParcelable(PAYZAPP_PAYMENT_PARAMS);
+                } catch (Exception e) {
+                    Crashlytics.logException(new ClassCastException(
+                            "Exception while getting values from bundle"));
+                }
+            }
+        }
         mOrderPrepaymentProcessingTask =
                 new OrderPrepaymentProcessingTask<PaymentSelectionActivity>(this,
                         mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
@@ -683,6 +775,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
                         mOrderPrepaymentProcessingTask = null;
                     }
                 };
+        /**
+         * setting the payment parameters
+         */
+        mOrderPrepaymentProcessingTask.setPaymentParams(mPaymentParams);
+        mOrderPrepaymentProcessingTask.setPayZappPaymentParams(mPayzappPostParams);
+
         if (savedInstanceState != null
                 && savedInstanceState.getBoolean(IS_PREPAYMENT_TASK_PAUSED, false)) {
             mOrderPrepaymentProcessingTask.pause();

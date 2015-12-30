@@ -26,7 +26,8 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PayzappPrePaymentParamsResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPayZappResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPrePaymentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostGiftItemsResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
@@ -352,8 +353,12 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("co-place-order/")
-    Call<OldApiResponse<PlaceOrderApiResponseContent>> placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId,
-                                                                  @Field(Constants.PAYMENT_METHOD) String paymentMethod);
+    Call<OldApiResponse<PlaceOrderApiPrePaymentResponseContent>> placeOrderWithPrePayment(@Field(Constants.P_ORDER_ID) String potentialOrderId,
+                                                                            @Field(Constants.PAYMENT_METHOD) String paymentMethod);
+    @FormUrlEncoded
+    @POST("co-place-order/")
+    Call<OldApiResponse<PlaceOrderApiPayZappResponseContent>> placeOrderWithPayZapp(@Field(Constants.P_ORDER_ID) String potentialOrderId,
+                                                                                    @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @GET("pay-now/")
     Call<ApiResponse<GetPayNowParamsResponse>> getPayNowDetails(@Query(Constants.ORDER_ID) String orderId,
