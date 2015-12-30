@@ -1,12 +1,10 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -31,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -41,16 +38,13 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.factory.payment.OrderPrepaymentProcessingTask;
-import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
-import com.bigbasket.mobileapp.factory.payment.impl.MobikwikPayment;
+import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
-import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
-import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentOptionsKnowMoreDialogCallback;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
@@ -69,10 +63,6 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.crashlytics.android.Crashlytics;
-import com.enstage.wibmo.sdk.WibmoSDK;
-import com.mobikwik.sdk.MobikwikSDK;
-import com.mobikwik.sdk.lib.MKTransactionResponse;
-import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +70,7 @@ import java.util.HashMap;
 import retrofit.Call;
 
 public class PaymentSelectionActivity extends BackButtonActivity
-        implements OnPostPaymentListener, OnPaymentValidationListener, PaymentTxnInfoAware,
+        implements OnPaymentValidationListener, PaymentTxnInfoAware,
         PaymentMethodsView.OnPaymentOptionSelectionListener, PaymentOptionsKnowMoreDialogCallback {
 
     private static final java.lang.String IS_PREPAYMENT_TASK_PAUSED = "is_prepayment_task_paused";
@@ -210,15 +200,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private boolean isPaymentPending() {
         return mIsPrepaymentProcessingStarted && !TextUtils.isEmpty(mSelectedPaymentMethod)
                 && mOrdersCreated != null;
-    }
-
-    private void processMobikWikResponse(String txnId) {
-        if (mOrdersCreated != null) {
-            new PostPaymentProcessor<>(this, txnId)
-                    .withPotentialOrderId(mPotentialOrderId)
-                    .withOrderId(mOrdersCreated.get(0).getOrderNumber())
-                    .processPayment();
-        }
     }
 
     private void renderCheckOutProgressView() {
@@ -546,37 +527,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            new PostPaymentProcessor<>(this, mTxnId)
-                    .withPotentialOrderId(mPotentialOrderId)
-                    .processPayzapp(data, resultCode, mOrderAmount);
-        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
-            new PostPaymentProcessor<>(this, mTxnId)
-                    .withPotentialOrderId(mPotentialOrderId)
-                    .withOrderId(mOrdersCreated.get(0).getOrderNumber())
-                    .processPayment();
-        } else if (requestCode == MobikwikPayment.MOBIKWIK_REQ_CODE) {
-            if (data != null) {
-                MKTransactionResponse response = (MKTransactionResponse) data.getSerializableExtra(MobikwikSDK.EXTRA_TRANSACTION_RESPONSE);
-                if (response != null) {
-                    if (!TextUtils.isEmpty(response.orderId)) {
-                        try {
-                            if (BuildConfig.DEBUG) {
-                                processMobikWikResponse(String.valueOf(Integer.parseInt(response.orderId) / 5000));
-                            } else {
-                                processMobikWikResponse(response.orderId);
-                            }
-                        } catch (NumberFormatException e) {
-                            Crashlytics.logException(e);
-                        }
-                    } else {
-                        Crashlytics.logException(new IllegalArgumentException());
-                    }
-                } else {
-                    Crashlytics.logException(new IllegalArgumentException());
-                }
-            }
-        } else {
+        boolean handled = ValidatePayment.onActivityResult(this, requestCode, resultCode, data, mTxnId, mOrdersCreated.get(0).getOrderNumber(),
+                mPotentialOrderId, false, false, mOrderAmount);
+        if (!handled) {
             switch (resultCode) {
                 case NavigationCodes.VOUCHER_APPLIED:
                     if (data != null) {
@@ -746,22 +699,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void onPostPaymentFailure(String txnId, String paymentType) {
-        // When transaction has failed. Place order as Cash on Delivery.
-        // User can later use 'Pay Now' to complete order.
-        String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-        new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
-    }
-
-    @Override
-    public void onPostPaymentSuccess(String txnId, String paymentType) {
-        // Now Validate payment from server for excess collection
-        String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-        new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
-    }
-
-    @Override
-    public void onPaymentValidated(boolean status, @Nullable String msg, ArrayList<Order> orders) {
+    public void onPaymentValidated(boolean status, @Nullable String msg, @NonNull ArrayList<Order> orders) {
         mOrdersCreated = orders;
         if (status || msg == null) {
             showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
@@ -791,7 +729,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 mIsPrepaymentProcessingStarted = false;
                 String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
                 if (!TextUtils.isEmpty(txnId)) {
-                    new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
+                    ValidatePayment.validate(this, txnId, fullOrderId, mPotentialOrderId,
+                            false, false, null, null);
                 } else {
                     showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
                 }

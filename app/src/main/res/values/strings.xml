@@ -243,7 +243,7 @@
     <string name="otherError">An error occurred</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
-    <!-- remove this -->
+    <string name="validating_payment">Validating Payment...</string>
     <string name="smartBasket">Smart Basket</string>
     <string name="rateTheApp">Rate our App</string>
     <string name="shopFromPreviousOrder">Shop From Previous Order(s)</string>

@@ -29,7 +29,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.PayzappPrePaymentParam
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostGiftItemsResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PrePaymentParamsResponse;
@@ -317,13 +316,14 @@ public interface BigBasketApiService {
     Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappOrderPaymentParams(@Query(Constants.P_ORDER_ID) String potentialOrderId);
 
     @FormUrlEncoded
-    @POST("post-order-payment/")
-    Call<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPayment(@FieldMap Map<String, String> paymentParams);
-
-    @GET("validate-order-payment/")
-    Call<ApiResponse<ValidateOrderPaymentApiResponse>> validateOrderPayment(@Query(Constants.TXN_ID) String txnId,
-                                                                            @Query(Constants.P_ORDER_ID) String potentialOrderId,
-                                                                            @Query(Constants.ORDER_ID) String fullOrderId);
+    @POST("validate-payment/")
+    Call<ApiResponse<ValidateOrderPaymentApiResponse>> validatePayment(@Field(Constants.TXN_ID) String txnId,
+                                                                       @Field(Constants.P_ORDER_ID) String potentialOrderId,
+                                                                       @Field(Constants.ORDER_ID) String fullOrderId,
+                                                                       @Field(Constants.PAYMENT_TYPE) String paymentType,
+                                                                       @Field(Constants.PAY_NOW) String isPayNow,
+                                                                       @Field(Constants.WALLET) String isFundWallet,
+                                                                       @FieldMap Map<String, String> paymentParams);
 
     @GET("register-utm-params/")
     Call<BaseApiResponse> postUtmParams(@QueryMap Map<String, String> utmQueryMap);
