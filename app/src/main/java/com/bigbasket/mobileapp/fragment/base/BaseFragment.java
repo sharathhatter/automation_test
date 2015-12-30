@@ -423,10 +423,9 @@ public abstract class BaseFragment extends AbstractFragment implements
     public void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive) {
         if (getCurrentActivity() == null) return;
         if (isPositive) {
+            onPositiveButtonClicked(reqCode, data);
             if (data != null && data.getBoolean(Constants.FINISH_ACTIVITY, false)) {
                 getCurrentActivity().finish();
-            } else {
-                onPositiveButtonClicked(reqCode, data);
             }
         } else {
             onNegativeButtonClicked(reqCode);
