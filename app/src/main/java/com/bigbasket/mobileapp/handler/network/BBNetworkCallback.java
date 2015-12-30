@@ -49,5 +49,7 @@ public abstract class BBNetworkCallback<K> implements Callback<K> {
 
     public abstract void onSuccess(K k);
 
-    public abstract boolean updateProgress();
+    public boolean updateProgress() {
+        return true;
+    }
 }

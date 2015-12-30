@@ -44,20 +44,36 @@ public class OTPBroadcastReceiver extends BroadcastReceiver {
                 } else {
                     currentMessage = SmsMessage.createFromPdu((byte[]) aPduObj);
                 }
-                String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-                String message = currentMessage.getDisplayMessageBody();
+                String phoneNumber;
+                if (currentMessage.getDisplayOriginatingAddress() != null) {
+                    phoneNumber = currentMessage.getDisplayOriginatingAddress().toUpperCase();
+                } else {
+                    phoneNumber = "";
+                }
+
+                String message;
+                if (currentMessage.getDisplayMessageBody() != null) {
+                    message = currentMessage.getDisplayMessageBody().toLowerCase();
+                } else {
+                    message = "";
+                }
 
                 /**
                  * checking that the message received is from BigBasket
                  * and it contains the word verification
                  */
-                if ((phoneNumber.toUpperCase().contains("BIG") &&
-                        (message.toLowerCase().contains("verification")))) {
-                    final Pattern p = Pattern.compile("( \\d{4,6} )");
+                if (phoneNumber.contains("BIG")
+                        && (message.contains(" otp "))
+                        || message.contains(" verification ") ) {
+                    final Pattern p = Pattern.compile("( \\d{4,6}[ .])");
                     final Matcher m = p.matcher(message);
                     if (m.find()) {
                         if (mCallback != null) {
-                            mCallback.onOTPReceived(m.group(0).trim());
+                            String otp = m.group(0).trim();
+                            if (otp.endsWith(".")) {
+                                otp = otp.substring(0, otp.length() - 1);
+                            }
+                            mCallback.onOTPReceived(otp);
                         }
                     }
                 }

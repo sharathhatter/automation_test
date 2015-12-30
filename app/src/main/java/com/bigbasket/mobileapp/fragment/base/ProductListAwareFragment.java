@@ -121,7 +121,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     private void injectSponsoredProducts(){
         if(getCurrentActivity() == null || mSponsoredSectionInfo == null
-                || !mSponsoredSectionInfo.hasMoreItems()) {
+                || !mSponsoredSectionInfo.hasMoreItems()
+                || mProductListRecyclerAdapter == null) {
             return;
         }
         if(mSponsoredSectionInfo.getInjectionWindow() <= 0) {
@@ -260,7 +261,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     setNextPageLoading(false);
                     if (productNextPageApiResponse.status == 0) {
                         mProductInfo.setCurrentPage(nextPage);
-                        HashMap<String, ArrayList<Product>> productMap = productNextPageApiResponse.apiResponseContent.productListMap;
+                        HashMap<String, ArrayList<Product>> productMap =
+                                productNextPageApiResponse.apiResponseContent.productListMap;
                         if (productMap != null && productMap.size() > 0) {
                             updateProductList(productMap.get(mTabType));
                         } else {
@@ -315,6 +317,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         mProductInfo.setCurrentPage(1);
         mProductInfo.setProducts(products);
         setProductListView();
+        injectSponsoredProducts();
     }
 
     public void updateProductInfo(@NonNull ProductInfo productInfo, ArrayList<NameValuePair> nameValuePairs) {
@@ -324,6 +327,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         mProductInfo.setProducts(productInfo.getProducts());
         mNameValuePairs = NameValuePair.toMap(nameValuePairs);
         setProductListView();
+        injectSponsoredProducts();
     }
 
     public void setLazyProductLoadingFailure() {
