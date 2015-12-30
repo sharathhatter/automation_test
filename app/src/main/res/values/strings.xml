@@ -442,4 +442,5 @@
     <string name="select_different_payment_method">Please select another payment method</string>
     <string name="store_img">Store Image</string>
     <string name="store_icon">Store Icon</string>
+    <string name="close">Close</string>
 </resources>

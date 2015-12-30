@@ -40,6 +40,7 @@ import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
@@ -140,8 +141,9 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
 
     private void getDeliveryAddress() {
         if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-            ((BaseActivity) getActivity()).showAlertDialog("BigBasket",
-                    getString(R.string.notSignedIn), NavigationCodes.GO_TO_LOGIN);
+            showAlertDialog(null,
+                    getString(R.string.notSignedIn),
+                    DialogButton.OK, DialogButton.NONE, NavigationCodes.GO_TO_LOGIN, null, null);
             return;
         }
         mSelectedAddress = null;

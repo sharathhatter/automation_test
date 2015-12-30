@@ -328,13 +328,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     public final void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive) {
         if (isPositive) {
+            onPositiveButtonClicked(reqCode, data);
             if (data != null && data.getBoolean(Constants.FINISH_ACTIVITY, false)) {
                 if (data.containsKey(Constants.ACTIVITY_RESULT_CODE)) {
                     setResult(data.getInt(Constants.ACTIVITY_RESULT_CODE, RESULT_OK));
                 }
                 finish();
-            } else {
-                onPositiveButtonClicked(reqCode, data);
             }
         } else {
             onNegativeButtonClicked(reqCode, data);
