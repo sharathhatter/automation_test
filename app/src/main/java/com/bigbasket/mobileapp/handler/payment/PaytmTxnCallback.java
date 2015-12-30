@@ -4,14 +4,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
 
 import java.util.HashMap;
 
-public class PaytmTxnCallback<T extends AppOperationAware> implements PaytmPaymentTransactionCallback {
+public class PaytmTxnCallback<T extends AppOperationAware>
+        implements PaytmPaymentTransactionCallback {
 
     private T ctx;
     @Nullable
@@ -74,11 +75,7 @@ public class PaytmTxnCallback<T extends AppOperationAware> implements PaytmPayme
             txnId = paramsMap.get("ORDER_ID");
         }
 
-        new PostPaymentProcessor<>(ctx, txnId)
-                .withOrderId(orderId)
-                .withPotentialOrderId(potentialOrderId)
-                .withIsFundWallet(isWallet)
-                .withIsPayNow(isPayNow)
-                .processPaytm(status, paramsMap);
+        ValidatePayment.validatePaytm(ctx, status, txnId, orderId, potentialOrderId, isPayNow,
+                isWallet, paramsMap);
     }
 }

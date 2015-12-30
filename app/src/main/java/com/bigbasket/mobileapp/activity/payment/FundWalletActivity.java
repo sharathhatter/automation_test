@@ -1,8 +1,6 @@
 package com.bigbasket.mobileapp.activity.payment;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,14 +17,14 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
 import com.bigbasket.mobileapp.factory.payment.FundWalletPrepaymentProcessingTask;
-import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
-import com.bigbasket.mobileapp.factory.payment.impl.MobikwikPayment;
+import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
+import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -34,17 +32,13 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.crashlytics.android.Crashlytics;
-import com.enstage.wibmo.sdk.WibmoSDK;
-import com.mobikwik.sdk.MobikwikSDK;
-import com.mobikwik.sdk.lib.MKTransactionResponse;
-import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import retrofit.Call;
 
-public class FundWalletActivity extends BackButtonActivity implements OnPostPaymentListener,
+public class FundWalletActivity extends BackButtonActivity implements OnPaymentValidationListener,
         CityListDisplayAware, PaymentTxnInfoAware, PaymentMethodsView.OnPaymentOptionSelectionListener {
 
     @Nullable
@@ -107,14 +101,6 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         super.onDestroy();
         if (mFundWalletPrepaymentProcessingTask != null) {
             mFundWalletPrepaymentProcessingTask.cancel(true);
-        }
-    }
-
-    private void processMobikWikResponse(int status) {
-        if (status == 0) {
-            onFundWalletSuccess();
-        } else {
-            onFundWalletFailure();
         }
     }
 
@@ -233,29 +219,11 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            new PostPaymentProcessor<>(this, mTxnId)
-                    .withIsFundWallet(true)
-                    .processPayzapp(data, resultCode, UIUtil.formatAsMoney(mFinalTotal));
-        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                onFundWalletSuccess();
-            } else {
-                onFundWalletFailure();
-            }
-        } else if (requestCode == MobikwikPayment.MOBIKWIK_REQ_CODE) {
-            if (data != null) {
-                MKTransactionResponse response = (MKTransactionResponse) data.getSerializableExtra(MobikwikSDK.EXTRA_TRANSACTION_RESPONSE);
-                if (response != null) {
-                    try {
-                        processMobikWikResponse(Integer.parseInt(response.statusCode));
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        boolean handled = ValidatePayment.onActivityResult(this, requestCode, resultCode, data,
+                mTxnId, null, null, false, true, UIUtil.formatAsMoney(mFinalTotal));
+        if (!handled) {
+            super.onActivityResult(requestCode, resultCode, data);
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void onFundWalletFailure() {
@@ -278,13 +246,12 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     @Override
-    public void onPostPaymentFailure(String txnId, String paymentType) {
-        onFundWalletFailure();
-    }
-
-    @Override
-    public void onPostPaymentSuccess(String txnId, String paymentType) {
-        onFundWalletSuccess();
+    public void onPaymentValidated(boolean status, @Nullable String msg, @Nullable ArrayList<Order> orders) {
+        if (status) {
+            onFundWalletSuccess();
+        } else {
+            onFundWalletFailure();
+        }
     }
 
     @Override
