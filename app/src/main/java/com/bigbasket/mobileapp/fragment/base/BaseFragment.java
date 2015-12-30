@@ -168,7 +168,7 @@ public abstract class BaseFragment extends AbstractFragment implements
         ft.add(fragment, progressDialogTag);
         if (!isSuspended()) {
             try {
-                ft.commitAllowingStateLoss();
+                ft.commit();
             } catch (IllegalStateException ex) {
                 Crashlytics.logException(ex);
             }

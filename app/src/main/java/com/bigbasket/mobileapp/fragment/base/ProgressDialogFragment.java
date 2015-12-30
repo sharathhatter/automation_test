@@ -6,8 +6,9 @@ import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatDialogFragment;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
@@ -16,7 +17,7 @@ import com.crashlytics.android.Crashlytics;
 /**
  * Fragment the displays progress dialog
  */
-public class ProgressDialogFragment extends DialogFragment {
+public class ProgressDialogFragment extends AppCompatDialogFragment {
 
     private static final String ARG_MSG = "com.bigbasket.mobileapp.fragment.base.ProgressDialogFragment.arg-msg";
     private static final String ARG_CANCELLABLE = "com.bigbasket.mobileapp.fragment.base.ProgressDialogFragment.arg-cancellable";
@@ -39,12 +40,16 @@ public class ProgressDialogFragment extends DialogFragment {
 
     @Override
     public void onStart() {
+        boolean error = false ;
         try {
             super.onStart();
-        } catch (Throwable t){
+        } catch (WindowManager.BadTokenException t){
             Crashlytics.logException(t);
+            error = true;
+        }
+        if(error) {
             try {
-                dismiss();
+                dismissAllowingStateLoss();
             } catch (Exception ex) {
                 //Ignore
             }
