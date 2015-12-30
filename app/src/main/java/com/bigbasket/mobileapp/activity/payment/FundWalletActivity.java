@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
 import com.bigbasket.mobileapp.factory.payment.FundWalletPrepaymentProcessingTask;
@@ -45,7 +46,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
     private String mSelectedPaymentMethod;
     @Nullable
     private String mTxnId;
-    private double mFinalTotal;
+    private String mFinalTotal;
     private FundWalletPrepaymentProcessingTask<FundWalletActivity> mFundWalletPrepaymentProcessingTask;
     private boolean isPayUOptionVisible;
 
@@ -71,8 +72,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
         if (mSelectedPaymentMethod != null) {
             outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
         }
-        if (mFinalTotal != 0) {
-            outState.putDouble(Constants.FINAL_TOTAL, mFinalTotal);
+        if (mFinalTotal != null) {
+            outState.putString(Constants.FINAL_TOTAL, mFinalTotal);
         }
         super.onSaveInstanceState(outState);
     }
@@ -86,8 +87,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
         if (mSelectedPaymentMethod == null) {
             mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
         }
-        if (mFinalTotal == 0) {
-            mFinalTotal = savedInstanceState.getDouble(Constants.FINAL_TOTAL);
+        if (mFinalTotal == null) {
+            mFinalTotal = savedInstanceState.getString(Constants.FINAL_TOTAL);
         }
     }
 
@@ -174,7 +175,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
             return;
         }
         try {
-            mFinalTotal = Double.parseDouble(amount);
+            mFinalTotal = UIUtil.formatAsMoney(Double.parseDouble(amount));
         } catch (NumberFormatException e) {
             showAlertDialog(getString(R.string.invalidAmount));
             return;
@@ -219,8 +220,12 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        boolean handled = ValidatePayment.onActivityResult(this, requestCode, resultCode, data,
-                mTxnId, null, null, false, true, UIUtil.formatAsMoney(mFinalTotal));
+        ValidatePaymentRequest validatePaymentRequest =
+                new ValidatePaymentRequest(mTxnId);
+        validatePaymentRequest.setFinalTotal(mFinalTotal);
+        validatePaymentRequest.setIsWallet(true);
+        boolean handled = new ValidatePayment<>(this, validatePaymentRequest)
+                .onActivityResult(requestCode, resultCode, data);
         if (!handled) {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -242,7 +247,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
     @Override
     public void setTxnDetails(String txnId, String amount) {
         mTxnId = txnId;
-        mFinalTotal = Double.parseDouble(amount);
+        mFinalTotal = amount;
     }
 
     @Override

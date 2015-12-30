@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
@@ -75,7 +76,10 @@ public class PaytmTxnCallback<T extends AppOperationAware>
             txnId = paramsMap.get("ORDER_ID");
         }
 
-        ValidatePayment.validatePaytm(ctx, status, txnId, orderId, potentialOrderId, isPayNow,
-                isWallet, paramsMap);
+        ValidatePaymentRequest validatePaymentRequest =
+                new ValidatePaymentRequest(txnId, orderId, potentialOrderId);
+        validatePaymentRequest.setIsPayNow(isPayNow);
+        validatePaymentRequest.setIsWallet(isWallet);
+        new ValidatePayment<>(ctx, validatePaymentRequest).validatePaytm(status, paramsMap);
     }
 }

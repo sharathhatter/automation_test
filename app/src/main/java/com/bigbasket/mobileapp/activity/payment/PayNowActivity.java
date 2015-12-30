@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
 import com.bigbasket.mobileapp.factory.payment.PayNowPrepaymentProcessingTask;
@@ -53,7 +54,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     private String mOrderId;
     @Nullable
     private String mTxnId;
-    private double mFinalTotal;
+    private String mFinalTotal;
     private PayNowPrepaymentProcessingTask<PayNowActivity> mPayNowPrepaymentProcessingTask;
     private boolean isPayUOptionVisible;
 
@@ -81,8 +82,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         if (mSelectedPaymentMethod != null) {
             outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
         }
-        if (mFinalTotal != 0) {
-            outState.putDouble(Constants.FINAL_TOTAL, mFinalTotal);
+        if (mFinalTotal != null) {
+            outState.putString(Constants.FINAL_TOTAL, mFinalTotal);
         }
         super.onSaveInstanceState(outState);
     }
@@ -96,8 +97,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         if (mSelectedPaymentMethod == null) {
             mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
         }
-        if (mFinalTotal == 0) {
-            mFinalTotal = savedInstanceState.getDouble(Constants.FINAL_TOTAL);
+        if (mFinalTotal == null) {
+            mFinalTotal = savedInstanceState.getString(Constants.FINAL_TOTAL);
         }
     }
 
@@ -148,12 +149,12 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startPayNow(Double.parseDouble(amount));
+                startPayNow(amount);
             }
         });
     }
 
-    private void startPayNow(double total) {
+    private void startPayNow(String total) {
         if (mSelectedPaymentMethod == null) return;
         mFinalTotal = total;
         initPayNowPrepaymentProcessingTask();
@@ -208,8 +209,15 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        boolean handled = ValidatePayment.onActivityResult(this, requestCode, resultCode, data, mTxnId, mOrderId,
-                null, true, false, UIUtil.formatAsMoney(mFinalTotal));
+        boolean handled = false;
+        if (mOrderId != null) {
+            ValidatePaymentRequest validatePaymentRequest =
+                    new ValidatePaymentRequest(mTxnId, mOrderId, null);
+            validatePaymentRequest.setFinalTotal(mFinalTotal);
+            validatePaymentRequest.setIsPayNow(true);
+            handled = new ValidatePayment<>(this, validatePaymentRequest)
+                    .onActivityResult(requestCode, resultCode, data);
+        }
         if (!handled) {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -231,7 +239,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     @Override
     public void setTxnDetails(String txnId, String amount) {
         mTxnId = txnId;
-        mFinalTotal = Double.parseDouble(amount);
+        mFinalTotal = amount;
     }
 
     @Override

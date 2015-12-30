@@ -33,6 +33,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPayZappResponseContent;
@@ -544,8 +545,15 @@ public class PaymentSelectionActivity extends BackButtonActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        boolean handled = ValidatePayment.onActivityResult(this, requestCode, resultCode, data, mTxnId, mOrdersCreated.get(0).getOrderNumber(),
-                mPotentialOrderId, false, false, mOrderAmount);
+        boolean handled = false;
+        if (mOrdersCreated != null) {
+            ValidatePaymentRequest validatePaymentRequest =
+                    new ValidatePaymentRequest(mTxnId, mOrdersCreated.get(0).getOrderNumber(),
+                            mPotentialOrderId);
+            validatePaymentRequest.setFinalTotal(mOrderAmount);
+            ValidatePayment validatePayment = new ValidatePayment<>(this, validatePaymentRequest);
+            handled = validatePayment.onActivityResult(requestCode, resultCode, data);
+        }
         if (!handled) {
             switch (resultCode) {
                 case NavigationCodes.VOUCHER_APPLIED:
@@ -827,8 +835,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 mIsPrepaymentProcessingStarted = false;
                 String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
                 if (!TextUtils.isEmpty(txnId)) {
-                    ValidatePayment.validate(this, txnId, fullOrderId, mPotentialOrderId,
-                            false, false, null, null);
+                    ValidatePaymentRequest validatePaymentRequest =
+                            new ValidatePaymentRequest(txnId, fullOrderId, mPotentialOrderId);
+                    new ValidatePayment<>(this, validatePaymentRequest).validate(null, null);
                 } else {
                     showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
                 }

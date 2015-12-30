@@ -444,7 +444,6 @@ public class Constants {
 
     public static final String PAYMENT_TYPES = "payment_types";
     public static final String PAYMENT_TYPE = "payment_type";
-    public static final String PAYMENT_STATUS = "payment_status";
     public static final String PAYMENT_METHOD = "payment_method";
     public static final String CAN_PAY = "can_pay";
 
