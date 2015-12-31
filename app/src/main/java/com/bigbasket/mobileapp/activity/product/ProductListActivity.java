@@ -832,7 +832,8 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-                        if (selectedPosition != ListView.INVALID_POSITION) {
+                        if (selectedPosition != ListView.INVALID_POSITION
+                                && selectedPosition < mSortOptions.size()) {
                             applySort(mSortOptions.get(selectedPosition).getSortSlug(),
                                     mSortOptions.get(selectedPosition).getSortName());
                         }

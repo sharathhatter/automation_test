@@ -443,4 +443,5 @@
     <string name="store_img">Store Image</string>
     <string name="store_icon">Store Icon</string>
     <string name="close">Close</string>
+    <string name="no_delivery_address">No delivery address available. Please add a delivery address.</string>
 </resources>
