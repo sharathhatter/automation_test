@@ -47,8 +47,6 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     protected boolean isPayNow;
     protected boolean isFundWallet;
     protected ErrorResponse errorResponse;
-    protected PrePaymentParamsResponse prePaymentParamsResponse;
-    protected PayzappPrePaymentParamsResponse payzappPrePaymentParamsResponse;
     protected Callback callback;
     protected boolean isPaymentParamsAlreadyAvailable;
     private MinDurationCountDownTimer minDurationCountDownTimer;
@@ -140,12 +138,11 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     public synchronized
     @Nullable
     String getTransactionId() {
-        if (payzappPrePaymentParamsResponse != null
-                && payzappPrePaymentParamsResponse.payzappPostParams != null) {
-            return payzappPrePaymentParamsResponse.payzappPostParams.getTxnId();
+        if (mPayzappPostParams != null) {
+            return mPayzappPostParams.getTxnId();
         }
 
-        if (prePaymentParamsResponse != null && prePaymentParamsResponse.postParams != null) {
+        if (mPaymentPostParams != null) {
             String key = null;
             switch (paymentMethod) {
                 case Constants.PAYU:
@@ -160,7 +157,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                     break;
             }
             if (!TextUtils.isEmpty(key)) {
-                return prePaymentParamsResponse.postParams.get(key);
+                return mPaymentPostParams.get(key);
             }
         }
 
@@ -234,9 +231,8 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                             synchronized (this) {
                                 mPayzappPostParams = response.body().apiResponseContent.payzappPostParams;
                             }
-                            PayzappPostParams payzappPostParams = payzappPrePaymentParamsResponse.payzappPostParams;
-                            WibmoSDK.setWibmoIntentActionPackage(payzappPostParams.getPkgName());
-                            WibmoSDKConfig.setWibmoDomain(payzappPostParams.getServerUrl());
+                            WibmoSDK.setWibmoIntentActionPackage(mPayzappPostParams.getPkgName());
+                            WibmoSDKConfig.setWibmoDomain(mPayzappPostParams.getServerUrl());
                             WibmoSDK.init(context);
                             countDownLatch.countDown();
                             result = true;
@@ -308,7 +304,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         if (success) {
             /**payment parameters is already passed in the constructor
              * open the gateway method based on that.
-            */
+             */
 
             try {
                 openGateway();
@@ -348,6 +344,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
 
     /**
      * check payment method and initialize the corresponding payment sdk
+     *
      * @param paymentMethod:String
      */
     private void startPaymentGateway(String paymentMethod) {

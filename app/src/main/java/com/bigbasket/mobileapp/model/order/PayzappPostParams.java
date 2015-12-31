@@ -110,6 +110,9 @@ public class PayzappPostParams implements Parcelable{
 
     }
 
+    public PayzappPostParams() {
+    }
+
     public String getServerUrl() {
         return serverUrl;
     }
