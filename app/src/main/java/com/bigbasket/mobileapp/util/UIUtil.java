@@ -429,7 +429,8 @@ public class UIUtil {
         if (targetImageWidth > 0 && targetImageHeight > 0) {
             requestCreator.resize(targetImageWidth, targetImageHeight);
             Log.i(imageView.getContext().getClass().getName(),
-                    "Loading image (" + targetImageWidth + "," + targetImageHeight + ") = " + url);
+                    "Loading image " + (skipMemoryCache ? "[NO_MEM_CACHE] " : "")
+                            + "(" + targetImageWidth + "," + targetImageHeight + ") = " + url);
         } else {
             Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
         }

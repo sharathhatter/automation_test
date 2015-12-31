@@ -8,9 +8,11 @@ import android.text.TextUtils;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ValidateOrderPaymentApiResponse;
 import com.bigbasket.mobileapp.factory.payment.impl.MobikwikPayment;
+import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
@@ -27,27 +29,37 @@ import java.util.HashMap;
 
 import retrofit.Call;
 
-public final class ValidatePayment {
-    private ValidatePayment() {
+public final class ValidatePayment<T extends AppOperationAware> {
+    private T context;
+    private ValidatePaymentRequest validatePaymentRequest;
+    @Nullable
+    private BigBasketMessageHandler handler;
+
+    public ValidatePayment(T context,
+                           ValidatePaymentRequest validatePaymentRequest,
+                           @Nullable BigBasketMessageHandler handler) {
+        this.context = context;
+        this.validatePaymentRequest = validatePaymentRequest;
+        this.handler = handler;
     }
 
-    public static <T extends AppOperationAware & OnPaymentValidationListener> boolean
-    onActivityResult(T context, int requestCode, int resultCode, Intent data,
-                     @Nullable String txnId, @Nullable String orderId, @Nullable String potentialOrderId,
-                     boolean isPayNow, boolean isWallet, @Nullable String finalTotal) {
+    public ValidatePayment(T context, ValidatePaymentRequest validatePaymentRequest) {
+        this(context, validatePaymentRequest, null);
+    }
+
+    public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case WibmoSDK.REQUEST_CODE_IAP_PAY:
-                if (TextUtils.isEmpty(txnId)) {
+                if (TextUtils.isEmpty(validatePaymentRequest.getTxnId())) {
                     throw new IllegalArgumentException("txn_id can't be empty for Payzapp");
                 }
-                validatePayzapp(context, txnId, orderId, potentialOrderId, isPayNow, isWallet,
-                        data, resultCode, finalTotal);
+                validatePayzapp(data, resultCode);
                 return true;
             case PayuConstants.PAYU_REQUEST_CODE:
-                if (TextUtils.isEmpty(txnId)) {
+                if (TextUtils.isEmpty(validatePaymentRequest.getTxnId())) {
                     throw new IllegalArgumentException("txn_id can't be empty for PayU");
                 }
-                validate(context, txnId, orderId, potentialOrderId, isPayNow, isWallet, Constants.PAYU, null);
+                validate(Constants.PAYU, null);
                 return true;
             case MobikwikPayment.MOBIKWIK_REQ_CODE:
                 if (data != null) {
@@ -55,9 +67,8 @@ public final class ValidatePayment {
                     if (response != null) {
                         if (!TextUtils.isEmpty(response.orderId)) {
                             try {
-                                txnId = response.orderId;
-                                validate(context, txnId, orderId,
-                                        potentialOrderId, isPayNow, isWallet, Constants.MOBIKWIK_WALLET, null);
+                                validatePaymentRequest.setTxnId(response.orderId);
+                                validate(Constants.MOBIKWIK_WALLET, null);
                             } catch (NumberFormatException e) {
                                 Crashlytics.logException(e);
                             }
@@ -75,24 +86,17 @@ public final class ValidatePayment {
 
     }
 
-    public static <T extends AppOperationAware>
-    void validatePaytm(T context, boolean status,
-                       @Nullable String txnId, @Nullable String orderId, @Nullable String potentialOrderId,
-                       boolean isPayNow, boolean isWallet, HashMap<String, String> additionalParams) {
+    public void validatePaytm(boolean status, HashMap<String, String> additionalParams) {
         if (additionalParams == null) {
             additionalParams = new HashMap<>();
         }
         additionalParams.put(Constants.STATUS, status ? "1" : "0");
-        validate(context, txnId, orderId, potentialOrderId, isPayNow, isWallet,
-                Constants.PAYTM_WALLET, additionalParams);
+        validate(Constants.PAYTM_WALLET, additionalParams);
     }
 
-    private static <T extends AppOperationAware & OnPaymentValidationListener>
-    void validatePayzapp(T ctx,
-                         String txnId, @Nullable String orderId, @Nullable String potentialOrderId,
-                         boolean isPayNow, boolean isWallet, Intent data, int resultCode, String finalTotal) {
+    private void validatePayzapp(Intent data, int resultCode) {
         HashMap<String, String> queryMap = new HashMap<>();
-        queryMap.put(Constants.AMOUNT, finalTotal);
+        queryMap.put(Constants.AMOUNT, validatePaymentRequest.getFinalTotal());
         if (resultCode == Activity.RESULT_OK) {
             WPayResponse res = WibmoSDK.processInAppResponseWPay(data);
             String pgTxnId = res.getWibmoTxnId();
@@ -110,55 +114,88 @@ public final class ValidatePayment {
             queryMap.put(Constants.STATUS, "0");
         }
 
-        validate(ctx, txnId, orderId, potentialOrderId, isPayNow,
-                isWallet, Constants.HDFC_POWER_PAY, queryMap);
+        validate(Constants.HDFC_POWER_PAY, queryMap);
     }
 
-    public static <T extends AppOperationAware> void validate(final T ctx,
-                                                              String txnId,
-                                                              @Nullable String fullOrderId,
-                                                              @Nullable String potentialOrderId,
-                                                              boolean isPayNow,
-                                                              boolean isFundWallet,
-                                                              String paymentType,
-                                                              @Nullable HashMap<String, String> additionalParams) {
-        if (!ctx.checkInternetConnection()) {
-            ctx.getHandler().sendOfflineError();
+    /**
+     * @param paymentType When user is pressing back during order-payment, this is passed null, so that the order gets converted to Cash on Delivery
+     */
+    public void validate(@Nullable String paymentType,
+                         @Nullable HashMap<String, String> additionalParams) {
+        if (!context.checkInternetConnection()) {
+            if (handler != null) {
+                handler.sendOfflineError();
+            } else {
+                context.getHandler().sendOfflineError();
+            }
             return;
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(ctx.getCurrentActivity());
-        ctx.showProgressDialog(ctx.getCurrentActivity().getString(R.string.validating_payment));
+        int resId;
+        if (!validatePaymentRequest.isPayNow() && !validatePaymentRequest.isWallet() && TextUtils.isEmpty(paymentType)) {
+            resId = R.string.converting_to_cod;
+        } else {
+            resId = R.string.validating_payment;
+        }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context.getCurrentActivity());
+        context.showProgressDialog(context.getCurrentActivity().getString(resId));
         Call<ApiResponse<ValidateOrderPaymentApiResponse>> call = bigBasketApiService.
-                validatePayment(txnId, potentialOrderId, fullOrderId, paymentType,
-                        isPayNow ? "1" : "0", isFundWallet ? "1" : "0", additionalParams);
-        call.enqueue(new BBNetworkCallback<ApiResponse<ValidateOrderPaymentApiResponse>>(ctx) {
+                validatePayment(validatePaymentRequest.getTxnId(), validatePaymentRequest.getPotentialOrderId(),
+                        validatePaymentRequest.getOrderId(), paymentType,
+                        validatePaymentRequest.isPayNow() ? "1" : "0",
+                        validatePaymentRequest.isWallet() ? "1" : "0", additionalParams);
+        call.enqueue(new BBNetworkCallback<ApiResponse<ValidateOrderPaymentApiResponse>>(context) {
             @Override
             public void onSuccess(ApiResponse<ValidateOrderPaymentApiResponse> validateOrderPaymentResponse) {
                 switch (validateOrderPaymentResponse.status) {
                     case 0:
-                        if (ctx instanceof OnPaymentValidationListener) {
-                            ((OnPaymentValidationListener) ctx).onPaymentValidated(true, null,
+                        if (context instanceof OnPaymentValidationListener) {
+                            ((OnPaymentValidationListener) context).onPaymentValidated(true, null,
                                     validateOrderPaymentResponse.apiResponseContent.orders);
                         }
                         break;
                     case ApiErrorCodes.PAYMENT_ERROR:
-                        if (ctx instanceof OnPaymentValidationListener) {
-                            ((OnPaymentValidationListener) ctx).onPaymentValidated(false,
+                        if (context instanceof OnPaymentValidationListener) {
+                            ((OnPaymentValidationListener) context).onPaymentValidated(false,
                                     validateOrderPaymentResponse.message,
                                     validateOrderPaymentResponse.apiResponseContent.orders);
                         }
                         break;
                     default:
-                        ctx.getHandler().sendEmptyMessage(validateOrderPaymentResponse.status,
-                                validateOrderPaymentResponse.message);
+                        if (handler != null) {
+                            handler.sendEmptyMessage(validateOrderPaymentResponse.status,
+                                    validateOrderPaymentResponse.message);
+                        } else {
+                            context.getHandler().sendEmptyMessage(validateOrderPaymentResponse.status,
+                                    validateOrderPaymentResponse.message);
+                        }
                         break;
+                }
+            }
+
+            @Override
+            public void onFailure(int httpErrorCode, String msg) {
+                if (handler != null) {
+                    handler.handleHttpError(httpErrorCode, msg, false);
+                } else {
+                    super.onFailure(httpErrorCode, msg);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                if (handler != null) {
+                    if (context.isSuspended()) return;
+                    if (!updateProgress()) return;
+                    handler.handleRetrofitError(t, false);
+                } else {
+                    super.onFailure(t);
                 }
             }
 
             @Override
             public boolean updateProgress() {
                 try {
-                    ctx.hideProgressDialog();
+                    context.hideProgressDialog();
                     return true;
                 } catch (IllegalArgumentException e) {
                     return false;
