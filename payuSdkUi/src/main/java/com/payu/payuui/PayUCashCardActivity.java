@@ -67,8 +67,8 @@ public class PayUCashCardActivity extends PaymentBaseActivity implements Adapter
         mPayuHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
         mPaymentParams.setHash(mPayuHashes.getPaymentHash());
 
-        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(mPaymentParams.getAmount());
-        (txnIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(PayuConstants.TXNID + ":" + mPaymentParams.getTxnId());
+        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(getString(R.string.amount, mPaymentParams.getAmount()));
+        (txnIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
 
         // lets get the list of cash card from bundle.
         if (bundle.getParcelableArrayList(PayuConstants.CASHCARD) != null) {

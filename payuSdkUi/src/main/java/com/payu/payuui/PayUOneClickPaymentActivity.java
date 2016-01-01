@@ -103,8 +103,8 @@ public class PayUOneClickPaymentActivity extends AppCompatActivity implements Ge
         amountTextView = (TextView) findViewById(R.id.text_view_amount);
         transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id);
 
-        amountTextView.setText(PayuConstants.AMOUNT + ": " + mPaymentParams.getAmount());
-        transactionIdTextView.setText(PayuConstants.TXNID + ": " + mPaymentParams.getTxnId());
+        amountTextView.setText(getString(R.string.amount, mPaymentParams.getAmount()));
+        transactionIdTextView.setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
 
         // one click payment:
         // if there is only one stored card Make the payment directly: (Like to surprise the users. :) )

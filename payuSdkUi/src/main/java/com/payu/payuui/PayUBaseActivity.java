@@ -304,7 +304,7 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
         if (payuResponse.isResponseAvailable() && payuResponse.getResponseStatus().getCode() == PayuErrors.NO_ERROR) { // ok we are good to go
 
             //making the view visible if payuresponse is success
-            findViewById(R.id.mOptionSelectionTextView).setVisibility(View.VISIBLE);
+            //findViewById(R.id.mOptionSelectionTextView).setVisibility(View.VISIBLE);
 
             if (payuResponse.isStoredCardsAvailable() && null != storedCards && storedCards.size() > 0) {
                 findViewById(R.id.linear_layout_stored_card).setVisibility(View.VISIBLE);

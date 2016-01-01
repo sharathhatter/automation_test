@@ -23,10 +23,7 @@
     <string name="title_activity_verify_api">VerifyApiActivity</string>
 
     <!--note is ude to tell user -->
-    <string name="note">Note  You will be navigated to payment gateway.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="note_navigation">Note: You will be navigated to payment gateway.</string>
 
     <!-- Custom strings-->
     <string name="paymentviapayu">Payment via PayU</string>
@@ -38,5 +35,24 @@
     <string name="no">No</string>
     <string name="retry">Retry</string>
     <string name="transaction_cancelled_due_back_pressed">Transaction canceled due to back pressed!</string>
-
+    <string name="one_click_payment">One Click Payment</string>
+    <string name="stored_card">Stored card</string>
+    <string name="credit_debit_card">Credit / Debit card</string>
+    <string name="cash_card">Cash Card</string>
+    <string name="emi">EMI</string>
+    <string name="payu_money">PayU Money</string>
+    <string name="merchant_payment">Merchant Payment</string>
+    <string name="verify_api">Verify Api</string>
+    <string name="amount">Amount: %1$s</string>
+    <string name="transaction_id">Transaction ID: %1$s</string>
+    <string name="store_card">Store card</string>
+    <string name="enable_one_click_payment">Enable One click payment</string>
+    <string name="card_number">Card Number</string>
+    <string name="name_on_card">Name as on Card</string>
+    <string name="mm">MM</string>
+    <string name="yyyy">YYYY</string>
+    <string name="cvv">CVV</string>
+    <string name="cc_pay_now">Pay Now</string>
+    <string name="emi_pay_now">Emi Pay Now</string>
+    <string name="select_net_banking">Select Net banking (of your choice):</string>
 </resources>

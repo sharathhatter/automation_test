@@ -21,12 +21,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical" />
 
     <LinearLayout
         android:id="@+id/trans_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_drawable"
-        android:orientation="horizontal"></LinearLayout>
+        android:orientation="horizontal" />
 </RelativeLayout>
