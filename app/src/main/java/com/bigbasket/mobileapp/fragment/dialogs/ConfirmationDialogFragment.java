@@ -9,10 +9,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
 
 
-public class ConfirmationDialogFragment extends DialogFragment {
+public class ConfirmationDialogFragment extends AppCompatDialogFragment {
 
     private static final String ARG_REQUEST_CODE = "arg_request_code";
     private static final String ARG_TITLE = "arg_title";

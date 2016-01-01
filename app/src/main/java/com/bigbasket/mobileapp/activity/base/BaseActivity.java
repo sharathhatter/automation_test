@@ -185,7 +185,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         ft.add(fragment, progressDialogTag);
         if (!isSuspended()) {
             try {
-                ft.commitAllowingStateLoss();
+                ft.commit();
             } catch (IllegalStateException ex) {
                 Crashlytics.logException(ex);
             }
