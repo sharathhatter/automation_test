@@ -57,10 +57,9 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseDeliveryLocation));
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
-        if (savedInstanceState == null)
-            if (handlePermission(Manifest.permission.ACCESS_FINE_LOCATION, Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION)) {
-
-            }
+        if (savedInstanceState == null) {
+            handlePermission(Manifest.permission.ACCESS_FINE_LOCATION, Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION);
+        }
     }
 
     @Override

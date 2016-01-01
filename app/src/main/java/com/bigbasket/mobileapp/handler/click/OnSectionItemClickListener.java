@@ -348,7 +348,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
             analyticsAttrsJsonString = gson.toJson(analyticsAttrs);
         }
-        if(analyticsAttrsJsonString != null) {
+        if(analyticsAttrsJsonString != null && sectionItem != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
             AnalyticsIntentService.startUpdateAnalyticsEvent(
                     appContext,
