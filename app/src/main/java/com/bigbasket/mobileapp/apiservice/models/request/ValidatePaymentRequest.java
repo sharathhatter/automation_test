@@ -13,6 +13,11 @@ public class ValidatePaymentRequest implements Parcelable {
     private String potentialOrderId;
     @Nullable
     private String finalTotal;
+    /**
+     * When user is pressing back during order-payment, this is passed null, so that the order gets converted to Cash on Delivery
+     */
+    @Nullable
+    private String selectedPaymentMethod;
     private boolean isPayNow;
     private boolean isWallet;
 
@@ -21,10 +26,12 @@ public class ValidatePaymentRequest implements Parcelable {
     }
 
     public ValidatePaymentRequest(@Nullable String txnId, @Nullable String orderId,
-                                  @Nullable String potentialOrderId) {
+                                  @Nullable String potentialOrderId,
+                                  @Nullable String selectedPaymentMethod) {
         this(txnId);
         this.orderId = orderId;
         this.potentialOrderId = potentialOrderId;
+        this.selectedPaymentMethod = selectedPaymentMethod;
     }
 
     protected ValidatePaymentRequest(Parcel in) {
@@ -43,6 +50,10 @@ public class ValidatePaymentRequest implements Parcelable {
         boolean wasFinalTotalNull = in.readByte() == 1;
         if (!wasFinalTotalNull) {
             finalTotal = in.readString();
+        }
+        boolean wasSelectedPaymentMethodNull = in.readByte() == 1;
+        if (!wasSelectedPaymentMethodNull) {
+            selectedPaymentMethod = in.readString();
         }
         isPayNow = in.readByte() != 0;
         isWallet = in.readByte() != 0;
@@ -87,6 +98,11 @@ public class ValidatePaymentRequest implements Parcelable {
         if (!isFieldNull) {
             dest.writeString(finalTotal);
         }
+        isFieldNull = selectedPaymentMethod == null;
+        dest.writeByte(isFieldNull ? (byte) 1: (byte) 0);
+        if (!isFieldNull) {
+            dest.writeString(selectedPaymentMethod);
+        }
         dest.writeByte((byte) (isPayNow ? 1 : 0));
         dest.writeByte((byte) (isWallet ? 1 : 0));
     }
@@ -109,6 +125,11 @@ public class ValidatePaymentRequest implements Parcelable {
     @Nullable
     public String getFinalTotal() {
         return finalTotal;
+    }
+
+    @Nullable
+    public String getSelectedPaymentMethod() {
+        return selectedPaymentMethod;
     }
 
     public boolean isPayNow() {

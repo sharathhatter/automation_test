@@ -549,7 +549,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (mOrdersCreated != null) {
             ValidatePaymentRequest validatePaymentRequest =
                     new ValidatePaymentRequest(mTxnId, mOrdersCreated.get(0).getOrderNumber(),
-                            mPotentialOrderId);
+                            mPotentialOrderId, mSelectedPaymentMethod);
             validatePaymentRequest.setFinalTotal(mOrderAmount);
             ValidatePayment validatePayment = new ValidatePayment<>(this, validatePaymentRequest);
             handled = validatePayment.onActivityResult(requestCode, resultCode, data);
@@ -836,8 +836,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
                 if (!TextUtils.isEmpty(txnId)) {
                     ValidatePaymentRequest validatePaymentRequest =
-                            new ValidatePaymentRequest(txnId, fullOrderId, mPotentialOrderId);
-                    new ValidatePayment<>(this, validatePaymentRequest).validate(null, null);
+                            new ValidatePaymentRequest(txnId, fullOrderId, mPotentialOrderId,
+                                    null);  // Passing payment method as null to convert it to COD
+                    new ValidatePayment<>(this, validatePaymentRequest).validate(null);
                 } else {
                     showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
                 }

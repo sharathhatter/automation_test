@@ -8,6 +8,7 @@ import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.util.Constants;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
 
 import java.util.HashMap;
@@ -77,7 +78,7 @@ public class PaytmTxnCallback<T extends AppOperationAware>
         }
 
         ValidatePaymentRequest validatePaymentRequest =
-                new ValidatePaymentRequest(txnId, orderId, potentialOrderId);
+                new ValidatePaymentRequest(txnId, orderId, potentialOrderId, Constants.PAYTM_WALLET);
         validatePaymentRequest.setIsPayNow(isPayNow);
         validatePaymentRequest.setIsWallet(isWallet);
         new ValidatePayment<>(ctx, validatePaymentRequest).validatePaytm(status, paramsMap);
