@@ -788,7 +788,7 @@ public class SectionView {
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(
                             context.getApplicationContext());
                     String cityId = preferences.getString(Constants.CITY_ID, null);
-                    Map<String, String> analyticsAttrs = null;
+                    Map<String, String> analyticsAttrs;
                     Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
                     for(SectionItem sectionItem: section.getSectionItems()){
                         if(TextUtils.isEmpty(sectionItem.getId())){

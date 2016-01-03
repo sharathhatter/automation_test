@@ -212,7 +212,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         boolean handled = false;
         if (mOrderId != null) {
             ValidatePaymentRequest validatePaymentRequest =
-                    new ValidatePaymentRequest(mTxnId, mOrderId, null);
+                    new ValidatePaymentRequest(mTxnId, mOrderId, null, mSelectedPaymentMethod);
             validatePaymentRequest.setFinalTotal(mFinalTotal);
             validatePaymentRequest.setIsPayNow(true);
             handled = new ValidatePayment<>(this, validatePaymentRequest)

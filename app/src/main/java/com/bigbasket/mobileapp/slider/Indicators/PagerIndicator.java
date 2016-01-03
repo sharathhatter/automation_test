@@ -376,7 +376,7 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
         @Override
         public void onChanged() {
             PagerAdapter adapter = mPager.getAdapter();
-            int count = 0;
+            int count;
             if (adapter instanceof InfinitePagerAdapter) {
                 count = ((InfinitePagerAdapter) adapter).getRealCount();
             } else {
