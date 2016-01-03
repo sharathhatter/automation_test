@@ -103,8 +103,8 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
         amountTextView = (TextView) findViewById(R.id.text_view_amount);
         transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id);
 
-        amountTextView.setText(PayuConstants.AMOUNT + ": " + mPaymentParams.getAmount());
-        transactionIdTextView.setText(PayuConstants.TXNID + ": " + mPaymentParams.getTxnId());
+        amountTextView.setText(getString(R.string.amount, mPaymentParams.getAmount()));
+        transactionIdTextView.setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
 /*******************setting status bar color**************/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = this.getWindow();

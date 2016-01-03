@@ -92,8 +92,8 @@ public class PayUEmiActivity extends PaymentBaseActivity implements View.OnClick
         mPaymentParams.setHash(mPayuHashes.getPaymentHash());
 
         (emiPayNowButton = (Button) findViewById(R.id.button_emi_pay_now)).setOnClickListener(this);
-        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(PayuConstants.AMOUNT + ": " + mPaymentParams.getAmount());
-        (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(PayuConstants.TXNID + ": " + mPaymentParams.getTxnId());
+        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(getString(R.string.amount, mPaymentParams.getAmount()));
+        (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
 
         if (bundle.getParcelableArrayList(PayuConstants.EMI) != null) {
             // okay we have emi now!

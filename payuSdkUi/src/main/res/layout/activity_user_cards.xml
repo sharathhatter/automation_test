@@ -8,76 +8,36 @@
         android:id="@+id/toolbarMain"
         layout="@layout/layout_toolbar" />
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/toolbarMain"
-        android:fillViewport="true">
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <include layout="@layout/layout_payment_method_header" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/payu_divider_color" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/white"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/mbblogo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_margin="20dp"
-
-                android:background="@drawable/bb_logo_transparent_bkg"
-
-                />
-
-            <LinearLayout
+            <ListView
+                android:id="@+id/list_view_user_card"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/mbblogo"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:weightSum="1">
+                android:layout_height="wrap_content"
+                android:descendantFocusability="afterDescendants"
+                android:divider="@color/payu_divider_color"
+                android:gravity="center" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
-                    android:background="@drawable/layout_background"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <TextView
-                        android:id="@+id/text_view_amount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Rs."
-                        android:textAppearance="@android:style/TextAppearance.Medium"
-                        android:textColor="@color/amt_txn_textColor" />
-
-                    <TextView
-                        android:id="@+id/text_view_transaction_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Transaction id : "
-                        android:textColor="@color/amt_txn_textColor" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
-
-                    <ListView
-                        android:id="@+id/list_view_user_card"
-                        android:layout_width="match_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_margin="10dp"
-                        android:descendantFocusability="afterDescendants" />
-                </LinearLayout>
-            </LinearLayout>
-        </RelativeLayout>
-    </ScrollView>
+        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
 

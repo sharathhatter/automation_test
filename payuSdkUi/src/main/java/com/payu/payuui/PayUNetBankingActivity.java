@@ -104,8 +104,8 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
         payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
         payuConfig = null != payuConfig ? payuConfig : new PayuConfig();
 
-        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(PayuConstants.AMOUNT + ": " + mPaymentParams.getAmount());
-        (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(PayuConstants.TXNID + ": " + mPaymentParams.getTxnId());
+        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(getString(R.string.amount, mPaymentParams.getAmount()));
+        (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
 
 
         /*******************setting status bar color**************/
