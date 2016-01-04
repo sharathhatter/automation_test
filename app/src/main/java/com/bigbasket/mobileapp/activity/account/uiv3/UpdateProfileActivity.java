@@ -33,6 +33,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -113,8 +114,12 @@ public class UpdateProfileActivity extends BackButtonActivity implements OtpDial
     }
 
     private void showDatePickerDialog(View view) {
-        DialogFragment newFragment = new DatePickerFragment(view);
-        newFragment.show(getSupportFragmentManager(), Constants.DATE_PICKER);
+        try {
+            DialogFragment newFragment = new DatePickerFragment(view);
+            newFragment.show(getSupportFragmentManager(), Constants.DATE_PICKER);
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+        }
     }
 
     private void handleMessage(int otp_flag, String errorMsg, boolean isResendOtpRequested) {

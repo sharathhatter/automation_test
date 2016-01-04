@@ -5,7 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -15,7 +15,7 @@ import com.bigbasket.mobileapp.R;
 import java.util.Calendar;
 
 
-public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+public class DatePickerFragment extends AppCompatDialogFragment implements DatePickerDialog.OnDateSetListener {
 
     private View view;
 

@@ -49,6 +49,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
+import com.crashlytics.android.Crashlytics;
 import com.moengage.widgets.NudgeView;
 
 import java.util.ArrayList;
@@ -416,7 +417,11 @@ public class HomeFragment extends BaseSectionFragment {
                 break;
             case Constants.SHOW_APP_EXPIRE_POPUP:
                 AppNotSupportedDialog appNotSupportedDialog = AppNotSupportedDialog.newInstance(upgradeMsg, latestAppVersion);
-                appNotSupportedDialog.show(getFragmentManager(), Constants.APP_EXPIRED_DIALOG_FLAG);
+                try {
+                    appNotSupportedDialog.show(getFragmentManager(), Constants.APP_EXPIRED_DIALOG_FLAG);
+                } catch (IllegalStateException ex) {
+                    Crashlytics.logException(ex);
+                }
                 break;
             default:
                 break;

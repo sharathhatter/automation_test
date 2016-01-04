@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.CursorAdapter;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -11,7 +12,6 @@ import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -117,7 +117,7 @@ public class SearchViewAdapter<T> extends CursorAdapter {
                 if (itemRightIconKey.equals(SearchUtil.HISTORY_TERM)) {
                     imgSearchTermAction.setTag(R.id.search_history_term_tag_id, term);
                     imgSearchTermAction.setTag(R.id.search_suggestion_term_tag_id, null); // Reset
-                    drawableResId = R.drawable.delete_product;
+                    drawableResId = R.drawable.trash;
                 } else {
                     imgSearchTermAction.setTag(R.id.search_history_term_tag_id, null); // Reset
                     imgSearchTermAction.setTag(R.id.search_suggestion_term_tag_id, term);

@@ -333,7 +333,10 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
 
             try {
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                TransactionDialogFragment transactionDialogFragment = TransactionDialogFragment.newInstance(getString(R.string.retry_message), Constants.TRANSACTION_RETRY_CODE, getString(R.string.cancel), getString(R.string.retry));
+                TransactionDialogFragment transactionDialogFragment =
+                        TransactionDialogFragment.newInstance(getString(R.string.retry_message),
+                                Constants.TRANSACTION_RETRY_CODE, getString(R.string.cancel),
+                                getString(R.string.retry));
                 transactionDialogFragment.show(fragmentManager, getClass().getName());
             } catch (Exception e) {
                 Log.d(getClass().getName(), "fragment failed");

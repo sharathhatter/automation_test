@@ -1,10 +1,12 @@
 package com.bigbasket.mobileapp.fragment.base;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -67,6 +69,7 @@ public abstract class BaseFragment extends AbstractFragment implements
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
     private String progressDialogTag;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onAttach(Context context) {

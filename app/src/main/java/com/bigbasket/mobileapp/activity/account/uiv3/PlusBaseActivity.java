@@ -10,7 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -478,7 +478,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     /* A fragment to display an error dialog */
-    public static class GooglePlayServicesErrorDialogFragment extends DialogFragment {
+    public static class GooglePlayServicesErrorDialogFragment extends AppCompatDialogFragment {
         public GooglePlayServicesErrorDialogFragment() {
         }
 

@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.os.AsyncTaskCompat;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.section.Section;
@@ -96,7 +98,11 @@ public class DynamicPageDbHelper {
     }
 
     public static void clearAll(Context context) {
-        AsyncTask.THREAD_POOL_EXECUTOR.execute(new DynamicScreenResetRunnable(context));
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            AsyncTask.THREAD_POOL_EXECUTOR.execute(new DynamicScreenResetRunnable(context));
+        } else {
+            new Thread(new DynamicScreenResetRunnable(context)).start();
+        }
     }
 
     private static class DynamicScreenResetRunnable implements Runnable {
