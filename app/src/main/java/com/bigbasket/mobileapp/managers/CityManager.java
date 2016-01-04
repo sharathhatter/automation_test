@@ -26,12 +26,13 @@ public final class CityManager {
     }
 
     private static final int TIMEOUT_IN_MINUTES = 60;
+    private static final int AREA_PIN_CODE_INFO_TIMEOUT_IN_DAYS = 30;
     private static final String preferenceKey = "stored_city";
 
     public static boolean isAreaPinInfoDataStale(Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         String areaInfoCalledLast = prefer.getString(Constants.AREA_INFO_CALL_LAST, null);
-        int cityCacheExpiryDays = prefer.getInt(preferenceKey + "_expiry", 7);
+        int cityCacheExpiryDays = prefer.getInt(preferenceKey + "_expiry", AREA_PIN_CODE_INFO_TIMEOUT_IN_DAYS);
         try {
             DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
             Date d1 = format.getCalendar().getTime();
