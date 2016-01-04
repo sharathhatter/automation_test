@@ -187,9 +187,6 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
                 setResult(resultCode, data);
                 finish();
             }
-        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode == RESULT_CANCELED) {
-            //some unknown error navigate to previous screen
-            finish();
         }
     }
 
