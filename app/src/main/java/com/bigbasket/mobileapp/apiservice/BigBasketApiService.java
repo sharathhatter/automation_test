@@ -389,7 +389,6 @@ public interface BigBasketApiService {
     Call<OldApiResponse<PlaceOrderApiPayZappResponseContent>> placeOrderWithPayZapp(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                                                     @Field(Constants.P_ORDER_ID) String potentialOrderId,
                                                                                     @Field(Constants.PAYMENT_METHOD) String paymentMethod);
-
     @GET("pay-now/")
     Call<ApiResponse<GetPayNowParamsResponse>> getPayNowDetails(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                                 @Query(Constants.ORDER_ID) String orderId,

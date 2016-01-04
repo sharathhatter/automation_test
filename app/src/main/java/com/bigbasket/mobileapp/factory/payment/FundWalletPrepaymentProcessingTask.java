@@ -8,9 +8,6 @@ import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 
 import retrofit.Call;
 
-/**
- * Created by bigbasket on 26/11/15.
- */
 public class FundWalletPrepaymentProcessingTask<T extends AppOperationAware>
         extends AbstractPrepaymentProcessingTask<T> {
     private String amount;

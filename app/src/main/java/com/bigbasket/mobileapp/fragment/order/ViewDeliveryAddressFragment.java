@@ -62,11 +62,11 @@ import retrofit.Call;
 public class ViewDeliveryAddressFragment extends BaseFragment implements AddressSelectionAware,
         CreatePotentialOrderAware, BasketDeltaUserActionListener, OnAddressChangeListener, OnBasketDeltaListener {
 
+    ProgressBar mLoadingBar;
     private Address mSelectedAddress;
     private ViewGroup layoutCheckoutFooter;
     private Typeface faceRobotoLight;
     private boolean hasGifts = false;
-    ProgressBar mLoadingBar;
     private LinearLayout layoutAddressDetails;
     private TextView txtAddressLabel;
     private TextView txtInComplete;
@@ -83,9 +83,9 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         faceRobotoLight = FontHolder.getInstance(getActivity()).getFaceRobotoLight();
         View contentView = inflater.inflate(R.layout.uiv3_delivery_address_layout, container, false);
-        mLoadingBar = (ProgressBar)contentView.findViewById(R.id.loading_bar);
+        mLoadingBar = (ProgressBar) contentView.findViewById(R.id.loading_bar);
         layoutCheckoutProgressContainer =
-                (LinearLayout)contentView.findViewById(R.id.layoutCheckoutProgressContainer);
+                (LinearLayout) contentView.findViewById(R.id.layoutCheckoutProgressContainer);
         layoutCheckoutFooter = (ViewGroup) contentView.findViewById(R.id.layoutCheckoutFooter);
         layoutAddressDetails = (LinearLayout) contentView.findViewById(R.id.layoutAddressDetails);
         txtAddressLabel = (TextView) contentView.findViewById(R.id.txtAddressLbl);
@@ -103,7 +103,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
         txtChangeAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mSelectedAddress != null) {
+                if (mSelectedAddress != null) {
                     launchChangeAddress();
                 } else {
                     showAddressForm(null);
@@ -113,7 +113,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
         imageViewEditLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mSelectedAddress != null) {
+                if (mSelectedAddress != null) {
                     showAddressForm(mSelectedAddress);
                 }
             }
@@ -151,7 +151,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
                     showDeliveryAddress(address);
                 }
             }
-            if(changed) {
+            if (changed) {
                 // Forcefully calling get-app-data-dynamic, as user might have change location
                 AppDataDynamic.reset(getActivity());
             }
@@ -233,16 +233,16 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
                 switch (deliveryAddrResp.status) {
                     case 0:
                         ArrayList<Address> addrList = deliveryAddrResp.apiResponseContent.addresses;
-                        if(addrList != null && !addrList.isEmpty()) {
-                            for(Address addr : addrList){
-                                if(addr.isSelected()){
+                        if (addrList != null && !addrList.isEmpty()) {
+                            for (Address addr : addrList) {
+                                if (addr.isSelected()) {
                                     mSelectedAddress = addr;
                                     showDeliveryAddress(addr);
                                     break; // break the for-loop
                                 }
                             }
                         }
-                        if(mSelectedAddress != null) {
+                        if (mSelectedAddress != null) {
                             break; //break from switch case
                         }
                         //Continue and show empty address
@@ -295,7 +295,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
                 txtInComplete.setVisibility(View.GONE);
             }
 
-            if(selectedAddress.isExpress()){
+            if (selectedAddress.isExpress()) {
                 txtExpressDelivery.setVisibility(View.VISIBLE);
             } else {
                 txtExpressDelivery.setVisibility(View.GONE);
@@ -303,9 +303,10 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
 
             txtDeliveryAddress.setText(selectedAddress.toString().trim());
 
-            trackEvent(TrackingAware.DELIVERY_ADDRESS_SHOWN, null);
+            trackEvent(TrackingAware.CHECKOUT_ADDRESS_SHOWN, null);
             String total = getArguments() != null ? getArguments().getString(Constants.TOTAL_BASKET_VALUE) : null;
             UIUtil.setUpFooterButton(getCurrentActivity(), layoutCheckoutFooter, total,
+
                     getString(R.string.continueCaps), true);
             layoutCheckoutFooter.setVisibility(View.VISIBLE);
         } else {
@@ -470,6 +471,12 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
         startActivityForResult(memberAddressFormIntent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
     }
 
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "ViewDeliveryAddressFragment";
+    }
+
     private class AddressListFooterButtonOnClickListener implements View.OnClickListener {
 
         @Override
@@ -491,11 +498,5 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
                         Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    @NonNull
-    @Override
-    public String getInteractionName() {
-        return "ViewDeliveryAddressFragment";
     }
 }

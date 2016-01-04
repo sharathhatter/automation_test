@@ -401,7 +401,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
 
                 imgRemove.setTag(R.id.basket_op_cart_item_tag_id, cartItem);
                 imgRemove.setTag(R.id.basket_op_qty_tag_id, "0");
-                imgRemove.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_INCREMENT);
+                imgRemove.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_REMOVE);
                 imgRemove.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
                 imgRemove.setTag(R.id.basket_op_tabname_tag_id, TrackEventkeys.SINGLE_TAB_NAME);
                 imgRemove.setTag(R.id.basket_op_additional_query_map_tag_id, basketQueryMap);
@@ -763,40 +763,6 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         }
     }
 
-    private class HeaderTitleHolder extends RecyclerView.ViewHolder {
-        private TextView txtTopCategory;
-        private TextView topCatTotalItems;
-        private TextView topCatTotal;
-
-        public HeaderTitleHolder(View base) {
-            super(base);
-        }
-
-        public TextView getTxtTopCategory() {
-            if (txtTopCategory == null) {
-                txtTopCategory = (TextView) itemView.findViewById(R.id.txtTopCategory);
-                txtTopCategory.setTypeface(faceRobotoRegular);
-            }
-            return txtTopCategory;
-        }
-
-        public TextView getTopCatTotalItems() {
-            if (topCatTotalItems == null) {
-                topCatTotalItems = (TextView) itemView.findViewById(R.id.topCatTotalItems);
-                topCatTotalItems.setTypeface(faceRobotoRegular);
-            }
-            return topCatTotalItems;
-        }
-
-        public TextView getTopCatTotal() {
-            if (topCatTotal == null) {
-                topCatTotal = (TextView) itemView.findViewById(R.id.topCatTotal);
-                topCatTotal.setTypeface(faceRobotoRegular);
-            }
-            return topCatTotal;
-        }
-    }
-
     public static class FulfillmentInfoViewHolder extends RecyclerView.ViewHolder {
         private RelativeLayout layoutInfoMsg;
         private ImageView imgLiquorIcon;
@@ -841,6 +807,40 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                 txtTC2 = (TextView) itemView.findViewById(R.id.txtTC2);
             }
             return txtTC2;
+        }
+    }
+
+    private class HeaderTitleHolder extends RecyclerView.ViewHolder {
+        private TextView txtTopCategory;
+        private TextView topCatTotalItems;
+        private TextView topCatTotal;
+
+        public HeaderTitleHolder(View base) {
+            super(base);
+        }
+
+        public TextView getTxtTopCategory() {
+            if (txtTopCategory == null) {
+                txtTopCategory = (TextView) itemView.findViewById(R.id.txtTopCategory);
+                txtTopCategory.setTypeface(faceRobotoRegular);
+            }
+            return txtTopCategory;
+        }
+
+        public TextView getTopCatTotalItems() {
+            if (topCatTotalItems == null) {
+                topCatTotalItems = (TextView) itemView.findViewById(R.id.topCatTotalItems);
+                topCatTotalItems.setTypeface(faceRobotoRegular);
+            }
+            return topCatTotalItems;
+        }
+
+        public TextView getTopCatTotal() {
+            if (topCatTotal == null) {
+                topCatTotal = (TextView) itemView.findViewById(R.id.topCatTotal);
+                topCatTotal.setTypeface(faceRobotoRegular);
+            }
+            return topCatTotal;
         }
     }
 

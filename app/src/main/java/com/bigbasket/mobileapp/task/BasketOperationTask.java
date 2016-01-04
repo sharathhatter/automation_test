@@ -4,16 +4,19 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
+import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
@@ -33,103 +36,6 @@ import java.util.Map;
 import retrofit.Call;
 
 public class BasketOperationTask<T extends AppOperationAware> {
-
-    /**
-     * Builder class to create a basket add/remove operation
-     */
-    public static class Builder<T extends AppOperationAware> {
-        private T context;
-        private Product product;
-        private
-        @BasketOperation.Mode
-        int basketOperation;
-        private String qty;
-        private WeakReference<TextView> basketCountTextView;
-        private WeakReference<View> viewIncQty;
-        private WeakReference<View> viewDecQty;
-        private WeakReference<View> viewAddToBasket;
-        private String eventName;
-        private WeakReference<View> productView;
-        private String navigationCtx;
-        private WeakReference<HashMap<String, Integer>> cartInfo;
-        private WeakReference<EditText> editTextQty;
-        private String tabName;
-        private WeakReference<Map<String, String>> basketQueryMap;
-
-        public Builder(T context,
-                       @BasketOperation.Mode int basketOperation,
-                       @NonNull Product product) {
-            this.context = context;
-            this.basketOperation = basketOperation;
-            this.product = product;
-        }
-
-        public Builder withQty(String qty) {
-            this.qty = qty;
-            return this;
-        }
-
-        public Builder withEventName(String eventName) {
-            this.eventName = eventName;
-            return this;
-        }
-
-        public Builder withNavigationCtx(String navigationCtx) {
-            this.navigationCtx = navigationCtx;
-            return this;
-        }
-
-        public Builder withTabName(String tabName) {
-            this.tabName = tabName;
-            return this;
-        }
-
-        public Builder withBasketCountTextView(TextView basketCountTextView) {
-            this.basketCountTextView = new WeakReference<>(basketCountTextView);
-            return this;
-        }
-
-        public Builder withViewIncQty(View viewIncQty) {
-            this.viewIncQty = new WeakReference<>(viewIncQty);
-            return this;
-        }
-
-        public Builder withViewDecQty(View viewDecQty) {
-            this.viewDecQty = new WeakReference<>(viewDecQty);
-            return this;
-        }
-
-        public Builder withViewAddToBasket(View viewAddToBasket) {
-            this.viewAddToBasket = new WeakReference<>(viewAddToBasket);
-            return this;
-        }
-
-        public Builder withProductView(View productView) {
-            this.productView = new WeakReference<>(productView);
-            return this;
-        }
-
-        public Builder withCartInfo(@Nullable HashMap<String, Integer> cartInfo) {
-            this.cartInfo = new WeakReference<>(cartInfo);
-            return this;
-        }
-
-        public Builder withEditTextQty(@Nullable EditText editTextQty) {
-            this.editTextQty = new WeakReference<>(editTextQty);
-            return this;
-        }
-
-        public Builder withBasketQueryMap(@Nullable Map<String, String> basketQueryMap) {
-            this.basketQueryMap = new WeakReference<>(basketQueryMap);
-            return this;
-        }
-
-        public BasketOperationTask build() {
-            return new BasketOperationTask<>(context, basketOperation, product, basketCountTextView,
-                    viewDecQty, viewIncQty, viewAddToBasket, qty, eventName, navigationCtx,
-                    productView, cartInfo, editTextQty, tabName, basketQueryMap);
-        }
-    }
 
     private T context;
     private Product product;
@@ -248,13 +154,117 @@ public class BasketOperationTask<T extends AppOperationAware> {
         eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
         eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
         eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());
+
+        if (context instanceof ShoppingListProductFragment) {
+            navigationCtx = ((ShoppingListSummaryActivity) context.getCurrentActivity()).getCurrentNavigationContextForSl();
+        }
+
         if (navigationCtx != null) {
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         }
+
         eventAttribs.put(TrackEventkeys.TAB_NAME, tabName);
+
         ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false, true);
         if (!TextUtils.isEmpty(eventName) && eventName.equals(TrackingAware.BASKET_ADD)) {
             ((TrackingAware) context).trackEventAppsFlyer(eventName);
+        }
+    }
+
+    /**
+     * Builder class to create a basket add/remove operation
+     */
+    public static class Builder<T extends AppOperationAware> {
+        private T context;
+        private Product product;
+        private
+        @BasketOperation.Mode
+        int basketOperation;
+        private String qty;
+        private WeakReference<TextView> basketCountTextView;
+        private WeakReference<View> viewIncQty;
+        private WeakReference<View> viewDecQty;
+        private WeakReference<View> viewAddToBasket;
+        private String eventName;
+        private WeakReference<View> productView;
+        private String navigationCtx;
+        private WeakReference<HashMap<String, Integer>> cartInfo;
+        private WeakReference<EditText> editTextQty;
+        private String tabName;
+        private WeakReference<Map<String, String>> basketQueryMap;
+
+        public Builder(T context,
+                       @BasketOperation.Mode int basketOperation,
+                       @NonNull Product product) {
+            this.context = context;
+            this.basketOperation = basketOperation;
+            this.product = product;
+        }
+
+        public Builder withQty(String qty) {
+            this.qty = qty;
+            return this;
+        }
+
+        public Builder withEventName(String eventName) {
+            this.eventName = eventName;
+            return this;
+        }
+
+        public Builder withNavigationCtx(String navigationCtx) {
+            this.navigationCtx = navigationCtx;
+            return this;
+        }
+
+        public Builder withTabName(String tabName) {
+            this.tabName = tabName;
+            return this;
+        }
+
+        public Builder withBasketCountTextView(TextView basketCountTextView) {
+            this.basketCountTextView = new WeakReference<>(basketCountTextView);
+            return this;
+        }
+
+        public Builder withViewIncQty(View viewIncQty) {
+            this.viewIncQty = new WeakReference<>(viewIncQty);
+            return this;
+        }
+
+        public Builder withViewDecQty(View viewDecQty) {
+            this.viewDecQty = new WeakReference<>(viewDecQty);
+            return this;
+        }
+
+        public Builder withViewAddToBasket(View viewAddToBasket) {
+            this.viewAddToBasket = new WeakReference<>(viewAddToBasket);
+            return this;
+        }
+
+        public Builder withProductView(View productView) {
+            this.productView = new WeakReference<>(productView);
+            return this;
+        }
+
+        public Builder withCartInfo(@Nullable HashMap<String, Integer> cartInfo) {
+            this.cartInfo = new WeakReference<>(cartInfo);
+            return this;
+        }
+
+        public Builder withEditTextQty(@Nullable EditText editTextQty) {
+            this.editTextQty = new WeakReference<>(editTextQty);
+            return this;
+        }
+
+        public Builder withBasketQueryMap(@Nullable Map<String, String> basketQueryMap) {
+            this.basketQueryMap = new WeakReference<>(basketQueryMap);
+            return this;
+        }
+
+        public BasketOperationTask build() {
+            return new BasketOperationTask<>(context, basketOperation, product, basketCountTextView,
+                    viewDecQty, viewIncQty, viewAddToBasket, qty, eventName, navigationCtx,
+                    productView, cartInfo, editTextQty, tabName, basketQueryMap);
         }
     }
 

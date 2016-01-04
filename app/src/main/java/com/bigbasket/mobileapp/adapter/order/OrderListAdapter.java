@@ -22,13 +22,16 @@ import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.GetMoreOrderAware;
 import com.bigbasket.mobileapp.interfaces.OrderItemClickAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -176,6 +179,9 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
                     public void onClick(View view) {
                         Intent intent = new Intent(((AppOperationAware) context).getCurrentActivity(), PayNowActivity.class);
                         intent.putExtra(Constants.ORDER_ID, order.getOrderId());
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put(TrackEventkeys.NAVIGATION_CTX, ((AppOperationAware) context).getCurrentActivity().getCurrentScreenName());
+                        ((AppOperationAware) context).getCurrentActivity().trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
                         ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                 });

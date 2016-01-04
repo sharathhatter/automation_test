@@ -16,6 +16,7 @@ import retrofit.Call;
  */
 public class OrderPrepaymentProcessingTask<T extends AppOperationAware>
         extends AbstractPrepaymentProcessingTask<T> {
+
     public OrderPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
                                          String paymentMethod, boolean isPayNow,
                                          boolean isFundWallet, boolean isPayUOptionVisible) {
@@ -46,12 +47,12 @@ public class OrderPrepaymentProcessingTask<T extends AppOperationAware>
     @Override
     protected Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService) {
-        return bigBasketApiService.getPayzappOrderPaymentParams(ctx.getCurrentActivity().getPreviousScreenName(),potentialOrderId);
+        return bigBasketApiService.getPayzappOrderPaymentParams(ctx.getCurrentActivity().getPreviousScreenName(), potentialOrderId);
     }
 
     @Override
     protected Call<ApiResponse<PrePaymentParamsResponse>> getPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService) {
-        return bigBasketApiService.getOrderPaymentParams(ctx.getCurrentActivity().getPreviousScreenName(),potentialOrderId);
+        return bigBasketApiService.getOrderPaymentParams(ctx.getCurrentActivity().getPreviousScreenName(), potentialOrderId);
     }
 }

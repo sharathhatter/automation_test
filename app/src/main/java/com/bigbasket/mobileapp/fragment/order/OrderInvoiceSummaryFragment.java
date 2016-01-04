@@ -178,6 +178,9 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PayNowActivity.class);
                 intent.putExtra(Constants.ORDER_ID, orderInvoice.getOrderId());
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+                trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
             }
         });

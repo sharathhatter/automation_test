@@ -66,7 +66,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
     protected String screenName;
 
     protected Map<String, String> analyticsAttrs;
-    protected String analyticsAttrsJsonString ;
+    protected String analyticsAttrsJsonString;
 
 
     public OnSectionItemClickListener(T context) {
@@ -344,11 +344,11 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             logItemClickEvent();
         }
         Context appContext = context.getCurrentActivity().getApplicationContext();
-        if(analyticsAttrsJsonString == null && analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
+        if (analyticsAttrsJsonString == null && analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
             Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
             analyticsAttrsJsonString = gson.toJson(analyticsAttrs);
         }
-        if(analyticsAttrsJsonString != null && sectionItem != null) {
+        if (analyticsAttrsJsonString != null && sectionItem != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
             AnalyticsIntentService.startUpdateAnalyticsEvent(
                     appContext,
