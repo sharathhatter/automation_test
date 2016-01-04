@@ -54,6 +54,7 @@ import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.model.order.PaytmResponseHolder;
 import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -181,6 +182,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
         super.onResume();
         if (mOrderPrepaymentProcessingTask != null && !mIsPrepaymentAbortInitiated) {
             mOrderPrepaymentProcessingTask.resume();
+        }
+        if (PaytmResponseHolder.hasPendingTransaction()) {
+            PaytmResponseHolder.processPaytmResponse(this);
         }
     }
 

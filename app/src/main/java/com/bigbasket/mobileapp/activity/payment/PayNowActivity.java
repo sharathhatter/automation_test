@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.PayNowDetail;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.model.order.PaytmResponseHolder;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -57,6 +58,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     private String mFinalTotal;
     private PayNowPrepaymentProcessingTask<PayNowActivity> mPayNowPrepaymentProcessingTask;
     private boolean isPayUOptionVisible;
+    private ViewGroup mProgressLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         setTitle(getString(R.string.payNow));
 
         mOrderId = getIntent().getStringExtra(Constants.ORDER_ID);
+        mProgressLayout = (ViewGroup) findViewById(R.id.layoutLoading);
         new GetCitiesTask<>(this).startTask();
     }
 
@@ -196,6 +199,9 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     @Override
     public void onResume() {
         super.onResume();
+        if (PaytmResponseHolder.hasPendingTransaction()) {
+            PaytmResponseHolder.processPaytmResponse(this);
+        }
     }
 
     @Override
@@ -287,6 +293,18 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         }
         PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
+    }
+
+    @Override
+    public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
+        if (mProgressLayout == null) return;
+        mProgressLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        if (mProgressLayout == null) return;
+        mProgressLayout.setVisibility(View.GONE);
     }
 
     @Override
