@@ -441,7 +441,7 @@ public final class ProductView {
                 && productViewDisplayDataHolder.isLoggedInMember()
                 && !getAvailability(product, storeAvailability).equalsIgnoreCase("N")) {
             int imageDrawableId = productViewDisplayDataHolder.showShopListDeleteBtn() ?
-                    R.drawable.delete_product : R.drawable.add_to_shopping_list;
+                    R.drawable.trash : R.drawable.add_to_shopping_list;
             if (productViewDisplayDataHolder.showShopListDeleteBtn()) {
                 imgProductOverflowAction.setImageDrawable(
                         ContextCompat.getDrawable(shoppingListNamesAware.getCurrentActivity(), imageDrawableId));

@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -901,7 +901,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
-    public static class PaymentOrderInfoDialog extends DialogFragment
+    public static class PaymentOrderInfoDialog extends AppCompatDialogFragment
             implements Dialog.OnClickListener {
 
         private static final String ARG_DIALOG_IDENTIFIER = "arg_dialog_identifier";

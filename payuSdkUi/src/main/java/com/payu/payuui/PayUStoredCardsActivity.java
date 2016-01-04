@@ -319,34 +319,34 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
             String issuer = payuUtils.getIssuer(mStoredCards.get(position).getCardBin());
             switch (issuer) {
                 case PayuConstants.VISA:
-                    holder.cardIconImageView.setImageResource(R.mipmap.visa);
+                    holder.cardIconImageView.setImageResource(R.drawable.visa);
                     break;
                 case PayuConstants.LASER:
-                    holder.cardIconImageView.setImageResource(R.mipmap.laser);
+                    holder.cardIconImageView.setImageResource(R.drawable.laser);
                     break;
                 case PayuConstants.DISCOVER:
-                    holder.cardIconImageView.setImageResource(R.mipmap.discover);
+                    holder.cardIconImageView.setImageResource(R.drawable.discover);
                     break;
                 case PayuConstants.MAES:
-                    holder.cardIconImageView.setImageResource(R.mipmap.maestro);
+                    holder.cardIconImageView.setImageResource(R.drawable.maestro);
                     break;
                 case PayuConstants.MAST:
-                    holder.cardIconImageView.setImageResource(R.mipmap.master);
+                    holder.cardIconImageView.setImageResource(R.drawable.master);
                     break;
                 case PayuConstants.AMEX:
-                    holder.cardIconImageView.setImageResource(R.mipmap.amex);
+                    holder.cardIconImageView.setImageResource(R.drawable.amex);
                     break;
                 case PayuConstants.DINR:
-                    holder.cardIconImageView.setImageResource(R.mipmap.diner);
+                    holder.cardIconImageView.setImageResource(R.drawable.diner);
                     break;
                 case PayuConstants.JCB:
-                    holder.cardIconImageView.setImageResource(R.mipmap.jcb);
+                    holder.cardIconImageView.setImageResource(R.drawable.jcb);
                     break;
                 case PayuConstants.SMAE:
-                    holder.cardIconImageView.setImageResource(R.mipmap.maestro);
+                    holder.cardIconImageView.setImageResource(R.drawable.maestro);
                     break;
                 default:
-                    holder.cardIconImageView.setImageResource(R.mipmap.card);
+                    holder.cardIconImageView.setImageResource(R.drawable.card);
                     break;
 
             }

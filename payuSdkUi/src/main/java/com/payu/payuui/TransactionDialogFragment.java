@@ -4,14 +4,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 /**
  * Created by manu on 23/12/15.
  */
-public class TransactionDialogFragment extends DialogFragment {
+public class TransactionDialogFragment extends AppCompatDialogFragment {
 
     private static final String ARG_REQUEST_CODE = "arg_request_code";
     private static final String ARG_MESSAGE = "arg_message";
