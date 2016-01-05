@@ -414,4 +414,7 @@ public interface BigBasketApiService {
     Call<ApiResponse<AddressSummary>> getLocationDetail(@Query(Constants.LAT) String latitude,
                                                         @Query(Constants.LNG) String longitude);
 
+    @POST("logout/")
+    Call<BaseApiResponse> logout();
+
 }

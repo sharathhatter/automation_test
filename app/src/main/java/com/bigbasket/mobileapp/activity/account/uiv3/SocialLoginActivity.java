@@ -10,39 +10,36 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.fragment.dialogs.ConfirmationDialogFragment;
-import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
+import com.bigbasket.mobileapp.interfaces.OnLogoutListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.SocialAccountType;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.task.LogoutTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
-import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import retrofit.Call;
 
-public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActivity {
+public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActivity
+        implements OnLogoutListener {
 
     private boolean mIsInLogoutMode;
 
@@ -116,16 +113,17 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     @Override
     public void onFacebookSignIn(AccessToken accessToken) {
         if (mIsInLogoutMode) {
-            doLogout();
+            doLogout(true);
             return;
         }
+        showProgressDialog(getString(R.string.please_wait));
         startSocialLogin(SocialAccountType.FB, accessToken.getToken());
     }
 
     @Override
     protected void onPlusClientSignOut() {
-        hideProgressDialog();
-        doLogout();
+        //hideProgressDialog();
+        doLogout(true);
     }
 
     @Override
@@ -179,28 +177,27 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, "");
         if (!checkInternetConnection()) {
             handler.sendOfflineError();
-            postLogout(false);
             return;
         }
+        showProgressDialog(getString(R.string.please_wait));
         if (!TextUtils.isEmpty(socialAccountType) && SocialAccountType.getSocialLoginTypes().contains(socialAccountType)) {
             switch (socialAccountType) {
                 case SocialAccountType.FB:
                     mIsInLogoutMode = true;
                     LoginManager.getInstance().logOut();
-                    doLogout();
+                    doLogout(true);
                     break;
                 case SocialAccountType.GP:
                     mIsInLogoutMode = true;
                     if (UIUtil.isPhoneWithGoogleAccount(this)) {
-                        showProgressDialog(getString(R.string.please_wait));
                         signOutFromGplus();
                     } else {
-                        doLogout();
+                        doLogout(true);
                     }
                     break;
             }
         } else {
-            doLogout();
+            doLogout(false);
         }
     }
 
@@ -212,53 +209,46 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 Toast.LENGTH_SHORT).show();
     }
 
-    @SuppressWarnings("unchecked")
-    public void doLogout() {
-        DynamicPageDbHelper.clearAll(getCurrentActivity());
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.remove(Constants.FIRST_NAME_PREF);
-        editor.remove(Constants.BBTOKEN_KEY);
-        editor.remove(Constants.OLD_BBTOKEN_KEY);
-        editor.remove(Constants.MID_KEY);
-        editor.remove(Constants.MEMBER_FULL_NAME_KEY);
-        editor.remove(Constants.MEMBER_EMAIL_KEY);
-        editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
-        editor.remove(Constants.UPDATE_PROFILE_IMG_URL);
-        editor.remove(Constants.IS_KIRANA);
-        editor.commit();
-        AuthParameters.reset();
-        AppDataDynamic.reset(getCurrentActivity());
-
-        MoEngageWrapper.setUserAttribute(moEHelper, Constants.IS_LOGGED_IN, false);
-
-        String analyticsAdditionalAttrsJson = preferences.getString(Constants.ANALYTICS_ADDITIONAL_ATTRS, null);
-        editor.remove(Constants.ANALYTICS_ADDITIONAL_ATTRS);
-
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_NAME, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
-
-        if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
-            Gson gson = new Gson();
-            HashMap<String, Object> additionalAttrMap = new HashMap<>();
-            additionalAttrMap = (HashMap<String, Object>) gson.fromJson(analyticsAdditionalAttrsJson, additionalAttrMap.getClass());
-            if (additionalAttrMap != null) {
-                for (Map.Entry<String, Object> entry : additionalAttrMap.entrySet()) {
-                    LocalyticsWrapper.setIdentifier(entry.getKey(), null);
-                }
-            }
+    public void doLogout(boolean wasSocialLogin) {
+        if (wasSocialLogin) {
+            PreferenceManager.getDefaultSharedPreferences(getCurrentActivity())
+                    .edit()
+                    .remove(Constants.SOCIAL_ACCOUNT_TYPE)
+                    .commit();
         }
+        LogoutTask logoutTask = new LogoutTask(this);
+        logoutTask.execute();
+    }
+
+    @Override
+    public void onLogoutSuccess() {
         moEHelper.logoutUser();
         mIsInLogoutMode = false;
+        if (isSuspended()) return;
+        try {
+            hideProgressDialog();
+        } catch (IllegalArgumentException e) {
+            return;
+        }
         postLogout(true);
+    }
+
+    @Override
+    public void onLogoutFailure(ErrorResponse errorResponse) {
+        if (isSuspended()) return;
+        try {
+            hideProgressDialog();
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        if (errorResponse.isException()) {
+            handler.handleRetrofitError(errorResponse.getThrowable(), false);
+        } else if (errorResponse.getErrorType() == ErrorResponse.HTTP_ERROR) {
+            handler.handleHttpError(errorResponse.getCode(), errorResponse.getMessage(),
+                    false);
+        } else {
+            handler.sendEmptyMessage(errorResponse.getCode(), errorResponse.getMessage());
+        }
     }
 
     public void saveLoginUserDetailInPreference(LoginApiResponse loginApiResponse, String socialAccountType,

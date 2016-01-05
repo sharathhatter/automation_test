@@ -33,6 +33,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
 import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
@@ -771,11 +772,11 @@ public class PaymentSelectionActivity extends BackButtonActivity
                                 if (errorResponse.isException()) {
                                     //TODO: Possible network error retry
                                     getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
-                                } else if (errorResponse.getCode() > 0) {
+                                } else if (errorResponse.getErrorType() == ErrorResponse.HTTP_ERROR) {
                                     getHandler().handleHttpError(errorResponse.getCode(),
                                             errorResponse.getMessage(), false);
                                 } else {
-                                    getHandler().sendEmptyMessage(-1 * errorResponse.getCode(),
+                                    getHandler().sendEmptyMessage(errorResponse.getCode(),
                                             errorResponse.getMessage(), false);
                                 }
                             } else {
