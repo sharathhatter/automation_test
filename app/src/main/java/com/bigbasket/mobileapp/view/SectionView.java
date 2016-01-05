@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.slider.SliderTypes.HelpSliderView;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -816,7 +817,8 @@ public class SectionView {
                 sectionView.setLayoutParams(layoutParams);
                 sectionViewHolderRow.addView(sectionView);
             } catch (Exception e) {
-                e.printStackTrace();
+                //Ignore
+                Crashlytics.logException(e);
             }
         }
 

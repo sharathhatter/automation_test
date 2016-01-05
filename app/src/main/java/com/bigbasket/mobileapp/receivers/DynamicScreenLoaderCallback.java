@@ -18,7 +18,7 @@ import com.bigbasket.mobileapp.service.MainMenuSyncService;
 import com.bigbasket.mobileapp.util.LoaderIds;
 
 public abstract class DynamicScreenLoaderCallback implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = DynamicScreenLoaderCallback.class.getName();
+    private static final String TAG = DynamicScreenLoaderCallback.class.getSimpleName();
     private Context mContext;
     @Nullable
     private String mDynamicScreenType;
@@ -31,7 +31,7 @@ public abstract class DynamicScreenLoaderCallback implements LoaderManager.Loade
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         mDynamicScreenType = getDynamicScreenType(id);
         if (mDynamicScreenType == null) return null;
-        Log.d(TAG, "Create loader invoked for = " + mDynamicScreenType);
+        Log.d(TAG, "onCreateLoader - Context: " + mContext + ",  id = " + mDynamicScreenType);
         String selection = DynamicPageDbHelper.COLUMN_DYNAMIC_SCREEN_TYPE + " = \'" + mDynamicScreenType
                 + "\'";
         return new CursorLoader(mContext, Uri.withAppendedPath(DynamicPageDbHelper.CONTENT_URI, mDynamicScreenType),
@@ -58,7 +58,7 @@ public abstract class DynamicScreenLoaderCallback implements LoaderManager.Loade
             mDynamicScreenType = getDynamicScreenType(loader.getId());
         }
         if (mDynamicScreenType == null) return; // Defensive check
-        Log.d(TAG, "Load finished invoked for = " + mDynamicScreenType);
+        Log.d(TAG, "onLoadFinished - Context: " + mContext + ",  id = " + mDynamicScreenType);
         if (data != null && data.moveToFirst()) {
             if (DynamicPageDbHelper.isStale(mContext, mDynamicScreenType)) {
                 Log.d(TAG, "Dynamic screen = " + mDynamicScreenType + " is stale, triggering refresh");
@@ -80,6 +80,7 @@ public abstract class DynamicScreenLoaderCallback implements LoaderManager.Loade
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.d(TAG, "onLoaderReset - Context: " + mContext + ",  id = " + mDynamicScreenType);
     }
 
     public abstract void onCursorLoadingInProgress();

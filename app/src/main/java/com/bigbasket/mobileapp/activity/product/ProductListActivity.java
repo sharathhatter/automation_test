@@ -115,10 +115,27 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         if (mNameValuePairs != null) {
             setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(null);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mHeaderSpinnerView != null && mHeaderSpinnerView.isShown()) {
+            mHeaderSpinnerView.hide();
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -160,7 +177,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(getApplicationContext());
-        showProgressDialog("Please wait...");
+        showProgressDialog(getString(R.string.please_wait));
         mProductListCall = bigBasketApiService.productList(getCurrentNavigationContext(), paramMap);
         mProductListCall.enqueue(new ProductListApiResponseCallback<>(this, false, isFilterOrSortApplied,
                 currentTabIndx));
@@ -170,14 +187,6 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     @Override
     public String getScreenTag() {
         return TrackEventkeys.PRODUCT_LISTING_SCREEN;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle(null);
-        }
     }
 
     @Override
@@ -760,7 +769,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                     .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
                     .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
                     .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
-                    .withToolbar(getToolbar())
+                    .withToolbar(toolbar)
                     .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
                     .withTxtToolbarDropdown(mToolbarTextDropdown)
                     .withTypeface(faceRobotoRegular)

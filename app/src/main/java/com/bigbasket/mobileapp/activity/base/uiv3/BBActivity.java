@@ -121,7 +121,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     private FloatingBadgeCountView mBtnViewBasket;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getMainLayout());
 
@@ -860,6 +860,15 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         super.onPause();
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mMainMenuView != null) {
+            mMainMenuView.clear();
+            getSupportLoaderManager().destroyLoader(LoaderIds.MAIN_MENU_ID);
         }
     }
 

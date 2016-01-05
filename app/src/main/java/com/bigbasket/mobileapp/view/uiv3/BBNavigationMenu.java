@@ -283,7 +283,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
     public boolean onBackPressed(@Nullable DrawerLayout drawerLayout) {
         if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
             if (mListSubNavigationParent != null && mListSubNavigationParent.getVisibility() == View.VISIBLE) {
-                mListSubNavigationParent.setVisibility(View.GONE, true);
+                onSubNavigationHideRequested(true);
                 return true;
             } else {
                 drawerLayout.closeDrawers();
@@ -296,6 +296,12 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
     public void onNavigationSelection(String name) {
         if (mNavRecyclerView != null && mNavRecyclerView.getAdapter() != null) {
             ((NavigationSelectedValueAware) mNavRecyclerView.getAdapter()).setSelectedNavigationCategory(name);
+        }
+    }
+
+    public void clear() {
+        if(mNavRecyclerView != null){
+            mNavRecyclerView.setAdapter(null);
         }
     }
 }

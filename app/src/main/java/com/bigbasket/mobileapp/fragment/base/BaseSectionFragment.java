@@ -20,6 +20,7 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
 
     private SectionData mSectionData;
     private String mScreenName;
+    private boolean mSaveData = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,7 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mSectionData != null) {
+        if (mSectionData != null && mSaveData) {
             outState.putParcelable(Constants.SECTIONS, mSectionData);
         }
     }
@@ -84,6 +85,10 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
             }
         }
         mSectionData = sectionData;
+    }
+
+    protected void saveSectionData(boolean saveData) {
+        mSaveData = saveData;
     }
 
 }
