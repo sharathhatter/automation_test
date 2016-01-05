@@ -846,7 +846,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 .putBoolean(Constants.HAS_USER_CHOSEN_CITY, true)
                 .apply();
 
-        DynamicPageDbHelper.clearAll(getCurrentActivity());
+        DynamicPageDbHelper.clearAllAsync(getCurrentActivity());
         AppDataDynamic.reset(this);
     }
 

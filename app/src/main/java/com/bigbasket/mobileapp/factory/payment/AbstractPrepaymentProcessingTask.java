@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PayzappPrePaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PrePaymentParamsResponse;
@@ -25,7 +26,6 @@ import com.crashlytics.android.Crashlytics;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.WibmoSDKConfig;
 import com.payu.india.Payu.PayuConstants;
-import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -237,12 +237,12 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                             countDownLatch.countDown();
                             result = true;
                         } else {
-                            errorResponse = new ErrorResponse(-1 * response.body().status,
-                                    response.body().message, null);
+                            errorResponse = new ErrorResponse(response.body().status,
+                                    response.body().message, ErrorResponse.API_ERROR);
                         }
                     } else {
                         errorResponse = new ErrorResponse(response.code(), response.message(),
-                                response.errorBody());
+                                ErrorResponse.HTTP_ERROR);
                     }
                 } else {
                     Call<ApiResponse<PrePaymentParamsResponse>> call =
@@ -256,12 +256,12 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                             countDownLatch.countDown();
                             result = true;
                         } else {
-                            errorResponse = new ErrorResponse(-1 * response.body().status,
-                                    response.body().message, null);
+                            errorResponse = new ErrorResponse(response.body().status,
+                                    response.body().message, ErrorResponse.API_ERROR);
                         }
                     } else {
                         errorResponse = new ErrorResponse(response.code(), response.message(),
-                                response.errorBody());
+                                ErrorResponse.HTTP_ERROR);
                     }
                 }
             } catch (IOException ex) {
@@ -406,43 +406,6 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
 
         public boolean isFinished() {
             return isFinished;
-        }
-    }
-
-    public static class ErrorResponse {
-        private int code;
-        private String message;
-        private ResponseBody errorResponseBody;
-        private Throwable throwable;
-
-        public ErrorResponse(int code, String message, ResponseBody errorResponseBody) {
-            this.code = code;
-            this.message = message;
-            this.errorResponseBody = errorResponseBody;
-        }
-
-        public ErrorResponse(Throwable throwable) {
-            this.throwable = throwable;
-        }
-
-        public boolean isException() {
-            return throwable != null;
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public ResponseBody getErrorResponseBody() {
-            return errorResponseBody;
-        }
-
-        public Throwable getThrowable() {
-            return throwable;
         }
     }
 }

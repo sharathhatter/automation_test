@@ -96,11 +96,18 @@ public class DynamicPageDbHelper {
         editor.apply();
     }
 
-    public static void clearAll(Context context) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+    public static void clearAllAsync(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             AsyncTask.THREAD_POOL_EXECUTOR.execute(new DynamicScreenResetRunnable(context));
         } else {
             new Thread(new DynamicScreenResetRunnable(context)).start();
+        }
+    }
+
+    public static void clearAll(Context context) {
+        for (String dynamicScreenType : new String[]{AbstractDynamicPageSyncService.HOME_PAGE, AbstractDynamicPageSyncService.MAIN_MENU}) {
+            Uri uri = Uri.withAppendedPath(CONTENT_URI, dynamicScreenType);
+            context.getContentResolver().delete(uri, null, null);
         }
     }
 
@@ -113,10 +120,7 @@ public class DynamicPageDbHelper {
 
         @Override
         public void run() {
-            for (String dynamicScreenType : new String[]{AbstractDynamicPageSyncService.HOME_PAGE, AbstractDynamicPageSyncService.MAIN_MENU}) {
-                Uri uri = Uri.withAppendedPath(CONTENT_URI, dynamicScreenType);
-                context.getContentResolver().delete(uri, null, null);
-            }
+            clearAll(context);
         }
     }
 

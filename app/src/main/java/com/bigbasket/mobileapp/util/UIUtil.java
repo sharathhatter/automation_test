@@ -82,7 +82,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -245,16 +244,8 @@ public class UIUtil {
         }
     }
 
-    public static HashMap<String, String> getUserCityDetails(Context ctx) {
-        HashMap<String, String> map = new HashMap<>();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        map.put(Constants.CITY, preferences.getString(Constants.CITY, null));
-        map.put(Constants.CITY_ID, preferences.getString(Constants.CITY_ID, "-1"));
-        return map;
-    }
-
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
-        DynamicPageDbHelper.clearAll(ctx);
+        DynamicPageDbHelper.clearAllAsync(ctx);
 
         AppDataSyncHandler.reset(ctx);
         AppDataDynamic.reset(ctx);

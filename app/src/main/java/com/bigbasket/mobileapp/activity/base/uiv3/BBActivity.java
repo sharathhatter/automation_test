@@ -788,11 +788,11 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     }
 
     @Override
-    public void doLogout() {
+    public void doLogout(boolean wasSocialLogin) {
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawers();
         }
-        super.doLogout();
+        super.doLogout(wasSocialLogin);
     }
 
     public void changeAddressRequested() {
