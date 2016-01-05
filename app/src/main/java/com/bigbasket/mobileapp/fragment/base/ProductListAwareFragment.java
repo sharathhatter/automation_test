@@ -254,7 +254,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
             Call<ApiResponse<ProductNextPageResponse>> call =
-                    bigBasketApiService.productNextPage(mNameValuePairs);
+                    bigBasketApiService.productNextPage(getPreviousScreenName(),mNameValuePairs);
             call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
                 @Override
                 public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {
@@ -374,7 +374,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             }
             mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productItems, mBaseImgUrl,
                     productViewDisplayDataHolder, this, mProductInfo.getProductCount(),
-                    getNextScreenNavigationContext(), cartInfo,
+                    getCurrentScreenName(), cartInfo,
                     mHasSingleTab ? TrackEventkeys.SINGLE_TAB_NAME : mTabType);
             mProductRecyclerView.setAdapter(mProductListRecyclerAdapter);
             contentView.addView(mProductRecyclerView);
@@ -411,26 +411,26 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     @Nullable
     @Override
-    public String getNextScreenNavigationContext() {
+    public String getCurrentScreenName() {
         if (getCurrentActivity() != null) {
-            return getCurrentActivity().getNextScreenNavigationContext();
+            return getCurrentActivity().getCurrentScreenName();
         }
         return null;
     }
 
     @Nullable
     @Override
-    public String getCurrentNavigationContext() {
+    public String getPreviousScreenName() {
         if (getCurrentActivity() != null) {
-            return getCurrentActivity().getCurrentNavigationContext();
+            return getCurrentActivity().getPreviousScreenName();
         }
         return null;
     }
 
     @Override
-    public void setNextScreenNavigationContext(@Nullable String nc) {
+    public void setCurrentScreenName(@Nullable String nc) {
         if (getCurrentActivity() != null) {
-            getCurrentActivity().setNextScreenNavigationContext(nc);
+            getCurrentActivity().setCurrentScreenName(nc);
         }
     }
 

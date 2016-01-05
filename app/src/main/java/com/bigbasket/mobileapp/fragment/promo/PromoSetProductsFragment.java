@@ -77,7 +77,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_PRODUCT_LISTING);
+        setCurrentScreenName(TrackEventkeys.NC_PROMO_PRODUCT_LISTING);
     }
 
     @Override
@@ -300,11 +300,11 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         }
         if (cartInfo == null) {
             productListAdapter = new ProductListRecyclerAdapter(productItems, baseImgUrl,
-                    getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
+                    getProductDisplayHolder(), this, products.size(), getCurrentScreenName(),
                     TrackEventkeys.SINGLE_TAB_NAME);
         } else {
             productListAdapter = new ProductListRecyclerAdapter(productItems, baseImgUrl,
-                    getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
+                    getProductDisplayHolder(), this, products.size(), getCurrentScreenName(),
                     cartInfo, TrackEventkeys.SINGLE_TAB_NAME);
         }
 

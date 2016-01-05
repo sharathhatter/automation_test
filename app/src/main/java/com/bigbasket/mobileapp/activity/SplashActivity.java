@@ -52,7 +52,7 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_SPLASH_SCREEN);
+        setCurrentScreenName(TrackEventkeys.NC_SPLASH_SCREEN);
 
         // Defensive fix
         removePendingCodes();

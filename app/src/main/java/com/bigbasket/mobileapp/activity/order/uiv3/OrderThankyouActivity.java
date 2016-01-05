@@ -45,7 +45,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.CO_INVOICE);
+        setCurrentScreenName(TrackEventkeys.CO_INVOICE);
         setContentView(R.layout.uiv3_multiple_order_invoice_layout);
 
         ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
@@ -200,7 +200,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
     private void showInvoice(Order order) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(order.getOrderId());
+        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(getPreviousScreenName(), order.getOrderId());
         call.enqueue(new CallbackOrderInvoice<>(this));
     }
 

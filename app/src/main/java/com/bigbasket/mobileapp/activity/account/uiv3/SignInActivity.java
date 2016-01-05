@@ -49,7 +49,7 @@ public class SignInActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_LOGIN_SCREEN);
+        setCurrentScreenName(TrackEventkeys.NC_LOGIN_SCREEN);
 
         setTitle(getString(R.string.signInCapsVerb));
 

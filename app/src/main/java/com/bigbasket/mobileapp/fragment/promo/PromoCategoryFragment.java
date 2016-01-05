@@ -44,7 +44,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_CAT_LISTING);
+        setCurrentScreenName(TrackEventkeys.NC_PROMO_CAT_LISTING);
         if (savedInstanceState != null) {
             mPromoCategoryList = savedInstanceState.getParcelableArrayList(Constants.PROMO_CATS);
             if (mPromoCategoryList != null && mPromoCategoryList.size() > 0) {
@@ -61,7 +61,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
     private void getPromoCategories() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        Call<ApiResponse<BrowsePromoCategoryApiResponseContent>> call = bigBasketApiService.browsePromoCategory();
+        Call<ApiResponse<BrowsePromoCategoryApiResponseContent>> call = bigBasketApiService.browsePromoCategory(getPreviousScreenName());
         call.enqueue(new BBNetworkCallback<ApiResponse<BrowsePromoCategoryApiResponseContent>>(this) {
             @Override
             public void onSuccess(ApiResponse<BrowsePromoCategoryApiResponseContent> browsePromoCategoryApiResponse) {

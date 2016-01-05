@@ -110,7 +110,8 @@ public class DeepLinkHandler {
                 if (!TextUtils.isEmpty(id)) {
                     BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context.getCurrentActivity());
                     context.showProgressDialog("Please wait!");
-                    Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(id);
+                    Call<ApiResponse<OrderInvoice>> call =
+                            bigBasketApiService.getInvoice(context.getCurrentActivity().getPreviousScreenName(), id);
                     call.enqueue(new CallbackOrderInvoice<>(context));
                     return SUCCESS;
                 }

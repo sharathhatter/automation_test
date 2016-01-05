@@ -52,7 +52,7 @@ public class ChangeAddressTask<T extends OnBasketDeltaListener & OnAddressChange
         if (isTransient) {
             ctx.showProgressDialog("Checking for changes in basket...");
             Call<ApiResponse<SetAddressTransientResponse>> call =
-                    bigBasketApiService.setCurrentAddress(addressId, lat, lng, isTransient ? "1" : "0", area);
+                    bigBasketApiService.setCurrentAddress(ctx.getCurrentActivity().getPreviousScreenName(), addressId, lat, lng, isTransient ? "1" : "0", area);
             call.enqueue(new BBNetworkCallback<ApiResponse<SetAddressTransientResponse>>(ctx) {
                 @Override
                 public void onSuccess(ApiResponse<SetAddressTransientResponse> setAddressTransientResponse) {
@@ -92,7 +92,8 @@ public class ChangeAddressTask<T extends OnBasketDeltaListener & OnAddressChange
             });
         } else {
             ctx.showProgressDialog("Updating your address...");
-            Call<ApiResponse<SetAddressResponse>> call = bigBasketApiService.setCurrentAddress(addressId, lat, lng, area);
+            Call<ApiResponse<SetAddressResponse>> call =
+                    bigBasketApiService.setCurrentAddress(ctx.getCurrentActivity().getPreviousScreenName(), addressId, lat, lng, area);
             call.enqueue(new BBNetworkCallback<ApiResponse<SetAddressResponse>>(ctx) {
                 @Override
                 public void onSuccess(ApiResponse<SetAddressResponse> getAddressSummaryApiResponse) {

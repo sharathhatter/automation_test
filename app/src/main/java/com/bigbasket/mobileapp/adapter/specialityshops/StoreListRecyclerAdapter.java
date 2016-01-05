@@ -158,7 +158,7 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             final int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
                 if (context instanceof AnalyticsNavigationContextAware) {
-                    ((AnalyticsNavigationContextAware) context).setNextScreenNavigationContext(TrackingAware.SPECIALITYSHOPS +
+                    ((AnalyticsNavigationContextAware) context).setCurrentScreenName(TrackingAware.SPECIALITYSHOPS +
                             storeList.get(position).getStoreName());
                 }
                 new OnSectionItemClickListener<>((AppOperationAware)context)

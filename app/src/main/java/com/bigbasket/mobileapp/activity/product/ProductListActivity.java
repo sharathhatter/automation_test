@@ -118,7 +118,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     protected void onResume() {
         super.onResume();
         if (mNameValuePairs != null) {
-            setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
+            setCurrentScreenName(NameValuePair.buildNavigationContext(mNameValuePairs));
         }
     }
 
@@ -166,7 +166,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         }
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
-        setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
+        setCurrentScreenName(NameValuePair.buildNavigationContext(mNameValuePairs));
         if (!checkInternetConnection()) {
             getHandler().sendOfflineError(true);
             return;
@@ -177,8 +177,8 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(getApplicationContext());
-        showProgressDialog(getString(R.string.please_wait));
-        mProductListCall = bigBasketApiService.productList(getCurrentNavigationContext(), paramMap);
+        showProgressDialog("Please wait...");
+        mProductListCall = bigBasketApiService.productList(getPreviousScreenName(), paramMap);
         mProductListCall.enqueue(new ProductListApiResponseCallback<>(this, false, isFilterOrSortApplied,
                 currentTabIndx));
 
@@ -319,7 +319,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             }
             Gson gson = new GsonBuilder().create();
             mSponsoredProductsCall =
-                    apiService.getSponsoredProducts(getCurrentNavigationContext(),
+                    apiService.getSponsoredProducts(getPreviousScreenName(),
                             paramMap.remove(Constants.TYPE),
                             paramMap.remove(Constants.SLUG),
                             gson.toJson(tabTypes),
@@ -488,7 +488,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 renderHeaderDropDown(headerSection, headerSelIndx, productTabData.getScreenName());
                 HashMap<String, String> eventAttribs = new HashMap<>();
                 eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabType());
-                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                 trackEvent(TrackingAware.PRODUCT_LIST_TAB_CHANGED, eventAttribs);
             }
 
@@ -537,7 +537,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             newNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(tabTypeWithNoProducts)));
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
             Call<ApiResponse<ProductNextPageResponse>> call =
-                    bigBasketApiService.productNextPage(NameValuePair.toMap(newNameValuePairs));
+                    bigBasketApiService.productNextPage(getPreviousScreenName(),NameValuePair.toMap(newNameValuePairs));
             call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
                 @Override
                 public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {
@@ -700,7 +700,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         if (getSupportFragmentManager().getFragments() != null &&
                 getSupportFragmentManager().getFragments().size() > 0) {
             // New product list is requested over current page, so change nc by copying next-nc
-            setCurrentNavigationContext(navigationCtx);
+            setPreviousScreenName(navigationCtx);
         }
         loadProductTabs(false, 0);
     }
@@ -801,7 +801,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         if (getSupportFragmentManager().getFragments() != null &&
                 getSupportFragmentManager().getFragments().size() > 0) {
             // New product list is requested over current page, so change nc by copying next-nc
-            setCurrentNavigationContext(getNextScreenNavigationContext());
+            setPreviousScreenName(getCurrentScreenName());
         }
         loadProductTabs(false, 0);
     }
@@ -955,7 +955,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     private void trackSortByEvent(String sortedOn) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.NAME, sortedOn);
-        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         trackEvent(TrackingAware.SORT_BY, map);
     }
 
@@ -984,7 +984,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             trackEvent(TrackingAware.FILTER_CLEARED, null);
         } else {
             if (mFilterOptionCategories != null && mFilterOptionCategories.size() > 0)
-                new FilterTrackEvent(this, getNextScreenNavigationContext(),
+                new FilterTrackEvent(this, getCurrentScreenName(),
                         mFilterOptionCategories, filteredOnArrayList).execute();
         }
     }

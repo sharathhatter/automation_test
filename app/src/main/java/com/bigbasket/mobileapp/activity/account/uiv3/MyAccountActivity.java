@@ -59,7 +59,7 @@ public class MyAccountActivity extends BackButtonActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
+        setPreviousScreenName(TrackEventkeys.ACCOUNT_MENU);
         setTitle(getString(R.string.myAccount));
         getMemberDetails();
     }
@@ -87,7 +87,7 @@ public class MyAccountActivity extends BackButtonActivity implements
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.getMemberProfileData();
+        Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.getMemberProfileData(getPreviousScreenName());
         call.enqueue(new BBNetworkCallback<ApiResponse<UpdateProfileApiResponse>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback) {
@@ -131,7 +131,7 @@ public class MyAccountActivity extends BackButtonActivity implements
                 intent.putExtra(Constants.UPDATE_PROFILE_OBJ, updateProfileModel);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                 trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_CLICKED, map);
                 return true;
             default:
@@ -220,7 +220,7 @@ public class MyAccountActivity extends BackButtonActivity implements
         }
 
         contentLayout.addView(view);
-        setNextScreenNavigationContext(TrackEventkeys.ACCOUNT);
+        setCurrentScreenName(TrackEventkeys.ACCOUNT);
         trackEvent(TrackingAware.MY_ACCOUNT_SHOWN, null);
     }
 
@@ -230,7 +230,7 @@ public class MyAccountActivity extends BackButtonActivity implements
         intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ACCOUNT);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         trackEvent(TrackingAware.DELIVERY_ADDRESS_CLICKED, map);
     }
 

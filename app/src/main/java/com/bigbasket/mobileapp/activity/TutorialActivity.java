@@ -23,7 +23,7 @@ public class TutorialActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_TUTORIAL_SCREEN);
+        setCurrentScreenName(TrackEventkeys.NC_TUTORIAL_SCREEN);
         setContentView(R.layout.uiv3_tutorial_layout);
         showTutorial();
     }

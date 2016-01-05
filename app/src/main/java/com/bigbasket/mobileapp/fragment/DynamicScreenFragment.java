@@ -47,7 +47,7 @@ public class DynamicScreenFragment extends BaseSectionFragment {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        Call<ApiResponse<GetDynamicPageApiResponse>> call = bigBasketApiService.getDynamicPage(Constants.ANDROID,
+        Call<ApiResponse<GetDynamicPageApiResponse>> call = bigBasketApiService.getDynamicPage(getPreviousScreenName(), Constants.ANDROID,
                 DataUtil.getAppVersion(getActivity()), screenName);
         call.enqueue(new BBNetworkCallback<ApiResponse<GetDynamicPageApiResponse>>(this) {
             @Override

@@ -38,7 +38,7 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
         if (orderInvoice == null) return;
         ///logOrderItemTabClicked(orderInvoice);
         renderCartItems(orderInvoice);
-        setNextScreenNavigationContext(TrackEventkeys.NC_ORDER_DETAIL);
+        setCurrentScreenName(TrackEventkeys.NC_ORDER_DETAIL);
     }
 
     private void renderCartItems(OrderInvoice orderInvoice) {

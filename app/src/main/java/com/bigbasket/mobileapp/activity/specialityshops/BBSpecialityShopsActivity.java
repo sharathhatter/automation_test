@@ -73,7 +73,7 @@ public class BBSpecialityShopsActivity extends SearchActivity implements LaunchS
         StoreListRecyclerAdapter<BBSpecialityShopsActivity> storeListRecyclerAdapter =
                 new StoreListRecyclerAdapter<>(BBSpecialityShopsActivity.this, baseImgUrl, storeList);
         recyclerViewStoreList.setAdapter(storeListRecyclerAdapter);
-        setNextScreenNavigationContext(TrackingAware.SPECIALITYSHOPS + storeList.get(0).getStoreName());
+        setCurrentScreenName(TrackingAware.SPECIALITYSHOPS + storeList.get(0).getStoreName());
         logViewSpecialityShopsEvent(category);
     }
 
@@ -115,7 +115,7 @@ public class BBSpecialityShopsActivity extends SearchActivity implements LaunchS
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getApplicationContext());
         showProgressView();
-        Call<ApiResponse<SpecialityShopsListData>> call = bigBasketApiService.getSpecialityShops(catVal);
+        Call<ApiResponse<SpecialityShopsListData>> call = bigBasketApiService.getSpecialityShops(getPreviousScreenName(), catVal);
         call.enqueue(new BBNetworkCallback<ApiResponse<SpecialityShopsListData>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<SpecialityShopsListData> specialityStoreListApiResponse) {

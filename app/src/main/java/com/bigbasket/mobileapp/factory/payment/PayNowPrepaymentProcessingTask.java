@@ -22,11 +22,11 @@ public class PayNowPrepaymentProcessingTask<T extends AppOperationAware>
     @Override
     protected Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService) {
-        return bigBasketApiService.postPayzappPayNowDetails(orderId, paymentMethod);
+        return bigBasketApiService.postPayzappPayNowDetails(ctx.getCurrentActivity().getPreviousScreenName(), orderId, paymentMethod);
     }
 
     @Override
     protected Call<ApiResponse<PrePaymentParamsResponse>> getPrepaymentParamsApiCall(BigBasketApiService bigBasketApiService) {
-        return bigBasketApiService.postPayNowDetails(orderId, paymentMethod);
+        return bigBasketApiService.postPayNowDetails(ctx.getCurrentActivity().getPreviousScreenName(), orderId, paymentMethod);
     }
 }

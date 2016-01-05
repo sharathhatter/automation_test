@@ -84,7 +84,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     public void logSignInBtnClickEvent(String type) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.TYPE, type);
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         trackEvent(TrackingAware.LOGIN_BTN_CLICKED, eventAttribs);
     }
 
@@ -350,7 +350,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     Intent intent = new Intent(getCurrentActivity(), SocialLoginConfirmActivity.class);
                     intent.putExtra(Constants.SOCIAL_LOGIN_TYPE, loginType);
                     intent.putExtra(Constants.AUTH_TOKEN, authToken);
-                    setNextScreenNavigationContext(TrackEventkeys.NC_SIGNUP_SCREEN);
+                    setCurrentScreenName(TrackEventkeys.NC_SIGNUP_SCREEN);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case ApiErrorCodes.INVALID_USER_PASSED:

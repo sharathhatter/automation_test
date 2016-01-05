@@ -44,7 +44,7 @@ public class SignupActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_SIGNUP_SCREEN);
+        setCurrentScreenName(TrackEventkeys.NC_SIGNUP_SCREEN);
         setTitle(getString(R.string.signUpCapsVerb));
 
         renderSignUp();

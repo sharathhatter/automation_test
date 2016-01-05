@@ -48,7 +48,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.SL);
+        setCurrentScreenName(TrackEventkeys.SL);
         if (savedInstanceState != null) {
             mShoppingListNames = savedInstanceState.getParcelableArrayList(Constants.SHOPPING_LISTS);
             if (mShoppingListNames != null) {
@@ -70,7 +70,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
             handler.sendOfflineError(true);
             return;
         }
-        new ShoppingListNamesTask<>(this, true).startTask();
+        new ShoppingListNamesTask<>(this, true, getPreviousScreenName()).startTask();
     }
 
     private void renderShoppingList() {

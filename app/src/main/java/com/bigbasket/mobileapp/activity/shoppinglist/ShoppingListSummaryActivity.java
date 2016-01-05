@@ -133,7 +133,7 @@ public class ShoppingListSummaryActivity extends SearchActivity {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
         Call<ApiResponse<GetShoppingListSummaryResponse>> call = bigBasketApiService.getShoppingListSummary(
-                getCurrentNavigationContext(), mShoppingListName.getSlug());
+                getPreviousScreenName(), mShoppingListName.getSlug());
         call.enqueue(new BBNetworkCallback<ApiResponse<GetShoppingListSummaryResponse>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<GetShoppingListSummaryResponse> getShoppingListSummaryApiResponse) {
@@ -249,7 +249,7 @@ public class ShoppingListSummaryActivity extends SearchActivity {
         final int numTabs = shoppingListSummaries.size();
 
         final String nc = getNc();
-        setNextScreenNavigationContext(nc);
+        setCurrentScreenName(nc);
 
 
         final View layoutAddAll = findViewById(R.id.layoutAddAll);
@@ -285,12 +285,12 @@ public class ShoppingListSummaryActivity extends SearchActivity {
                         } else {
                             layoutAddAll.setVisibility(View.VISIBLE);
                         }
-                        setNextScreenNavigationContext(nc + "." + shoppingListSummaries.get(position).getFacetSlug());
+                        setCurrentScreenName(nc + "." + shoppingListSummaries.get(position).getFacetSlug());
                         HashMap<String, String> eventAttribs = new HashMap<>();
                         eventAttribs.put(Constants.TAB_NAME, shoppingListSummaries.get(position).getFacetSlug());
                         String tabName = !TextUtils.isEmpty(nc) && nc.equals(TrackEventkeys.SB)
                                 ? "SmartBasket" : "ShoppingList";
-                        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                         trackEvent(tabName + "." + TrackingAware.TAB_CHANGED, eventAttribs);
                     }
 
@@ -352,7 +352,7 @@ public class ShoppingListSummaryActivity extends SearchActivity {
         if (shoppingListName != null) {
             String nc = shoppingListName.getNc();
             nc += "." + shoppingListSummary.getFacetSlug();
-            setNextScreenNavigationContext(nc);
+            setCurrentScreenName(nc);
             eventAttribs.put(Constants.NAME, shoppingListName.getSlug());
             if (!shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
                 trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, eventAttribs);
@@ -425,8 +425,9 @@ public class ShoppingListSummaryActivity extends SearchActivity {
         String shoppingListSlug = mShoppingListName.getSlug();
         if (shoppingListSlug.equals(Constants.SMART_BASKET_SLUG)) {
             trackEvent(TrackingAware.SMART_BASKET + "." + shoppingListSummary.getFacetName() + " Add All", null);
-            Call<AddAllShoppingListItemResponse> call = bigBasketApiService.addAllToBasketSmartBasket(
-                    shoppingListSlug, shoppingListSummary.getFacetSlug());
+            Call<AddAllShoppingListItemResponse> call =
+                    bigBasketApiService.addAllToBasketSmartBasket(getCurrentScreenName(), shoppingListSlug,
+                            shoppingListSummary.getFacetSlug());
             call.enqueue(new BBNetworkCallback<AddAllShoppingListItemResponse>(this) {
                 @Override
                 public void onSuccess(AddAllShoppingListItemResponse addAllToBasketSmartBasketCallBack) {
@@ -459,8 +460,10 @@ public class ShoppingListSummaryActivity extends SearchActivity {
 
         } else {
             trackEvent(TrackingAware.SHOPPING_LIST + "." + shoppingListSummary.getFacetName() + " Add All", null);
-            Call<AddAllShoppingListItemResponse> call = bigBasketApiService.addAllToBasketShoppingList(
-                    shoppingListSlug, shoppingListSummary.getFacetSlug());
+            Call<AddAllShoppingListItemResponse> call =
+                    bigBasketApiService.addAllToBasketShoppingList(getCurrentScreenName(),
+                            shoppingListSlug,
+                            shoppingListSummary.getFacetSlug());
             call.enqueue(new BBNetworkCallback<AddAllShoppingListItemResponse>(this) {
                 @Override
                 public void onSuccess(AddAllShoppingListItemResponse addAllToBasketShoppingListCallBack) {

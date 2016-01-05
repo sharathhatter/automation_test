@@ -213,8 +213,9 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
             handler.sendOfflineError();
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        Call<ApiResponse<AddressSummary>> call = bigBasketApiService.getLocationDetail(String.valueOf(latLng.latitude),
-                String.valueOf(latLng.longitude));
+        Call<ApiResponse<AddressSummary>> call =
+                bigBasketApiService.getLocationDetail(getPreviousScreenName(), String.valueOf(latLng.latitude),
+                        String.valueOf(latLng.longitude));
         call.enqueue(new BBNetworkCallback<ApiResponse<AddressSummary>>(this) {
             @Override
             public void onSuccess(ApiResponse<AddressSummary> addressSummaryApiResponse) {

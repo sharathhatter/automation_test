@@ -49,8 +49,8 @@ public class DoWalletActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
-        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_WALLET_SUMMARY);
+        setPreviousScreenName(TrackEventkeys.ACCOUNT_MENU);
+        setCurrentScreenName(TrackEventkeys.NAVIGATION_CTX_WALLET_SUMMARY);
         setTitle(getString(R.string.wallet_activity));
         getCurrentMemberWalletBalance(false);
     }
@@ -62,7 +62,7 @@ public class DoWalletActivity extends BackButtonActivity {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
-        Call<ApiResponse<CurrentWalletBalance>> call = bigBasketApiService.getCurrentWalletBalance();
+        Call<ApiResponse<CurrentWalletBalance>> call = bigBasketApiService.getCurrentWalletBalance(getPreviousScreenName());
         call.enqueue(new BBNetworkCallback<ApiResponse<CurrentWalletBalance>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<CurrentWalletBalance> currentWalletBalCallback) {
@@ -324,7 +324,8 @@ public class DoWalletActivity extends BackButtonActivity {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<ArrayList<WalletDataItem>>> call = bigBasketApiService.getWalletActivity(dateFrom, dateTo);
+        Call<ApiResponse<ArrayList<WalletDataItem>>> call =
+                bigBasketApiService.getWalletActivity(getCurrentScreenName(),dateFrom, dateTo);
         call.enqueue(new BBNetworkCallback<ApiResponse<ArrayList<WalletDataItem>>>(this) {
             @Override
             public void onSuccess(ApiResponse<ArrayList<WalletDataItem>> walletActivityCallback) {

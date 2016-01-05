@@ -44,7 +44,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         ArrayList<ActiveVouchers> activeVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
         renderVouchers(activeVouchersList);
         HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentNavigationContext());
+        map.put(TrackEventkeys.NAVIGATION_CTX, getPreviousScreenName());
         trackEvent(TrackingAware.EVOUCHER_SHOWN, map);
     }
 

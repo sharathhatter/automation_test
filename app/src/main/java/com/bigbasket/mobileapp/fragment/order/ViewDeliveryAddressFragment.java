@@ -9,16 +9,13 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
@@ -129,7 +126,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.CO_ADDRESS);
+        setCurrentScreenName(TrackEventkeys.CO_ADDRESS);
         hasGifts = getActivity().getIntent().getBooleanExtra(Constants.HAS_GIFTS, false);
         getDeliveryAddress();
     }
@@ -228,7 +225,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
         layoutCheckoutFooter.setVisibility(View.GONE);
         renderCheckOutProgressView(hasGifts);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        Call<ApiResponse<GetDeliveryAddressApiResponseContent>> call = bigBasketApiService.getDeliveryAddresses();
+        Call<ApiResponse<GetDeliveryAddressApiResponseContent>> call = bigBasketApiService.getDeliveryAddresses(getPreviousScreenName());
         call.enqueue(new BBNetworkCallback<ApiResponse<GetDeliveryAddressApiResponseContent>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<GetDeliveryAddressApiResponseContent> deliveryAddrResp) {
@@ -399,7 +396,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
 
     @Override
     public void postOrderQc(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
-        setNextScreenNavigationContext(TrackEventkeys.CO_QC);
+        setCurrentScreenName(TrackEventkeys.CO_QC);
         launchSlotSelection(createPotentialOrderResponseContent);
     }
 
@@ -478,7 +475,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
         @Override
         public void onClick(View v) {
             HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
             trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
             if (mSelectedAddress == null) {
                 mSelectedAddress = getSelectedAddress();

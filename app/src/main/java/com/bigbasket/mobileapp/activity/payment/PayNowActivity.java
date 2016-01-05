@@ -64,7 +64,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_PAY_NOW);
+        setCurrentScreenName(TrackEventkeys.NAVIGATION_CTX_PAY_NOW);
         trackEvent(TrackingAware.PAY_NOW_SHOWN, null);
         setTitle(getString(R.string.payNow));
 
@@ -113,7 +113,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<GetPayNowParamsResponse>> call = bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes", "yes");
+        Call<ApiResponse<GetPayNowParamsResponse>> call =
+                bigBasketApiService.getPayNowDetails(getPreviousScreenName(), mOrderId, "yes", "yes", "yes", "yes", "yes");
         call.enqueue(new BBNetworkCallback<ApiResponse<GetPayNowParamsResponse>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse) {

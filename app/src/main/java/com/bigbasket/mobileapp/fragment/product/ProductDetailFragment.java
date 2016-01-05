@@ -100,10 +100,10 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         String productId = args.getString(Constants.SKU_ID);
         String eanCode = args.getString(Constants.EAN_CODE);
         if (TextUtils.isEmpty(productId) && TextUtils.isEmpty(eanCode)) return;
-        setNextScreenNavigationContext("pd." + (productId != null ? productId : eanCode));
+        setCurrentScreenName("pd." + (productId != null ? productId : eanCode));
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        Call<ProductDetailApiResponse> call = bigBasketApiService.productDetails(productId, eanCode);
+        Call<ProductDetailApiResponse> call = bigBasketApiService.productDetails(getPreviousScreenName(), productId, eanCode);
         call.enqueue(new BBNetworkCallback<ProductDetailApiResponse>(this, true) {
             @Override
             public void onSuccess(ProductDetailApiResponse productDetailApiResponse) {
@@ -170,7 +170,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         productViewHolder.setBasketDecActionListener(new OnProductBasketActionListener(BasketOperation.DEC, this));
         ProductView.setProductView(productViewHolder,
                 mProduct, null, productViewDisplayDataHolder,
-                false, this, getNextScreenNavigationContext(), null, "none",
+                false, this, getCurrentScreenName(), null, "none",
                 appDataDynamic.getStoreAvailabilityMap(),
                 appDataDynamic.getSpecialityStoreDetailList());
 

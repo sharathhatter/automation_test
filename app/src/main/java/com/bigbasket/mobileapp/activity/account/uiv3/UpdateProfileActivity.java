@@ -288,7 +288,7 @@ public class UpdateProfileActivity extends BackButtonActivity implements OtpDial
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(isResendOtpRequested ? getString(R.string.resending_otp) : getString(R.string.please_wait));
-        Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.setUserDetailsData(userDetails);
+        Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.setUserDetailsData(getPreviousScreenName(),userDetails);
         call.enqueue(new BBNetworkCallback<ApiResponse<UpdateProfileApiResponse>>(this) {
             @Override
             public void onSuccess(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback) {

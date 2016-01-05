@@ -227,7 +227,7 @@ public final class ProductView {
             txtExpressMsg.setText("");
             radioGroupExpress.removeAllViews();
             setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                    productDataAware, null);
+                    productDataAware, null, navigationCtx);
             setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                     productDataAware, navigationCtx, cartInfo, tabName, null, null);
             return;
@@ -258,7 +258,7 @@ public final class ProductView {
                     isFirst = false;
                     rbtnAvailabilityType.setChecked(true);
                     setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                            productDataAware, particularStoreMap.get(Constants.PRODUCT_STATUS));
+                            productDataAware, particularStoreMap.get(Constants.PRODUCT_STATUS),navigationCtx);
                     setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                             productDataAware, navigationCtx, cartInfo, tabName,
                             particularStoreMap.get(Constants.PRODUCT_STATUS), particularStoreMap);
@@ -272,7 +272,7 @@ public final class ProductView {
                         String storeAvailability = selectedStore != null ?
                                 selectedStore.get(Constants.PRODUCT_STATUS) : null;
                         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                                productDataAware, storeAvailability);
+                                productDataAware, storeAvailability,navigationCtx);
                         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                                 productDataAware, navigationCtx, cartInfo, tabName, storeAvailability,
                                 selectedStore);
@@ -327,7 +327,7 @@ public final class ProductView {
         String storeAvailability = currentStoreMap != null ?
                 currentStoreMap.get(Constants.PRODUCT_STATUS) : null;
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                productDataAware, storeAvailability);
+                productDataAware, storeAvailability, navigationCtx);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, navigationCtx, cartInfo, tabName, storeAvailability,
                 currentStoreMap);
@@ -435,7 +435,8 @@ public final class ProductView {
 
     private static <T extends AppOperationAware> void setProductAdditionalActionMenu(ProductViewHolder productViewHolder, final Product product,
                                                                                      final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                                                     final T shoppingListNamesAware, String storeAvailability) {
+                                                                                     final T shoppingListNamesAware,
+                                                                                     String storeAvailability, final String navigationCtx) {
         final ImageView imgProductOverflowAction = productViewHolder.getImgProductOverflowAction();
         if ((productViewDisplayDataHolder.isShowShoppingListBtn() || productViewDisplayDataHolder.showShopListDeleteBtn())
                 && productViewDisplayDataHolder.isLoggedInMember()
@@ -484,7 +485,7 @@ public final class ProductView {
                         if (shoppingListNamesAware.checkInternetConnection()) {
                             ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.ADD_TO_SHOPPING_LIST, null);
                             ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
-                            new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
+                            new ShoppingListNamesTask<>(shoppingListNamesAware, false, navigationCtx).startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
                         }

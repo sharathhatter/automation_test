@@ -152,7 +152,7 @@ public class HomeActivity extends SearchActivity {
     @Override
     public void onResume() {
         super.onResume();
-        setNextScreenNavigationContext(TrackEventkeys.HOME);
+        setCurrentScreenName(TrackEventkeys.HOME);
         // Check if spinner's index is set to "CHANGE MY LOCATION"
         // In case it is True, then reset it to 0, and ensure that spinner's on item-selection
         // even is NOT triggered

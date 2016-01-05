@@ -69,7 +69,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.CO_DELIVERY_OPS);
+        setCurrentScreenName(TrackEventkeys.CO_DELIVERY_OPS);
         setTitle(getString(R.string.chooseSlot));
         mShipments = getIntent().getParcelableArrayListExtra(Constants.SHIPMENTS);
         String cityMode = getIntent().getStringExtra(Constants.CITY_MODE); //= merge basket
@@ -476,7 +476,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         @Override
         public void onClick(View v) {
             HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
             trackEvent(TrackingAware.CHECKOUT_SLOT_SELECTED_CLICKED, map, null, null, false, true);
             if (mSelectedShipmentIndx == null || mSelectedShipmentIndx.size() == 0) {
                 showToast(getString(R.string.selectAllSlotsErrMsg));
@@ -515,7 +515,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         public void onClick(View v) {
             showSlotListDialog(v);
             HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
             trackEvent(TrackingAware.CHECKOUT_SLOT_SHOWN, map);
         }
 
@@ -549,7 +549,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                         }
 
                         HashMap<String, String> map = new HashMap<>();
-                        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                         if (selectedSlot.getSlotDisplay() != null)
                             map.put(TrackEventkeys.SELECTED_SLOT, selectedSlot.getSlotDisplay().getTime());
                         trackEvent(TrackingAware.CHECKOUT_SLOT_SELECTED, map);

@@ -46,7 +46,7 @@ public class ChangePasswordFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
+        setPreviousScreenName(TrackEventkeys.ACCOUNT_MENU);
     }
 
     private void initiateChangePassword(View base) {
