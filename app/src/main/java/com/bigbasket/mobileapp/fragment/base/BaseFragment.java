@@ -69,7 +69,7 @@ public abstract class BaseFragment extends AbstractFragment implements
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
     private String progressDialogTag;
-    private ProgressDialog progressDialog;
+    private View mLoadingView;
 
     @Override
     public void onAttach(Context context) {
@@ -135,9 +135,11 @@ public abstract class BaseFragment extends AbstractFragment implements
         ViewGroup view = getContentView();
         if (view == null) return;
         view.removeAllViews();
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View loadingView = inflater.inflate(R.layout.uiv3_loading_layout, view, false);
-        view.addView(loadingView);
+        if(mLoadingView == null) {
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            mLoadingView = inflater.inflate(R.layout.uiv3_loading_layout, view, false);
+        }
+        view.addView(mLoadingView);
     }
 
     public void hideProgressView() {

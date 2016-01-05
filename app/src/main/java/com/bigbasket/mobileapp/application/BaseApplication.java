@@ -16,6 +16,7 @@ import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.localytics.android.Localytics;
 import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
 import com.moe.pushlibrary.MoEHelper;
+import com.moe.pushlibrary.utils.MoEHelperUtils;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.Picasso;
 
@@ -70,7 +71,8 @@ public class BaseApplication extends Application {
             AdWordsConversionReporter.reportWithConversionId(this.getApplicationContext(),
                     "963141508", "hfTqCLOjpWAQhL-hywM", "0.00", false);
         } else {
-            Localytics.setLoggingEnabled(true);
+            //Read this value from dev config
+            Localytics.setLoggingEnabled(false);
         }
         Picasso p = new Picasso.Builder(this)
                 .memoryCache(new LruCache(getMemCacheSize()))

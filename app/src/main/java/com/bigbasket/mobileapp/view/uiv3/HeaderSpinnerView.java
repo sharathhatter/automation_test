@@ -27,7 +27,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.HashMap;
 
-public class HeaderSpinnerView<T> {
+public class HeaderSpinnerView<T extends AppOperationAware> {
     private T ctx;
     private Typeface typeface;
     @Nullable
@@ -43,6 +43,7 @@ public class HeaderSpinnerView<T> {
     private ImageView imgCloseChildDropdown;
     private ViewGroup layoutListHeader;
     private int mSelectedPosition = Spinner.INVALID_POSITION;
+    private final OnChildDropdownRequested onChildDropdownRequested;
 
     private HeaderSpinnerView(T ctx, Typeface typeface, @Nullable Section headSection, int defaultSelectedIdx,
                               @Nullable String fallbackHeaderTitle, ListView listHeaderDropdown,
@@ -62,15 +63,13 @@ public class HeaderSpinnerView<T> {
         this.txtToolbarDropdown = txtToolbarDropdown;
         this.imgCloseChildDropdown = imgCloseChildDropdown;
         this.layoutListHeader = layoutListHeader;
+        onChildDropdownRequested = new OnChildDropdownRequested(layoutChildToolbarContainer,
+                ((AppOperationAware) ctx).getCurrentActivity());
     }
 
     public void setView() {
         if (headSection != null && headSection.getSectionItems() != null
                 && headSection.getSectionItems().size() > 0) {
-            final OnChildDropdownRequested onChildDropdownRequested =
-                    new OnChildDropdownRequested(layoutChildToolbarContainer,
-                            ((AppOperationAware) ctx).getCurrentActivity());
-
             if (toolbar.findViewById(txtToolbarDropdown.getId()) == null) {
                 txtToolbarDropdown.setTypeface(typeface);
                 toolbar.addView(txtToolbarDropdown);
@@ -101,7 +100,8 @@ public class HeaderSpinnerView<T> {
             if (headSection.getSectionItems() != null && headSection.getSectionItems().size() > 0) {
                 SectionItem firstSectionItem = headSection.getSectionItems().get(0);
                 if (firstSectionItem != null && firstSectionItem.getTitle() != null
-                        && !TextUtils.isEmpty(firstSectionItem.getTitle().getText())) {
+                        && !TextUtils.isEmpty(firstSectionItem.getTitle().getText())
+                        && ctx instanceof NavigationSelectionAware) {
                     ((NavigationSelectionAware) ctx).onNavigationSelection(firstSectionItem.getTitle().getText().split("\\(")[0]);
                 }
             }
@@ -153,6 +153,13 @@ public class HeaderSpinnerView<T> {
         this.headSection = headSection;
     }
 
+    public boolean isShown() {
+        return layoutChildToolbarContainer.getVisibility() == View.VISIBLE;
+    }
+    public void hide() {
+        onChildDropdownRequested.onClick(imgCloseChildDropdown);
+    }
+
     public static class OnChildDropdownRequested implements View.OnClickListener {
 
         private ViewGroup layoutChildToolbarContainer;
@@ -184,7 +191,7 @@ public class HeaderSpinnerView<T> {
     }
 
 
-    public static class HeaderSpinnerViewBuilder<T> {
+    public static class HeaderSpinnerViewBuilder<T extends AppOperationAware> {
         private T ctx;
         private Typeface typeface;
         private Section headSection;

@@ -42,6 +42,7 @@ import com.bigbasket.mobileapp.receivers.DynamicScreenLoaderCallback;
 import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.LeakCanaryObserverImpl;
 import com.bigbasket.mobileapp.util.LoaderIds;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.SectionCursorHelper;
@@ -66,7 +67,13 @@ public class HomeFragment extends BaseSectionFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.home_fragment_layout, container, false);
+        saveSectionData(false);
+        View rootView = inflater.inflate(R.layout.home_fragment_layout, container, false);
+        NudgeView nudgeView = (NudgeView) rootView.findViewById(R.id.nudge);
+        if(getCurrentActivity() != null) {
+            nudgeView.setMoEHelper(getCurrentActivity().getMoEHelper());
+        }
+        return rootView;
     }
 
     @Override
@@ -87,6 +94,27 @@ public class HomeFragment extends BaseSectionFragment {
         }
 
         getAppData(null);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        setSectionData(null);
+        ViewGroup contentView = getContentView();
+        if (contentView != null) {
+            contentView.removeAllViews();
+        }
+        if(mRecyclerView != null) {
+            mRecyclerView.setAdapter(null);
+            mRecyclerView.removeAllViews();
+        }
+        mRecyclerView = null;
+        if(getActivity() != null && !getActivity().isFinishing()) {
+            showProgressView();
+        }
+        mDynamicTiles = null;
+        getLoaderManager().destroyLoader(LoaderIds.HOME_PAGE_ID);
+        System.gc();
     }
 
     private void homePageGetter(Bundle savedInstanceState) {
@@ -224,13 +252,9 @@ public class HomeFragment extends BaseSectionFragment {
         if (contentView == null || sectionData == null || sectionData.getSections() == null
                 || sectionData.getSections().size() == 0) return;
 
-        // Render sections
-        showProgressView();
-
         contentView.removeAllViews();
 
-        addNudgeView();
-
+        // Render sections
         Pair<RecyclerView, ArrayList<Integer>> pair = getSectionRecylerView(contentView);
         mRecyclerView = pair.first;
         if (mRecyclerView != null) {
@@ -240,12 +264,6 @@ public class HomeFragment extends BaseSectionFragment {
 
         // Check if any deep-link needs to be opened
         processPendingDeepLink();
-    }
-
-    private void addNudgeView() {
-        if (getCurrentActivity() == null || getView() == null) return;
-        NudgeView nudgeView = (NudgeView) getView().findViewById(R.id.nudge);
-        nudgeView.setMoEHelper(getCurrentActivity().getMoEHelper());
     }
 
     public void syncDynamicTiles() {
