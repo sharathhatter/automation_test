@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
@@ -46,9 +47,11 @@ public class DeepLinkHandler {
     public static final int REGISTER_DEVICE_REQUIRED = 4;
     public static final String PATH_MY_WALLET = "/member/credit/";
     public static final String PATH_FUND_WALLET = "/payment/wallet/";
+    public static final String PATH_MY_ORDERS = "/member/active-orders/";
     public static final String REGEX_PATH_MY_WALLET = "^" + PATH_MY_WALLET + "$";
     public static final String REGEX_PATH_FUND_WALLET = "^" + PATH_FUND_WALLET + "$";
     public static final String REGEX_PATH_PAY_NOW = "^/payment/pay_now/\\d+/$";
+    public static final String REGEX_PATH_MY_ORDERS = "^" + PATH_MY_ORDERS + "$";
 
     public static int handleDeepLink(AppOperationAware context, Uri uri) {
         if (uri == null) {
@@ -289,6 +292,11 @@ public class DeepLinkHandler {
                     context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     return SUCCESS;
                 }
+            } else if (path.matches(REGEX_PATH_MY_ORDERS)) {
+                Intent intent = new Intent(context.getCurrentActivity(), OrderListActivity.class);
+                intent.putExtra(Constants.ORDER, "all");
+                intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.DEEP_LINK);
+                context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
             }
         }
         return FAILED;
@@ -299,6 +307,7 @@ public class DeepLinkHandler {
         loginRequiredUrls.add(REGEX_PATH_MY_WALLET);
         loginRequiredUrls.add(REGEX_PATH_FUND_WALLET);
         loginRequiredUrls.add(REGEX_PATH_PAY_NOW);
+        loginRequiredUrls.add(REGEX_PATH_MY_ORDERS);
         return loginRequiredUrls;
     }
 }

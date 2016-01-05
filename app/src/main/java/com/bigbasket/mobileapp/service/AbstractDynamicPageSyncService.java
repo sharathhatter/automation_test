@@ -1,10 +1,12 @@
 package com.bigbasket.mobileapp.service;
 
 import android.app.IntentService;
+import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.DynamicPageResponse;
+import com.bigbasket.mobileapp.util.CompressUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
@@ -44,15 +46,28 @@ public abstract class AbstractDynamicPageSyncService extends IntentService {
             if (response.isSuccessful()) {
                 responseJson = response.body().string();
                 // Parsing the json to extract duration for caching :(
-                DynamicPageResponse dynamicPageResponse = new Gson().fromJson(responseJson, DynamicPageResponse.class);
-                cacheDuration = dynamicPageResponse.apiResponseContent.cacheDuration;
+                DynamicPageResponse dynamicPageResponse = new Gson().fromJson(responseJson,
+                        DynamicPageResponse.class);
+                if (dynamicPageResponse.status == 0) {
+                    cacheDuration = dynamicPageResponse.apiResponseContent.cacheDuration;
+                } else {
+                    responseJson = null;
+                }
             } else {
-                responseJson = "";
+                responseJson = null;
             }
         } catch (IOException e) {
-            responseJson = "";
+            responseJson = null;
         }
+        byte[] compressedResponse = null;
         DynamicPageDbHelper dynamicPageDbHelper = new DynamicPageDbHelper(this);
-        dynamicPageDbHelper.save(dynamicScreenType, responseJson, cacheDuration);
+        if (!TextUtils.isEmpty(responseJson)) {
+            try {
+                compressedResponse = CompressUtil.gzipCompress(responseJson);
+            } catch (IOException e) {
+                compressedResponse = null;
+            }
+        }
+        dynamicPageDbHelper.save(dynamicScreenType, compressedResponse, cacheDuration);
     }
 }
