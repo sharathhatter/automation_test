@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.model.order.PaytmResponseHolder;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -49,6 +50,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
     private String mFinalTotal;
     private FundWalletPrepaymentProcessingTask<FundWalletActivity> mFundWalletPrepaymentProcessingTask;
     private boolean isPayUOptionVisible;
+    private ViewGroup mProgressLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
         setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_FUND_WALLET);
         trackEvent(TrackingAware.FUND_WALLET_SHOWN, null);
         setTitle(getString(R.string.fundWallet));
+        mProgressLayout = (ViewGroup) findViewById(R.id.layoutLoading);
         new GetCitiesTask<>(this).startTask();
     }
 
@@ -95,6 +98,9 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
     @Override
     public void onResume() {
         super.onResume();
+        if (PaytmResponseHolder.hasPendingTransaction()) {
+            PaytmResponseHolder.processPaytmResponse(this);
+        }
     }
 
     @Override
@@ -242,6 +248,18 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
 
         setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
+        if (mProgressLayout == null) return;
+        mProgressLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        if (mProgressLayout == null) return;
+        mProgressLayout.setVisibility(View.GONE);
     }
 
     @Override
