@@ -182,9 +182,11 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             if (activeVouchers.canApply()) {
                 txtVoucherMsg.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.uiv3_secondary_text_color));
                 txtLblApply.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.uiv3_dialog_header_text_bkg));
+                txtLblApply.setBackgroundResource(R.drawable.apply_button_rounded_background);
             } else {
                 txtVoucherMsg.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.dark_red));
                 txtLblApply.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.uiv3_secondary_text_color));
+                txtLblApply.setBackgroundResource(R.drawable.grey_border);
             }
 
             txtVoucherCode.setText(activeVouchers.getCode());
