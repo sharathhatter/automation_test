@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Build;
 
 import com.bigbasket.mobileapp.BuildConfig;
+import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 import com.bigbasket.mobileapp.util.MultiDexHandler;
@@ -17,6 +18,7 @@ import com.localytics.android.Localytics;
 import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperUtils;
+import com.newrelic.agent.android.NewRelic;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.Picasso;
 
@@ -56,6 +58,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        NewRelic.withApplicationToken(getString(R.string.new_relic_app_token)).start(this);
         Fabric.with(this, new Crashlytics());
         AuthParameters.reset();
         FacebookSdk.sdkInitialize(this.getApplicationContext());
