@@ -258,7 +258,7 @@ public final class ProductView {
                     isFirst = false;
                     rbtnAvailabilityType.setChecked(true);
                     setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                            productDataAware, particularStoreMap.get(Constants.PRODUCT_STATUS),navigationCtx);
+                            productDataAware, particularStoreMap.get(Constants.PRODUCT_STATUS), navigationCtx);
                     setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                             productDataAware, navigationCtx, cartInfo, tabName,
                             particularStoreMap.get(Constants.PRODUCT_STATUS), particularStoreMap);
@@ -272,7 +272,7 @@ public final class ProductView {
                         String storeAvailability = selectedStore != null ?
                                 selectedStore.get(Constants.PRODUCT_STATUS) : null;
                         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                                productDataAware, storeAvailability,navigationCtx);
+                                productDataAware, storeAvailability, navigationCtx);
                         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                                 productDataAware, navigationCtx, cartInfo, tabName, storeAvailability,
                                 selectedStore);

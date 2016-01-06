@@ -1,17 +1,10 @@
 package com.bigbasket.mobileapp.handler.click;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
-import com.bigbasket.mobileapp.service.AnalyticsIntentService;
-import com.bigbasket.mobileapp.util.Constants;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.Map;
 

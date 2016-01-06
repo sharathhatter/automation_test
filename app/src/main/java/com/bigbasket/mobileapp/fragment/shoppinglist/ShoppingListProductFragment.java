@@ -76,7 +76,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
         ArrayList<AbstractProductItem> productItems = new ArrayList<>(shoppingListSummary.getProducts().size());
-        for(Product p: shoppingListSummary.getProducts()){
+        for (Product p : shoppingListSummary.getProducts()) {
             productItems.add(new NormalProductItem(p));
         }
         if (cartInfo != null) {

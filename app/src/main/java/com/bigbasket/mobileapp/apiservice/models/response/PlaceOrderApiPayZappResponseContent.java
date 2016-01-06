@@ -32,7 +32,6 @@ public class PlaceOrderApiPayZappResponseContent extends PlaceOrderReponseConten
     }
 
 
-
     @Override
     public int describeContents() {
         return super.describeContents();

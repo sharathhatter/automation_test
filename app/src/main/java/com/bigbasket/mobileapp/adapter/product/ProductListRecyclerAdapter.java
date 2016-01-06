@@ -115,7 +115,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         if (getTotalProductsSize() > 0 && position >= getTotalProductsSize()) {
             return VIEW_TYPE_EMPTY;
         }
-        if(position >= products.size() ) {
+        if (position >= products.size()) {
             return (mLoadingFailed ? VIEW_TYPE_PRODUCT_LOADING_FAILED : VIEW_TYPE_LOADING);
         } else {
             return products.get(position).getType();
@@ -172,7 +172,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             AbstractProductItem productItem = products.get(position);
 
             ProductView.setProductView((ProductViewHolder) viewHolder,
-                    ((NormalProductItem)productItem).getProduct(), baseImgUrl,
+                    ((NormalProductItem) productItem).getProduct(), baseImgUrl,
                     productViewDisplayDataHolder,
                     false, activityAware, navigationCtx, cartInfo, mTabType, storeAvailabilityMap,
                     specialityStoreInfoHashMap);
@@ -195,10 +195,10 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                     ((InfiniteProductListAware) activityAware).retryNextPage();
                 }
             });
-        } else if( viewType == VIEW_TYPE_SPONSORED_PRODUCT_DATA) {
+        } else if (viewType == VIEW_TYPE_SPONSORED_PRODUCT_DATA) {
             View view = ((FixedLayoutViewHolder) viewHolder).getItemView();
-            ((ViewGroup)view).removeAllViews();
-            SponsoredProductItem spItem = (SponsoredProductItem)products.get(getActualPosition(position));
+            ((ViewGroup) view).removeAllViews();
+            SponsoredProductItem spItem = (SponsoredProductItem) products.get(getActualPosition(position));
             SectionView sectionView = new SectionView(view.getContext(),
                     productViewDisplayDataHolder.getSerifTypeface(),
                     spItem.getSectionData(), navigationCtx);
@@ -207,7 +207,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             OnSponsoredItemClickListener<AppOperationAware> clickListener = null;
             String sectionId = null;
             Map<String, String> analyticsAttrs = null;
-            if(spItem.getSection() != null && spItem.getSection().getSectionItems() != null &&
+            if (spItem.getSection() != null && spItem.getSection().getSectionItems() != null &&
                     !spItem.getSection().getSectionItems().isEmpty()) {
                 SectionItem sectionItem = spItem.getSection().getSectionItems().get(0);
                 sectionId = sectionItem.getId();
@@ -219,18 +219,18 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                         analyticsAttrs);
             }
             View spView = sectionView.getViewToRender(spItem.getSection(), inflater,
-                    ((ViewGroup)view), 0, clickListener);
-            if(spView != null) {
+                    ((ViewGroup) view), 0, clickListener);
+            if (spView != null) {
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
                 ((ViewGroup) view).addView(spView, layoutParams);
-                if(!spItem.isSeen()){
+                if (!spItem.isSeen()) {
                     spItem.setIsSeen(true);
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(
                             activityAware.getCurrentActivity().getApplicationContext());
                     String analyticsAttrsJsonString = null;
-                    if(analyticsAttrs != null && !analyticsAttrs.isEmpty()){
+                    if (analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
                         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
                         analyticsAttrsJsonString = gson.toJson(analyticsAttrs);
                     }

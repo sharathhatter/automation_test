@@ -58,16 +58,16 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:background="@color/payu_divider_color" />
-
                         <Button
                             android:id="@+id/button_one_click_payment"
                             style="@style/PayuPaymentOptionStyle"
                             android:drawableLeft="@drawable/one_click"
                             android:text="@string/one_click_payment" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
 
                     </LinearLayout>
 
@@ -78,16 +78,16 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:background="@color/payu_divider_color" />
-
                         <Button
                             android:id="@+id/button_stored_card"
                             style="@style/PayuPaymentOptionStyle"
                             android:drawableLeft="@drawable/ic_account_balance_wallet_black_24dp"
                             android:text="@string/stored_card" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -97,16 +97,16 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:background="@color/payu_divider_color" />
-
                         <Button
                             android:id="@+id/button_netbanking"
                             style="@style/PayuPaymentOptionStyle"
                             android:drawableLeft="@drawable/ic_account_balance_black_24dp"
                             android:text="@string/net_banking" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
 
                     </LinearLayout>
 
@@ -117,16 +117,16 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:background="@color/payu_divider_color" />
-
                         <Button
                             android:id="@+id/button_credit_debit_card"
                             style="@style/PayuPaymentOptionStyle"
                             android:drawableLeft="@drawable/ic_credit_card_black_24dp"
                             android:text="@string/credit_debit_card" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
 
                     </LinearLayout>
 
@@ -137,16 +137,16 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:background="@color/payu_divider_color" />
-
                         <Button
                             android:id="@+id/button_cash_card"
                             style="@style/PayuPaymentOptionStyle"
                             android:drawableLeft="@drawable/ic_credit_card_black_24dp"
                             android:text="@string/cash_card" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -156,16 +156,16 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:background="@color/payu_divider_color" />
-
                         <Button
                             android:id="@+id/button_emi"
                             style="@style/PayuPaymentOptionStyle"
                             android:drawableLeft="@drawable/ic_credit_card_black_24dp"
                             android:text="@string/emi" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -175,16 +175,16 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:background="@color/payu_divider_color" />
-
                         <Button
                             android:id="@+id/button_payumoney"
                             style="@style/PayuPaymentOptionStyle"
                             android:drawableLeft="@drawable/payu_money"
                             android:text="@string/payu_money" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -194,16 +194,16 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:background="@color/payu_divider_color" />
-
                         <Button
                             android:id="@+id/button_merchant_payment"
                             style="@style/PayuPaymentOptionStyle"
                             android:drawableLeft="@drawable/ic_credit_card_black_24dp"
                             android:text="@string/merchant_payment" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -213,16 +213,16 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:background="@color/payu_divider_color" />
-
                         <Button
                             android:id="@+id/button_verify_api"
                             style="@style/PayuPaymentOptionStyle"
                             android:drawableLeft="@drawable/ic_credit_card_black_24dp"
                             android:text="@string/verify_api" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
 
                     </LinearLayout>
                 </LinearLayout>

@@ -781,7 +781,7 @@ public class SectionView {
                 if (sectionView == null || sectionView.getLayoutParams() == null) {
                     return;
                 }
-                if(!section.isShown() && section.getSectionItems() != null) {
+                if (!section.isShown() && section.getSectionItems() != null) {
                     section.setIsShown(true);
                     //TODO: Improve the impression tracking, by actually updating imps' count
                     // when a section item is really displayed,
@@ -791,12 +791,12 @@ public class SectionView {
                     String cityId = preferences.getString(Constants.CITY_ID, null);
                     Map<String, String> analyticsAttrs;
                     Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
-                    for(SectionItem sectionItem: section.getSectionItems()){
-                        if(TextUtils.isEmpty(sectionItem.getId())){
+                    for (SectionItem sectionItem : section.getSectionItems()) {
+                        if (TextUtils.isEmpty(sectionItem.getId())) {
                             continue;
                         }
                         analyticsAttrs = mSectionData.getAnalyticsAttrs(sectionItem.getId());
-                        if(analyticsAttrs != null && !analyticsAttrs.isEmpty()){
+                        if (analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
                             AnalyticsIntentService.startUpdateAnalyticsEvent(
                                     context,
                                     false,

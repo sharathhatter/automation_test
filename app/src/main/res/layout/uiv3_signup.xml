@@ -117,7 +117,7 @@
                     android:ems="10"
                     android:hint="@string/password"
                     android:imeActionLabel="@string/action_sign_up_short"
-                    android:imeOptions="actionUnspecified"
+                    android:imeOptions="actionDone"
                     android:inputType="textPassword"
                     android:paddingBottom="@dimen/padding_normal"
                     android:paddingLeft="@dimen/padding_normal"

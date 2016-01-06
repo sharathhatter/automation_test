@@ -145,7 +145,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             cursor = db.query(DynamicPageDbHelper.TABLE_NAME,
-                DynamicPageDbHelper.getDefaultProjection(), null, null, null, null, null);
+                    DynamicPageDbHelper.getDefaultProjection(), null, null, null, null, null);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     sectionsToCompressList = new ArrayList<>();

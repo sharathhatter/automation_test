@@ -325,7 +325,7 @@ public class DoWalletActivity extends BackButtonActivity {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
         Call<ApiResponse<ArrayList<WalletDataItem>>> call =
-                bigBasketApiService.getWalletActivity(getCurrentScreenName(),dateFrom, dateTo);
+                bigBasketApiService.getWalletActivity(getCurrentScreenName(), dateFrom, dateTo);
         call.enqueue(new BBNetworkCallback<ApiResponse<ArrayList<WalletDataItem>>>(this) {
             @Override
             public void onSuccess(ApiResponse<ArrayList<WalletDataItem>> walletActivityCallback) {

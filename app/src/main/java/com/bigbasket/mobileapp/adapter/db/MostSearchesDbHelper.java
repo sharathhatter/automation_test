@@ -81,7 +81,7 @@ public class MostSearchesDbHelper {
                 count = cursor.getInt(0);
             }
         } finally {
-            if(cursor != null) {
+            if (cursor != null) {
                 cursor.close();
             }
         }

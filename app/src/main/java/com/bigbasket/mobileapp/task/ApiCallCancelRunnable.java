@@ -9,18 +9,18 @@ public class ApiCallCancelRunnable implements Runnable {
 
     private final Call<?> call;
 
-    public ApiCallCancelRunnable(Call<?> call){
+    public ApiCallCancelRunnable(Call<?> call) {
         this.call = call;
     }
 
     @Override
     public void run() {
-        if(call == null) {
+        if (call == null) {
             return;
         }
         try {
             call.cancel();
-        } catch (Throwable t){
+        } catch (Throwable t) {
             //Ignore
         }
     }

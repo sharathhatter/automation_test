@@ -37,7 +37,6 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
-import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
 import org.json.JSONObject;

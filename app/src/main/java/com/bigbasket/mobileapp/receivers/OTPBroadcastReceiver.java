@@ -64,7 +64,7 @@ public class OTPBroadcastReceiver extends BroadcastReceiver {
                  */
                 if (phoneNumber.contains("BIG")
                         && (message.contains(" otp "))
-                        || message.contains(" verification ") ) {
+                        || message.contains(" verification ")) {
                     final Pattern p = Pattern.compile("( \\d{4,6}[ .])");
                     final Matcher m = p.matcher(message);
                     if (m.find()) {

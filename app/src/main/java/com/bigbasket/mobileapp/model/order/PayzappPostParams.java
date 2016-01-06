@@ -6,8 +6,6 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
 public class PayzappPostParams implements Parcelable {
 
     public static final Parcelable.Creator<PayzappPostParams> CREATOR = new Parcelable.Creator<PayzappPostParams>() {

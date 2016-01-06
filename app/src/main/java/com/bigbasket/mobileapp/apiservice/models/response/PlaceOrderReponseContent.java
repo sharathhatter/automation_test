@@ -31,18 +31,10 @@ public class PlaceOrderReponseContent implements Parcelable {
     @SerializedName(Constants.ADD_MORE_MSG)
     public String addMoreMsg;
 
-    public PlaceOrderReponseContent(ArrayList<Order> orders, String addMoreLink, String addMoreMsg) {
-        this.orders = orders;
-        this.addMoreLink = addMoreLink;
-        this.addMoreMsg = addMoreMsg;
-    }
-
-    public PlaceOrderReponseContent() {
-    }
     public PlaceOrderReponseContent(Parcel parcel) {
         this.addMoreLink = parcel.readString();
-        this.addMoreMsg=parcel.readString();
-        this.orders=parcel.createTypedArrayList(Order.CREATOR);
+        this.addMoreMsg = parcel.readString();
+        this.orders = parcel.createTypedArrayList(Order.CREATOR);
     }
 
     @Override

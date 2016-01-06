@@ -25,10 +25,10 @@ public class SponsoredProductItem extends AbstractProductItem {
     }
 
     public Section getSection() {
-        if(sectionData != null && sectionData.getSections() != null &&
+        if (sectionData != null && sectionData.getSections() != null &&
                 !sectionData.getSections().isEmpty()) {
             ArrayList<Section> sections = sectionData.getSections();
-            if(sectionIndex >=0 && sectionIndex < sections.size()){
+            if (sectionIndex >= 0 && sectionIndex < sections.size()) {
                 return sections.get(sectionIndex);
             }
         }

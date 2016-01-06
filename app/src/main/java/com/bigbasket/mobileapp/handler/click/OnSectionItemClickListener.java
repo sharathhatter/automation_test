@@ -64,9 +64,10 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
     protected SectionItem sectionItem;
     @Nullable
     protected String screenName;
-
+    @Nullable
     protected Map<String, String> analyticsAttrs;
-    protected String analyticsAttrsJsonString;
+    @Nullable
+    protected String cachedAnalyticsAttrsJsonString;
 
 
     public OnSectionItemClickListener(T context) {
@@ -82,11 +83,12 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
     public OnSectionItemClickListener(T context, @Nullable Section section,
                                       @Nullable SectionItem sectionItem,
                                       @Nullable String screenName,
-                                      Map<String, String> analyticsAttrs) {
+                                      @Nullable Map<String, String> analyticsAttrs) {
         this.context = context;
         this.section = section;
         this.sectionItem = sectionItem;
         this.screenName = screenName;
+        this.analyticsAttrs = analyticsAttrs;
     }
 
     @Override
@@ -344,18 +346,18 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             logItemClickEvent();
         }
         Context appContext = context.getCurrentActivity().getApplicationContext();
-        if (analyticsAttrsJsonString == null && analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
+        if (cachedAnalyticsAttrsJsonString == null && analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
             Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
-            analyticsAttrsJsonString = gson.toJson(analyticsAttrs);
+            cachedAnalyticsAttrsJsonString = gson.toJson(analyticsAttrs);
         }
-        if (analyticsAttrsJsonString != null && sectionItem != null) {
+        if (cachedAnalyticsAttrsJsonString != null && sectionItem != null) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
             AnalyticsIntentService.startUpdateAnalyticsEvent(
                     appContext,
                     true,
                     sectionItem.getId(),
                     preferences.getString(Constants.CITY_ID, null),
-                    analyticsAttrsJsonString);
+                    cachedAnalyticsAttrsJsonString);
         }
     }
 
