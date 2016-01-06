@@ -48,9 +48,6 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
     private Toolbar toolbar;
     private PayuConfig payuConfig;
 
-    private TextView amountTextView;
-    private TextView transactionIdTextView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +57,7 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
+        getSupportActionBar().setTitle(getResources().getString(R.string.net_banking));
 
         (payNowButton = (Button) findViewById(R.id.button_pay_now)).setOnClickListener(this);
         spinnerNetbanking = (Spinner) findViewById(R.id.spinner_netbanking);
@@ -103,10 +100,6 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
         payuHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
         payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
         payuConfig = null != payuConfig ? payuConfig : new PayuConfig();
-
-        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(getString(R.string.amount, mPaymentParams.getAmount()));
-        (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
-
 
         /*******************setting status bar color**************/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -208,7 +201,7 @@ class PayUNetBankingAdapter extends BaseAdapter {
         NetbankingViewHolder netbankingViewHolder = null;
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.netbanking_list_item, null);
+            convertView = mInflater.inflate(R.layout.payu_spinner_list_item, parent, false);
             netbankingViewHolder = new NetbankingViewHolder(convertView);
             convertView.setTag(netbankingViewHolder);
         } else {
@@ -227,7 +220,7 @@ class PayUNetBankingAdapter extends BaseAdapter {
         TextView netbankingTextView;
 
         NetbankingViewHolder(View view) {
-            netbankingTextView = (TextView) view.findViewById(R.id.text_view_netbanking);
+            netbankingTextView = (TextView) view.findViewById(R.id.text_view_spinner_item);
         }
     }
 }

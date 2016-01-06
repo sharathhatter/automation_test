@@ -33,10 +33,6 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboard|screenSize"/>
         <activity
-            android:name=".PayUVerifyApiActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboard|screenSize"/>
-        <activity
             android:name=".PayUStoredCardsActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboard|screenSize"/>

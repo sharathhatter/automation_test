@@ -53,8 +53,6 @@ public class PayUOneClickPaymentActivity extends AppCompatActivity implements Ge
     private PayuHashes payuHashes;
     private PaymentParams mPaymentParams;
     private Toolbar toolbar;
-    private TextView amountTextView;
-    private TextView transactionIdTextView;
 
     private PayuConfig payuConfig;
     private PayuUtils payuUtils;
@@ -71,7 +69,7 @@ public class PayUOneClickPaymentActivity extends AppCompatActivity implements Ge
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
+        getSupportActionBar().setTitle(getResources().getString(R.string.one_click_payment));
 
         storedCardListView = (ListView) findViewById(R.id.list_view_user_card);
 
@@ -97,12 +95,6 @@ public class PayUOneClickPaymentActivity extends AppCompatActivity implements Ge
         oneClickCardTokens = (HashMap<String, String>) bundle.getSerializable(PayuConstants.ONE_CLICK_CARD_TOKENS);
 
         payuConfig = null != payuConfig ? payuConfig : new PayuConfig();
-
-        amountTextView = (TextView) findViewById(R.id.text_view_amount);
-        transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id);
-
-        amountTextView.setText(getString(R.string.amount, mPaymentParams.getAmount()));
-        transactionIdTextView.setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
 
         // one click payment:
         // if there is only one stored card Make the payment directly: (Like to surprise the users. :) )

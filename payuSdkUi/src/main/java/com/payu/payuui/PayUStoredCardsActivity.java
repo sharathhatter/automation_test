@@ -55,8 +55,6 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
     private PayuHashes payuHashes;
     private PaymentParams mPaymentParams;
     private Toolbar toolbar;
-    private TextView amountTextView;
-    private TextView transactionIdTextView;
 
     private PayuConfig payuConfig;
     private PayuUtils payuUtils;
@@ -72,7 +70,7 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
+        getSupportActionBar().setTitle(getResources().getString(R.string.stored_card));
 
         storedCardListView = (ListView) findViewById(R.id.list_view_user_card);
 
@@ -99,11 +97,6 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
         payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
         payuConfig = null != payuConfig ? payuConfig : new PayuConfig();
 
-        amountTextView = (TextView) findViewById(R.id.text_view_amount);
-        transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id);
-
-        amountTextView.setText(getString(R.string.amount, mPaymentParams.getAmount()));
-        transactionIdTextView.setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
 /*******************setting status bar color**************/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = this.getWindow();

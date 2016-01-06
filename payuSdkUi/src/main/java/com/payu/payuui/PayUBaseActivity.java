@@ -15,6 +15,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.payu.india.Interfaces.PaymentRelatedDetailsListener;
 import com.payu.india.Model.MerchantWebService;
@@ -46,7 +47,6 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
     Button storedCardButton;
     Button creditDebitButton;
     Button merchantPaymentButton;
-    Button verifyApiButton;
     Button oneClickPaymentButton;
     PayuConfig payuConfig;
 
@@ -87,7 +87,6 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
         (storedCardButton = (Button) findViewById(R.id.button_stored_card)).setOnClickListener(this);
         (creditDebitButton = (Button) findViewById(R.id.button_credit_debit_card)).setOnClickListener(this);
         (merchantPaymentButton = (Button) findViewById(R.id.button_merchant_payment)).setOnClickListener(this);
-        (verifyApiButton = (Button) findViewById(R.id.button_verify_api)).setOnClickListener(this);
         (oneClickPaymentButton = (Button) findViewById(R.id.button_one_click_payment)).setOnClickListener(this);
 
         // lets collect the details from bundle to fetch the payment related details for a merchant
@@ -98,9 +97,12 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
 
         // TODO add null pointer check here
 //        mPaymentDefaultParams = bundle.getParcelable(PayuConstants.PAYMENT_DEFAULT_PARAMS);
-        mPaymentParams = bundle.getParcelable(PayuConstants.PAYMENT_PARAMS); // Todo change the name to PAYMENT_PARAMS
+        mPaymentParams = bundle.getParcelable(PayuConstants.PAYMENT_PARAMS);
         mPayUHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
         storeOneClickHash = bundle.getInt(PayuConstants.STORE_ONE_CLICK_HASH);
+
+        ((TextView) findViewById(R.id.text_view_amount)).setText(getString(R.string.amount, mPaymentParams.getAmount()));
+        ((TextView) findViewById(R.id.text_view_transaction_id)).setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
 
 
         oneClickCardTokens = (HashMap<String, String>) bundle.getSerializable(PayuConstants.ONE_CLICK_CARD_TOKENS);
@@ -221,13 +223,6 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
             mIntent = new Intent(this, PayUStoredCardsActivity.class);
             mIntent.putParcelableArrayListExtra(PayuConstants.STORED_CARD, storedCards);
             launchActivity(mIntent);
-        } else if (id == R.id.button_verify_api) {
-            mIntent = new Intent(this, PayUVerifyApiActivity.class);
-            mIntent.putParcelableArrayListExtra(PayuConstants.NETBANKING, mPayuResponse.getNetBanks());
-            mIntent.putParcelableArrayListExtra(PayuConstants.STORED_CARD, mPayuResponse.getStoredCards());
-//            mIntent.putExtra(PayuConstants.PAYU_RESPONSE, mPayuResponse);
-            launchActivity(mIntent);
-
         } else if (id == R.id.button_one_click_payment) {
             mIntent = new Intent(this, PayUOneClickPaymentActivity.class);
             mIntent.putParcelableArrayListExtra(PayuConstants.STORED_CARD, oneClickCards);
@@ -345,9 +340,6 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
                 Log.d(getClass().getName(), "fragment failed");
             }
         }
-
-        // no mater what response i get just show this button, so that we can go further.
-        findViewById(R.id.linear_layout_verify_api).setVisibility(View.GONE);
     }
 
     @Override

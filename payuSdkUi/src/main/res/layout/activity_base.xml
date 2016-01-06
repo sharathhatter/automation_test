@@ -10,41 +10,48 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/mbblogo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="20dp"
-                android:background="@drawable/bb_logo_transparent_bkg"
-                android:contentDescription="@string/app_name" />
+            <include
+                android:id="@+id/layouPaymentInfo"
+                layout="@layout/layout_payment_method_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:id="@+id/viewThickSeparator"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:layout_below="@id/layouPaymentInfo"
+                android:background="@color/uiv3_list_bkg_color" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/mbblogo"
+                android:layout_below="@id/viewThickSeparator"
                 android:layout_centerHorizontal="true"
                 android:layout_centerInParent="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="16dp"
                 android:paddingBottom="16dp">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/payu_divider_color" />
 
                 <ProgressBar
                     android:id="@+id/progress_bar"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_marginTop="16dp"
                     android:visibility="visible" />
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -204,26 +211,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
                             android:background="@color/payu_divider_color" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/linear_layout_verify_api"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <Button
-                            android:id="@+id/button_verify_api"
-                            style="@style/PayuPaymentOptionStyle"
-                            android:drawableLeft="@drawable/ic_credit_card_black_24dp"
-                            android:text="@string/verify_api" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:background="@color/payu_divider_color" />
-
                     </LinearLayout>
                 </LinearLayout>
 

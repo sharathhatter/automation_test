@@ -33,15 +33,11 @@ import java.util.ArrayList;
 public class PayUCashCardActivity extends PaymentBaseActivity implements AdapterView.OnItemClickListener {
 
     ListView cashCardListView;
-    PayUCashCardAdapter payUCashCardAdapter;
     ArrayList<PaymentDetails> mCashCardList;
     Bundle bundle;
     //    PaymentDefaultParams mPaymentDefaultParams;
     PaymentParams mPaymentParams;
     PayuHashes mPayuHashes;
-    private Toolbar toolbar;
-    private TextView amountTextView;
-    private TextView txnIdTextView;
 
     private PayuConfig payuConfig;
 
@@ -50,11 +46,11 @@ public class PayUCashCardActivity extends PaymentBaseActivity implements Adapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cash_card);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
+        getSupportActionBar().setTitle(getResources().getString(R.string.cash_card));
 
         cashCardListView = (ListView) findViewById(R.id.list_view_cash_card);
         cashCardListView.setOnItemClickListener(this);
@@ -67,13 +63,10 @@ public class PayUCashCardActivity extends PaymentBaseActivity implements Adapter
         mPayuHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
         mPaymentParams.setHash(mPayuHashes.getPaymentHash());
 
-        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(getString(R.string.amount, mPaymentParams.getAmount()));
-        (txnIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
-
         // lets get the list of cash card from bundle.
         if (bundle.getParcelableArrayList(PayuConstants.CASHCARD) != null) {
             mCashCardList = bundle.getParcelableArrayList(PayuConstants.CASHCARD);
-            payUCashCardAdapter = new PayUCashCardAdapter(this, R.layout.cash_card_list_item, mCashCardList);
+            PayUCashCardAdapter payUCashCardAdapter = new PayUCashCardAdapter(this, R.layout.payu_list_item, mCashCardList);
             cashCardListView.setAdapter(payUCashCardAdapter);
 
             // lets set the mandatory params
@@ -167,7 +160,7 @@ class PayUCashCardAdapter extends ArrayAdapter<PaymentDetails> {
         CashCardViewHolder cashCardViewHolder = null;
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.cash_card_list_item, null);
+            convertView = mInflater.inflate(R.layout.payu_list_item, parent, false);
             cashCardViewHolder = new CashCardViewHolder(convertView);
             convertView.setTag(cashCardViewHolder);
         } else {
@@ -186,7 +179,7 @@ class PayUCashCardAdapter extends ArrayAdapter<PaymentDetails> {
         TextView cashCardTextView;
 
         CashCardViewHolder(View view) {
-            cashCardTextView = (TextView) view.findViewById(R.id.text_view_cash_card);
+            cashCardTextView = (TextView) view.findViewById(R.id.text_view_list_item);
         }
     }
 }

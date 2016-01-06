@@ -177,7 +177,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(getApplicationContext());
-        showProgressDialog("Please wait...");
+        showProgressDialog(getString(R.string.please_wait));
         mProductListCall = bigBasketApiService.productList(getPreviousScreenName(), paramMap);
         mProductListCall.enqueue(new ProductListApiResponseCallback<>(this, false, isFilterOrSortApplied,
                 currentTabIndx));
@@ -328,7 +328,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 @Override
                 public void onResponse(Response<ApiResponse<GetDynamicPageApiResponse>> response,
                                        Retrofit retrofit) {
-                    if (response != null && response.isSuccess()) {
+                    if (response != null && response.isSuccess() && response.body().status == 0) {
                         //Set section data for all tabs for now
                         SectionData sponsoredSectionData = response.body().apiResponseContent.sectionData;
                         if (numTabs > 1 && mViewPager != null) {
@@ -348,8 +348,6 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                                 ((ProductListAwareFragment) fragment).setSponsoredSectionData(sponsoredSectionData);
                             }
                         }
-                    } else {
-                        //Ignore, No sponsored items for this page
                     }
                 }
 
