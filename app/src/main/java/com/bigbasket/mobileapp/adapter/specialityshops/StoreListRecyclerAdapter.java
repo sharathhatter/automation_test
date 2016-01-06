@@ -161,7 +161,7 @@ public class StoreListRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                     ((AnalyticsNavigationContextAware) context).setCurrentScreenName(TrackingAware.SPECIALITYSHOPS +
                             storeList.get(position).getStoreName());
                 }
-                new OnSectionItemClickListener<>((AppOperationAware)context)
+                new OnSectionItemClickListener<>((AppOperationAware) context)
                         .handleDestinationClick(storeList.get(position).getDestinationInfo());
             }
         }

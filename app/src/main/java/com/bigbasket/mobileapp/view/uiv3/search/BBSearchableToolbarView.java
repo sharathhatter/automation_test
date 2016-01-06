@@ -103,8 +103,8 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
             BaseActivity.hideKeyboard(getContext(), mSearchView);
         }
         UIUtil.changeStatusBarColor(getContext(), R.color.uiv3_status_bar_background);
-        if(mAttachedActivity != null && mAttachedActivity instanceof AppCompatActivity) {
-            ((AppCompatActivity)mAttachedActivity).getSupportLoaderManager().destroyLoader(
+        if (mAttachedActivity != null && mAttachedActivity instanceof AppCompatActivity) {
+            ((AppCompatActivity) mAttachedActivity).getSupportLoaderManager().destroyLoader(
                     LoaderIds.SEARCH_HISTORY_LOADER_ID);
         }
     }
@@ -178,7 +178,7 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
     }
 
     private void setListAdapter() {
-        if(mSearchListAdapter == null) {
+        if (mSearchListAdapter == null) {
             mSearchListAdapter = new SearchViewAdapter<>(getContext(), null, this);
             mSearchListAdapter.setFilterQueryProvider(
                     new SearchViewAdapter.SearchFilterQueryProvider(getContext()));
@@ -187,9 +187,9 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
     }
 
     private void restartSearchHistoryLoader() {
-        if(getVisibility() == View.VISIBLE
+        if (getVisibility() == View.VISIBLE
                 && mAttachedActivity != null && mAttachedActivity instanceof AppCompatActivity) {
-            ((AppCompatActivity)mAttachedActivity).getSupportLoaderManager().restartLoader(
+            ((AppCompatActivity) mAttachedActivity).getSupportLoaderManager().restartLoader(
                     LoaderIds.SEARCH_HISTORY_LOADER_ID, null, this);
         }
     }
@@ -316,14 +316,14 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(mSearchListAdapter != null) {
+        if (mSearchListAdapter != null) {
             mSearchListAdapter.swapCursor(data);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if(mSearchListAdapter != null) {
+        if (mSearchListAdapter != null) {
             mSearchListAdapter.swapCursor(null);
         }
     }
@@ -341,7 +341,7 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
         }
 
         private void reset() {
-            if (bbSearchableToolbarView != null){
+            if (bbSearchableToolbarView != null) {
                 bbSearchableToolbarView.hide();
             }
         }

@@ -1,8 +1,10 @@
 package com.payu.payuui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import com.payu.india.Interfaces.PaymentRelatedDetailsListener;
@@ -388,5 +391,14 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
         setResult(RESULT_CANCELED, intent);
         finish();
 
+    }
+
+    public static void hideKeyboard(Context context, View view) {
+        if (context == null || view == null) return;
+        IBinder token = view.getWindowToken();
+        if (token == null) return;
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(token, 0);
     }
 }

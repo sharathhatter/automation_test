@@ -99,7 +99,7 @@ public class ValidatePaymentRequest implements Parcelable {
             dest.writeString(finalTotal);
         }
         isFieldNull = selectedPaymentMethod == null;
-        dest.writeByte(isFieldNull ? (byte) 1: (byte) 0);
+        dest.writeByte(isFieldNull ? (byte) 1 : (byte) 0);
         if (!isFieldNull) {
             dest.writeString(selectedPaymentMethod);
         }

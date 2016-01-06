@@ -17,7 +17,7 @@ public class SponsoredProductInfo {
 
     public SponsoredProductInfo(SectionData sectionData) {
         this.sectionData = sectionData;
-        if(sectionData != null && sectionData.getSections() != null){
+        if (sectionData != null && sectionData.getSections() != null) {
             totalItems = remainingItems = sectionData.getSections().size();
         }
     }
@@ -62,23 +62,23 @@ public class SponsoredProductInfo {
         this.remainingItems = remainingItems;
     }
 
-    public int getNextInjectPosition(){
-        if(injectionWindow > 0) {
+    public int getNextInjectPosition() {
+        if (injectionWindow > 0) {
             return lastInjectedPosition + injectionWindow;
         }
         return RecyclerView.NO_POSITION;
     }
 
-    public Section getNextSponsoredItem(){
-        int nextIndex = getNextSponsoredItemIndex() ;
-        if(nextIndex >= 0 && nextIndex < totalItems) {
+    public Section getNextSponsoredItem() {
+        int nextIndex = getNextSponsoredItemIndex();
+        if (nextIndex >= 0 && nextIndex < totalItems) {
             return sectionData.getSections().get(nextIndex);
         }
         return null;
     }
 
-    public int getNextSponsoredItemIndex(){
-        return totalItems - remainingItems ;
+    public int getNextSponsoredItemIndex() {
+        return totalItems - remainingItems;
     }
 
     public void reset() {
@@ -89,7 +89,7 @@ public class SponsoredProductInfo {
     }
 
     public void reset(SectionData sponsoredSectionData) {
-        if(sponsoredSectionData != null && sponsoredSectionData.getSections() != null){
+        if (sponsoredSectionData != null && sponsoredSectionData.getSections() != null) {
             sectionData = sponsoredSectionData;
             totalItems = remainingItems = sponsoredSectionData.getSections().size();
             lastInjectedPosition = 0;

@@ -156,6 +156,7 @@ public class HeaderSpinnerView<T extends AppOperationAware> {
     public boolean isShown() {
         return layoutChildToolbarContainer.getVisibility() == View.VISIBLE;
     }
+
     public void hide() {
         onChildDropdownRequested.onClick(imgCloseChildDropdown);
     }

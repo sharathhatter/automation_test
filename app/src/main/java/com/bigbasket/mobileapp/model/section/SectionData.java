@@ -61,17 +61,17 @@ public class SectionData implements Parcelable, Serializable {
         int analyticsAttrSize = source.readInt();
         analyticsAttrs = new HashMap<>(analyticsAttrSize);
 
-        for(int i = 0 ; i < analyticsAttrSize ; i++) {
+        for (int i = 0; i < analyticsAttrSize; i++) {
             String key = source.readString();
             int valMapLen = source.readInt();
-            if(valMapLen <= 0) {
+            if (valMapLen <= 0) {
                 analyticsAttrs.put(key, null);
             } else {
                 Map<String, String> valueMap = new HashMap<>(valMapLen);
-                for(int j =0; j< valMapLen; j++){
+                for (int j = 0; j < valMapLen; j++) {
                     String valKey = source.readString();
                     boolean wasValueNull = source.readByte() == (byte) 1;
-                    if(!wasValueNull){
+                    if (!wasValueNull) {
                         valueMap.put(valKey, source.readString());
                     } else {
                         valueMap.put(valKey, null);
@@ -115,18 +115,18 @@ public class SectionData implements Parcelable, Serializable {
             dest.writeString(baseImgUrl);
         }
 
-        if(analyticsAttrs != null && !analyticsAttrs.isEmpty()){
+        if (analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
             dest.writeInt(analyticsAttrs.size());
-            for (Map.Entry<String, Map<String, String>> entry: analyticsAttrs.entrySet()){
+            for (Map.Entry<String, Map<String, String>> entry : analyticsAttrs.entrySet()) {
                 dest.writeString(entry.getKey()); //FIXME: Assumption key is not null
                 Map<String, String> value = entry.getValue();
-                if(value != null && !value.isEmpty()){
+                if (value != null && !value.isEmpty()) {
                     dest.writeInt(value.size());
-                    for(Map.Entry<String, String> valEntry:value.entrySet()){
+                    for (Map.Entry<String, String> valEntry : value.entrySet()) {
                         dest.writeString(valEntry.getKey());
                         boolean wasValueNull = valEntry.getValue() == null;
                         dest.writeByte(wasValueNull ? (byte) 1 : (byte) 0);
-                        if(!wasValueNull) {
+                        if (!wasValueNull) {
                             dest.writeString(valEntry.getValue());
                         }
                     }
@@ -160,8 +160,8 @@ public class SectionData implements Parcelable, Serializable {
         this.sections = sections;
     }
 
-    public Map<String, String> getAnalyticsAttrs(String sectionItemId){
-        if(analyticsAttrs != null){
+    public Map<String, String> getAnalyticsAttrs(String sectionItemId) {
+        if (analyticsAttrs != null) {
             return analyticsAttrs.get(sectionItemId);
         }
         return null;

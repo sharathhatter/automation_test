@@ -72,14 +72,14 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
 
     @Override
     public void setSectionData(SectionData sectionData) {
-        if(mSectionData != null && sectionData != null
+        if (mSectionData != null && sectionData != null
                 && mSectionData.getSections() != null
                 && sectionData.getSections() != null
                 && sectionData.getSections().size() == mSectionData.getSections().size()) {
             ArrayList<Section> newSections = sectionData.getSections();
             ArrayList<Section> oldSection = mSectionData.getSections();
-            for(int i = 0 ; i < newSections.size(); i++) {
-                if(newSections.get(i).equals(oldSection.get(i))) {
+            for (int i = 0; i < newSections.size(); i++) {
+                if (newSections.get(i).equals(oldSection.get(i))) {
                     newSections.get(i).setIsShown(oldSection.get(0).isShown());
                 }
             }

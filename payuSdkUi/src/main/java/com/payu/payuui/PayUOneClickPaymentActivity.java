@@ -16,10 +16,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -429,11 +427,10 @@ public class PayUOneClickPaymentActivity extends AppCompatActivity implements Ge
             ImageView cardTrashImageView;
             TextView cardNumberTextView;
             TextView cardNameTextView;
-            LinearLayout cvvPayNowLinearLayout;
-            LinearLayout rowLinearLayout;
+            ViewGroup cvvPayNowLinearLayout;
+            ViewGroup rowLinearLayout;
             Button paynNowButton;
             EditText cvvEditText;
-            CheckBox storeCvvCheckBox;
 
             public ViewHolder(View itemView) {
 
@@ -441,8 +438,8 @@ public class PayUOneClickPaymentActivity extends AppCompatActivity implements Ge
                 cardNumberTextView = (TextView) itemView.findViewById(R.id.text_view_card_number);
                 cardTrashImageView = (ImageView) itemView.findViewById(R.id.image_view_card_trash);
                 cardNameTextView = (TextView) itemView.findViewById(R.id.text_view_card_name);
-                rowLinearLayout = (LinearLayout) itemView.findViewById(R.id.linear_layout_row);
-                cvvPayNowLinearLayout = (LinearLayout) itemView.findViewById(R.id.linear_layout_cvv_paynow);
+                rowLinearLayout = (ViewGroup) itemView.findViewById(R.id.linear_layout_row);
+                cvvPayNowLinearLayout = (ViewGroup) itemView.findViewById(R.id.linear_layout_cvv_paynow);
                 paynNowButton = (Button) itemView.findViewById(R.id.button_pay_now);
                 cvvEditText = (EditText) itemView.findViewById(R.id.edit_text_cvv);
 
