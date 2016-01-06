@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.section.Section;
@@ -27,7 +28,7 @@ public class DynamicPageDbHelper {
 
     public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s " +
                     "(%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "%3$s TEXT , %4$s TEXT);", TABLE_NAME, COLUMN_ID,
+                    "%3$s TEXT , %4$s BLOB);", TABLE_NAME, COLUMN_ID,
             COLUMN_DYNAMIC_SCREEN_TYPE, COLUMN_SCREEN_DATA);
 
     public static final Uri CONTENT_URI =
@@ -42,7 +43,7 @@ public class DynamicPageDbHelper {
         this.context = context;
     }
 
-    public void save(String dynamicScreenType, String dynamicScreenJson, int cacheDuration) {
+    public void save(String dynamicScreenType, @Nullable byte[] compressedDynamicScreenJson, int cacheDuration) {
         Uri uri = Uri.withAppendedPath(CONTENT_URI, dynamicScreenType);
         Cursor cursor = context.getContentResolver()
                 .query(uri, new String[]{COLUMN_ID},
@@ -57,7 +58,7 @@ public class DynamicPageDbHelper {
         }
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_DYNAMIC_SCREEN_TYPE, dynamicScreenType);
-        cv.put(COLUMN_SCREEN_DATA, dynamicScreenJson);
+        cv.put(COLUMN_SCREEN_DATA, compressedDynamicScreenJson);
         if (existingID <= 0) {
             context.getContentResolver().insert(uri, cv);
         } else {
@@ -126,5 +127,29 @@ public class DynamicPageDbHelper {
 
     public static String[] getDefaultProjection() {
         return new String[]{COLUMN_ID, COLUMN_DYNAMIC_SCREEN_TYPE, COLUMN_SCREEN_DATA};
+    }
+
+    public static class DynamicPageDataHolder {
+        private int id;
+        private String dynamicScreenType;
+        private String dynamicScreenData;
+
+        public DynamicPageDataHolder(Cursor cursor) {
+            this.id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+            this.dynamicScreenType = cursor.getString(cursor.getColumnIndex(COLUMN_DYNAMIC_SCREEN_TYPE));
+            this.dynamicScreenData = cursor.getString(cursor.getColumnIndex(COLUMN_SCREEN_DATA));
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getDynamicScreenType() {
+            return dynamicScreenType;
+        }
+
+        public String getDynamicScreenData() {
+            return dynamicScreenData;
+        }
     }
 }

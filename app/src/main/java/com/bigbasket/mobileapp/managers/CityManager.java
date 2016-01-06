@@ -26,7 +26,7 @@ public final class CityManager {
     }
 
     private static final int TIMEOUT_IN_MINUTES = 60;
-    private static final int AREA_PIN_CODE_INFO_TIMEOUT_IN_DAYS = 30;
+    private static final int AREA_PIN_CODE_INFO_TIMEOUT_IN_DAYS = 7;
     private static final String preferenceKey = "stored_city";
 
     public static boolean isAreaPinInfoDataStale(Context context) {
