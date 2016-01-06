@@ -3,7 +3,7 @@ package com.bigbasket.mobileapp.util;
 public final class TrackEventkeys {
 
     public static final String CITY = "city";
-    public static final String NAVIGATION_CTX = "referer";
+    public static final String NAVIGATION_CTX = "referrer";
     public static final String NAVIGATION_CTX_LANDING_PAGE = "landing-page";
     public static final String NAVIGATION_CTX_DIALOG = "dialog";
     public static final String LOGIN_TYPE_GOOGLE = "Google";
@@ -165,6 +165,8 @@ public final class TrackEventkeys {
 
     public static final String SPECIALITYSHOPS_LISTING_PAGE = "Speciality Shops Screen";
     public static final String SPECIALITY_STORE_DETAILS_DIALOG = "Speciality Store Details Dialog";
+
+    public static final String ADDRESS_LIST_SCREEN = "Address List Screen";
 
     private TrackEventkeys() {
     }

@@ -16,8 +16,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.slider.SliderAdapter;
 import com.bigbasket.mobileapp.slider.InfinitePagerAdapter;
+import com.bigbasket.mobileapp.slider.SliderAdapter;
 
 import java.util.ArrayList;
 
@@ -265,6 +265,7 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
             resetDrawable();
         }
     }
+
     private float pxFromDp(float dp) {
         return dp * this.getContext().getResources().getDisplayMetrics().density;
     }
@@ -291,7 +292,7 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
             return;
         }
         PagerAdapter adapter = mPager.getAdapter();
-        if(adapter instanceof InfinitePagerAdapter) {
+        if (adapter instanceof InfinitePagerAdapter) {
             InfinitePagerAdapter wrapper = (InfinitePagerAdapter) mPager.getAdapter();
             adapter = wrapper.getRealAdapter();
         }
@@ -311,12 +312,12 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
         if (pager.getAdapter() == null) {
             throw new IllegalStateException("Viewpager does not have adapter instance");
         }
-        if(mPager != null) {
+        if (mPager != null) {
             mPager.removeOnPageChangeListener(this);
         }
         mPager = pager;
         mPager.addOnPageChangeListener(this);
-        if(mPager.getAdapter() instanceof InfinitePagerAdapter) {
+        if (mPager.getAdapter() instanceof InfinitePagerAdapter) {
             ((InfinitePagerAdapter) mPager.getAdapter())
                     .getRealAdapter().registerDataSetObserver(dataChangeObserver);
         } else {

@@ -17,7 +17,6 @@ import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.localytics.android.Localytics;
 import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
 import com.moe.pushlibrary.MoEHelper;
-import com.moe.pushlibrary.utils.MoEHelperUtils;
 import com.newrelic.agent.android.NewRelic;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.Picasso;

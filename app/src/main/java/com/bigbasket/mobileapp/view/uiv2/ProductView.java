@@ -258,7 +258,7 @@ public final class ProductView {
                     isFirst = false;
                     rbtnAvailabilityType.setChecked(true);
                     setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                            productDataAware, particularStoreMap.get(Constants.PRODUCT_STATUS),navigationCtx);
+                            productDataAware, particularStoreMap.get(Constants.PRODUCT_STATUS), navigationCtx);
                     setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                             productDataAware, navigationCtx, cartInfo, tabName,
                             particularStoreMap.get(Constants.PRODUCT_STATUS), particularStoreMap);
@@ -272,7 +272,7 @@ public final class ProductView {
                         String storeAvailability = selectedStore != null ?
                                 selectedStore.get(Constants.PRODUCT_STATUS) : null;
                         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder,
-                                productDataAware, storeAvailability,navigationCtx);
+                                productDataAware, storeAvailability, navigationCtx);
                         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                                 productDataAware, navigationCtx, cartInfo, tabName, storeAvailability,
                                 selectedStore);
@@ -586,7 +586,7 @@ public final class ProductView {
 
                 imgAddToBasket.setTag(R.id.basket_op_product_tag_id, product);
                 imgAddToBasket.setTag(R.id.basket_op_qty_tag_id, "1");
-                imgAddToBasket.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_DECREMENT);
+                imgAddToBasket.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_ADD);
                 imgAddToBasket.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
                 imgAddToBasket.setTag(R.id.basket_op_tabname_tag_id, tabName);
                 imgAddToBasket.setTag(R.id.basket_op_read_input_qty_tag_id, productViewDisplayDataHolder.isShowQtyInput());

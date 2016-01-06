@@ -198,7 +198,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     private void addAllItemsToBasket() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        Call<OldApiResponseWithCart> call = bigBasketApiService.addAllToBasketPastOrders(getPreviousScreenName(),mOrderId);
+        Call<OldApiResponseWithCart> call = bigBasketApiService.addAllToBasketPastOrders(getPreviousScreenName(), mOrderId);
         call.enqueue(new BBNetworkCallback<OldApiResponseWithCart>(this) {
             @Override
             public void onSuccess(OldApiResponseWithCart addAllToBasketPastOrdersCallBack) {

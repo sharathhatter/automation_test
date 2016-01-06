@@ -234,7 +234,7 @@ public class Renderer implements Parcelable, Serializable {
             }
             tv.setGravity(this.getAsNativeAlignment());
             int nativeTextStyle;
-            if((textStyle & TEXT_STYLE_BOLD) != 0 && (textStyle & TEXT_STYLE_ITALIC) != 0) {
+            if ((textStyle & TEXT_STYLE_BOLD) != 0 && (textStyle & TEXT_STYLE_ITALIC) != 0) {
                 nativeTextStyle = Typeface.BOLD_ITALIC;
             } else if ((textStyle & TEXT_STYLE_BOLD) != 0) {
                 nativeTextStyle = Typeface.BOLD;

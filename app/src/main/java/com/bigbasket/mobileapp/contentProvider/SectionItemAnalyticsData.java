@@ -37,7 +37,7 @@ public class SectionItemAnalyticsData {
     };
 
     public static final int COLUMN_ID = 0;
-    public static final int COLUMN_SECTION_ID = COLUMN_ID +1;
+    public static final int COLUMN_SECTION_ID = COLUMN_ID + 1;
     public static final int COLUMN_CITY_ID = COLUMN_SECTION_ID + 1;
     public static final int COLUMN_CLICKS = COLUMN_CITY_ID + 1;
     public static final int COLUMN_IMPRESSIONS = COLUMN_CLICKS + 1;

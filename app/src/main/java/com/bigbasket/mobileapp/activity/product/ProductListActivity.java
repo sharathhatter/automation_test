@@ -132,7 +132,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
 
     @Override
     public void onBackPressed() {
-        if(mHeaderSpinnerView != null && mHeaderSpinnerView.isShown()) {
+        if (mHeaderSpinnerView != null && mHeaderSpinnerView.isShown()) {
             mHeaderSpinnerView.hide();
         } else {
             super.onBackPressed();
@@ -156,11 +156,11 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             mArrayTabTypeAndFragmentPosition = null;
             mTabNameWithEmptyProductView = null;
         }
-        if(mProductListCall != null){
+        if (mProductListCall != null) {
             new Thread(new ApiCallCancelRunnable(mProductListCall)).start();
             mProductListCall = null;
         }
-        if(mSponsoredProductsCall != null) {
+        if (mSponsoredProductsCall != null) {
             new Thread(new ApiCallCancelRunnable(mSponsoredProductsCall)).start();
             mSponsoredProductsCall = null;
         }
@@ -171,7 +171,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             getHandler().sendOfflineError(true);
             return;
         }
-        if(isSuspended()){
+        if (isSuspended()) {
             return;
         }
 
@@ -314,7 +314,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
             BigBasketApiService apiService = BigBasketApiAdapter.getApiService(getApplicationContext());
             String[] tabTypes = new String[numTabs];
-            for(int i =0; i < numTabs; i ++) {
+            for (int i = 0; i < numTabs; i++) {
                 tabTypes[i] = productTabData.getProductTabInfos().get(i).getTabType();
             }
             Gson gson = new GsonBuilder().create();
@@ -328,24 +328,24 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 @Override
                 public void onResponse(Response<ApiResponse<GetDynamicPageApiResponse>> response,
                                        Retrofit retrofit) {
-                    if(response != null && response.isSuccess()){
+                    if (response != null && response.isSuccess()) {
                         //Set section data for all tabs for now
                         SectionData sponsoredSectionData = response.body().apiResponseContent.sectionData;
-                        if(numTabs > 1 && mViewPager != null){
+                        if (numTabs > 1 && mViewPager != null) {
                             ProductListTabPagerAdapter adapter =
                                     (ProductListTabPagerAdapter) mViewPager.getAdapter();
                             adapter.setSponsoredProducts(sponsoredSectionData);
-                            for(int i =0; i < numTabs; i ++) {
+                            for (int i = 0; i < numTabs; i++) {
                                 Fragment fragment = adapter.getRegisteredFragment(i);
-                                if(fragment != null && fragment instanceof ProductListAwareFragment){
-                                    ((ProductListAwareFragment)fragment).setSponsoredSectionData(sponsoredSectionData);
+                                if (fragment != null && fragment instanceof ProductListAwareFragment) {
+                                    ((ProductListAwareFragment) fragment).setSponsoredSectionData(sponsoredSectionData);
                                 }
                             }
 
                         } else {
                             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-                            if(fragment != null && fragment instanceof ProductListAwareFragment){
-                                ((ProductListAwareFragment)fragment).setSponsoredSectionData(sponsoredSectionData);
+                            if (fragment != null && fragment instanceof ProductListAwareFragment) {
+                                ((ProductListAwareFragment) fragment).setSponsoredSectionData(sponsoredSectionData);
                             }
                         }
                     } else {
@@ -537,7 +537,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             newNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(tabTypeWithNoProducts)));
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
             Call<ApiResponse<ProductNextPageResponse>> call =
-                    bigBasketApiService.productNextPage(getPreviousScreenName(),NameValuePair.toMap(newNameValuePairs));
+                    bigBasketApiService.productNextPage(getPreviousScreenName(), NameValuePair.toMap(newNameValuePairs));
             call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
                 @Override
                 public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {

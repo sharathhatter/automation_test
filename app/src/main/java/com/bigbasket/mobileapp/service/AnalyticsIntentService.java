@@ -3,8 +3,8 @@ package com.bigbasket.mobileapp.service;
 import android.app.IntentService;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
@@ -60,12 +60,12 @@ public class AnalyticsIntentService extends IntentService {
                                                  String sectionId,
                                                  String cityId,
                                                  String analyticsAttributes) {
-        if(TextUtils.isEmpty(sectionId)) {
+        if (TextUtils.isEmpty(sectionId)) {
             return;
         }
         int clicks = 0;
         int imps = 0;
-        if(isClickEvent){
+        if (isClickEvent) {
             clicks++;
         } else {
             imps++;
@@ -96,11 +96,11 @@ public class AnalyticsIntentService extends IntentService {
                                             String sectionId,
                                             String cityId,
                                             String analyticsAttributes) {
-        synchronized (sAnalyticsEventLock){
-            if(TextUtils.isEmpty(sectionId)) {
+        synchronized (sAnalyticsEventLock) {
+            if (TextUtils.isEmpty(sectionId)) {
                 return;
             }
-            if(TextUtils.isEmpty(cityId)) {
+            if (TextUtils.isEmpty(cityId)) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 cityId = preferences.getString(Constants.CITY_ID, "");
             }
@@ -113,21 +113,21 @@ public class AnalyticsIntentService extends IntentService {
                     null);
             SectionItemAnalyticsData sectionItemAnalyticsData = null;
             try {
-                if(cursor != null && cursor.moveToFirst()){
+                if (cursor != null && cursor.moveToFirst()) {
                     sectionItemAnalyticsData = new SectionItemAnalyticsData(cursor);
                 }
 
             } finally {
-                if(cursor != null) {
+                if (cursor != null) {
                     cursor.close();
                 }
             }
-            if(sectionItemAnalyticsData != null) {
+            if (sectionItemAnalyticsData != null) {
                 ContentValues values = new ContentValues(3);
                 values.put(SectionItemAnalyticsData.CLICKS,
-                            sectionItemAnalyticsData.getClicks() + clicks);
+                        sectionItemAnalyticsData.getClicks() + clicks);
                 values.put(SectionItemAnalyticsData.IMPRESSIONS,
-                            sectionItemAnalyticsData.getImpressions() + impressions);
+                        sectionItemAnalyticsData.getImpressions() + impressions);
                 values.put(SectionItemAnalyticsData.ANALYTICS_ATTRS, analyticsAttributes);
                 getContentResolver().update(
                         ContentUris.withAppendedId(SectionItemAnalyticsData.CONTENT_URI,
@@ -146,8 +146,7 @@ public class AnalyticsIntentService extends IntentService {
     }
 
 
-
-    public static List<SectionItemAnalyticsData> getAnalyticsData(Context context){
+    public static List<SectionItemAnalyticsData> getAnalyticsData(Context context) {
 
         synchronized (sAnalyticsEventLock) {
             Cursor cursor = context.getContentResolver().query(SectionItemAnalyticsData.CONTENT_URI,
@@ -156,7 +155,7 @@ public class AnalyticsIntentService extends IntentService {
                     null,
                     null);
             try {
-                if(cursor != null) {
+                if (cursor != null) {
                     List<SectionItemAnalyticsData> sectionItemAnalyticsDataList =
                             new ArrayList<>(cursor.getCount());
                     while (cursor.moveToNext()) {
@@ -167,7 +166,7 @@ public class AnalyticsIntentService extends IntentService {
                     return sectionItemAnalyticsDataList;
                 }
             } finally {
-                if(cursor != null) {
+                if (cursor != null) {
                     cursor.close();
                 }
             }

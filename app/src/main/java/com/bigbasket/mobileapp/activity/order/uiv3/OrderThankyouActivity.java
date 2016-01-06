@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Call;
 
@@ -187,6 +188,9 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     public void onClick(View v) {
                         Intent intent = new Intent(getCurrentActivity(), PayNowActivity.class);
                         intent.putExtra(Constants.ORDER_ID, order.getOrderId());
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+                        trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                 });

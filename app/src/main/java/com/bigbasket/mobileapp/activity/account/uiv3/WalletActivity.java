@@ -92,7 +92,7 @@ public class WalletActivity extends BackButtonActivity implements InvoiceDataAwa
     private void showInvoice(String orderId) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(getPreviousScreenName(),orderId);
+        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(getPreviousScreenName(), orderId);
         call.enqueue(new CallbackOrderInvoice<>(getCurrentActivity()));
     }
 

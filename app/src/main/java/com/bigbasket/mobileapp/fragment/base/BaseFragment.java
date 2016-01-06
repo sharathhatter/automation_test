@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.fragment.base;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -134,7 +133,7 @@ public abstract class BaseFragment extends AbstractFragment implements
         ViewGroup view = getContentView();
         if (view == null) return;
         view.removeAllViews();
-        if(mLoadingView == null) {
+        if (mLoadingView == null) {
             LayoutInflater inflater = getActivity().getLayoutInflater();
             mLoadingView = inflater.inflate(R.layout.uiv3_loading_layout, view, false);
         }

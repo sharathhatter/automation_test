@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -411,8 +410,8 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
             ImageView cardTrashImageView;
             TextView cardNumberTextView;
             TextView cardNameTextView;
-            LinearLayout cvvPayNowLinearLayout;
-            LinearLayout rowLinearLayout;
+            ViewGroup cvvPayNowLinearLayout;
+            ViewGroup rowLinearLayout;
             Button paynNowButton;
             EditText cvvEditText;
             CheckBox enableOneClickPaymentCheckBox;
@@ -424,8 +423,8 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
                 cardNumberTextView = (TextView) itemView.findViewById(R.id.text_view_card_number);
                 cardTrashImageView = (ImageView) itemView.findViewById(R.id.image_view_card_trash);
                 cardNameTextView = (TextView) itemView.findViewById(R.id.text_view_card_name);
-                rowLinearLayout = (LinearLayout) itemView.findViewById(R.id.linear_layout_row);
-                cvvPayNowLinearLayout = (LinearLayout) itemView.findViewById(R.id.linear_layout_cvv_paynow);
+                rowLinearLayout = (ViewGroup) itemView.findViewById(R.id.linear_layout_row);
+                cvvPayNowLinearLayout = (ViewGroup) itemView.findViewById(R.id.linear_layout_cvv_paynow);
                 paynNowButton = (Button) itemView.findViewById(R.id.button_pay_now);
                 cvvEditText = (EditText) itemView.findViewById(R.id.edit_text_cvv);
                 enableOneClickPaymentCheckBox = (CheckBox) itemView.findViewById(R.id.check_box_enable_one_click_payment);
@@ -433,8 +432,8 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
                 // lets restrict the user not from typing alpha characters.
 
                 cardTrashImageView.setOnClickListener(this);
-                cvvPayNowLinearLayout.setOnClickListener(this);
-                rowLinearLayout.setOnClickListener(this);
+//                cvvPayNowLinearLayout.setOnClickListener(this);
+//                rowLinearLayout.setOnClickListener(this);
                 paynNowButton.setOnClickListener(this);
 
                 // we need to set the length of cvv field according to the card number
@@ -469,6 +468,7 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
 
             @Override
             public void onClick(View view) {
+                PayUBaseActivity.hideKeyboard(view.getContext(), view);
                 if (cvvPayNowLinearLayout.getVisibility() == View.VISIBLE) {
                     cvvPayNowLinearLayout.setVisibility(View.GONE);
                 } else {

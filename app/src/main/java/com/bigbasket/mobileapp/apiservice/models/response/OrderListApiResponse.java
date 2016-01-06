@@ -13,4 +13,5 @@ public class OrderListApiResponse {
 
     @SerializedName(Constants.TOTAL_PAGE)
     public int totalPages;
+
 }

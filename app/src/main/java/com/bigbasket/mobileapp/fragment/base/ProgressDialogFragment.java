@@ -40,14 +40,14 @@ public class ProgressDialogFragment extends AppCompatDialogFragment {
 
     @Override
     public void onStart() {
-        boolean error = false ;
+        boolean error = false;
         try {
             super.onStart();
-        } catch (WindowManager.BadTokenException t){
+        } catch (WindowManager.BadTokenException t) {
             Crashlytics.logException(t);
             error = true;
         }
-        if(error) {
+        if (error) {
             try {
                 dismissAllowingStateLoss();
             } catch (Exception ex) {

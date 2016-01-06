@@ -58,16 +58,17 @@ public class GetAppDataDynamicIntentService extends IntentService {
         AppDataDynamicDbHelper appDataDynamicDbHelper = new AppDataDynamicDbHelper(this);
         appDataDynamicDbHelper.save(responseJson);
         //Upload pending analytics data
-        if(DataUtil.isInternetAvailable(this)){
+        if (DataUtil.isInternetAvailable(this)) {
             List<SectionItemAnalyticsData> data = AnalyticsIntentService.getAnalyticsData(this);
-            if(data == null || data.isEmpty()){
+            if (data == null || data.isEmpty()) {
                 return;
             }
             Gson gson = new GsonBuilder().create();
-            Type type = new TypeToken<HashMap<String, String>>(){}.getType();
+            Type type = new TypeToken<HashMap<String, String>>() {
+            }.getType();
             AdAnalyticsData[] analyticsData = new AdAnalyticsData[data.size()];
             int i = 0;
-            for(SectionItemAnalyticsData sd: data) {
+            for (SectionItemAnalyticsData sd : data) {
                 AdAnalyticsData aad = new AdAnalyticsData();
                 aad.setClicks(sd.getClicks());
                 aad.setImps(sd.getImpressions());
@@ -79,7 +80,7 @@ public class GetAppDataDynamicIntentService extends IntentService {
                     Crashlytics.logException(ex);
                 }
                 aad.setCityId(cityId);
-                if(!TextUtils.isEmpty(sd.getAnalyticsAttrs())) {
+                if (!TextUtils.isEmpty(sd.getAnalyticsAttrs())) {
                     HashMap<String, String> analyticsAttrMap =
                             gson.fromJson(sd.getAnalyticsAttrs(), type);
                     aad.setAnalyticsAttr(analyticsAttrMap);
@@ -96,11 +97,11 @@ public class GetAppDataDynamicIntentService extends IntentService {
                 //Ignore, try again
             }
 
-            if(response == null || !response.isSuccess() || response.body().status != 0) {
+            if (response == null || !response.isSuccess() || response.body().status != 0) {
                 // POST request failed, Restore the data back to the db, which will be retried later
                 // Dont just insert here, there may have ben some clicks or impressions recorded
                 // during the execution of above statements
-                for(SectionItemAnalyticsData sd: data) {
+                for (SectionItemAnalyticsData sd : data) {
                     AnalyticsIntentService.startUpdateAnalyticsEvent(this,
                             sd.getClicks(),
                             sd.getImpressions(),

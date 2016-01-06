@@ -447,6 +447,18 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         }
     }
 
+    @Override
+    public void onNoFragmentsInLayout() {
+        OtpValidationHelper.onDestroy();
+        // No need to finish activity
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        OtpValidationHelper.onDestroy();
+    }
+
     private class CreateUpdateAddressApiCallback extends BBNetworkCallback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
 
         private boolean forceCreate;
@@ -509,17 +521,5 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                 return false;
             }
         }
-    }
-
-    @Override
-    public void onNoFragmentsInLayout() {
-        OtpValidationHelper.onDestroy();
-        // No need to finish activity
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        OtpValidationHelper.onDestroy();
     }
 }

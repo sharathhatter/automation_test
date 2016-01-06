@@ -111,7 +111,6 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Shown", map);
     }
 
-
     @Override
     public int getMainLayout() {
         return R.layout.uiv3_shipment_layout;

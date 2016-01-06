@@ -42,7 +42,6 @@ import com.bigbasket.mobileapp.receivers.DynamicScreenLoaderCallback;
 import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.LeakCanaryObserverImpl;
 import com.bigbasket.mobileapp.util.LoaderIds;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.SectionCursorHelper;
@@ -70,7 +69,7 @@ public class HomeFragment extends BaseSectionFragment {
         saveSectionData(false);
         View rootView = inflater.inflate(R.layout.home_fragment_layout, container, false);
         NudgeView nudgeView = (NudgeView) rootView.findViewById(R.id.nudge);
-        if(getCurrentActivity() != null) {
+        if (getCurrentActivity() != null) {
             nudgeView.setMoEHelper(getCurrentActivity().getMoEHelper());
         }
         return rootView;
@@ -104,12 +103,12 @@ public class HomeFragment extends BaseSectionFragment {
         if (contentView != null) {
             contentView.removeAllViews();
         }
-        if(mRecyclerView != null) {
+        if (mRecyclerView != null) {
             mRecyclerView.setAdapter(null);
             mRecyclerView.removeAllViews();
         }
         mRecyclerView = null;
-        if(getActivity() != null && !getActivity().isFinishing()) {
+        if (getActivity() != null && !getActivity().isFinishing()) {
             showProgressView();
         }
         mDynamicTiles = null;

@@ -36,7 +36,6 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
-import com.bigbasket.mobileapp.model.section.SubSectionItem;
 import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -111,7 +110,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
                                          HashMap<Integer, Renderer> rendererHashMap) {
         Typeface faceRobotoMedium = FontHolder.getInstance(getContext()).getFaceRobotoMedium();
         if (sectionItem.getSubSectionItems() == null
-                || sectionItem.getSubSectionItems().isEmpty()){
+                || sectionItem.getSubSectionItems().isEmpty()) {
             return;
         }
         ArrayList<SectionItem> subNavigationSectionItems = new ArrayList<>(
@@ -300,7 +299,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
     }
 
     public void clear() {
-        if(mNavRecyclerView != null){
+        if (mNavRecyclerView != null) {
             mNavRecyclerView.setAdapter(null);
         }
     }

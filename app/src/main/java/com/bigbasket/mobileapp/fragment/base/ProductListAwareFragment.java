@@ -102,14 +102,14 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     public void setSponsoredSectionData(SectionData sponsoredSectionData) {
-        if(sponsoredSectionData == null || sponsoredSectionData.getSections() == null
-                || sponsoredSectionData.getSections().isEmpty()){
-            if(mSponsoredSectionInfo != null){
+        if (sponsoredSectionData == null || sponsoredSectionData.getSections() == null
+                || sponsoredSectionData.getSections().isEmpty()) {
+            if (mSponsoredSectionInfo != null) {
                 mSponsoredSectionInfo.reset();
             }
             return;
         }
-        if(mSponsoredSectionInfo == null) {
+        if (mSponsoredSectionInfo == null) {
             mSponsoredSectionInfo = new SponsoredProductInfo(sponsoredSectionData);
         } else {
             mSponsoredSectionInfo.reset(sponsoredSectionData);
@@ -119,33 +119,33 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         injectSponsoredProducts();
     }
 
-    private void injectSponsoredProducts(){
-        if(getCurrentActivity() == null || mSponsoredSectionInfo == null
+    private void injectSponsoredProducts() {
+        if (getCurrentActivity() == null || mSponsoredSectionInfo == null
                 || !mSponsoredSectionInfo.hasMoreItems()
                 || mProductListRecyclerAdapter == null) {
             return;
         }
-        if(mSponsoredSectionInfo.getInjectionWindow() <= 0) {
+        if (mSponsoredSectionInfo.getInjectionWindow() <= 0) {
             //Determine injection window
-            if(mProductRecyclerView != null && mProductRecyclerView.getLayoutManager() != null){
+            if (mProductRecyclerView != null && mProductRecyclerView.getLayoutManager() != null) {
                 RecyclerView.LayoutManager layoutManager = mProductRecyclerView.getLayoutManager();
                 int lastVisiblePosition = RecyclerView.NO_POSITION;
                 int firstVisiblePosition = RecyclerView.NO_POSITION;
-                if(layoutManager instanceof LinearLayoutManager) {
-                    firstVisiblePosition = ((LinearLayoutManager)layoutManager)
+                if (layoutManager instanceof LinearLayoutManager) {
+                    firstVisiblePosition = ((LinearLayoutManager) layoutManager)
                             .findFirstVisibleItemPosition();
-                    lastVisiblePosition = ((LinearLayoutManager)layoutManager)
+                    lastVisiblePosition = ((LinearLayoutManager) layoutManager)
                             .findLastVisibleItemPosition();
-                } else if (layoutManager instanceof StaggeredGridLayoutManager){
+                } else if (layoutManager instanceof StaggeredGridLayoutManager) {
                     int[] pos = ((StaggeredGridLayoutManager) layoutManager)
                             .findFirstVisibleItemPositions(null);
-                    if(pos != null && pos.length > 0){
+                    if (pos != null && pos.length > 0) {
                         Arrays.sort(pos);
                         firstVisiblePosition = pos[0];
                     }
-                    pos = ((StaggeredGridLayoutManager)layoutManager)
+                    pos = ((StaggeredGridLayoutManager) layoutManager)
                             .findLastVisibleItemPositions(null);
-                    if(pos != null && pos.length > 0){
+                    if (pos != null && pos.length > 0) {
                         Arrays.sort(pos);
                         lastVisiblePosition = pos[pos.length - 1];
                     }
@@ -155,12 +155,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     try {
                         lastVisiblePosition = getResources()
                                 .getInteger(R.integer.default_sponsored_items_window);
-                    } catch (IllegalStateException ex){
+                    } catch (IllegalStateException ex) {
                         //Ignore
                     }
                 }
 
-                if(firstVisiblePosition != RecyclerView.NO_POSITION
+                if (firstVisiblePosition != RecyclerView.NO_POSITION
                         && lastVisiblePosition != RecyclerView.NO_POSITION) {
                     //Injection window is hardcoded 4 visible pages on the screen
                     mSponsoredSectionInfo.setInjectionWindow(
@@ -169,13 +169,13 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     // so that the next inject position will firstVisiblePosition + injectionWindow
                     mSponsoredSectionInfo.setLastInjectedPosition(firstVisiblePosition);
                 } else {
-                    if(mInjectWindowRetries >= 5) {
+                    if (mInjectWindowRetries >= 5) {
                         //Could not determine after 5 retries, use hard coded window values
                         firstVisiblePosition = 0;
                         try {
                             lastVisiblePosition = getResources()
                                     .getInteger(R.integer.default_sponsored_items_window);
-                        } catch (IllegalStateException ex){
+                        } catch (IllegalStateException ex) {
                             //Ignore
                         }
                         mSponsoredSectionInfo.setInjectionWindow(
@@ -199,7 +199,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
 
         List<AbstractProductItem> existingProducts = mProductListRecyclerAdapter.getProducts();
-        if(existingProducts != null) {
+        if (existingProducts != null) {
             int nextInjectPosition = mSponsoredSectionInfo.getNextInjectPosition();
             while (mSponsoredSectionInfo.getNextSponsoredItem() != null
                     && nextInjectPosition != RecyclerView.NO_POSITION
@@ -214,7 +214,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     existingProducts.add(spItem);
                     nextInjectPosition = existingProducts.size();
                 }
-                if(mProductListRecyclerAdapter != null) {
+                if (mProductListRecyclerAdapter != null) {
                     mProductListRecyclerAdapter.setSponsoredItemsSize(
                             mSponsoredSectionInfo.getTotalItems()
                                     - mSponsoredSectionInfo.getRemainingItems());
@@ -254,7 +254,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
             Call<ApiResponse<ProductNextPageResponse>> call =
-                    bigBasketApiService.productNextPage(getPreviousScreenName(),mNameValuePairs);
+                    bigBasketApiService.productNextPage(getPreviousScreenName(), mNameValuePairs);
             call.enqueue(new BBNetworkCallback<ApiResponse<ProductNextPageResponse>>(this) {
                 @Override
                 public void onSuccess(ApiResponse<ProductNextPageResponse> productNextPageApiResponse) {
@@ -302,11 +302,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         if (products == null || products.size() == 0) return;
         List<AbstractProductItem> existingProductList = mProductListRecyclerAdapter.getProducts();
         int insertedAt = existingProductList.size();
-        for(Product p: products){
+        for (Product p : products) {
             existingProductList.add(new NormalProductItem(p));
         }
         mProductListRecyclerAdapter.notifyItemRangeInserted(insertedAt, products.size());
-        if(mSponsoredSectionInfo != null && mSponsoredSectionInfo.hasMoreItems()) {
+        if (mSponsoredSectionInfo != null && mSponsoredSectionInfo.hasMoreItems()) {
             injectSponsoredProducts();
         }
     }
@@ -369,7 +369,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     .showQtyInput(authParameters.isKirana())
                     .build();
             List<AbstractProductItem> productItems = new ArrayList<>(products.size());
-            for(Product p: products){
+            for (Product p : products) {
                 productItems.add(new NormalProductItem(p));
             }
             mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productItems, mBaseImgUrl,

@@ -291,7 +291,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
 
     public String constructImageUrl(Context context, String baseImgUrl) {
         //TODO: Use existing constants for schema"
-        if(imageName.startsWith("http://")
+        if (imageName.startsWith("http://")
                 || imageName.startsWith("https://")) {
             return imageName;
         } else {

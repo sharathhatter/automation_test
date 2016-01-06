@@ -257,6 +257,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
             signinUser();
         }
     }
+
     private void signinUser() {
         try {
             String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
@@ -266,6 +267,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
             showToast(getString(R.string.unknownError));
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {

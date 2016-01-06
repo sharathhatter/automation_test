@@ -295,7 +295,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, layoutPromoProductList);
         ArrayList<AbstractProductItem> productItems = new ArrayList<>(products.size());
-        for(Product p: products){
+        for (Product p : products) {
             productItems.add(new NormalProductItem(p));
         }
         if (cartInfo == null) {

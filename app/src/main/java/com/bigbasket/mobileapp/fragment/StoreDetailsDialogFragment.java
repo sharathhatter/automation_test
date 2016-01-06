@@ -99,7 +99,7 @@ public class StoreDetailsDialogFragment extends AbstractDialogFragment {
                         DestinationInfo destinationInfo = new DestinationInfo(DestinationInfo.STORE_LIST, storeCategory);
                         if (getDialog().isShowing())
                             getDialog().dismiss();
-                        new OnSectionItemClickListener<>((AppOperationAware)getActivity()).handleDestinationClick(destinationInfo);
+                        new OnSectionItemClickListener<>((AppOperationAware) getActivity()).handleDestinationClick(destinationInfo);
                     }
                 }
             });

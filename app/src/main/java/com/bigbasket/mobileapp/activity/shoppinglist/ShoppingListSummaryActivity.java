@@ -35,6 +35,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.GetCurrentNavigationContextForSl;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.section.Section;
@@ -54,7 +55,7 @@ import java.util.HashMap;
 
 import retrofit.Call;
 
-public class ShoppingListSummaryActivity extends SearchActivity {
+public class ShoppingListSummaryActivity extends SearchActivity implements GetCurrentNavigationContextForSl {
 
     private String baseImgUrl;
     @Nullable
@@ -63,6 +64,7 @@ public class ShoppingListSummaryActivity extends SearchActivity {
     private ViewPager viewPager;
     private TextView mTxtToolbarDropdown;
     private int currentTabIndex;
+    private String referrer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -165,7 +167,6 @@ public class ShoppingListSummaryActivity extends SearchActivity {
                 }
             }
         });
-
     }
 
     private void showNoShoppingListView(ViewGroup contentView) {
@@ -249,8 +250,12 @@ public class ShoppingListSummaryActivity extends SearchActivity {
         final int numTabs = shoppingListSummaries.size();
 
         final String nc = getNc();
-        setCurrentScreenName(nc);
-
+        if (!TextUtils.isEmpty(nc)) {
+            referrer = nc + "." + shoppingListSummaries.get(0).getFacetSlug();
+        } else {
+            referrer = shoppingListSummaries.get(0).getFacetSlug();
+        }
+        setCurrentScreenName(referrer);
 
         final View layoutAddAll = findViewById(R.id.layoutAddAll);
         if (numTabs == 1) {
@@ -285,7 +290,15 @@ public class ShoppingListSummaryActivity extends SearchActivity {
                         } else {
                             layoutAddAll.setVisibility(View.VISIBLE);
                         }
-                        setCurrentScreenName(nc + "." + shoppingListSummaries.get(position).getFacetSlug());
+
+                        if (!TextUtils.isEmpty(nc)) {
+                            referrer = nc + "." + shoppingListSummaries.get(position).getFacetSlug();
+                        } else {
+                            referrer = shoppingListSummaries.get(position).getFacetSlug();
+                        }
+
+                        setCurrentScreenName(referrer);
+
                         HashMap<String, String> eventAttribs = new HashMap<>();
                         eventAttribs.put(Constants.TAB_NAME, shoppingListSummaries.get(position).getFacetSlug());
                         String tabName = !TextUtils.isEmpty(nc) && nc.equals(TrackEventkeys.SB)
@@ -654,5 +667,10 @@ public class ShoppingListSummaryActivity extends SearchActivity {
     @Override
     protected String getCategoryId() {
         return getString(R.string.my_basket_header);
+    }
+
+    @Override
+    public String getCurrentNavigationContextForSl() {
+        return referrer;
     }
 }
