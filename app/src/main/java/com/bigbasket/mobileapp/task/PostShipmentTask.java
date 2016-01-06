@@ -21,13 +21,13 @@ import retrofit.Call;
 public class PostShipmentTask<T extends AppOperationAware> {
 
     public static <T extends AppOperationAware> void startTask(final T ctx, final ArrayList<SelectedShipment> selectedShipments,
-                          final String potentialOrderId,
-                          final String nc) {
+                                                               final String potentialOrderId,
+                                                               final String nc) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(
                 ctx.getCurrentActivity());
         ctx.showProgressDialog("Please wait...");
         Call<ApiResponse<PostShipmentResponseContent>> call =
-                bigBasketApiService.postShipment(new Gson().toJson(selectedShipments),
+                bigBasketApiService.postShipment(ctx.getCurrentActivity().getPreviousScreenName(), new Gson().toJson(selectedShipments),
                         potentialOrderId, "yes", "yes", "yes", "yes", "yes");
         call.enqueue(new BBNetworkCallback<ApiResponse<PostShipmentResponseContent>>(ctx, true) {
             @Override
@@ -57,8 +57,8 @@ public class PostShipmentTask<T extends AppOperationAware> {
     }
 
     private static <T extends AppOperationAware> void onPostShipment(T ctx, String potentialOrderId,
-                                       String nc,
-                                       PostShipmentResponseContent postShipmentResponseContent) {
+                                                                     String nc,
+                                                                     PostShipmentResponseContent postShipmentResponseContent) {
         Intent intent = new Intent(ctx.getCurrentActivity(),
                 PaymentSelectionActivity.class);
         intent.putExtra(Constants.P_ORDER_ID, potentialOrderId);
@@ -73,7 +73,7 @@ public class PostShipmentTask<T extends AppOperationAware> {
         intent.putExtra(Constants.NEW_FLOW_URL, postShipmentResponseContent.newFlowUrl);
         intent.putParcelableArrayListExtra(Constants.VOUCHERS,
                 postShipmentResponseContent.activeVouchersArrayList);
-        ctx.getCurrentActivity().setNextScreenNavigationContext(nc);
+        ctx.getCurrentActivity().setCurrentScreenName(nc);
         ctx.getCurrentActivity().startActivityForResult(intent,
                 NavigationCodes.GO_TO_HOME);
     }

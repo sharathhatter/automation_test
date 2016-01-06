@@ -46,12 +46,12 @@ public class OrderPrepaymentProcessingTask<T extends AppOperationAware>
     @Override
     protected Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService) {
-        return bigBasketApiService.getPayzappOrderPaymentParams(potentialOrderId);
+        return bigBasketApiService.getPayzappOrderPaymentParams(ctx.getCurrentActivity().getPreviousScreenName(),potentialOrderId);
     }
 
     @Override
     protected Call<ApiResponse<PrePaymentParamsResponse>> getPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService) {
-        return bigBasketApiService.getOrderPaymentParams(potentialOrderId);
+        return bigBasketApiService.getOrderPaymentParams(ctx.getCurrentActivity().getPreviousScreenName(),potentialOrderId);
     }
 }

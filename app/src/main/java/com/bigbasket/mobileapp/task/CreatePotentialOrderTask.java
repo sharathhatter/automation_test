@@ -25,7 +25,8 @@ public class CreatePotentialOrderTask<T extends AppOperationAware> {
                 getApiService(ctx.getCurrentActivity());
         ctx.showProgressDialog(ctx.getCurrentActivity().getString(R.string.checkingAvailability),
                 false);
-        Call<ApiResponse<CreatePotentialOrderResponseContent>> call = bigBasketApiService.createPotentialOrder(addressId);
+        Call<ApiResponse<CreatePotentialOrderResponseContent>> call =
+                bigBasketApiService.createPotentialOrder(ctx.getCurrentActivity().getPreviousScreenName(), addressId);
         call.enqueue(new BBNetworkCallback<ApiResponse<CreatePotentialOrderResponseContent>>(ctx, true) {
             @Override
             public void onSuccess(ApiResponse<CreatePotentialOrderResponseContent> createPotentialOrderApiResponse) {

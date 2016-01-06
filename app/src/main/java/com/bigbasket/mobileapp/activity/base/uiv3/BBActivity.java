@@ -235,7 +235,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 @Override
                 public void onClick(View v) {
                     HashMap<String, String> map = new HashMap<>();
-                    map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     trackEvent(TrackingAware.BASKET_VIEW_CLICKED, map, null, null, false, true);
                     launchViewBasketScreen();
                 }
@@ -281,7 +281,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 super.onDrawerOpened(drawerView);
 
                 Map<String, String> eventAttribs = new HashMap<>();
-                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                 trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
                 if (mMainMenuView != null) {
@@ -312,7 +312,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
         if (frameLayout == null) return;
-        UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
+        UIUtil.addNavigationContextToBundle(fragment, getCurrentScreenName());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -330,7 +330,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
         if (fragment == null) return;
-        UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
+        UIUtil.addNavigationContextToBundle(fragment, getCurrentScreenName());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -797,7 +797,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
     public void changeAddressRequested() {
         if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
-            showChangeCity(false, getNextScreenNavigationContext(), false);
+            showChangeCity(false, getCurrentScreenName(), false);
         } else {
             Intent intent = new Intent(this, BackButtonActivity.class);
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.CHANGE_ADDRESS_FRAGMENT);

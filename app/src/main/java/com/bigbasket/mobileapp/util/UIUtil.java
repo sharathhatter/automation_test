@@ -734,17 +734,17 @@ public class UIUtil {
     public static void addNavigationContextToBundle(Fragment fragment, String mNextScreenNavigationContext) {
         Bundle args = fragment.getArguments();
         String nc = fragment instanceof AnalyticsNavigationContextAware ?
-                ((AnalyticsNavigationContextAware) fragment).getNextScreenNavigationContext() : null;
+                ((AnalyticsNavigationContextAware) fragment).getCurrentScreenName() : null;
 
         if (nc == null && fragment.getActivity() == null) // when Fragment's onActivityCreated in not called
             nc = mNextScreenNavigationContext;
         if (nc == null && fragment.getActivity() != null &&
                 fragment.getActivity() instanceof AnalyticsNavigationContextAware) {
             // Use activity's current nc
-            nc = ((AnalyticsNavigationContextAware) fragment.getActivity()).getCurrentNavigationContext();
+            nc = ((AnalyticsNavigationContextAware) fragment.getActivity()).getPreviousScreenName();
             if (nc == null) {
                 nc = ((AnalyticsNavigationContextAware) fragment.getActivity()).
-                        getNextScreenNavigationContext();
+                        getCurrentScreenName();
             }
         }
         if (!TextUtils.isEmpty(nc)) {

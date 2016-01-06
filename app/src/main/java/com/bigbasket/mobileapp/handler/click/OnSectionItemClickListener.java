@@ -425,9 +425,9 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             }
         }
         if (context instanceof Fragment && context instanceof AnalyticsNavigationContextAware) {
-            ((AnalyticsNavigationContextAware) context).setNextScreenNavigationContext(ncBuilder.toString());
+            ((AnalyticsNavigationContextAware) context).setCurrentScreenName(ncBuilder.toString());
         }
-        context.getCurrentActivity().setNextScreenNavigationContext(ncBuilder.toString());
+        context.getCurrentActivity().setCurrentScreenName(ncBuilder.toString());
     }
 
     @Nullable
@@ -474,7 +474,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             eventAttribs.put(TrackEventkeys.BANNER_ID, String.valueOf(index));
             eventAttribs.put(TrackEventkeys.BANNER_SLUG, bannerName);
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
-                    context.getCurrentActivity().getNextScreenNavigationContext());
+                    context.getCurrentActivity().getCurrentScreenName());
             if (context instanceof TrackingAware) {
                 ((TrackingAware) context).trackEvent(eventName, eventAttribs);
             }
@@ -521,7 +521,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, sectionItemNameBuilder.toString());
         }
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
-                context.getCurrentActivity().getNextScreenNavigationContext());
+                context.getCurrentActivity().getCurrentScreenName());
         String eventName = getAnalyticsFormattedScreeName();
         if (eventName == null) return;
         if (context instanceof TrackingAware) {

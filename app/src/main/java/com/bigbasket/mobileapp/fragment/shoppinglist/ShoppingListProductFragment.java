@@ -83,13 +83,13 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
             productListAdapter = new ProductListRecyclerAdapter(productItems,
                     baseImgUrl,
                     getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(),
-                    getNextScreenNavigationContext(),
+                    getCurrentScreenName(),
                     cartInfo, tabName);
         } else {
             productListAdapter = new ProductListRecyclerAdapter(productItems,
                     baseImgUrl,
                     getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(),
-                    getNextScreenNavigationContext(), tabName);
+                    getCurrentScreenName(), tabName);
         }
         productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(productRecyclerView);

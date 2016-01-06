@@ -185,7 +185,7 @@ public class HeaderSpinnerView<T extends AppOperationAware> {
                 }
             }
             HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.NAVIGATION_CTX, activity.getNextScreenNavigationContext());
+            map.put(TrackEventkeys.NAVIGATION_CTX, activity.getCurrentScreenName());
             activity.trackEvent(TrackingAware.PRODUCT_LIST_HEADER_CLICKED, map);
         }
     }

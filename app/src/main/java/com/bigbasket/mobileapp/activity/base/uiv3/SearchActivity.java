@@ -80,7 +80,7 @@ public class SearchActivity extends BBActivity {
         Intent intent = new Intent(getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
         intent.putExtra(Constants.EAN_CODE, eanCode);
-        setNextScreenNavigationContext(TrackEventkeys.PS_SCAN);
+        setCurrentScreenName(TrackEventkeys.PS_SCAN);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -93,7 +93,7 @@ public class SearchActivity extends BBActivity {
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        setNextScreenNavigationContext(navigationCtx);
+        setCurrentScreenName(navigationCtx);
         intent.putExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
@@ -121,7 +121,7 @@ public class SearchActivity extends BBActivity {
         nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
         intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         intent.putExtra(Constants.TITLE, searchQuery);
-        setNextScreenNavigationContext(referrer);
+        setCurrentScreenName(referrer);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

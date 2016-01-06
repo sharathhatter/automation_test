@@ -50,10 +50,12 @@ public class ShoppingListDoAddDeleteTask<T extends AppOperationAware> {
                 for (ShoppingListName shoppingListName : selectedShoppingListNames) {
                     slugList.add(shoppingListName.getSlug());
                 }
-                call = bigBasketApiService.addItemToShoppingList(selectedProductId, new Gson().toJson(slugList));
+                call = bigBasketApiService.addItemToShoppingList(ctx.getCurrentActivity().getCurrentScreenName(),
+                        selectedProductId, new Gson().toJson(slugList));
                 break;
             case ShoppingListOption.DELETE_ITEM:
-                call = bigBasketApiService.deleteItemFromShoppingList(selectedProductId, selectedShoppingListNames.get(0).getSlug());
+                call = bigBasketApiService.deleteItemFromShoppingList(ctx.getCurrentActivity().getPreviousScreenName(),
+                        selectedProductId, selectedShoppingListNames.get(0).getSlug());
                 break;
         }
         if (call != null) {

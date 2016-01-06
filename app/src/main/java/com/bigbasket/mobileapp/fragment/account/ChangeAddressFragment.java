@@ -68,9 +68,9 @@ public class ChangeAddressFragment extends BaseFragment implements AddressSelect
         mAddressPageMode = args != null ?
                 args.getInt(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.CHECKOUT) : MemberAddressPageMode.CHECKOUT;
         if (mAddressPageMode == MemberAddressPageMode.ACCOUNT) {
-            setNextScreenNavigationContext(TrackEventkeys.NC_ACCOUNT_ADDRESS);
+            setCurrentScreenName(TrackEventkeys.NC_ACCOUNT_ADDRESS);
         } else {
-            setNextScreenNavigationContext(TrackEventkeys.CO_ADDRESS);
+            setCurrentScreenName(TrackEventkeys.CO_ADDRESS);
         }
         if (savedInstanceState != null) {
             mAddressArrayList = savedInstanceState.getParcelableArrayList(Constants.ADDRESSES);
@@ -118,7 +118,7 @@ public class ChangeAddressFragment extends BaseFragment implements AddressSelect
         mSelectedAddress = null; // Reset
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        Call<ApiResponse<GetDeliveryAddressApiResponseContent>> call = bigBasketApiService.getDeliveryAddresses();
+        Call<ApiResponse<GetDeliveryAddressApiResponseContent>> call = bigBasketApiService.getDeliveryAddresses(getPreviousScreenName());
         call.enqueue(new BBNetworkCallback<ApiResponse<GetDeliveryAddressApiResponseContent>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<GetDeliveryAddressApiResponseContent> getDeliveryAddressApiResponse) {
@@ -227,10 +227,10 @@ public class ChangeAddressFragment extends BaseFragment implements AddressSelect
         showAddressForm(null);
         HashMap<String, String> map = new HashMap<>();
         if (mAddressPageMode != MemberAddressPageMode.CHECKOUT) {
-            setCurrentNavigationContext(TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
+            setPreviousScreenName(TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
             trackEvent(TrackingAware.NEW_ADDRESS_CLICKED, map);
         } else {
-            setCurrentNavigationContext(TrackEventkeys.CO_BASKET);
+            setPreviousScreenName(TrackEventkeys.CO_BASKET);
             trackEvent(TrackingAware.CHECKOUT_CREATE_ADDRESS_SHOWN, map);
         }
     }

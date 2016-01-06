@@ -114,7 +114,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         super.onCreate(savedInstanceState);
         mElapsedTime = new MutableLong();
 
-        setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
+        setCurrentScreenName(TrackEventkeys.CO_PAYMENT);
         mPotentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
 
         if (TextUtils.isEmpty(mPotentialOrderId)) return;
@@ -261,7 +261,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                     }
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
-                    map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
 
                     SharedPreferences prefs =
@@ -430,7 +430,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (checkInternetConnection()) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
             showProgressDialog(getString(R.string.please_wait));
-            Call<ApiResponse<PostVoucherApiResponseContent>> call = bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode);
+            Call<ApiResponse<PostVoucherApiResponseContent>> call =
+                    bigBasketApiService.postVoucher(getCurrentScreenName(), mPotentialOrderId, voucherCode);
             call.enqueue(new BBNetworkCallback<ApiResponse<PostVoucherApiResponseContent>>(this) {
                 @Override
                 public void onSuccess(ApiResponse<PostVoucherApiResponseContent> postVoucherApiResponse) {
@@ -483,7 +484,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<PostVoucherApiResponseContent>> call = bigBasketApiService.removeVoucher(mPotentialOrderId);
+        Call<ApiResponse<PostVoucherApiResponseContent>> call =
+                bigBasketApiService.removeVoucher(getCurrentScreenName(), mPotentialOrderId);
         call.enqueue(new BBNetworkCallback<ApiResponse<PostVoucherApiResponseContent>>(this) {
             @Override
             public void onSuccess(ApiResponse<PostVoucherApiResponseContent> removeVoucherApiResponse) {
@@ -599,7 +601,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private void placeOrderWithPrePaymentMethod() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         Call<OldApiResponse<PlaceOrderApiPrePaymentResponseContent>> call =
-                bigBasketApiService.placeOrderWithPrePayment(mPotentialOrderId, mSelectedPaymentMethod);
+                bigBasketApiService.placeOrderWithPrePayment(getCurrentScreenName(), mPotentialOrderId, mSelectedPaymentMethod);
         call.enqueue(new BBNetworkCallback<OldApiResponse<PlaceOrderApiPrePaymentResponseContent>>(this) {
             @Override
             public void onSuccess(OldApiResponse<PlaceOrderApiPrePaymentResponseContent> placeOrderApiPrePaymentResponse) {
@@ -633,7 +635,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private void placeOrderWithPayZappPaymentMethod() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         Call<OldApiResponse<PlaceOrderApiPayZappResponseContent>> call =
-                bigBasketApiService.placeOrderWithPayZapp(mPotentialOrderId, mSelectedPaymentMethod);
+                bigBasketApiService.placeOrderWithPayZapp(getCurrentScreenName(), mPotentialOrderId, mSelectedPaymentMethod);
         call.enqueue(new BBNetworkCallback<OldApiResponse<PlaceOrderApiPayZappResponseContent>>(this) {
             @Override
             public void onSuccess(OldApiResponse<PlaceOrderApiPayZappResponseContent> placeOrderApiPayZappResponseContent) {
@@ -690,7 +692,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
             trackEventAppsFlyer(TrackingAware.PLACE_ORDER, order.getOrderValue(), map);
         }
-        setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
+        setCurrentScreenName(TrackEventkeys.CO_PAYMENT);
 
         Intent invoiceIntent = new Intent(this, OrderThankyouActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);

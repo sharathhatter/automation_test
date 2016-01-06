@@ -40,7 +40,8 @@ public class PostGiftTask<T extends AppOperationAware> {
         ctx.showProgressDialog("Please wait...");
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         String giftsJson = gift != null ? gson.toJson(gift) : null;
-        Call<ApiResponse<PostGiftItemsResponseContent>> call = bigBasketApiService.postGifts(potentialOrderId, giftsJson);
+        Call<ApiResponse<PostGiftItemsResponseContent>> call =
+                bigBasketApiService.postGifts(ctx.getCurrentActivity().getPreviousScreenName(), potentialOrderId, giftsJson);
         call.enqueue(new BBNetworkCallback<ApiResponse<PostGiftItemsResponseContent>>(ctx, true) {
             @Override
             public void onSuccess(ApiResponse<PostGiftItemsResponseContent> postGiftItemsResponseContent) {
@@ -86,7 +87,7 @@ public class PostGiftTask<T extends AppOperationAware> {
                     new Gson().toJson(postGiftItemsResponseContent.toggleShipmentActions));
         }
         intent.putExtra(Constants.HAS_GIFTS, hasGift);
-        ctx.getCurrentActivity().setNextScreenNavigationContext(nc);
+        ctx.getCurrentActivity().setCurrentScreenName(nc);
         ctx.getCurrentActivity().startActivityForResult(intent,
                 NavigationCodes.GO_TO_HOME);
     }

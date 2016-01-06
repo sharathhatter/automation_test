@@ -75,7 +75,8 @@ public class CategoryLandingFragment extends BaseSectionFragment {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        Call<ApiResponse<SubCategoryApiResponse>> call = bigBasketApiService.getSubCategoryData(categorySlug, version);
+        Call<ApiResponse<SubCategoryApiResponse>> call =
+                bigBasketApiService.getSubCategoryData(getPreviousScreenName(), categorySlug, version);
         call.enqueue(new BBNetworkCallback<ApiResponse<SubCategoryApiResponse>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<SubCategoryApiResponse> subCategoryCallback) {

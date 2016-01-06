@@ -295,7 +295,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             showToast(getString(R.string.loginToContinue));
             Bundle bundle = new Bundle(1);
             bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_COMMUNICATION_HUB);
-            launchLogin(getCurrentNavigationContext(), bundle, true);
+            launchLogin(getPreviousScreenName(), bundle, true);
         }
 
         Map<String, String> eventAttribs = new HashMap<>();
@@ -444,7 +444,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                            Bundle valuePassed) {
         switch (sourceName) {
             case NavigationCodes.GO_TO_LOGIN:
-                launchLogin(getCurrentNavigationContext(), valuePassed, true);
+                launchLogin(getPreviousScreenName(), valuePassed, true);
                 break;
         }
 
@@ -630,7 +630,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void trackEvent(String eventName, Map<String, String> eventAttribs,
                            String source, String sourceValue, boolean isCustomerValueIncrease,
                            boolean sendToFacebook) {
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+        trackEvent(eventName, eventAttribs, source, sourceValue, getPreviousScreenName(),
                 isCustomerValueIncrease, sendToFacebook);
     }
 
@@ -641,14 +641,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+        trackEvent(eventName, eventAttribs, source, sourceValue, getPreviousScreenName(),
                 false, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+        trackEvent(eventName, eventAttribs, source, sourceValue, getPreviousScreenName(),
                 isCustomerValueIncrease, false);
     }
 
@@ -738,23 +738,23 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Nullable
     @Override
-    public String getCurrentNavigationContext() {
+    public String getPreviousScreenName() {
         return mNavigationContext;
     }
 
     @Override
-    public void setCurrentNavigationContext(@Nullable String nc) {
+    public void setPreviousScreenName(@Nullable String nc) {
         mNavigationContext = nc;
     }
 
     @Nullable
     @Override
-    public String getNextScreenNavigationContext() {
+    public String getCurrentScreenName() {
         return mNextScreenNavigationContext;
     }
 
     @Override
-    public void setNextScreenNavigationContext(@Nullable String nc) {
+    public void setCurrentScreenName(@Nullable String nc) {
         mNextScreenNavigationContext = nc;
     }
 
@@ -900,7 +900,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
         if (intent != null) {
-            intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         }
         super.startActivityForResult(intent, requestCode);
     }

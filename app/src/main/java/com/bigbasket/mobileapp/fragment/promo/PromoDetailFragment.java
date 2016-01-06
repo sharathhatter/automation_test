@@ -82,7 +82,7 @@ public class PromoDetailFragment extends BaseFragment {
             }
         }
         mPromoCategory = getArguments().getParcelable(Constants.PROMO_CATS);
-        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_DETAIL);
+        setCurrentScreenName(TrackEventkeys.NC_PROMO_DETAIL);
     }
 
     @Override
@@ -97,7 +97,8 @@ public class PromoDetailFragment extends BaseFragment {
         if (promoId > -1) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
             showProgressView();
-            Call<ApiResponse<PromoDetailApiResponseContent>> call = bigBasketApiService.getPromoDetail(String.valueOf(promoId));
+            Call<ApiResponse<PromoDetailApiResponseContent>> call =
+                    bigBasketApiService.getPromoDetail(getPreviousScreenName(), String.valueOf(promoId));
             call.enqueue(new BBNetworkCallback<ApiResponse<PromoDetailApiResponseContent>>(this, true) {
                 @Override
                 public void onSuccess(ApiResponse<PromoDetailApiResponseContent> promoDetailApiResponseContentApiResponse) {
@@ -302,7 +303,7 @@ public class PromoDetailFragment extends BaseFragment {
             productViewHolder.setBrandPageListener(new OnBrandPageListener<>(this));
             ProductView.setProductView(productViewHolder,
                     freeProduct, promoDetail.getBaseImgUrl(),
-                    productViewDisplayDataHolder, false, getCurrentActivity(), getNextScreenNavigationContext(), null, "none",
+                    productViewDisplayDataHolder, false, getCurrentActivity(), getCurrentScreenName(), null, "none",
                     null, null);
             base.setLayoutParams(productRowParams);
             view.addView(base);

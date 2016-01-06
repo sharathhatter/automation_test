@@ -334,14 +334,14 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                 showProgressDialog(isResendOtpRequested ? getString(R.string.resending_otp) :
                         getString(R.string.please_wait));
                 Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
-                        bigBasketApiService.updateAddress(payload);
+                        bigBasketApiService.updateAddress(getPreviousScreenName(), payload);
                 call.enqueue(new CreateUpdateAddressApiCallback(this, false, isResendOtpRequested));
             } else {
                 //handling if the address is created manually without id
                 showProgressDialog(isResendOtpRequested ? getString(R.string.resending_otp) :
                         getString(R.string.please_wait));
                 Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
-                        bigBasketApiService.createAddress(payload);
+                        bigBasketApiService.createAddress(getPreviousScreenName(), payload);
                 call.enqueue(new CreateUpdateAddressApiCallback(this, false, isResendOtpRequested));
             }
         } else {
@@ -349,7 +349,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             showProgressDialog(isResendOtpRequested ? getString(R.string.resending_otp) :
                     getString(R.string.please_wait));
             Call<ApiResponse<CreateUpdateAddressApiResponseContent>> call =
-                    bigBasketApiService.createAddress(payload);
+                    bigBasketApiService.createAddress(getPreviousScreenName(), payload);
             call.enqueue(new CreateUpdateAddressApiCallback(this, forceCreate, isResendOtpRequested));
         }
     }

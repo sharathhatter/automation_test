@@ -3,11 +3,11 @@ package com.bigbasket.mobileapp.interfaces;
 import android.support.annotation.Nullable;
 
 public interface AnalyticsNavigationContextAware {
-    String getCurrentNavigationContext();
+    String getPreviousScreenName();
 
-    void setCurrentNavigationContext(@Nullable String nc);
+    void setPreviousScreenName(@Nullable String nc);
 
-    String getNextScreenNavigationContext();
+    String getCurrentScreenName();
 
-    void setNextScreenNavigationContext(@Nullable String nc);
+    void setCurrentScreenName(@Nullable String nc);
 }

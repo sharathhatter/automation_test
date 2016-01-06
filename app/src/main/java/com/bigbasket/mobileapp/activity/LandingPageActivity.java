@@ -21,7 +21,7 @@ public class LandingPageActivity extends SocialLoginActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_ENTRY_SCREEN);
+        setCurrentScreenName(TrackEventkeys.NC_ENTRY_SCREEN);
         setContentView(R.layout.landing_page);
 
         ((Button) findViewById(R.id.btnLogin)).setTypeface(faceRobotoRegular);
@@ -34,7 +34,7 @@ public class LandingPageActivity extends SocialLoginActivity {
         switch (view.getId()) {
             case R.id.btnLogin:
                 Map<String, String> eventAttribs = new HashMap<>();
-                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                 trackEvent(TrackingAware.ENTRY_PAGE_LOGIN_CLICKED, eventAttribs);
                 launchTutorial(NavigationCodes.LAUNCH_LOGIN);
                 break;

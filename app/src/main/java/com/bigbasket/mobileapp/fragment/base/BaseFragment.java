@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -464,7 +463,7 @@ public abstract class BaseFragment extends AbstractFragment implements
     public void trackEvent(String eventName, Map<String, String> eventAttribs,
                            String source, String sourceValue, boolean isCustomerValueIncrease,
                            boolean sendToFacebook) {
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+        trackEvent(eventName, eventAttribs, source, sourceValue, getPreviousScreenName(),
                 isCustomerValueIncrease, sendToFacebook);
     }
 
@@ -483,14 +482,14 @@ public abstract class BaseFragment extends AbstractFragment implements
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
         if (getCurrentActivity() == null) return;
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false, false);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getPreviousScreenName(), false, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
         if (getCurrentActivity() == null) return;
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+        trackEvent(eventName, eventAttribs, source, sourceValue, getPreviousScreenName(),
                 isCustomerValueIncrease, false);
     }
 
@@ -552,30 +551,30 @@ public abstract class BaseFragment extends AbstractFragment implements
 
     @Nullable
     @Override
-    public String getCurrentNavigationContext() {
-        if (mNavigationContext == null && getActivity() != null && ((BaseActivity) getActivity()).getCurrentNavigationContext() != null)
-            return ((BaseActivity) getActivity()).getCurrentNavigationContext();
+    public String getPreviousScreenName() {
+        if (mNavigationContext == null && getActivity() != null && ((BaseActivity) getActivity()).getPreviousScreenName() != null)
+            return ((BaseActivity) getActivity()).getPreviousScreenName();
         return mNavigationContext;
     }
 
     @Override
-    public void setCurrentNavigationContext(@Nullable String nc) {
+    public void setPreviousScreenName(@Nullable String nc) {
         mNavigationContext = nc;
     }
 
     @Nullable
     @Override
-    public String getNextScreenNavigationContext() {
-        if (mNextScreenNavigationContext == null && getActivity() != null && ((BaseActivity) getActivity()).getNextScreenNavigationContext() != null)
-            return ((BaseActivity) getActivity()).getNextScreenNavigationContext();
+    public String getCurrentScreenName() {
+        if (mNextScreenNavigationContext == null && getActivity() != null && ((BaseActivity) getActivity()).getCurrentScreenName() != null)
+            return ((BaseActivity) getActivity()).getCurrentScreenName();
         return mNextScreenNavigationContext;
     }
 
     @Override
-    public void setNextScreenNavigationContext(@Nullable String nc) {
+    public void setCurrentScreenName(@Nullable String nc) {
         mNextScreenNavigationContext = nc;
         if (getCurrentActivity() != null) {
-            getCurrentActivity().setNextScreenNavigationContext(mNextScreenNavigationContext);
+            getCurrentActivity().setCurrentScreenName(mNextScreenNavigationContext);
         }
     }
 
@@ -603,7 +602,7 @@ public abstract class BaseFragment extends AbstractFragment implements
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         super.startActivityForResult(intent, requestCode);
     }
 

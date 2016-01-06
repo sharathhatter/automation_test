@@ -17,19 +17,19 @@ public class FundWalletPrepaymentProcessingTask<T extends AppOperationAware>
 
     public FundWalletPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
                                               String paymentMethod, boolean isPayNow,
-                                              boolean isFundWallet, String amount,boolean showPayUOption) {
-        super(ctx, potentialOrderId, orderId, paymentMethod, isPayNow, isFundWallet,showPayUOption);
+                                              boolean isFundWallet, String amount, boolean showPayUOption) {
+        super(ctx, potentialOrderId, orderId, paymentMethod, isPayNow, isFundWallet, showPayUOption);
         this.amount = amount;
     }
 
     @Override
     protected Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService) {
-        return bigBasketApiService.postPayzappFundWallet(paymentMethod, amount);
+        return bigBasketApiService.postPayzappFundWallet(ctx.getCurrentActivity().getPreviousScreenName(), paymentMethod, amount);
     }
 
     @Override
     protected Call<ApiResponse<PrePaymentParamsResponse>> getPrepaymentParamsApiCall(BigBasketApiService bigBasketApiService) {
-        return bigBasketApiService.postFundWallet(paymentMethod, amount);
+        return bigBasketApiService.postFundWallet(ctx.getCurrentActivity().getPreviousScreenName(), paymentMethod, amount);
     }
 }

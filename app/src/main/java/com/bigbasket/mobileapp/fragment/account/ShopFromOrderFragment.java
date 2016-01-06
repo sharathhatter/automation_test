@@ -58,7 +58,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     @Override
     public void onResume() {
         super.onResume();
-        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_SHOP_FROM_ORDER);
+        setCurrentScreenName(TrackEventkeys.NAVIGATION_CTX_SHOP_FROM_ORDER);
         loadProducts();
     }
 
@@ -81,7 +81,8 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<GetProductsForOrderApiResponseContent>> call = bigBasketApiService.getProductsForOrder(mOrderId);
+        Call<ApiResponse<GetProductsForOrderApiResponseContent>> call =
+                bigBasketApiService.getProductsForOrder(getPreviousScreenName(), mOrderId);
         call.enqueue(new BBNetworkCallback<ApiResponse<GetProductsForOrderApiResponseContent>>(this) {
             @Override
             public void onSuccess(ApiResponse<GetProductsForOrderApiResponseContent> getProductsForOrderApiResponse) {
@@ -167,12 +168,12 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                     .build();
 
             ArrayList<AbstractProductItem> productItems = new ArrayList<>(mProducts.size());
-            for(Product p: mProducts){
+            for (Product p : mProducts) {
                 productItems.add(new NormalProductItem(p));
             }
             productListRecyclerAdapter = new ProductListRecyclerAdapter(productItems, null,
                     productViewDisplayDataHolder, this, mProducts.size(),
-                    getNextScreenNavigationContext(), TrackEventkeys.SINGLE_TAB_NAME);
+                    getCurrentScreenName(), TrackEventkeys.SINGLE_TAB_NAME);
 
             productRecyclerView.setAdapter(productListRecyclerAdapter);
         }
@@ -197,7 +198,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     private void addAllItemsToBasket() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        Call<OldApiResponseWithCart> call = bigBasketApiService.addAllToBasketPastOrders(mOrderId);
+        Call<OldApiResponseWithCart> call = bigBasketApiService.addAllToBasketPastOrders(getPreviousScreenName(),mOrderId);
         call.enqueue(new BBNetworkCallback<OldApiResponseWithCart>(this) {
             @Override
             public void onSuccess(OldApiResponseWithCart addAllToBasketPastOrdersCallBack) {
@@ -210,6 +211,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                     case Constants.ERROR:
                         handler.sendEmptyMessage(addAllToBasketPastOrdersCallBack.getErrorTypeAsInt(),
                                 addAllToBasketPastOrdersCallBack.message);
+
                         break;
                 }
             }

@@ -80,7 +80,7 @@ public class HomeFragment extends BaseSectionFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
-        setNextScreenNavigationContext(TrackEventkeys.HOME);
+        setCurrentScreenName(TrackEventkeys.HOME);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class HomeFragment extends BaseSectionFragment {
     protected void onBackResume() {
         super.onBackResume();
         // removed home event from here
-        setNextScreenNavigationContext(TrackEventkeys.HOME);
+        setCurrentScreenName(TrackEventkeys.HOME);
     }
 
     private boolean isVisitorUpdateNeeded() {

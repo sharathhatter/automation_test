@@ -56,7 +56,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_FUND_WALLET);
+        setCurrentScreenName(TrackEventkeys.NAVIGATION_CTX_FUND_WALLET);
         trackEvent(TrackingAware.FUND_WALLET_SHOWN, null);
         setTitle(getString(R.string.fundWallet));
         mProgressLayout = (ViewGroup) findViewById(R.id.layoutLoading);
@@ -119,7 +119,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<GetPaymentTypes>> call = bigBasketApiService.getFundWalletPayments("yes", "yes", "yes", "yes", "yes");
+        Call<ApiResponse<GetPaymentTypes>> call =
+                bigBasketApiService.getFundWalletPayments(getPreviousScreenName(), "yes", "yes", "yes", "yes", "yes");
         call.enqueue(new BBNetworkCallback<ApiResponse<GetPaymentTypes>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<GetPaymentTypes> getPaymentTypesApiResponse) {
