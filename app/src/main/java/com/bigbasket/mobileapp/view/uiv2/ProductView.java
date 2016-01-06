@@ -586,7 +586,7 @@ public final class ProductView {
 
                 imgAddToBasket.setTag(R.id.basket_op_product_tag_id, product);
                 imgAddToBasket.setTag(R.id.basket_op_qty_tag_id, "1");
-                imgAddToBasket.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_DECREMENT);
+                imgAddToBasket.setTag(R.id.basket_op_event_name_tag_id, TrackingAware.BASKET_ADD);
                 imgAddToBasket.setTag(R.id.basket_op_nc_tag_id, navigationCtx);
                 imgAddToBasket.setTag(R.id.basket_op_tabname_tag_id, tabName);
                 imgAddToBasket.setTag(R.id.basket_op_read_input_qty_tag_id, productViewDisplayDataHolder.isShowQtyInput());

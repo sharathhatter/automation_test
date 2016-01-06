@@ -4,7 +4,6 @@ import java.util.Map;
 
 public interface TrackingAware {
 
-
     //Start Activity
     String APP_OPEN = "App.Open";
     String ENTRY_PAGE_SHOWN = "EntryPage.Shown";
@@ -36,7 +35,6 @@ public interface TrackingAware {
     String REGISTER_BTN_CLICK = "SignUp Page.SignUp Clicked";
     String REGISTRATION_FAILED = "SignUp Page.Failed";
 
-
     //Account
     String MY_ACCOUNT_CLICKED = "My Account.Clicked";
     String MY_ACCOUNT_SHOWN = "My Account.Shown";
@@ -44,7 +42,6 @@ public interface TrackingAware {
     String MY_ORDER_SHOWN = "My Orders.Shown";
     String MY_ORDER_ITEM_CLICKED = "My Orders Item.Clicked";
     String MY_ACCOUNT_UPDATE_PROFILE_CLICKED = "Edit Profile.Clicked";
-
 
     //update_profile
     String UPDATE_PROFILE_SHOWN = "Update Profile.Shown";
@@ -86,7 +83,6 @@ public interface TrackingAware {
     String SHOP_LST_DELETED = "ShoppingList.Deleted";
     String SHOP_LST_SUMMARY_SHOWN = "ShoppingList.Summary Shown";
 
-
     //main menu
     String MENU_SHOWN = "Menu.Shown";
     String MENU_ITEM_CLICKED = "Menu Item.Clicked";
@@ -115,7 +111,6 @@ public interface TrackingAware {
     String PROMO_CATEGORY_LIST = "Promo Category.Shown";
     String PROMO_REDEEMED = "Promo.Redeemed";
 
-
     //basket
     String BASKET_INCREMENT = "Basket.Increment";
     String BASKET_ADD = "Basket.add";
@@ -142,7 +137,8 @@ public interface TrackingAware {
 
     //check out
     String CHECKOUT_QC_SHOWN = "Checkout.QC Shown";
-    String CHECKOUT_CREATE_ADDRESS_SHOWN = "Checkout.Address Shown";
+    String CHECKOUT_CREATE_ADDRESS_SHOWN = "Checkout.Address Form Shown";
+    String CHECKOUT_ADDRESS_SHOWN = "Checkout.Address Shown";
     String CHECKOUT_ADDRESS_CREATED = "Checkout.Address Created";
     String CHECKOUT_SLOT_SHOWN = "Checkout.Slot Shown";
     String CHECKOUT_SLOT_SELECTED = "Checkout.Slot Selected";
@@ -171,6 +167,7 @@ public interface TrackingAware {
     String NOTIFICATION_ERROR = "Notification Error";
 
     String FLAT_PAGE_SHOWN = "Flat Page Shown";
+    String PAY_NOW_CLICKED = "PayNow.Clicked";
     String PAY_NOW_SHOWN = "PayNow.Shown";
     String PAY_NOW_DONE = "PayNow.Done";
 

@@ -67,11 +67,7 @@ public class ChangeAddressFragment extends BaseFragment implements AddressSelect
         setHasOptionsMenu(true);
         mAddressPageMode = args != null ?
                 args.getInt(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.CHECKOUT) : MemberAddressPageMode.CHECKOUT;
-        if (mAddressPageMode == MemberAddressPageMode.ACCOUNT) {
-            setCurrentScreenName(TrackEventkeys.NC_ACCOUNT_ADDRESS);
-        } else {
-            setCurrentScreenName(TrackEventkeys.CO_ADDRESS);
-        }
+        setCurrentScreenName(TrackEventkeys.ADDRESS_LIST_SCREEN);
         if (savedInstanceState != null) {
             mAddressArrayList = savedInstanceState.getParcelableArrayList(Constants.ADDRESSES);
             if (mAddressArrayList != null) {
@@ -226,11 +222,14 @@ public class ChangeAddressFragment extends BaseFragment implements AddressSelect
     private void showCreateAddressForm() {
         showAddressForm(null);
         HashMap<String, String> map = new HashMap<>();
-        if (mAddressPageMode != MemberAddressPageMode.CHECKOUT) {
+        if (mAddressPageMode == MemberAddressPageMode.ACCOUNT) {
             setPreviousScreenName(TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
             trackEvent(TrackingAware.NEW_ADDRESS_CLICKED, map);
+        } else if (mAddressPageMode == MemberAddressPageMode.ADDRESS_SELECT) {
+            setPreviousScreenName(TrackEventkeys.MENU);
+            trackEvent(TrackingAware.NEW_ADDRESS_CLICKED, map);
         } else {
-            setPreviousScreenName(TrackEventkeys.CO_BASKET);
+            setPreviousScreenName(TrackEventkeys.CO_ADDRESS);
             trackEvent(TrackingAware.CHECKOUT_CREATE_ADDRESS_SHOWN, map);
         }
     }

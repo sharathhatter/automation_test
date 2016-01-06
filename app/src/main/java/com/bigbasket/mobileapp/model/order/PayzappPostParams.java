@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class PayzappPostParams implements Parcelable{
+public class PayzappPostParams implements Parcelable {
 
     public static final Parcelable.Creator<PayzappPostParams> CREATOR = new Parcelable.Creator<PayzappPostParams>() {
         @Override
@@ -108,9 +108,6 @@ public class PayzappPostParams implements Parcelable{
         this.merchantAppId = source.readString();
         this.countryCode = source.readString();
 
-    }
-
-    public PayzappPostParams() {
     }
 
     public String getServerUrl() {

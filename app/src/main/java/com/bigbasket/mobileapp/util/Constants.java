@@ -356,7 +356,6 @@ public class Constants {
     public static final String SHOPPING_LIST_SUMMARY = "shoplist_summary";
     public static final String SL_NAME = "name";
     public static final String IS_PUBLIC = "is_public";
-
     //otp
     //public static final String IMAGE_URLS = "image_urls/";
 

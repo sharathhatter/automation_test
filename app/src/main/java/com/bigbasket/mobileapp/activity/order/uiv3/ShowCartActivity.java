@@ -549,5 +549,4 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             hideProgressDialog();
         }
     }
-
 }

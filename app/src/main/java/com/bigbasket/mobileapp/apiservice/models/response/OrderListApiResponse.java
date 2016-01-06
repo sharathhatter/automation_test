@@ -5,6 +5,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class OrderListApiResponse {
 
@@ -13,4 +14,5 @@ public class OrderListApiResponse {
 
     @SerializedName(Constants.TOTAL_PAGE)
     public int totalPages;
+
 }
