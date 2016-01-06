@@ -8,7 +8,7 @@
     <string name="headingServerError">Server Error!</string>
     <string name="server_error">Oops an error occurred!\nPlease try again later.</string>
     <string name="login_required">Please login to continue!</string>
-    <string name="voucherCode">eVoucher Code</string>
+    <string name="voucherCode">Voucher Code</string>
     <string name="potentialOrderIdExpired">Previous checkout process timed out. Please start again!</string>
     <string name="list_exists">You have already created a list with the same name!</string>
     <string name="INVALID_USER_PASS">Username or password is incorrect!</string>
@@ -19,7 +19,7 @@
     <string name="cartNotExistsError">Cart does not exist!</string>
     <string name="basketEmpty">Your Basket is empty!</string>
     <string name="alt_placeholder">BigBasket Image</string>
-    <string name="evoucherError">Evoucher Error!</string>
+    <string name="evoucherError">Voucher Error!</string>
     <string name="invalid_promo">Sorry,this promotion is no longer active!</string>
     <string name="no_promo_cat">No promotions are currently active for this city!</string>
     <string name="free_promo_txt">On completing promo selection,
@@ -141,7 +141,7 @@
     <string name="paymentMethod">Payment Options</string>
     <string name="pleaseChooseAddress">Please choose an address</string>
     <string name="orderItems">Order Items</string>
-    <string name="enterVoucher">Enter eVoucher code</string>
+    <string name="enterVoucher">Enter Voucher code</string>
     <string name="connectionOffline">Apologies, cannot proceed with the operation. No network connection!\nPlease check your Internet connection</string>
     <string name="contactHeading">ADDRESS</string>
     <string name="paymentHeading">PAYMENT DETAILS</string>
@@ -248,10 +248,10 @@
     <string name="smartBasket">Smart Basket</string>
     <string name="rateTheApp">Rate our App</string>
     <string name="shopFromPreviousOrder">Shop From Previous Order(s)</string>
-    <string name="applyVoucher">Apply Voucher</string>
+    <string name="applyVoucher">Apply</string>
     <string name="selectAndApplyVoucher">Select &amp; Apply Voucher</string>
-    <string name="removeVoucher">eVoucher: BBFNV Applied!</string>
-    <string name="voucherWasRemoved">eVoucher was successfully removed</string>
+    <string name="removeVoucher">Remove</string>
+    <string name="voucherWasRemoved">Voucher was successfully removed</string>
     <string name="removeVoucherHeading">Remove voucher</string>
     <string name="removeVoucherDesc">Are you sure that you want to remove this voucher?</string>
     <string name="addAllProducts">Are you sure that you want to add all the products</string>
@@ -332,8 +332,8 @@
     <string name="help">Help</string>
     <string name="deliverableTextPlural">Based on the items in your basket, deliveries will come in multiple shipments.</string>
     <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
-    <string name="voucherApplicableSingular">Voucher Applicable</string>
-    <string name="voucherApplicablePlural">Vouchers Applicable</string>
+    <string name="voucherApplicableSingular">Voucher applicable</string>
+    <string name="voucherApplicablePlural">Vouchers applicable</string>
 
     <string name="add_bundle">ADD BUNDLE</string>
     <string name="error">Error!</string>
@@ -436,7 +436,7 @@
     <string name="order_details">Order Details</string>
     <string name="empty_email_address_error">Please enter your e-mail address</string>
     <string name="empty_password_error">Please enter your password</string>
-    <string name="evoucher_applied_format">"eVoucher: %1$s Applied!"</string>
+    <string name="evoucher_applied_format">"Voucher: %1$s Applied!"</string>
     <string name="abort_payment_transaction_confirmation">Order is already placed. Convert payment to "Cash on Delivery" and cancel the transaction?</string>
     <string name="dont_not_show_this_message">Do not show this message again</string>
 

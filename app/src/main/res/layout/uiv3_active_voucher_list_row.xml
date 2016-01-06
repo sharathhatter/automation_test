@@ -20,12 +20,17 @@
             android:layout_height="wrap_content"
             style="@style/RippleStyle"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:layout_marginRight="@dimen/margin_normal"
-            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_marginLeft="@dimen/margin_15"
+            android:layout_marginRight="@dimen/margin_15"
+            android:layout_marginTop="@dimen/margin_small"
             android:text="@string/applyAllCaps"
             android:textColor="@color/uiv3_dialog_header_text_bkg"
-            android:textSize="@dimen/primary_text_size" />
+            android:textSize="@dimen/primary_text_size"
+            android:paddingRight="@dimen/margin_small"
+            android:paddingBottom="@dimen/padding_mini"
+            android:paddingTop="@dimen/padding_mini"
+            android:paddingLeft="@dimen/margin_small"
+            android:background="@drawable/apply_button_rounded_background"/>
 
         <TextView
             android:id="@+id/txtVoucherCode"

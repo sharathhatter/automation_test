@@ -416,10 +416,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private void showVoucherAppliedText(String voucher) {
         mTxtApplyVoucher.setVisibility(View.GONE);
         mTxtRemoveVoucher.setVisibility(View.VISIBLE);
-        mTxtRemoveVoucher.setText(getString(R.string.evoucher_applied_format, voucher));
-        if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
-            mTxtApplicableVoucherCount.setVisibility(View.GONE);
-        }
+        mTxtApplicableVoucherCount.setText(getString(R.string.evoucher_applied_format, voucher));
+        mTxtApplicableVoucherCount.setTextColor(ContextCompat.getColor(this,R.color.uiv3_dialog_header_text_bkg));
         mAppliedVoucherCode = voucher;
     }
 
@@ -529,6 +527,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxtRemoveVoucher.setVisibility(View.GONE);
         if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
             mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
+            mTxtApplicableVoucherCount.setTextColor(ContextCompat.getColor(this,R.color.uiv3_secondary_text_color));
         }
     }
 

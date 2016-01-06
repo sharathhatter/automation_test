@@ -130,6 +130,9 @@
     <style name="BBLoginTextInputLayoutStyle" parent="Widget.Design.TextInputLayout">
         <item name="colorControlActivated">@color/white</item>
     </style>
+    <style name="BBVoucherTextInputLayoutStyle" parent="Widget.Design.TextInputLayout">
+        <item name="colorControlActivated">@color/uiv3_secondary_text_color</item>
+    </style>
 
     <style name="BBTextStyle.Gift" parent="android:Widget.TextView">
         <item name="android:textColor">@color/uiv3_secondary_text_color</item>
