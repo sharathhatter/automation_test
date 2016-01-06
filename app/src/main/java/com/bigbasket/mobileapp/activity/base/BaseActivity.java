@@ -142,12 +142,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
         handler = new BigBasketMessageHandler<>(getCurrentActivity());
         isActivitySuspended = false;
 
-        faceRupee = FontHolder.getInstance(this).getFaceRupee();
-        faceRobotoRegular = FontHolder.getInstance(this).getFaceRobotoRegular();
-        faceRobotoMedium = FontHolder.getInstance(this).getFaceRobotoMedium();
-        faceRobotoBold = FontHolder.getInstance(this).getFaceRobotoBold();
-        faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
-        moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
+        faceRupee = FontHolder.getInstance(getApplicationContext()).getFaceRupee();
+        faceRobotoRegular = FontHolder.getInstance(getApplicationContext()).getFaceRobotoRegular();
+        faceRobotoMedium = FontHolder.getInstance(getApplicationContext()).getFaceRobotoMedium();
+        faceRobotoBold = FontHolder.getInstance(getApplicationContext()).getFaceRobotoBold();
+        faceRobotoLight = FontHolder.getInstance(getApplicationContext()).getFaceRobotoLight();
+        moEHelper = MoEngageWrapper.getMoHelperObj(getApplicationContext());
         fbLogger = AppEventsLogger.newLogger(getApplicationContext());
         mNavigationContext = getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX);
         NewRelic.setInteractionName(getCurrentActivity().getClass().getSimpleName());

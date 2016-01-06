@@ -78,9 +78,6 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
             AppsFlyerLib.sendTracking(getApplicationContext()); //detects installation, session and updates
             AppsFlyerLib.setCurrencyCode("INR");
             editor.putBoolean(Constants.APP_LAUNCH, true);
-            if (checkInternetConnection()) {
-                NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
-            }
         }
         editor.commit(); //HomeActivity need APP_LAUNCH flag, so we don't want to write data in background
     }
