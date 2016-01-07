@@ -48,8 +48,6 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
     private PaymentParams mPaymentParams;
     private PostData postData;
     private Toolbar toolbar;
-    private TextView amountTextView;
-    private TextView transactionIdTextView;
     private PayuConfig payuConfig;
     private PayuUtils payuUtils;
 
@@ -62,7 +60,7 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
+        getSupportActionBar().setTitle(getResources().getString(R.string.credit_debit_card));
 
         (payNowButton = (Button) findViewById(R.id.button_card_make_payment)).setOnClickListener(this);
 
@@ -88,9 +86,6 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
         mPaymentParams = bundle.getParcelable(PayuConstants.PAYMENT_PARAMS);
         payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
         payuConfig = null != payuConfig ? payuConfig : new PayuConfig();
-
-        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(getString(R.string.amount, mPaymentParams.getAmount()));
-        (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
 
         // lets not show the save card check box if user credentials is not found!
         if (null == mPaymentParams.getUserCredentials()) {

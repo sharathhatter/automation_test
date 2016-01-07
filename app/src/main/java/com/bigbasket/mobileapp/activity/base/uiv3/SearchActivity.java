@@ -105,8 +105,6 @@ public class SearchActivity extends BBActivity {
     }
 
     private void logSearchEvent(String query) {
-        if (mBbSearchableToolbarView != null)
-            mBbSearchableToolbarView.hide();
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.TERM, query);
         map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.PS);
@@ -131,9 +129,15 @@ public class SearchActivity extends BBActivity {
         if (searchIntentResult != null) {
             switch (searchIntentResult.getSearchType()) {
                 case SearchIntentResult.TYPE_BARCODE_SEARCH:
+                    if (mBbSearchableToolbarView != null) {
+                        mBbSearchableToolbarView.hide();
+                    }
                     handleEancode(searchIntentResult.getContent());
                     return;
                 case SearchIntentResult.TYPE_VOICE_SEARCH:
+                    if (mBbSearchableToolbarView != null) {
+                        mBbSearchableToolbarView.hide();
+                    }
                     triggerSearch(searchIntentResult.getContent(), TrackEventkeys.PS_VOICE);
                     return;
             }

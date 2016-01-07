@@ -55,8 +55,6 @@ public class PayUEmiActivity extends PaymentBaseActivity implements View.OnClick
     private PaymentParams mPaymentParams;
     private PayuHashes mPayuHashes;
     private Toolbar toolbar;
-    private TextView amountTextView;
-    private TextView transactionIdTextView;
 
     private PayuConfig payuConfig;
 
@@ -69,7 +67,7 @@ public class PayUEmiActivity extends PaymentBaseActivity implements View.OnClick
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(getResources().getString(R.string.paymentviapayu));
+        getSupportActionBar().setTitle(getResources().getString(R.string.emi));
 
         bundle = getIntent().getExtras();
 
@@ -92,8 +90,6 @@ public class PayUEmiActivity extends PaymentBaseActivity implements View.OnClick
         mPaymentParams.setHash(mPayuHashes.getPaymentHash());
 
         (emiPayNowButton = (Button) findViewById(R.id.button_emi_pay_now)).setOnClickListener(this);
-        (amountTextView = (TextView) findViewById(R.id.text_view_amount)).setText(getString(R.string.amount, mPaymentParams.getAmount()));
-        (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(getString(R.string.transaction_id, mPaymentParams.getTxnId()));
 
         if (bundle.getParcelableArrayList(PayuConstants.EMI) != null) {
             // okay we have emi now!
@@ -236,7 +232,7 @@ class PayUEmiNameAdapter extends BaseAdapter {
         PayUEmiVH emiViewHolder = null;
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.emi_list_item, null);
+            convertView = mInflater.inflate(R.layout.payu_spinner_list_item, null);
             emiViewHolder = new PayUEmiVH(convertView);
             convertView.setTag(emiViewHolder);
         } else {
@@ -292,7 +288,7 @@ class PayUEmiDurationAdapter extends BaseAdapter {
         PayUEmiVH emiViewHolder = null;
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.emi_list_item, null);
+            convertView = mInflater.inflate(R.layout.payu_spinner_list_item, null);
             emiViewHolder = new PayUEmiVH(convertView);
             convertView.setTag(emiViewHolder);
         } else {
@@ -310,6 +306,6 @@ class PayUEmiVH {
     TextView emiNameTextView;
 
     PayUEmiVH(View view) {
-        emiNameTextView = (TextView) view.findViewById(R.id.text_view_emi_list);
+        emiNameTextView = (TextView) view.findViewById(R.id.text_view_spinner_item);
     }
 }
