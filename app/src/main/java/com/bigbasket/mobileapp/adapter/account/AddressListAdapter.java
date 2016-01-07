@@ -19,23 +19,29 @@ import com.bigbasket.mobileapp.util.FontHolder;
 
 import java.util.ArrayList;
 
-public class AddressListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AddressListAdapter<T extends AddressSelectionAware & AddressChangeAware & AppOperationAware> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_ADDRESS = 0;
 
+    private final OnAddressViewClickListener<T> addressViewClickListener;
+    private final OnAddressEditClickListener<T> addressEditClickListener;
     private ArrayList<Address> addressObjectList;
     private T context;
     private LayoutInflater inflater;
     private Typeface faceRobotoRegular;
     private Typeface faceRobotoMedium;
+    private Typeface faceRobotoLight;
 
     public AddressListAdapter(T context, ArrayList<Address> addressObjectList) {
         this.addressObjectList = addressObjectList;
         this.context = context;
-        Context ctx = ((AppOperationAware) context).getCurrentActivity();
+        Context ctx = context.getCurrentActivity();
         this.faceRobotoMedium = FontHolder.getInstance(ctx).getFaceRobotoMedium();
         this.faceRobotoRegular = FontHolder.getInstance(ctx).getFaceRobotoRegular();
-        inflater = ((AppOperationAware) context).getCurrentActivity().getLayoutInflater();
+        this.faceRobotoLight = FontHolder.getInstance(ctx).getFaceRobotoLight();
+        inflater = context.getCurrentActivity().getLayoutInflater();
+        addressViewClickListener = new OnAddressViewClickListener<>(context);
+        addressEditClickListener = new OnAddressEditClickListener<>(context);
     }
 
     @Override
@@ -46,7 +52,7 @@ public class AddressListAdapter<T> extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = inflater.inflate(R.layout.uiv3_address_layout, viewGroup, false);
-        return new MemberAddressViewHolder(view, faceRobotoMedium, faceRobotoRegular);
+        return new MemberAddressViewHolder(view, faceRobotoMedium, faceRobotoRegular, faceRobotoLight);
     }
 
     @Override
@@ -57,22 +63,27 @@ public class AddressListAdapter<T> extends RecyclerView.Adapter<RecyclerView.Vie
 
         View view = memberAddressViewHolder.getItemView();
         view.setTag(R.id.address_id, addressObjectList.get(position));
-        view.setOnClickListener(new OnAddressViewClickListener<>(context));
+        view.setOnClickListener(addressViewClickListener);
 
         TextView txtAddress = memberAddressViewHolder.getTxtAddress();
         txtAddress.setText(address.toString().trim());
 
         ImageView imgEditIcon = memberAddressViewHolder.getImgEditIcon();
-        imgEditIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((AddressChangeAware) context).onEditAddressClicked(address);
-            }
-        });
+        imgEditIcon.setTag(R.id.address_id, addressObjectList.get(position));
+        imgEditIcon.setOnClickListener(addressEditClickListener);
+
+        Address selectedAddress = context.getSelectedAddress();
+        boolean isSelected = selectedAddress == null || TextUtils.isEmpty(selectedAddress.getId()) ?
+                address.isSelected() : (selectedAddress.getId().equals(address.getId()));
+        if (isSelected && selectedAddress == null) {
+            view.setBackgroundResource(R.drawable.grey_border);
+        } else {
+            view.setBackgroundResource(R.drawable.clickable_white);
+        }
 
         TextView txtExpressDelivery = memberAddressViewHolder.getTxtExpressDelivery();
         if (address.isExpress()) {
-            txtExpressDelivery.setText(((AppOperationAware) context).getCurrentActivity().getString(R.string.expressAvailable));
+            txtExpressDelivery.setText(context.getCurrentActivity().getString(R.string.expressAvailable));
             txtExpressDelivery.setVisibility(View.VISIBLE);
         } else
             txtExpressDelivery.setVisibility(View.GONE);
@@ -81,11 +92,13 @@ public class AddressListAdapter<T> extends RecyclerView.Adapter<RecyclerView.Vie
         TextView txtName = memberAddressViewHolder.getTxtName();
         TextView txtPh = memberAddressViewHolder.getTxtPh();
         if (address.isPartial()) {
-            txtPartialAddress.setText(((AppOperationAware) context).getCurrentActivity().getString(R.string.incomplete));
+            txtPartialAddress.setText(context.getCurrentActivity().getString(R.string.incomplete));
             txtPartialAddress.setVisibility(View.VISIBLE);
         } else {
             txtPartialAddress.setVisibility(View.GONE);
         }
+        txtPartialAddress.setTag(R.id.address_id, addressObjectList.get(position));
+        txtPartialAddress.setOnClickListener(addressEditClickListener);
 
         if (!TextUtils.isEmpty(address.getContactNum())) {
             txtPh.setVisibility(View.VISIBLE);
@@ -107,7 +120,7 @@ public class AddressListAdapter<T> extends RecyclerView.Adapter<RecyclerView.Vie
         return addressObjectList.size();
     }
 
-    private static class OnAddressViewClickListener<T> implements View.OnClickListener {
+    private static class OnAddressViewClickListener<T extends AddressSelectionAware> implements View.OnClickListener {
 
         private T context;
 
@@ -119,7 +132,23 @@ public class AddressListAdapter<T> extends RecyclerView.Adapter<RecyclerView.Vie
         public void onClick(View v) {
             if (context == null) return;
             Address selectedAddress = (Address) v.getTag(R.id.address_id);
-            ((AddressSelectionAware) context).onAddressSelected(selectedAddress);
+            context.onAddressSelected(selectedAddress);
+        }
+    }
+
+    private static class OnAddressEditClickListener<T extends AddressChangeAware> implements View.OnClickListener {
+
+        private T context;
+
+        public OnAddressEditClickListener(T context) {
+            this.context = context;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (context == null) return;
+            Address selectedAddress = (Address) v.getTag(R.id.address_id);
+            context.onEditAddressClicked(selectedAddress);
         }
     }
 
@@ -134,12 +163,14 @@ public class AddressListAdapter<T> extends RecyclerView.Adapter<RecyclerView.Vie
         private TextView txtPh;
         private Typeface faceRobotoRegular;
         private Typeface faceRobotoMedium;
+        private Typeface faceRobotoLight;
 
         public MemberAddressViewHolder(View itemView, Typeface faceRobotoRegular,
-                                       Typeface faceRobotoMedium) {
+                                       Typeface faceRobotoMedium, Typeface faceRobotoLight) {
             super(itemView);
             this.faceRobotoRegular = faceRobotoRegular;
             this.faceRobotoMedium = faceRobotoMedium;
+            this.faceRobotoLight = faceRobotoLight;
             this.itemView = itemView;
         }
 
@@ -164,7 +195,7 @@ public class AddressListAdapter<T> extends RecyclerView.Adapter<RecyclerView.Vie
         public TextView getTxtPh() {
             if (txtPh == null) {
                 txtPh = (TextView) itemView.findViewById(R.id.txtPh);
-                txtPh.setTypeface(faceRobotoRegular);
+                txtPh.setTypeface(faceRobotoLight);
             }
             return txtPh;
         }

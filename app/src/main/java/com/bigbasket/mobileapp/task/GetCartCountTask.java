@@ -34,7 +34,7 @@ public class GetCartCountTask<T> {
                 public void run() {
                     try {
                         Call<CartSummaryApiResponse> call =
-                                bigBasketApiService.cartSummary(((AppOperationAware) ctx.get()).getCurrentActivity().getPreviousScreenName());
+                                bigBasketApiService.cartSummary(((AppOperationAware) ctx.get()).getCurrentActivity().getCurrentScreenName());
                         Response<CartSummaryApiResponse> response = call.execute();
                         if (!response.isSuccess()) return;
                         final CartSummaryApiResponse cartSummaryApiResponse = response.body();

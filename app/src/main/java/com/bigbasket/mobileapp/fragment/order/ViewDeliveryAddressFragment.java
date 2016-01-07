@@ -118,6 +118,14 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
                 }
             }
         });
+        txtInComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSelectedAddress != null) {
+                    showAddressForm(mSelectedAddress);
+                }
+            }
+        });
         layoutCheckoutFooter.setOnClickListener(new AddressListFooterButtonOnClickListener());
 
         return contentView;

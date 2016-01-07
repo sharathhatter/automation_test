@@ -4,7 +4,6 @@
     android:id="@+id/layoutLoading"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/margin_normal"
     android:background="@color/white"
     android:clickable="true">
 

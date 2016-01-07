@@ -2,11 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/margin_mini"
+    android:layout_marginBottom="@dimen/dimen_2"
     android:layout_marginLeft="@dimen/margin_small"
     android:layout_marginRight="@dimen/margin_small"
-    android:layout_marginTop="@dimen/margin_small"
-    android:background="@drawable/clickable_white"
+    android:layout_marginTop="@dimen/dimen_2"
     android:clickable="true"
     android:padding="@dimen/padding_mini">
 
@@ -17,7 +16,7 @@
         android:layout_alignParentRight="true"
         android:contentDescription="@string/edit"
         android:padding="@dimen/margin_small"
-        android:src="@drawable/ic_edit" />
+        android:src="@drawable/ic_edit_black_14dp" />
 
     <RelativeLayout
         android:id="@+id/address_layout"
@@ -44,8 +43,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/txtName"
             android:layout_marginLeft="@dimen/margin_normal"
-            android:contentDescription="@string/location"
             android:layout_marginTop="@dimen/margin_small"
+            android:contentDescription="@string/location"
             android:paddingTop="@dimen/padding_mini"
             android:src="@drawable/ic_location_on_black_18dp" />
 
@@ -100,7 +99,7 @@
         android:drawablePadding="@dimen/dimen_2"
         android:drawableRight="@drawable/ic_warning_red"
         android:gravity="center"
-        android:padding="@dimen/dimen_2"
+        android:padding="@dimen/padding_small"
         android:text="@string/incomplete"
         android:textColor="@color/uiv3_action_bar_background"
         android:textSize="@dimen/small_text_size" />
