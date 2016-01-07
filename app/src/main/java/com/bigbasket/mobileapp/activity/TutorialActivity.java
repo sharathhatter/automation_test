@@ -27,14 +27,14 @@ public class TutorialActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setCurrentScreenName(TrackEventkeys.NC_TUTORIAL_SCREEN);
         setContentView(R.layout.uiv3_tutorial_layout);
+        setCurrentScreenName(TrackEventkeys.NC_TUTORIAL_SCREEN);
         showTutorial();
     }
 
     private void showTutorial() {
         mImageView = (ImageView) findViewById(R.id.pager);
-        UIUtil.displayAsyncImage(mImageView, drawableIdArray[mCurrentTutorialIndex], true, true);
+        UIUtil.displayAsyncImage(mImageView, drawableIdArray[mCurrentTutorialIndex], true);
         lblSkip = (TextView) findViewById(R.id.lblSkip);
         lblNext = (TextView) findViewById(R.id.lblNext);
 
@@ -60,9 +60,9 @@ public class TutorialActivity extends BaseActivity {
     }
 
     private void slideNext() {
-        int nextPosition = mCurrentTutorialIndex++;
+        int nextPosition = ++mCurrentTutorialIndex;
         if(nextPosition < drawableIdArray.length) {
-            UIUtil.displayAsyncImage(mImageView, drawableIdArray[nextPosition], true, true);
+            UIUtil.displayAsyncImage(mImageView, drawableIdArray[nextPosition], true);
             if(nextPosition == drawableIdArray.length - 1){
                 lblSkip.setVisibility(View.GONE);
                 lblNext.setText(R.string.startShopping);

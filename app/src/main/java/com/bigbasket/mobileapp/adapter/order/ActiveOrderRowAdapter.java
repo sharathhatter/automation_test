@@ -8,8 +8,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -35,12 +38,10 @@ import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.MessageFormatUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
-import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;
-
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -72,6 +73,8 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
     private OnCartBasketActionListener basketIncActionListener;
     private OnCartBasketActionListener basketDecActionListener;
     private OnCartBasketActionListener basketDeleteItemActionListener;
+    private FulfillmentInfoPageClickListener<T> fulfillmentInfoPageClickListener;
+
 
     public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
                                  Typeface faceRobotoRegular, @OrderItemDisplaySource.Type int orderItemDisplaySource,
@@ -96,6 +99,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         this.basketIncActionListener = new OnCartBasketActionListener(BasketOperation.INC, context);
         this.basketDecActionListener = new OnCartBasketActionListener(BasketOperation.DEC, context);
         this.basketDeleteItemActionListener = new OnCartBasketActionListener(BasketOperation.DELETE_ITEM, context);
+        this.fulfillmentInfoPageClickListener = new FulfillmentInfoPageClickListener<>(context);
     }
 
     @Override
@@ -216,15 +220,99 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
     }
 
     private void showFulfillmentInfo(Object obj, FulfillmentInfoViewHolder holder) {
-        ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo<>((FulfillmentInfo) obj,
-                context.getCurrentActivity(), faceRobotoRegular, holder);
-        showFulfillmentInfo.showFulfillmentInfo(true, true);
+        FulfillmentInfo fulfillmentInfo = (FulfillmentInfo) obj;
+        RelativeLayout layoutInfoMsg = holder.getLayoutInfoMsg();
+        layoutInfoMsg.setBackgroundResource(R.drawable.background);
+
+        ImageView imgLiquorIcon = holder.getImgLiquorIcon();
+        if (fulfillmentInfo.getIcon() != null && !fulfillmentInfo.getIcon().equalsIgnoreCase("null")) {
+            imgLiquorIcon.setVisibility(View.VISIBLE);
+            UIUtil.displayAsyncImage(imgLiquorIcon, fulfillmentInfo.getIcon());
+        } else {
+            //Pass null to cancel the requests from recycled images
+            UIUtil.displayAsyncImage(imgLiquorIcon, null);
+            imgLiquorIcon.setVisibility(View.GONE);
+        }
+
+        final TextView txtFulfilledBy = holder.getTxtFulfilledBy();
+        if (!TextUtils.isEmpty(fulfillmentInfo.getFulfilledBy()) && !fulfillmentInfo.getFulfilledBy().equalsIgnoreCase("null")) {
+
+            String prefix = " - Indicates " + fulfillmentInfo.getDisplayName() + " products fulfilled by ";
+            String postFix = fulfillmentInfo.getFulfilledBy();
+            if (!TextUtils.isEmpty(fulfillmentInfo.getFulfilledByInfoPage())) {
+                SpannableString content = new SpannableString(prefix + postFix);
+                int prefixLen = prefix.length();
+                content.setSpan(new ForegroundColorSpan(
+                                ContextCompat.getColor(context.getCurrentActivity(),
+                                        R.color.link_color)),
+                        prefixLen - 1, content.length(), 0);
+                txtFulfilledBy.setVisibility(View.VISIBLE);
+                txtFulfilledBy.setText(content);
+                txtFulfilledBy.setTextSize(13);
+                if(fulfillmentInfoPageClickListener == null){
+                    fulfillmentInfoPageClickListener = new FulfillmentInfoPageClickListener<>(context);
+                }
+                txtFulfilledBy.setTag(R.id.fullfillment_info_page_url_tag_id,
+                        fulfillmentInfo.getFulfilledByInfoPage());
+                txtFulfilledBy.setOnClickListener(fulfillmentInfoPageClickListener);
+            } else {
+                txtFulfilledBy.setVisibility(View.VISIBLE);
+                txtFulfilledBy.setText(prefix + postFix);
+                txtFulfilledBy.setTextSize(13);
+                txtFulfilledBy.setOnClickListener(null);
+            }
+
+        } else {
+            txtFulfilledBy.setTextSize(15);
+            txtFulfilledBy.setVisibility(View.GONE);
+        }
+
+
+        //TextView txtTCLabel = (TextView) base.findViewById(R.id.txtTCLabel);
+        TextView txtTC1 = holder.getTxtTC1();
+        if (fulfillmentInfo.getTc1() != null && fulfillmentInfo.getTc1().length() > 0) {
+            txtTC1.setVisibility(View.VISIBLE);
+            txtTC1.setText(fulfillmentInfo.getTc1());
+        } else {
+            txtTC1.setVisibility(View.GONE);
+        }
+
+        TextView txtTC2 = holder.getTxtTC2();
+        if (fulfillmentInfo.getTc2() != null && fulfillmentInfo.getTc2().length() > 0) {
+            txtTC2.setVisibility(View.VISIBLE);
+            txtTC2.setText(fulfillmentInfo.getTc2());
+        } else {
+            txtTC2.setVisibility(View.GONE);
+        }
+
+
     }
 
     private void showAnnotationInfo(Object obj, FulfillmentInfoViewHolder holder) {
-        ShowAnnotationInfo showAnnotationInfo = new ShowAnnotationInfo<>((AnnotationInfo) obj,
-                context.getCurrentActivity(), holder);
-        showAnnotationInfo.showAnnotationInfo();
+        AnnotationInfo annotationInfo = (AnnotationInfo) obj;
+        ImageView imgAnnotationIcon = holder.getImgLiquorIcon();
+        if (annotationInfo.getIconUrl() != null) {
+            imgAnnotationIcon.setVisibility(View.VISIBLE);
+            UIUtil.displayAsyncImage(imgAnnotationIcon, annotationInfo.getIconUrl());
+        } else {
+            imgAnnotationIcon.setVisibility(View.GONE);
+        }
+
+        final TextView txtFulfilledBy = holder.getTxtFulfilledBy();
+
+        if (annotationInfo.getMsgInfo().getParams() != null
+                && annotationInfo.getMsgInfo().getMessageStr() != null) {
+            MessageFormatUtil<T> messageFormatUtil = new MessageFormatUtil<>();
+            SpannableStringBuilder msgContent = messageFormatUtil.
+                    replaceStringArgWithDisplayNameAndLink(context,
+                            " " + annotationInfo.getMsgInfo().getMessageStr(),
+                            annotationInfo.getMsgInfo().getParams(), null, null);
+            txtFulfilledBy.setMovementMethod(LinkMovementMethod.getInstance());
+            if (msgContent != null) {
+                txtFulfilledBy.setText(msgContent, TextView.BufferType.SPANNABLE);
+                txtFulfilledBy.setSelected(true);
+            }
+        }
     }
 
     private void renderBasicView(final RowHolder rowHolder, final CartItem cartItem) {
@@ -232,6 +320,8 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         if (imgProduct != null && !TextUtils.isEmpty(cartItem.getProductImgUrl())) {
             UIUtil.displayAsyncImage(imgProduct, baseImgUrl != null ? baseImgUrl +
                     cartItem.getProductImgUrl() : cartItem.getProductImgUrl());
+        } else {
+            UIUtil.displayAsyncImage(imgProduct, null);
         }
 
         ImageView imgMarketPlaceIcon = rowHolder.getImgLiquorIcon();
@@ -244,6 +334,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                     UIUtil.displayAsyncImage(imgMarketPlaceIcon, icon);
                     imgMarketPlaceIcon.setVisibility(View.VISIBLE);
                 } else {
+                    UIUtil.displayAsyncImage(imgMarketPlaceIcon, null);
                     imgMarketPlaceIcon.setVisibility(View.GONE);
                 }
             } else {
@@ -258,6 +349,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                     UIUtil.displayAsyncImage(imgMarketPlaceIcon, iconUrl);
                     imgMarketPlaceIcon.setVisibility(View.VISIBLE);
                 } else {
+                    UIUtil.displayAsyncImage(imgMarketPlaceIcon, null);
                     imgMarketPlaceIcon.setVisibility(View.GONE);
                 }
             } else {
@@ -857,6 +949,25 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
             intent.putExtra(Constants.PROMO_ID, promoId);
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
             context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        }
+    }
+
+    private static class FulfillmentInfoPageClickListener<T extends AppOperationAware> implements View.OnClickListener {
+        private final T context;
+
+        public FulfillmentInfoPageClickListener(T context) {
+            this.context = context;
+        }
+
+        @Override
+        public void onClick(View v) {
+            String fulfillmentInfoPageUrl = (String)v.getTag(R.id.fullfillment_info_page_url_tag_id);
+            if(fulfillmentInfoPageUrl != null && context.getCurrentActivity() != null) {
+                Intent intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
+                intent.putExtra(Constants.WEBVIEW_URL, fulfillmentInfoPageUrl);
+                context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            }
         }
     }
 }

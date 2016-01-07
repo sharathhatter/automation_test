@@ -395,18 +395,17 @@ public class UIUtil {
     }
 
     public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId) {
-        displayAsyncImage(imageView, drawableId, false, false);
+       displayAsyncImage(imageView, drawableId, false);
     }
 
     public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId,
-                                         boolean skipMemoryCache, boolean skipDiskCache) {
+                                         boolean skipMemoryCache) {
         RequestCreator requestCreator = Picasso.with(imageView.getContext()).load(drawableId);
         if(skipMemoryCache ) {
             requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE);
         }
-        if(skipDiskCache) {
-            requestCreator.memoryPolicy(MemoryPolicy.NO_STORE);
-        }
+        //Never do disk cache for drawables
+        requestCreator.memoryPolicy(MemoryPolicy.NO_STORE);
         requestCreator.into(imageView);
     }
 
@@ -427,6 +426,7 @@ public class UIUtil {
                                          int targetImageWidth, int targetImageHeight,
                                          boolean skipMemoryCache) {
         Picasso picasso = Picasso.with(imageView.getContext());
+        picasso.cancelRequest(imageView);
         RequestCreator requestCreator = picasso.load(url)
                 .error(R.drawable.noimage)
                 .placeholder(placeHolderDrawableId);
