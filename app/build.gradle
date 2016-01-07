@@ -137,7 +137,7 @@ dependencies {
         transitive = true;
     }
     compile project(':wibmoSDK')
-    compile files('libs/AF-Android-SDK-v2.3.1.17.jar')
+    compile files('libs/AF-Android-SDK-v3.3.0.jar')
     compile project(':moe-addon-ubox')
     compile project(':mobikwik-sdk')
     compile files('libs/pgsdk.jar')
@@ -150,6 +150,7 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     provided 'com.squareup.okhttp:okhttp:2.7.0'
+    compile "com.google.android.gms:play-services-ads:${playServicesLibVersion}"  // Needed for AppsFlyer & is optional for MoEngage
     compile "com.google.android.gms:play-services-plus:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-gcm:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-location:${playServicesLibVersion}"

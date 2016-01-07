@@ -1,23 +1,16 @@
 package com.payu.payuui;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.payu.india.Model.PaymentDetails;
 import com.payu.india.Model.PaymentParams;
@@ -27,6 +20,7 @@ import com.payu.india.Model.PostData;
 import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
 import com.payu.india.PostParams.PaymentPostParams;
+import com.payu.payuui.adapter.PayUNetBankingAdapter;
 
 import java.util.ArrayList;
 
@@ -41,8 +35,6 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
 //    private String[] netBanksCodesArray;
     private PaymentParams mPaymentParams;
     private PayuHashes payuHashes;
-
-    private Button payNowButton;
 
     private PayUNetBankingAdapter payUNetBankingAdapter;
     private Toolbar toolbar;
@@ -59,7 +51,7 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.net_banking));
 
-        (payNowButton = (Button) findViewById(R.id.button_pay_now)).setOnClickListener(this);
+        findViewById(R.id.button_pay_now).setOnClickListener(this);
         spinnerNetbanking = (Spinner) findViewById(R.id.spinner_netbanking);
 
 
@@ -162,65 +154,6 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
             }
             setResult(resultCode, data);
             finish();
-        }
-    }
-
-}
-
-
-/*created by Guruchetan 30 jun 2015
-*
-* */
-class PayUNetBankingAdapter extends BaseAdapter {
-    Context mContext;
-    ArrayList<PaymentDetails> mNetBankingList;
-
-    public PayUNetBankingAdapter(Context context, ArrayList<PaymentDetails> netBankingList) {
-        mContext = context;
-        mNetBankingList = netBankingList;
-    }
-
-    @Override
-    public int getCount() {
-        return mNetBankingList.size();
-    }
-
-    @Override
-    public Object getItem(int i) {
-        if (null != mNetBankingList) return mNetBankingList.get(i);
-        else return 0;
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        NetbankingViewHolder netbankingViewHolder = null;
-        if (convertView == null) {
-            LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.payu_spinner_list_item, parent, false);
-            netbankingViewHolder = new NetbankingViewHolder(convertView);
-            convertView.setTag(netbankingViewHolder);
-        } else {
-            netbankingViewHolder = (NetbankingViewHolder) convertView.getTag();
-        }
-
-        PaymentDetails paymentDetails = mNetBankingList.get(position);
-
-        // set text here
-        netbankingViewHolder.netbankingTextView.setText(paymentDetails.getBankName());
-        return convertView;
-    }
-
-
-    class NetbankingViewHolder {
-        TextView netbankingTextView;
-
-        NetbankingViewHolder(View view) {
-            netbankingTextView = (TextView) view.findViewById(R.id.text_view_spinner_item);
         }
     }
 }
