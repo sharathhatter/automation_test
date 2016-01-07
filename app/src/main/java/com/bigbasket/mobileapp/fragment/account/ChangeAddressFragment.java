@@ -200,6 +200,12 @@ public class ChangeAddressFragment extends BaseFragment implements AddressSelect
         View addressView = layoutInflater.inflate(R.layout.uiv3_fab_recycler_view, contentView, false);
 
         RecyclerView addressRecyclerView = (RecyclerView) addressView.findViewById(R.id.fabRecyclerView);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        int margin = (int) getResources().getDimension(R.dimen.margin_small);
+        layoutParams.setMargins(0, margin, 0, margin);
+        addressRecyclerView.setLayoutParams(layoutParams);
         UIUtil.configureRecyclerView(addressRecyclerView, getActivity(), 1, 3);
         RelativeLayout noDeliveryAddLayout = (RelativeLayout) addressView.findViewById(R.id.noDeliveryAddLayout);
         if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
