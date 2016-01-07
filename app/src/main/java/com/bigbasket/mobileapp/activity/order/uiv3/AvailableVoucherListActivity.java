@@ -16,6 +16,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -77,6 +78,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         mEditTextVoucherCode.setTypeface(faceRobotoLight);
         if (activeVouchersList == null || activeVouchersList.size() == 0) {
             listVoucher.setVisibility(View.GONE);
+            base.findViewById(R.id.divider).setVisibility(View.GONE);
         } else {
             ActiveVoucherListAdapter activeVoucherListAdapter = new ActiveVoucherListAdapter(activeVouchersList);
             listVoucher.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);

@@ -99,6 +99,21 @@
                     android:layout_marginLeft="@dimen/margin_small"
                     android:layout_alignParentLeft="true"
                     android:textColor="@color/uiv3_secondary_text_color" />
+                <EditText
+                    android:id="@+id/editTextVoucherCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:hint="@string/enterVoucher"
+                    android:imeActionLabel="@string/apply"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:paddingLeft="@dimen/padding_mini"
+                    android:layout_toLeftOf="@+id/txtApplyVoucher"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/primary_text_size"
+                    android:visibility="gone"/>
+
                 <TextView
                     android:id="@+id/txtApplyVoucher"
                     style="@style/RippleStyle"

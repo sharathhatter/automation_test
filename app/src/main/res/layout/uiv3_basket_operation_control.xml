@@ -10,8 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/remove"
-        android:paddingBottom="2dp"
-        android:paddingTop="2dp"
         android:src="@drawable/basket_minus" />
 
     <TextView
@@ -19,10 +17,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:paddingBottom="4dp"
         android:paddingLeft="@dimen/padding_small"
         android:paddingRight="@dimen/padding_small"
-        android:paddingTop="2dp"
         android:text="10"
         android:textColor="@color/uiv3_action_bar_background"
         android:textSize="@dimen/primary_text_size" />
@@ -33,7 +29,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/add"
-        android:paddingBottom="2dp"
-        android:paddingTop="2dp"
         android:src="@drawable/basket_plus" />
 </LinearLayout>
