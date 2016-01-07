@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -92,6 +93,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private TextView mTxtApplyVoucher;
     private TextView mTxtRemoveVoucher;
     private TextView mTxtApplicableVoucherCount;
+    private EditText editTextVoucherCode;
     private String mAppliedVoucherCode;
     private String mSelectedPaymentMethod;
     private OrderDetails mOrderDetails;
@@ -335,6 +337,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxtApplyVoucher.setOnClickListener(showAvailableVouchersListener);
         mTxtApplicableVoucherCount = (TextView) findViewById(R.id.txtApplicableVoucherCount);
         mTxtApplicableVoucherCount.setTypeface(faceRobotoRegular);
+        editTextVoucherCode =(EditText) findViewById(R.id.editTextVoucherCode);
         if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
             mTxtApplicableVoucherCount.setText(mActiveVouchersList.size() + " " +
                     (mActiveVouchersList.size() > 1 ?
@@ -342,7 +345,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                             getString(R.string.voucherApplicableSingular)));
             mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
         } else {
-            mTxtApplicableVoucherCount.setVisibility(View.GONE);
+            handleNoVoucherApplicable();
         }
         mTxtApplicableVoucherCount.setOnClickListener(showAvailableVouchersListener);
 
@@ -415,10 +418,31 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     private void showVoucherAppliedText(String voucher) {
         mTxtApplyVoucher.setVisibility(View.GONE);
+        editTextVoucherCode.setVisibility(View.GONE);
         mTxtRemoveVoucher.setVisibility(View.VISIBLE);
+        mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
         mTxtApplicableVoucherCount.setText(getString(R.string.evoucher_applied_format, voucher));
         mTxtApplicableVoucherCount.setTextColor(ContextCompat.getColor(this,R.color.uiv3_dialog_header_text_bkg));
         mAppliedVoucherCode = voucher;
+    }
+
+    /**
+     * handling the condition when there is no voucher codes sent by server
+     * edittext is made visible and the clicklistener of the apply textview is updated
+     */
+    private void handleNoVoucherApplicable(){
+        mTxtApplicableVoucherCount.setVisibility(View.GONE);
+        editTextVoucherCode.setVisibility(View.VISIBLE);
+        editTextVoucherCode.setText("");
+        mTxtApplyVoucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(editTextVoucherCode.getText().toString().trim())) {
+                    hideKeyboard(getCurrentActivity(),mTxtApplyVoucher);
+                    applyVoucher(editTextVoucherCode.getText().toString().trim());
+                }
+            }
+        });
     }
 
     private void applyVoucher(final String voucherCode) {
