@@ -11,7 +11,7 @@ public class FacebookEventTrackWrapper {
         try {
             AppEventsLogger.activateApp(context);//, context.getString(R.string.fb_app_id));
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -19,7 +19,7 @@ public class FacebookEventTrackWrapper {
         try {
             AppEventsLogger.deactivateApp(context);//, context.getString(R.string.fb_app_id));
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -28,7 +28,7 @@ public class FacebookEventTrackWrapper {
         try {
             logger.logEvent(eventName, eventBundle);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -37,7 +37,7 @@ public class FacebookEventTrackWrapper {
         try {
             logger.logEvent(eventName, valueToSum, bundleAttr);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -46,7 +46,7 @@ public class FacebookEventTrackWrapper {
         try {
             logger.logEvent(eventName);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 }

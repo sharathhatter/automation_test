@@ -136,11 +136,6 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     }
 
     @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
-    }
-
-    @Override
     public void onChangeFragment(AbstractFragment newFragment) {
 
     }

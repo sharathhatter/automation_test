@@ -110,11 +110,6 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
     }
 
     @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
-    }
-
-    @Override
     public void onChangeFragment(AbstractFragment newFragment) {
 
     }

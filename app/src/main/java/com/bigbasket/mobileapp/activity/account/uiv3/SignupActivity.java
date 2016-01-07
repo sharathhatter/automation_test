@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -274,6 +275,26 @@ public class SignupActivity extends BackButtonActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            onSignupCancelled();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        onSignupCancelled();
+    }
+
+    private void onSignupCancelled() {
+        setResult(NavigationCodes.SIGN_UP_CANCELLED);
+        finish();
+    }
+
 
     public void showProgress(final boolean show) {
         if (show) {

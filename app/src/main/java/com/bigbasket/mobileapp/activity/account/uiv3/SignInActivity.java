@@ -4,11 +4,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -19,16 +22,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
+import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.click.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
@@ -38,7 +42,7 @@ import java.util.Map;
 
 import retrofit.Call;
 
-public class SignInActivity extends BackButtonActivity {
+public class SignInActivity extends SocialLoginActivity {
 
     // UI references.
     private EditText mPasswordView;
@@ -49,9 +53,17 @@ public class SignInActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setCurrentScreenName(TrackEventkeys.NC_LOGIN_SCREEN);
+        setContentView(R.layout.uiv3_login);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        setSupportActionBar(toolbar);
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         setTitle(getString(R.string.signInCapsVerb));
+
+        setCurrentScreenName(TrackEventkeys.NC_LOGIN_SCREEN);
 
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
                 findViewById(R.id.btnFBLogin));
@@ -133,16 +145,6 @@ public class SignInActivity extends BackButtonActivity {
         trackEvent(TrackingAware.LOGIN_SHOWN, null);
     }
 
-    @Override
-    public int getMainLayout() {
-        return R.layout.uiv3_login;
-    }
-
-    @Override
-    public void handleIntent(Bundle savedInstanceState) {
-        // This activity doesn't support fragment operations
-    }
-
     private void logRememberMeEnabled(String enabled) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ENABLED, enabled);
@@ -170,6 +172,36 @@ public class SignInActivity extends BackButtonActivity {
             hideKeyboard(this, mPasswordView);
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            onSignInCancelled();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        onSignInCancelled();
+    }
+
+    @Override
+    public void onChangeFragment(AbstractFragment newFragment) {
+
+    }
+
+    @Override
+    public void onChangeTitle(String title) {
+
+    }
+
+    private void onSignInCancelled(){
+        setResult(NavigationCodes.SIGN_IN_CANCELLED);
+        finish();
+    }
+
 
     /**
      * Attempts to sign in or register the account specified by the login form.

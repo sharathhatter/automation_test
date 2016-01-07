@@ -391,7 +391,19 @@ public class UIUtil {
     }
 
     public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId) {
-        Picasso.with(imageView.getContext()).load(drawableId).into(imageView);
+        displayAsyncImage(imageView, drawableId, false, false);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId,
+                                         boolean skipMemoryCache, boolean skipDiskCache) {
+        RequestCreator requestCreator = Picasso.with(imageView.getContext()).load(drawableId);
+        if(skipMemoryCache ) {
+            requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE);
+        }
+        if(skipDiskCache) {
+            requestCreator.memoryPolicy(MemoryPolicy.NO_STORE);
+        }
+        requestCreator.into(imageView);
     }
 
     public static void displayAsyncImage(ImageView imageView, String url, boolean animate,

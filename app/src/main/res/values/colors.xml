@@ -82,4 +82,7 @@
     <color name="uiv3_bbShops_circle">#84c225</color>
     <color name="uic_btn_disable">#c2c1c1</color>
 
+    <color name="facebook_bg">#3b5998</color>
+    <color name="google_plus_bg">#d34836</color>
+
 </resources>

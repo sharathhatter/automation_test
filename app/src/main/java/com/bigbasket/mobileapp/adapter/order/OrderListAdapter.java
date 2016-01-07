@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.adapter.order;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
@@ -33,7 +34,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class OrderListAdapter<T extends Context & AppOperationAware > extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private static final int VIEW_TYPE_LOADING = 0;
@@ -43,7 +44,7 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
     private T context;
     private ArrayList<Order> orders;
     private int totalPages, currentPage, orderListSize;
-    private Typeface faceRobotoRegular, faceRobotoBold;
+    private Typeface faceRobotoRegular, faceRobotoBold, faceRupee;
 
     public OrderListAdapter(T context, ArrayList<Order> orders, int
             totalPages, int currentPage, int orderListSize) {
@@ -52,10 +53,10 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
         this.totalPages = totalPages;
         this.currentPage = currentPage;
         this.orderListSize = orderListSize;
-        this.faceRobotoRegular = FontHolder.getInstance(((AppOperationAware) context)
-                .getCurrentActivity()).getFaceRobotoRegular();
-        this.faceRobotoBold = FontHolder.getInstance(((AppOperationAware) context)
-                .getCurrentActivity()).getFaceRobotoBold();
+        FontHolder fontHolder = FontHolder.getInstance(context.getApplicationContext());
+        this.faceRobotoRegular = fontHolder.getFaceRobotoRegular();
+        this.faceRobotoBold = fontHolder.getFaceRobotoBold();
+        this.faceRupee = fontHolder.getFaceRupee();
     }
 
     public void setCurrentPage(int currentPage) {
@@ -194,7 +195,7 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
             String orderValStr = UIUtil.formatAsMoney(Double.parseDouble(order.getOrderValue()));
             int prefixLen = prefix.length();
             SpannableString spannableMrp = new SpannableString(prefix + orderValStr);
-            spannableMrp.setSpan(new CustomTypefaceSpan("", BaseActivity.faceRupee), prefixLen - 1,
+            spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.setText(spannableMrp);
             if (orderListSize - 1 == position && currentPage < totalPages && totalPages > 1) {

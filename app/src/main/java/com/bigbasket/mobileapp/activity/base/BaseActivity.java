@@ -95,8 +95,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
         LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware,
         LaunchStoreListAware, ConfirmationDialogFragment.ConfirmationDialogCallback {
 
-    public static Typeface faceRupee;
-    protected static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
+    protected Typeface faceRupee;
+    protected Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
             faceRobotoBold;
     protected BigBasketMessageHandler handler;
     protected MoEHelper moEHelper;
@@ -139,18 +139,18 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        handler = new BigBasketMessageHandler<>(getCurrentActivity());
+        handler = new BigBasketMessageHandler<>(this);
         isActivitySuspended = false;
-
-        faceRupee = FontHolder.getInstance(getApplicationContext()).getFaceRupee();
-        faceRobotoRegular = FontHolder.getInstance(getApplicationContext()).getFaceRobotoRegular();
-        faceRobotoMedium = FontHolder.getInstance(getApplicationContext()).getFaceRobotoMedium();
-        faceRobotoBold = FontHolder.getInstance(getApplicationContext()).getFaceRobotoBold();
-        faceRobotoLight = FontHolder.getInstance(getApplicationContext()).getFaceRobotoLight();
+        FontHolder fontHolder = FontHolder.getInstance(getApplicationContext());
+        faceRupee = fontHolder.getFaceRupee();
+        faceRobotoRegular = fontHolder.getFaceRobotoRegular();
+        faceRobotoMedium = fontHolder.getFaceRobotoMedium();
+        faceRobotoBold = fontHolder.getFaceRobotoBold();
+        faceRobotoLight = fontHolder.getFaceRobotoLight();
         moEHelper = MoEngageWrapper.getMoHelperObj(getApplicationContext());
         fbLogger = AppEventsLogger.newLogger(getApplicationContext());
         mNavigationContext = getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX);
-        NewRelic.setInteractionName(getCurrentActivity().getClass().getSimpleName());
+        NewRelic.setInteractionName(getClass().getSimpleName());
     }
 
     public MoEHelper getMoEHelper() {
@@ -159,7 +159,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public boolean checkInternetConnection() {
-        return DataUtil.isInternetAvailable(getCurrentActivity());
+        return DataUtil.isInternetAvailable(getApplicationContext());
     }
 
     @Override
@@ -234,20 +234,23 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public abstract BaseActivity getCurrentActivity();
+    @Override
+    public BaseActivity getCurrentActivity() {
+        return this;
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
         isActivitySuspended = false;
-        MoEngageWrapper.onStart(moEHelper, getCurrentActivity());
+        MoEngageWrapper.onStart(moEHelper, this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         isActivitySuspended = true;
-        MoEngageWrapper.onStop(moEHelper, getCurrentActivity());
+        MoEngageWrapper.onStop(moEHelper, this);
         FacebookEventTrackWrapper.deactivateApp(getApplicationContext());
     }
 
@@ -255,7 +258,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
         isActivitySuspended = true;
-        MoEngageWrapper.onPause(moEHelper, getCurrentActivity());
+        MoEngageWrapper.onPause(moEHelper, this);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             LocalyticsWrapper.onPause();
         }
@@ -282,12 +285,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
             LocalyticsWrapper.onResume();
         }
 
-        MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
-        FacebookEventTrackWrapper.activateApp(getCurrentActivity());
+        MoEngageWrapper.onResume(moEHelper, this);
+        FacebookEventTrackWrapper.activateApp(getApplicationContext());
     }
 
     public void launchMoEngageCommunicationHub() {
-        AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
+        AuthParameters authParameters = AuthParameters.getInstance(getApplicationContext());
         if (!authParameters.isAuthTokenEmpty()) {
             Intent communicationHunIntent = new Intent(this, BBUnifiedInboxActivity.class);
             startActivity(communicationHunIntent);
@@ -451,7 +454,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void launchViewBasketScreen() {
-        Intent intent = new Intent(getCurrentActivity(), ShowCartActivity.class);
+        Intent intent = new Intent(this, ShowCartActivity.class);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -483,7 +486,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showToast(String txt) {
-        Toast toast = Toast.makeText(getCurrentActivity(), txt, Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(this, txt, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
         toast.show();
     }
@@ -494,18 +497,18 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public void goToHome() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            Intent intent = new Intent(getCurrentActivity(), HomeActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         } else {
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
             editor.putBoolean(Constants.IS_PENDING_GO_TO_HOME, true);
             editor.apply();
 
             Intent data = new Intent();
             setResult(NavigationCodes.GO_TO_HOME, data);
-            getCurrentActivity().finish();
+            finish();
         }
     }
 
@@ -519,15 +522,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     protected void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode,
                                   final String cityName) {
-        final AreaPinInfoDbHelper areaPinInfoDbHelper = new AreaPinInfoDbHelper(getCurrentActivity());
+        final AreaPinInfoDbHelper areaPinInfoDbHelper = new AreaPinInfoDbHelper(getApplicationContext());
         ArrayList<String> areaPinArrayList = areaPinInfoDbHelper.getPinList(cityName);
-        ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(getCurrentActivity(),
+        ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(this,
                 android.R.layout.select_dialog_item, areaPinArrayList);
         editTextPincode.setThreshold(1);
         editTextPincode.setAdapter(pinAdapter);
 
         ArrayList<String> areaNameArrayList = areaPinInfoDbHelper.getAreaNameList(cityName);
-        final ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(getCurrentActivity(),
+        final ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(this,
                 android.R.layout.select_dialog_item, areaNameArrayList);
         editTextArea.setThreshold(1);
         editTextArea.setAdapter(areaAdapter);
@@ -673,11 +676,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, nc);
             }
         }
-        Log.d(getCurrentActivity().getClass().getName(), "Sending event = " + eventName +
+        Log.d(getScreenTag(), "Sending event = " + eventName +
                 ", eventAttribs = " + eventAttribs + ", " +
                 ", sourceValue = " + sourceValue + ", isCustomerValueIncrease = "
                 + isCustomerValueIncrease);
-        AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
+        AuthParameters authParameters = AuthParameters.getInstance(getApplicationContext());
         if (authParameters.isMoEngageEnabled()) {
             JSONObject analyticsJsonObj = new JSONObject();
             try {
@@ -769,39 +772,39 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public boolean isBasketDirty() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         return preferences.getBoolean(Constants.IS_BASKET_COUNT_DIRTY, false);
     }
 
     protected boolean isPendingGoToHome() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         return preferences.getBoolean(Constants.IS_PENDING_GO_TO_HOME, false);
     }
 
     protected void removePendingGoToHome() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
         editor.remove(Constants.IS_PENDING_GO_TO_HOME);
         editor.apply();
     }
 
     public void removePendingCodes() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
         editor.remove(Constants.FRAGMENT_CODE);
         editor.remove(Constants.DEEP_LINK);
+        editor.remove(Constants.IS_PENDING_GO_TO_HOME);
         editor.apply();
-        removePendingGoToHome();
     }
 
     protected void togglePasswordView(EditText passwordEditText, boolean show) {
         Drawable rightDrawable;
         if (!show) {
-            rightDrawable = ContextCompat.getDrawable(getCurrentActivity(),
+            rightDrawable = ContextCompat.getDrawable(getApplicationContext(),
                     R.drawable.ic_visibility_white_18dp);
             passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
             passwordEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
             logShowPasswordEnabled(TrackEventkeys.YES, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         } else {
-            rightDrawable = ContextCompat.getDrawable(getCurrentActivity(),
+            rightDrawable = ContextCompat.getDrawable(getApplicationContext(),
                     R.drawable.ic_visibility_off_white_18dp);
             passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
             logShowPasswordEnabled(TrackEventkeys.NO, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
@@ -846,7 +849,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 .putBoolean(Constants.HAS_USER_CHOSEN_CITY, true)
                 .apply();
 
-        DynamicPageDbHelper.clearAllAsync(getCurrentActivity());
+        DynamicPageDbHelper.clearAllAsync(getApplicationContext());
         AppDataDynamic.reset(this);
     }
 
@@ -861,28 +864,28 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void launchProductList(ArrayList<NameValuePair> nameValuePairs, @Nullable String sectionName,
                                   @Nullable String sectionItemName) {
         if (nameValuePairs != null && nameValuePairs.size() > 0) {
-            Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+            Intent intent = new Intent(this, ProductListActivity.class);
             intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
             String title = sectionItemName != null ? sectionItemName : null;
             if (!TextUtils.isEmpty(title)) {
                 intent.putExtra(Constants.TITLE, title);
             }
-            getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 
     @Override
     public void launchStoreList(String destinationSlug) {
         if (!TextUtils.isEmpty(destinationSlug)) {
-            Intent intent = new Intent(getCurrentActivity(), BBSpecialityShopsActivity.class);
+            Intent intent = new Intent(this, BBSpecialityShopsActivity.class);
             intent.putExtra(Constants.CATEGORY, destinationSlug);
-            getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 
     @Override
     public void launchShoppingList(ShoppingListName shoppingListName) {
-        Intent intent = new Intent(getCurrentActivity(), ShoppingListSummaryActivity.class);
+        Intent intent = new Intent(this, ShoppingListSummaryActivity.class);
         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
@@ -911,9 +914,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (isTutorialShown) {
             handleTutorialResponse(resultCode);
         } else {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(Constants.TUTORIAL_SEEN, true);
-            editor.apply();
             Intent intent = new Intent(this, TutorialActivity.class);
             intent.putExtra(Constants.ACTION_TAB_TAG, resultCode);
             startActivityForResult(intent, NavigationCodes.TUTORIAL_SEEN);
@@ -935,11 +935,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showChangeCity(boolean isFirstTime, String nc, boolean reopenLandingPage) {
-        Intent intent = new Intent(getCurrentActivity(), ChooseLocationActivity.class);
+        Intent intent = new Intent(this, ChooseLocationActivity.class);
         intent.putExtra(TrackEventkeys.NAVIGATION_CTX, nc);
         intent.putExtra(Constants.IS_FIRST_TIME, isFirstTime);
         intent.putExtra(Constants.REOPEN_LANDING_PAGE, reopenLandingPage);
-        getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     /**************

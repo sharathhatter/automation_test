@@ -444,4 +444,5 @@
     <string name="store_icon">Store Icon</string>
     <string name="close">Close</string>
     <string name="no_delivery_address">No delivery address available. Please add a delivery address.</string>
+    <string name="failed_to_add_basket">Could not add to basket</string>
 </resources>
