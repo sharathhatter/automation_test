@@ -164,6 +164,10 @@ public class UIUtil {
         return sbr.toString();
     }
 
+    public static boolean isEmpty(String str) {
+        return str == null || TextUtils.isEmpty(str.trim());
+    }
+
 
     public static String strJoin(String[] stringArray, String separator) {
         if (stringArray == null || stringArray.length == 0) return "";

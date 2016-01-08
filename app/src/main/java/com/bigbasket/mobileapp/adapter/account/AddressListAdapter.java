@@ -16,6 +16,7 @@ import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
@@ -100,14 +101,19 @@ public class AddressListAdapter<T extends AddressSelectionAware & AddressChangeA
         txtPartialAddress.setTag(R.id.address_id, addressObjectList.get(position));
         txtPartialAddress.setOnClickListener(addressEditClickListener);
 
-        if (!TextUtils.isEmpty(address.getContactNum())) {
+        if (!UIUtil.isEmpty(address.getContactNum())) {
             txtPh.setVisibility(View.VISIBLE);
             txtPh.setText(address.getContactNum());
         } else txtPh.setVisibility(View.GONE);
-        if (!TextUtils.isEmpty(address.getName())) {
+        if (!UIUtil.isEmpty(address.getAddressNickName())) {
             txtName.setVisibility(View.VISIBLE);
-            txtName.setText(address.getName());
-        } else txtName.setVisibility(View.GONE);
+            txtName.setText(address.getAddressNickName().trim());
+        } else if (!UIUtil.isEmpty(address.getAltAddressNickName())) {
+            txtName.setVisibility(View.VISIBLE);
+            txtName.setText(address.getAltAddressNickName().trim());
+        } else {
+            txtName.setVisibility(View.GONE);
+        }
     }
 
     @Override

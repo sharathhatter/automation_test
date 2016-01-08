@@ -290,9 +290,11 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
             } else {
                 txtPh.setVisibility(View.GONE);
             }
-            if (!TextUtils.isEmpty(selectedAddress.getName().trim())) {
+            if (!UIUtil.isEmpty(selectedAddress.getAddressNickName())) {
                 txtName.setVisibility(View.VISIBLE);
-                txtName.setText(selectedAddress.getName().trim());
+                txtName.setText(selectedAddress.getAddressNickName());
+            } else if (!UIUtil.isEmpty(selectedAddress.getAltAddressNickName())) {
+                txtName.setText(selectedAddress.getAltAddressNickName());
             } else {
                 txtName.setVisibility(View.GONE);
             }
