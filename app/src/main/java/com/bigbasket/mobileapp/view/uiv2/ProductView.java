@@ -441,6 +441,7 @@ public final class ProductView {
         if ((productViewDisplayDataHolder.isShowShoppingListBtn() || productViewDisplayDataHolder.showShopListDeleteBtn())
                 && productViewDisplayDataHolder.isLoggedInMember()
                 && !getAvailability(product, storeAvailability).equalsIgnoreCase("N")) {
+            imgProductOverflowAction.setVisibility(View.VISIBLE);
             int imageDrawableId = productViewDisplayDataHolder.showShopListDeleteBtn() ?
                     R.drawable.trash : R.drawable.add_to_shopping_list;
             if (productViewDisplayDataHolder.showShopListDeleteBtn()) {

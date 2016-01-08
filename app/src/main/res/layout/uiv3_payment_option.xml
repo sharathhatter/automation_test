@@ -105,8 +105,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:hint="@string/enterVoucher"
-                    android:imeActionLabel="@string/apply"
-                    android:imeOptions="actionDone"
                     android:inputType="text"
                     android:paddingLeft="@dimen/padding_mini"
                     android:layout_toLeftOf="@+id/txtApplyVoucher"
