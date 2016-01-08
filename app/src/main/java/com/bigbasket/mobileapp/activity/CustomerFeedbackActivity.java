@@ -136,11 +136,6 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
 
     }
 
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
-    }
-
     public String getScreenTag() {
         return TrackEventkeys.CUSTOMER_FEEDBACK_SCREEN;
     }

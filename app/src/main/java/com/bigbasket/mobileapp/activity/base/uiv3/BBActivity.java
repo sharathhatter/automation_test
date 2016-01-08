@@ -205,12 +205,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 mMainMenuView.setCityText(defaultAddress.toString());
             }
         }
-
-        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager()
-                .findFragmentByTag(HomeFragment.class.getName());
-        if (homeFragment != null) {
-            homeFragment.syncDynamicTiles();
-        }
     }
 
     public void onDataSyncFailure() {
@@ -294,11 +288,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-    }
-
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
     }
 
     public void addToMainLayout(AbstractFragment fragment) {

@@ -353,11 +353,6 @@ public class UpdateProfileActivity extends BackButtonActivity implements OtpDial
     }
 
     @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         boolean handled = OtpValidationHelper.onRequestPermissionsResult(this, requestCode,
                 permissions, grantResults);

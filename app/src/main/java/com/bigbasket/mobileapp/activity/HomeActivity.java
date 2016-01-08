@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.account.AddressSummaryDropdownAdapter;
+import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
@@ -45,6 +46,8 @@ public class HomeActivity extends SearchActivity {
             trackEventAppsFlyer(TrackingAware.APP_OPEN, appFlyerHashMap);
             preferences.edit().putBoolean(Constants.APP_LAUNCH, false).apply();
         }
+        //Show the tutorial if needed
+        launchTutorial(-1);
     }
 
     @Override
@@ -129,6 +132,12 @@ public class HomeActivity extends SearchActivity {
     public void onDataSynced() {
         super.onDataSynced();
         setUpAddressSpinner();
+
+        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager()
+                .findFragmentByTag(HomeFragment.class.getName());
+        if (homeFragment != null) {
+            homeFragment.syncDynamicTiles();
+        }
     }
 
     @Override

@@ -79,6 +79,7 @@ public abstract class AbstractFragment extends Fragment implements AppOperationA
         this.isFragmentSuspended = isFragmentSuspended;
     }
 
+    @Override
     public BaseActivity getCurrentActivity() {
         return (BaseActivity) getActivity();
     }

@@ -117,7 +117,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
             String orderValStr = UIUtil.formatAsMoney(Double.parseDouble(order.getOrderValue()));
             int prefixLen = orderPrefix.length();
             SpannableString spannableMrp = new SpannableString(orderPrefix + orderValStr);
-            spannableMrp.setSpan(new CustomTypefaceSpan("", BaseActivity.faceRupee), prefixLen - 1,
+            spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.append(spannableMrp);
 
@@ -218,11 +218,6 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
 
     public void onContinueBtnClicked(View view) {
         goToHome();
-    }
-
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
     }
 
     @Override

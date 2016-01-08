@@ -64,11 +64,6 @@ public class PayNowThankyouActivity extends BaseActivity implements InvoiceDataA
     }
 
     @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
-    }
-
-    @Override
     public void onChangeFragment(AbstractFragment newFragment) {
 
     }

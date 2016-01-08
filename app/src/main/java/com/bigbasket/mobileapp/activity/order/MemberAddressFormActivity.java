@@ -370,11 +370,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         return TextUtils.isEmpty(editText.getText().toString());
     }
 
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
-    }
-
     private String getActivityTitle() {
         if (mAddress == null) {
             mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);

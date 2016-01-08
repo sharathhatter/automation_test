@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -27,6 +26,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -41,12 +41,18 @@ import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import retrofit.Call;
 
 
-public class SplashActivity extends SocialLoginActivity implements AppOperationAware {
+public class SplashActivity extends BaseActivity implements AppOperationAware {
 
     private boolean mIsFromActivityResult;
+    private ImageView imgBBLogo;
+    private View landingView;
+    private View progressView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,11 +71,13 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
         }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        if (preferences.contains(Constants.FIRSE_TIME_USER)) {
-            MoEngageWrapper.setExistingUser(moEHelper, true);
-        } else {
-            MoEngageWrapper.setExistingUser(moEHelper, false);
-            editor.putBoolean(Constants.FIRSE_TIME_USER, true);
+        if(savedInstanceState == null) {
+            if (preferences.contains(Constants.FIRSE_TIME_USER)) {
+                MoEngageWrapper.setExistingUser(moEHelper, true);
+            } else {
+                MoEngageWrapper.setExistingUser(moEHelper, false);
+                editor.putBoolean(Constants.FIRSE_TIME_USER, true);
+            }
         }
         if (!BuildConfig.DEBUG) {
             AppsFlyerLib.setAppsFlyerKey(Constants.APP_FLYER_ID);
@@ -82,9 +90,11 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
     }
 
     private void startSplashScreen() {
-        setContentView(R.layout.loading_layout);
-        ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
-        UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo);
+        setContentView(R.layout.splash_screen_layout);
+        imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
+        UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo, true, true);
+        landingView = findViewById(R.id.layoutLoginButtons);
+        progressView = findViewById(R.id.progressBar);
 
         if (AuthParameters.getInstance(this).isAuthTokenEmpty() && !CityManager.hasUserChosenCity(this)) {
             if (TextUtils.isEmpty(AuthParameters.getInstance(this).getVisitorId())) {
@@ -133,6 +143,22 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
             startSplashScreen();
         } else {
             showNoInternetConnectionView(getString(R.string.lostInternetConnection));
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(imgBBLogo != null) {
+            UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo, true, true);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (imgBBLogo != null) {
+            imgBBLogo.setImageBitmap(null);
         }
     }
 
@@ -248,8 +274,29 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
     }
 
     private void startLandingPage() {
-        Intent intent = new Intent(getCurrentActivity(), LandingPageActivity.class);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        progressView.setVisibility(View.GONE);
+        landingView.setVisibility(View.VISIBLE);
+    }
+
+    public void onLandingPageButtonClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btnLogin:
+                Map<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+                trackEvent(TrackingAware.ENTRY_PAGE_LOGIN_CLICKED, eventAttribs);
+                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, true);
+                break;
+            case R.id.btnRegister:
+                trackEvent(TrackingAware.ENTRY_PAGE_SIGNUP_CLICKED, null);
+                launchRegistrationPage();
+                break;
+            case R.id.btnSkip:
+                trackEvent(TrackingAware.ENTRY_PAGE_SKIP_BUTTON_CLICKED, null);
+                showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, false);
+                break;
+            default:
+                return;
+        }
     }
 
     @Override
@@ -271,18 +318,14 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
             handleResults();
         } else if (requestCode == NavigationCodes.TUTORIAL_SEEN) {
             super.onActivityResult(requestCode, resultCode, data);
-        } else {
+        } else if(resultCode != NavigationCodes.SIGN_UP_CANCELLED
+                && resultCode != NavigationCodes.SIGN_IN_CANCELLED){
             finish();
         }
     }
 
     private void handleResults() {
         loadHomePage();
-    }
-
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
     }
 
     @Override

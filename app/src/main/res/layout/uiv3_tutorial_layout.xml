@@ -40,22 +40,9 @@
             android:textColor="@color/white"
             android:textSize="@dimen/heading_1_text_size" />
 
-
-        <TextView
-            android:id="@+id/lblStartShopping"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/startShopping"
-            android:textColor="@color/white"
-            android:textSize="@dimen/heading_1_text_size"
-            android:visibility="gone" />
-
     </LinearLayout>
 
-    <android.support.v4.view.ViewPager
+    <ImageView
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

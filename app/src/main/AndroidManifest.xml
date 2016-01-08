@@ -534,11 +534,6 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.LandingPageActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/LandingPageTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
             android:name=".activity.order.uiv3.ShowCartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"

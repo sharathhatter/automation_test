@@ -247,11 +247,6 @@ public abstract class BaseFragment extends AbstractFragment implements
     @Nullable
     public abstract ViewGroup getContentView();
 
-    @Nullable
-    public BaseActivity getCurrentActivity() {
-        return getActivity() != null ? (BaseActivity) getActivity() : null;
-    }
-
     protected Spannable asRupeeSpannable(double amt) {
         return UIUtil.asRupeeSpannable(amt, faceRupee);
     }
@@ -275,7 +270,7 @@ public abstract class BaseFragment extends AbstractFragment implements
                                                    @Nullable WeakReference<View> productViewRef,
                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
-            Toast.makeText(getActivity(), "0 added to basket.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.failed_to_add_basket, Toast.LENGTH_SHORT).show();
         }
     }
 
