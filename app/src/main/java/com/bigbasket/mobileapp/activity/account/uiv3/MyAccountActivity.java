@@ -236,21 +236,21 @@ public class MyAccountActivity extends BackButtonActivity implements
 
     private String getAddress(UpdateProfileModel updateProfileModel) {
         String address = "";
-        if (!TextUtils.isEmpty(updateProfileModel.getHouseNumber())) {
+        if (!UIUtil.isEmpty(updateProfileModel.getHouseNumber())) {
             address += updateProfileModel.getHouseNumber() + " ";
         }
-        if (!TextUtils.isEmpty(updateProfileModel.getLandmark())) {
+        if (!UIUtil.isEmpty(updateProfileModel.getLandmark())) {
             address += updateProfileModel.getLandmark() + " ";
         }
-        if (!TextUtils.isEmpty(updateProfileModel.getResidentialComplex())) {
+        if (!UIUtil.isEmpty(updateProfileModel.getResidentialComplex())) {
             address += updateProfileModel.getResidentialComplex() + " ";
         }
 
-        if (!TextUtils.isEmpty(updateProfileModel.getStreet())) {
+        if (!UIUtil.isEmpty(updateProfileModel.getStreet())) {
             address += updateProfileModel.getStreet() + " ";
         }
 
-        if (!TextUtils.isEmpty(updateProfileModel.getArea())) {
+        if (!UIUtil.isEmpty(updateProfileModel.getArea())) {
             address += updateProfileModel.getArea() + " ";
         }
 

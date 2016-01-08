@@ -3,9 +3,9 @@ package com.bigbasket.mobileapp.model.account;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.annotations.SerializedName;
 
 public class Address extends AddressSummary {
@@ -144,15 +144,20 @@ public class Address extends AddressSummary {
         return isSelected;
     }
 
+    public String getAltAddressNickName() {
+        return (!UIUtil.isEmpty(getArea()) ? getArea() + " - " : "") +
+                (!UIUtil.isEmpty(getCityName()) ? getCityName() : "");
+    }
+
     @Override
     public String toString() {
-        return (!TextUtils.isEmpty(getAddressNickName()) ? getAddressNickName() + " - " : "") +
-                (!TextUtils.isEmpty(houseNumber) ? houseNumber + "\n" : "") +
-                (!TextUtils.isEmpty(street) ? street + "\n" : "") +
-                (!TextUtils.isEmpty(getArea()) ? getArea() + "\n" : "") +
-                (!TextUtils.isEmpty(residentialComplex) ? residentialComplex + "\n" : "") +
-                (!TextUtils.isEmpty(landmark) ? landmark + "\n" : "") +
-                (!TextUtils.isEmpty(getCityName()) ? getCityName() + "\n" : "") +
-                (!TextUtils.isEmpty(getPincode()) ? "Pin - " + getPincode() + "\n" : "");
+        return (!UIUtil.isEmpty(getName()) ? getName() + "\n" : "") +
+                (!UIUtil.isEmpty(houseNumber) ? houseNumber + "\n" : "") +
+                (!UIUtil.isEmpty(street) ? street + "\n" : "") +
+                (!UIUtil.isEmpty(getArea()) ? getArea() + "\n" : "") +
+                (!UIUtil.isEmpty(residentialComplex) ? residentialComplex + "\n" : "") +
+                (!UIUtil.isEmpty(landmark) ? landmark + "\n" : "") +
+                (!UIUtil.isEmpty(getCityName()) ? getCityName() + "\n" : "") +
+                (!UIUtil.isEmpty(getPincode()) ? "Pin - " + getPincode() + "\n" : "");
     }
 }

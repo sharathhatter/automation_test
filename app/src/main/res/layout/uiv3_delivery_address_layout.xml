@@ -110,6 +110,9 @@
                     android:layout_marginLeft="@dimen/margin_small"
                     android:layout_marginRight="@dimen/margin_small"
                     android:contentDescription="@string/changeMyLocation"
+                    android:paddingBottom="@dimen/padding_small"
+                    android:paddingLeft="@dimen/padding_small"
+                    android:paddingRight="@dimen/padding_small"
                     android:src="@drawable/ic_edit_black_14dp"
                     android:visibility="visible" />
             </LinearLayout>
