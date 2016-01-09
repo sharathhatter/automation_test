@@ -112,10 +112,7 @@ public class StoreDetailsDialogFragment extends AbstractDialogFragment {
                 storeDesc.setText(desc);
             }
             String imgUrl = detailsBundle.getString(Constants.STORE_IMG);
-            if (!TextUtils.isEmpty(imgUrl)) {
-//                    UIUtil.displayProductImage(null, imgUrl, storeIcon);
-                UIUtil.displayAsyncImage(storeIcon, imgUrl);
-            }
+            UIUtil.displayAsyncImage(storeIcon, imgUrl);
         }
     }
 

@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment.shoppinglist;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -242,9 +243,11 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     public static class ShoppingListHeaderViewHolder {
         private TextView txtHeaderMsg;
         private View base;
+        private Typeface faceRobotoRegular;
 
-        public ShoppingListHeaderViewHolder(View base) {
+        public ShoppingListHeaderViewHolder(View base, Typeface faceRobotoRegular) {
             this.base = base;
+            this.faceRobotoRegular = faceRobotoRegular;
         }
 
         public TextView getTxtHeaderMsg() {
@@ -334,7 +337,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 if (convertView == null) {
                     LayoutInflater inflater = getActivity().getLayoutInflater();
                     convertView = inflater.inflate(R.layout.uiv3_list_title, parent, false);
-                    holder = new ShoppingListHeaderViewHolder(convertView);
+                    holder = new ShoppingListHeaderViewHolder(convertView, faceRobotoRegular);
                     convertView.setTag(holder);
                 } else {
                     holder = (ShoppingListHeaderViewHolder) convertView.getTag();

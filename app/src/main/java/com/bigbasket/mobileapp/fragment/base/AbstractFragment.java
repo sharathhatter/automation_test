@@ -14,9 +14,9 @@ import com.bigbasket.mobileapp.util.FontHolder;
 
 public abstract class AbstractFragment extends Fragment implements AppOperationAware {
 
-    protected static Typeface faceRupee;
-    protected static Typeface faceRobotoRegular;
-    protected static Typeface faceRobotoMedium;
+    protected Typeface faceRupee;
+    protected Typeface faceRobotoRegular;
+    protected Typeface faceRobotoMedium;
 
     private boolean mAlreadyLoaded = false;
     private boolean isFragmentSuspended;

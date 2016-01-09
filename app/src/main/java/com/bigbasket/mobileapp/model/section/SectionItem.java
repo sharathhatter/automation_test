@@ -284,7 +284,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                     constructImageUrl(context, baseImgUrl), animate, placeHolderDrawableResId,
                     targetImgWidth, targetImgHeight, skipMemoryCache);
         } else {
-            imageView.setImageDrawable(null);
+            imageView.setImageBitmap(null);
             imageView.setVisibility(View.GONE);
         }
     }

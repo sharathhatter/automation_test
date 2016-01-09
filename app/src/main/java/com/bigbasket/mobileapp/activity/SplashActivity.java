@@ -92,7 +92,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
     private void startSplashScreen() {
         setContentView(R.layout.splash_screen_layout);
         imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
-        UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo, true, true);
+        UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo, true);
         landingView = findViewById(R.id.layoutLoginButtons);
         progressView = findViewById(R.id.progressBar);
 
@@ -150,7 +150,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
     protected void onStart() {
         super.onStart();
         if(imgBBLogo != null) {
-            UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo, true, true);
+            UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo, true);
         }
     }
 
