@@ -62,6 +62,7 @@ import com.bigbasket.mobileapp.model.order.PaytmResponseHolder;
 import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MutableLong;
@@ -1035,11 +1036,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                             ((TrackingAware) activity).trackEvent(
                                     TrackingAware.PLACE_ORDER_KNOW_MORE_LINK_CLICKED, null);
                         }
-                        Intent intent = new Intent(getActivity(), BackButtonActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                        intent.putExtra(Constants.WEBVIEW_URL, mKnowMoreUrl);
-                        intent.putExtra(Constants.WEBVIEW_TITLE, "");
-                        startActivity(intent);
+                        FlatPageHelper.openFlatPage(getActivity(), mKnowMoreUrl, "");
                     }
 
                     @Override
