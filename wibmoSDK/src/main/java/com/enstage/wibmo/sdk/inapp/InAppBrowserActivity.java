@@ -27,7 +27,6 @@ import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -40,18 +39,21 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.enstage.wibmo.sdk.R;
+import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.WibmoSDKConfig;
 import com.enstage.wibmo.sdk.inapp.pojo.W2faInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.W2faInitResponse;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitResponse;
-import com.enstage.wibmo.sdk.R;
 
 /**
  * Created by akshath on 20/10/14.
  */
 public class InAppBrowserActivity extends Activity {
     private static final String TAG = "wibmo.sdk.InAppBrowser";
+
+    private String qrMsg;
 
     private W2faInitResponse w2faInitResponse;
 
@@ -60,7 +62,6 @@ public class InAppBrowserActivity extends Activity {
     private boolean resultSet;
 
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,13 +79,12 @@ public class InAppBrowserActivity extends Activity {
             wPayInitResponse = (WPayInitResponse) extras
                     .getSerializable("WPayInitResponse");
 
-            String qrMsg;
-            if (w2faInitRequest != null && w2faInitResponse!=null) {
+            if (w2faInitRequest != null && w2faInitResponse != null) {
                 qrMsg = "Wibmo InApp payment";
-            } else if (wPayInitRequest != null && wPayInitResponse!=null) {
+            } else if (wPayInitRequest != null && wPayInitResponse != null) {
                 qrMsg = "Wibmo InApp payment";
             } else {
-                sendAbort();
+                sendAbort(WibmoSDK.RES_CODE_FAILURE_SYSTEM_ABORT, "SDK Browser - InitReq was null");
                 return;
             }
         }
@@ -158,7 +158,6 @@ public class InAppBrowserActivity extends Activity {
         //--
 
 
-
         final ProgressBar webViewProgressBar = (ProgressBar) findViewById(R.id.web_view_progress_bar);
 
         webView.setWebChromeClient(new WebChromeClient() {
@@ -181,13 +180,13 @@ public class InAppBrowserActivity extends Activity {
             @android.webkit.JavascriptInterface
             @SuppressWarnings("unused")
             public void notifyAbort() {
-                sendAbort();
+                sendAbort(WibmoSDK.RES_CODE_FAILURE_USER_ABORT, "SDK Browser - JS");
             }
 
             @android.webkit.JavascriptInterface
             @SuppressWarnings("unused")
             public void notifyFailure(String resCode, String resDesc) {
-                if(WibmoSDKConfig.isTestMode()) {
+                if (WibmoSDKConfig.isTestMode()) {
                     /*
                     Toast.makeText(activity, "notifyFailure called",
                             Toast.LENGTH_SHORT).show();
@@ -199,8 +198,8 @@ public class InAppBrowserActivity extends Activity {
             @android.webkit.JavascriptInterface
             @SuppressWarnings("unused")
             public void notifySuccess(String resCode, String resDesc,
-                    String dataPickUpCode, String wTxnId, String msgHash) {
-                if(WibmoSDKConfig.isTestMode()) {
+                                      String dataPickUpCode, String wTxnId, String msgHash) {
+                if (WibmoSDKConfig.isTestMode()) {
                     /*
                     Toast.makeText(activity, "notifySuccess called",
                             Toast.LENGTH_SHORT).show();
@@ -215,7 +214,7 @@ public class InAppBrowserActivity extends Activity {
             @SuppressWarnings("unused")
             public void recordSuccess(String resCode, String resDesc,
                                       String dataPickUpCode, String wTxnId, String msgHash) {
-                if(WibmoSDKConfig.isTestMode()) {
+                if (WibmoSDKConfig.isTestMode()) {
                     /*
                     Toast.makeText(activity, "notifySuccess called",
                             Toast.LENGTH_SHORT).show();
@@ -228,7 +227,7 @@ public class InAppBrowserActivity extends Activity {
             @android.webkit.JavascriptInterface
             @SuppressWarnings("unused")
             public void notifyCompletion() {
-                if(WibmoSDKConfig.isTestMode()) {
+                if (WibmoSDKConfig.isTestMode()) {
                     /*
                     Toast.makeText(activity, "notifySuccess called",
                             Toast.LENGTH_SHORT).show();
@@ -247,7 +246,7 @@ public class InAppBrowserActivity extends Activity {
             @android.webkit.JavascriptInterface
             @SuppressWarnings("unused")
             public void alert(String msg) {
-                Log.d(TAG, "alert: "+msg);
+                Log.d(TAG, "alert: " + msg);
                 showMsg(msg);
             }
 
@@ -267,12 +266,12 @@ public class InAppBrowserActivity extends Activity {
         webView.addJavascriptInterface(new MyJavaScriptInterface(), "WibmoSDK");
         //webView.clearCache(true);
 
-        if(w2faInitResponse!=null) {
+        if (w2faInitResponse != null) {
             webView.postUrl(w2faInitResponse.getWebUrl(), "a=b".getBytes());
             Log.i(TAG, "web posting to " + w2faInitResponse.getWebUrl());
         }
 
-        if(wPayInitResponse!=null) {
+        if (wPayInitResponse != null) {
             webView.postUrl(wPayInitResponse.getWebUrl(), "a=b".getBytes());
             Log.i(TAG, "web posting to " + wPayInitResponse.getWebUrl());
         }
@@ -281,18 +280,21 @@ public class InAppBrowserActivity extends Activity {
     }
 
 
-
     private void sendAbort() {
+        sendAbort(WibmoSDK.RES_CODE_FAILURE_USER_ABORT, "sdk browser - user abort");
+    }
+
+    private void sendAbort(String resCode, String resDesc) {
         //webView.destroy();
 
         Intent resultData = new Intent();
-        resultData.putExtra("ResCode", "204");
-        resultData.putExtra("ResDesc", "user abort");
+        resultData.putExtra("ResCode", resCode);
+        resultData.putExtra("ResDesc", resDesc);
 
-        if(w2faInitResponse!=null) {
+        if (w2faInitResponse != null) {
             resultData.putExtra("WibmoTxnId", w2faInitResponse.getWibmoTxnId());
             resultData.putExtra("MerTxnId", w2faInitResponse.getTransactionInfo().getMerTxnId());
-        } else if(wPayInitResponse!=null) {
+        } else if (wPayInitResponse != null) {
             resultData.putExtra("WibmoTxnId", wPayInitResponse.getWibmoTxnId());
             resultData.putExtra("MerTxnId", wPayInitResponse.getTransactionInfo().getMerTxnId());
         }
@@ -313,10 +315,10 @@ public class InAppBrowserActivity extends Activity {
         resultData.putExtra("ResCode", resCode);
         resultData.putExtra("ResDesc", resDesc);
 
-        if(w2faInitResponse!=null) {
+        if (w2faInitResponse != null) {
             resultData.putExtra("WibmoTxnId", w2faInitResponse.getWibmoTxnId());
             resultData.putExtra("MerTxnId", w2faInitResponse.getTransactionInfo().getMerTxnId());
-        } else if(wPayInitResponse!=null) {
+        } else if (wPayInitResponse != null) {
             resultData.putExtra("WibmoTxnId", wPayInitResponse.getWibmoTxnId());
             resultData.putExtra("MerTxnId", wPayInitResponse.getTransactionInfo().getMerTxnId());
         }
@@ -326,7 +328,7 @@ public class InAppBrowserActivity extends Activity {
     }
 
     private void _recordSuccess(String resCode, String resDesc,
-            String dataPickUpCode, String wTxnId, String msgHash) {
+                                String dataPickUpCode, String wTxnId, String msgHash) {
         //webView.destroy();
 
         Intent resultData = new Intent();
@@ -337,10 +339,10 @@ public class InAppBrowserActivity extends Activity {
         resultData.putExtra("WibmoTxnId", wTxnId);
         resultData.putExtra("MsgHash", msgHash);
 
-        if(w2faInitResponse!=null) {
+        if (w2faInitResponse != null) {
             //resultData.putExtra("WibmoTxnId", w2faInitResponse.getWibmoTxnId());
             resultData.putExtra("MerTxnId", w2faInitResponse.getTransactionInfo().getMerTxnId());
-        } else if(wPayInitResponse!=null) {
+        } else if (wPayInitResponse != null) {
             //resultData.putExtra("WibmoTxnId", wPayInitResponse.getWibmoTxnId());
             resultData.putExtra("MerTxnId", wPayInitResponse.getTransactionInfo().getMerTxnId());
         }
@@ -364,7 +366,7 @@ public class InAppBrowserActivity extends Activity {
 
 
     public void processBackAction() {
-        if(resultSet) {
+        if (resultSet) {
             Log.v(TAG, "resultSet was true");
             _notifyCompletion();
         } else {
@@ -432,13 +434,14 @@ public class InAppBrowserActivity extends Activity {
 
         try {
             alert.show();
-        } catch(Throwable e) {
+        } catch (Throwable e) {
             Log.e(TAG, "error: " + e, e);
             showToast(msg);
         }
     }
 
     private Handler handler = new Handler();
+
     protected void showToast(final String msg) {
         Log.i(TAG, "Show Toast: " + msg);
 
@@ -451,7 +454,7 @@ public class InAppBrowserActivity extends Activity {
 
                 try {
                     toast.show();
-                } catch(Throwable e) {
+                } catch (Throwable e) {
                     Log.e(TAG, "error: " + e, e);
                 }
             }

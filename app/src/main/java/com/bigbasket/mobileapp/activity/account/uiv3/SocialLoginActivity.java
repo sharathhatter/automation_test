@@ -37,7 +37,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActivity
         implements OnLogoutListener {
@@ -400,9 +400,11 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            logFailureEvents("Network Error");
-            super.onFailure(t);
+        public void onFailure(Call<ApiResponse<LoginApiResponse>> call, Throwable t) {
+            if (call != null && !call.isCanceled()) {
+                logFailureEvents("Network Error");
+            }
+            super.onFailure(call, t);
         }
 
         private void logFailureEvents(String err) {

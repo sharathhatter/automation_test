@@ -13,7 +13,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SocialLoginConfirmActivity extends ChooseLocationActivity {
 

@@ -29,14 +29,16 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.squareup.okhttp.OkHttpClient;
 
 import java.util.ArrayList;
 
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -153,7 +155,9 @@ public class BBDevConfigActivity extends SocialLoginActivity
                     .create(BigBasketApiService.class);
             bbService.listCities().enqueue(new Callback<ArrayList<City>>() {
                 @Override
-                public void onResponse(Response<ArrayList<City>> response, Retrofit retrofit) {
+                public void onResponse(Call<ArrayList<City>> call,
+                                       Response<ArrayList<City>> response) {
+                    if (call != null && call.isCanceled()) return;
                     hideProgressDialog();
                     if(response.isSuccess()) {
                         PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
@@ -181,7 +185,8 @@ public class BBDevConfigActivity extends SocialLoginActivity
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
+                public void onFailure(Call<ArrayList<City>> call, Throwable t) {
+                    if (call != null && call.isCanceled()) return;
                     hideProgressDialog();
                     Log.e(getScreenTag(), "Error", t);
                     Toast.makeText(getCurrentActivity(), "Invalid server address: " + t.toString(),

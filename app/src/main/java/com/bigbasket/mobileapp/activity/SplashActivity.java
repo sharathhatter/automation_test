@@ -44,7 +44,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public class SplashActivity extends BaseActivity implements AppOperationAware {
@@ -246,8 +246,8 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                if (isSuspended()) return;
+            public void onFailure(Call<RegisterDeviceResponse> call, Throwable t) {
+                if (isSuspended() || (call != null && call.isCanceled())) return;
                 showNoInternetConnectionView(getString(R.string.networkError));
             }
 

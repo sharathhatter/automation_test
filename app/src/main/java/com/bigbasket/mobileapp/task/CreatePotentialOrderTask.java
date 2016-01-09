@@ -9,7 +9,7 @@ import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class CreatePotentialOrderTask<T extends AppOperationAware> {
     private T ctx;

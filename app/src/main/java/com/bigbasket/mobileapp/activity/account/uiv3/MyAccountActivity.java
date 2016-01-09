@@ -45,7 +45,7 @@ import com.google.android.gms.plus.model.people.Person;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class MyAccountActivity extends BackButtonActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {

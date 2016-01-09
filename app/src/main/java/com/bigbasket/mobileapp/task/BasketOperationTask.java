@@ -32,7 +32,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class BasketOperationTask<T extends AppOperationAware> {
 

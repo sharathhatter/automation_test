@@ -16,7 +16,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class CreateShoppingListTask<T extends AppOperationAware> {
     private T ctx;

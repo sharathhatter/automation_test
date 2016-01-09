@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public class PromoCategoryFragment extends BaseSectionFragment implements PromoDetailNavigationAware {

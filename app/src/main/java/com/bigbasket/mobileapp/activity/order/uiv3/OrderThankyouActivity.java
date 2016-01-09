@@ -38,7 +38,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAware {
 

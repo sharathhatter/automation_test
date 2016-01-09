@@ -38,7 +38,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class DeepLinkHandler {
     public static final int SUCCESS = 1;

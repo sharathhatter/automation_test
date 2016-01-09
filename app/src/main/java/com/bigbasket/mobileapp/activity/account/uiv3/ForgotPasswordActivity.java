@@ -39,7 +39,8 @@ import com.crashlytics.android.Crashlytics;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
+
 
 public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpReceivedListener {
 
@@ -119,18 +120,18 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
 
         final OnCompoundDrawableClickListener passWdVisibilityClickListener =
                 new OnCompoundDrawableClickListener(OnCompoundDrawableClickListener.DRAWABLE_RIGHT) {
-            @Override
-            public void onRightDrawableClicked() {
-                mIsPasswordVisible = !mIsPasswordVisible;
-                togglePasswordView(newPwdEditText, mIsPasswordVisible);
-                togglePasswordView(confirmPwdEditText, mIsPasswordVisible);
-            }
+                    @Override
+                    public void onRightDrawableClicked() {
+                        mIsPasswordVisible = !mIsPasswordVisible;
+                        togglePasswordView(newPwdEditText, mIsPasswordVisible);
+                        togglePasswordView(confirmPwdEditText, mIsPasswordVisible);
+                    }
 
-            @Override
-            public void onLeftDrawableClicked() {
+                    @Override
+                    public void onLeftDrawableClicked() {
 
-            }
-        };
+                    }
+                };
         newPwdEditText = (EditText) findViewById(R.id.new_pass_word_edit_txt);
         newPwdEditText.setTypeface(faceRobotoRegular);
         newPwdEditText.setOnTouchListener(passWdVisibilityClickListener);
@@ -382,7 +383,7 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
             case Constants.PERMISSION_REQUEST_CODE_RECEIVE_SMS:
                 if (grantResults.length > 0 && permissions.length > 0
                         && permissions[0].equals(Manifest.permission.RECEIVE_SMS)) {
-                    if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         //TODO: Show some indication
                     } else {
                     }

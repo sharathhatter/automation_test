@@ -29,7 +29,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public class ChangePasswordFragment extends BaseFragment {
@@ -182,9 +182,11 @@ public class ChangePasswordFragment extends BaseFragment {
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                super.onFailure(t);
-                logChangePasswordErrorEvent("Network Error", TrackingAware.CHANGE_PASSWORD_FAILED);
+            public void onFailure(Call<OldBaseApiResponse> call, Throwable t) {
+                super.onFailure(call, t);
+                if (call != null && !call.isCanceled()) {
+                    logChangePasswordErrorEvent("Network Error", TrackingAware.CHANGE_PASSWORD_FAILED);
+                }
             }
 
         });

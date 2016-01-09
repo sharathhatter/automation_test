@@ -55,7 +55,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public abstract class ProductListAwareFragment extends BaseSectionFragment implements
@@ -270,7 +270,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
+                public void onFailure(Call<ApiResponse<ProductNextPageResponse>> call, Throwable t) {
+                    if (call != null && call.isCanceled()) return;
                     failure();
                 }
 

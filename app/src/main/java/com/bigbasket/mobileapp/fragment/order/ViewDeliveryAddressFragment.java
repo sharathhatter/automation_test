@@ -58,7 +58,7 @@ import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class ViewDeliveryAddressFragment extends BaseFragment implements AddressSelectionAware,
         CreatePotentialOrderAware, BasketDeltaUserActionListener, OnAddressChangeListener, OnBasketDeltaListener {

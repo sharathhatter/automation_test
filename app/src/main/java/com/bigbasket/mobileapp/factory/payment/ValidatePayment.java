@@ -28,7 +28,7 @@ import com.payu.india.Payu.PayuConstants;
 
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public final class ValidatePayment<T extends AppOperationAware> {
     private T context;
@@ -187,13 +187,15 @@ public final class ValidatePayment<T extends AppOperationAware> {
                          }
 
                          @Override
-                         public void onFailure(Throwable t) {
+                         public void onFailure(Call<ApiResponse<ValidateOrderPaymentApiResponse>> call,
+                                               Throwable t) {
+                             if (call != null && call.isCanceled()) return;
                              if (handler != null) {
                                  if (context.isSuspended()) return;
                                  if (!updateProgress()) return;
                                  handler.handleRetrofitError(t, false);
                              } else {
-                                 super.onFailure(t);
+                                 super.onFailure(call, t);
                              }
                          }
 

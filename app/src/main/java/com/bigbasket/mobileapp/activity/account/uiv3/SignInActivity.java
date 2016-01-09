@@ -47,7 +47,7 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SignInActivity extends SocialLoginActivity {
 

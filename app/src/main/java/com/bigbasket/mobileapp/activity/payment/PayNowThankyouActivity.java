@@ -22,7 +22,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class PayNowThankyouActivity extends BaseActivity implements InvoiceDataAware {
 

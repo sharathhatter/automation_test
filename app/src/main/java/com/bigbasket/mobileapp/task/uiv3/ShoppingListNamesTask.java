@@ -8,7 +8,7 @@ import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.util.Constants;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class ShoppingListNamesTask<T extends AppOperationAware> {
     private T ctx;
