@@ -84,5 +84,6 @@
 
     <color name="facebook_bg">#3b5998</color>
     <color name="google_plus_bg">#d34836</color>
+    <color name="ripple_dark">#33ffffff</color>
 
 </resources>
