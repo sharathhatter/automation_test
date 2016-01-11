@@ -16,7 +16,6 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -65,6 +64,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                         actionId == EditorInfo.IME_ACTION_DONE) {
                     String voucherCode = mEditTextVoucherCode.getText().toString();
                     if (!TextUtils.isEmpty(voucherCode)) {
+                        trackEvent(AVAILABLE_EVOUCHER_KEYBOARD_APPLY_CLICKED,null);
                         applyVoucher(voucherCode);
                     }
                     hideKeyboard(getCurrentActivity(), mEditTextVoucherCode);
@@ -88,6 +88,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     ActiveVouchers activeVouchers = activeVouchersList.get(position);
                     if (activeVouchers.canApply()) {
+                        trackEvent(AVAILABLE_EVOUCHER_SELECTED, null);
                         applyVoucher(activeVouchers.getCode());
                     }
                 }
@@ -99,6 +100,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(mEditTextVoucherCode.getText().toString())) {
+                    trackEvent(AVAILABLE_EVOUCHER_USER_ENTERED, null);
                     BaseActivity.hideKeyboard(getCurrentActivity(), mEditTextVoucherCode);
                     String voucherCode = mEditTextVoucherCode.getText().toString();
                     applyVoucher(voucherCode);
@@ -115,6 +117,10 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
     }
 
     private void applyVoucher(String voucherCode) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+        trackEvent(TrackingAware.AVAILABLE_EVOUCHER_APPLIED, map);
+
         Intent data = new Intent();
         data.putExtra(Constants.EVOUCHER_CODE, voucherCode);
         setResult(NavigationCodes.VOUCHER_APPLIED, data);

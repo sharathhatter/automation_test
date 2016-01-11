@@ -56,4 +56,7 @@
     <dimen name="dimen_2">2dp</dimen>
     <dimen name="dimen_5">5dp</dimen>
 
+    <dimen name="dimen_48">48dp</dimen>
+    <dimen name="dimen_10">10dp</dimen>
+
 </resources>

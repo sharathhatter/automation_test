@@ -41,6 +41,8 @@
         android:imeActionLabel="@string/apply"
         android:imeOptions="actionDone"
         android:inputType="text"
+        android:maxLines="1"
+        android:maxLength="50"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
     </android.support.design.widget.TextInputLayout>
