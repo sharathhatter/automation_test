@@ -53,6 +53,7 @@ import com.crashlytics.android.Crashlytics;
 import com.moengage.widgets.NudgeView;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import retrofit.Call;
 
@@ -79,6 +80,7 @@ public class HomeFragment extends BaseSectionFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
+        trackEventsOnFabric(TrackingAware.HOME_PAGE_SHOWN, null);
         setCurrentScreenName(TrackEventkeys.HOME);
     }
 
@@ -351,7 +353,7 @@ public class HomeFragment extends BaseSectionFragment {
 
     private void setAppCapability(AppCapability appCapability) {
         if (appCapability == null) return;
-        AuthParameters.getInstance(getCurrentActivity()).setAppCapability(appCapability.isMoEngageEnabled(),
+        AuthParameters.getInstance(getCurrentActivity()).setAppCapability(appCapability.isNewRelicEnabled(), appCapability.isMoEngageEnabled(),
                 appCapability.isAnalyticsEnabled(),
                 appCapability.isFBLoggerEnabled(),
                 appCapability.isMultiCityEnabled(),
@@ -469,6 +471,12 @@ public class HomeFragment extends BaseSectionFragment {
         return TrackEventkeys.HOME_SCREEN;
     }
 
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "HomeFragment";
+    }
+
     public class HomePageHandler<T extends ApiErrorAware & AppOperationAware> extends BigBasketMessageHandler<T> {
 
         public HomePageHandler(T ctx) {
@@ -479,11 +487,5 @@ public class HomeFragment extends BaseSectionFragment {
         public void sendOfflineError() {
             displayHomePageError(getString(R.string.lostInternetConnection), R.drawable.empty_no_internet);
         }
-    }
-
-    @NonNull
-    @Override
-    public String getInteractionName() {
-        return "HomeFragment";
     }
 }

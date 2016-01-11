@@ -14,6 +14,12 @@ public class AppCapability {
     private boolean isFBLoggerEnabled;
     @SerializedName(Constants.IS_MULTICITY_ENABLED)
     private boolean isMultiCityEnabled;
+    @SerializedName(Constants.ENABLE_NEWRELIC)
+    private boolean isNewRelicEnabled;
+
+    public boolean isNewRelicEnabled() {
+        return isNewRelicEnabled;
+    }
 
     public boolean isMoEngageEnabled() {
         return isMoEngageEnabled;
@@ -22,7 +28,6 @@ public class AppCapability {
     public boolean isAnalyticsEnabled() {
         return isAnalyticsEnabled;
     }
-
 
     public boolean isFBLoggerEnabled() {
         return isFBLoggerEnabled;

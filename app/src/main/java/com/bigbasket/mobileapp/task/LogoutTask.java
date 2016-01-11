@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
+import com.bigbasket.mobileapp.util.analytics.NewRelicWrapper;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -91,6 +92,14 @@ public class LogoutTask extends AsyncTask<Void, Void, ErrorResponse> {
         LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, null);
         LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, null);
         LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
+
+        NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, null);
+        NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, null);
+        NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.USER_NAME, null);
+        NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, null);
+        NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, null);
+        NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
+        NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.APP_VERSION, null);
 
         if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
             Gson gson = new Gson();

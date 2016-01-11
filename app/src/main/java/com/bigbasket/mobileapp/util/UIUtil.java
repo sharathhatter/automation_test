@@ -69,9 +69,11 @@ import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
+import com.bigbasket.mobileapp.util.analytics.NewRelicWrapper;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
+import com.newrelic.agent.android.NewRelic;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -282,7 +284,6 @@ public class UIUtil {
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
-
             MoEHelper moEHelper = MoEngageWrapper.getMoHelperObj(ctx);
             MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
             MoEngageWrapper.setUserAttribute(moEHelper, Constants.IS_LOGGED_IN, true);
@@ -295,23 +296,35 @@ public class UIUtil {
             MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
             MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, email);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, mId);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.USER_NAME, userDetails.fullName);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, userDetails.analytics.mobileNumber);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
+
             if (!TextUtils.isEmpty(userDetails.analytics.gender)) {
                 MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, userDetails.analytics.gender);
                 LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, userDetails.analytics.gender);
+                NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, userDetails.analytics.gender);
             }
             if (!TextUtils.isEmpty(userDetails.analytics.hub)) {
                 MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
                 LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
+                NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
             }
             if (!TextUtils.isEmpty(userDetails.analytics.dateOfBirth)) {
                 MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, userDetails.analytics.dateOfBirth);
                 LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, userDetails.analytics.dateOfBirth);
+                NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, userDetails.analytics.dateOfBirth);
             }
 
             if (userDetails.analytics.additionalAttrs != null) {
                 for (Map.Entry<String, Object> additionalInfoObj : userDetails.analytics.additionalAttrs.entrySet()) {
                     MoEngageWrapper.setUserAttribute(moEHelper, additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
                     LocalyticsWrapper.setIdentifier(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
+                    NewRelicWrapper.setIdentifier(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
                 }
                 editor.putString(Constants.ANALYTICS_ADDITIONAL_ATTRS, new Gson().toJson(userDetails.analytics.additionalAttrs));
             }
@@ -395,13 +408,13 @@ public class UIUtil {
     }
 
     public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId) {
-       displayAsyncImage(imageView, drawableId, false);
+        displayAsyncImage(imageView, drawableId, false);
     }
 
     public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId,
                                          boolean skipMemoryCache) {
         RequestCreator requestCreator = Picasso.with(imageView.getContext()).load(drawableId);
-        if(skipMemoryCache ) {
+        if (skipMemoryCache) {
             requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE);
         }
         //Never do disk cache for drawables

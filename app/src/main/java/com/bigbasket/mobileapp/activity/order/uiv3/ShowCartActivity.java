@@ -193,6 +193,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
         trackEvent(TrackingAware.BASKET_VIEW_SHOWN, eventAttribs, null, null, false, true);
+        trackEventsOnFabric(TrackingAware.BASKET_VIEW_SHOWN, eventAttribs);
     }
 
     private void startCheckout(String cartTotal) {
