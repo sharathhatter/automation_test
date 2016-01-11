@@ -33,7 +33,6 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.ProductListApiResponseCallback;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
@@ -46,6 +45,7 @@ import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.ads.SponsoredAds;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
@@ -98,7 +98,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     private String tabType;
     private ArrayList<String> mTabNameWithEmptyProductView;
     private HeaderSpinnerView mHeaderSpinnerView;
-    private Call<ApiResponse<GetDynamicPageApiResponse>> mSponsoredProductsCall;
+    private Call<ApiResponse<SponsoredAds>> mSponsoredProductsCall;
     private Call<ApiResponse<ProductTabData>> mProductListCall;
 
     @Override
@@ -324,13 +324,14 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                             paramMap.remove(Constants.SLUG),
                             gson.toJson(tabTypes),
                             paramMap);
-            mSponsoredProductsCall.enqueue(new Callback<ApiResponse<GetDynamicPageApiResponse>>() {
+            mSponsoredProductsCall.enqueue(new Callback<ApiResponse<SponsoredAds>>() {
                 @Override
-                public void onResponse(Response<ApiResponse<GetDynamicPageApiResponse>> response,
+                public void onResponse(Response<ApiResponse<SponsoredAds>> response,
                                        Retrofit retrofit) {
                     if (response != null && response.isSuccess() && response.body().status == 0) {
                         //Set section data for all tabs for now
-                        SectionData sponsoredSectionData = response.body().apiResponseContent.sectionData;
+                        SponsoredAds sponsoredSectionData =
+                                response.body().apiResponseContent;
                         if (numTabs > 1 && mViewPager != null) {
                             ProductListTabPagerAdapter adapter =
                                     (ProductListTabPagerAdapter) mViewPager.getAdapter();

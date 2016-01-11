@@ -50,6 +50,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.ads.AdAnalyticsData;
+import com.bigbasket.mobileapp.model.ads.SponsoredAds;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.product.ProductTabData;
@@ -102,7 +103,7 @@ public interface BigBasketApiService {
                                                   @QueryMap Map<String, String> productQueryMap);
 
     @GET("sponsored-items/")
-    Call<ApiResponse<GetDynamicPageApiResponse>> getSponsoredProducts(
+    Call<ApiResponse<SponsoredAds>> getSponsoredProducts(
             @Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
             @Query(Constants.TYPE) String type,
             @Query(Constants.SLUG) String slug,

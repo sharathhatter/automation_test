@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.ads.SponsoredAds;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductInfo;
@@ -101,7 +102,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
-    public void setSponsoredSectionData(SectionData sponsoredSectionData) {
+    public void setSponsoredSectionData(SponsoredAds sponsoredSectionData) {
         if (sponsoredSectionData == null || sponsoredSectionData.getSections() == null
                 || sponsoredSectionData.getSections().isEmpty()) {
             if (mSponsoredSectionInfo != null) {
@@ -125,7 +126,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 || mProductListRecyclerAdapter == null) {
             return;
         }
-        if (mSponsoredSectionInfo.getInjectionWindow() <= 0) {
+        if (mSponsoredSectionInfo.getLastInjectedPosition() < 0) {
             //Determine injection window
             if (mProductRecyclerView != null && mProductRecyclerView.getLayoutManager() != null) {
                 RecyclerView.LayoutManager layoutManager = mProductRecyclerView.getLayoutManager();
@@ -162,12 +163,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
                 if (firstVisiblePosition != RecyclerView.NO_POSITION
                         && lastVisiblePosition != RecyclerView.NO_POSITION) {
-                    //Injection window is hardcoded 4 visible pages on the screen
-                    mSponsoredSectionInfo.setInjectionWindow(
-                            (lastVisiblePosition - firstVisiblePosition) * 4);
-                    //Set the last injected positions as first visible item,
-                    // so that the next inject position will firstVisiblePosition + injectionWindow
-                    mSponsoredSectionInfo.setLastInjectedPosition(firstVisiblePosition);
+                    mSponsoredSectionInfo.setStartPosition(lastVisiblePosition);
                 } else {
                     if (mInjectWindowRetries >= 5) {
                         //Could not determine after 5 retries, use hard coded window values
@@ -178,11 +174,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                         } catch (IllegalStateException ex) {
                             //Ignore
                         }
-                        mSponsoredSectionInfo.setInjectionWindow(
-                                lastVisiblePosition - firstVisiblePosition);
-                        //Set the last injected positions as first visible item,
-                        // so that the next inject position will firstVisiblePosition + injectionWindow
-                        mSponsoredSectionInfo.setLastInjectedPosition(firstVisiblePosition);
+                        mSponsoredSectionInfo.setStartPosition(lastVisiblePosition);
                     } else {
                         //UI is not ready, try again after 500ms
                         mProductRecyclerView.postDelayed(new Runnable() {
@@ -201,11 +193,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         List<AbstractProductItem> existingProducts = mProductListRecyclerAdapter.getProducts();
         if (existingProducts != null) {
             int nextInjectPosition = mSponsoredSectionInfo.getNextInjectPosition();
-            while (mSponsoredSectionInfo.getNextSponsoredItem() != null
-                    && nextInjectPosition != RecyclerView.NO_POSITION
-                    && nextInjectPosition <= existingProducts.size()) {
-                SponsoredProductItem spItem = new SponsoredProductItem(
-                        mSponsoredSectionInfo.getSectionData(),
+            while (nextInjectPosition != RecyclerView.NO_POSITION
+                    && nextInjectPosition <= existingProducts.size()
+                    && mSponsoredSectionInfo.getNextSponsoredItem() != null) {
+                SponsoredProductItem spItem = new SponsoredProductItem (
+                        mSponsoredSectionInfo.getSponsoredAds().getSectionData(),
                         mSponsoredSectionInfo.getNextSponsoredItemIndex());
 
                 if (nextInjectPosition > 0 && (nextInjectPosition) < existingProducts.size()) {

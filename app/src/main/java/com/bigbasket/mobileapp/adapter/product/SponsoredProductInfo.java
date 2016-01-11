@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.adapter.product;
 
 import android.support.v7.widget.RecyclerView;
 
+import com.bigbasket.mobileapp.model.ads.SponsoredAds;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 
@@ -9,25 +10,26 @@ import com.bigbasket.mobileapp.model.section.SectionData;
  * Created by muniraju on 18/12/15.
  */
 public class SponsoredProductInfo {
-    private SectionData sectionData;
-    private int lastInjectedPosition = 0;
-    private int injectionWindow = -1;
+    private SponsoredAds sponsoredAds;
+    private int lastInjectedPosition = -1;
+    private int startPosition = -1;
     private int remainingItems;
     private int totalItems;
 
-    public SponsoredProductInfo(SectionData sectionData) {
-        this.sectionData = sectionData;
-        if (sectionData != null && sectionData.getSections() != null) {
-            totalItems = remainingItems = sectionData.getSections().size();
+    public SponsoredProductInfo(SponsoredAds sponsoredAds) {
+        this.sponsoredAds = sponsoredAds;
+        if (sponsoredAds != null && sponsoredAds.getSectionData() != null
+                && sponsoredAds.getSectionData().getSections() != null) {
+            totalItems = remainingItems = sponsoredAds.getSectionData().getSections().size();
         }
     }
 
-    public SectionData getSectionData() {
-        return sectionData;
+    public SponsoredAds getSponsoredAds() {
+        return sponsoredAds;
     }
 
-    public void setSectionData(SectionData sectionData) {
-        this.sectionData = sectionData;
+    public void setSponsoredAds(SponsoredAds sponsoredAds) {
+        this.sponsoredAds = sponsoredAds;
     }
 
     public int getLastInjectedPosition() {
@@ -36,14 +38,6 @@ public class SponsoredProductInfo {
 
     public void setLastInjectedPosition(int lastInjectedPosition) {
         this.lastInjectedPosition = lastInjectedPosition;
-    }
-
-    public int getInjectionWindow() {
-        return injectionWindow;
-    }
-
-    public void setInjectionWindow(int injectionWindow) {
-        this.injectionWindow = injectionWindow;
     }
 
     public int getRemainingItems() {
@@ -62,9 +56,25 @@ public class SponsoredProductInfo {
         this.remainingItems = remainingItems;
     }
 
+    public int getStartPosition() {
+        return startPosition;
+    }
+
+    public void setStartPosition(int startPosition) {
+        if(sponsoredAds != null && this.startPosition < 0) {
+            this.startPosition = startPosition * sponsoredAds.getPageStart();
+        }
+    }
+
     public int getNextInjectPosition() {
-        if (injectionWindow > 0) {
-            return lastInjectedPosition + injectionWindow;
+        if(sponsoredAds == null || sponsoredAds.getSectionData() == null
+                ||sponsoredAds.getSectionData().getSections() == null) {
+            return RecyclerView.NO_POSITION;
+        }
+        if (lastInjectedPosition >= 0) {
+            return lastInjectedPosition + sponsoredAds.getPageOffset() + 1;
+        } else if(startPosition >= 0) {
+            return startPosition;
         }
         return RecyclerView.NO_POSITION;
     }
@@ -72,7 +82,7 @@ public class SponsoredProductInfo {
     public Section getNextSponsoredItem() {
         int nextIndex = getNextSponsoredItemIndex();
         if (nextIndex >= 0 && nextIndex < totalItems) {
-            return sectionData.getSections().get(nextIndex);
+            return sponsoredAds.getSectionData().getSections().get(nextIndex);
         }
         return null;
     }
@@ -82,17 +92,20 @@ public class SponsoredProductInfo {
     }
 
     public void reset() {
-        lastInjectedPosition = 0;
-        sectionData = null;
+        lastInjectedPosition = -1;
+        startPosition = -1;
+        sponsoredAds = null;
         totalItems = 0;
         remainingItems = 0;
     }
 
-    public void reset(SectionData sponsoredSectionData) {
-        if (sponsoredSectionData != null && sponsoredSectionData.getSections() != null) {
-            sectionData = sponsoredSectionData;
-            totalItems = remainingItems = sponsoredSectionData.getSections().size();
-            lastInjectedPosition = 0;
+    public void reset(SponsoredAds sponsoredSectionData) {
+        if (sponsoredSectionData != null && sponsoredSectionData.getSectionData() != null
+                && sponsoredSectionData.getSectionData().getSections() != null) {
+            sponsoredAds = sponsoredSectionData;
+            totalItems = remainingItems = sponsoredSectionData.getSectionData().getSections().size();
+            lastInjectedPosition = -1;
+            startPosition = -1;
         } else {
             reset();
         }

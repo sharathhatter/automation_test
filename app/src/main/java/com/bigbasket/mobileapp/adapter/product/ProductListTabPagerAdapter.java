@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
+import com.bigbasket.mobileapp.model.ads.SponsoredAds;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  */
 public class ProductListTabPagerAdapter extends TabPagerAdapterWithFragmentRegistration {
 
-    SectionData sponsoredProducts;
+    private SponsoredAds sponsoredProducts;
 
     public ProductListTabPagerAdapter(Context ctx, FragmentManager fm, ArrayList<BBTab> bbTabs) {
         super(ctx, fm, bbTabs);
@@ -31,11 +32,11 @@ public class ProductListTabPagerAdapter extends TabPagerAdapterWithFragmentRegis
         return fragment;
     }
 
-    public SectionData getSponsoredProducts() {
+    public SponsoredAds getSponsoredProducts() {
         return sponsoredProducts;
     }
 
-    public void setSponsoredProducts(SectionData sponsoredProducts) {
+    public void setSponsoredProducts(SponsoredAds sponsoredProducts) {
         this.sponsoredProducts = sponsoredProducts;
     }
 }

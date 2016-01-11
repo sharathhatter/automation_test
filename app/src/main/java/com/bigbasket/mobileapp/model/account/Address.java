@@ -144,6 +144,15 @@ public class Address extends AddressSummary {
         return isSelected;
     }
 
+    @Override
+    public String getAddressNickName() {
+        String nickName = super.getAddressNickName();
+        if(UIUtil.isEmpty(nickName)){
+            return getAltAddressNickName();
+        }
+        return nickName.trim();
+    }
+
     public String getAltAddressNickName() {
         return (!UIUtil.isEmpty(getArea()) ? getArea() + " - " : "") +
                 (!UIUtil.isEmpty(getCityName()) ? getCityName() : "");
