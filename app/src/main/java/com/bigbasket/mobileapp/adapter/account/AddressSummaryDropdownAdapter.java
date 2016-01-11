@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
@@ -111,11 +112,11 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
         TextView txtAddress = addressViewHolder.getTxtAddress();
         txtAddress.setTextColor(ContextCompat.getColor(getContext(), color));
 
-        String area = TextUtils.isEmpty(addressSummary.getArea()) ? "" :
+        String area = UIUtil.isEmpty(addressSummary.getArea()) ? "" :
                 addressSummary.getArea() + "\n";
 
         String nick = addressSummary.getAddressNickName();
-        if (TextUtils.isEmpty(nick)) {
+        if (UIUtil.isEmpty(nick)) {
             nick = "";
         } else {
             area = " - " + area;
@@ -128,19 +129,19 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
         }
 
         SpannableString spannableString = new SpannableString(nick + area + cityName + slot);
-        if (!TextUtils.isEmpty(nick)) {
+        if (!UIUtil.isEmpty(nick)) {
             spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoBold), 0,
                     nick.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         spannableString.setSpan(new AbsoluteSizeSpan(12, true),
                 nick.length() + area.length(), spannableString.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        if (!TextUtils.isEmpty(cityName)) {
+        if (!UIUtil.isEmpty(cityName)) {
             spannableString.setSpan(new CustomTypefaceSpan("", faceRobotLight),
                     nick.length() + area.length(), nick.length() + area.length() + cityName.length(),
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
-        if (!TextUtils.isEmpty(slot)) {
+        if (!UIUtil.isEmpty(slot)) {
             spannableString.setSpan(new StyleSpan(Typeface.ITALIC),
                     nick.length() + area.length() + cityName.length(),
                     spannableString.length(),

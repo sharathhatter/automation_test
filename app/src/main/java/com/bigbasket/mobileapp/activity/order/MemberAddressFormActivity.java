@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -367,7 +366,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     }
 
     private boolean isEditTextEmpty(EditText editText) {
-        return TextUtils.isEmpty(editText.getText().toString());
+        return TextUtils.isEmpty(editText.getText().toString().trim());
     }
 
     private String getActivityTitle() {
