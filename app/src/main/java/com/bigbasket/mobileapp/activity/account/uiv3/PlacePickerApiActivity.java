@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,7 +54,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
         switch (playServicesAvailable) {
             case ConnectionResult.SUCCESS:
-                renderChooseLocation();
+                renderChooseLocation(savedInstanceState);
                 break;
             default:
                 Dialog dialog = GooglePlayServicesUtil.getErrorDialog(playServicesAvailable,
@@ -64,23 +65,43 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         }
     }
 
-    private void renderChooseLocation() {
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        GoogleMap map = mapFragment.getMap();
-        map.setMyLocationEnabled(true);
-        map.getUiSettings().setMyLocationButtonEnabled(true);
-        map.getUiSettings().setZoomControlsEnabled(true);
-        map.setOnMyLocationButtonClickListener(this);
-        //map.setPadding(0, 160, 0, 0);
-        mapFragment.getMapAsync(this);
+    private void renderChooseLocation(@Nullable Bundle savedInstanceState) {
         buildGoogleApiClient();
 
         mEditTextChooseArea =
                 (AutoCompleteTextView) findViewById(R.id.aEditTextChooseArea);
         new LocationAutoSuggestHelper<>(this, mEditTextChooseArea, mGoogleApiClient,
                 new LatLngBounds(new LatLng(7.43231, 65.82658), new LatLng(36.93593, 99.04924)), false).init();
+
+        if (savedInstanceState == null) {
+            String mediaState = Environment.getExternalStorageState();
+            boolean hasStorage = !(mediaState == null || mediaState.equalsIgnoreCase(Environment.MEDIA_REMOVED)
+                    || mediaState.equalsIgnoreCase(Environment.MEDIA_BAD_REMOVAL)
+                    || mediaState.equalsIgnoreCase(Environment.MEDIA_UNMOUNTABLE)
+                    || mediaState.equalsIgnoreCase(Environment.MEDIA_UNMOUNTED));
+            if (hasStorage) {
+                // Map fragment crashes if the device doesn't have sd-card or
+                // a sd-card simulation storage area (e.g. Devices like Nexus don't have sd-card slot,
+                // but they still simulate it so that apps continue to work).
+                // Many Android One phones don't simulate this storage.
+                SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.layout_map, mapFragment)
+                        .commit();
+                //map.setPadding(0, 160, 0, 0);
+                mapFragment.getMapAsync(this);
+
+                boolean isAttached = mEditTextChooseArea.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        setUpMyLocationButtonUI(true);
+                    }
+                });
+                if (!isAttached) {
+                    setUpMyLocationButtonUI(false);
+                }
+            }
+        }
 
         TextView txtAction = (TextView) findViewById(R.id.txtAction);
         txtAction.setTypeface(faceRobotoLight);
@@ -99,22 +120,11 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
                 finish();
             }
         });
-        boolean isAttached = mEditTextChooseArea.post(new Runnable() {
-            @Override
-            public void run() {
-                setUpMyLocationButtonUI(true);
-            }
-        });
-        if (!isAttached) {
-            setUpMyLocationButtonUI(false);
-        }
     }
 
     private void setUpMyLocationButtonUI(boolean isAttached) {
         if (isSuspended()) return;
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        if (mapFragment == null) return;
+        if (mGoogleMap == null) return;
         int myLocPaddingTop;
         if (isAttached && mEditTextChooseArea.getLayoutParams() != null
                 && mEditTextChooseArea.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
@@ -127,8 +137,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         } else {
             myLocPaddingTop = 160;
         }
-        GoogleMap map = mapFragment.getMap();
-        map.setPadding(0, myLocPaddingTop, 0, 0);
+        mGoogleMap.setPadding(0, myLocPaddingTop, 0, 0);
     }
 
     @Override
@@ -189,6 +198,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
             Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if (lastLocation != null) {
                 mSelectedLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+                mAreaName = null;
                 updateLastKnownLocationOnMap();
             }
         }
@@ -246,6 +256,11 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
+        mGoogleMap.setMyLocationEnabled(true);
+        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+        mGoogleMap.setOnMyLocationButtonClickListener(this);
+        setUpMyLocationButtonUI(true);
     }
 
     @Override
