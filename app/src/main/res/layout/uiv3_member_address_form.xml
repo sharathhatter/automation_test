@@ -198,6 +198,7 @@
                         android:ems="10"
                         android:hint="@string/mobileNumber"
                         android:inputType="numberSigned"
+                        android:digits="1234567890"
                         android:maxLength="10"
                         android:paddingLeft="@dimen/padding_small"
                         android:textColor="@color/uiv3_primary_text_color"
