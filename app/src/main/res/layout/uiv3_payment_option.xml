@@ -37,8 +37,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
-
-
             <LinearLayout
                 android:id="@+id/layoutChoosePayment"
                 android:layout_width="match_parent"
@@ -47,7 +45,6 @@
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_small"
-                android:background="@color/white"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/padding_normal"
                 android:paddingLeft="@dimen/padding_small"
@@ -63,8 +60,79 @@
                     android:layout_marginStart="@dimen/margin_small"
                     android:padding="@dimen/padding_small"
                     android:text="@string/fromWalletMsg"
+                    android:background="@color/white"
                     android:textColor="@color/uiv3_dialog_header_text_bkg"
                     android:textSize="@dimen/primary_text_size" />
+                <LinearLayout
+                    android:id="@+id/layoutVoucher"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/padding_normal"
+                    android:paddingLeft="@dimen/margin_normal"
+                    android:orientation="horizontal"
+                    android:paddingRight="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:paddingTop="@dimen/padding_normal">
+
+                    <TextView
+                        android:id="@+id/txtApplicableVoucherCount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/uiv3_secondary_text_color" />
+                    <EditText
+                        android:id="@+id/editTextVoucherCode"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/enterVoucher"
+                        android:inputType="text"
+                        android:imeActionLabel="@string/apply"
+                        android:imeOptions="actionDone"
+                        android:layout_toLeftOf="@+id/txtApplyVoucher"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/primary_text_size"
+                        android:maxLength="50"
+                        android:maxLines="1"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/txtApplyVoucher"
+                        style="@style/RippleStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/apply_button_rounded_background"
+                        android:clickable="true"
+                        android:paddingRight="@dimen/margin_small"
+                        android:paddingBottom="@dimen/padding_mini"
+                        android:paddingTop="@dimen/padding_mini"
+                        android:paddingLeft="@dimen/margin_small"
+                        android:text="@string/applyVoucher"
+                        android:textColor="@color/uiv3_dialog_header_text_bkg"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <TextView
+                        android:id="@+id/txtRemoveVoucher"
+                        style="@style/RippleStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:gravity="center_vertical"
+                        android:text="@string/removeVoucher"
+                        android:textColor="@color/dark_black"
+                        android:textSize="@dimen/secondary_text_size"
+                        android:paddingRight="@dimen/margin_small"
+                        android:paddingBottom="@dimen/padding_mini"
+                        android:paddingTop="@dimen/padding_mini"
+                        android:paddingLeft="@dimen/margin_small"
+                        android:background="@drawable/remove_button_rounded_background"
+                        android:visibility="gone" />
+                </LinearLayout>
 
                 <com.bigbasket.mobileapp.view.PaymentMethodsView
                     android:id="@+id/layoutPaymentOptions"
@@ -76,78 +144,6 @@
                 </com.bigbasket.mobileapp.view.PaymentMethodsView>
 
             </LinearLayout>
-
-            <RelativeLayout
-                android:id="@+id/layoutVoucher"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_marginRight="@dimen/margin_normal"
-                android:background="@color/white"
-                android:gravity="center_vertical"
-                android:paddingBottom="@dimen/padding_normal"
-                android:paddingLeft="@dimen/margin_22"
-                android:paddingRight="@dimen/margin_22"
-                android:paddingTop="@dimen/padding_normal">
-
-                <TextView
-                    android:id="@+id/txtApplicableVoucherCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_alignParentLeft="true"
-                    android:textColor="@color/uiv3_secondary_text_color" />
-                <EditText
-                    android:id="@+id/editTextVoucherCode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:hint="@string/enterVoucher"
-                    android:inputType="text"
-                    android:paddingLeft="@dimen/padding_mini"
-                    android:layout_toLeftOf="@+id/txtApplyVoucher"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size"
-                    android:visibility="gone"/>
-
-                <TextView
-                    android:id="@+id/txtApplyVoucher"
-                    style="@style/RippleStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/apply_button_rounded_background"
-                    android:clickable="true"
-                    android:paddingRight="@dimen/margin_small"
-                    android:paddingBottom="@dimen/padding_mini"
-                    android:paddingTop="@dimen/padding_mini"
-                    android:paddingLeft="@dimen/margin_small"
-                    android:text="@string/applyVoucher"
-                    android:textColor="@color/uiv3_dialog_header_text_bkg"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/txtRemoveVoucher"
-                    style="@style/RippleStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:text="@string/removeVoucher"
-                    android:textColor="@color/dark_black"
-                    android:textSize="@dimen/secondary_text_size"
-                    android:paddingRight="@dimen/margin_small"
-                    android:paddingBottom="@dimen/padding_mini"
-                    android:paddingTop="@dimen/padding_mini"
-                    android:paddingLeft="@dimen/margin_small"
-                    android:background="@drawable/remove_button_rounded_background"
-                    android:visibility="gone" />
-            </RelativeLayout>
-
 
             <LinearLayout
                 android:id="@+id/layoutOrderSummaryInfo"

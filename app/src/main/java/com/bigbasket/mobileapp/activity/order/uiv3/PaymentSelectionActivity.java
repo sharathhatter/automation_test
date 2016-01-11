@@ -20,10 +20,12 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -289,10 +291,11 @@ public class PaymentSelectionActivity extends BackButtonActivity
         paymentTypeList = getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES);
 
         ArrayList<CreditDetails> creditDetails = getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS);
-        renderPaymentMethodsAndSummary(creditDetails);
+        renderPaymentMethodsView();
+        renderOrderSummary(creditDetails);
     }
 
-    private void renderPaymentMethodsAndSummary(@Nullable ArrayList<CreditDetails> creditDetails) {
+    private void renderOrderSummary(@Nullable ArrayList<CreditDetails> creditDetails) {
         // Show invoice and other order details
         LayoutInflater inflater = getLayoutInflater();
         int normalColor = ContextCompat.getColor(this, R.color.uiv3_primary_text_color);
@@ -369,10 +372,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
         } else {
             onVoucherRemoved();
         }
+        renderCheckOutProgressView();
+    }
 
+    private void renderPaymentMethodsView(){
         TextView lblAmountFromWallet = (TextView) findViewById(R.id.lblAmountFromWallet);
         lblAmountFromWallet.setTypeface(faceRobotoRegular);
-
         boolean isInHDFCPayMode = HDFCPayzappHandler.isInHDFCPayMode(this);
         if (isInHDFCPayMode) {
             // Now check whether Payzapp is actually present
@@ -403,15 +408,16 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
             paymentMethodsView.setPaymentMethods(paymentTypeList, false, isInHDFCPayMode);
         }
-        renderCheckOutProgressView();
+
     }
+
 
     private void onVoucherApplied(String voucher, OrderDetails orderDetails,
                                   ArrayList<CreditDetails> creditDetails) {
         if (!TextUtils.isEmpty(voucher)) {
             showVoucherAppliedText(voucher);
             mOrderDetails = orderDetails;
-            renderPaymentMethodsAndSummary(creditDetails);
+            renderOrderSummary(creditDetails);
             renderFooter(true);
         }
     }
@@ -434,12 +440,28 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxtApplicableVoucherCount.setVisibility(View.GONE);
         editTextVoucherCode.setVisibility(View.VISIBLE);
         editTextVoucherCode.setText("");
+        editTextVoucherCode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
+                if (((keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                        actionId == EditorInfo.IME_ACTION_DONE) {
+                    String voucherCode = editTextVoucherCode.getText().toString();
+                    if (!TextUtils.isEmpty(voucherCode)) {
+                        trackEvent(EVOUCHER_KEYBOARD_APPLY_CLICKED,null);
+                        applyVoucher(voucherCode);
+                    }
+                    hideKeyboard(getCurrentActivity(), editTextVoucherCode);
+                }
+                return false;
+            }
+        });
         mTxtApplyVoucher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(editTextVoucherCode.getText().toString().trim())) {
                     hideKeyboard(getCurrentActivity(),mTxtApplyVoucher);
                     applyVoucher(editTextVoucherCode.getText().toString().trim());
+                    trackEvent(EVOUCHER_USER_VOUCHER_ENTERED,null);
                 }
             }
         });
@@ -462,6 +484,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
                             onVoucherSuccessfullyApplied(voucherCode,
                                     postVoucherApiResponse.apiResponseContent.orderDetails,
                                     postVoucherApiResponse.apiResponseContent.creditDetails);
+                            trackEvent(TrackingAware.EVOUCHER_APPLIED_SUCCESS, null);
+
+
                             break;
                         default:
                             HashMap<String, String> map = new HashMap<>();
@@ -517,6 +542,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                                 getString(R.string.voucherWasRemoved), Toast.LENGTH_SHORT).show();
                         onVoucherRemoved(removeVoucherApiResponse.apiResponseContent.orderDetails,
                                 removeVoucherApiResponse.apiResponseContent.creditDetails);
+                        trackEvent(TrackingAware.EVOUCHER_REMOVAL_SUCCESS, null);
                         break;
                     default:
                         handler.sendEmptyMessage(removeVoucherApiResponse.status,
@@ -559,7 +585,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                                   ArrayList<CreditDetails> creditDetails) {
         onVoucherRemoved();
         mOrderDetails = orderDetails;
-        renderPaymentMethodsAndSummary(creditDetails);
+        renderOrderSummary(creditDetails);
         renderFooter(true);
     }
 
