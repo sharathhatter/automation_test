@@ -341,6 +341,9 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.CHANGE_ADDRESS_FRAGMENT);
         intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.CHECKOUT);
         startActivityForResult(intent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+        trackEvent(TrackingAware.DELIVERY_ADDRESS_CLICKED, map);
     }
 
     @NonNull
