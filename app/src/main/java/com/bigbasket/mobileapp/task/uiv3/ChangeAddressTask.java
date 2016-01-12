@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.SetAddressResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SetAddressTransientResponse;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.OnBasketDeltaListener;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
@@ -72,6 +73,7 @@ public class ChangeAddressTask<T extends OnBasketDeltaListener & OnAddressChange
                             } else {
                                 ctx.onNoBasketDelta(addressId, lat, lng, area);
                             }
+
                             break;
                         default:
                             ctx.getHandler().sendEmptyMessage(setAddressTransientResponse.status,
@@ -101,6 +103,18 @@ public class ChangeAddressTask<T extends OnBasketDeltaListener & OnAddressChange
                         case 0:
                             ctx.onAddressChanged(getAddressSummaryApiResponse.apiResponseContent.addressSummaries,
                                     addressId);
+
+                            /**
+                             * this is called to sync the count of the floating cart button
+                             * call this only when transient is false
+                             * i.e user has selected to change the address after seeing changes in the basket
+                             */
+
+                            if (ctx instanceof CartInfoAware) {
+                                ((CartInfoAware) ctx).syncBasket();
+                                ((CartInfoAware) ctx).markBasketDirty();
+
+                            }
                             break;
                         case ApiErrorCodes.ADDRESS_NOT_SERVED:
                             ctx.onAddressNotSupported(getAddressSummaryApiResponse.message);

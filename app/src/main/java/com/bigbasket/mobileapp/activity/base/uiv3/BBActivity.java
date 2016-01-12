@@ -34,7 +34,6 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.AppDataDynamicDbHelper;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
