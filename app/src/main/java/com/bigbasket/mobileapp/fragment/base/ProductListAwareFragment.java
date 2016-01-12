@@ -211,7 +211,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                             mSponsoredSectionInfo.getTotalItems()
                                     - mSponsoredSectionInfo.getRemainingItems());
                 }
-                mProductListRecyclerAdapter.notifyItemInserted(nextInjectPosition);
+                // +1 to include the product count label
+                mProductListRecyclerAdapter.notifyItemInserted(nextInjectPosition + 1);
                 mSponsoredSectionInfo.setLastInjectedPosition(nextInjectPosition);
                 mSponsoredSectionInfo.setRemainingItems(
                         mSponsoredSectionInfo.getRemainingItems() - 1);
@@ -297,7 +298,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         for (Product p : products) {
             existingProductList.add(new NormalProductItem(p));
         }
-        mProductListRecyclerAdapter.notifyItemRangeInserted(insertedAt, products.size());
+        // +1 to include the product count label
+        mProductListRecyclerAdapter.notifyItemRangeInserted(insertedAt + 1, products.size());
         if (mSponsoredSectionInfo != null && mSponsoredSectionInfo.hasMoreItems()) {
             injectSponsoredProducts();
         }
