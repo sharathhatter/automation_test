@@ -791,6 +791,9 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             Intent intent = new Intent(this, BackButtonActivity.class);
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.CHANGE_ADDRESS_FRAGMENT);
             intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ADDRESS_SELECT);
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+            trackEvent(TrackingAware.DELIVERY_ADDRESS_CLICKED, map);
             startActivityForResult(intent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
         }
     }
