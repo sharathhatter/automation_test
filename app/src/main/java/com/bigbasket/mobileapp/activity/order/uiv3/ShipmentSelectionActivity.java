@@ -91,6 +91,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         renderFooter(cityMode);
         renderShipments(cityMode);
         trackEvent(TrackingAware.CHECKOUT_DELIVERY_OPTION_SHOWN, null, null, null, false, true);
+        trackEventsOnFabric(TrackingAware.CHECKOUT_DELIVERY_OPTION_SHOWN, null);
         trackCheckEventShown(mShipments);
     }
 

@@ -314,6 +314,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
             txtDeliveryAddress.setText(selectedAddress.toString().trim());
 
             trackEvent(TrackingAware.CHECKOUT_ADDRESS_SHOWN, null);
+            trackEventsOnFabric(TrackingAware.CHECKOUT_ADDRESS_SHOWN, null);
             String total = getArguments() != null ? getArguments().getString(Constants.TOTAL_BASKET_VALUE) : null;
             UIUtil.setUpFooterButton(getCurrentActivity(), layoutCheckoutFooter, total,
 

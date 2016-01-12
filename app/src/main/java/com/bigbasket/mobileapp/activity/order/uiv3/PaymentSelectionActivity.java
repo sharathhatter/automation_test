@@ -149,6 +149,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             mOrderAmount = savedInstanceState.getString(Constants.AMOUNT);
         } else {
             trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
+            trackEventsOnFabric(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
         }
     }
 
@@ -267,6 +268,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                     map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
                     map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
+                    trackEventsOnFabric(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map);
 
                     SharedPreferences prefs =
                             PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -340,7 +342,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxtApplyVoucher.setOnClickListener(showAvailableVouchersListener);
         mTxtApplicableVoucherCount = (TextView) findViewById(R.id.txtApplicableVoucherCount);
         mTxtApplicableVoucherCount.setTypeface(faceRobotoRegular);
-        editTextVoucherCode =(EditText) findViewById(R.id.editTextVoucherCode);
+        editTextVoucherCode = (EditText) findViewById(R.id.editTextVoucherCode);
         if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
             mTxtApplicableVoucherCount.setText(mActiveVouchersList.size() + " " +
                     (mActiveVouchersList.size() > 1 ?
@@ -428,7 +430,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxtRemoveVoucher.setVisibility(View.VISIBLE);
         mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
         mTxtApplicableVoucherCount.setText(getString(R.string.evoucher_applied_format, voucher));
-        mTxtApplicableVoucherCount.setTextColor(ContextCompat.getColor(this,R.color.uiv3_dialog_header_text_bkg));
+        mTxtApplicableVoucherCount.setTextColor(ContextCompat.getColor(this, R.color.uiv3_dialog_header_text_bkg));
         mAppliedVoucherCode = voucher;
     }
 
@@ -436,7 +438,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
      * handling the condition when there is no voucher codes sent by server
      * edittext is made visible and the clicklistener of the apply textview is updated
      */
-    private void handleNoVoucherApplicable(){
+    private void handleNoVoucherApplicable() {
         mTxtApplicableVoucherCount.setVisibility(View.GONE);
         editTextVoucherCode.setVisibility(View.VISIBLE);
         editTextVoucherCode.setText("");
@@ -459,7 +461,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(editTextVoucherCode.getText().toString().trim())) {
-                    hideKeyboard(getCurrentActivity(),mTxtApplyVoucher);
+                    hideKeyboard(getCurrentActivity(), mTxtApplyVoucher);
                     applyVoucher(editTextVoucherCode.getText().toString().trim());
                     trackEvent(EVOUCHER_USER_VOUCHER_ENTERED,null);
                 }
@@ -577,7 +579,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxtRemoveVoucher.setVisibility(View.GONE);
         if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
             mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
-            mTxtApplicableVoucherCount.setTextColor(ContextCompat.getColor(this,R.color.uiv3_secondary_text_color));
+            mTxtApplicableVoucherCount.setTextColor(ContextCompat.getColor(this, R.color.uiv3_secondary_text_color));
         }
     }
 
@@ -739,6 +741,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             map.put(TrackEventkeys.PAYMENT_MODE, order.getPaymentMethod());
             map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
             trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
+            trackEventsOnFabric(TrackingAware.CHECKOUT_ORDER_COMPLETE, map);
             trackEventAppsFlyer(TrackingAware.PLACE_ORDER, order.getOrderValue(), map);
         }
         setCurrentScreenName(TrackEventkeys.CO_PAYMENT);

@@ -101,6 +101,23 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     private Call<ApiResponse<SponsoredAds>> mSponsoredProductsCall;
     private Call<ApiResponse<ProductTabData>> mProductListCall;
 
+    private static ArrayList<String> getFilterDisplayName(final FilteredOn filteredOn,
+                                                          ArrayList<FilterOptionCategory> mFilterOptionCategories) {
+        final ArrayList<String> filterDisplayNameArrayList = new ArrayList<>();
+        for (FilterOptionCategory filterOptionCategory : mFilterOptionCategories) {
+            if (filterOptionCategory.getFilterSlug().equals(filteredOn.getFilterSlug())) {
+                for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
+                    for (String filterValue : filteredOn.getFilterValues()) {
+                        if (filterOptionItem.getFilterValueSlug().equals(filterValue)) {
+                            filterDisplayNameArrayList.add(filterOptionItem.getDisplayName());
+                        }
+                    }
+                }
+            }
+        }
+        return filterDisplayNameArrayList;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -370,7 +387,6 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         }
     }
 
-
     @Override
     public void setTabNameWithEmptyProductView(String tabName) {
         if (mTabNameWithEmptyProductView == null) {
@@ -403,7 +419,6 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             updateNameValuePairsWithSortedOn(sortedOn);
         }
     }
-
 
     private void toggleFilterSortView(boolean isVisible) {
         int visibility = isVisible ? View.VISIBLE : View.GONE;
@@ -602,16 +617,15 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         }
     }
 
-
     private void logProductListingShownEvent(String mTabType) {
         if (mTabType == null) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(Constants.TAB_NAME, mTabType);
         map = getProductListEventParams(mNameValuePairs, map);
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
+        trackEventsOnFabric(TrackingAware.PRODUCT_LIST_SHOWN, map);
         trackEventAppsFlyer(TrackingAware.PRODUCT_LIST_SHOWN);
     }
-
 
     private HashMap<String, String> getProductListEventParams(ArrayList<NameValuePair> nameValuePairs,
                                                               HashMap<String, String> map) {
@@ -988,60 +1002,6 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         }
     }
 
-
-    private static class FilterTrackEvent extends AsyncTask<Void, Void, Map<String, String>> {
-
-        private Context context;
-        private Map<String, String> eventAttribs;
-        private String mNextScreenNavigationContext;
-        private ArrayList<FilterOptionCategory> mFilterOptionCategories;
-        private ArrayList<FilteredOn> filteredOnArrayList;
-
-        FilterTrackEvent(Context context, String mNextScreenNavigationContext,
-                         ArrayList<FilterOptionCategory> mFilterOptionCategories,
-                         ArrayList<FilteredOn> filteredOnArrayList) {
-            this.context = context;
-            this.mNextScreenNavigationContext = mNextScreenNavigationContext;
-            this.mFilterOptionCategories = mFilterOptionCategories;
-            this.filteredOnArrayList = filteredOnArrayList;
-            eventAttribs = new HashMap<>();
-        }
-
-        @Override
-        protected Map<String, String> doInBackground(Void... Void) {
-            for (FilteredOn filteredOn : filteredOnArrayList) {
-                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, mNextScreenNavigationContext);
-                eventAttribs.put(filteredOn.getFilterSlug(), UIUtil.strJoin(getFilterDisplayName(filteredOn,
-                        mFilterOptionCategories), ","));
-            }
-            return eventAttribs;
-        }
-
-        @Override
-        protected void onPostExecute(Map<String, String> map) {
-            super.onPostExecute(map);
-            ((AppOperationAware) context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
-                    null, null, false);
-        }
-    }
-
-    private static ArrayList<String> getFilterDisplayName(final FilteredOn filteredOn,
-                                                          ArrayList<FilterOptionCategory> mFilterOptionCategories) {
-        final ArrayList<String> filterDisplayNameArrayList = new ArrayList<>();
-        for (FilterOptionCategory filterOptionCategory : mFilterOptionCategories) {
-            if (filterOptionCategory.getFilterSlug().equals(filteredOn.getFilterSlug())) {
-                for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
-                    for (String filterValue : filteredOn.getFilterValues()) {
-                        if (filterOptionItem.getFilterValueSlug().equals(filterValue)) {
-                            filterDisplayNameArrayList.add(filterOptionItem.getDisplayName());
-                        }
-                    }
-                }
-            }
-        }
-        return filterDisplayNameArrayList;
-    }
-
     @Override
     public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation,
                                                     @Nullable WeakReference<TextView> basketCountTextViewRef,
@@ -1114,4 +1074,40 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             mBbSearchableToolbarView.show();
         }
     }
+
+    private static class FilterTrackEvent extends AsyncTask<Void, Void, Map<String, String>> {
+        private Context context;
+        private Map<String, String> eventAttribs;
+        private String mNextScreenNavigationContext;
+        private ArrayList<FilterOptionCategory> mFilterOptionCategories;
+        private ArrayList<FilteredOn> filteredOnArrayList;
+
+        FilterTrackEvent(Context context, String mNextScreenNavigationContext,
+                         ArrayList<FilterOptionCategory> mFilterOptionCategories,
+                         ArrayList<FilteredOn> filteredOnArrayList) {
+            this.context = context;
+            this.mNextScreenNavigationContext = mNextScreenNavigationContext;
+            this.mFilterOptionCategories = mFilterOptionCategories;
+            this.filteredOnArrayList = filteredOnArrayList;
+            eventAttribs = new HashMap<>();
+        }
+
+        @Override
+        protected Map<String, String> doInBackground(Void... Void) {
+            for (FilteredOn filteredOn : filteredOnArrayList) {
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, mNextScreenNavigationContext);
+                eventAttribs.put(filteredOn.getFilterSlug(), UIUtil.strJoin(getFilterDisplayName(filteredOn,
+                        mFilterOptionCategories), ","));
+            }
+            return eventAttribs;
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, String> map) {
+            super.onPostExecute(map);
+            ((AppOperationAware) context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
+                    null, null, false);
+        }
+    }
+
 }

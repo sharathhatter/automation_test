@@ -277,6 +277,7 @@ public class Constants {
     public static final String VERSION_NAME = "versionName";
     public static final String ENABLE_FB_LOGGER = "enable_fb_logger";
     public static final String ENABLE_MOENGAGE = "enable_moengage";
+    public static final String ENABLE_NEWRELIC = "enable_newrelic";
     public static final String ENABLE_LOCALYTICS = "enable_localytics";
     public static final int CUSTOMER_VALUE_INCREASE = 1;
     public static final String ANALYTICS = "analytics";

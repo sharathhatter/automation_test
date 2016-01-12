@@ -167,6 +167,7 @@ public class BasketOperationTask<T extends AppOperationAware> {
         ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false, true);
         if (!TextUtils.isEmpty(eventName) && eventName.equals(TrackingAware.BASKET_ADD)) {
             ((TrackingAware) context).trackEventAppsFlyer(eventName);
+            ((TrackingAware) context).trackEventsOnFabric(eventName, eventAttribs, null, navigationCtx);
         }
     }
 

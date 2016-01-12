@@ -211,4 +211,9 @@ public interface TrackingAware {
     void trackEvent(String eventName, Map<String, String> eventAttribs);
 
     void trackEventAppsFlyer(String eventName);
+
+    void trackEventsOnFabric(String eventName, Map<String, String> eventAttribs, String source, String nc);
+
+    void trackEventsOnFabric(String eventName, Map<String, String> eventAttribs);
+
 }
