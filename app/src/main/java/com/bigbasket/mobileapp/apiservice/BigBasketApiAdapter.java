@@ -65,7 +65,7 @@ public class BigBasketApiAdapter {
 
         if (loggingInterceptor != null) {
             okHttpClient.interceptors().add(loggingInterceptor);
-            okHttpClient.networkInterceptors().add(loggingInterceptor);
+            //okHttpClient.networkInterceptors().add(loggingInterceptor);
         }
         return okHttpClient;
     }

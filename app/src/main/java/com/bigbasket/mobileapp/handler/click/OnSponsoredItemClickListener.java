@@ -22,7 +22,7 @@ public class OnSponsoredItemClickListener<T extends AppOperationAware>
                                         @Nullable SectionItem sectionItem,
                                         @Nullable String screenName,
                                         Map<String, String> analyticsAttrs) {
-        super(context, section, sectionItem, screenName);
+        super(context, section, sectionItem, screenName, analyticsAttrs);
     }
 
     @Override

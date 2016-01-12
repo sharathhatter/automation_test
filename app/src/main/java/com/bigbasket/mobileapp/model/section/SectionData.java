@@ -13,17 +13,6 @@ import java.util.Map;
 
 public class SectionData implements Parcelable, Serializable {
 
-    public static final Parcelable.Creator<SectionData> CREATOR = new Parcelable.Creator<SectionData>() {
-        @Override
-        public SectionData createFromParcel(Parcel source) {
-            return new SectionData(source);
-        }
-
-        @Override
-        public SectionData[] newArray(int size) {
-            return new SectionData[size];
-        }
-    };
     private ArrayList<Section> sections;
     @SerializedName(Constants.RENDERERS)
     private HashMap<Integer, Renderer> renderersMap;
@@ -34,6 +23,9 @@ public class SectionData implements Parcelable, Serializable {
     @SerializedName(Constants.ANALYTICS_ATTRS)
     private HashMap<String, Map<String, String>> analyticsAttrs;
 
+    public SectionData() {
+
+    }
     public SectionData(Parcel source) {
         boolean wasSectionsNull = source.readByte() == (byte) 1;
         if (!wasSectionsNull) {
@@ -166,4 +158,14 @@ public class SectionData implements Parcelable, Serializable {
         }
         return null;
     }
+
+    public static final Creator<SectionData> CREATOR = new Creator<SectionData>() {
+        public SectionData createFromParcel(Parcel source) {
+            return new SectionData(source);
+        }
+
+        public SectionData[] newArray(int size) {
+            return new SectionData[size];
+        }
+    };
 }

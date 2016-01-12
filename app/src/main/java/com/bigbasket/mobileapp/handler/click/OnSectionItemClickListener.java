@@ -396,34 +396,44 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
         if (!TextUtils.isEmpty(getAdditionalNcValue())) {
             ncBuilder.append('.').append(getAdditionalNcValue());
         }
-        if (section != null) {
-            if (section.getTitle() != null &&
-                    !TextUtils.isEmpty(section.getTitle().getText())) {
-                ncBuilder.append(".").append(section.getTitle().getText());
-            } else if (section.getDescription() != null && !TextUtils.isEmpty(section.getDescription().getText())) {
-                ncBuilder.append(".").append(section.getDescription().getText());
-            }
-        }
-        if (sectionItem != null) {
-            if (sectionItem.getTitle() != null &&
-                    !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
-                ncBuilder.append(".").append(sectionItem.getTitle().getText().replaceAll("\\(\\d+\\)", "").trim());
-            } else if (sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
-                ncBuilder.append(".").append(sectionItem.getImageName().replaceAll("[.]\\w+", ""));
-            } else if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
-                ncBuilder.append(".").append(sectionItem.getDescription().getText());
-            } else if (sectionItem.getDestinationInfo() != null &&
-                    !TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationSlug()) &&
-                    sectionItem.getDestinationInfo().getDestinationSlug().contains(Constants.SLUG_PARAM)) {
-                String typeAndSlug = sectionItem.getDestinationInfo().getDestinationSlug();
-                int indexOfSlug = typeAndSlug.indexOf(Constants.SLUG_PARAM);
-                String slug = typeAndSlug.substring(indexOfSlug + Constants.SLUG_PARAM.length());
-                if (slug.contains("&")) {
-                    int indexOfNextParam = slug.indexOf("&");
-                    slug = slug.substring(0, indexOfNextParam);
+
+        if(sectionItem != null && !TextUtils.isEmpty(sectionItem.getCampaign())) {
+            ncBuilder.append('.').append(sectionItem.getCampaign());
+        } else {
+            if (section != null) {
+                if (section.getTitle() != null &&
+                        !TextUtils.isEmpty(section.getTitle().getText())) {
+                    ncBuilder.append(".").append(section.getTitle().getText());
+                } else if (section.getDescription() != null
+                        && !TextUtils.isEmpty(section.getDescription().getText())) {
+                    ncBuilder.append(".").append(section.getDescription().getText());
                 }
-                if (!TextUtils.isEmpty(slug))
-                    ncBuilder.append(".").append(slug);
+            }
+
+            if (sectionItem != null) {
+                if (sectionItem.getTitle() != null &&
+                        !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                    ncBuilder.append('.').append(
+                            sectionItem.getTitle().getText().replaceAll("\\(\\d+\\)", "").trim());
+                } else if (sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
+                    ncBuilder.append(".").append(
+                            sectionItem.getImageName().replaceAll("[.]\\w+", ""));
+                } else if (sectionItem.getDescription() != null
+                        && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
+                    ncBuilder.append(".").append(sectionItem.getDescription().getText());
+                } else if (sectionItem.getDestinationInfo() != null &&
+                        !TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationSlug()) &&
+                        sectionItem.getDestinationInfo().getDestinationSlug().contains(Constants.SLUG_PARAM)) {
+                    String typeAndSlug = sectionItem.getDestinationInfo().getDestinationSlug();
+                    int indexOfSlug = typeAndSlug.indexOf(Constants.SLUG_PARAM);
+                    String slug = typeAndSlug.substring(indexOfSlug + Constants.SLUG_PARAM.length());
+                    if (slug.contains("&")) {
+                        int indexOfNextParam = slug.indexOf("&");
+                        slug = slug.substring(0, indexOfNextParam);
+                    }
+                    if (!TextUtils.isEmpty(slug))
+                        ncBuilder.append(".").append(slug);
+                }
             }
         }
         if (context instanceof Fragment && context instanceof AnalyticsNavigationContextAware) {

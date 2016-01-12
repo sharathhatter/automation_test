@@ -56,6 +56,9 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     @SerializedName(Constants.ID)
     private String id;
 
+    @SerializedName(Constants.CAMPAIGN)
+    private String campaign;
+
     private String image;
 
     @SerializedName(Constants.IMAGE_NAME)
@@ -93,6 +96,10 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         boolean _wasIdNull = source.readByte() == (byte) 1;
         if (!_wasIdNull) {
             id = source.readString();
+        }
+        boolean _wasCampaignNull = source.readByte() == (byte) 1;
+        if (!_wasCampaignNull) {
+            campaign = source.readString();
         }
         boolean _wasImageNull = source.readByte() == (byte) 1;
         if (!_wasImageNull) {
@@ -190,6 +197,14 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return subSectionItems;
     }
 
+    public String getCampaign() {
+        return campaign;
+    }
+
+    public void setCampaign(String campaign) {
+        this.campaign = campaign;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -202,6 +217,11 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         dest.writeByte(_wasIdNull ? (byte) 1 : (byte) 0);
         if (!_wasIdNull) {
             dest.writeString(id);
+        }
+        boolean _wasCompaignNull = campaign == null;
+        dest.writeByte(_wasCompaignNull ? (byte) 1 : (byte) 0);
+        if (!_wasCompaignNull) {
+            dest.writeString(campaign);
         }
         boolean _wasImageNull = image == null;
         dest.writeByte(_wasImageNull ? (byte) 1 : (byte) 0);

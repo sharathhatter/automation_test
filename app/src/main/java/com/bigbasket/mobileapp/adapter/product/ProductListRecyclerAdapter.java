@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -212,10 +213,17 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                 SectionItem sectionItem = spItem.getSection().getSectionItems().get(0);
                 sectionId = sectionItem.getId();
                 analyticsAttrs = spItem.getSectionData().getAnalyticsAttrs(sectionId);
+                String screenName ;
+                if(TextUtils.isEmpty(spItem.getSectionData().getScreenName())){
+                    screenName = navigationCtx;
+                } else {
+                    screenName = spItem.getSectionData().getScreenName();
+                }
+
                 clickListener = new OnSponsoredItemClickListener<>(
                         activityAware, spItem.getSection(),
                         sectionItem,
-                        spItem.getSectionData().getScreenName(),
+                        screenName,
                         analyticsAttrs);
             }
             View spView = sectionView.getViewToRender(spItem.getSection(), inflater,

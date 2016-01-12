@@ -456,6 +456,7 @@ public class Constants {
     public static final String SECTION_TYPE = "section_type";
     public static final String SECTION_INFO = "section_info";
     public static final String SECTION_ITEM = "section_item";
+    public static final String CAMPAIGN = "campaign";
     public static final String DESTINATION = "destination";
     public static final String MORE = "more";
     public static final String DESTINATION_TYPE = "dest_type";

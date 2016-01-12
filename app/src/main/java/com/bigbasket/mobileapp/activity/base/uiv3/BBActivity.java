@@ -501,7 +501,8 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             City newCity = new City(addressSummaries.get(0).getCityName(),
                     addressSummaries.get(0).getCityId());
             changeCity(newCity);
-            startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
+            //The srvice is started in AppDataDynamic.reset, no need to start the service here
+            //startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
         } else {
             showToast(getString(R.string.unknownError));
         }
