@@ -48,5 +48,5 @@
         android:layout_height="match_parent"
         android:layout_above="@id/layoutTutorialFooter"
         android:layout_marginBottom="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_small"/>
+        android:layout_marginTop="@dimen/margin_normal"/>
 </RelativeLayout>
