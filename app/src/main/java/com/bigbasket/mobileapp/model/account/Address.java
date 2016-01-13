@@ -147,7 +147,7 @@ public class Address extends AddressSummary {
     @Override
     public String getAddressNickName() {
         String nickName = super.getAddressNickName();
-        if(UIUtil.isEmpty(nickName)){
+        if (UIUtil.isEmpty(nickName)) {
             return getAltAddressNickName();
         }
         return nickName.trim();

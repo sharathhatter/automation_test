@@ -64,7 +64,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                         actionId == EditorInfo.IME_ACTION_DONE) {
                     String voucherCode = mEditTextVoucherCode.getText().toString();
                     if (!TextUtils.isEmpty(voucherCode)) {
-                        trackEvent(AVAILABLE_EVOUCHER_KEYBOARD_APPLY_CLICKED,null);
+                        trackEvent(AVAILABLE_EVOUCHER_KEYBOARD_APPLY_CLICKED, null);
                         applyVoucher(voucherCode);
                     }
                     hideKeyboard(getCurrentActivity(), mEditTextVoucherCode);

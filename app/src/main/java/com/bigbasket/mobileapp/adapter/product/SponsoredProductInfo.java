@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView;
 
 import com.bigbasket.mobileapp.model.ads.SponsoredAds;
 import com.bigbasket.mobileapp.model.section.Section;
-import com.bigbasket.mobileapp.model.section.SectionData;
 
 /**
  * Created by muniraju on 18/12/15.
@@ -61,19 +60,19 @@ public class SponsoredProductInfo {
     }
 
     public void setStartPosition(int startPosition) {
-        if(sponsoredAds != null && this.startPosition < 0) {
+        if (sponsoredAds != null && this.startPosition < 0) {
             this.startPosition = startPosition * sponsoredAds.getPageStart();
         }
     }
 
     public int getNextInjectPosition() {
-        if(sponsoredAds == null || sponsoredAds.getSectionData() == null
-                ||sponsoredAds.getSectionData().getSections() == null) {
+        if (sponsoredAds == null || sponsoredAds.getSectionData() == null
+                || sponsoredAds.getSectionData().getSections() == null) {
             return RecyclerView.NO_POSITION;
         }
         if (lastInjectedPosition >= 0) {
             return lastInjectedPosition + sponsoredAds.getPageOffset() + 1;
-        } else if(startPosition >= 0) {
+        } else if (startPosition >= 0) {
             return startPosition;
         }
         return RecyclerView.NO_POSITION;

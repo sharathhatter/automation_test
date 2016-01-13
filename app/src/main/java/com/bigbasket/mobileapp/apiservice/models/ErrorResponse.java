@@ -17,7 +17,9 @@ public class ErrorResponse {
     private int code;
     private String message;
     private Throwable throwable;
-    private @Type int errorType;
+    private
+    @Type
+    int errorType;
 
     public ErrorResponse(int code, String message, @Type int errorType) {
         this.code = code;

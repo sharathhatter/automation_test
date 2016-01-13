@@ -163,14 +163,14 @@ public interface TrackingAware {
 
     //eVoucher
     String EVOUCHER_SHOWN = "EVocuher.Shown";
-    String EVOUCHER_APPLIED_SUCCESS="PaymentSelection_Voucher_Apply.Success";
-    String EVOUCHER_REMOVAL_SUCCESS="PaymentSelection_Voucher_Removal.Success";
-    String EVOUCHER_USER_VOUCHER_ENTERED="PaymentSelection_Voucher.User_Entered";
-    String EVOUCHER_KEYBOARD_APPLY_CLICKED="PaymentSelection_Voucher.Keyboard_apply_Clicked";
-    String AVAILABLE_EVOUCHER_APPLIED="Available_Voucher.Applied";
-    String AVAILABLE_EVOUCHER_USER_ENTERED="Available_Voucher.UserEnter";
-    String AVAILABLE_EVOUCHER_SELECTED="Available_Voucher.Selected";
-    String AVAILABLE_EVOUCHER_KEYBOARD_APPLY_CLICKED="Available_Voucher.Keyboard_apply_Clicked";
+    String EVOUCHER_APPLIED_SUCCESS = "PaymentSelection_Voucher_Apply.Success";
+    String EVOUCHER_REMOVAL_SUCCESS = "PaymentSelection_Voucher_Removal.Success";
+    String EVOUCHER_USER_VOUCHER_ENTERED = "PaymentSelection_Voucher.User_Entered";
+    String EVOUCHER_KEYBOARD_APPLY_CLICKED = "PaymentSelection_Voucher.Keyboard_apply_Clicked";
+    String AVAILABLE_EVOUCHER_APPLIED = "Available_Voucher.Applied";
+    String AVAILABLE_EVOUCHER_USER_ENTERED = "Available_Voucher.UserEnter";
+    String AVAILABLE_EVOUCHER_SELECTED = "Available_Voucher.Selected";
+    String AVAILABLE_EVOUCHER_KEYBOARD_APPLY_CLICKED = "Available_Voucher.Keyboard_apply_Clicked";
 
     String NOTIFICATION_ERROR = "Notification Error";
 

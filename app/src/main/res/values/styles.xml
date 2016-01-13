@@ -28,10 +28,15 @@
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
         <item name="android:textColor">@color/uiv3_action_bar_background</item>
     </style>
+
     <style name="BaseAppTheme.AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
-        <item name="buttonBarNegativeButtonStyle">@style/BaseAppTheme.AlertDialogNegativeButtonStyle</item>
-        <item name="buttonBarPositiveButtonStyle">@style/BaseAppTheme.AlertDialogPositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">
+            @style/BaseAppTheme.AlertDialogNegativeButtonStyle
+        </item>
+        <item name="buttonBarPositiveButtonStyle">
+            @style/BaseAppTheme.AlertDialogPositiveButtonStyle
+        </item>
     </style>
 
     <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -129,6 +134,12 @@
 
     <style name="BBLoginTextInputLayoutStyle" parent="Widget.Design.TextInputLayout">
         <item name="colorControlActivated">@color/white</item>
+        <item name="android:textColorHint">@color/white_60p</item>
+        <item name="colorControlNormal">@color/white_60p</item>
+    </style>
+
+    <style name="ErrorStyle" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">#B71C1C</item>
     </style>
     <style name="BBVoucherTextInputLayoutStyle" parent="Widget.Design.TextInputLayout">
         <item name="colorControlActivated">@color/uiv3_secondary_text_color</item>

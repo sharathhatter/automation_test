@@ -31,14 +31,15 @@
             android:paddingTop="@dimen/padding_normal">
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputEmail"
+                android:id="@+id/text_input_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_small"
-                android:theme="@style/BBLoginTextInputLayoutStyle">
+                android:theme="@style/BBLoginTextInputLayoutStyle"
+                app:errorTextAppearance="@style/ErrorStyle">
 
                 <EditText
-                    android:id="@+id/emailInput"
+                    android:id="@+id/email_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -50,18 +51,18 @@
                     android:paddingRight="@dimen/padding_normal"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/translucent_white"
                     android:textSize="@dimen/secondary_text_size" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputPasswd"
+                android:id="@+id/text_input_passwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:theme="@style/BBLoginTextInputLayoutStyle">
+                android:theme="@style/BBLoginTextInputLayoutStyle"
+                app:errorTextAppearance="@style/ErrorStyle">
 
                 <EditText
-                    android:id="@+id/editTextPasswd"
+                    android:id="@+id/edit_text_passwd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/padding_mini"
@@ -76,12 +77,11 @@
                     android:paddingRight="@dimen/padding_normal"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/translucent_white"
                     android:textSize="@dimen/secondary_text_size" />
             </android.support.design.widget.TextInputLayout>
 
             <CheckBox
-                android:id="@+id/chkRememberMe"
+                android:id="@+id/chk_remember_me"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_normal"
@@ -91,9 +91,10 @@
                 android:textSize="@dimen/small_text_size" />
 
             <Button
-                android:id="@+id/btnLogin"
+                android:id="@+id/btn_login"
                 style="@style/RoundedFormButtonStyle"
                 android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/margin_small"
                 android:layout_marginTop="@dimen/margin_large"
                 android:paddingBottom="@dimen/padding_normal"
                 android:paddingTop="@dimen/padding_normal"
@@ -101,26 +102,50 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/large_text_size" />
 
-            <TextView
-                android:id="@+id/txtForgotPasswd"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/margin_small"
                 android:layout_marginTop="@dimen/margin_small"
-                android:clickable="true"
-                android:padding="@dimen/padding_normal"
-                android:text="@string/forgotPasswd"
-                android:textColor="@color/white"
-                android:textSize="@dimen/secondary_text_size" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt_forgot_passwd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:clickable="true"
+                    android:text="@string/forgotPasswd"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/secondary_text_size" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/margin_small"
+                    android:layout_marginRight="@dimen/margin_small"
+                    android:background="@color/white" />
+
+                <TextView
+                    android:id="@+id/lbl_sign_up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:clickable="true"
+                    android:text="@string/newUserSignup"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/secondary_text_size" />
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_normal">
+                android:layout_marginTop="@dimen/margin_small">
 
                 <TextView
-                    android:id="@+id/txtOrSeparator"
+                    android:id="@+id/txt_or_separator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
@@ -133,7 +158,7 @@
                     android:layout_height="1dp"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/margin_small"
-                    android:layout_toLeftOf="@id/txtOrSeparator"
+                    android:layout_toLeftOf="@id/txt_or_separator"
                     android:background="@color/white" />
 
                 <View
@@ -141,12 +166,12 @@
                     android:layout_height="1dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_toRightOf="@id/txtOrSeparator"
+                    android:layout_toRightOf="@id/txt_or_separator"
                     android:background="@color/white" />
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/lblConnectUsing"
+                android:id="@+id/lbl_connect_using"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -158,6 +183,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/margin_mini"
                 android:layout_marginTop="@dimen/margin_medium_large"
                 android:baselineAligned="false"
                 android:orientation="horizontal">
@@ -169,7 +195,7 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:id="@+id/btnFBLogin"
+                        android:id="@+id/btn_fb_login"
                         style="@style/BBNavDrawerTheme.FacebookButton"
                         android:layout_marginRight="@dimen/margin_normal"
                         android:contentDescription="@string/facebookSignup" />
@@ -190,18 +216,15 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/lblSignUp"
-                android:layout_width="wrap_content"
+                android:id="@+id/txt_terms_and_conditions"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:clickable="true"
-                android:padding="@dimen/padding_normal"
-                android:text="@string/newUserSignup"
-                android:textColor="@color/white"
+                android:paddingBottom="@dimen/padding_large"
+                android:paddingTop="@dimen/padding_normal"
+                android:gravity="center"
+                android:textColor="@color/white_60p"
+                android:textColorHighlight="@android:color/transparent"
                 android:textSize="@dimen/secondary_text_size" />
         </LinearLayout>
-
     </ScrollView>
 </RelativeLayout>

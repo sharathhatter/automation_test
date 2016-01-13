@@ -26,6 +26,7 @@ public class SectionData implements Parcelable, Serializable {
     public SectionData() {
 
     }
+
     public SectionData(Parcel source) {
         boolean wasSectionsNull = source.readByte() == (byte) 1;
         if (!wasSectionsNull) {
