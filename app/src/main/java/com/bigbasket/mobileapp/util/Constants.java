@@ -669,4 +669,7 @@ public class Constants {
     public static final int PERMISSION_REQUEST_CODE_GET_ACCOUNTS = 104;
     public static final int PERMISSION_REQUEST_CODE_RECEIVE_SMS = 105;
 
+    public static final String TERMS_AND_COND_URL = "http://www.bigbasket.com/terms-and-conditions/?source=app";
+    public static final String PRIVACY_POLICY_URL = "http://www.bigbasket.com/privacy-policy/?source=app";
+
 }

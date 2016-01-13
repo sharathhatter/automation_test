@@ -34,7 +34,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_small"
-                android:theme="@style/BBLoginTextInputLayoutStyle">
+                android:theme="@style/BBLoginTextInputLayoutStyle"
+                app:errorTextAppearance="@style/ErrorStyle">
 
                 <EditText
                     android:id="@+id/editTextFirstName"
@@ -49,7 +50,6 @@
                     android:paddingRight="@dimen/padding_normal"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/translucent_white"
                     android:textSize="@dimen/secondary_text_size" />
             </android.support.design.widget.TextInputLayout>
 
@@ -58,7 +58,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_small"
-                android:theme="@style/BBLoginTextInputLayoutStyle">
+                android:theme="@style/BBLoginTextInputLayoutStyle"
+                app:errorTextAppearance="@style/ErrorStyle">
 
                 <EditText
                     android:id="@+id/editTextLastName"
@@ -73,19 +74,19 @@
                     android:paddingRight="@dimen/padding_normal"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/translucent_white"
                     android:textSize="@dimen/secondary_text_size" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputEmail"
+                android:id="@+id/text_input_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_small"
-                android:theme="@style/BBLoginTextInputLayoutStyle">
+                android:theme="@style/BBLoginTextInputLayoutStyle"
+                app:errorTextAppearance="@style/ErrorStyle">
 
                 <EditText
-                    android:id="@+id/emailInput"
+                    android:id="@+id/email_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -97,19 +98,19 @@
                     android:paddingRight="@dimen/padding_normal"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/translucent_white"
                     android:textSize="@dimen/secondary_text_size" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputPasswd"
+                android:id="@+id/text_input_passwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_small"
-                android:theme="@style/BBLoginTextInputLayoutStyle">
+                android:theme="@style/BBLoginTextInputLayoutStyle"
+                app:errorTextAppearance="@style/ErrorStyle">
 
                 <EditText
-                    android:id="@+id/editTextPasswd"
+                    android:id="@+id/edit_text_passwd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/padding_mini"
@@ -124,7 +125,6 @@
                     android:paddingRight="@dimen/padding_normal"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/translucent_white"
                     android:textSize="@dimen/secondary_text_size" />
             </android.support.design.widget.TextInputLayout>
 
@@ -133,7 +133,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_small"
-                android:theme="@style/BBLoginTextInputLayoutStyle">
+                android:theme="@style/BBLoginTextInputLayoutStyle"
+                app:errorTextAppearance="@style/ErrorStyle">
 
                 <EditText
                     android:id="@+id/editTextCurrentLocation"
@@ -150,7 +151,6 @@
                     android:padding="@dimen/padding_normal"
                     android:singleLine="true"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/translucent_white"
                     android:textSize="@dimen/secondary_text_size" />
             </android.support.design.widget.TextInputLayout>
 
@@ -187,7 +187,7 @@
                 android:layout_marginTop="48dp">
 
                 <TextView
-                    android:id="@+id/txtOrSeparator"
+                    android:id="@+id/txt_or_separator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
@@ -200,7 +200,7 @@
                     android:layout_height="1dp"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/margin_small"
-                    android:layout_toLeftOf="@id/txtOrSeparator"
+                    android:layout_toLeftOf="@id/txt_or_separator"
                     android:background="@color/white" />
 
                 <View
@@ -208,16 +208,16 @@
                     android:layout_height="1dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_toRightOf="@id/txtOrSeparator"
+                    android:layout_toRightOf="@id/txt_or_separator"
                     android:background="@color/white" />
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/lblConnectUsing"
+                android:id="@+id/lbl_connect_using"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/connectUsing"
+                android:text="@string/signUpUsing"
                 android:textColor="@color/white"
                 android:textSize="@dimen/small_text_size" />
 
@@ -237,7 +237,7 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:id="@+id/btnFBLogin"
+                        android:id="@+id/btn_fb_login"
                         style="@style/BBNavDrawerTheme.FacebookButton"
                         android:layout_marginRight="@dimen/margin_normal"
                         android:contentDescription="@string/facebookSignup" />

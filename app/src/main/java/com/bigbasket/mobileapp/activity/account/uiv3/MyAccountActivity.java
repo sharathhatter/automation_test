@@ -201,22 +201,13 @@ public class MyAccountActivity extends BackButtonActivity implements
             layoutBirthday.setVisibility(View.GONE);
         }
 
-        RelativeLayout layoutAddress = (RelativeLayout) view.findViewById(R.id.layoutAddress);
         String address = getAddress(updateProfileModel);
         if (!TextUtils.isEmpty(address)) {
             TextView txtAddressLabel = (TextView) view.findViewById(R.id.txtAddressLabel);
             txtAddressLabel.setTypeface(faceRobotoRegular);
-
-            address += updateProfileModel.getCityName();
-            if (!TextUtils.isEmpty(updateProfileModel.getPincode()))
-                address += " - " + updateProfileModel.getPincode();
             TextView txtAddress = (TextView) view.findViewById(R.id.txtAddress);
             txtAddress.setTypeface(faceRobotoMedium);
             txtAddress.setText(address);
-        } else {
-            layoutAddress.setVisibility(View.GONE);
-            RelativeLayout layoutEmptyAddress = (RelativeLayout) view.findViewById(R.id.layoutEmptyAddress);
-            layoutEmptyAddress.setVisibility(View.VISIBLE);
         }
 
         contentLayout.addView(view);
@@ -235,26 +226,55 @@ public class MyAccountActivity extends BackButtonActivity implements
     }
 
     private String getAddress(UpdateProfileModel updateProfileModel) {
-        String address = "";
+        StringBuilder address = new StringBuilder("");
+        boolean appendSpace = false;
         if (!UIUtil.isEmpty(updateProfileModel.getHouseNumber())) {
-            address += updateProfileModel.getHouseNumber() + " ";
+            address.append(updateProfileModel.getHouseNumber());
+            appendSpace = true;
         }
         if (!UIUtil.isEmpty(updateProfileModel.getLandmark())) {
-            address += updateProfileModel.getLandmark() + " ";
+            if (appendSpace) {
+                address.append(' ');
+            }
+            address.append(updateProfileModel.getLandmark());
+            appendSpace = true;
         }
         if (!UIUtil.isEmpty(updateProfileModel.getResidentialComplex())) {
-            address += updateProfileModel.getResidentialComplex() + " ";
+            if (appendSpace) {
+                address.append(' ');
+            }
+            address.append(updateProfileModel.getResidentialComplex());
+            appendSpace = true;
         }
 
         if (!UIUtil.isEmpty(updateProfileModel.getStreet())) {
-            address += updateProfileModel.getStreet() + " ";
+            if (appendSpace) {
+                address.append(' ');
+            }
+            address.append(updateProfileModel.getStreet());
+            appendSpace = true;
         }
 
         if (!UIUtil.isEmpty(updateProfileModel.getArea())) {
-            address += updateProfileModel.getArea() + " ";
+            if (appendSpace) {
+                address.append(' ');
+            }
+            address.append(updateProfileModel.getArea());
+            appendSpace = true;
         }
 
-        return address;
+        if (!UIUtil.isEmpty(updateProfileModel.getCityName())) {
+            if (appendSpace) {
+                address.append(' ');
+            }
+            address.append(updateProfileModel.getCityName());
+            updateProfileModel.getPincode();
+            if (!UIUtil.isEmpty(updateProfileModel.getPincode())) {
+                address.append('-').append(updateProfileModel.getPincode());
+            }
+        }
+
+        return address.toString();
     }
 
 

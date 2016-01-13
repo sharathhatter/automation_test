@@ -62,9 +62,9 @@ public class SignupActivity extends BackButtonActivity {
     }
 
     private void renderSignUp() {
-        ((TextView) findViewById(R.id.txtOrSeparator)).setTypeface(faceRobotoRegular);
-        ((TextView) findViewById(R.id.lblConnectUsing)).setTypeface(faceRobotoLight);
-        mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
+        ((TextView) findViewById(R.id.txt_or_separator)).setTypeface(faceRobotoRegular);
+        ((TextView) findViewById(R.id.lbl_connect_using)).setTypeface(faceRobotoLight);
+        mPasswordView = (EditText) findViewById(R.id.edit_text_passwd);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -80,7 +80,7 @@ public class SignupActivity extends BackButtonActivity {
         mFirstNameView.setNextFocusDownId(R.id.editTextLastName);
         mLastNameView = (EditText) findViewById(R.id.editTextLastName);
 //        mRefCodeView = (EditText) base.findViewById(R.id.editTextRefCode);
-        mEmailView = (EditText) findViewById(R.id.emailInput);
+        mEmailView = (EditText) findViewById(R.id.email_input);
 
         Button btnSignUp = (Button) findViewById(R.id.btnRegister);
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +105,7 @@ public class SignupActivity extends BackButtonActivity {
         });
 
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
-                findViewById(R.id.btnFBLogin));
+                findViewById(R.id.btn_fb_login));
 
 
         showLocationView();
@@ -151,9 +151,8 @@ public class SignupActivity extends BackButtonActivity {
     private void onRegisterButtonClicked() {
         trackEvent(TrackingAware.REGISTER_BTN_CLICK, null);
 
-
-        TextInputLayout textInputEmail = (TextInputLayout) findViewById(R.id.textInputEmail);
-        TextInputLayout textInputPasswd = (TextInputLayout) findViewById(R.id.textInputPasswd);
+        TextInputLayout textInputEmail = (TextInputLayout) findViewById(R.id.text_input_email);
+        TextInputLayout textInputPasswd = (TextInputLayout) findViewById(R.id.text_input_passwd);
         TextInputLayout textInputFirstName = (TextInputLayout) findViewById(R.id.textInputFirstName);
         TextInputLayout textInputLastName = (TextInputLayout) findViewById(R.id.textInputLastName);
 
@@ -165,7 +164,6 @@ public class SignupActivity extends BackButtonActivity {
 
         boolean cancel = false;
         View focusView = null;
-
 
         String email = mEmailView.getText().toString().trim();
         String password = mPasswordView.getText().toString().trim();
@@ -278,7 +276,7 @@ public class SignupActivity extends BackButtonActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             onSignupCancelled();
             return true;
         }

@@ -52,7 +52,7 @@
             android:textSize="@dimen/secondary_text_size" />
 
         <Button
-            android:id="@+id/btnLogin"
+            android:id="@+id/btn_login"
             style="@style/FormButtonStyle"
             android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/margin_large"

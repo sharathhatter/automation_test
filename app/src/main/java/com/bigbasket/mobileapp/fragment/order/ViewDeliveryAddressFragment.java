@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,9 +68,9 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
     private ViewGroup layoutCheckoutFooter;
     private Typeface faceRobotoLight;
     private boolean hasGifts = false;
-    private LinearLayout layoutAddressDetails;
+    private RelativeLayout layoutAddressDetails;
     private TextView txtAddressLabel;
-    private TextView txtInComplete;
+    private TextView txtPartialAddress;
     private TextView txtDeliveryAddress;
     private TextView txtName;
     private TextView txtPh;
@@ -87,19 +88,24 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
         layoutCheckoutProgressContainer =
                 (LinearLayout) contentView.findViewById(R.id.layoutCheckoutProgressContainer);
         layoutCheckoutFooter = (ViewGroup) contentView.findViewById(R.id.layoutCheckoutFooter);
-        layoutAddressDetails = (LinearLayout) contentView.findViewById(R.id.layoutAddressDetails);
+        layoutAddressDetails = (RelativeLayout) contentView.findViewById(R.id.layoutAddressDetails);
         txtAddressLabel = (TextView) contentView.findViewById(R.id.txtAddressLbl);
-        txtInComplete = (TextView) contentView.findViewById(R.id.partial_address_textView);
-        txtDeliveryAddress = (TextView) contentView.findViewById(R.id.txtDeliveryAddress);
+        txtPartialAddress = (TextView) contentView.findViewById(R.id.txtPartialAddress);
+        txtDeliveryAddress = (TextView) contentView.findViewById(R.id.txtAddress);
         txtName = (TextView) contentView.findViewById(R.id.txtName);
         txtPh = (TextView) contentView.findViewById(R.id.txtPh);
         txtChangeAddress = (TextView) contentView.findViewById(R.id.txtChangeAddress);
         txtExpressDelivery = (TextView) contentView.findViewById(R.id.txtExpressDelivery);
+        ((ImageView) contentView.findViewById(R.id.imgLocation)).setVisibility(View.INVISIBLE);
+        txtExpressDelivery.setVisibility(View.GONE);
+        txtPartialAddress.setVisibility(View.GONE);
+        txtPh.setVisibility(View.GONE);
+        txtName.setVisibility(View.GONE);
 
         txtDeliveryAddress.setTypeface(faceRobotoMedium);
         txtName.setTypeface(faceRobotoMedium);
 
-        imageViewEditLoc = (ImageView) contentView.findViewById(R.id.imgEditLoc);
+        imageViewEditLoc = (ImageView) contentView.findViewById(R.id.imgEditIcon);
         txtChangeAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +124,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
                 }
             }
         });
-        txtInComplete.setOnClickListener(new View.OnClickListener() {
+        txtPartialAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mSelectedAddress != null) {
@@ -300,9 +306,11 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
             }
 
             if (selectedAddress.isPartial()) {
-                txtInComplete.setVisibility(View.VISIBLE);
+                imageViewEditLoc.setVisibility(View.VISIBLE);
+                txtPartialAddress.setVisibility(View.VISIBLE);
             } else {
-                txtInComplete.setVisibility(View.GONE);
+                imageViewEditLoc.setVisibility(View.GONE);
+                txtPartialAddress.setVisibility(View.GONE);
             }
 
             if (selectedAddress.isExpress()) {
@@ -324,7 +332,8 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
             layoutCheckoutFooter.setVisibility(View.GONE);
             txtName.setVisibility(View.GONE);
             imageViewEditLoc.setVisibility(View.GONE);
-            txtInComplete.setVisibility(View.GONE);
+            imageViewEditLoc.setVisibility(View.GONE);
+            txtPartialAddress.setVisibility(View.GONE);
             txtExpressDelivery.setVisibility(View.GONE);
 
             txtDeliveryAddress.setVisibility(View.VISIBLE);

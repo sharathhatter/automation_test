@@ -395,7 +395,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             ncBuilder.append('.').append(getAdditionalNcValue());
         }
 
-        if(sectionItem != null && !TextUtils.isEmpty(sectionItem.getCampaign())) {
+        if (sectionItem != null && !TextUtils.isEmpty(sectionItem.getCampaign())) {
             ncBuilder.append('.').append(sectionItem.getCampaign());
         } else {
             if (section != null) {

@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapterWithFragmentRegistration;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.model.ads.SponsoredAds;
-import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
 import java.util.ArrayList;

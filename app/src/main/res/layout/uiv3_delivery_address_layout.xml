@@ -26,7 +26,7 @@
             android:layout_margin="@dimen/margin_normal"
             android:layout_weight="1"
             android:drawablePadding="@dimen/margin_mini"
-            android:drawableStart="@drawable/ic_location_on_black_18dp"
+            android:drawableLeft="@drawable/ic_location_on_black_18dp"
             android:paddingBottom="@dimen/padding_mini"
             android:paddingTop="@dimen/padding_mini"
             android:text="@string/delivery_address"
@@ -41,11 +41,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="@dimen/margin_normal"
-            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_normal"
             android:layout_weight="0"
-            android:background="@android:color/transparent"
-            android:padding="@dimen/padding_mini"
+            android:background="@drawable/apply_button_rounded_background"
+            android:paddingBottom="@dimen/padding_mini"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small"
+            android:paddingTop="@dimen/padding_mini"
             android:text="@string/changeAllCaps"
             android:textAllCaps="true"
             android:textColor="@color/red"
@@ -66,102 +69,16 @@
         android:layout_above="@+id/layoutCheckoutFooter"
         android:layout_below="@+id/address_label_layout">
 
-        <LinearLayout
+        <include
             android:id="@+id/layoutAddressDetails"
+            layout="@layout/uiv3_address_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/address_label_layout"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"
             android:layout_marginTop="@dimen/dimen_2"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:padding="@dimen/padding_12"
-            android:visibility="visible">
-
-
-            <TextView
-                android:id="@+id/txtName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/primary_text_size"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/txtDeliveryAddress"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:layout_weight="1"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-
-                <ImageView
-                    android:id="@+id/imgEditLoc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginRight="@dimen/margin_small"
-                    android:contentDescription="@string/changeMyLocation"
-                    android:paddingBottom="@dimen/padding_small"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingRight="@dimen/padding_small"
-                    android:src="@drawable/ic_edit_black_14dp"
-                    android:visibility="visible" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/txtPh"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_mini"
-                android:drawablePadding="@dimen/margin_small"
-                android:drawableStart="@drawable/ic_call_grey600_18dp"
-                android:textColor="@color/uiv3_secondary_text_color"
-                android:textSize="@dimen/secondary_text_size"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/txtExpressDelivery"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_marginRight="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_small"
-                android:drawablePadding="@dimen/margin_mini"
-                android:drawableStart="@drawable/express_delivery"
-                android:textColor="@color/uiv3_secondary_text_color"
-                android:textSize="@dimen/small_text_size"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/partial_address_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
-                android:drawableEnd="@drawable/ic_warning_red"
-                android:drawablePadding="@dimen/padding_small"
-                android:paddingBottom="@dimen/padding_mini"
-                android:paddingLeft="@dimen/dimen_2"
-                android:paddingRight="@dimen/dimen_2"
-                android:paddingTop="@dimen/padding_small"
-                android:text="@string/incomplete"
-                android:textColor="@color/uiv3_action_bar_background"
-                android:textSize="@dimen/small_text_size"
-                android:visibility="gone" />
-
-        </LinearLayout>
+            android:padding="@dimen/padding_12" />
 
         <ProgressBar
             android:id="@+id/loading_bar"

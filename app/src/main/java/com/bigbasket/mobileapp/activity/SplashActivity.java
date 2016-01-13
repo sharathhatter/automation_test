@@ -271,7 +271,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
 
     public void onLandingPageButtonClicked(View view) {
         switch (view.getId()) {
-            case R.id.btnLogin:
+            case R.id.btn_login:
                 Map<String, String> eventAttribs = new HashMap<>();
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                 trackEvent(TrackingAware.ENTRY_PAGE_LOGIN_CLICKED, eventAttribs);

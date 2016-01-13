@@ -37,7 +37,6 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductInfo;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
@@ -196,7 +195,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             while (nextInjectPosition != RecyclerView.NO_POSITION
                     && nextInjectPosition <= existingProducts.size()
                     && mSponsoredSectionInfo.getNextSponsoredItem() != null) {
-                SponsoredProductItem spItem = new SponsoredProductItem (
+                SponsoredProductItem spItem = new SponsoredProductItem(
                         mSponsoredSectionInfo.getSponsoredAds().getSectionData(),
                         mSponsoredSectionInfo.getNextSponsoredItemIndex());
 

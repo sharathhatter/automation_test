@@ -549,7 +549,7 @@ public abstract class BaseFragment extends AbstractFragment implements
     @Override
     public void showApiErrorDialog(@Nullable String title, String message, int resultCode) {
         if (getCurrentActivity() == null) return;
-        getCurrentActivity().showAlertDialogFinish(title, message, resultCode);
+        getCurrentActivity().showAlertDialog(title, message, resultCode);
     }
 
     public abstract String getScreenTag();

@@ -377,7 +377,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         renderCheckOutProgressView();
     }
 
-    private void renderPaymentMethodsView(){
+    private void renderPaymentMethodsView() {
         TextView lblAmountFromWallet = (TextView) findViewById(R.id.lblAmountFromWallet);
         lblAmountFromWallet.setTypeface(faceRobotoRegular);
         boolean isInHDFCPayMode = HDFCPayzappHandler.isInHDFCPayMode(this);
@@ -449,7 +449,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                         actionId == EditorInfo.IME_ACTION_DONE) {
                     String voucherCode = editTextVoucherCode.getText().toString();
                     if (!TextUtils.isEmpty(voucherCode)) {
-                        trackEvent(EVOUCHER_KEYBOARD_APPLY_CLICKED,null);
+                        trackEvent(EVOUCHER_KEYBOARD_APPLY_CLICKED, null);
                         applyVoucher(voucherCode);
                     }
                     hideKeyboard(getCurrentActivity(), editTextVoucherCode);
@@ -463,7 +463,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 if (!TextUtils.isEmpty(editTextVoucherCode.getText().toString().trim())) {
                     hideKeyboard(getCurrentActivity(), mTxtApplyVoucher);
                     applyVoucher(editTextVoucherCode.getText().toString().trim());
-                    trackEvent(EVOUCHER_USER_VOUCHER_ENTERED,null);
+                    trackEvent(EVOUCHER_USER_VOUCHER_ENTERED, null);
                 }
             }
         });

@@ -8,10 +8,10 @@ import android.support.v4.app.DialogFragment;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -43,10 +43,12 @@ import java.util.HashMap;
 import retrofit.Call;
 
 public class UpdateProfileActivity extends BackButtonActivity implements OtpDialogAware {
+
     private EditText editTextEmail, editTextFirstName, editTextLastName, editTextDob,
             editTextMobileNumber,
             editTextTelNumber;
     private CheckBox chkReceivePromos;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class UpdateProfileActivity extends BackButtonActivity implements OtpDial
     }
 
     private void initiateUpdateProfileActivity(UpdateProfileModel updateProfileModel) {
+
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextEmail.setTypeface(faceRobotoRegular);
         editTextEmail.setText(updateProfileModel.getEmail());
@@ -94,7 +97,7 @@ public class UpdateProfileActivity extends BackButtonActivity implements OtpDial
         chkReceivePromos = (CheckBox) findViewById(R.id.chkReceivePromos);
         chkReceivePromos.setChecked(updateProfileModel.isNewPaperSubscription());
 
-        Button txtSave = (Button) findViewById(R.id.txtUpdateProfile);
+        TextView txtSave = (TextView) findViewById(R.id.txtUpdateProfile);
         txtSave.setTypeface(faceRobotoMedium);
         txtSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +114,8 @@ public class UpdateProfileActivity extends BackButtonActivity implements OtpDial
             }
         });
         trackEvent(TrackingAware.UPDATE_PROFILE_SHOWN, null);
+
+
     }
 
     private void showDatePickerDialog(View view) {
@@ -171,7 +176,7 @@ public class UpdateProfileActivity extends BackButtonActivity implements OtpDial
         final View view = getContentView();
         if (view == null) return;
 
-        TextInputLayout textInputEmail = (TextInputLayout) view.findViewById(R.id.textInputEmail);
+        TextInputLayout textInputEmail = (TextInputLayout) view.findViewById(R.id.text_input_email);
         TextInputLayout textInputFirstName = (TextInputLayout) view.findViewById(R.id.textInputFirstName);
         TextInputLayout textInputLastName = (TextInputLayout) view.findViewById(R.id.textInputLastName);
         TextInputLayout textInputMobileNumber = (TextInputLayout) view.findViewById(R.id.textInputMobileNumber);

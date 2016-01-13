@@ -213,8 +213,8 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                 SectionItem sectionItem = spItem.getSection().getSectionItems().get(0);
                 sectionId = sectionItem.getId();
                 analyticsAttrs = spItem.getSectionData().getAnalyticsAttrs(sectionId);
-                String screenName ;
-                if(TextUtils.isEmpty(spItem.getSectionData().getScreenName())){
+                String screenName;
+                if (TextUtils.isEmpty(spItem.getSectionData().getScreenName())) {
                     screenName = navigationCtx;
                 } else {
                     screenName = spItem.getSectionData().getScreenName();

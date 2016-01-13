@@ -61,9 +61,9 @@ public class TutorialActivity extends BaseActivity {
 
     private void slideNext() {
         int nextPosition = ++mCurrentTutorialIndex;
-        if(nextPosition < drawableIdArray.length) {
+        if (nextPosition < drawableIdArray.length) {
             UIUtil.displayAsyncImage(mImageView, drawableIdArray[nextPosition], true);
-            if(nextPosition == drawableIdArray.length - 1){
+            if (nextPosition == drawableIdArray.length - 1) {
                 lblSkip.setVisibility(View.GONE);
                 lblNext.setText(R.string.startShopping);
             }
