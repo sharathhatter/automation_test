@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -28,7 +27,6 @@ import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
-import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
@@ -339,12 +337,12 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
     private void logClickEvent() {
         if (section == null) return;
         boolean isBannerClicked = section.getSectionType().equals(Section.BANNER);
-        setNc(isBannerClicked);
         if (isBannerClicked) {
-            logBannerEvent();
+            logBannerEvent(getNc(isBannerClicked));
         } else if (screenName != null) {
-            logItemClickEvent();
+            logItemClickEvent(getNc(isBannerClicked));
         }
+
         Context appContext = context.getCurrentActivity().getApplicationContext();
         if (cachedAnalyticsAttrsJsonString == null && analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
             Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
@@ -368,7 +366,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
         return null;
     }
 
-    private void setNc(boolean isBannerClicked) {
+    private String getNc(boolean isBannerClicked) {
         StringBuilder ncBuilder = new StringBuilder();
         if (screenName != null) {
             switch (screenName) {
@@ -388,7 +386,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
                     break;
             }
         } else {
-            ncBuilder.append(TrackEventkeys.SCREEN);
+            ncBuilder.append(context.getCurrentActivity().getCurrentScreenName());
         }
         if (isBannerClicked)
             ncBuilder.append(".").append(Section.BANNER);
@@ -436,10 +434,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
                 }
             }
         }
-        if (context instanceof Fragment && context instanceof AnalyticsNavigationContextAware) {
-            ((AnalyticsNavigationContextAware) context).setCurrentScreenName(ncBuilder.toString());
-        }
-        context.getCurrentActivity().setCurrentScreenName(ncBuilder.toString());
+        return ncBuilder.toString();
     }
 
     @Nullable
@@ -462,7 +457,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
         return section.getTitle() != null ? section.getTitle().getText() : section.getSectionType();
     }
 
-    private void logBannerEvent() {
+    private void logBannerEvent(String nc) {
         if (sectionItem == null || sectionItem.getDestinationInfo() == null) return;
         int index = 0;
         if (section != null) {
@@ -485,8 +480,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             HashMap<String, String> eventAttribs = new HashMap<>();
             eventAttribs.put(TrackEventkeys.BANNER_ID, String.valueOf(index));
             eventAttribs.put(TrackEventkeys.BANNER_SLUG, bannerName);
-            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
-                    context.getCurrentActivity().getCurrentScreenName());
+            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, nc);
             if (context instanceof TrackingAware) {
                 ((TrackingAware) context).trackEvent(eventName, eventAttribs);
             }
@@ -518,7 +512,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
         return "";
     }
 
-    private void logItemClickEvent() {
+    private void logItemClickEvent(String nc) {
         HashMap<String, String> eventAttribs = new HashMap<>();
         StringBuilder sectionItemNameBuilder = new StringBuilder();
         String sectionName = getSectionName();
@@ -532,8 +526,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
         if (!TextUtils.isEmpty(sectionItemNameBuilder)) {
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, sectionItemNameBuilder.toString());
         }
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
-                context.getCurrentActivity().getCurrentScreenName());
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, nc);
         String eventName = getAnalyticsFormattedScreeName();
         if (eventName == null) return;
         if (context instanceof TrackingAware) {

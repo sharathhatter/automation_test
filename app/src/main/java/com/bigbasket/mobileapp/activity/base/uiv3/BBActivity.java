@@ -827,6 +827,13 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     }
 
     @Override
+    protected void postLogout(boolean success) {
+        super.postLogout(success);
+        syncBasket();
+        markBasketDirty();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         FragmentManager sfm = getSupportFragmentManager();

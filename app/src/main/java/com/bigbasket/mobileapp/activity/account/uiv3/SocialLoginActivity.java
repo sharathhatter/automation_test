@@ -304,8 +304,8 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         } else {
             if (getCurrentActivity() instanceof CartInfoAware) {
                 ((CartInfoAware) getCurrentActivity()).markBasketDirty();
-                setResult(NavigationCodes.BASKET_CHANGED);
             }
+            setResult(NavigationCodes.BASKET_CHANGED);
             finish();
         }
     }

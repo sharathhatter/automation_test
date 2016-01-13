@@ -46,8 +46,6 @@ public class HomeActivity extends SearchActivity {
             trackEventAppsFlyer(TrackingAware.APP_OPEN, appFlyerHashMap);
             preferences.edit().putBoolean(Constants.APP_LAUNCH, false).apply();
         }
-        //Show the tutorial if needed
-        launchTutorial(-1);
     }
 
     @Override
