@@ -51,16 +51,16 @@ public class ChangePasswordFragment extends BaseFragment {
 
     private void initiateChangePassword(View base) {
 
-        oldEditText = (EditText) base.findViewById(R.id.oldPwdEditTxt);
+        oldEditText = (EditText) base.findViewById(R.id.edit_text_otp);
         oldEditText.setTypeface(faceRobotoRegular);
 
-        newPwdText = (EditText) base.findViewById(R.id.newPassWordEditTxt);
+        newPwdText = (EditText) base.findViewById(R.id.new_pass_word_edit_txt);
         newPwdText.setTypeface(faceRobotoRegular);
 
-        confirmPwdEditText = (EditText) base.findViewById(R.id.confirmPwdEditTxt);
+        confirmPwdEditText = (EditText) base.findViewById(R.id.confirm_pwd_edit_txt);
         confirmPwdEditText.setTypeface(faceRobotoRegular);
 
-        TextView txtUpdatePassword = (TextView) base.findViewById(R.id.txtUpdatePassword);
+        TextView txtUpdatePassword = (TextView) base.findViewById(R.id.txt_update_password);
         txtUpdatePassword.setTypeface(faceRobotoRegular);
 
         BaseActivity.showKeyboard(oldEditText);
@@ -81,8 +81,8 @@ public class ChangePasswordFragment extends BaseFragment {
         if (base == null) return;
 
         TextInputLayout textInputOldPasswd = (TextInputLayout) base.findViewById(R.id.textInputOldPasswd);
-        TextInputLayout textInputNewPasswd = (TextInputLayout) base.findViewById(R.id.textInputNewPasswd);
-        TextInputLayout textInputConfirmPasswd = (TextInputLayout) base.findViewById(R.id.textInputConfirmPasswd);
+        TextInputLayout textInputNewPasswd = (TextInputLayout) base.findViewById(R.id.text_input_new_passwd);
+        TextInputLayout textInputConfirmPasswd = (TextInputLayout) base.findViewById(R.id.text_input_confirm_passwd);
 
         UIUtil.resetFormInputField(textInputOldPasswd);
         UIUtil.resetFormInputField(textInputNewPasswd);

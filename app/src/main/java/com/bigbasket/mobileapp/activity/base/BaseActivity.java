@@ -39,7 +39,6 @@ import android.widget.Toast;
 import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.HomeActivity;
-import com.bigbasket.mobileapp.activity.TutorialActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.BBUnifiedInboxActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;

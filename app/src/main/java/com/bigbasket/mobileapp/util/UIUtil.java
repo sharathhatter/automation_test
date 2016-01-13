@@ -73,7 +73,6 @@ import com.bigbasket.mobileapp.util.analytics.NewRelicWrapper;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
-import com.newrelic.agent.android.NewRelic;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;

@@ -42,6 +42,7 @@ import com.bigbasket.mobileapp.util.MessageFormatUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -249,7 +250,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                 txtFulfilledBy.setVisibility(View.VISIBLE);
                 txtFulfilledBy.setText(content);
                 txtFulfilledBy.setTextSize(13);
-                if(fulfillmentInfoPageClickListener == null){
+                if (fulfillmentInfoPageClickListener == null) {
                     fulfillmentInfoPageClickListener = new FulfillmentInfoPageClickListener<>(context);
                 }
                 txtFulfilledBy.setTag(R.id.fullfillment_info_page_url_tag_id,
@@ -961,8 +962,8 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
 
         @Override
         public void onClick(View v) {
-            String fulfillmentInfoPageUrl = (String)v.getTag(R.id.fullfillment_info_page_url_tag_id);
-            if(fulfillmentInfoPageUrl != null && context.getCurrentActivity() != null) {
+            String fulfillmentInfoPageUrl = (String) v.getTag(R.id.fullfillment_info_page_url_tag_id);
+            if (fulfillmentInfoPageUrl != null && context.getCurrentActivity() != null) {
                 Intent intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                 intent.putExtra(Constants.WEBVIEW_URL, fulfillmentInfoPageUrl);

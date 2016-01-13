@@ -28,7 +28,7 @@ public class SponsoredAds extends GetDynamicPageApiResponse {
     }
 
     public int getPageOffset() {
-        if(pageOffset == 0) {
+        if (pageOffset == 0) {
             //Default page offset
             pageOffset = 8;
         }
