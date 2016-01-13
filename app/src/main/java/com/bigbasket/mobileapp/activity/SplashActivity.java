@@ -71,7 +71,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
         }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             if (preferences.contains(Constants.FIRSE_TIME_USER)) {
                 MoEngageWrapper.setExistingUser(moEHelper, true);
             } else {
@@ -149,7 +149,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
     @Override
     protected void onStart() {
         super.onStart();
-        if(imgBBLogo != null) {
+        if (imgBBLogo != null) {
             UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo, true);
         }
     }
@@ -168,20 +168,11 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
     }
 
     private void loadHomePage() {
-        launchTutorial(FragmentCodes.START_HOME);
-    }
-
-    @Override
-    protected void handleTutorialResponse(int resultCode) {
-        if (resultCode == FragmentCodes.START_HOME) {
-            Intent homePageIntent = new Intent(this, HomeActivity.class);
-            homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
-            startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                finish();
-            }
-        } else {
-            super.handleTutorialResponse(resultCode);
+        Intent homePageIntent = new Intent(this, HomeActivity.class);
+        homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
+        startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            finish();
         }
     }
 
@@ -294,8 +285,6 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
                 trackEvent(TrackingAware.ENTRY_PAGE_SKIP_BUTTON_CLICKED, null);
                 showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, false);
                 break;
-            default:
-                return;
         }
     }
 
@@ -316,10 +305,8 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
         if (resultCode == NavigationCodes.GO_TO_HOME) {
             removePendingGoToHome();
             handleResults();
-        } else if (requestCode == NavigationCodes.TUTORIAL_SEEN) {
-            super.onActivityResult(requestCode, resultCode, data);
-        } else if(resultCode != NavigationCodes.SIGN_UP_CANCELLED
-                && resultCode != NavigationCodes.SIGN_IN_CANCELLED){
+        } else if (resultCode != NavigationCodes.SIGN_UP_CANCELLED
+                && resultCode != NavigationCodes.SIGN_IN_CANCELLED) {
             finish();
         }
     }

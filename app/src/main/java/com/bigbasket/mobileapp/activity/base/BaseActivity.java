@@ -481,8 +481,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
             onBasketChanged(data);
             // Initiate Fragment callback (if-any) to sync cart
             super.onActivityResult(requestCode, resultCode, data);
-        } else if (requestCode == NavigationCodes.TUTORIAL_SEEN) {
-            handleTutorialResponse(resultCode);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -966,32 +964,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
             intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         }
         super.startActivityForResult(intent, requestCode);
-    }
-
-    protected void launchTutorial(int resultCode) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isTutorialShown = preferences.getBoolean(Constants.TUTORIAL_SEEN, false);
-        if (isTutorialShown) {
-            handleTutorialResponse(resultCode);
-        } else {
-            Intent intent = new Intent(this, TutorialActivity.class);
-            intent.putExtra(Constants.ACTION_TAB_TAG, resultCode);
-            startActivityForResult(intent, NavigationCodes.TUTORIAL_SEEN);
-        }
-    }
-
-    protected void handleTutorialResponse(int resultCode) {
-        switch (resultCode) {
-            case NavigationCodes.LAUNCH_LOGIN:
-                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, true);
-                break;
-            case NavigationCodes.LAUNCH_CITY:
-                showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, false);
-                break;
-            case NavigationCodes.LAUNCH_SIGNUP:
-                launchRegistrationPage();
-                break;
-        }
     }
 
     public void showChangeCity(boolean isFirstTime, String nc, boolean reopenLandingPage) {

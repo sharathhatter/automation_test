@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.TutorialActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -53,7 +55,6 @@ import com.crashlytics.android.Crashlytics;
 import com.moengage.widgets.NudgeView;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import retrofit.Call;
 
@@ -93,8 +94,19 @@ public class HomeFragment extends BaseSectionFragment {
             showUpgradeAppDialog(appUpdateData.getAppExpireBy(), appUpdateData.getAppUpdateMsg(),
                     appUpdateData.getLatestAppVersion());
         }
+        launchTutorial();
+    }
 
-        getAppData(null);
+    protected void launchTutorial() {
+        if (getActivity() == null || isSuspended()) return;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean isTutorialShown = preferences.getBoolean(Constants.TUTORIAL_SEEN, false);
+        if (isTutorialShown) {
+            getAppData(null);
+        } else {
+            Intent intent = new Intent(getActivity(), TutorialActivity.class);
+            startActivityForResult(intent, NavigationCodes.TUTORIAL_SEEN);
+        }
     }
 
     @Override

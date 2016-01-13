@@ -45,6 +45,7 @@ import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.ads.SponsoredAds;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
@@ -899,9 +900,9 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                         data.getIntExtra(Constants.PRODUCT_NO_ITEM_IN_CART, 0));
                 setCartInfo(mCartInfo);
             } else {
+                markBasketDirty();
                 getProducts();
             }
-
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -963,6 +964,18 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         mNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(sortAndFilterArrayList)));
         loadProductTabs(true,
                 mViewPager != null && mViewPager.getCurrentItem() >= 0 ? mViewPager.getCurrentItem() : 0);
+    }
+
+    @Override
+    protected void changeCity(City city) {
+        super.changeCity(city);
+        loadProductTabs(false, 0);
+    }
+
+    @Override
+    protected void postLogout(boolean success) {
+        super.postLogout(success);
+        loadProductTabs(false, 0);
     }
 
     private void trackSortByEvent(String sortedOn) {
