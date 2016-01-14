@@ -2,10 +2,10 @@ package com.bigbasket.mobileapp.view;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
-import android.widget.AutoCompleteTextView;
 
-public class InstantAutoCompleteTextView extends AutoCompleteTextView {
+public class InstantAutoCompleteTextView extends AppCompatAutoCompleteTextView {
 
     public InstantAutoCompleteTextView(Context context) {
         super(context);

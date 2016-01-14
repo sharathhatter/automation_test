@@ -7,7 +7,9 @@
     android:layout_marginRight="@dimen/margin_small"
     android:layout_marginTop="@dimen/dimen_2"
     android:clickable="true"
+    android:background="@color/white"
     android:padding="@dimen/padding_mini">
+
 
     <ImageView
         android:id="@+id/imgEditIcon"
@@ -18,34 +20,65 @@
         android:padding="@dimen/margin_small"
         android:src="@drawable/ic_edit_black_14dp" />
 
-    <RelativeLayout
-        android:id="@+id/address_layout"
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/imgEditIcon"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/imgEditIcon">
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/imgEditIcon"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtPartialAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_10"
+            android:layout_toLeftOf="@+id/imgEditIcon"
+            android:drawableLeft="@drawable/ic_warning_red"
+            android:drawablePadding="@dimen/padding_small"
+            android:gravity="center|left"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small"
+            android:paddingTop="@dimen/padding_small"
+            android:text="@string/incomplete"
+            android:textColor="@color/uiv3_action_bar_background"
+            android:textSize="@dimen/small_text_size" />
 
         <TextView
             android:id="@+id/txtName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dimen_2"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@+id/txtPartialAddress"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/margin_normal"
-            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_toLeftOf="@+id/imgEditIcon"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size"
             android:visibility="gone" />
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/address_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@+id/linearLayout">
+
 
         <ImageView
             android:id="@+id/imgLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txtName"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_small"
             android:contentDescription="@string/location"
-            android:paddingTop="@dimen/padding_mini"
             android:src="@drawable/ic_location_on_black_18dp" />
 
         <TextView
@@ -78,6 +111,7 @@
             android:id="@+id/txtExpressDelivery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
             android:layout_below="@+id/txtPh"
             android:layout_marginBottom="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_normal"
@@ -90,19 +124,6 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/txtPartialAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/address_layout"
-        android:drawablePadding="@dimen/dimen_2"
-        android:drawableRight="@drawable/ic_warning_red"
-        android:gravity="center"
-        android:padding="@dimen/padding_small"
-        android:text="@string/incomplete"
-        android:textColor="@color/uiv3_action_bar_background"
-        android:textSize="@dimen/small_text_size" />
-
 
 </RelativeLayout>
+

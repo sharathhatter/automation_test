@@ -43,10 +43,12 @@ import java.util.HashMap;
 import retrofit.Call;
 
 public class UpdateProfileActivity extends BackButtonActivity implements OtpDialogAware {
+
     private EditText editTextEmail, editTextFirstName, editTextLastName, editTextDob,
             editTextMobileNumber,
             editTextTelNumber;
     private CheckBox chkReceivePromos;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class UpdateProfileActivity extends BackButtonActivity implements OtpDial
     }
 
     private void initiateUpdateProfileActivity(UpdateProfileModel updateProfileModel) {
+
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextEmail.setTypeface(faceRobotoRegular);
         editTextEmail.setText(updateProfileModel.getEmail());
@@ -111,6 +114,8 @@ public class UpdateProfileActivity extends BackButtonActivity implements OtpDial
             }
         });
         trackEvent(TrackingAware.UPDATE_PROFILE_SHOWN, null);
+
+
     }
 
     private void showDatePickerDialog(View view) {
