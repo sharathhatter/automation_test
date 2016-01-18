@@ -19,6 +19,7 @@ public class AuthParameters {
     private String memberEmail;
     private String memberFullName;
     private String firstName;
+    private String cityId;
     private boolean isMoEngageEnabled;
     private boolean isLocalyticsEnabled;
     private boolean isFBLoggerEnabled;
@@ -48,12 +49,19 @@ public class AuthParameters {
             firstName = prefer.getString(Constants.FIRST_NAME_PREF, "");
             isKirana = prefer.getBoolean(Constants.IS_KIRANA, false);
             isMultiCityEnabled = prefer.getBoolean(Constants.IS_MULTICITY_ENABLED, false);
+            cityId = prefer.getString(Constants.CITY_ID, "1");
         }
     }
 
     public static void reset() {
         authParameters = null;
         BigBasketApiAdapter.reset();
+    }
+
+    public static void resetCity(String cityId) {
+        if (authParameters != null) {
+            authParameters.cityId = cityId;
+        }
     }
 
     public static AuthParameters getInstance(Context context) {
@@ -134,6 +142,11 @@ public class AuthParameters {
         this.isLocalyticsEnabled = isLocalyticsEnabled;
         this.isFBLoggerEnabled = isFBLoggerEnabled;
         this.isMultiCityEnabled = isMultiCityEnabled;
+    }
+
+    public String getCityId() {
+        if (cityId == null) return "1";
+        return cityId;
     }
 
     public boolean isNewRelicEnabled() {

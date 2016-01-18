@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.SearchUtil;
 
 public class SearchSuggestionProvider extends ContentProvider {
@@ -18,7 +19,8 @@ public class SearchSuggestionProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         String query = uri.getLastPathSegment().toLowerCase().trim();
-        return SearchUtil.searchQueryCall(query, getContext());
+        return SearchUtil.searchQueryCall(query, AuthParameters.getInstance(getContext()).getCityId(),
+                getContext());
     }
 
     @Override

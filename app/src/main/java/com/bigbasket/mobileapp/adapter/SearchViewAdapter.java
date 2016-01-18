@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.OnSearchTermActionCallback;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.SearchUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -250,6 +251,7 @@ public class SearchViewAdapter<T> extends CursorAdapter {
             if (context != null && context.get() != null && constraint != null) {
                 this.constraint = constraint.toString();
                 return SearchUtil.searchQueryCall(constraint.toString(),
+                        AuthParameters.getInstance(context.get()).getCityId(),
                         context.get().getApplicationContext());
             }
             return null;

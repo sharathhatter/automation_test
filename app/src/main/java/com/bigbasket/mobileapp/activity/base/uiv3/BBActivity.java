@@ -200,6 +200,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             editor.putString(Constants.CITY, defaultAddress.getCityName());
             editor.putString(Constants.CITY_ID, String.valueOf(defaultAddress.getCityId()));
             editor.apply();
+            AuthParameters.resetCity(String.valueOf(defaultAddress.getCityId()));
             if (mMainMenuView != null) {
                 mMainMenuView.setCityText(defaultAddress.toString());
             }

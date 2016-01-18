@@ -28,7 +28,7 @@ public class SearchUtil {
     public static final String HISTORY_TERM = "h";
     public static final String SUGGESTION_TERM = "s";
 
-    public static Cursor searchQueryCall(String query, Context context) {
+    public static Cursor searchQueryCall(String query, String cityId, Context context) {
         if (TextUtils.isEmpty(query.trim()) || (query.trim().length() < 3)) return null;
 
         SearchSuggestionDbHelper searchSuggestionDbHelper = new SearchSuggestionDbHelper(context);
@@ -41,7 +41,7 @@ public class SearchUtil {
             if (DataUtil.isInternetAvailable(context)) {
                 BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
                 try {
-                    Call<ApiResponse<AutoSearchApiResponseContent>> call = bigBasketApiService.autoSearch(query);
+                    Call<ApiResponse<AutoSearchApiResponseContent>> call = bigBasketApiService.autoSearch(query, cityId);
                     Response<ApiResponse<AutoSearchApiResponseContent>> response = call.execute();
                     if (response.isSuccess()) {
                         ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = response.body();
