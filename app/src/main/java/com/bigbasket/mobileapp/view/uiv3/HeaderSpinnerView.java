@@ -64,7 +64,7 @@ public class HeaderSpinnerView<T extends AppOperationAware> {
         this.imgCloseChildDropdown = imgCloseChildDropdown;
         this.layoutListHeader = layoutListHeader;
         onChildDropdownRequested = new OnChildDropdownRequested(layoutChildToolbarContainer,
-                ((AppOperationAware) ctx).getCurrentActivity());
+                ctx.getCurrentActivity());
     }
 
     public void setView() {
@@ -75,7 +75,7 @@ public class HeaderSpinnerView<T extends AppOperationAware> {
                 toolbar.addView(txtToolbarDropdown);
             }
             toolbar.setTitle("");
-            ((AppOperationAware) ctx).getCurrentActivity().setTitle("");
+            ctx.getCurrentActivity().setTitle("");
             txtToolbarDropdown.setOnClickListener(onChildDropdownRequested);
             imgCloseChildDropdown.setOnClickListener(onChildDropdownRequested);
 
@@ -90,9 +90,9 @@ public class HeaderSpinnerView<T extends AppOperationAware> {
             txtChildDropdownTitle.setText(title != null ? title.getText() : "");
             txtChildDropdownTitle.setOnClickListener(onChildDropdownRequested);
 
-            BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(((AppOperationAware) ctx).getCurrentActivity(),
+            BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(ctx.getCurrentActivity(),
                     R.layout.uiv3_product_header_list_item, headSection.getSectionItems(),
-                    typeface, ContextCompat.getColor(((AppOperationAware) ctx).getCurrentActivity(),
+                    typeface, ContextCompat.getColor(ctx.getCurrentActivity(),
                     R.color.uiv3_primary_text_color), Color.WHITE);
             bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             listHeaderDropdown.setAdapter(bbArrayAdapter);
@@ -112,7 +112,7 @@ public class HeaderSpinnerView<T extends AppOperationAware> {
                     if (position != Spinner.INVALID_POSITION) {
                         if (position != defaultSelectedIdx) {
                             mSelectedPosition = position;
-                            new OnSectionItemClickListener<>(((AppOperationAware) ctx).getCurrentActivity(), headSection,
+                            new OnSectionItemClickListener<>(ctx.getCurrentActivity(), headSection,
                                     headSection.getSectionItems().get(position),
                                     TrackingAware.PRODUCT_LIST_HEADER).onClick(view);
                         }

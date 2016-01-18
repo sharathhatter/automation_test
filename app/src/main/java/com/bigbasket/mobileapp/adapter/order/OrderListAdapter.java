@@ -83,7 +83,7 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(((AppOperationAware) context).getCurrentActivity());
+        LayoutInflater inflater = LayoutInflater.from(context.getCurrentActivity());
         switch (viewType) {
             case VIEW_TYPE_DATA:
                 View row = inflater.inflate(R.layout.uiv3_order_list_row, parent, false);
@@ -92,7 +92,7 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
                 row = inflater.inflate(R.layout.uiv3_list_loading_footer, parent, false);
                 return new FixedLayoutViewHolder(row);
             case VIEW_TYPE_EMPTY:
-                row = new View(((AppOperationAware) context).getCurrentActivity());
+                row = new View(context.getCurrentActivity());
                 return new FixedLayoutViewHolder(row);
         }
         return null;
@@ -162,12 +162,12 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
                 txtSlotTime.setVisibility(View.VISIBLE);
             } else if (order.getOrderState() == 1) { //delivered
                 txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(ContextCompat.getColor(((AppOperationAware) context).getCurrentActivity(), R.color.uiv3_large_list_item_bck));
+                layoutOrderData.setBackgroundColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.uiv3_large_list_item_bck));
                 imgOrderType.setImageResource(R.drawable.complete_order);
                 txtSlotTime.setVisibility(View.GONE);
             } else { //cancel
                 txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(ContextCompat.getColor(((AppOperationAware) context).getCurrentActivity(), R.color.uiv3_large_list_item_bck));
+                layoutOrderData.setBackgroundColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.uiv3_large_list_item_bck));
                 imgOrderType.setImageResource(R.drawable.order_cancel);
                 txtSlotTime.setVisibility(View.GONE);
             }
@@ -177,12 +177,12 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
                 btnPayNow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(((AppOperationAware) context).getCurrentActivity(), PayNowActivity.class);
+                        Intent intent = new Intent(context.getCurrentActivity(), PayNowActivity.class);
                         intent.putExtra(Constants.ORDER_ID, order.getOrderId());
                         HashMap<String, String> map = new HashMap<>();
-                        map.put(TrackEventkeys.NAVIGATION_CTX, ((AppOperationAware) context).getCurrentActivity().getCurrentScreenName());
-                        ((AppOperationAware) context).getCurrentActivity().trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
-                        ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        map.put(TrackEventkeys.NAVIGATION_CTX, context.getCurrentActivity().getCurrentScreenName());
+                        context.getCurrentActivity().trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
+                        context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                 });
             } else {
