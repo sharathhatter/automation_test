@@ -283,7 +283,7 @@ public interface BigBasketApiService {
     Call<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddresses(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx);
 
     @GET("search-tc/")
-    Call<ApiResponse<AutoSearchApiResponseContent>> autoSearch(@Query("t") String term);
+    Call<ApiResponse<AutoSearchApiResponseContent>> autoSearch(@Query("t") String term, @Query(Constants.CITY_ID) String cityId);
 
     @FormUrlEncoded
     @POST("co-post-voucher/")

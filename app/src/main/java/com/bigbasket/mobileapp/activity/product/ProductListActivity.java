@@ -595,10 +595,15 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     private void renderFilterAndSortProductList(ProductTabInfo productTabInfo,
                                                 String filterAndSortTabName,
                                                 int currentTabIndx) {
-        if (filterAndSortTabName == null || mViewPager == null || productTabInfo == null
+        if (filterAndSortTabName == null || productTabInfo == null
                 || productTabInfo.getProductInfo() == null) return;
-        Fragment fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter())
-                .getRegisteredFragment(currentTabIndx);
+        Fragment fragment;
+        if (mViewPager != null) {
+            fragment = ((TabPagerAdapterWithFragmentRegistration) mViewPager.getAdapter())
+                    .getRegisteredFragment(currentTabIndx);
+        } else {
+            fragment = getSupportFragmentManager().findFragmentByTag(GenericProductListFragment.class.getName());
+        }
         if (fragment != null) {
             ArrayList<Product> products = productTabInfo.getProductInfo().getProducts();
             if (products == null) {
