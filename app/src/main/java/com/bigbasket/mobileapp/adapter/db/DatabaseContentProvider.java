@@ -6,28 +6,34 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.application.BaseApplication;
+import com.bigbasket.mobileapp.contentProvider.SectionItemAnalyticsData;
 import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
+import com.crashlytics.android.Crashlytics;
 
 public class DatabaseContentProvider extends ContentProvider {
     DatabaseHelper databaseHelper;
     private static final String TAG = DatabaseContentProvider.class.getName();
 
-    public static final String AUTHORITY = BaseApplication.getsContext().getPackageName() + ".DatabaseContentProvider";
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".bbprovider";
 
     public static final Uri CONTENT_URI_PREFIX = Uri.parse("content://" + AUTHORITY);
 
     public static final int AREA_PIN_INFO_URI_MATCHER_CODE = 100;
-    public static final int HOME_SECTION_URI_MATCHER_CODE = 200;
-    public static final int MAIN_MENU_SECTION_URI_MATCHER_CODE = 300;
-    public static final int APP_DATA_DYNAMIC_URI_MATCHER_CODE = 400;
+    public static final int HOME_SECTION_URI_MATCHER_CODE = 101;
+    public static final int MAIN_MENU_SECTION_URI_MATCHER_CODE = 102;
+    public static final int APP_DATA_DYNAMIC_URI_MATCHER_CODE = 103;
+    public static final int SECTION_ITEM_ANALYTICS_DATA_DIR = 104;
+    public static final int SECTION_ITEM_ANALYTICS_DATA_ITEM = 105;
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -38,6 +44,10 @@ public class DatabaseContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, DynamicPageDbHelper.TABLE_NAME + "/" + AbstractDynamicPageSyncService.HOME_PAGE,
                 HOME_SECTION_URI_MATCHER_CODE);
         sURIMatcher.addURI(AUTHORITY, AppDataDynamicDbHelper.TABLE_NAME, APP_DATA_DYNAMIC_URI_MATCHER_CODE);
+        sURIMatcher.addURI(AUTHORITY, SectionItemAnalyticsData.TABLE_NAME,
+                SECTION_ITEM_ANALYTICS_DATA_DIR);
+        sURIMatcher.addURI(AUTHORITY, SectionItemAnalyticsData.TABLE_NAME + "/#",
+                SECTION_ITEM_ANALYTICS_DATA_ITEM);
     }
 
     public DatabaseContentProvider() {
@@ -47,7 +57,17 @@ public class DatabaseContentProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
         String tableName = getTableName(uri);
-        Log.d(TAG, "Running delete for uri = " + uri);
+        switch (sURIMatcher.match(uri)) {
+            case SECTION_ITEM_ANALYTICS_DATA_ITEM:
+                String id = uri.getLastPathSegment();
+                String idSelection = SectionItemAnalyticsData.ID + " = '" + id + "'";
+                if (selection == null) {
+                    selection = idSelection;
+                } else {
+                    selection += " AND " + idSelection;
+                }
+                break;
+        }
         int rowCount = sqlDB.delete(tableName, selection, selectionArgs);
         notifyChange(uri);
         return rowCount;
@@ -55,23 +75,49 @@ public class DatabaseContentProvider extends ContentProvider {
 
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+        switch (sURIMatcher.match(uri)) {
+            case SECTION_ITEM_ANALYTICS_DATA_DIR:
+                return SectionItemAnalyticsData.MIME_TYPE_DIR;
+            case SECTION_ITEM_ANALYTICS_DATA_ITEM:
+                return SectionItemAnalyticsData.MIME_TYPE_ITEM;
+            default:
+                return null;
+        }
     }
 
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
         String tableName = getTableName(uri);
-        Log.d(TAG, "Running insert for uri = " + uri + " and values = " + values);
         long newID = sqlDB.insert(tableName, null, values);
         if (newID > 0) {
             Uri newUri = ContentUris.withAppendedId(uri, newID);
-            if (getContext() != null) {
-                getContext().getContentResolver().notifyChange(uri, null);
-            }
+            notifyChange(uri);
             return newUri;
         }
         return uri;
+    }
+
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        Log.d(TAG, "Running bulkInsert for uri = " + uri);
+        int insertedCount = 0;
+        SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
+        String tableName = getTableName(uri);
+        sqlDB.beginTransaction();
+        try {
+            for (ContentValues cv : values) {
+                long rowCount = sqlDB.insertOrThrow(tableName, null, cv);
+                insertedCount += rowCount;
+            }
+            sqlDB.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Crashlytics.logException(e);
+            Log.e(TAG, "Failed bulkInsert for uri = " + uri, e);
+        } finally {
+            sqlDB.endTransaction();
+        }
+        return insertedCount;
     }
 
     @Override
@@ -87,6 +133,17 @@ public class DatabaseContentProvider extends ContentProvider {
         String tableName = getTableName(uri);
         queryBuilder.setTables(tableName);
         Log.d(TAG, "Running query for uri = " + uri);
+        switch (sURIMatcher.match(uri)) {
+            case SECTION_ITEM_ANALYTICS_DATA_ITEM:
+                String id = uri.getLastPathSegment();
+                String idSelection = SectionItemAnalyticsData.ID + " = '" + id + "'";
+                if (selection == null) {
+                    selection = idSelection;
+                } else {
+                    selection += " AND " + idSelection;
+                }
+                break;
+        }
         Cursor cursor = queryBuilder.query(databaseHelper.getReadableDatabase(),
                 projection, selection, selectionArgs, null, null, sortOrder);
         if (getContext() != null) {
@@ -101,8 +158,19 @@ public class DatabaseContentProvider extends ContentProvider {
         String tableName = getTableName(uri);
         Log.d(TAG, "Running update for uri = " + uri);
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        switch (sURIMatcher.match(uri)) {
+            case SECTION_ITEM_ANALYTICS_DATA_ITEM:
+                String id = uri.getLastPathSegment();
+                String idSelection = SectionItemAnalyticsData.ID + " = '" + id + "'";
+                if (selection == null) {
+                    selection = idSelection;
+                } else {
+                    selection += " AND " + idSelection;
+                }
+                break;
+        }
         int rowCount = db.update(tableName, values, selection, selectionArgs);
-        if (rowCount > 0 && getContext() != null) {
+        if (rowCount > 0) {
             notifyChange(uri);
         }
         return rowCount;
@@ -117,6 +185,9 @@ public class DatabaseContentProvider extends ContentProvider {
                 return DynamicPageDbHelper.TABLE_NAME;
             case APP_DATA_DYNAMIC_URI_MATCHER_CODE:
                 return AppDataDynamicDbHelper.TABLE_NAME;
+            case SECTION_ITEM_ANALYTICS_DATA_DIR:
+            case SECTION_ITEM_ANALYTICS_DATA_ITEM:
+                return SectionItemAnalyticsData.TABLE_NAME;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }

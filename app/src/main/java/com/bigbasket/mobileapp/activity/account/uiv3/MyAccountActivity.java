@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonSpinnerDateActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -60,7 +59,7 @@ public class MyAccountActivity extends BackButtonActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
+        setPreviousScreenName(TrackEventkeys.ACCOUNT_MENU);
         setTitle(getString(R.string.myAccount));
         getMemberDetails();
     }
@@ -88,7 +87,7 @@ public class MyAccountActivity extends BackButtonActivity implements
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.getMemberProfileData();
+        Call<ApiResponse<UpdateProfileApiResponse>> call = bigBasketApiService.getMemberProfileData(getPreviousScreenName());
         call.enqueue(new BBNetworkCallback<ApiResponse<UpdateProfileApiResponse>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback) {
@@ -128,12 +127,11 @@ public class MyAccountActivity extends BackButtonActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit_detail:
-                Intent intent = new Intent(getCurrentActivity(), BackButtonSpinnerDateActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_UPDATE_PROFILE);
+                Intent intent = new Intent(getCurrentActivity(), UpdateProfileActivity.class);
                 intent.putExtra(Constants.UPDATE_PROFILE_OBJ, updateProfileModel);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                 trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_CLICKED, map);
                 return true;
             default:
@@ -203,60 +201,80 @@ public class MyAccountActivity extends BackButtonActivity implements
             layoutBirthday.setVisibility(View.GONE);
         }
 
-        RelativeLayout layoutAddress = (RelativeLayout) view.findViewById(R.id.layoutAddress);
         String address = getAddress(updateProfileModel);
         if (!TextUtils.isEmpty(address)) {
             TextView txtAddressLabel = (TextView) view.findViewById(R.id.txtAddressLabel);
             txtAddressLabel.setTypeface(faceRobotoRegular);
-
-            address += updateProfileModel.getCityName();
-            if (!TextUtils.isEmpty(updateProfileModel.getPincode()))
-                address += " - " + updateProfileModel.getPincode();
             TextView txtAddress = (TextView) view.findViewById(R.id.txtAddress);
             txtAddress.setTypeface(faceRobotoMedium);
             txtAddress.setText(address);
-        } else {
-            layoutAddress.setVisibility(View.GONE);
-            RelativeLayout layoutEmptyAddress = (RelativeLayout) view.findViewById(R.id.layoutEmptyAddress);
-            layoutEmptyAddress.setVisibility(View.VISIBLE);
         }
 
         contentLayout.addView(view);
-        setNextScreenNavigationContext(TrackEventkeys.ACCOUNT);
+        setCurrentScreenName(TrackEventkeys.ACCOUNT);
         trackEvent(TrackingAware.MY_ACCOUNT_SHOWN, null);
     }
 
     public void renderAddressActivity(View view) {
         Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.CHANGE_ADDRESS_FRAGMENT);
         intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ACCOUNT);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         trackEvent(TrackingAware.DELIVERY_ADDRESS_CLICKED, map);
     }
 
     private String getAddress(UpdateProfileModel updateProfileModel) {
-        String address = "";
-        if (!TextUtils.isEmpty(updateProfileModel.getHouseNumber())) {
-            address += updateProfileModel.getHouseNumber() + " ";
+        StringBuilder address = new StringBuilder("");
+        boolean appendSpace = false;
+        if (!UIUtil.isEmpty(updateProfileModel.getHouseNumber())) {
+            address.append(updateProfileModel.getHouseNumber());
+            appendSpace = true;
         }
-        if (!TextUtils.isEmpty(updateProfileModel.getLandmark())) {
-            address += updateProfileModel.getLandmark() + " ";
+        if (!UIUtil.isEmpty(updateProfileModel.getLandmark())) {
+            if (appendSpace) {
+                address.append(' ');
+            }
+            address.append(updateProfileModel.getLandmark());
+            appendSpace = true;
         }
-        if (!TextUtils.isEmpty(updateProfileModel.getResidentialComplex())) {
-            address += updateProfileModel.getResidentialComplex() + " ";
+        if (!UIUtil.isEmpty(updateProfileModel.getResidentialComplex())) {
+            if (appendSpace) {
+                address.append(' ');
+            }
+            address.append(updateProfileModel.getResidentialComplex());
+            appendSpace = true;
         }
 
-        if (!TextUtils.isEmpty(updateProfileModel.getStreet())) {
-            address += updateProfileModel.getStreet() + " ";
+        if (!UIUtil.isEmpty(updateProfileModel.getStreet())) {
+            if (appendSpace) {
+                address.append(' ');
+            }
+            address.append(updateProfileModel.getStreet());
+            appendSpace = true;
         }
 
-        if (!TextUtils.isEmpty(updateProfileModel.getArea())) {
-            address += updateProfileModel.getArea() + " ";
+        if (!UIUtil.isEmpty(updateProfileModel.getArea())) {
+            if (appendSpace) {
+                address.append(' ');
+            }
+            address.append(updateProfileModel.getArea());
+            appendSpace = true;
         }
 
-        return address;
+        if (!UIUtil.isEmpty(updateProfileModel.getCityName())) {
+            if (appendSpace) {
+                address.append(' ');
+            }
+            address.append(updateProfileModel.getCityName());
+            updateProfileModel.getPincode();
+            if (!UIUtil.isEmpty(updateProfileModel.getPincode())) {
+                address.append('-').append(updateProfileModel.getPincode());
+            }
+        }
+
+        return address.toString();
     }
 
 

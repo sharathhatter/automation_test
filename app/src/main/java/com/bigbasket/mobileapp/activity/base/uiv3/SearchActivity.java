@@ -1,6 +1,8 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,7 +35,8 @@ public class SearchActivity extends BBActivity {
         super.onCreate(savedInstanceState);
         mBbSearchableToolbarView =
                 (BBSearchableToolbarView) findViewById(R.id.bbSearchView);
-        mBbSearchableToolbarView.attachActivity(getCurrentActivity());
+        if (mBbSearchableToolbarView != null)
+            mBbSearchableToolbarView.attachActivity(getCurrentActivity());
         if (mBbSearchableToolbarView != null) {
             mBbSearchableToolbarView.setOnSearchEventListener(new OnSearchEventListener() {
 
@@ -77,7 +80,7 @@ public class SearchActivity extends BBActivity {
         Intent intent = new Intent(getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
         intent.putExtra(Constants.EAN_CODE, eanCode);
-        setNextScreenNavigationContext(TrackEventkeys.PS_SCAN);
+        setCurrentScreenName(TrackEventkeys.PS_SCAN);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -90,7 +93,7 @@ public class SearchActivity extends BBActivity {
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        setNextScreenNavigationContext(navigationCtx);
+        setCurrentScreenName(navigationCtx);
         intent.putExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
@@ -116,7 +119,7 @@ public class SearchActivity extends BBActivity {
         nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
         intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         intent.putExtra(Constants.TITLE, searchQuery);
-        setNextScreenNavigationContext(referrer);
+        setCurrentScreenName(referrer);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -126,9 +129,15 @@ public class SearchActivity extends BBActivity {
         if (searchIntentResult != null) {
             switch (searchIntentResult.getSearchType()) {
                 case SearchIntentResult.TYPE_BARCODE_SEARCH:
+                    if (mBbSearchableToolbarView != null) {
+                        mBbSearchableToolbarView.hide();
+                    }
                     handleEancode(searchIntentResult.getContent());
                     return;
                 case SearchIntentResult.TYPE_VOICE_SEARCH:
+                    if (mBbSearchableToolbarView != null) {
+                        mBbSearchableToolbarView.hide();
+                    }
                     triggerSearch(searchIntentResult.getContent(), TrackEventkeys.PS_VOICE);
                     return;
             }
@@ -140,5 +149,30 @@ public class SearchActivity extends BBActivity {
     public void onBackPressed() {
         if (mBbSearchableToolbarView != null && mBbSearchableToolbarView.onBackPressed()) return;
         super.onBackPressed();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Constants.PERMISSION_REQUEST_CODE_CAPTURE_CAMERA:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.CAMERA)
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (mBbSearchableToolbarView != null)
+                        mBbSearchableToolbarView.launchScanner();
+                }
+                break;
+            case Constants.PERMISSION_REQUEST_CODE_RECORD_AUDIO:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.RECORD_AUDIO)
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (mBbSearchableToolbarView != null)
+                        mBbSearchableToolbarView.launchVoiceSearch();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }

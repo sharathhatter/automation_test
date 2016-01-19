@@ -1,7 +1,9 @@
 package com.bigbasket.mobileapp.adapter.order;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -14,22 +16,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.GetMoreOrderAware;
 import com.bigbasket.mobileapp.interfaces.OrderItemClickAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class OrderListAdapter<T extends Context & AppOperationAware> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private static final int VIEW_TYPE_LOADING = 0;
@@ -39,7 +43,7 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
     private T context;
     private ArrayList<Order> orders;
     private int totalPages, currentPage, orderListSize;
-    private Typeface faceRobotoRegular, faceRobotoBold;
+    private Typeface faceRobotoRegular, faceRobotoBold, faceRupee;
 
     public OrderListAdapter(T context, ArrayList<Order> orders, int
             totalPages, int currentPage, int orderListSize) {
@@ -48,10 +52,10 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
         this.totalPages = totalPages;
         this.currentPage = currentPage;
         this.orderListSize = orderListSize;
-        this.faceRobotoRegular = FontHolder.getInstance(((AppOperationAware) context)
-                .getCurrentActivity()).getFaceRobotoRegular();
-        this.faceRobotoBold = FontHolder.getInstance(((AppOperationAware) context)
-                .getCurrentActivity()).getFaceRobotoBold();
+        FontHolder fontHolder = FontHolder.getInstance(context.getApplicationContext());
+        this.faceRobotoRegular = fontHolder.getFaceRobotoRegular();
+        this.faceRobotoBold = fontHolder.getFaceRobotoBold();
+        this.faceRupee = fontHolder.getFaceRupee();
     }
 
     public void setCurrentPage(int currentPage) {
@@ -79,7 +83,7 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(((AppOperationAware) context).getCurrentActivity());
+        LayoutInflater inflater = LayoutInflater.from(context.getCurrentActivity());
         switch (viewType) {
             case VIEW_TYPE_DATA:
                 View row = inflater.inflate(R.layout.uiv3_order_list_row, parent, false);
@@ -88,7 +92,7 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
                 row = inflater.inflate(R.layout.uiv3_list_loading_footer, parent, false);
                 return new FixedLayoutViewHolder(row);
             case VIEW_TYPE_EMPTY:
-                row = new View(((AppOperationAware) context).getCurrentActivity());
+                row = new View(context.getCurrentActivity());
                 return new FixedLayoutViewHolder(row);
         }
         return null;
@@ -158,12 +162,12 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
                 txtSlotTime.setVisibility(View.VISIBLE);
             } else if (order.getOrderState() == 1) { //delivered
                 txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(((AppOperationAware) context).getCurrentActivity().getResources().getColor(R.color.uiv3_large_list_item_bck));
+                layoutOrderData.setBackgroundColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.uiv3_large_list_item_bck));
                 imgOrderType.setImageResource(R.drawable.complete_order);
                 txtSlotTime.setVisibility(View.GONE);
             } else { //cancel
                 txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(((AppOperationAware) context).getCurrentActivity().getResources().getColor(R.color.uiv3_large_list_item_bck));
+                layoutOrderData.setBackgroundColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.uiv3_large_list_item_bck));
                 imgOrderType.setImageResource(R.drawable.order_cancel);
                 txtSlotTime.setVisibility(View.GONE);
             }
@@ -173,9 +177,12 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
                 btnPayNow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(((AppOperationAware) context).getCurrentActivity(), PayNowActivity.class);
+                        Intent intent = new Intent(context.getCurrentActivity(), PayNowActivity.class);
                         intent.putExtra(Constants.ORDER_ID, order.getOrderId());
-                        ((AppOperationAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put(TrackEventkeys.NAVIGATION_CTX, context.getCurrentActivity().getCurrentScreenName());
+                        context.getCurrentActivity().trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
+                        context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                 });
             } else {
@@ -187,7 +194,7 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
             String orderValStr = UIUtil.formatAsMoney(Double.parseDouble(order.getOrderValue()));
             int prefixLen = prefix.length();
             SpannableString spannableMrp = new SpannableString(prefix + orderValStr);
-            spannableMrp.setSpan(new CustomTypefaceSpan("", BaseActivity.faceRupee), prefixLen - 1,
+            spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.setText(spannableMrp);
             if (orderListSize - 1 == position && currentPage < totalPages && totalPages > 1) {

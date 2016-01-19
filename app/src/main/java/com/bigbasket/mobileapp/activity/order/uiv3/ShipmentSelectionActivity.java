@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableString;
@@ -68,7 +69,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.CO_DELIVERY_OPS);
+        setCurrentScreenName(TrackEventkeys.CO_DELIVERY_OPS);
         setTitle(getString(R.string.chooseSlot));
         mShipments = getIntent().getParcelableArrayListExtra(Constants.SHIPMENTS);
         String cityMode = getIntent().getStringExtra(Constants.CITY_MODE); //= merge basket
@@ -90,6 +91,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         renderFooter(cityMode);
         renderShipments(cityMode);
         trackEvent(TrackingAware.CHECKOUT_DELIVERY_OPTION_SHOWN, null, null, null, false, true);
+        trackEventsOnFabric(TrackingAware.CHECKOUT_DELIVERY_OPTION_SHOWN, null);
         trackCheckEventShown(mShipments);
     }
 
@@ -109,7 +111,6 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         }
         trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Shown", map);
     }
-
 
     @Override
     public int getMainLayout() {
@@ -180,11 +181,11 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                                 applyBottom = i != 0;
                             }
                             mSelectedShipmentIndx.add(i);
-                            shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
+                            shipmentView.setBackgroundColor(ContextCompat.getColor(this, R.color.uiv3_large_list_item_bck));
                             break;
                         case Constants.DISABLED:
                             applyBottom = i != 0;
-                            shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck_disabled));
+                            shipmentView.setBackgroundColor(ContextCompat.getColor(this, R.color.uiv3_large_list_item_bck_disabled));
                             break;
                     }
                 }
@@ -203,7 +204,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 if (isAdjacentShipmentDisabled(i, shipmentActionHashMap)) {
                     applyBottom = i != 0;
                 }
-                shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
+                shipmentView.setBackgroundColor(ContextCompat.getColor(this, R.color.uiv3_large_list_item_bck));
                 switchToggleDelivery.setVisibility(View.GONE);
                 mSelectedShipmentIndx.add(i);
             }
@@ -301,7 +302,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 SpannableString spannableString = new SpannableString(prefix + msg);
                 spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoMedium), 0, prefix.length(),
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_dialog_header_text_bkg)),
+                spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.uiv3_dialog_header_text_bkg)),
                         0, prefix.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 txtDeliverablesHeading.setText(spannableString);
             }
@@ -367,6 +368,29 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.SLOT_SELECTION_SCREEN;
+    }
+
+    private void trackToggleEvent(String cityMode) {
+        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.ACTION_NAME, cityMode);
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Toggle", map);
+    }
+
+    private void trackFinalShipmentEvent(ArrayList<Shipment> shipments, String cityMode) {
+        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.ACTION_NAME, !mHasUserToggledShipmentsAtAll ? "none" : cityMode);
+        if (mOriginalShipmentMap == null) {
+            mOriginalShipmentMap = new HashMap<>();
+        }
+        for (Shipment shipment : shipments) {
+            map.put(TrackEventkeys.FINAL_FIS, shipment.getFulfillmentType());
+            map.put(TrackEventkeys.ORIGINAL_FIS, mOriginalShipmentMap.get(shipment.getShipmentId()));
+            map.put("Final_" + shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
+        }
+
+        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".FinalStatus", map);
     }
 
     private class OnViewShipmentLinkedProductsListener implements View.OnClickListener {
@@ -441,13 +465,6 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         }
     }
 
-    private void trackToggleEvent(String cityMode) {
-        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.ACTION_NAME, cityMode);
-        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".Toggle", map);
-    }
-
     private class OnPostShipmentClickListener implements View.OnClickListener {
 
         private String cityMode;
@@ -459,7 +476,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         @Override
         public void onClick(View v) {
             HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
             trackEvent(TrackingAware.CHECKOUT_SLOT_SELECTED_CLICKED, map, null, null, false, true);
             if (mSelectedShipmentIndx == null || mSelectedShipmentIndx.size() == 0) {
                 showToast(getString(R.string.selectAllSlotsErrMsg));
@@ -479,26 +496,10 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             }
             String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
             if (potentialOrderId == null) return;
-            new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId,
-                    TrackEventkeys.CO_DELIVERY_OPS).startTask();
+            PostShipmentTask.startTask(getCurrentActivity(), selectedShipments, potentialOrderId,
+                    TrackEventkeys.CO_DELIVERY_OPS);
             trackFinalShipmentEvent(mShipments, cityMode);
         }
-    }
-
-    private void trackFinalShipmentEvent(ArrayList<Shipment> shipments, String cityMode) {
-        if (TextUtils.isEmpty(AppDataDynamic.getInstance(this).getAbModeName())) return;
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.ACTION_NAME, !mHasUserToggledShipmentsAtAll ? "none" : cityMode);
-        if (mOriginalShipmentMap == null) {
-            mOriginalShipmentMap = new HashMap<>();
-        }
-        for (Shipment shipment : shipments) {
-            map.put(TrackEventkeys.FINAL_FIS, shipment.getFulfillmentType());
-            map.put(TrackEventkeys.ORIGINAL_FIS, mOriginalShipmentMap.get(shipment.getShipmentId()));
-            map.put("Final_" + shipment.getFulfillmentType() + "_items", String.valueOf(shipment.getCount()));
-        }
-
-        trackEvent("Checkout." + AppDataDynamic.getInstance(this).getAbModeName() + ".FinalStatus", map);
     }
 
     private class OnSelectSlotClickListener implements View.OnClickListener {
@@ -514,7 +515,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         public void onClick(View v) {
             showSlotListDialog(v);
             HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+            map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
             trackEvent(TrackingAware.CHECKOUT_SLOT_SHOWN, map);
         }
 
@@ -548,7 +549,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                         }
 
                         HashMap<String, String> map = new HashMap<>();
-                        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                         if (selectedSlot.getSlotDisplay() != null)
                             map.put(TrackEventkeys.SELECTED_SLOT, selectedSlot.getSlotDisplay().getTime());
                         trackEvent(TrackingAware.CHECKOUT_SLOT_SELECTED, map);

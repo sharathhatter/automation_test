@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/deliveryAddressContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/uiv3_large_list_item_bck">
+
+    <LinearLayout
+        android:id="@+id/layoutCheckoutProgressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:id="@+id/address_label_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@+id/layoutCheckoutProgressContainer"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txtAddressLbl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/margin_mini"
+            android:drawableLeft="@drawable/ic_location_on_black_18dp"
+            android:paddingBottom="@dimen/padding_mini"
+            android:paddingTop="@dimen/padding_mini"
+            android:text="@string/delivery_address"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/txtChangeAddress"
+            style="@style/RippleStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_weight="0"
+            android:background="@drawable/apply_button_rounded_background"
+            android:paddingBottom="@dimen/padding_mini"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small"
+            android:paddingTop="@dimen/padding_mini"
+            android:text="@string/changeAllCaps"
+            android:textAllCaps="true"
+            android:textColor="@color/red"
+            android:textSize="@dimen/secondary_text_size" />
+    </LinearLayout>
+
+
+    <include
+        android:id="@+id/layoutCheckoutFooter"
+        layout="@layout/uiv3_checkout_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layoutCheckoutFooter"
+        android:layout_below="@+id/address_label_layout">
+
+        <include
+            android:id="@+id/layoutAddressDetails"
+            layout="@layout/uiv3_address_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/dimen_2"
+            android:padding="@dimen/padding_12" />
+
+        <ProgressBar
+            android:id="@+id/loading_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+
+</RelativeLayout>

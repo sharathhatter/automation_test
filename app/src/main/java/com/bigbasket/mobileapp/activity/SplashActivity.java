@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -27,6 +26,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -37,22 +37,27 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
-import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import retrofit.Call;
 
 
-public class SplashActivity extends SocialLoginActivity implements AppOperationAware {
+public class SplashActivity extends BaseActivity implements AppOperationAware {
 
     private boolean mIsFromActivityResult;
+    private ImageView imgBBLogo;
+    private View landingView;
+    private View progressView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_SPLASH_SCREEN);
+        setCurrentScreenName(TrackEventkeys.NC_SPLASH_SCREEN);
 
         // Defensive fix
         removePendingCodes();
@@ -66,11 +71,13 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
         }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        if (preferences.contains(Constants.FIRSE_TIME_USER)) {
-            MoEngageWrapper.setExistingUser(moEHelper, true);
-        } else {
-            MoEngageWrapper.setExistingUser(moEHelper, false);
-            editor.putBoolean(Constants.FIRSE_TIME_USER, true);
+        if (savedInstanceState == null) {
+            if (preferences.contains(Constants.FIRSE_TIME_USER)) {
+                MoEngageWrapper.setExistingUser(moEHelper, true);
+            } else {
+                MoEngageWrapper.setExistingUser(moEHelper, false);
+                editor.putBoolean(Constants.FIRSE_TIME_USER, true);
+            }
         }
         if (!BuildConfig.DEBUG) {
             AppsFlyerLib.setAppsFlyerKey(Constants.APP_FLYER_ID);
@@ -78,17 +85,16 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
             AppsFlyerLib.sendTracking(getApplicationContext()); //detects installation, session and updates
             AppsFlyerLib.setCurrencyCode("INR");
             editor.putBoolean(Constants.APP_LAUNCH, true);
-            if (checkInternetConnection()) {
-                NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
-            }
         }
         editor.commit(); //HomeActivity need APP_LAUNCH flag, so we don't want to write data in background
     }
 
     private void startSplashScreen() {
-        setContentView(R.layout.loading_layout);
-        ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
-        UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo);
+        setContentView(R.layout.splash_screen_layout);
+        imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
+        UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo, true);
+        landingView = findViewById(R.id.layoutLoginButtons);
+        progressView = findViewById(R.id.progressBar);
 
         if (AuthParameters.getInstance(this).isAuthTokenEmpty() && !CityManager.hasUserChosenCity(this)) {
             if (TextUtils.isEmpty(AuthParameters.getInstance(this).getVisitorId())) {
@@ -141,25 +147,32 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (imgBBLogo != null) {
+            UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo, true);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (imgBBLogo != null) {
+            imgBBLogo.setImageBitmap(null);
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
     }
 
     private void loadHomePage() {
-        launchTutorial(FragmentCodes.START_HOME);
-    }
-
-    @Override
-    protected void handleTutorialResponse(int resultCode) {
-        if (resultCode == FragmentCodes.START_HOME) {
-            Intent homePageIntent = new Intent(this, HomeActivity.class);
-            homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
-            startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                finish();
-            }
-        } else {
-            super.handleTutorialResponse(resultCode);
+        Intent homePageIntent = new Intent(this, HomeActivity.class);
+        homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
+        startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            finish();
         }
     }
 
@@ -194,7 +207,7 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
             Log.e("StartActivity", "Error while creating device-properties json");
         }
 
-        String imei = UIUtil.getIMEI(this);
+        String imei = UIUtil.getUniqueDeviceIdentifier(this);
         Call<RegisterDeviceResponse> call = bigBasketApiService.registerDevice(imei, deviceID,
                 String.valueOf(city.getId()), devicePropertiesJsonObj.toString());
         call.enqueue(new BBNetworkCallback<RegisterDeviceResponse>(this, true) {
@@ -252,8 +265,27 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
     }
 
     private void startLandingPage() {
-        Intent intent = new Intent(getCurrentActivity(), LandingPageActivity.class);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        progressView.setVisibility(View.GONE);
+        landingView.setVisibility(View.VISIBLE);
+    }
+
+    public void onLandingPageButtonClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btn_login:
+                Map<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+                trackEvent(TrackingAware.ENTRY_PAGE_LOGIN_CLICKED, eventAttribs);
+                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, true);
+                break;
+            case R.id.btnRegister:
+                trackEvent(TrackingAware.ENTRY_PAGE_SIGNUP_CLICKED, null);
+                launchRegistrationPage();
+                break;
+            case R.id.btnSkip:
+                trackEvent(TrackingAware.ENTRY_PAGE_SKIP_BUTTON_CLICKED, null);
+                showChangeCity(true, TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE, false);
+                break;
+        }
     }
 
     @Override
@@ -273,20 +305,14 @@ public class SplashActivity extends SocialLoginActivity implements AppOperationA
         if (resultCode == NavigationCodes.GO_TO_HOME) {
             removePendingGoToHome();
             handleResults();
-        } else if (requestCode == NavigationCodes.TUTORIAL_SEEN) {
-            super.onActivityResult(requestCode, resultCode, data);
-        } else {
+        } else if (resultCode != NavigationCodes.SIGN_UP_CANCELLED
+                && resultCode != NavigationCodes.SIGN_IN_CANCELLED) {
             finish();
         }
     }
 
     private void handleResults() {
         loadHomePage();
-    }
-
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
     }
 
     @Override

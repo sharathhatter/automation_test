@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import com.bigbasket.mobileapp.adapter.db.AppDataDynamicDbHelper;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataDynamicResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SpecialityStoresInfoModel;
+import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.google.gson.Gson;
@@ -29,10 +30,8 @@ import java.util.concurrent.TimeUnit;
 public class AppDataDynamic {
     private static final String TIMEOUT_KEY = "dynamic_data_timeout";
     private static final long TIMEOUT = 2;  // minutes
-
-    private static volatile AppDataDynamic appDataDynamic;
     private static final Object lock = new Object();
-
+    private static volatile AppDataDynamic appDataDynamic;
     private ArrayList<String> addToBasketPostParams;
     private ArrayList<AddressSummary> addressSummaries;
     private boolean isContextualMode;
@@ -40,6 +39,18 @@ public class AppDataDynamic {
     private String abModeName;  // Used for analytics
     private HashMap<String, String> storeAvailabilityMap;
     private HashMap<String, SpecialityStoresInfoModel> specialityStoreDetailList;
+    private Address userDeliveryAddress;
+
+    private AppDataDynamic(Context context) {
+        Cursor cursor = context.getContentResolver().query(AppDataDynamicDbHelper.CONTENT_URI,
+                AppDataDynamicDbHelper.getDefaultProjection(), null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                updateInstance(context, cursor);
+            }
+            cursor.close();
+        }
+    }
 
     public static AppDataDynamic getInstance(Context context) {
         AppDataDynamic localInstance = appDataDynamic;
@@ -53,33 +64,6 @@ public class AppDataDynamic {
             }
         }
         return localInstance;
-    }
-
-    public boolean updateInstance(Context context,
-                                  Cursor cursor) {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        boolean success = true;
-        if (cursor != null && cursor.moveToFirst()) {
-            String appDataDynamicJson = cursor.getString(cursor.getColumnIndex(AppDataDynamicDbHelper.COLUMN_APP_DATA_DYNAMIC_PARAMS));
-            if (!TextUtils.isEmpty(appDataDynamicJson)) {
-                Gson gson = new Gson();
-                AppDataDynamicResponse appDataDynamicResponse = gson.fromJson(appDataDynamicJson, AppDataDynamicResponse.class);
-                if (appDataDynamicResponse.status == 0) {
-                    this.addressSummaries = appDataDynamicResponse.getAppDataDynamicResponse.addressSummaries;
-                    this.addToBasketPostParams = appDataDynamicResponse.getAppDataDynamicResponse.addToBasketPostParams;
-                    this.isContextualMode = appDataDynamicResponse.getAppDataDynamicResponse.isContextualMode;
-                    this.expressAvailability = appDataDynamicResponse.getAppDataDynamicResponse.expressAvailability;
-                    this.abModeName = appDataDynamicResponse.getAppDataDynamicResponse.abModeName;
-                    this.storeAvailabilityMap = appDataDynamicResponse.getAppDataDynamicResponse.storeAvailabilityMap;
-                    this.specialityStoreDetailList = appDataDynamicResponse.getAppDataDynamicResponse.specialityStoresInfo;
-                } else {
-                    success = false;
-                }
-            }
-            editor.putString(TIMEOUT_KEY, new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
-                    Locale.getDefault()).format(new Date())).apply();
-        }
-        return success;
     }
 
     public static boolean isStale(@Nullable Context context) {
@@ -100,17 +84,6 @@ public class AppDataDynamic {
         }
     }
 
-    private AppDataDynamic(Context context) {
-        Cursor cursor = context.getContentResolver().query(AppDataDynamicDbHelper.CONTENT_URI,
-                AppDataDynamicDbHelper.getDefaultProjection(), null, null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                updateInstance(context, cursor);
-            }
-            cursor.close();
-        }
-    }
-
     public static void reset(Context context) {
         if (context == null) return;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
@@ -118,6 +91,34 @@ public class AppDataDynamic {
         AppDataDynamicDbHelper.delete(context);
         context.startService(new Intent(context, GetAppDataDynamicIntentService.class));
         appDataDynamic = null;
+    }
+
+    public boolean updateInstance(Context context,
+                                  Cursor cursor) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        boolean success = true;
+        if (cursor != null && cursor.moveToFirst()) {
+            String appDataDynamicJson = cursor.getString(cursor.getColumnIndex(AppDataDynamicDbHelper.COLUMN_APP_DATA_DYNAMIC_PARAMS));
+            if (!TextUtils.isEmpty(appDataDynamicJson)) {
+                Gson gson = new Gson();
+                AppDataDynamicResponse appDataDynamicResponse = gson.fromJson(appDataDynamicJson, AppDataDynamicResponse.class);
+                if (appDataDynamicResponse.status == 0) {
+                    this.addressSummaries = appDataDynamicResponse.getAppDataDynamicResponse.addressSummaries;
+                    this.addToBasketPostParams = appDataDynamicResponse.getAppDataDynamicResponse.addToBasketPostParams;
+                    this.isContextualMode = appDataDynamicResponse.getAppDataDynamicResponse.isContextualMode;
+                    this.expressAvailability = appDataDynamicResponse.getAppDataDynamicResponse.expressAvailability;
+                    this.abModeName = appDataDynamicResponse.getAppDataDynamicResponse.abModeName;
+                    this.storeAvailabilityMap = appDataDynamicResponse.getAppDataDynamicResponse.storeAvailabilityMap;
+                    this.specialityStoreDetailList = appDataDynamicResponse.getAppDataDynamicResponse.specialityStoresInfo;
+                    this.userDeliveryAddress = appDataDynamicResponse.getAppDataDynamicResponse.userSelectedAddress;
+                } else {
+                    success = false;
+                }
+            }
+            editor.putString(TIMEOUT_KEY, new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
+                    Locale.getDefault()).format(new Date())).apply();
+        }
+        return success;
     }
 
     @Nullable
@@ -152,5 +153,10 @@ public class AppDataDynamic {
     @Nullable
     public HashMap<String, SpecialityStoresInfoModel> getSpecialityStoreDetailList() {
         return specialityStoreDetailList;
+    }
+
+    @Nullable
+    public Address getUserDeliveryAddress() {
+        return userDeliveryAddress;
     }
 }

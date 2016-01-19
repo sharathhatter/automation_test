@@ -36,7 +36,6 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
-import com.bigbasket.mobileapp.model.section.SubSectionItem;
 import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -110,8 +109,14 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
     public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
                                          HashMap<Integer, Renderer> rendererHashMap) {
         Typeface faceRobotoMedium = FontHolder.getInstance(getContext()).getFaceRobotoMedium();
-        ArrayList<SubSectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
-        if (subNavigationSectionItems == null || subNavigationSectionItems.size() == 0) return;
+        if (sectionItem.getSubSectionItems() == null
+                || sectionItem.getSubSectionItems().isEmpty()) {
+            return;
+        }
+        ArrayList<SectionItem> subNavigationSectionItems = new ArrayList<>(
+                sectionItem.getSubSectionItems().size());
+        subNavigationSectionItems.addAll(sectionItem.getSubSectionItems());
+
 
         if (mListSubNavigationParent == null) {
             mListSubNavigationParent = (AnimatedRelativeLayout) findViewById(R.id.layoutSubNavigationItems);
@@ -123,6 +128,8 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
             mListSubNavigation.setLayoutManager(new LinearLayoutManager(getContext()));
         }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
+        section = new Section(sectionItem.getTitle(), sectionItem.getDescription(), Section.MENU,
+                subNavigationSectionItems, null);
         SectionCursorHelper.setSectionNavigationItemList(sectionNavigationItems,
                 subNavigationSectionItems, section);
         String selectedId = mCallback != null ? mCallback.onSubCategoryIdRequested() : null;
@@ -275,7 +282,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
     public boolean onBackPressed(@Nullable DrawerLayout drawerLayout) {
         if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
             if (mListSubNavigationParent != null && mListSubNavigationParent.getVisibility() == View.VISIBLE) {
-                mListSubNavigationParent.setVisibility(View.GONE, true);
+                onSubNavigationHideRequested(true);
                 return true;
             } else {
                 drawerLayout.closeDrawers();
@@ -288,6 +295,12 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
     public void onNavigationSelection(String name) {
         if (mNavRecyclerView != null && mNavRecyclerView.getAdapter() != null) {
             ((NavigationSelectedValueAware) mNavRecyclerView.getAdapter()).setSelectedNavigationCategory(name);
+        }
+    }
+
+    public void clear() {
+        if (mNavRecyclerView != null) {
+            mNavRecyclerView.setAdapter(null);
         }
     }
 }

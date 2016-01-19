@@ -11,6 +11,8 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,13 +21,13 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.telephony.TelephonyManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -67,9 +69,11 @@ import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
+import com.bigbasket.mobileapp.util.analytics.NewRelicWrapper;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -111,7 +115,7 @@ public class UIUtil {
                 scaleToScreenIndependentPixel(2, context), scaleToScreenIndependentPixel(10, context),
                 scaleToScreenIndependentPixel(5, context));
         textView.setLayoutParams(layoutParams);
-        textView.setTextColor(context.getResources().getColor(R.color.redColor));
+        textView.setTextColor(ContextCompat.getColor(context, R.color.redColor));
         textView.setTextSize(scaleToScreenIndependentPixel(14, context));
         return textView;
     }
@@ -159,6 +163,10 @@ public class UIUtil {
             }
         }
         return sbr.toString();
+    }
+
+    public static boolean isEmpty(String str) {
+        return str == null || TextUtils.isEmpty(str.trim());
     }
 
 
@@ -242,7 +250,7 @@ public class UIUtil {
     }
 
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
-        DynamicPageDbHelper.clearAll(ctx);
+        DynamicPageDbHelper.clearAllAsync(ctx);
 
         AppDataSyncHandler.reset(ctx);
         AppDataDynamic.reset(ctx);
@@ -275,7 +283,6 @@ public class UIUtil {
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
-
             MoEHelper moEHelper = MoEngageWrapper.getMoHelperObj(ctx);
             MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
             MoEngageWrapper.setUserAttribute(moEHelper, Constants.IS_LOGGED_IN, true);
@@ -288,23 +295,35 @@ public class UIUtil {
             MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
             MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, email);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, mId);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.USER_NAME, userDetails.fullName);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, userDetails.analytics.mobileNumber);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
+            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
+
             if (!TextUtils.isEmpty(userDetails.analytics.gender)) {
                 MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, userDetails.analytics.gender);
                 LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, userDetails.analytics.gender);
+                NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, userDetails.analytics.gender);
             }
             if (!TextUtils.isEmpty(userDetails.analytics.hub)) {
                 MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
                 LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
+                NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
             }
             if (!TextUtils.isEmpty(userDetails.analytics.dateOfBirth)) {
                 MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, userDetails.analytics.dateOfBirth);
                 LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, userDetails.analytics.dateOfBirth);
+                NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, userDetails.analytics.dateOfBirth);
             }
 
             if (userDetails.analytics.additionalAttrs != null) {
                 for (Map.Entry<String, Object> additionalInfoObj : userDetails.analytics.additionalAttrs.entrySet()) {
                     MoEngageWrapper.setUserAttribute(moEHelper, additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
                     LocalyticsWrapper.setIdentifier(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
+                    NewRelicWrapper.setIdentifier(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
                 }
                 editor.putString(Constants.ANALYTICS_ADDITIONAL_ATTRS, new Gson().toJson(userDetails.analytics.additionalAttrs));
             }
@@ -352,7 +371,7 @@ public class UIUtil {
         final String appPackageName = Constants.BASE_PKG_NAME;
         try {
             activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-        } catch (android.content.ActivityNotFoundException anfe) {
+        } catch (ActivityNotFoundException anfe) {
             activity.startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
         }
@@ -376,7 +395,8 @@ public class UIUtil {
             } else {
                 url = baseImgUrl + productImgUrl;
             }
-            UIUtil.displayAsyncImage(imgProduct, url);
+            UIUtil.displayAsyncImage(imgProduct, url, false,
+                    R.drawable.loading_small);
         } else {
             imgProduct.setImageResource(R.drawable.noimage);
         }
@@ -387,16 +407,52 @@ public class UIUtil {
     }
 
     public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId) {
-        Picasso.with(imageView.getContext()).load(drawableId).into(imageView);
+        displayAsyncImage(imageView, drawableId, false);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, @DrawableRes int drawableId,
+                                         boolean skipMemoryCache) {
+        RequestCreator requestCreator = Picasso.with(imageView.getContext()).load(drawableId);
+        if (skipMemoryCache) {
+            requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE);
+        }
+        //Never do disk cache for drawables
+        requestCreator.memoryPolicy(MemoryPolicy.NO_STORE);
+        requestCreator.into(imageView);
     }
 
     public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
                                          @DrawableRes int placeHolderDrawableId) {
-        Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
+        displayAsyncImage(imageView, url, animate, placeHolderDrawableId, 0, 0);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
+                                         @DrawableRes int placeHolderDrawableId,
+                                         int targetImageWidth, int targetImageHeight) {
+        displayAsyncImage(imageView, url, animate, placeHolderDrawableId, targetImageWidth,
+                targetImageHeight, false);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
+                                         @DrawableRes int placeHolderDrawableId,
+                                         int targetImageWidth, int targetImageHeight,
+                                         boolean skipMemoryCache) {
         Picasso picasso = Picasso.with(imageView.getContext());
+        picasso.cancelRequest(imageView);
         RequestCreator requestCreator = picasso.load(url)
                 .error(R.drawable.noimage)
                 .placeholder(placeHolderDrawableId);
+        if (skipMemoryCache) {
+            requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE);
+        }
+        if (targetImageWidth > 0 && targetImageHeight > 0) {
+            requestCreator.resize(targetImageWidth, targetImageHeight);
+            Log.i(imageView.getContext().getClass().getName(),
+                    "Loading image " + (skipMemoryCache ? "[NO_MEM_CACHE] " : "")
+                            + "(" + targetImageWidth + "," + targetImageHeight + ") = " + url);
+        } else {
+            Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
+        }
         if (!animate) {
             requestCreator.noFade();
         }
@@ -706,17 +762,17 @@ public class UIUtil {
     public static void addNavigationContextToBundle(Fragment fragment, String mNextScreenNavigationContext) {
         Bundle args = fragment.getArguments();
         String nc = fragment instanceof AnalyticsNavigationContextAware ?
-                ((AnalyticsNavigationContextAware) fragment).getNextScreenNavigationContext() : null;
+                ((AnalyticsNavigationContextAware) fragment).getCurrentScreenName() : null;
 
         if (nc == null && fragment.getActivity() == null) // when Fragment's onActivityCreated in not called
             nc = mNextScreenNavigationContext;
         if (nc == null && fragment.getActivity() != null &&
                 fragment.getActivity() instanceof AnalyticsNavigationContextAware) {
             // Use activity's current nc
-            nc = ((AnalyticsNavigationContextAware) fragment.getActivity()).getCurrentNavigationContext();
+            nc = ((AnalyticsNavigationContextAware) fragment.getActivity()).getPreviousScreenName();
             if (nc == null) {
                 nc = ((AnalyticsNavigationContextAware) fragment.getActivity()).
-                        getNextScreenNavigationContext();
+                        getCurrentScreenName();
             }
         }
         if (!TextUtils.isEmpty(nc)) {
@@ -739,9 +795,12 @@ public class UIUtil {
         return radioButton;
     }
 
-    public static String getIMEI(Context context) {
-        TelephonyManager mngr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        return mngr.getDeviceId();
+    public static String getUniqueDeviceIdentifier(Context context) {
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wInfo = wifiManager.getConnectionInfo();
+        if (wInfo != null && !TextUtils.isEmpty(wInfo.getMacAddress()))
+            return wInfo.getMacAddress();
+        return " ";
     }
 
     public static void dialNumber(String number, Activity activity) {
@@ -778,7 +837,7 @@ public class UIUtil {
             TextView txtMsg = (TextView) dlg.findViewById(R.id.txtMsg);
             int dp16 = (int) activity.getResources().getDimension(R.dimen.padding_normal);
             txtMsg.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            txtMsg.setTextColor(activity.getResources().getColor(android.R.color.black));
+            txtMsg.setTextColor(ContextCompat.getColor(activity, android.R.color.black));
             String prefix = activity.getString(R.string.txnFailureMsgPrefix) + " ";
             String suffix = activity.getString(R.string.txnFailureMsgSuffix) + " ";
             final String csEmail = "customerservice@bigbasket.com";

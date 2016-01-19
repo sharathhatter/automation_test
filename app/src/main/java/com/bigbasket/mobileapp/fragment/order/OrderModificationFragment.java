@@ -147,4 +147,10 @@ public class OrderModificationFragment extends BaseFragment {
             }
         }
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "OrderModificationFragment";
+    }
 }

@@ -140,7 +140,7 @@ public class GiftHomeActivity extends BackButtonActivity implements GiftItemAwar
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.GIFT_ADDMESSAGE);
         trackEvent(TrackingAware.GIFT_OPTS_SAVE_AND_CONTINUE, eventAttribs);
         String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
-        new PostGiftTask<>(this, potentialOrderId, gift, getCurrentNavigationContext()).startTask();
+        new PostGiftTask<>(this, potentialOrderId, gift, getPreviousScreenName()).startTask();
     }
 
     @Override

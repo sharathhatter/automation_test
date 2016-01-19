@@ -47,6 +47,8 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
     @SerializedName(Constants.RENDERING_ID)
     private int renderingId;
 
+    private transient boolean isShown = false;
+
     public Section(SectionTextItem title, SectionTextItem description,
                    String sectionType, ArrayList<SectionItem> sectionItems, SectionItem moreSectionItem) {
         super(title, description);
@@ -68,6 +70,7 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
             moreSectionItem = source.readParcelable(Section.class.getClassLoader());
         }
         renderingId = source.readInt();
+        isShown = source.readByte() != 0;
     }
 
     public String getSectionType() {
@@ -106,14 +109,22 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
             dest.writeParcelable(moreSectionItem, flags);
         }
         dest.writeInt(renderingId);
+        dest.writeByte(isShown ? (byte) 1 : 0);
     }
 
     public int getWidgetHeight(Context context, HashMap<Integer, Renderer> rendererHashMap,
                                boolean adjustForScreen) {
+        return getWidgetHeight(context, rendererHashMap, adjustForScreen, -1);
+    }
+
+    public int getWidgetHeight(Context context, HashMap<Integer, Renderer> rendererHashMap,
+                               boolean adjustForScreen, int screenWidth) {
         if (sectionItems == null) return 0;
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int screenWidth = displayMetrics.widthPixels;
+        if (screenWidth == -1) {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            screenWidth = displayMetrics.widthPixels;
+        }
         int maxHeight = 0;
         for (SectionItem sectionItem : sectionItems) {
             Renderer renderer = rendererHashMap != null ? rendererHashMap.get(sectionItem.getRenderingId()) : null;
@@ -128,5 +139,40 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
             maxHeight = Math.max(maxHeight, sectionItemHeight);
         }
         return maxHeight;
+    }
+
+    public boolean isShown() {
+        return isShown;
+    }
+
+    public void setIsShown(boolean isShown) {
+        this.isShown = isShown;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) {
+            return false;
+        }
+        Section section = (Section) o;
+
+        if (renderingId != section.renderingId) return false;
+        if (sectionType != null ? !sectionType.equals(section.sectionType) : section.sectionType != null)
+            return false;
+        if (sectionItems != null ? !sectionItems.equals(section.sectionItems) : section.sectionItems != null)
+            return false;
+        return !(moreSectionItem != null ? !moreSectionItem.equals(section.moreSectionItem) : section.moreSectionItem != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = sectionType != null ? sectionType.hashCode() : 0;
+        result = 31 * result + (sectionItems != null ? sectionItems.hashCode() : 0);
+        result = 31 * result + (moreSectionItem != null ? moreSectionItem.hashCode() : 0);
+        result = 31 * result + renderingId;
+        return result;
     }
 }

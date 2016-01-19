@@ -62,6 +62,8 @@
                 android:paddingRight="@dimen/padding_small"
                 android:paddingTop="@dimen/padding_normal"
                 android:textColor="@color/uiv3_secondary_text_color"
+                android:singleLine="true"
+                android:inputType="textNoSuggestions"
                 android:textSize="@dimen/primary_text_size" />
 
             <ListView

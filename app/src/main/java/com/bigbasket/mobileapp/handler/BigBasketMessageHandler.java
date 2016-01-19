@@ -35,8 +35,9 @@ public class BigBasketMessageHandler<T extends ApiErrorAware & AppOperationAware
                         getString(R.string.server_error), finish);
                 break;
             case ApiErrorCodes.INVALID_USER:
-                ctx.showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.potentialOrderIdExpired),
-                        NavigationCodes.GO_TO_HOME);
+                ctx.showApiErrorDialog(null,
+                        !TextUtils.isEmpty(message) ? message : getString(R.string.invalid_user),
+                        false);
                 break;
             case ApiErrorCodes.INVALID_FIELD:
                 ctx.showApiErrorDialog(getString(R.string.headingServerError),

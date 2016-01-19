@@ -12,10 +12,10 @@
     <color name="dark_green">#ff14a209</color>
     <color name="white">#ffffff</color>
     <color name="translucent_white">#BBffffff</color>
+    <color name="white_60p">#99FFFFFF</color>
     <color name="strokeLine">#d1d2d3</color>
     <color name="redColor">#ba5253</color>
     <color name="promo_txt_green_color">#2E9B57</color>
-    <color name="promo_red_color">#e80000</color>
     <color name="active_order_red_color">#ed5353</color>
     <color name="dark_black">#000000</color>
 
@@ -69,7 +69,6 @@
         <item>#ffbb33</item>
     </string-array>
 
-    <color name="fbutton_color_asbestos">#7f8c8d</color>
     <color name="landing_page_header_bkg">#66000000</color>
 
     <color name="separator_line_color">#afafaf</color>
@@ -81,5 +80,8 @@
     <color name="uiv3_default_button_click_bck">#fafafa</color>
 
     <color name="uiv3_bbShops_circle">#84c225</color>
+    <color name="uic_btn_disable">#c2c1c1</color>
+
+    <color name="ripple_dark">#33ffffff</color>
 
 </resources>

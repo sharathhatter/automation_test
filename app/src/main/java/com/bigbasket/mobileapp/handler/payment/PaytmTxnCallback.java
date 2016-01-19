@@ -4,30 +4,30 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
-import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
-import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
+import com.bigbasket.mobileapp.model.order.PaytmResponseHolder;
+import com.bigbasket.mobileapp.util.Constants;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
 
 import java.util.HashMap;
 
-public class PaytmTxnCallback<T extends AppOperationAware> implements PaytmPaymentTransactionCallback {
+public class PaytmTxnCallback implements PaytmPaymentTransactionCallback {
 
-    private T ctx;
     @Nullable
     private String orderId;
     @Nullable
     private String potentialOrderId;
     private boolean isPayNow;
     private boolean isWallet;
+    private String txnId;
 
-    public PaytmTxnCallback(T ctx, @Nullable String orderId, @Nullable String potentialOrderId,
-                            boolean isPayNow, boolean isWallet) {
-        this.ctx = ctx;
+    public PaytmTxnCallback(@Nullable String orderId, @Nullable String potentialOrderId,
+                            String txnId, boolean isPayNow, boolean isWallet) {
         this.orderId = orderId;
         this.potentialOrderId = potentialOrderId;
         this.isPayNow = isPayNow;
         this.isWallet = isWallet;
+        this.txnId = txnId;
     }
 
     @Override
@@ -42,30 +42,37 @@ public class PaytmTxnCallback<T extends AppOperationAware> implements PaytmPayme
 
     @Override
     public void networkNotAvailable() {
-        ctx.getHandler().sendOfflineError();
+        onPaytmCallback(false, null);
     }
 
     @Override
     public void clientAuthenticationFailed(String s) {
-        ((ApiErrorAware) ctx).showApiErrorDialog("Error!", s);
+        onPaytmCallback(false, null);
     }
 
     @Override
     public void someUIErrorOccurred(String s) {
-        ((ApiErrorAware) ctx).showApiErrorDialog("Error!", s);
+        onPaytmCallback(false, null);
     }
 
     @Override
     public void onErrorLoadingWebPage(int iniErrorCode, String inErrorMessage, String inFailingUrl) {
-        ((ApiErrorAware) ctx).showApiErrorDialog("Error!", inErrorMessage);
+        onPaytmCallback(false, null);
     }
 
-    private void onPaytmCallback(boolean status, Bundle bundle) {
+    @Override
+    public void onBackPressedCancelTransaction() {
+        onPaytmCallback(false, null);
+    }
+
+    private void onPaytmCallback(boolean status, @Nullable Bundle bundle) {
         HashMap<String, String> paramsMap = new HashMap<>();
-        for (String key : bundle.keySet()) {
-            Object val = bundle.get(key);
-            if (val instanceof String) {
-                paramsMap.put(key, val.toString());
+        if (bundle != null) {
+            for (String key : bundle.keySet()) {
+                Object val = bundle.get(key);
+                if (val instanceof String) {
+                    paramsMap.put(key, val.toString());
+                }
             }
         }
 
@@ -73,12 +80,15 @@ public class PaytmTxnCallback<T extends AppOperationAware> implements PaytmPayme
         if (TextUtils.isEmpty(txnId)) {
             txnId = paramsMap.get("ORDER_ID");
         }
+        if (TextUtils.isEmpty(txnId)) {
+            txnId = this.txnId;
+            paramsMap.put("ORDER_ID", txnId);
+        }
 
-        new PostPaymentProcessor<>(ctx, txnId)
-                .withOrderId(orderId)
-                .withPotentialOrderId(potentialOrderId)
-                .withIsFundWallet(isWallet)
-                .withIsPayNow(isPayNow)
-                .processPaytm(status, paramsMap);
+        ValidatePaymentRequest validatePaymentRequest =
+                new ValidatePaymentRequest(txnId, orderId, potentialOrderId, Constants.PAYTM_WALLET);
+        validatePaymentRequest.setIsPayNow(isPayNow);
+        validatePaymentRequest.setIsWallet(isWallet);
+        PaytmResponseHolder.setPaytmResponse(status, validatePaymentRequest, paramsMap);
     }
 }

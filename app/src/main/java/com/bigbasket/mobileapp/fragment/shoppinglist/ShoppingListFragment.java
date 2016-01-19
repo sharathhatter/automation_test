@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment.shoppinglist;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -48,7 +49,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.SL);
+        setCurrentScreenName(TrackEventkeys.SL);
         if (savedInstanceState != null) {
             mShoppingListNames = savedInstanceState.getParcelableArrayList(Constants.SHOPPING_LISTS);
             if (mShoppingListNames != null) {
@@ -70,7 +71,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
             handler.sendOfflineError(true);
             return;
         }
-        new ShoppingListNamesTask<>(this, true).startTask();
+        new ShoppingListNamesTask<>(this, true, getPreviousScreenName()).startTask();
     }
 
     private void renderShoppingList() {
@@ -242,9 +243,11 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     public static class ShoppingListHeaderViewHolder {
         private TextView txtHeaderMsg;
         private View base;
+        private Typeface faceRobotoRegular;
 
-        public ShoppingListHeaderViewHolder(View base) {
+        public ShoppingListHeaderViewHolder(View base, Typeface faceRobotoRegular) {
             this.base = base;
+            this.faceRobotoRegular = faceRobotoRegular;
         }
 
         public TextView getTxtHeaderMsg() {
@@ -334,7 +337,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 if (convertView == null) {
                     LayoutInflater inflater = getActivity().getLayoutInflater();
                     convertView = inflater.inflate(R.layout.uiv3_list_title, parent, false);
-                    holder = new ShoppingListHeaderViewHolder(convertView);
+                    holder = new ShoppingListHeaderViewHolder(convertView, faceRobotoRegular);
                     convertView.setTag(holder);
                 } else {
                     holder = (ShoppingListHeaderViewHolder) convertView.getTag();
@@ -370,5 +373,11 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 return txtShopLstDesc;
             }
         }
+    }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "ShoppingListFragment";
     }
 }

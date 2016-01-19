@@ -54,7 +54,8 @@ public class CreateShoppingListTask<T extends AppOperationAware> {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(ctx.getCurrentActivity());
         ctx.showProgressDialog(ctx.getCurrentActivity().getString(R.string.please_wait));
-        Call<OldBaseApiResponse> call = bigBasketApiService.createShoppingList(shoppingListName, "1");
+        Call<OldBaseApiResponse> call =
+                bigBasketApiService.createShoppingList(ctx.getCurrentActivity().getCurrentScreenName(), shoppingListName, "1");
         call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(ctx, true) {
             @Override
             public void onSuccess(OldBaseApiResponse oldBaseApiResponse) {

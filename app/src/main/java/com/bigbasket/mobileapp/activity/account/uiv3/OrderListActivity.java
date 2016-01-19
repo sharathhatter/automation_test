@@ -53,7 +53,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.ORDER_HISTORY);
+        setCurrentScreenName(TrackEventkeys.ORDER_HISTORY);
         mOrderType = getIntent().getStringExtra(Constants.ORDER);
         mIsInShopFromPreviousOrderMode = getIntent().getBooleanExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, false);
         setTitle(mIsInShopFromPreviousOrderMode ? getString(R.string.shopFromPreviousOrder) :
@@ -86,7 +86,8 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         if (page == 1)
             showProgressView();
-        Call<ApiResponse<OrderListApiResponse>> call = bigBasketApiService.getOrders(mOrderType, String.valueOf(page));
+        Call<ApiResponse<OrderListApiResponse>> call =
+                bigBasketApiService.getOrders(getPreviousScreenName(), mOrderType, String.valueOf(page));
         call.enqueue(new BBNetworkCallback<ApiResponse<OrderListApiResponse>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<OrderListApiResponse> orderListApiResponse) {
@@ -168,7 +169,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     @Override
     public void onOrderItemClicked(Order order) {
         HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         trackEvent(TrackingAware.MY_ORDER_ITEM_CLICKED, map);
         if (mIsInShopFromPreviousOrderMode) {
             onShopFromThisOrder(order.getOrderNumber());
@@ -192,7 +193,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     private void showInvoice(Order order) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(order.getOrderId());
+        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(getCurrentScreenName(), order.getOrderId());
         call.enqueue(new CallbackOrderInvoice<>(this));
     }
 

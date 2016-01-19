@@ -10,4 +10,11 @@
         android:singleLine="true"
         android:maxLines="1" />
 
+    <ListPreference
+        android:key="http_logging_level"
+        android:title="@string/pref_http_logging_level"
+        android:defaultValue="NONE"
+        android:entries="@array/http_logging_level_entires"
+        android:entryValues="@array/http_logging_level_entires"/>
+
 </PreferenceScreen>

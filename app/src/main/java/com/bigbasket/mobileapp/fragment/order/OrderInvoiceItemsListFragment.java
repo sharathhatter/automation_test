@@ -38,7 +38,7 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
         if (orderInvoice == null) return;
         ///logOrderItemTabClicked(orderInvoice);
         renderCartItems(orderInvoice);
-        setNextScreenNavigationContext(TrackEventkeys.NC_ORDER_DETAIL);
+        setCurrentScreenName(TrackEventkeys.NC_ORDER_DETAIL);
     }
 
     private void renderCartItems(OrderInvoice orderInvoice) {
@@ -96,5 +96,11 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.ORDER_DETAILS_ITEMS_SCREEN;
+    }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "OrderInvoiceItemsListFragment";
     }
 }

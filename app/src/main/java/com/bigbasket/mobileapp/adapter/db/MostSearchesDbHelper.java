@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +37,14 @@ public class MostSearchesDbHelper {
             cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_QUERY, COLUMN_URL},
                     null, null, null, null, COLUMN_ID + " DESC", String.valueOf(limit));
             if (cursor.moveToFirst()) {
-                mostSearchedItems = new ArrayList<>();
+                mostSearchedItems = new ArrayList<>(cursor.getCount());
                 do {
                     mostSearchedItems.add(new MostSearchedItem(cursor));
                 } while (cursor.moveToNext());
             }
         } catch (SQLiteException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Crashlytics.logException(e);
         } finally {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
@@ -62,7 +64,7 @@ public class MostSearchesDbHelper {
                 count = cursor.getInt(cursor.getColumnIndex(COLUMN_COUNT));
             }
         } catch (SQLiteException e) {
-            e.printStackTrace();
+            Crashlytics.logException(e);
         } finally {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
@@ -72,9 +74,17 @@ public class MostSearchesDbHelper {
     }
 
     public int getRowCount() {
-        Cursor cursor = DatabaseHelper.db.rawQuery("select _id from " + tableName, null);
-        int count = cursor.getCount();
-        cursor.close();
+        Cursor cursor = DatabaseHelper.db.rawQuery("SELECT COUNT(_id) FROM " + tableName, null);
+        int count = 0;
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
         return count;
     }
 

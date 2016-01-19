@@ -10,6 +10,7 @@ public final class AnalyticsIdentifierKeys {
     public static final String CUSTOMER_CITY = "City";
     public static final String CUSTOMER_EMAIL = "email";
     public static final String CUSTOMER_NAME = "Name";
+    public static final String USER_NAME = "UserName";
     public static final String CUSTOMER_ID = "mid";
     public static final String APP_VERSION = "App Version";
 

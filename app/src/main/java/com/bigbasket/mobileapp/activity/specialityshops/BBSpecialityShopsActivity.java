@@ -1,7 +1,9 @@
 package com.bigbasket.mobileapp.activity.specialityshops;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -9,16 +11,14 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.specialityshops.StoreListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.interfaces.LaunchStoreListAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityShopsListData;
 import com.bigbasket.mobileapp.model.specialityshops.SpecialityStore;
@@ -42,20 +43,37 @@ import java.util.HashMap;
 
 import retrofit.Call;
 
-public class BBSpecialityShopsActivity extends SearchActivity implements LaunchStoreListAware {
+public class BBSpecialityShopsActivity extends BackButtonActivity implements LaunchStoreListAware {
 
     private TextView mToolbarTextDropDown;
     private String category;
+    private RecyclerView recyclerViewStoreList;
+    private HeaderSpinnerView mHeaderSpinnerView;
+    private TextView emptyMsgView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        recyclerViewStoreList = (RecyclerView) findViewById(R.id.store_list);
+        emptyMsgView = (TextView) findViewById(R.id.textView_empty_text);
         getSpecialityShops();
     }
 
     @Override
     public int getMainLayout() {
         return R.layout.uiv3_speciality_store_list_activity;
+    }
+
+    @Override
+    protected void postLogout(boolean success) {
+        super.postLogout(success);
+        goToHome();
+    }
+
+    @Override
+    protected void changeCity(City city) {
+        super.changeCity(city);
+        goToHome();
     }
 
     private void getSpecialityShops() {
@@ -67,23 +85,20 @@ public class BBSpecialityShopsActivity extends SearchActivity implements LaunchS
     }
 
     private void renderStoreList(String baseImgUrl, ArrayList<SpecialityStore> storeList) {
-        RecyclerView recyclerViewStoreList = (RecyclerView) findViewById(R.id.store_list);
+        recyclerViewStoreList.setVisibility(View.VISIBLE);
+        emptyMsgView.setVisibility(View.GONE);
         UIUtil.configureRecyclerView(recyclerViewStoreList, this, 1, 1);
         StoreListRecyclerAdapter<BBSpecialityShopsActivity> storeListRecyclerAdapter =
                 new StoreListRecyclerAdapter<>(BBSpecialityShopsActivity.this, baseImgUrl, storeList);
         recyclerViewStoreList.setAdapter(storeListRecyclerAdapter);
-        setNextScreenNavigationContext(TrackingAware.SPECIALITYSHOPS + storeList.get(0).getStoreName());
+        setCurrentScreenName(TrackingAware.SPECIALITYSHOPS + storeList.get(0).getStoreName());
         logViewSpecialityShopsEvent(category);
     }
 
     private void showStoreEmptyMsg(String location) {
-        RecyclerView recyclerViewStoreList = (RecyclerView) findViewById(R.id.store_list);
         recyclerViewStoreList.setVisibility(View.GONE);
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.ssList);
-        LayoutInflater inflater = getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_empty_store_list_data, layout, false);
+        emptyMsgView.setVisibility(View.VISIBLE);
 
-        TextView txtMsg = (TextView) base.findViewById(R.id.textView_empty_text);
         String emptyMsg = getString(R.string.store_empty) + category + getString(R.string.available_in) + " \n";
         if (TextUtils.isEmpty(location)) {
             emptyMsg = getString(R.string.store_empty) + category + getString(R.string.available_in);
@@ -94,17 +109,11 @@ public class BBSpecialityShopsActivity extends SearchActivity implements LaunchS
         spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), 0, emptyMsg.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         if (!location.equalsIgnoreCase(getString(R.string.your_loc))) {
             spannable.setSpan(new CustomTypefaceSpan("", faceRobotoBold), emptyMsg.length(), emptyMsg.length() + location.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_status_bar_background)), emptyMsg.length(), emptyMsg.length() + location.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.uiv3_status_bar_background)), emptyMsg.length(), emptyMsg.length() + location.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         } else
             spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), emptyMsg.length(), emptyMsg.length() + location.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         spannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), emptyMsg.length() + location.length(), spannable.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        txtMsg.setText(spannable);
-
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        int dp = (int) getResources().getDimension(R.dimen.margin_medium_large);
-        params.setMargins(0, dp, 0, 0);
-        params.addRule(RelativeLayout.BELOW, getToolbar().getId());
-        layout.addView(base, params);
+        emptyMsgView.setText(spannable);
     }
 
     private void loadSpecialityShops(final String catVal) {
@@ -114,7 +123,7 @@ public class BBSpecialityShopsActivity extends SearchActivity implements LaunchS
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getApplicationContext());
         showProgressView();
-        Call<ApiResponse<SpecialityShopsListData>> call = bigBasketApiService.getSpecialityShops(catVal);
+        Call<ApiResponse<SpecialityShopsListData>> call = bigBasketApiService.getSpecialityShops(getPreviousScreenName(), catVal);
         call.enqueue(new BBNetworkCallback<ApiResponse<SpecialityShopsListData>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<SpecialityShopsListData> specialityStoreListApiResponse) {
@@ -152,6 +161,15 @@ public class BBSpecialityShopsActivity extends SearchActivity implements LaunchS
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mHeaderSpinnerView != null && mHeaderSpinnerView.isShown()) {
+            mHeaderSpinnerView.hide();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void renderHeaderDropDown(@Nullable final Section headSection, int mHeaderSelectedIdx,
                                       String screenName) {
         Toolbar toolbar = getToolbar();
@@ -159,21 +177,24 @@ public class BBSpecialityShopsActivity extends SearchActivity implements LaunchS
             mToolbarTextDropDown = (TextView) getLayoutInflater().
                     inflate(R.layout.uiv3_product_header_text, toolbar, false);
         }
-        new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
-                .withCtx(this)
-                .withDefaultSelectedIdx(mHeaderSelectedIdx)
-                .withFallbackHeaderTitle(!TextUtils.isEmpty(screenName) ? screenName : getString(R.string.app_name))
-                .withHeadSection(headSection)
-                .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
-                .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
-                .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
-                .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
-                .withToolbar(getToolbar())
-                .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
-                .withTxtToolbarDropdown(mToolbarTextDropDown)
-                .withTypeface(faceRobotoRegular)
-                .build()
-                .setView();
+        if (mHeaderSpinnerView == null) {
+            mHeaderSpinnerView = new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
+                    .withCtx(this)
+                    .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
+                    .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
+                    .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
+                    .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
+                    .withToolbar(getToolbar())
+                    .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
+                    .withTxtToolbarDropdown(mToolbarTextDropDown)
+                    .withTypeface(faceRobotoRegular)
+                    .build();
+        }
+        mHeaderSpinnerView.setDefaultSelectedIdx(mHeaderSelectedIdx);
+        mHeaderSpinnerView.setFallbackHeaderTitle(
+                !TextUtils.isEmpty(screenName) ? screenName : getString(R.string.app_name));
+        mHeaderSpinnerView.setHeadSection(headSection);
+        mHeaderSpinnerView.setView();
     }
 
     @Override
@@ -193,5 +214,12 @@ public class BBSpecialityShopsActivity extends SearchActivity implements LaunchS
     public void launchStoreList(String destinationSlug) {
         category = destinationSlug;
         loadSpecialityShops(category);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        super.onNewIntent(intent);
+        getSpecialityShops();
     }
 }

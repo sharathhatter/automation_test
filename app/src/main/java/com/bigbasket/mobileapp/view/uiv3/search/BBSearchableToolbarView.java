@@ -1,16 +1,18 @@
 package com.bigbasket.mobileapp.view.uiv3.search;
 
+import android.Manifest;
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.provider.BaseColumns;
+import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -29,19 +31,18 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.SearchViewAdapter;
-import com.bigbasket.mobileapp.adapter.db.MostSearchesDbHelper;
 import com.bigbasket.mobileapp.interfaces.OnSearchTermActionCallback;
-import com.bigbasket.mobileapp.model.search.MostSearchedItem;
-import com.bigbasket.mobileapp.util.SearchUtil;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.LoaderIds;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
-public class BBSearchableToolbarView extends LinearLayout implements OnSearchTermActionCallback {
+public class BBSearchableToolbarView extends LinearLayout implements OnSearchTermActionCallback,
+        LoaderManager.LoaderCallbacks<Cursor> {
     public static final int REQ_CODE_SPEECH_INPUT = 100;
 
     private ListView mSearchList;
@@ -63,6 +64,24 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
         init();
     }
 
+    @Nullable
+    public static SearchIntentResult parseActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQ_CODE_SPEECH_INPUT && resultCode == Activity.RESULT_OK && data != null) {
+            ArrayList<String> items = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (items != null && items.size() > 0) {
+                return new SearchIntentResult(items.get(0).trim(), SearchIntentResult.TYPE_VOICE_SEARCH);
+            }
+        }
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (scanResult != null) {
+            String eanCode = scanResult.getContents();
+            if (!TextUtils.isEmpty(eanCode)) {
+                return new SearchIntentResult(eanCode, SearchIntentResult.TYPE_BARCODE_SEARCH);
+            }
+        }
+        return null;
+    }
+
     public void attachActivity(Activity activity) {
         mAttachedActivity = activity;
     }
@@ -73,10 +92,21 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
         mSearchView.requestFocus();
         UIUtil.changeStatusBarColor(getContext(), R.color.primary_dark_material_light);
         BaseActivity.showKeyboard(mSearchView);
+        restartSearchHistoryLoader();
     }
 
     public void hide() {
-        mOnSearchEventListenerProxy.reset();
+        setVisibility(View.GONE);
+        if (mSearchView != null) {
+            mSearchView.setText("");
+            mSearchView.clearFocus();
+            BaseActivity.hideKeyboard(getContext(), mSearchView);
+        }
+        UIUtil.changeStatusBarColor(getContext(), R.color.uiv3_status_bar_background);
+        if (mAttachedActivity != null && mAttachedActivity instanceof AppCompatActivity) {
+            ((AppCompatActivity) mAttachedActivity).getSupportLoaderManager().destroyLoader(
+                    LoaderIds.SEARCH_HISTORY_LOADER_ID);
+        }
     }
 
     private void init() {
@@ -119,16 +149,23 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
         });
 
         setupSearchView();
-        mImgVoice.setOnClickListener(new View.OnClickListener() {
+        mImgVoice.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchVoiceSearch();
+
+                if (mAttachedActivity instanceof BaseActivity) {
+                    if (((BaseActivity) mAttachedActivity).handlePermission(Manifest.permission.RECORD_AUDIO, Constants.PERMISSION_REQUEST_CODE_RECORD_AUDIO))
+                        launchVoiceSearch();
+                }
             }
         });
-        mImgBarcode.setOnClickListener(new View.OnClickListener() {
+        mImgBarcode.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchScanner();
+                if (mAttachedActivity instanceof BaseActivity) {
+                    if (((BaseActivity) mAttachedActivity).handlePermission(Manifest.permission.CAMERA, Constants.PERMISSION_REQUEST_CODE_CAPTURE_CAMERA))
+                        launchScanner();
+                }
             }
         });
         mImgClear.setOnClickListener(new OnClickListener() {
@@ -141,9 +178,20 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
     }
 
     private void setListAdapter() {
-        mSearchListAdapter = new SearchViewAdapter<>(getContext(), populatePastSearchTermsList(), this);
-        mSearchListAdapter.setFilterQueryProvider(new SearchViewAdapter.SearchFilterQueryProvider(getContext()));
-        mSearchList.setAdapter(mSearchListAdapter);
+        if (mSearchListAdapter == null) {
+            mSearchListAdapter = new SearchViewAdapter<>(getContext(), null, this);
+            mSearchListAdapter.setFilterQueryProvider(
+                    new SearchViewAdapter.SearchFilterQueryProvider(getContext()));
+            mSearchList.setAdapter(mSearchListAdapter);
+        }
+    }
+
+    private void restartSearchHistoryLoader() {
+        if (getVisibility() == View.VISIBLE
+                && mAttachedActivity != null && mAttachedActivity instanceof AppCompatActivity) {
+            ((AppCompatActivity) mAttachedActivity).getSupportLoaderManager().restartLoader(
+                    LoaderIds.SEARCH_HISTORY_LOADER_ID, null, this);
+        }
     }
 
     private void setupSearchView() {
@@ -176,40 +224,6 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
         });
     }
 
-    private Cursor populatePastSearchTermsList() {
-        MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1,
-                SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA,
-                SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID,
-                SearchManager.SUGGEST_COLUMN_ICON_1, SearchManager.SUGGEST_COLUMN_ICON_2});
-        MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(getContext());
-        int mostSearchTermsCount = mostSearchesDbHelper.getRowCount();
-        if (mostSearchTermsCount > 0) {
-            matrixCursor.addRow(new String[]{"0", getContext().getString(R.string.history), null,
-                    null, null, getContext().getString(R.string.history), null});
-            if (mostSearchTermsCount >= 5) {
-                List<MostSearchedItem> mostSearchedItemList = mostSearchesDbHelper.getRecentSearchedItems(5);
-                int i = 1;
-                for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
-                    matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
-                            mostSearchedItem.getUrl(), null, mostSearchedItem.getQuery(),
-                            null, SearchUtil.HISTORY_TERM});
-                if (mostSearchTermsCount > 20)
-                    mostSearchesDbHelper.deleteFirstRow();
-            } else {
-                List<MostSearchedItem> mostSearchedItemList = mostSearchesDbHelper.getRecentSearchedItems(mostSearchTermsCount);
-                if (mostSearchedItemList != null) {
-                    int i = 0;
-                    for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
-                        matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
-                                null, mostSearchedItem.getUrl(), null,
-                                null, SearchUtil.HISTORY_TERM});
-                }
-            }
-        }
-        SearchUtil.populateTopSearch(matrixCursor, getContext());
-        return matrixCursor;
-    }
-
     public void setOnSearchEventListener(OnSearchEventListener searchEventListener) {
         this.mOnSearchEventListenerProxy.setOnSearchEventListener(searchEventListener);
     }
@@ -232,6 +246,7 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
             if (mImgClear != null && mImgClear.getVisibility() != View.GONE) {
                 mImgClear.setVisibility(View.GONE);
             }
+            restartSearchHistoryLoader();
         } else {
             if (mImgBarcode != null) {
                 mImgBarcode.setVisibility(View.GONE);
@@ -258,8 +273,7 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
     @Override
     public void onSearchTermDeleted() {
         if (mSearchListAdapter != null) {
-            mSearchListAdapter.changeCursor(populatePastSearchTermsList());
-            mSearchListAdapter.notifyDataSetChanged();
+            restartSearchHistoryLoader();
         }
     }
 
@@ -267,6 +281,51 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
     public void setSearchText(String term) {
         mSearchView.setText("");
         mSearchView.append(term); // This also moves the screen cursor to the end
+    }
+
+    public void launchVoiceSearch() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, mAttachedActivity.getString(R.string.voicePrompt));
+        try {
+            mAttachedActivity.startActivityForResult(intent, BBSearchableToolbarView.REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), getContext().getString(R.string.speechNotSupported), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void launchScanner() {
+        Toast.makeText(getContext(), getContext().getString(R.string.please_wait), Toast.LENGTH_SHORT).show();
+        new IntentIntegrator(mAttachedActivity).initiateScan();
+    }
+
+    public boolean onBackPressed() {
+        if (getVisibility() == View.VISIBLE) {
+            hide();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new SearchHistoryLoader(getContext());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (mSearchListAdapter != null) {
+            mSearchListAdapter.swapCursor(data);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        if (mSearchListAdapter != null) {
+            mSearchListAdapter.swapCursor(null);
+        }
     }
 
     private static class OnSearchEventListenerProxy implements OnSearchEventListener {
@@ -282,23 +341,8 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
         }
 
         private void reset() {
-            if (bbSearchableToolbarView == null) return;
-            if (bbSearchableToolbarView.mSearchView != null) {
-                bbSearchableToolbarView.mSearchView.clearFocus();
-            }
-            if (bbSearchableToolbarView.mSearchListAdapter != null) {
-                bbSearchableToolbarView.mSearchListAdapter = null;
-            }
-            if (bbSearchableToolbarView.mSearchList != null) {
-                bbSearchableToolbarView.mSearchList.setAdapter(null);
-            }
             if (bbSearchableToolbarView != null) {
-                UIUtil.changeStatusBarColor(bbSearchableToolbarView.getContext(), R.color.uiv3_status_bar_background);
-                BaseActivity.hideKeyboard(bbSearchableToolbarView.getContext(), bbSearchableToolbarView.mSearchView);
-                bbSearchableToolbarView.setVisibility(View.GONE);
-            }
-            if (bbSearchableToolbarView != null && bbSearchableToolbarView.mSearchView != null) {
-                bbSearchableToolbarView.mSearchView.setText("");
+                bbSearchableToolbarView.hide();
             }
         }
 
@@ -317,49 +361,5 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
                 mOnSearchEventListener.onCategorySearchRequested(categoryName, categoryUrl, categorySlug);
             }
         }
-    }
-
-    private void launchVoiceSearch() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, mAttachedActivity.getString(R.string.voicePrompt));
-        try {
-            mAttachedActivity.startActivityForResult(intent, BBSearchableToolbarView.REQ_CODE_SPEECH_INPUT);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(getContext(), getContext().getString(R.string.speechNotSupported), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void launchScanner() {
-        Toast.makeText(getContext(), getContext().getString(R.string.please_wait), Toast.LENGTH_SHORT).show();
-        new IntentIntegrator(mAttachedActivity).initiateScan();
-    }
-
-    @Nullable
-    public static SearchIntentResult parseActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQ_CODE_SPEECH_INPUT && resultCode == Activity.RESULT_OK && data != null) {
-            ArrayList<String> items = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            if (items != null && items.size() > 0) {
-                return new SearchIntentResult(items.get(0).trim(), SearchIntentResult.TYPE_VOICE_SEARCH);
-            }
-        }
-        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (scanResult != null) {
-            String eanCode = scanResult.getContents();
-            if (!TextUtils.isEmpty(eanCode)) {
-                return new SearchIntentResult(eanCode, SearchIntentResult.TYPE_BARCODE_SEARCH);
-            }
-        }
-        return null;
-    }
-
-    public boolean onBackPressed() {
-        if (getVisibility() == View.VISIBLE) {
-            hide();
-            return true;
-        }
-        return false;
     }
 }

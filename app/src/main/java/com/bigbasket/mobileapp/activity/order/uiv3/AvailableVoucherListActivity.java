@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -43,7 +44,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         ArrayList<ActiveVouchers> activeVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
         renderVouchers(activeVouchersList);
         HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentNavigationContext());
+        map.put(TrackEventkeys.NAVIGATION_CTX, getPreviousScreenName());
         trackEvent(TrackingAware.EVOUCHER_SHOWN, map);
     }
 
@@ -63,6 +64,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                         actionId == EditorInfo.IME_ACTION_DONE) {
                     String voucherCode = mEditTextVoucherCode.getText().toString();
                     if (!TextUtils.isEmpty(voucherCode)) {
+                        trackEvent(AVAILABLE_EVOUCHER_KEYBOARD_APPLY_CLICKED, null);
                         applyVoucher(voucherCode);
                     }
                     hideKeyboard(getCurrentActivity(), mEditTextVoucherCode);
@@ -76,6 +78,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         mEditTextVoucherCode.setTypeface(faceRobotoLight);
         if (activeVouchersList == null || activeVouchersList.size() == 0) {
             listVoucher.setVisibility(View.GONE);
+            base.findViewById(R.id.divider).setVisibility(View.GONE);
         } else {
             ActiveVoucherListAdapter activeVoucherListAdapter = new ActiveVoucherListAdapter(activeVouchersList);
             listVoucher.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
@@ -85,6 +88,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     ActiveVouchers activeVouchers = activeVouchersList.get(position);
                     if (activeVouchers.canApply()) {
+                        trackEvent(AVAILABLE_EVOUCHER_SELECTED, null);
                         applyVoucher(activeVouchers.getCode());
                     }
                 }
@@ -96,6 +100,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(mEditTextVoucherCode.getText().toString())) {
+                    trackEvent(AVAILABLE_EVOUCHER_USER_ENTERED, null);
                     BaseActivity.hideKeyboard(getCurrentActivity(), mEditTextVoucherCode);
                     String voucherCode = mEditTextVoucherCode.getText().toString();
                     applyVoucher(voucherCode);
@@ -107,16 +112,15 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
     }
 
     @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
-    }
-
-    @Override
     public void onChangeFragment(AbstractFragment newFragment) {
 
     }
 
     private void applyVoucher(String voucherCode) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+        trackEvent(TrackingAware.AVAILABLE_EVOUCHER_APPLIED, map);
+
         Intent data = new Intent();
         data.putExtra(Constants.EVOUCHER_CODE, voucherCode);
         setResult(NavigationCodes.VOUCHER_APPLIED, data);
@@ -179,11 +183,13 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             TextView txtLblApply = activeVoucherViewHolder.getTxtLblApply();
 
             if (activeVouchers.canApply()) {
-                txtVoucherMsg.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
-                txtLblApply.setTextColor(getResources().getColor(R.color.uiv3_dialog_header_text_bkg));
+                txtVoucherMsg.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.uiv3_secondary_text_color));
+                txtLblApply.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.uiv3_dialog_header_text_bkg));
+                txtLblApply.setBackgroundResource(R.drawable.apply_button_rounded_background);
             } else {
-                txtVoucherMsg.setTextColor(getResources().getColor(R.color.dark_red));
-                txtLblApply.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
+                txtVoucherMsg.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.dark_red));
+                txtLblApply.setTextColor(ContextCompat.getColor(getCurrentActivity(), R.color.uiv3_secondary_text_color));
+                txtLblApply.setBackgroundResource(R.drawable.grey_border);
             }
 
             txtVoucherCode.setText(activeVouchers.getCode());

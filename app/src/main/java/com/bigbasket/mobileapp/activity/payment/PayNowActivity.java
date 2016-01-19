@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,19 +14,22 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
+import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
 import com.bigbasket.mobileapp.factory.payment.PayNowPrepaymentProcessingTask;
-import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
-import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
+import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.PayNowDetail;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.model.order.PaytmResponseHolder;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -33,8 +37,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.crashlytics.android.Crashlytics;
-import com.enstage.wibmo.sdk.WibmoSDK;
-import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +47,7 @@ import retrofit.Call;
  * Don't do the mistake of moving this to Fragment. I've done all that, and these 3rd Party SDKs
  * don't handle fragments well.
  */
-public class PayNowActivity extends BackButtonActivity implements OnPostPaymentListener,
+public class PayNowActivity extends BackButtonActivity implements OnPaymentValidationListener,
         CityListDisplayAware, PaymentTxnInfoAware, PaymentMethodsView.OnPaymentOptionSelectionListener {
 
     @Nullable
@@ -54,17 +56,20 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     private String mOrderId;
     @Nullable
     private String mTxnId;
-    private double mFinalTotal;
+    private String mFinalTotal;
     private PayNowPrepaymentProcessingTask<PayNowActivity> mPayNowPrepaymentProcessingTask;
+    private boolean isPayUOptionVisible;
+    private ViewGroup mProgressLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_PAY_NOW);
+        setCurrentScreenName(TrackEventkeys.NAVIGATION_CTX_PAY_NOW);
         trackEvent(TrackingAware.PAY_NOW_SHOWN, null);
         setTitle(getString(R.string.payNow));
 
         mOrderId = getIntent().getStringExtra(Constants.ORDER_ID);
+        mProgressLayout = (ViewGroup) findViewById(R.id.layoutLoading);
         new GetCitiesTask<>(this).startTask();
     }
 
@@ -81,8 +86,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         if (mSelectedPaymentMethod != null) {
             outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
         }
-        if (mFinalTotal != 0) {
-            outState.putDouble(Constants.FINAL_TOTAL, mFinalTotal);
+        if (mFinalTotal != null) {
+            outState.putString(Constants.FINAL_TOTAL, mFinalTotal);
         }
         super.onSaveInstanceState(outState);
     }
@@ -96,8 +101,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         if (mSelectedPaymentMethod == null) {
             mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
         }
-        if (mFinalTotal == 0) {
-            mFinalTotal = savedInstanceState.getDouble(Constants.FINAL_TOTAL);
+        if (mFinalTotal == null) {
+            mFinalTotal = savedInstanceState.getString(Constants.FINAL_TOTAL);
         }
     }
 
@@ -108,7 +113,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<GetPayNowParamsResponse>> call = bigBasketApiService.getPayNowDetails(mOrderId, "yes", "yes", "yes", "yes", "yes");
+        Call<ApiResponse<GetPayNowParamsResponse>> call =
+                bigBasketApiService.getPayNowDetails(getPreviousScreenName(), mOrderId, "yes", "yes", "yes", "yes", "yes");
         call.enqueue(new BBNetworkCallback<ApiResponse<GetPayNowParamsResponse>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<GetPayNowParamsResponse> payNowParamsApiResponse) {
@@ -148,15 +154,21 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startPayNow(Double.parseDouble(amount));
+                startPayNow(amount);
             }
         });
     }
 
-    private void startPayNow(double total) {
+    private void startPayNow(String total) {
+        if (mSelectedPaymentMethod == null) return;
         mFinalTotal = total;
+        initPayNowPrepaymentProcessingTask();
+    }
+
+
+    public void initPayNowPrepaymentProcessingTask() {
         mPayNowPrepaymentProcessingTask = new PayNowPrepaymentProcessingTask<PayNowActivity>(this,
-                null, mOrderId, mSelectedPaymentMethod, true, false) {
+                null, mOrderId, mSelectedPaymentMethod, true, false, isPayUOptionVisible) {
             @Override
             protected void onPostExecute(Boolean success) {
                 super.onPostExecute(success);
@@ -168,11 +180,11 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                         if (errorResponse.isException()) {
                             //TODO: Possible network error retry
                             getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
-                        } else if (errorResponse.getCode() > 0) {
+                        } else if (errorResponse.getCode() == ErrorResponse.HTTP_ERROR) {
                             getHandler().handleHttpError(errorResponse.getCode(),
                                     errorResponse.getMessage(), false);
                         } else {
-                            getHandler().sendEmptyMessage(-1 * errorResponse.getCode(),
+                            getHandler().sendEmptyMessage(errorResponse.getCode(),
                                     errorResponse.getMessage(), false);
                         }
                     } else {
@@ -189,7 +201,9 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     @Override
     public void onResume() {
         super.onResume();
-        processMobikWikResponse();
+        if (PaytmResponseHolder.hasPendingTransaction()) {
+            PaytmResponseHolder.processPaytmResponse(this);
+        }
     }
 
     @Override
@@ -200,34 +214,19 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         }
     }
 
-    private void processMobikWikResponse() {
-        String txnId = MobikwikResponseHandler.getLastTransactionID();
-        if (!TextUtils.isEmpty(txnId)) {
-            if (MobikwikResponseHandler.wasTransactionSuccessful()) {
-                onPayNowSuccess();
-            } else {
-                onPayNowFailure();
-            }
-            MobikwikResponseHandler.clear();
-        }
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            new PostPaymentProcessor<>(this, mTxnId)
-                    .withOrderId(mOrderId)
-                    .withIsPayNow(true)
-                    .processPayzapp(data, resultCode, UIUtil.formatAsMoney(mFinalTotal));
-        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                onPayNowSuccess();
-            } else {
-                onPayNowFailure();
-            }
-        } else {
+        boolean handled = false;
+        if (mOrderId != null) {
+            ValidatePaymentRequest validatePaymentRequest =
+                    new ValidatePaymentRequest(mTxnId, mOrderId, null, mSelectedPaymentMethod);
+            validatePaymentRequest.setFinalTotal(mFinalTotal);
+            validatePaymentRequest.setIsPayNow(true);
+            handled = new ValidatePayment<>(this, validatePaymentRequest)
+                    .onActivityResult(requestCode, resultCode, data);
+        }
+        if (!handled) {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -236,7 +235,6 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         HashMap<String, String> attrs = new HashMap<>();
         attrs.put(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
         trackEvent(TrackingAware.PAY_NOW_DONE, attrs);
-
         Intent intent = new Intent(this, PayNowThankyouActivity.class);
         intent.putExtra(Constants.ORDER_ID, mOrderId);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -249,24 +247,23 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     @Override
     public void setTxnDetails(String txnId, String amount) {
         mTxnId = txnId;
-        mFinalTotal = Double.parseDouble(amount);
+        mFinalTotal = amount;
     }
 
     @Override
-    public void onPostPaymentFailure(String txnId, String paymentType) {
-        onPayNowFailure();
-    }
-
-    @Override
-    public void onPostPaymentSuccess(String txnId, String paymentType) {
-        onPayNowSuccess();
+    public void onPaymentValidated(boolean status, @Nullable String msg, @Nullable ArrayList<Order> orders) {
+        if (status) {
+            onPayNowSuccess();
+        } else {
+            onPayNowFailure();
+        }
     }
 
     private void displayOrderSummary(ArrayList<PayNowDetail> payNowDetailList) {
         LayoutInflater inflater = getLayoutInflater();
 
         // Show order & invoice details
-        int normalColor = getResources().getColor(R.color.uiv3_primary_text_color);
+        int normalColor = ContextCompat.getColor(this, R.color.uiv3_primary_text_color);
 
         ViewGroup layoutOrderSummaryInfo = (ViewGroup) findViewById(R.id.layoutOrderSummaryInfo);
 
@@ -290,8 +287,26 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void displayPaymentMethods(ArrayList<PaymentType> paymentTypeList) {
+        for (PaymentType paymentType : paymentTypeList) {
+            if (paymentType.getValue().equals(Constants.PAYUMONEY_WALLET)) {
+                isPayUOptionVisible = true;
+                break;
+            }
+        }
         PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
+    }
+
+    @Override
+    public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
+        if (mProgressLayout == null) return;
+        mProgressLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        if (mProgressLayout == null) return;
+        mProgressLayout.setVisibility(View.GONE);
     }
 
     @Override

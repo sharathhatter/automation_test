@@ -28,7 +28,7 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
         Fragment fragment = Fragment.instantiate(ctx, bbTab.getFragmentClass().getName(),
                 bbTab.getArgs());
 
-        UIUtil.addNavigationContextToBundle(fragment, ((AppOperationAware) ctx).getCurrentActivity().getNextScreenNavigationContext());
+        UIUtil.addNavigationContextToBundle(fragment, ((AppOperationAware) ctx).getCurrentActivity().getCurrentScreenName());
         return fragment;
     }
 

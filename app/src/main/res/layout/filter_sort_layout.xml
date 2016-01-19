@@ -12,10 +12,12 @@
         android:layout_margin="0dp"
         android:background="@color/uiv3_product_list_footer_bkg"
         android:baselineAligned="false"
+        android:minHeight="@dimen/dimen_48"
         android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/layoutFilter"
+            style="@style/RippleStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -27,7 +29,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="0dp"
+                android:layout_margin="@dimen/dimen_5"
                 android:drawableLeft="@drawable/filter"
                 android:drawablePadding="@dimen/padding_small"
                 android:gravity="center"
@@ -37,9 +39,9 @@
                 android:textColor="@color/uiv3_product_list_footer_txt_color"
                 android:textSize="@dimen/primary_text_size" />
         </LinearLayout>
-
         <LinearLayout
             android:id="@+id/layoutSort"
+            style="@style/RippleStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -51,7 +53,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="0dp"
+                android:layout_margin="@dimen/dimen_5"
                 android:drawableLeft="@drawable/sort"
                 android:drawablePadding="@dimen/padding_small"
                 android:gravity="center"

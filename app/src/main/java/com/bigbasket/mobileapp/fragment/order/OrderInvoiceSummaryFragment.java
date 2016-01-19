@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -45,7 +46,7 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loadOrderInvoiceSummary();
-        setNextScreenNavigationContext(TrackEventkeys.NC_ORDER_DETAIL);
+        setCurrentScreenName(TrackEventkeys.NC_ORDER_DETAIL);
     }
 
     private void loadOrderInvoiceSummary() {
@@ -98,9 +99,9 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         }
 
         // Show order & invoice details
-        int normalColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        int orderTotalValueColor = getResources().getColor(R.color.uiv3_ok_label_color);
+        int normalColor = ContextCompat.getColor(getActivity(), R.color.uiv3_primary_text_color);
+        int orderTotalLabelColor = ContextCompat.getColor(getActivity(), R.color.uiv3_primary_text_color);
+        int orderTotalValueColor = ContextCompat.getColor(getActivity(), R.color.uiv3_ok_label_color);
 
         LinearLayout layoutOrderSummaryInfo = (LinearLayout) base.findViewById(R.id.layoutOrderSummaryInfo);
         OrderInvoiceDetails orderInvoiceDetails = orderInvoice.getOrderInvoiceDetails();
@@ -177,6 +178,9 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PayNowActivity.class);
                 intent.putExtra(Constants.ORDER_ID, orderInvoice.getOrderId());
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+                trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
             }
         });
@@ -273,5 +277,11 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.ORDER_DETAILS_SUMMARY_SCREEN;
+    }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "OrderInvoiceSummaryFragment";
     }
 }

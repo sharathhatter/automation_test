@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.adapter.account.AddressSummaryDropdownAdapter;
+import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.AddressSummary;
@@ -129,6 +130,12 @@ public class HomeActivity extends SearchActivity {
     public void onDataSynced() {
         super.onDataSynced();
         setUpAddressSpinner();
+
+        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager()
+                .findFragmentByTag(HomeFragment.class.getName());
+        if (homeFragment != null) {
+            homeFragment.syncDynamicTiles();
+        }
     }
 
     @Override
@@ -152,7 +159,7 @@ public class HomeActivity extends SearchActivity {
     @Override
     public void onResume() {
         super.onResume();
-        setNextScreenNavigationContext(TrackEventkeys.HOME);
+        setCurrentScreenName(TrackEventkeys.HOME);
         // Check if spinner's index is set to "CHANGE MY LOCATION"
         // In case it is True, then reset it to 0, and ensure that spinner's on item-selection
         // even is NOT triggered

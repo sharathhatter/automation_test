@@ -71,7 +71,7 @@ public class AccountView<T extends AppOperationAware> {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final BaseActivity ctx = context.getCurrentActivity();
-            ctx.setNextScreenNavigationContext(TrackEventkeys.ACCOUNT_MENU);
+            ctx.setCurrentScreenName(TrackEventkeys.ACCOUNT_MENU);
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
             switch (position) {

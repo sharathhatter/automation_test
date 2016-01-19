@@ -14,48 +14,52 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
+import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
 import com.bigbasket.mobileapp.factory.payment.FundWalletPrepaymentProcessingTask;
-import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
-import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
+import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.model.order.PaytmResponseHolder;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.crashlytics.android.Crashlytics;
-import com.enstage.wibmo.sdk.WibmoSDK;
-import com.payu.india.Payu.PayuConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import retrofit.Call;
 
-public class FundWalletActivity extends BackButtonActivity implements OnPostPaymentListener,
+public class FundWalletActivity extends BackButtonActivity implements OnPaymentValidationListener,
         CityListDisplayAware, PaymentTxnInfoAware, PaymentMethodsView.OnPaymentOptionSelectionListener {
 
     @Nullable
     private String mSelectedPaymentMethod;
     @Nullable
     private String mTxnId;
-    private double mFinalTotal;
+    private String mFinalTotal;
     private FundWalletPrepaymentProcessingTask<FundWalletActivity> mFundWalletPrepaymentProcessingTask;
+    private boolean isPayUOptionVisible;
+    private ViewGroup mProgressLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_FUND_WALLET);
+        setCurrentScreenName(TrackEventkeys.NAVIGATION_CTX_FUND_WALLET);
         trackEvent(TrackingAware.FUND_WALLET_SHOWN, null);
         setTitle(getString(R.string.fundWallet));
+        mProgressLayout = (ViewGroup) findViewById(R.id.layoutLoading);
         new GetCitiesTask<>(this).startTask();
     }
 
@@ -72,8 +76,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         if (mSelectedPaymentMethod != null) {
             outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
         }
-        if (mFinalTotal != 0) {
-            outState.putDouble(Constants.FINAL_TOTAL, mFinalTotal);
+        if (mFinalTotal != null) {
+            outState.putString(Constants.FINAL_TOTAL, mFinalTotal);
         }
         super.onSaveInstanceState(outState);
     }
@@ -87,15 +91,17 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         if (mSelectedPaymentMethod == null) {
             mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
         }
-        if (mFinalTotal == 0) {
-            mFinalTotal = savedInstanceState.getDouble(Constants.FINAL_TOTAL);
+        if (mFinalTotal == null) {
+            mFinalTotal = savedInstanceState.getString(Constants.FINAL_TOTAL);
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        processMobikWikResponse();
+        if (PaytmResponseHolder.hasPendingTransaction()) {
+            PaytmResponseHolder.processPaytmResponse(this);
+        }
     }
 
     @Override
@@ -106,18 +112,6 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         }
     }
 
-    private void processMobikWikResponse() {
-        String txnId = MobikwikResponseHandler.getLastTransactionID();
-        if (!TextUtils.isEmpty(txnId)) {
-            if (MobikwikResponseHandler.wasTransactionSuccessful()) {
-                onFundWalletSuccess();
-            } else {
-                onFundWalletFailure();
-            }
-            MobikwikResponseHandler.clear();
-        }
-    }
-
     private void getPaymentTypes() {
         if (!checkInternetConnection()) {
             handler.sendOfflineError(true);
@@ -125,7 +119,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<GetPaymentTypes>> call = bigBasketApiService.getFundWalletPayments("yes", "yes", "yes", "yes", "yes");
+        Call<ApiResponse<GetPaymentTypes>> call =
+                bigBasketApiService.getFundWalletPayments(getPreviousScreenName(), "yes", "yes", "yes", "yes", "yes");
         call.enqueue(new BBNetworkCallback<ApiResponse<GetPaymentTypes>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<GetPaymentTypes> getPaymentTypesApiResponse) {
@@ -166,7 +161,12 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                 initiateWalletFunding(txtAmount.getText().toString());
             }
         });
-
+        for (PaymentType paymentType : paymentTypeList) {
+            if (paymentType.getValue().equals(Constants.PAYUMONEY_WALLET)) {
+                isPayUOptionVisible = true;
+                break;
+            }
+        }
         PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
     }
@@ -183,14 +183,19 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
             return;
         }
         try {
-            mFinalTotal = Double.parseDouble(amount);
+            mFinalTotal = UIUtil.formatAsMoney(Double.parseDouble(amount));
         } catch (NumberFormatException e) {
             showAlertDialog(getString(R.string.invalidAmount));
             return;
         }
+        initFundWalletPrepaymentProcessingTask(amount);
+
+    }
+
+    public void initFundWalletPrepaymentProcessingTask(String amount) {
         mFundWalletPrepaymentProcessingTask =
                 new FundWalletPrepaymentProcessingTask<FundWalletActivity>(this, null, null,
-                        mSelectedPaymentMethod, false, true, amount) {
+                        mSelectedPaymentMethod, false, true, amount, isPayUOptionVisible) {
                     @Override
                     protected void onPostExecute(Boolean success) {
                         super.onPostExecute(success);
@@ -202,11 +207,11 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                                 if (errorResponse.isException()) {
                                     //TODO: Possible network error retry
                                     getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
-                                } else if (errorResponse.getCode() > 0) {
+                                } else if (errorResponse.getCode() == ErrorResponse.HTTP_ERROR) {
                                     getHandler().handleHttpError(errorResponse.getCode(),
                                             errorResponse.getMessage(), false);
                                 } else {
-                                    getHandler().sendEmptyMessage(-1 * errorResponse.getCode(),
+                                    getHandler().sendEmptyMessage(errorResponse.getCode(),
                                             errorResponse.getMessage(), false);
                                 }
                             } else {
@@ -223,18 +228,15 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            new PostPaymentProcessor<>(this, mTxnId)
-                    .withIsFundWallet(true)
-                    .processPayzapp(data, resultCode, UIUtil.formatAsMoney(mFinalTotal));
-        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                onFundWalletSuccess();
-            } else {
-                onFundWalletFailure();
-            }
+        ValidatePaymentRequest validatePaymentRequest =
+                new ValidatePaymentRequest(mTxnId, null, null, mSelectedPaymentMethod);
+        validatePaymentRequest.setFinalTotal(mFinalTotal);
+        validatePaymentRequest.setIsWallet(true);
+        boolean handled = new ValidatePayment<>(this, validatePaymentRequest)
+                .onActivityResult(requestCode, resultCode, data);
+        if (!handled) {
+            super.onActivityResult(requestCode, resultCode, data);
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void onFundWalletFailure() {
@@ -251,19 +253,30 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     @Override
+    public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
+        if (mProgressLayout == null) return;
+        mProgressLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        if (mProgressLayout == null) return;
+        mProgressLayout.setVisibility(View.GONE);
+    }
+
+    @Override
     public void setTxnDetails(String txnId, String amount) {
         mTxnId = txnId;
-        mFinalTotal = Double.parseDouble(amount);
+        mFinalTotal = amount;
     }
 
     @Override
-    public void onPostPaymentFailure(String txnId, String paymentType) {
-        onFundWalletFailure();
-    }
-
-    @Override
-    public void onPostPaymentSuccess(String txnId, String paymentType) {
-        onFundWalletSuccess();
+    public void onPaymentValidated(boolean status, @Nullable String msg, @Nullable ArrayList<Order> orders) {
+        if (status) {
+            onFundWalletSuccess();
+        } else {
+            onFundWalletFailure();
+        }
     }
 
     @Override
@@ -275,4 +288,5 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     public void onPaymentOptionSelected(String paymentTypeValue) {
         mSelectedPaymentMethod = paymentTypeValue;
     }
+
 }

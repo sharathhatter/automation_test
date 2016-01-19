@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectedValueAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
@@ -187,9 +188,15 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             if (sectionItem.hasImage()) {
                 imgNavItem.setVisibility(View.VISIBLE);
+                int width = mainMenuView.getWidth();
+                int height = sectionNavigationItem.getSection().getWidgetHeight(
+                        imgNavItem.getContext(),
+                        rendererHashMap,
+                        true, width > 0 ? width : -1);
                 sectionNavigationItem.getSectionItem().displayImage(context, baseImgUrl, imgNavItem,
-                        R.drawable.loading_nav_header, true);
+                        R.drawable.loading_nav_header, true, width, height, true);
             } else {
+                imgNavItem.setImageBitmap(null); //Release the bitmap
                 imgNavItem.setVisibility(View.GONE);
             }
 
@@ -205,6 +212,11 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         mainMenuView.onSubNavigationHideRequested(true);
                     }
                 });
+                if (sectionItem.hasImage()) {
+                    txtNavMainItem.setBackgroundResource(R.drawable.bg_scrim_top);
+                } else {
+                    txtNavMainItem.setBackgroundResource(android.R.color.transparent);
+                }
             } else {
                 txtNavMainItem.setVisibility(View.GONE);
             }
@@ -356,7 +368,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             ((NavigationDrawerAware) context).closeDrawer();
                             notifyDataSetChanged();
                         } else {
-                            new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
+                            new OnSectionItemClickListener<>((AppOperationAware) context,
+                                    sectionNavigationItem.getSection(),
                                     sectionNavigationItem.getSectionItem(), screenName).onClick(v);
                         }
                     }

@@ -8,7 +8,8 @@
     <string name="headingServerError">Server Error!</string>
     <string name="server_error">Oops an error occurred!\nPlease try again later.</string>
     <string name="login_required">Please login to continue!</string>
-    <string name="voucherCode">eVoucher Code</string>
+    <string name="voucherCode">Voucher code</string>
+    <string name="invalid_user">Invalid user</string>
     <string name="potentialOrderIdExpired">Previous checkout process timed out. Please start again!</string>
     <string name="list_exists">You have already created a list with the same name!</string>
     <string name="INVALID_USER_PASS">Username or password is incorrect!</string>
@@ -19,7 +20,7 @@
     <string name="cartNotExistsError">Cart does not exist!</string>
     <string name="basketEmpty">Your Basket is empty!</string>
     <string name="alt_placeholder">BigBasket Image</string>
-    <string name="evoucherError">Evoucher Error!</string>
+    <string name="evoucherError">Voucher Error!</string>
     <string name="invalid_promo">Sorry,this promotion is no longer active!</string>
     <string name="no_promo_cat">No promotions are currently active for this city!</string>
     <string name="free_promo_txt">On completing promo selection,
@@ -36,7 +37,6 @@
     <string name="update">Update</string>
     <string name="updateDialogTitle">Update BigBasket App</string>
     <string name="UPDATE">UPDATE</string>
-    <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
     <string name="placeorder">Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
@@ -72,10 +72,10 @@
     <string name="signUpCapsVerb">SIGNUP</string>
     <string name="signInCapsVerb">LOGIN</string>
     <string name="newUserSignup">New user? Sign up</string>
-    <string name="addressNick">Address Nickname (Optional)</string>
-    <string name="houseNum">House No</string>
+    <string name="addressNick">Address nickname, Ex:Home/My office (Optional)</string>
+    <string name="houseNum">House no &amp; details</string>
     <string name="streetName">Street Name (Optional)</string>
-    <string name="residentialComplex">Location/Area/Zone (Optional)</string>
+    <string name="residentialComplex">Residential Complex(Optional)</string>
     <string name="location">Location</string>
     <string name="pincode">Pincode</string>
     <string name="makeDefaultAddress">Make this my default address.</string>
@@ -92,6 +92,7 @@
     <string name="pleaseNote">Please Note:</string>
     <string name="note">Note:</string>
     <string name="shopFromOrder">Shop from order</string>
+    <string name="update_profile">Update Profile</string>
 
     <style name="placeOrder">Place Order</style>
 
@@ -99,15 +100,17 @@
     <string name="appOutDatedMsg1">Please update BigBasket Mobile app to the latest version.</string>
     <string name="appOutDatedMsg2">To update, please touch UPDATE button.</string>
     <string name="appUpdatedMsg">A new version of App is available on Play Store, Please update to take advantage of latest features.</string>
-    <string name="confirmMobileNumber">Confirm your mobile number</string>
-    <string name="txtConfirm">CONFIRM</string>
-    <string name="txtResendCodeStr">RESEND</string>
-    <string name="headerMsgForMobileConfirm">Enter the OTP code that we send to your phone.</string>
+    <string name="resend_code">RESEND</string>
+    <string name="headerMsgForMobileConfirm">Please wait while we verify your mobile number</string>
+    <string name="headerMsgForMobileConfirmWhenPermissionDenied">Please enter the verification code sent to your mobile</string>
+    <string name="enter_otp_manually">(Enter the verification code below in case we fail to detect the SMS automatically)</string>
     <string name="txtConfirmNumberHint">Enter code</string>
     <string name="contactNoMin10">Enter a valid 10 digit mobile number.</string>
     <string name="otpCodeErrorMsg">Confirmation code entered is not valid.</string>
+    <string name="otpCodeMissing">Please enter the confirmation code</string>
     <string name="numberUsedByAnotherMember">This mobile number is already in use, please use another mobile number.</string>
     <string name="resendOtpMsg">Code has been resent</string>
+    <string name="resending_otp">Resending verification code</string>
     <string name="more">More</string>
     <string name="moreAllCaps">MORE</string>
     <string name="drawer_open">Open navigation</string>
@@ -122,7 +125,7 @@
     <string name="edit">Edit</string>
     <string name="renameShoppingList">Rename Shopping List</string>
     <string name="remember">Remember Me</string>
-    <string name="forgotPasswd">Forgot Password?</string>
+    <string name="forgotPasswd">Forgot Password</string>
     <string name="newPasswordSent">Your new password is emailed to you. Please check and login!</string>
     <string name="receivePromos">Send me mails on promotions, offers and services.</string>
     <string name="yourList">Your List</string>
@@ -133,12 +136,13 @@
     <string name="chooseShopList">Please select a shopping list</string>
     <string name="versionNoUpdated">Version Number Updated</string>
     <string name="selectAllSlotsErrMsg">You have not selected slots for all the orders.</string>
+    <string name="browse_by_cat">Browse by category</string>
 
     <!-- payment -->
     <string name="paymentMethod">Payment Options</string>
     <string name="pleaseChooseAddress">Please choose an address</string>
     <string name="orderItems">Order Items</string>
-    <string name="enterVoucher">Enter eVoucher code</string>
+    <string name="enterVoucher">Enter voucher code</string>
     <string name="connectionOffline">Apologies, cannot proceed with the operation. No network connection!\nPlease check your Internet connection</string>
     <string name="contactHeading">ADDRESS</string>
     <string name="paymentHeading">PAYMENT DETAILS</string>
@@ -191,9 +195,9 @@
     <string name="oldNewPasswordNotMatch">The passwords that you\'ve entered do not match.</string>
 
     <!-- update profile -->
-    <string name="dob">Date of Birth</string>
+    <string name="dob">Date of Birth (MM/DD/YYYY)</string>
     <string name="calender">Calender</string>
-    <string name="telNumber">Telephone Number</string>
+    <string name="telNumber">Landline Number (Optional)</string>
     <string name="area">Area</string>
     <string name="landmark">Landmarks (Optional)</string>
     <string name="profileUpdated">Profile updated successfully!</string>
@@ -240,14 +244,15 @@
     <string name="otherError">An error occurred</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
-    <!-- remove this -->
+    <string name="validating_payment">Validating payment</string>
+    <string name="converting_to_cod">Converting to Cash on Delivery</string>
     <string name="smartBasket">Smart Basket</string>
     <string name="rateTheApp">Rate our App</string>
     <string name="shopFromPreviousOrder">Shop From Previous Order(s)</string>
-    <string name="applyVoucher">Apply Voucher</string>
+    <string name="applyVoucher">Apply</string>
     <string name="selectAndApplyVoucher">Select &amp; Apply Voucher</string>
-    <string name="removeVoucher">eVoucher: BBFNV Applied!</string>
-    <string name="voucherWasRemoved">eVoucher was successfully removed</string>
+    <string name="removeVoucher">Remove</string>
+    <string name="voucherWasRemoved">Voucher was successfully removed</string>
     <string name="removeVoucherHeading">Remove voucher</string>
     <string name="removeVoucherDesc">Are you sure that you want to remove this voucher?</string>
     <string name="addAllProducts">Are you sure that you want to add all the products</string>
@@ -281,7 +286,8 @@
     <string name="productFound">product</string>
     <string name="productFoundPlural">products</string>
     <string name="createNewList">Create New List</string>
-    <string name="connectUsing">You can connect using</string>
+    <string name="connectUsing">login using</string>
+    <string name="signUpUsing">signup using</string>
     <string name="tutorial">Tutorial</string>
     <string name="promotions">Promotions</string>
     <string name="quantity">Quantity:&#160;</string>
@@ -290,20 +296,22 @@
     <string name="phone">Phone</string>
     <string name="birthday">Birthday</string>
     <string name="address">Address</string>
-    <string name="default_address">Default Address</string>
-    <string name="addWithSpace">\u0020 Add</string>
-    <string name="viewAll">\u0020 View All</string>
+    <string name="default_address">Address</string>
+    <string name="viewAll">View All</string>
 
     <!-- address -->
     <string name="expressAvailable"> \u0020 Express Delivery is available!</string>
-    <string name="delivery_add">Delivery Address:</string>
-    <string name="other_address">Other Addresses:</string>
-    <string name="addAnAddress"> \u0020 Add an Address</string>
-    <string name="addNewAddress">ADD NEW ADDRESS</string>
+    <string name="delivery_address">Delivery Addresses</string>
+    <string name="addNewAddress">Add New Address</string>
     <string name="save">SAVE</string>
     <string name="saveAndContinue">Save and Continue</string>
-    <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
     <string name="incomplete">Incomplete</string>
+    <string name="chooseAddress">Choose address</string>
+    <string name="chooseDelAddress">Choose delivery address</string>
+    <string name="notSignedIn">You are not signed in.\nPlease sign-in to continue</string>
+    <string name="verify_mobile">Verify number</string>
+    <string name="verify">Verify</string>
+    <string name="verify_caps">VERIFY</string>
 
     <!-- Show cart tabs -->
     <string name="exp_delivery">Express Delivery</string>
@@ -324,8 +332,8 @@
     <string name="help">Help</string>
     <string name="deliverableTextPlural">Based on the items in your basket, deliveries will come in multiple shipments.</string>
     <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
-    <string name="voucherApplicableSingular">Voucher Applicable</string>
-    <string name="voucherApplicablePlural">Vouchers Applicable</string>
+    <string name="voucherApplicableSingular">Voucher applicable</string>
+    <string name="voucherApplicablePlural">Vouchers applicable</string>
 
     <string name="add_bundle">ADD BUNDLE</string>
     <string name="error">Error!</string>
@@ -351,7 +359,6 @@
     <string name="locationSettingError">Unable to open location window.\nPlease enable it by going to settings.</string>
 
     <string name="payment_order_info">Your order will be placed first &amp; then you will be taken to complete the payment.</string>
-    <string name="newStr">New</string>
     <string name="orderPlacedTakingToPaymentGateway">Your order has been placed. You will be taken to payment gateway shortly.\nPlease don\'t press back button.</string>
 
     <string name="pleaseChooseLocationToProceed">Please choose a location to proceed further</string>
@@ -419,18 +426,29 @@
     <string name="createNewAddress">Create new address</string>
     <string name="addressAdded">Address added successfully</string>
     <string name="addressUpdated">Address updated successfully</string>
-    <string name="newAddressNotAllowed">We regret to inform that an address\' city can\'t be changed. Hence, when you click on \"Continue\" we will create a new address.</string>
+    <string name="newAddressNotAllowed">We regret to inform that city of an address can\'t be changed. Hence, when you click on \"Continue\" we will create a new address.</string>
     <string name="your_loc">\u0020your location</string>
     <string name="store_empty">Sorry, Currently we do not have any speciality stores for\u0020</string>
     <string name="available_in">\u0020available \nin </string>
-    <string name="adding_newStores">\n\nWe will be adding new stores in this location soon.Mean while, please checkout other categories.\nThanks!</string>
+    <string name="adding_newStores">\n\nWe will be adding new stores in this location soon. Meanwhile, please checkout other categories.\nThanks!</string>
     <string name="visit_store">VISIT STORE</string>
     <string name="dismiss_">DISMISS</string>
     <string name="order_details">Order Details</string>
     <string name="empty_email_address_error">Please enter your e-mail address</string>
     <string name="empty_password_error">Please enter your password</string>
-    <string name="remainig_seconds_format">%1$ds</string>
-    <string name="evoucher_applied_format">"eVoucher: %1$s Applied!"</string>
+    <string name="evoucher_applied_format">"Voucher: %1$s Applied!"</string>
     <string name="abort_payment_transaction_confirmation">Order is already placed. Convert payment to "Cash on Delivery" and cancel the transaction?</string>
     <string name="dont_not_show_this_message">Do not show this message again</string>
+
+    <string name="store_img">Store Image</string>
+    <string name="store_icon">Store Icon</string>
+    <string name="close">Close</string>
+    <string name="no_delivery_address">No delivery address available. Please add a delivery address.</string>
+    <string name="failed_to_add_basket">Could not add to basket</string>
+
+    <string name="terms_and_cond_start">By signing up, you agree to BigBasket’s\u0020</string>
+    <string name="terms_and_cond">Terms &amp; Conditions,</string>
+    <string name="and">\u0020and\u0020</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
 </resources>

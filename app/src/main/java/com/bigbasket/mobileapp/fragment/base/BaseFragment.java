@@ -1,11 +1,13 @@
 package com.bigbasket.mobileapp.fragment.base;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -48,6 +50,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.crashlytics.android.Crashlytics;
+import com.newrelic.agent.android.NewRelic;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -64,10 +67,11 @@ public abstract class BaseFragment extends AbstractFragment implements
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
     private String progressDialogTag;
+    private View mLoadingView;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         handler = new BigBasketMessageHandler<>(this);
     }
 
@@ -82,6 +86,10 @@ public abstract class BaseFragment extends AbstractFragment implements
         }
         mNavigationContext = getArguments() != null ?
                 getArguments().getString(TrackEventkeys.NAVIGATION_CTX) : null;
+        if (!isSuspended()) {
+            // Don't use class.getName() in getInteractionName(), as with Proguard it returns obfuscated name
+            NewRelic.setInteractionName(getActivity().getClass().getSimpleName() + "#" + getInteractionName());
+        }
     }
 
     @Override
@@ -125,9 +133,16 @@ public abstract class BaseFragment extends AbstractFragment implements
         ViewGroup view = getContentView();
         if (view == null) return;
         view.removeAllViews();
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View loadingView = inflater.inflate(R.layout.uiv3_loading_layout, view, false);
-        view.addView(loadingView);
+        if (mLoadingView == null) {
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            mLoadingView = inflater.inflate(R.layout.uiv3_loading_layout, view, false);
+        } else {
+            if (mLoadingView.getParent() != null) {
+                ((ViewGroup) mLoadingView.getParent()).removeView(mLoadingView);
+            }
+        }
+        mLoadingView.setVisibility(View.VISIBLE);
+        view.addView(mLoadingView);
     }
 
     public void hideProgressView() {
@@ -161,7 +176,7 @@ public abstract class BaseFragment extends AbstractFragment implements
         ft.add(fragment, progressDialogTag);
         if (!isSuspended()) {
             try {
-                ft.commitAllowingStateLoss();
+                ft.commit();
             } catch (IllegalStateException ex) {
                 Crashlytics.logException(ex);
             }
@@ -237,11 +252,6 @@ public abstract class BaseFragment extends AbstractFragment implements
     @Nullable
     public abstract ViewGroup getContentView();
 
-    @Nullable
-    public BaseActivity getCurrentActivity() {
-        return getActivity() != null ? (BaseActivity) getActivity() : null;
-    }
-
     protected Spannable asRupeeSpannable(double amt) {
         return UIUtil.asRupeeSpannable(amt, faceRupee);
     }
@@ -265,7 +275,7 @@ public abstract class BaseFragment extends AbstractFragment implements
                                                    @Nullable WeakReference<View> productViewRef,
                                                    @Nullable WeakReference<EditText> editTextQtyRef) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
-            Toast.makeText(getActivity(), "0 added to basket.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.failed_to_add_basket, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -416,10 +426,9 @@ public abstract class BaseFragment extends AbstractFragment implements
     public void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive) {
         if (getCurrentActivity() == null) return;
         if (isPositive) {
+            onPositiveButtonClicked(reqCode, data);
             if (data != null && data.getBoolean(Constants.FINISH_ACTIVITY, false)) {
                 getCurrentActivity().finish();
-            } else {
-                onPositiveButtonClicked(reqCode, data);
             }
         } else {
             onNegativeButtonClicked(reqCode);
@@ -453,8 +462,19 @@ public abstract class BaseFragment extends AbstractFragment implements
     public void trackEvent(String eventName, Map<String, String> eventAttribs,
                            String source, String sourceValue, boolean isCustomerValueIncrease,
                            boolean sendToFacebook) {
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+        trackEvent(eventName, eventAttribs, source, sourceValue, getPreviousScreenName(),
                 isCustomerValueIncrease, sendToFacebook);
+    }
+
+    @Override
+    public void trackEventsOnFabric(String eventName, Map<String, String> eventAttribs) {
+        trackEventsOnFabric(eventName, eventAttribs, null, null);
+    }
+
+    @Override
+    public void trackEventsOnFabric(String eventName, Map<String, String> eventAttribs, String source, String nc) {
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().trackEventsOnFabric(eventName, eventAttribs, source, nc);
     }
 
     @Override
@@ -472,14 +492,14 @@ public abstract class BaseFragment extends AbstractFragment implements
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
         if (getCurrentActivity() == null) return;
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false, false);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getPreviousScreenName(), false, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
         if (getCurrentActivity() == null) return;
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+        trackEvent(eventName, eventAttribs, source, sourceValue, getPreviousScreenName(),
                 isCustomerValueIncrease, false);
     }
 
@@ -534,37 +554,37 @@ public abstract class BaseFragment extends AbstractFragment implements
     @Override
     public void showApiErrorDialog(@Nullable String title, String message, int resultCode) {
         if (getCurrentActivity() == null) return;
-        getCurrentActivity().showAlertDialogFinish(title, message, resultCode);
+        getCurrentActivity().showAlertDialog(title, message, resultCode);
     }
 
     public abstract String getScreenTag();
 
     @Nullable
     @Override
-    public String getCurrentNavigationContext() {
-        if (mNavigationContext == null && getActivity() != null && ((BaseActivity) getActivity()).getCurrentNavigationContext() != null)
-            return ((BaseActivity) getActivity()).getCurrentNavigationContext();
+    public String getPreviousScreenName() {
+        if (mNavigationContext == null && getActivity() != null && ((BaseActivity) getActivity()).getPreviousScreenName() != null)
+            return ((BaseActivity) getActivity()).getPreviousScreenName();
         return mNavigationContext;
     }
 
     @Override
-    public void setCurrentNavigationContext(@Nullable String nc) {
+    public void setPreviousScreenName(@Nullable String nc) {
         mNavigationContext = nc;
     }
 
     @Nullable
     @Override
-    public String getNextScreenNavigationContext() {
-        if (mNextScreenNavigationContext == null && getActivity() != null && ((BaseActivity) getActivity()).getNextScreenNavigationContext() != null)
-            return ((BaseActivity) getActivity()).getNextScreenNavigationContext();
+    public String getCurrentScreenName() {
+        if (mNextScreenNavigationContext == null && getActivity() != null && ((BaseActivity) getActivity()).getCurrentScreenName() != null)
+            return ((BaseActivity) getActivity()).getCurrentScreenName();
         return mNextScreenNavigationContext;
     }
 
     @Override
-    public void setNextScreenNavigationContext(@Nullable String nc) {
+    public void setCurrentScreenName(@Nullable String nc) {
         mNextScreenNavigationContext = nc;
         if (getCurrentActivity() != null) {
-            getCurrentActivity().setNextScreenNavigationContext(mNextScreenNavigationContext);
+            getCurrentActivity().setCurrentScreenName(mNextScreenNavigationContext);
         }
     }
 
@@ -592,7 +612,7 @@ public abstract class BaseFragment extends AbstractFragment implements
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         super.startActivityForResult(intent, requestCode);
     }
 
@@ -617,4 +637,7 @@ public abstract class BaseFragment extends AbstractFragment implements
     protected void observeMemoryLeak() {
         LeakCanaryObserver.Factory.observe(this);
     }
+
+    @NonNull
+    public abstract String getInteractionName();  // Don't use class.getName(), as with Proguard it returns obfuscated value
 }

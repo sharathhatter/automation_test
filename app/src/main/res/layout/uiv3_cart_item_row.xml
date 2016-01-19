@@ -31,7 +31,7 @@
             android:contentDescription="@string/remove"
             android:paddingBottom="@dimen/margin_small"
             android:paddingRight="@dimen/margin_small"
-            android:src="@drawable/delete_product" />
+            android:src="@drawable/trash" />
 
         <ImageView
             android:id="@+id/imgLiquorIcon"

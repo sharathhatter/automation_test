@@ -227,9 +227,6 @@ public class Constants {
     public static final String PAYUMONEY_WALLET = "payumoney_wallet";
     public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
     public static final String PAYTM_HASH_GENERATION_URL = "GURL";
-    public static final String WALLET_USED = "wallet_used";
-    public static final String AMT_PAYABLE = "amount_payable";
-    public static final String WALLET_REMAINING = "wallet_remaining";
 
     public static final String HOME = "home";
     public static final String ADDRESSES = "addresses";
@@ -280,6 +277,7 @@ public class Constants {
     public static final String VERSION_NAME = "versionName";
     public static final String ENABLE_FB_LOGGER = "enable_fb_logger";
     public static final String ENABLE_MOENGAGE = "enable_moengage";
+    public static final String ENABLE_NEWRELIC = "enable_newrelic";
     public static final String ENABLE_LOCALYTICS = "enable_localytics";
     public static final int CUSTOMER_VALUE_INCREASE = 1;
     public static final String ANALYTICS = "analytics";
@@ -359,7 +357,6 @@ public class Constants {
     public static final String SHOPPING_LIST_SUMMARY = "shoplist_summary";
     public static final String SL_NAME = "name";
     public static final String IS_PUBLIC = "is_public";
-
     //otp
     //public static final String IMAGE_URLS = "image_urls/";
 
@@ -444,11 +441,9 @@ public class Constants {
     public static final String MOB_NUMBER_PREF = "mobnum";
     public static final String NEWS_PREF = "news";
     public static final String DATE_PICKER = "datePicker";
-    public static final String OTP_DIALOG_FLAG = "otp_dialog_flag";
 
     public static final String PAYMENT_TYPES = "payment_types";
     public static final String PAYMENT_TYPE = "payment_type";
-    public static final String PAYMENT_STATUS = "payment_status";
     public static final String PAYMENT_METHOD = "payment_method";
     public static final String CAN_PAY = "can_pay";
 
@@ -462,6 +457,7 @@ public class Constants {
     public static final String SECTION_TYPE = "section_type";
     public static final String SECTION_INFO = "section_info";
     public static final String SECTION_ITEM = "section_item";
+    public static final String CAMPAIGN = "campaign";
     public static final String DESTINATION = "destination";
     public static final String MORE = "more";
     public static final String DESTINATION_TYPE = "dest_type";
@@ -478,6 +474,13 @@ public class Constants {
     public static final String MARGIN = "margin";
     public static final String ALIGNMENT = "alignment";
     public static final String RENDERERS = "renderers";
+    public static final String TEXT_STYLE = "text_style";
+    public static final String ANALYTICS_ATTRS = "analytics_attr";
+
+    //Analytics
+    public static final String CLICKS = "clicks";
+    public static final String IMPRESSIONS = "imps";
+
 
     //fb login and register
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
@@ -584,14 +587,6 @@ public class Constants {
     public static final String GO_TO_HOME = "go_to_home";
 
     //mobikwik
-    public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
-    public static final String MOBIKWIKSDK = "MobikwikSDK";
-    public static final String MOBIKWIK_MODE = "mode";
-    public static final String MOBIKWIK_SDK_SIGN = "sdksign";
-    public static final String MOBIKWIK_REDIRECT_ANDROID_CLASS_NAME = "redirecturl";
-    public static final String MOBIKWIK_RESPONSE_HANDLER_CLASS = "com.bigbasket.mobileapp.activity.payment.MobiKwikResponseHandlerActivity";
-    public static final String MOBIKWIK_PAYMENT_OPTION = "paymentOption";
-    public static final String MOBIKWIK_PAYMENT_MW = "mw";
     public static final String MOBIKWIK_WALLET = "mobikwik_wallet";
 
     // Sku Tabs
@@ -659,10 +654,22 @@ public class Constants {
     public static final int EMPTY_BASKET_DIALOG_QUEST = 8004;
     public static final int LOCATION_DIALOG_REQUEST = 8005;
     public static final int PREPAYMENT_ABORT_CONFIRMATION_DIALOG = 8006;
-    public static final int SOURCE_ABORT_DIALOG_REQUEST = 8007;
+
 
     // App Indexing params
     public static final String HTTP_HOST = "bigbasket.com";
     public static final String SHOW_PAYMENT_OPTIONS_KNOW_MORE = "show_payment_options_know_more";
     public static final int KNOW_MORE_DIALOG_ID = 8008;
+
+    public static final String USER_SELECTED_ADDRESS = "selected_address";
+    //Android M Support Permissions codes
+    public static final int PERMISSION_REQUEST_CODE_ACCESS_LOCATION = 101;
+    public static final int PERMISSION_REQUEST_CODE_RECORD_AUDIO = 102;
+    public static final int PERMISSION_REQUEST_CODE_CAPTURE_CAMERA = 103;
+    public static final int PERMISSION_REQUEST_CODE_GET_ACCOUNTS = 104;
+    public static final int PERMISSION_REQUEST_CODE_RECEIVE_SMS = 105;
+
+    public static final String TERMS_AND_COND_URL = "http://www.bigbasket.com/terms-and-conditions/?source=app";
+    public static final String PRIVACY_POLICY_URL = "http://www.bigbasket.com/privacy-policy/?source=app";
+
 }

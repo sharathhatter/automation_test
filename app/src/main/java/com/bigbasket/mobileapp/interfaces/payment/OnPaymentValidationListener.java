@@ -8,5 +8,5 @@ import java.util.ArrayList;
 
 public interface OnPaymentValidationListener {
     void onPaymentValidated(boolean status, @Nullable String msg,
-                            ArrayList<Order> orders);
+                            @Nullable ArrayList<Order> orders);
 }

@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Call;
 
@@ -45,7 +46,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.CO_INVOICE);
+        setCurrentScreenName(TrackEventkeys.CO_INVOICE);
         setContentView(R.layout.uiv3_multiple_order_invoice_layout);
 
         ImageView imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
@@ -58,6 +59,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         showAddMoreText(addMoreLink, addMoreMsg);
 
         trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
+        trackEventsOnFabric(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
     }
 
     private void showAddMoreText(final String addMoreLink, final String addMoreMsg) {
@@ -116,7 +118,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
             String orderValStr = UIUtil.formatAsMoney(Double.parseDouble(order.getOrderValue()));
             int prefixLen = orderPrefix.length();
             SpannableString spannableMrp = new SpannableString(orderPrefix + orderValStr);
-            spannableMrp.setSpan(new CustomTypefaceSpan("", BaseActivity.faceRupee), prefixLen - 1,
+            spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.append(spannableMrp);
 
@@ -187,6 +189,9 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     public void onClick(View v) {
                         Intent intent = new Intent(getCurrentActivity(), PayNowActivity.class);
                         intent.putExtra(Constants.ORDER_ID, order.getOrderId());
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+                        trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                 });
@@ -200,7 +205,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
     private void showInvoice(Order order) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(order.getOrderId());
+        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(getPreviousScreenName(), order.getOrderId());
         call.enqueue(new CallbackOrderInvoice<>(this));
     }
 
@@ -214,11 +219,6 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
 
     public void onContinueBtnClicked(View view) {
         goToHome();
-    }
-
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
     }
 
     @Override

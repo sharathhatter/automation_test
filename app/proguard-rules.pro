@@ -26,11 +26,6 @@
 -keep class com.bigbasket.mobileapp.model.** { *; }
 -keep class com.bigbasket.mobileapp.apiservice.models.response.** { *; }
 
-# Wibmo
--keep class com.enstage.wibmo.sdk.** { *; }
--keep class com.enstage.wibmo.sdk.inapp.InAppBrowserActivity$* { *; }
--keep class com.enstage.wibmo.util.** { *; }
--keepclassmembers class com.enstage.wibmo.sdk.inapp.pojo.** { *; }
 
 # New Relic
 -keep class com.newrelic.** { *; }
@@ -153,12 +148,7 @@
 }
 
 # Mobikwik
--keepclassmembers class com.paymentsdk.android.PGWebView$MyJavaScriptInterface{
-   public *;
-}
-
--keep class com.paymentsdk.android.model.** { *; }
-
+-keep class com.mobikwik.sdk.**{ *; }
 
 #moengage
 -keep class com.moe.** { *; }
@@ -195,3 +185,22 @@
 }
 
 -dontwarn com.mixpanel.**
+
+# Fresco
+# Keep our interfaces so they can be used by other ProGuard rules.
+# See http://sourceforge.net/p/proguard/bugs/466/
+-keep,allowobfuscation @interface com.facebook.common.internal.DoNotStrip
+
+# Do not strip any method/class that is annotated with @DoNotStrip
+-keep @com.facebook.common.internal.DoNotStrip class *
+-keepclassmembers class * {
+    @com.facebook.common.internal.DoNotStrip *;
+}
+
+# Keep native methods
+-keepclassmembers class * {
+    native <methods>;
+}
+
+-dontwarn javax.annotation.**
+-dontwarn com.android.volley.toolbox.**

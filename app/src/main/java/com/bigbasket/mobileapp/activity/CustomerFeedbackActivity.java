@@ -12,7 +12,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -134,11 +133,6 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
     @Override
     public void onChangeTitle(String title) {
 
-    }
-
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
     }
 
     public String getScreenTag() {

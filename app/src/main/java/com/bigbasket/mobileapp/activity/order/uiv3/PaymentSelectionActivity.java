@@ -9,9 +9,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -19,11 +20,14 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,21 +36,21 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
+import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPayZappResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPrePaymentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.factory.payment.OrderPrepaymentProcessingTask;
-import com.bigbasket.mobileapp.factory.payment.PostPaymentProcessor;
+import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
-import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
-import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
-import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentOptionsKnowMoreDialogCallback;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
@@ -54,6 +58,8 @@ import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.model.order.PaytmResponseHolder;
+import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -65,27 +71,31 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
 import com.crashlytics.android.Crashlytics;
-import com.enstage.wibmo.sdk.WibmoSDK;
-import com.payu.india.Payu.PayuConstants;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import retrofit.Call;
 
 public class PaymentSelectionActivity extends BackButtonActivity
-        implements OnPostPaymentListener, OnPaymentValidationListener, PaymentTxnInfoAware,
+        implements OnPaymentValidationListener, PaymentTxnInfoAware,
         PaymentMethodsView.OnPaymentOptionSelectionListener, PaymentOptionsKnowMoreDialogCallback {
 
     private static final java.lang.String IS_PREPAYMENT_TASK_PAUSED = "is_prepayment_task_paused";
     private static final java.lang.String IS_PREPAYMENT_TASK_STARTED = "is_prepayment_task_started";
     private static final java.lang.String IS_PREPAYMENT_ABORT_INITIATED = "is_prepayment_abort_initiated";
+    private final String PAYMENT_PARAMS = "payment_params";
+    private final String PAYZAPP_PAYMENT_PARAMS = "payzapp_payment_params";
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private ArrayList<PaymentType> paymentTypeList;
     private String mPotentialOrderId;
     private TextView mTxtApplyVoucher;
     private TextView mTxtRemoveVoucher;
     private TextView mTxtApplicableVoucherCount;
+    private EditText editTextVoucherCode;
     private String mAppliedVoucherCode;
     private String mSelectedPaymentMethod;
     private OrderDetails mOrderDetails;
@@ -99,13 +109,16 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private boolean mIsPrepaymentProcessingStarted;
     private OrderPrepaymentProcessingTask<PaymentSelectionActivity> mOrderPrepaymentProcessingTask;
     private boolean mIsPrepaymentAbortInitiated;
+    private boolean isPayUOptionVisible;
+    private PayzappPostParams mPayzappPostParams;
+    private HashMap<String, String> mPaymentParams;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mElapsedTime = new MutableLong();
 
-        setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
+        setCurrentScreenName(TrackEventkeys.CO_PAYMENT);
         mPotentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
 
         if (TextUtils.isEmpty(mPotentialOrderId)) return;
@@ -136,6 +149,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             mOrderAmount = savedInstanceState.getString(Constants.AMOUNT);
         } else {
             trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
+            trackEventsOnFabric(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
         }
     }
 
@@ -158,15 +172,25 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (mOrderAmount != null) {
             outState.putString(Constants.AMOUNT, mOrderAmount);
         }
+        if (mPaymentParams != null) {
+            Gson gson = new Gson();
+            String jsonPaymentParams = gson.toJson(mPaymentParams);
+            outState.putString(PAYMENT_PARAMS, jsonPaymentParams);
+        }
+        if (mPayzappPostParams != null) {
+            outState.putParcelable(PAYZAPP_PAYMENT_PARAMS, mPayzappPostParams);
+        }
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        processMobikWikResponse();
         if (mOrderPrepaymentProcessingTask != null && !mIsPrepaymentAbortInitiated) {
             mOrderPrepaymentProcessingTask.resume();
+        }
+        if (PaytmResponseHolder.hasPendingTransaction()) {
+            PaytmResponseHolder.processPaytmResponse(this);
         }
     }
 
@@ -206,19 +230,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 && mOrdersCreated != null;
     }
 
-    private void processMobikWikResponse() {
-        String txnId = MobikwikResponseHandler.getLastTransactionID();
-        if (!TextUtils.isEmpty(txnId)) {
-            if (mOrdersCreated != null) {
-                new PostPaymentProcessor<>(this, txnId)
-                        .withPotentialOrderId(mPotentialOrderId)
-                        .withOrderId(mOrdersCreated.get(0).getOrderNumber())
-                        .processPayment();
-            }
-            MobikwikResponseHandler.clear();
-        }
-    }
-
     private void renderCheckOutProgressView() {
         LinearLayout layoutPaymentContainer = (LinearLayout) findViewById(R.id.layoutCheckoutProgressContainer);
         layoutPaymentContainer.removeAllViews();
@@ -255,8 +266,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
                     }
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
-                    map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
+                    trackEventsOnFabric(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map);
 
                     SharedPreferences prefs =
                             PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -274,7 +286,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
-
     private void renderPaymentDetails() {
         mActiveVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
         mAppliedVoucherCode = getIntent().getStringExtra(Constants.EVOUCHER_CODE);
@@ -282,16 +293,17 @@ public class PaymentSelectionActivity extends BackButtonActivity
         paymentTypeList = getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES);
 
         ArrayList<CreditDetails> creditDetails = getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS);
-        renderPaymentMethodsAndSummary(creditDetails);
+        renderPaymentMethodsView();
+        renderOrderSummary(creditDetails);
     }
 
-    private void renderPaymentMethodsAndSummary(@Nullable ArrayList<CreditDetails> creditDetails) {
+    private void renderOrderSummary(@Nullable ArrayList<CreditDetails> creditDetails) {
         // Show invoice and other order details
         LayoutInflater inflater = getLayoutInflater();
-        int normalColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        int secondaryColor = getResources().getColor(R.color.uiv3_secondary_text_color);
-        int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        int orderTotalValueColor = getResources().getColor(R.color.uiv3_ok_label_color);
+        int normalColor = ContextCompat.getColor(this, R.color.uiv3_primary_text_color);
+        int secondaryColor = ContextCompat.getColor(this, R.color.uiv3_secondary_text_color);
+        int orderTotalLabelColor = ContextCompat.getColor(this, R.color.uiv3_primary_text_color);
+        int orderTotalValueColor = ContextCompat.getColor(this, R.color.uiv3_ok_label_color);
         LinearLayout layoutOrderSummaryInfo = (LinearLayout) findViewById(R.id.layoutOrderSummaryInfo);
         layoutOrderSummaryInfo.removeAllViews();
 
@@ -330,6 +342,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxtApplyVoucher.setOnClickListener(showAvailableVouchersListener);
         mTxtApplicableVoucherCount = (TextView) findViewById(R.id.txtApplicableVoucherCount);
         mTxtApplicableVoucherCount.setTypeface(faceRobotoRegular);
+        editTextVoucherCode = (EditText) findViewById(R.id.editTextVoucherCode);
         if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
             mTxtApplicableVoucherCount.setText(mActiveVouchersList.size() + " " +
                     (mActiveVouchersList.size() > 1 ?
@@ -337,7 +350,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                             getString(R.string.voucherApplicableSingular)));
             mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
         } else {
-            mTxtApplicableVoucherCount.setVisibility(View.GONE);
+            handleNoVoucherApplicable();
         }
         mTxtApplicableVoucherCount.setOnClickListener(showAvailableVouchersListener);
 
@@ -361,10 +374,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
         } else {
             onVoucherRemoved();
         }
+        renderCheckOutProgressView();
+    }
 
+    private void renderPaymentMethodsView() {
         TextView lblAmountFromWallet = (TextView) findViewById(R.id.lblAmountFromWallet);
         lblAmountFromWallet.setTypeface(faceRobotoRegular);
-
         boolean isInHDFCPayMode = HDFCPayzappHandler.isInHDFCPayMode(this);
         if (isInHDFCPayMode) {
             // Now check whether Payzapp is actually present
@@ -377,6 +392,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
             }
             isInHDFCPayMode = hasHdfc;
         }
+        for (PaymentType paymentType : paymentTypeList) {
+            if (paymentType.getValue().equals(Constants.PAYUMONEY_WALLET)) {
+                isPayUOptionVisible = true;
+                break;
+            }
+        }
+
         PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         paymentMethodsView.removeAllViews();
 
@@ -388,27 +410,63 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
             paymentMethodsView.setPaymentMethods(paymentTypeList, false, isInHDFCPayMode);
         }
-        renderCheckOutProgressView();
+
     }
+
 
     private void onVoucherApplied(String voucher, OrderDetails orderDetails,
                                   ArrayList<CreditDetails> creditDetails) {
         if (!TextUtils.isEmpty(voucher)) {
             showVoucherAppliedText(voucher);
             mOrderDetails = orderDetails;
-            renderPaymentMethodsAndSummary(creditDetails);
+            renderOrderSummary(creditDetails);
             renderFooter(true);
         }
     }
 
     private void showVoucherAppliedText(String voucher) {
         mTxtApplyVoucher.setVisibility(View.GONE);
+        editTextVoucherCode.setVisibility(View.GONE);
         mTxtRemoveVoucher.setVisibility(View.VISIBLE);
-        mTxtRemoveVoucher.setText(getString(R.string.evoucher_applied_format, voucher));
-        if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
-            mTxtApplicableVoucherCount.setVisibility(View.GONE);
-        }
+        mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
+        mTxtApplicableVoucherCount.setText(getString(R.string.evoucher_applied_format, voucher));
+        mTxtApplicableVoucherCount.setTextColor(ContextCompat.getColor(this, R.color.uiv3_dialog_header_text_bkg));
         mAppliedVoucherCode = voucher;
+    }
+
+    /**
+     * handling the condition when there is no voucher codes sent by server
+     * edittext is made visible and the clicklistener of the apply textview is updated
+     */
+    private void handleNoVoucherApplicable() {
+        mTxtApplicableVoucherCount.setVisibility(View.GONE);
+        editTextVoucherCode.setVisibility(View.VISIBLE);
+        editTextVoucherCode.setText("");
+        editTextVoucherCode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
+                if (((keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                        actionId == EditorInfo.IME_ACTION_DONE) {
+                    String voucherCode = editTextVoucherCode.getText().toString();
+                    if (!TextUtils.isEmpty(voucherCode)) {
+                        trackEvent(EVOUCHER_KEYBOARD_APPLY_CLICKED, null);
+                        applyVoucher(voucherCode);
+                    }
+                    hideKeyboard(getCurrentActivity(), editTextVoucherCode);
+                }
+                return false;
+            }
+        });
+        mTxtApplyVoucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(editTextVoucherCode.getText().toString().trim())) {
+                    hideKeyboard(getCurrentActivity(), mTxtApplyVoucher);
+                    applyVoucher(editTextVoucherCode.getText().toString().trim());
+                    trackEvent(EVOUCHER_USER_VOUCHER_ENTERED, null);
+                }
+            }
+        });
     }
 
     private void applyVoucher(final String voucherCode) {
@@ -418,7 +476,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
         if (checkInternetConnection()) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
             showProgressDialog(getString(R.string.please_wait));
-            Call<ApiResponse<PostVoucherApiResponseContent>> call = bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode);
+            Call<ApiResponse<PostVoucherApiResponseContent>> call =
+                    bigBasketApiService.postVoucher(getCurrentScreenName(), mPotentialOrderId, voucherCode);
             call.enqueue(new BBNetworkCallback<ApiResponse<PostVoucherApiResponseContent>>(this) {
                 @Override
                 public void onSuccess(ApiResponse<PostVoucherApiResponseContent> postVoucherApiResponse) {
@@ -427,6 +486,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
                             onVoucherSuccessfullyApplied(voucherCode,
                                     postVoucherApiResponse.apiResponseContent.orderDetails,
                                     postVoucherApiResponse.apiResponseContent.creditDetails);
+                            trackEvent(TrackingAware.EVOUCHER_APPLIED_SUCCESS, null);
+
+
                             break;
                         default:
                             HashMap<String, String> map = new HashMap<>();
@@ -471,7 +533,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<PostVoucherApiResponseContent>> call = bigBasketApiService.removeVoucher(mPotentialOrderId);
+        Call<ApiResponse<PostVoucherApiResponseContent>> call =
+                bigBasketApiService.removeVoucher(getCurrentScreenName(), mPotentialOrderId);
         call.enqueue(new BBNetworkCallback<ApiResponse<PostVoucherApiResponseContent>>(this) {
             @Override
             public void onSuccess(ApiResponse<PostVoucherApiResponseContent> removeVoucherApiResponse) {
@@ -481,6 +544,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                                 getString(R.string.voucherWasRemoved), Toast.LENGTH_SHORT).show();
                         onVoucherRemoved(removeVoucherApiResponse.apiResponseContent.orderDetails,
                                 removeVoucherApiResponse.apiResponseContent.creditDetails);
+                        trackEvent(TrackingAware.EVOUCHER_REMOVAL_SUCCESS, null);
                         break;
                     default:
                         handler.sendEmptyMessage(removeVoucherApiResponse.status,
@@ -515,6 +579,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxtRemoveVoucher.setVisibility(View.GONE);
         if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
             mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
+            mTxtApplicableVoucherCount.setTextColor(ContextCompat.getColor(this, R.color.uiv3_secondary_text_color));
         }
     }
 
@@ -522,7 +587,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                                   ArrayList<CreditDetails> creditDetails) {
         onVoucherRemoved();
         mOrderDetails = orderDetails;
-        renderPaymentMethodsAndSummary(creditDetails);
+        renderOrderSummary(creditDetails);
         renderFooter(true);
     }
 
@@ -538,16 +603,16 @@ public class PaymentSelectionActivity extends BackButtonActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            new PostPaymentProcessor<>(this, mTxnId)
-                    .withPotentialOrderId(mPotentialOrderId)
-                    .processPayzapp(data, resultCode, mOrderAmount);
-        } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
-            new PostPaymentProcessor<>(this, mTxnId)
-                    .withPotentialOrderId(mPotentialOrderId)
-                    .withOrderId(mOrdersCreated.get(0).getOrderNumber())
-                    .processPayment();
-        } else {
+        boolean handled = false;
+        if (mOrdersCreated != null) {
+            ValidatePaymentRequest validatePaymentRequest =
+                    new ValidatePaymentRequest(mTxnId, mOrdersCreated.get(0).getOrderNumber(),
+                            mPotentialOrderId, mSelectedPaymentMethod);
+            validatePaymentRequest.setFinalTotal(mOrderAmount);
+            ValidatePayment validatePayment = new ValidatePayment<>(this, validatePaymentRequest);
+            handled = validatePayment.onActivityResult(requestCode, resultCode, data);
+        }
+        if (!handled) {
             switch (resultCode) {
                 case NavigationCodes.VOUCHER_APPLIED:
                     if (data != null) {
@@ -568,20 +633,38 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
+    /**
+     * checking the payment type and based on the calling placeOrder API.
+     */
     private void placeOrder() {
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
                 false);
-        Call<OldApiResponse<PlaceOrderApiResponseContent>> call = bigBasketApiService.placeOrder(mPotentialOrderId, mSelectedPaymentMethod);
-        call.enqueue(new BBNetworkCallback<OldApiResponse<PlaceOrderApiResponseContent>>(this) {
+        if (Constants.HDFC_POWER_PAY.equals(mSelectedPaymentMethod)) {
+            placeOrderWithPayZappPaymentMethod();
+        } else {
+            placeOrderWithPrePaymentMethod();
+        }
+    }
+
+    /**
+     * placing order with the payment method apart from PayZapp
+     */
+    private void placeOrderWithPrePaymentMethod() {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        Call<OldApiResponse<PlaceOrderApiPrePaymentResponseContent>> call =
+                bigBasketApiService.placeOrderWithPrePayment(getCurrentScreenName(), mPotentialOrderId, mSelectedPaymentMethod);
+        call.enqueue(new BBNetworkCallback<OldApiResponse<PlaceOrderApiPrePaymentResponseContent>>(this) {
             @Override
-            public void onSuccess(OldApiResponse<PlaceOrderApiResponseContent> placeOrderApiResponse) {
-                if (placeOrderApiResponse.status.equals(Constants.OK)) {
-                    postOrderCreation(placeOrderApiResponse.apiResponseContent.orders,
-                            placeOrderApiResponse.apiResponseContent.addMoreLink,
-                            placeOrderApiResponse.apiResponseContent.addMoreMsg);
+            public void onSuccess(OldApiResponse<PlaceOrderApiPrePaymentResponseContent> placeOrderApiPrePaymentResponse) {
+                if (placeOrderApiPrePaymentResponse.status.equals(Constants.OK)) {
+                    if (placeOrderApiPrePaymentResponse.apiResponseContent.postParams != null) {
+                        mPaymentParams = placeOrderApiPrePaymentResponse.apiResponseContent.postParams;
+                    }
+                    postOrderCreation(placeOrderApiPrePaymentResponse.apiResponseContent.orders,
+                            placeOrderApiPrePaymentResponse.apiResponseContent.addMoreLink,
+                            placeOrderApiPrePaymentResponse.apiResponseContent.addMoreMsg);
                 } else {
-                    handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
+                    handler.sendEmptyMessage(placeOrderApiPrePaymentResponse.getErrorTypeAsInt(), placeOrderApiPrePaymentResponse.message);
                 }
             }
 
@@ -597,6 +680,41 @@ public class PaymentSelectionActivity extends BackButtonActivity
         });
     }
 
+    /****
+     * method to order using PayZapp payment parameters
+     */
+    private void placeOrderWithPayZappPaymentMethod() {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        Call<OldApiResponse<PlaceOrderApiPayZappResponseContent>> call =
+                bigBasketApiService.placeOrderWithPayZapp(getCurrentScreenName(), mPotentialOrderId, mSelectedPaymentMethod);
+        call.enqueue(new BBNetworkCallback<OldApiResponse<PlaceOrderApiPayZappResponseContent>>(this) {
+            @Override
+            public void onSuccess(OldApiResponse<PlaceOrderApiPayZappResponseContent> placeOrderApiPayZappResponseContent) {
+                if (placeOrderApiPayZappResponseContent.status.equals(Constants.OK)) {
+                    if (placeOrderApiPayZappResponseContent.apiResponseContent.payzappPostParams != null) {
+                        mPayzappPostParams = placeOrderApiPayZappResponseContent.apiResponseContent.payzappPostParams;
+                    }
+                    postOrderCreation(placeOrderApiPayZappResponseContent.apiResponseContent.orders,
+                            placeOrderApiPayZappResponseContent.apiResponseContent.addMoreLink,
+                            placeOrderApiPayZappResponseContent.apiResponseContent.addMoreMsg);
+                } else {
+                    handler.sendEmptyMessage(placeOrderApiPayZappResponseContent.getErrorTypeAsInt(), placeOrderApiPayZappResponseContent.message);
+                }
+            }
+
+            @Override
+            public boolean updateProgress() {
+                try {
+                    hideProgressDialog();
+                    return true;
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        });
+    }
+
+
     private void postOrderCreation(ArrayList<Order> orders, String addMoreLink,
                                    String addMoreMsg) {
         ((CartInfoAware) getCurrentActivity()).markBasketDirty();
@@ -609,7 +727,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
         } else {
             showOrderThankyou(orders, addMoreLink, addMoreMsg);
         }
-
     }
 
     private void showOrderThankyou(ArrayList<Order> orders, String addMoreLink, String addMoreMsg) {
@@ -624,9 +741,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
             map.put(TrackEventkeys.PAYMENT_MODE, order.getPaymentMethod());
             map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
             trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
+            trackEventsOnFabric(TrackingAware.CHECKOUT_ORDER_COMPLETE, map);
             trackEventAppsFlyer(TrackingAware.PLACE_ORDER, order.getOrderValue(), map);
         }
-        setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
+        setCurrentScreenName(TrackEventkeys.CO_PAYMENT);
 
         Intent invoiceIntent = new Intent(this, OrderThankyouActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
@@ -664,10 +782,32 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
         ((TextView) findViewById(R.id.lblOrderPlaced)).setTypeface(faceRobotoRegular);
 
+        //getting values from the bundle and setting the payment parameters
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(PAYMENT_PARAMS)) {
+                try {
+                    Gson gson = new Gson();
+                    Type stringStringMap = new TypeToken<HashMap<String, String>>() {
+                    }.getType();
+                    mPaymentParams = gson.fromJson(savedInstanceState.getString(PAYMENT_PARAMS), stringStringMap);
+                } catch (Exception e) {
+                    Crashlytics.logException(new ClassCastException(
+                            "Exception while getting values from bundle"));
+                }
+            }
+            if (savedInstanceState.containsKey(PAYZAPP_PAYMENT_PARAMS)) {
+                try {
+                    mPayzappPostParams = savedInstanceState.getParcelable(PAYZAPP_PAYMENT_PARAMS);
+                } catch (Exception e) {
+                    Crashlytics.logException(new ClassCastException(
+                            "Exception while getting values from bundle"));
+                }
+            }
+        }
         mOrderPrepaymentProcessingTask =
                 new OrderPrepaymentProcessingTask<PaymentSelectionActivity>(this,
                         mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
-                        mSelectedPaymentMethod, false, false) {
+                        mSelectedPaymentMethod, false, false, isPayUOptionVisible) {
                     @Override
                     protected void onPreExecute() {
                         super.onPreExecute();
@@ -686,11 +826,11 @@ public class PaymentSelectionActivity extends BackButtonActivity
                                 if (errorResponse.isException()) {
                                     //TODO: Possible network error retry
                                     getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
-                                } else if (errorResponse.getCode() > 0) {
+                                } else if (errorResponse.getErrorType() == ErrorResponse.HTTP_ERROR) {
                                     getHandler().handleHttpError(errorResponse.getCode(),
                                             errorResponse.getMessage(), false);
                                 } else {
-                                    getHandler().sendEmptyMessage(-1 * errorResponse.getCode(),
+                                    getHandler().sendEmptyMessage(errorResponse.getCode(),
                                             errorResponse.getMessage(), false);
                                 }
                             } else {
@@ -702,6 +842,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
                         mOrderPrepaymentProcessingTask = null;
                     }
                 };
+        /**
+         * setting the payment parameters
+         */
+        mOrderPrepaymentProcessingTask.setPaymentParams(mPaymentParams);
+        mOrderPrepaymentProcessingTask.setPayZappPaymentParams(mPayzappPostParams);
+
         if (savedInstanceState != null
                 && savedInstanceState.getBoolean(IS_PREPAYMENT_TASK_PAUSED, false)) {
             mOrderPrepaymentProcessingTask.pause();
@@ -718,22 +864,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void onPostPaymentFailure(String txnId, String paymentType) {
-        // When transaction has failed. Place order as Cash on Delivery.
-        // User can later use 'Pay Now' to complete order.
-        String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-        new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
-    }
-
-    @Override
-    public void onPostPaymentSuccess(String txnId, String paymentType) {
-        // Now Validate payment from server for excess collection
-        String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-        new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
-    }
-
-    @Override
-    public void onPaymentValidated(boolean status, @Nullable String msg, ArrayList<Order> orders) {
+    public void onPaymentValidated(boolean status, @Nullable String msg, @NonNull ArrayList<Order> orders) {
         mOrdersCreated = orders;
         if (status || msg == null) {
             showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
@@ -763,7 +894,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 mIsPrepaymentProcessingStarted = false;
                 String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
                 if (!TextUtils.isEmpty(txnId)) {
-                    new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
+                    ValidatePaymentRequest validatePaymentRequest =
+                            new ValidatePaymentRequest(txnId, fullOrderId, mPotentialOrderId,
+                                    null);  // Passing payment method as null to convert it to COD
+                    new ValidatePayment<>(this, validatePaymentRequest).validate(null);
                 } else {
                     showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
                 }
@@ -771,7 +905,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             default:
                 super.onPositiveButtonClicked(sourceName, valuePassed);
         }
-
     }
 
     @Override
@@ -827,18 +960,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
-    private class OnShowAvailableVouchersListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            Intent availableVoucherListActivity = new Intent(getCurrentActivity(),
-                    AvailableVoucherListActivity.class);
-            availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
-            startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
-        }
-    }
-
-
-    public static class PaymentOrderInfoDialog extends DialogFragment
+    public static class PaymentOrderInfoDialog extends AppCompatDialogFragment
             implements Dialog.OnClickListener {
 
         private static final String ARG_DIALOG_IDENTIFIER = "arg_dialog_identifier";
@@ -925,7 +1047,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
                     @Override
                     public void updateDrawState(TextPaint ds) {
-                        ds.setColor(getResources().getColor(R.color.uiv3_link_color));
+                        ds.setColor(ContextCompat.getColor(getActivity(), R.color.uiv3_link_color));
                         ds.setUnderlineText(true);
                     }
                 };
@@ -992,4 +1114,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
+    private class OnShowAvailableVouchersListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Intent availableVoucherListActivity = new Intent(getCurrentActivity(),
+                    AvailableVoucherListActivity.class);
+            availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
+            startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
+        }
+    }
 }

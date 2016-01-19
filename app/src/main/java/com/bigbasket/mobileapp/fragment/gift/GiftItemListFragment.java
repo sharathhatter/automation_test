@@ -106,4 +106,10 @@ public class GiftItemListFragment extends BaseFragment implements GiftOperationA
             giftMessageFragment.redrawGiftMessageRecyclerView(position);
         }
     }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "GiftItemListFragment";
+    }
 }

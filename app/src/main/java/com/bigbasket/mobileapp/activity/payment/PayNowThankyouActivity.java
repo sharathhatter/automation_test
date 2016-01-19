@@ -30,7 +30,7 @@ public class PayNowThankyouActivity extends BaseActivity implements InvoiceDataA
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.uiv3_paynow_thankyou);
-        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_PAY_NOW_THANK_YOU);
+        setCurrentScreenName(TrackEventkeys.NAVIGATION_CTX_PAY_NOW_THANK_YOU);
         final String orderId = getIntent().getStringExtra(Constants.ORDER_ID);
 
         TextView txtThankYou = (TextView) findViewById(R.id.txtThankYou);
@@ -55,17 +55,12 @@ public class PayNowThankyouActivity extends BaseActivity implements InvoiceDataA
     private void showInvoice(String orderId) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(orderId);
+        Call<ApiResponse<OrderInvoice>> call = bigBasketApiService.getInvoice(getPreviousScreenName(), orderId);
         call.enqueue(new CallbackOrderInvoice<>(this));
     }
 
     public void onContinueBtnClicked(View v) {
         goToHome();
-    }
-
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
     }
 
     @Override
