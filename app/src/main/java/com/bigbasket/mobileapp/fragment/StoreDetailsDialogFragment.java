@@ -1,16 +1,16 @@
 package com.bigbasket.mobileapp.fragment;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -54,23 +54,62 @@ public class StoreDetailsDialogFragment extends AbstractDialogFragment {
         }
     }
 
-    @Nullable
+/*    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.store_details_layout, container, false);
-    }
+    }*/
 
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
-        return dialog;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View view = inflater.inflate(R.layout.store_details_layout, null, false);
+
+        String title = detailsBundle.getString(Constants.STORE_NAME);
+        TextView titleView = (TextView) view.findViewById(R.id.dialogTitle);
+        titleView.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular(), Typeface.BOLD);
+        if (!TextUtils.isEmpty(title)) {
+            titleView.setText(title);
+        } else {
+            titleView.setText(R.string.speciality_shop_title);
+        }
+
+        ImageView storeIcon = (ImageView) view.findViewById(R.id.storeIcon);
+        TextView storeDesc = (TextView) view.findViewById(R.id.txtStoreDesc);
+        storeDesc.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
+
+        String desc = detailsBundle.getString(Constants.STORE_DESC);
+        if (!TextUtils.isEmpty(desc)) {
+            storeDesc.setText(desc);
+        }
+        String imgUrl = detailsBundle.getString(Constants.STORE_IMG);
+        UIUtil.displayAsyncImage(storeIcon, imgUrl);
+
+        builder.setView(view);
+
+        builder.setNegativeButton(R.string.dismiss, null);
+
+        builder.setPositiveButton(R.string.visit_store, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String storeCategory = detailsBundle.getString(Constants.STORE_CATEGORY);
+                if (!TextUtils.isEmpty(storeCategory)) {
+                    DestinationInfo destinationInfo = new DestinationInfo(DestinationInfo.STORE_LIST, storeCategory);
+                    if (getDialog().isShowing())
+                        getDialog().dismiss();
+                    new OnSectionItemClickListener<>((AppOperationAware) getActivity()).handleDestinationClick(destinationInfo);
+                }
+            }
+        });
+        builder.setCancelable(true);
+        return builder.create();
     }
 
-    @Override
+    /*@Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         View view = getView();
@@ -114,7 +153,7 @@ public class StoreDetailsDialogFragment extends AbstractDialogFragment {
             String imgUrl = detailsBundle.getString(Constants.STORE_IMG);
             UIUtil.displayAsyncImage(storeIcon, imgUrl);
         }
-    }
+    }*/
 
     @Override
     protected String getScreenTag() {

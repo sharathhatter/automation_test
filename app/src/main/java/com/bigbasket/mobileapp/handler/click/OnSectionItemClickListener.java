@@ -291,11 +291,12 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
                         intent.putExtra(Constants.SECTION_ITEM, (Parcelable) sectionItem);
                         context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Constants.SCREEN, destinationInfo.getDestinationSlug());
-                        DynamicScreenFragment dynamicScreenFragment = new DynamicScreenFragment();
-                        dynamicScreenFragment.setArguments(bundle);
-                        context.getCurrentActivity().onChangeFragment(dynamicScreenFragment);
+                        intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_DYNAMIC_SCREEN);
+                        intent.putExtra(Constants.SCREEN, destinationInfo.getDestinationSlug());
+                        intent.putExtra(TrackEventkeys.NAVIGATION_CTX,
+                                context.getCurrentActivity().getCurrentScreenName());
+                        context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                 }
                 break;

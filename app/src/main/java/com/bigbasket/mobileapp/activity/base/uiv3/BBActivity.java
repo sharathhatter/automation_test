@@ -321,9 +321,9 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         if (fragment == null) return;
         UIUtil.addNavigationContextToBundle(fragment, getCurrentScreenName());
         FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
         this.currentFragmentTag = ftTag;
+        FragmentTransaction ft = fm.beginTransaction();
         ft.add(R.id.content_frame, fragment, ftTag);
         ft.addToBackStack(ftTag);
         if (stateLess) {

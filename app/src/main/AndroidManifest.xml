@@ -690,6 +690,7 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.specialityshops.BBSpecialityShopsActivity"
+            android:theme="@style/BackButtonTheme"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
