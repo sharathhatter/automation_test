@@ -105,12 +105,9 @@ public class AddressListAdapter<T extends AddressSelectionAware & AddressChangeA
             txtPh.setVisibility(View.VISIBLE);
             txtPh.setText(address.getContactNum());
         } else txtPh.setVisibility(View.GONE);
-        if (!UIUtil.isEmpty(address.getAddressNickName())) {
+        if (!UIUtil.isEmpty(address.getDisplayableNickName())) {
             txtName.setVisibility(View.VISIBLE);
-            txtName.setText(address.getAddressNickName().trim());
-        } else if (!UIUtil.isEmpty(address.getAltAddressNickName())) {
-            txtName.setVisibility(View.VISIBLE);
-            txtName.setText(address.getAltAddressNickName().trim());
+            txtName.setText(address.getDisplayableNickName().trim());
         } else {
             txtName.setVisibility(View.GONE);
         }

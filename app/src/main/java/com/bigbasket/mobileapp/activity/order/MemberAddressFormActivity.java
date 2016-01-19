@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -60,6 +61,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     private int mAddressPageMode;
     private ArrayList<City> mCities;
     private HashMap<String, String> mPayload;
+    private CheckBox chkIsAddrDefault;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,7 +197,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         final EditText editTextResidentialComplex = (EditText)
                 findViewById(R.id.editTextResidentialComplex);
         final EditText editTextLandmark = (EditText) findViewById(R.id.editTextLandmark);
-        final CheckBox chkIsAddrDefault = (CheckBox) findViewById(R.id.chkIsAddrDefault);
+        if(chkIsAddrDefault == null) {
+            chkIsAddrDefault = (CheckBox) findViewById(R.id.chkIsAddrDefault);
+        }
 
         TextInputLayout textInputFirstName = (TextInputLayout) findViewById(R.id.textInputFirstName);
         TextInputLayout textInputLastName = (TextInputLayout) findViewById(R.id.textInputLastName);
@@ -296,7 +300,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         payload.put(Constants.PIN, editTextPincode.getText().toString());
         payload.put(Constants.LANDMARK, editTextLandmark.getText().toString());
         payload.put(Constants.RES_CMPLX, editTextResidentialComplex.getText().toString());
-        payload.put(Constants.IS_DEFAULT, chkIsAddrDefault.isChecked() ? "1" : "0");
+        payload.put(Constants.IS_DEFAULT, mAddress.isDefault() || chkIsAddrDefault.isChecked() ? "1" : "0");
 
         if (AuthParameters.getInstance(this).isMultiCityEnabled()) {
             payload.put(Constants.CITY_ID, String.valueOf(mChoosenCity.getId()));
@@ -315,6 +319,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                         DialogButton.OK, DialogButton.CANCEL,
                         Constants.UPDATE_ADDRESS_DIALOG_REQUEST,
                         null, getString(R.string.lblContinue));
+                return;
             } else {
                 uploadAddress(payload, true, isResendOtpRequested);
             }
@@ -323,10 +328,18 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         }
     }
 
-    private void uploadAddress(HashMap<String, String> payload, boolean forceCreate, boolean isResendOtpRequested) {
+    private void uploadAddress(HashMap<String, String> payload, boolean forceCreate,
+                               boolean isResendOtpRequested) {
+        if(chkIsAddrDefault == null) {
+            chkIsAddrDefault = (CheckBox) findViewById(R.id.chkIsAddrDefault);
+        }
+        if(chkIsAddrDefault.getVisibility() == View.VISIBLE
+                && chkIsAddrDefault.isChecked() != mAddress.isDefault()) {
+            HashMap<String, String> eventAttribs = new HashMap<>();
+            trackEvent(TrackingAware.ENABLE_DEFAULT_ADDRESS, eventAttribs);
+        }
+
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        HashMap<String, String> eventAttribs = new HashMap<>();
-        trackEvent(TrackingAware.ENABLE_DEFAULT_ADDRESS, eventAttribs);
         if (mAddress != null && !forceCreate) {
             if (!TextUtils.isEmpty(mAddress.getId())) {
                 payload.put(Constants.ID, mAddress.getId());
@@ -359,6 +372,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     }
 
     private void addressCreatedModified(Address address) {
+        AppDataDynamic.reset(this);
         Intent result = new Intent();
         result.putExtra(Constants.UPDATE_ADDRESS, address);
         setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED, result);

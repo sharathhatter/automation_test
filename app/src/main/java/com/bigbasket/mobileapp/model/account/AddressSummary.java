@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.annotations.SerializedName;
 
 public class AddressSummary implements Parcelable {
@@ -162,5 +163,14 @@ public class AddressSummary implements Parcelable {
 
     public boolean isPartial() {
         return isPartial;
+    }
+
+    public String getDisplayableNickName() {
+        String nickName = getAddressNickName();
+        if (UIUtil.isEmpty(nickName)) {
+            return (!UIUtil.isEmpty(getArea()) ? getArea() + " - " : "") +
+                    (!UIUtil.isEmpty(getCityName()) ? getCityName() : "");
+        }
+        return nickName.trim();
     }
 }

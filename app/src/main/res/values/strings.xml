@@ -72,7 +72,7 @@
     <string name="signUpCapsVerb">SIGNUP</string>
     <string name="signInCapsVerb">LOGIN</string>
     <string name="newUserSignup">New user? Sign up</string>
-    <string name="addressNick">Address nickname, Ex:Home/My office (Optional)</string>
+    <string name="addressNick">Address nickname, e.g. Home/My office (Optional)</string>
     <string name="houseNum">House no &amp; details</string>
     <string name="streetName">Street Name (Optional)</string>
     <string name="residentialComplex">Residential Complex(Optional)</string>
