@@ -52,6 +52,13 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
             return new SectionItem[size];
         }
     };
+
+    @SerializedName(Constants.ID)
+    private String id;
+
+    @SerializedName(Constants.CAMPAIGN)
+    private String campaign;
+
     private String image;
 
     @SerializedName(Constants.IMAGE_NAME)
@@ -86,6 +93,14 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
 
     public SectionItem(Parcel source) {
         super(source);
+        boolean _wasIdNull = source.readByte() == (byte) 1;
+        if (!_wasIdNull) {
+            id = source.readString();
+        }
+        boolean _wasCampaignNull = source.readByte() == (byte) 1;
+        if (!_wasCampaignNull) {
+            campaign = source.readString();
+        }
         boolean _wasImageNull = source.readByte() == (byte) 1;
         if (!_wasImageNull) {
             image = source.readString();
@@ -150,6 +165,10 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         }
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getImage() {
         return image;
     }
@@ -178,6 +197,14 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return subSectionItems;
     }
 
+    public String getCampaign() {
+        return campaign;
+    }
+
+    public void setCampaign(String campaign) {
+        this.campaign = campaign;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -186,6 +213,16 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
+        boolean _wasIdNull = id == null;
+        dest.writeByte(_wasIdNull ? (byte) 1 : (byte) 0);
+        if (!_wasIdNull) {
+            dest.writeString(id);
+        }
+        boolean _wasCompaignNull = campaign == null;
+        dest.writeByte(_wasCompaignNull ? (byte) 1 : (byte) 0);
+        if (!_wasCompaignNull) {
+            dest.writeString(campaign);
+        }
         boolean _wasImageNull = image == null;
         dest.writeByte(_wasImageNull ? (byte) 1 : (byte) 0);
         if (!_wasImageNull) {
@@ -232,6 +269,15 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     public void displayImage(Context context, @Nullable String baseImgUrl, ImageView imageView,
                              @DrawableRes int placeHolderDrawableResId,
                              boolean animate) {
+        displayImage(context, baseImgUrl, imageView, placeHolderDrawableResId, animate,
+                0, 0, false);
+    }
+
+    public void displayImage(Context context, @Nullable String baseImgUrl, ImageView imageView,
+                             @DrawableRes int placeHolderDrawableResId,
+                             boolean animate, int targetImgWidth, int targetImgHeight,
+                             boolean skipMemoryCache) {
+
         imageView.setVisibility(View.VISIBLE);
         if (!TextUtils.isEmpty(image)) {
             if (image.startsWith(Constants.LOCAL_RES_PREFIX)) {
@@ -250,19 +296,27 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                     imageView.setVisibility(View.GONE);
                 }
             } else {
-                UIUtil.displayAsyncImage(imageView, image, animate, placeHolderDrawableResId);
+                UIUtil.displayAsyncImage(imageView, image, animate, placeHolderDrawableResId,
+                        targetImgWidth, targetImgHeight, skipMemoryCache);
             }
         } else if (!TextUtils.isEmpty(imageName) && !TextUtils.isEmpty(baseImgUrl)) {
             UIUtil.displayAsyncImage(imageView,
-                    constructImageUrl(context, baseImgUrl), animate, placeHolderDrawableResId);
+                    constructImageUrl(context, baseImgUrl), animate, placeHolderDrawableResId,
+                    targetImgWidth, targetImgHeight, skipMemoryCache);
         } else {
-            imageView.setImageDrawable(null);
+            imageView.setImageBitmap(null);
             imageView.setVisibility(View.GONE);
         }
     }
 
     public String constructImageUrl(Context context, String baseImgUrl) {
-        return baseImgUrl + UIUtil.getScreenDensity(context) + "/" + imageName;
+        //TODO: Use existing constants for schema"
+        if (imageName.startsWith("http://")
+                || imageName.startsWith("https://")) {
+            return imageName;
+        } else {
+            return baseImgUrl + UIUtil.getScreenDensity(context) + "/" + imageName;
+        }
     }
 
     public int getItemViewType(Renderer renderer, String sectionType) {
@@ -333,7 +387,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return 0;
     }
 
-    private int getActualHeight(Context context) {
+    public int getActualHeight(Context context) {
         if (imageParams != null) {
             return (int) (imageParams.getHeight() * UIUtil.getDpiCoefficient(context));
         }
@@ -414,5 +468,44 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
 
     public boolean isExpressDynamicTitle() {
         return !TextUtils.isEmpty(titleType) && titleType.equals("express_dynamic");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        SectionItem that = (SectionItem) o;
+
+        if (renderingId != that.renderingId) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (image != null ? !image.equals(that.image) : that.image != null) return false;
+        if (imageName != null ? !imageName.equals(that.imageName) : that.imageName != null)
+            return false;
+        if (destinationInfo != null ? !destinationInfo.equals(that.destinationInfo) : that.destinationInfo != null)
+            return false;
+        if (helpDestinationInfo != null ? !helpDestinationInfo.equals(that.helpDestinationInfo) : that.helpDestinationInfo != null)
+            return false;
+        if (subSectionItems != null ? !subSectionItems.equals(that.subSectionItems) : that.subSectionItems != null)
+            return false;
+        if (imageParams != null ? !imageParams.equals(that.imageParams) : that.imageParams != null)
+            return false;
+        return !(titleType != null ? !titleType.equals(that.titleType) : that.titleType != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (image != null ? image.hashCode() : 0);
+        result = 31 * result + (imageName != null ? imageName.hashCode() : 0);
+        result = 31 * result + renderingId;
+        result = 31 * result + (destinationInfo != null ? destinationInfo.hashCode() : 0);
+        result = 31 * result + (helpDestinationInfo != null ? helpDestinationInfo.hashCode() : 0);
+        result = 31 * result + (subSectionItems != null ? subSectionItems.hashCode() : 0);
+        result = 31 * result + (imageParams != null ? imageParams.hashCode() : 0);
+        result = 31 * result + (titleType != null ? titleType.hashCode() : 0);
+        return result;
     }
 }

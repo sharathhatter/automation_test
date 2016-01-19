@@ -3,16 +3,20 @@
     <string name="fb_app_id" templateMergeStrategy="preserve">1406239262971187</string>
     <string name="moe_app_id" templateMergeStrategy="preserve">YSD6Y5AVT60X4AWNLL35EIDJ</string>
     <string name="moe_gcm_sender_id" templateMergeStrategy="preserve">id:551288451469</string>
-    <string name="new_relic_key" templateMergeStrategy="preserve">AA7a058918c000f6de19f87629160fe53b42368eb1</string>
-    <string name="localytics_api_key" templateMergeStrategy="preserve">14488daecef8aa9ffe0e606-fe0465b6-31f0-11e5-f019-008b20abc1fa</string>
+    <string name="localytics_api_key" templateMergeStrategy="preserve">929bde845dd6abef0220bbb-e29737e4-2463-11e5-4f1b-00712085a1eb</string>
     <string name="google_geo_api_key" templateMergeStrategy="preserve">AIzaSyAcAYm_JguAF9LmBnNW1YC0Hmz6_UuO3Cw</string>
-    <string name="mobikwik_sdk_sign">a_lvjRAEvSbC0ENdEVuGC0B2Uo9</string>
+    <string name="new_relic_app_token">AA7a058918c000f6de19f87629160fe53b42368eb1</string>
     <string name="mobikwik_mode">0</string>
-    <string name="close">Close</string>
     <!-- Strings related to Developer configurations -->
     <string name="title_activity_settings">Developer options</string>
     <string name="pref_header_server">Server configurations</string>
     <string name="pref_title_server_address">Bigbasket MAPI Server address</string>
-    <string name="pref_default_server_address" translatable="false">http://qa.bigbasket.com</string>
+    <string name="pref_http_logging_level">Http logging Level</string>
+    <string-array name="http_logging_level_entires">
+        <item>NONE</item>
+        <item>HEADERS</item>
+        <item>BODY</item>
+    </string-array>
+    <string name="pref_default_server_address" translatable="false">https://dev1.bigbasket.com</string>
 
 </resources>

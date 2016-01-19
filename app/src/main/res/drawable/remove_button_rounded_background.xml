@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/remove_button_rounded_pressed_bkg" android:state_pressed="true" />
+    <item android:drawable="@drawable/remove_btn_rounded_bkg"  android:state_pressed="false" />
+    <item android:drawable="@drawable/remove_button_rounded_pressed_bkg" />
+</selector>

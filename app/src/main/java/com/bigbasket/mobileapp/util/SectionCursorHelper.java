@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public final class SectionCursorHelper {
@@ -57,8 +58,8 @@ public final class SectionCursorHelper {
                         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
                             sectionNavigationItems.add(new SectionNavigationItem(section));
                         }
-                        setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
-                                section);
+                        setSectionNavigationItemList(sectionNavigationItems,
+                                section.getSectionItems(), section);
                     }
                 }
                 navigationCallback.onNavigationAdapterCreated(getNavigationAdapter(sectionData));
@@ -87,9 +88,9 @@ public final class SectionCursorHelper {
 
     public static void getSectionDataAsync(Cursor sectionCursor, @NonNull Callback callback) {
         if (sectionCursor != null && sectionCursor.moveToFirst()) {
-            String sectionRespJson = sectionCursor.
-                    getString(sectionCursor.getColumnIndex(DynamicPageDbHelper.COLUMN_SCREEN_DATA));
-            new SectionJsonParserAsyncTask(callback).execute(sectionRespJson);
+            byte[] compressedSectionResp = sectionCursor.getBlob(
+                    sectionCursor.getColumnIndex(DynamicPageDbHelper.COLUMN_SCREEN_DATA));
+            new SectionJsonParserAsyncTask(callback).execute(compressedSectionResp);
         } else {
             callback.onParseSuccess(null);
         }
@@ -152,7 +153,7 @@ public final class SectionCursorHelper {
     }
 
     // Since JSON will be 4-6KB, it's better to parse it in a background thread
-    private static class SectionJsonParserAsyncTask extends AsyncTask<String, Void, DynamicPageResponse> {
+    private static class SectionJsonParserAsyncTask extends AsyncTask<byte[], Void, DynamicPageResponse> {
 
         private
         @NonNull
@@ -163,11 +164,16 @@ public final class SectionCursorHelper {
         }
 
         @Override
-        protected DynamicPageResponse doInBackground(String... params) {
-            String sectionRespJson = params[0];
-            if (!TextUtils.isEmpty(sectionRespJson)) {
-                Gson gson = new Gson();
-                return gson.fromJson(sectionRespJson, DynamicPageResponse.class);
+        protected DynamicPageResponse doInBackground(byte[]... params) {
+            byte[] compressedSectionRespJson = params[0];
+            if (compressedSectionRespJson != null && compressedSectionRespJson.length > 0) {
+                try {
+                    String responseJson = CompressUtil.gzipDecompress(compressedSectionRespJson);
+                    Gson gson = new Gson();
+                    return gson.fromJson(responseJson, DynamicPageResponse.class);
+                } catch (IOException e) {
+                    return null;
+                }
             }
             return null;
         }

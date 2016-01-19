@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.adapter;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.ColorRes;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -24,7 +25,7 @@ public class BBCheckedListAdapter<T> extends ArrayAdapter<T> {
         super(context, resource, objects);
 
         this.typeface = FontHolder.getInstance(getContext()).getFaceRobotoLight();
-        this.textColor = context.getResources().getColor(R.color.uiv3_primary_text_color);
+        this.textColor = ContextCompat.getColor(context, R.color.uiv3_primary_text_color);
         this.dp16 = (int) context.getResources().getDimension(R.dimen.padding_normal);
         this.dp8 = (int) context.getResources().getDimension(R.dimen.padding_small);
     }
@@ -34,7 +35,7 @@ public class BBCheckedListAdapter<T> extends ArrayAdapter<T> {
         super(context, resource, objects);
 
         this.typeface = typeface;
-        this.textColor = context.getResources().getColor(textColor);
+        this.textColor = ContextCompat.getColor(context, textColor);
         this.dp16 = (int) context.getResources().getDimension(R.dimen.padding_normal);
         this.dp8 = (int) context.getResources().getDimension(R.dimen.padding_small);
     }

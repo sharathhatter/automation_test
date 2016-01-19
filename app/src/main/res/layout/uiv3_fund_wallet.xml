@@ -59,12 +59,19 @@
                 android:layout_marginTop="@dimen/margin_small"
                 android:background="@color/white"
                 android:orientation="vertical"
+                android:paddingBottom="@dimen/padding_normal"
                 android:paddingLeft="@dimen/padding_small"
                 android:paddingRight="@dimen/padding_small"
-                android:paddingBottom="@dimen/padding_normal"
                 android:paddingTop="@dimen/padding_normal">
 
             </com.bigbasket.mobileapp.view.PaymentMethodsView>
         </LinearLayout>
     </ScrollView>
+
+    <include
+        layout="@layout/uiv3_loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbarMain"
+        android:visibility="gone" />
 </RelativeLayout>

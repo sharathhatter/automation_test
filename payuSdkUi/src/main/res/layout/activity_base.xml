@@ -1,232 +1,220 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".PayUBaseActivity">
+    android:orientation="vertical">
 
 
     <include
         android:id="@+id/toolbarMain"
         layout="@layout/layout_toolbar" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp">
-        
+        android:background="@android:color/white">
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/mbblogo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bb_logo_transparent_bkg"
-                android:layout_alignParentRight="true"
-                android:layout_margin="20dp"/>
-            <TextView
-                android:id="@+id/mOptionSelectionTextView"
+            <include
+                android:id="@+id/layouPaymentInfo"
+                layout="@layout/layout_payment_method_header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/selectoptionforpayment"
-                android:layout_below="@+id/mbblogo"
-                android:gravity="center"
-                android:textSize="17sp"
-                android:layout_marginTop="40dp"/>
-        
-        
+                android:layout_height="wrap_content" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="true"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_below="@+id/mOptionSelectionTextView"
-            android:background="@drawable/layout_background">
+            <View
+                android:id="@+id/viewThickSeparator"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:layout_below="@id/layouPaymentInfo"
+                android:background="@color/uiv3_list_bkg_color" />
 
-            <ProgressBar
-                android:id="@+id/progress_bar"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_below="@id/viewThickSeparator"
+                android:layout_centerHorizontal="true"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
-                android:visibility="visible" />
+                android:paddingBottom="16dp">
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/payu_divider_color" />
 
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="20dp">
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="16dp"
+                    android:visibility="visible" />
 
                 <LinearLayout
-                    android:id="@+id/linear_layout_stored_card"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:paddingBottom="10dp"
-                    android:visibility="gone"
-                    >
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                    <Button
-                        android:id="@+id/button_stored_card"
+                    <LinearLayout
+                        android:id="@+id/linear_layout_one_click_payment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Stored card"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/button_background"
-                        android:textSize="17sp"
-                        android:textStyle="bold"/>
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                </LinearLayout>
+                        <Button
+                            android:id="@+id/button_one_click_payment"
+                            style="@style/PayuPaymentOptionStyle"
+                            android:drawableLeft="@drawable/one_click"
+                            android:text="@string/one_click_payment" />
 
-                <LinearLayout
-                    android:id="@+id/linear_layout_netbanking"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:paddingBottom="10dp"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
 
-                    android:visibility="gone">
+                    </LinearLayout>
 
-                    <Button
-                        android:id="@+id/button_netbanking"
+                    <LinearLayout
+                        android:id="@+id/linear_layout_stored_card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/net_banking"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/button_background"
-                        android:textSize="17sp"
-                        android:textStyle="bold"/>
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                </LinearLayout>
+                        <Button
+                            android:id="@+id/button_stored_card"
+                            style="@style/PayuPaymentOptionStyle"
+                            android:drawableLeft="@drawable/ic_account_balance_wallet_black_24dp"
+                            android:text="@string/stored_card" />
 
-                <LinearLayout
-                    android:id="@+id/linear_layout_credit_debit_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:paddingBottom="10dp"
-                    android:visibility="gone">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
+                    </LinearLayout>
 
-                    <Button
-                        android:id="@+id/button_credit_debit_card"
+                    <LinearLayout
+                        android:id="@+id/linear_layout_netbanking"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Credit / Debit card"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/button_background"
-                        android:textSize="17sp"
-                        android:textStyle="bold"/>
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                </LinearLayout>
+                        <Button
+                            android:id="@+id/button_netbanking"
+                            style="@style/PayuPaymentOptionStyle"
+                            android:drawableLeft="@drawable/ic_account_balance_black_24dp"
+                            android:text="@string/net_banking" />
 
-                <LinearLayout
-                    android:id="@+id/linear_layout_cash_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:paddingBottom="10dp"
-                    android:visibility="gone">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
 
-                    <Button
-                        android:id="@+id/button_cash_card"
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_layout_credit_debit_card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Cash Card"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/button_background"
-                        android:textSize="17sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                <LinearLayout
-                    android:id="@+id/linear_layout_emi"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:paddingBottom="10dp"
-                    android:visibility="gone">
+                        <Button
+                            android:id="@+id/button_credit_debit_card"
+                            style="@style/PayuPaymentOptionStyle"
+                            android:drawableLeft="@drawable/ic_credit_card_black_24dp"
+                            android:text="@string/credit_debit_card" />
 
-                    <Button
-                        android:id="@+id/button_emi"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_layout_cash_card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="EMI"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/button_background"
-                        android:textSize="17sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                <LinearLayout
-                    android:id="@+id/linear_layout_payumoney"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:visibility="gone">
+                        <Button
+                            android:id="@+id/button_cash_card"
+                            style="@style/PayuPaymentOptionStyle"
+                            android:drawableLeft="@drawable/ic_credit_card_black_24dp"
+                            android:text="@string/cash_card" />
 
-                    <Button
-                        android:id="@+id/button_payumoney"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_layout_emi"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="PayU Money"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/button_background"
-                        android:textSize="15sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                <LinearLayout
-                    android:id="@+id/linear_layout_merchant_payment"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:paddingBottom="10dp"
-                    android:visibility="gone">
+                        <Button
+                            android:id="@+id/button_emi"
+                            style="@style/PayuPaymentOptionStyle"
+                            android:drawableLeft="@drawable/ic_credit_card_black_24dp"
+                            android:text="@string/emi" />
 
-                    <Button
-                        android:id="@+id/button_merchant_payment"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_layout_payumoney"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Merchant Payment"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/button_background"
-                        android:textSize="17sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                <LinearLayout
-                    android:id="@+id/linear_layout_verify_api"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:visibility="gone">
+                        <Button
+                            android:id="@+id/button_payumoney"
+                            style="@style/PayuPaymentOptionStyle"
+                            android:drawableLeft="@drawable/payu_money"
+                            android:text="@string/payu_money" />
 
-                    <Button
-                        android:id="@+id/button_verify_api"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_layout_merchant_payment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Verify Api"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/button_background"
-                        android:textSize="17sp"
-                        android:textStyle="bold"/>
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
+                        <Button
+                            android:id="@+id/button_merchant_payment"
+                            style="@style/PayuPaymentOptionStyle"
+                            android:drawableLeft="@drawable/ic_credit_card_black_24dp"
+                            android:text="@string/merchant_payment" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/payu_divider_color" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
 
-        </RelativeLayout>
+            </RelativeLayout>
 
         </RelativeLayout>
 

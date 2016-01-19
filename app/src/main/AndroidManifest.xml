@@ -5,6 +5,7 @@
     android:installLocation="auto">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -20,7 +21,6 @@
 
     <!-- PAYU -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
 
     <!-- Area -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -71,13 +71,16 @@
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <data android:scheme="@string/localytics_api_key" />
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
 
@@ -351,6 +354,7 @@
             </intent-filter>
             <!-- end Wallet Page -->
 
+
             <!-- Fund Wallet Page -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -385,7 +389,6 @@
                     android:path="/payment/wallet/"
                     android:scheme="http" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -448,6 +451,52 @@
                     android:scheme="https" />
             </intent-filter>
             <!-- end Pay Now -->
+            <!-- My orders -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="bigbasket.com"
+                    android:path="/member/active-orders/"
+                    android:scheme="http" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="bigbasket.com"
+                    android:path="/member/active-orders/"
+                    android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*.bigbasket.com"
+                    android:path="/member/active-orders/"
+                    android:scheme="http" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*.bigbasket.com"
+                    android:path="/member/active-orders/"
+                    android:scheme="https" />
+            </intent-filter>
+            <!-- end My orders -->
         </activity>
         <activity
             android:name=".activity.base.uiv3.SearchActivity"
@@ -485,11 +534,6 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.LandingPageActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/LandingPageTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
             android:name=".activity.order.uiv3.ShowCartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
@@ -519,6 +563,11 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.MemberAddressFormActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".activity.account.uiv3.UpdateProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
@@ -602,22 +651,12 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.base.uiv3.BackButtonSpinnerDateActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BBNavDrawerTheme.SpinnerDatePickerTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
             android:name=".activity.account.uiv3.MyAccountActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.DoWalletActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BackButtonTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
-            android:name=".activity.payment.MobiKwikResponseHandlerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
@@ -651,6 +690,7 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.specialityshops.BBSpecialityShopsActivity"
+            android:theme="@style/BackButtonTheme"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
@@ -732,7 +772,7 @@
 
         <!-- moEngage UBox -->
         <activity
-            android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
+            android:name=".activity.account.uiv3.BBUnifiedInboxActivity"
             android:label="Communication Hub"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="adjustResize" />
@@ -771,7 +811,7 @@
 
         <provider
             android:name=".adapter.db.DatabaseContentProvider"
-            android:authorities="${applicationId}.DatabaseContentProvider"
+            android:authorities="${applicationId}.bbprovider"
             android:enabled="true"
             android:exported="false" />
 
@@ -789,6 +829,10 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".service.AnalyticsIntentService"
+            android:exported="false"/>
     </application>
 
 </manifest>

@@ -26,10 +26,10 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PayzappPrePaymentParamsResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPayZappResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPrePaymentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostGiftItemsResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PrePaymentParamsResponse;
@@ -49,6 +49,8 @@ import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
+import com.bigbasket.mobileapp.model.ads.AdAnalyticsData;
+import com.bigbasket.mobileapp.model.ads.SponsoredAds;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.product.ProductTabData;
@@ -61,10 +63,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import retrofit.Call;
+import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
+import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.Query;
 import retrofit.http.QueryMap;
@@ -82,7 +86,8 @@ public interface BigBasketApiService {
                                                 @Field(Constants.PROPERTIES) String properties);
 
     @GET("get-dynamic-page/")
-    Call<ApiResponse<GetDynamicPageApiResponse>> getDynamicPage(@Query(Constants.OS) String osName,
+    Call<ApiResponse<GetDynamicPageApiResponse>> getDynamicPage(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                @Query(Constants.OS) String osName,
                                                                 @Query(Constants.APP_VERSION) String version,
                                                                 @Query(Constants.SCREEN) String screen);
 
@@ -97,17 +102,33 @@ public interface BigBasketApiService {
     Call<ApiResponse<ProductTabData>> productList(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                   @QueryMap Map<String, String> productQueryMap);
 
+    @GET("sponsored-items/")
+    Call<ApiResponse<SponsoredAds>> getSponsoredProducts(
+            @Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+            @Query(Constants.TYPE) String type,
+            @Query(Constants.SLUG) String slug,
+            @Query(Constants.TAB_TYPE) String tabType,
+            @QueryMap Map<String, String> productQueryMap);
+
+    @Headers({"Content-Type: application/json"})
+    @POST("ads-analytics/")
+    Call<BaseApiResponse> postAdAnalytics(@Body AdAnalyticsData[] adAnalyticsData);
+
+
     @GET("store-list/")
-    Call<ApiResponse<SpecialityShopsListData>> getSpecialityShops(@Query(Constants.CATEGORY) String categoryValue);
+    Call<ApiResponse<SpecialityShopsListData>> getSpecialityShops(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                  @Query(Constants.CATEGORY) String categoryValue);
 
     @GET("product-next-page/")
-    Call<ApiResponse<ProductNextPageResponse>> productNextPage(@QueryMap Map<String, String> productQueryMap);
+    Call<ApiResponse<ProductNextPageResponse>> productNextPage(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                               @QueryMap Map<String, String> productQueryMap);
 
     @GET("browse-promo-cat/")
-    Call<ApiResponse<BrowsePromoCategoryApiResponseContent>> browsePromoCategory();
+    Call<ApiResponse<BrowsePromoCategoryApiResponseContent>> browsePromoCategory(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx);
 
     @GET("get-promo-detail")
-    Call<ApiResponse<PromoDetailApiResponseContent>> getPromoDetail(@Query(Constants.PROMO_ID) String promoId);
+    Call<ApiResponse<PromoDetailApiResponseContent>> getPromoDetail(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                    @Query(Constants.PROMO_ID) String promoId);
 
     @GET("get-promo-set-products")
     Call<ApiResponse<PromoSetProductsApiResponseContent>> getPromoSetProducts(@Query(Constants.PROMO_ID) String promoId,
@@ -121,15 +142,17 @@ public interface BigBasketApiService {
     Call<ApiResponse<CartInfo>> addPromoBundle(@Field(Constants.PROMO_ID) String promoId);
 
     @GET("get-current-wallet-balance/")
-    Call<ApiResponse<CurrentWalletBalance>> getCurrentWalletBalance();
+    Call<ApiResponse<CurrentWalletBalance>> getCurrentWalletBalance(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx);
 
     @GET("get-wallet-activity/")
-    Call<ApiResponse<ArrayList<WalletDataItem>>> getWalletActivity(@Query(Constants.DATE_FROM) String dateFrom,
+    Call<ApiResponse<ArrayList<WalletDataItem>>> getWalletActivity(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                   @Query(Constants.DATE_FROM) String dateFrom,
                                                                    @Query(Constants.DATE_TO) String dateTo);
 
     @FormUrlEncoded
     @POST("sl-get-lists/")
-    Call<GetShoppingListsApiResponse> getShoppingLists(@Field(Constants.SYSTEM) String isSystemListAlsoNeeded);
+    Call<GetShoppingListsApiResponse> getShoppingLists(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                       @Field(Constants.SYSTEM) String isSystemListAlsoNeeded);
 
     @FormUrlEncoded
     @POST("sl-edit-list/")
@@ -142,7 +165,8 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("sl-create-list/")
-    Call<OldBaseApiResponse> createShoppingList(@Field(Constants.SL_NAME) String shoppingListName,
+    Call<OldBaseApiResponse> createShoppingList(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                @Field(Constants.SL_NAME) String shoppingListName,
                                                 @Field(Constants.IS_PUBLIC) String isPublic);
 
     @GET("sl-get-list-summary/")
@@ -151,12 +175,14 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("sl-cat-items-to-cart/")
-    Call<AddAllShoppingListItemResponse> addAllToBasketShoppingList(@Field(Constants.SHOPPING_LIST_SLUG) String shoppingListSlug,
+    Call<AddAllShoppingListItemResponse> addAllToBasketShoppingList(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                    @Field(Constants.SHOPPING_LIST_SLUG) String shoppingListSlug,
                                                                     @Field(Constants.CATEGORY_SLUG) String topCategorySlug);
 
     @FormUrlEncoded
     @POST("sb-cat-items-to-cart/")
-    Call<AddAllShoppingListItemResponse> addAllToBasketSmartBasket(@Field(Constants.SHOPPING_LIST_SLUG) String shoppingListSlug,
+    Call<AddAllShoppingListItemResponse> addAllToBasketSmartBasket(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                   @Field(Constants.SHOPPING_LIST_SLUG) String shoppingListSlug,
                                                                    @Field(Constants.CATEGORY_SLUG) String topCategorySlug);
 
 
@@ -187,11 +213,12 @@ public interface BigBasketApiService {
                                             @Field(Constants.CONFIRM_PASSWORD) String confirmPassword);
 
     @GET("update-profile/")
-    Call<ApiResponse<UpdateProfileApiResponse>> getMemberProfileData();
+    Call<ApiResponse<UpdateProfileApiResponse>> getMemberProfileData(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx);
 
     @FormUrlEncoded
     @POST("update-profile/")
-    Call<ApiResponse<UpdateProfileApiResponse>> setUserDetailsData(@Field(Constants.USER_DETAILS) String userDetails);
+    Call<ApiResponse<UpdateProfileApiResponse>> setUserDetailsData(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                   @Field(Constants.USER_DETAILS) String userDetails);
 
     @FormUrlEncoded
     @POST("login/")
@@ -214,46 +241,54 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("create-address/")
-    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> createAddress(@FieldMap HashMap<String, String> params);
+    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> createAddress(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                           @FieldMap HashMap<String, String> params);
 
 
     @FormUrlEncoded
     @POST("update-address/")
-    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> updateAddress(@FieldMap HashMap<String, String> params);
+    Call<ApiResponse<CreateUpdateAddressApiResponseContent>> updateAddress(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                           @FieldMap HashMap<String, String> params);
 
     @GET("get-orders/")
-    Call<ApiResponse<OrderListApiResponse>> getOrders(@Query(Constants.ORDER_TYPE) String orderType,
+    Call<ApiResponse<OrderListApiResponse>> getOrders(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                      @Query(Constants.ORDER_TYPE) String orderType,
                                                       @Query(Constants.CURRENT_PAGE) String page);
 
     @GET("get-invoice/")
-    Call<ApiResponse<OrderInvoice>> getInvoice(@Query(Constants.ORDER_ID) String orderId);
+    Call<ApiResponse<OrderInvoice>> getInvoice(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                               @Query(Constants.ORDER_ID) String orderId);
 
     @FormUrlEncoded
     @POST("sl-add-item/")
-    Call<OldBaseApiResponse> addItemToShoppingList(@Field("product_id") String productId,
+    Call<OldBaseApiResponse> addItemToShoppingList(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                   @Field("product_id") String productId,
                                                    @Field("slugs") String shoppingListSlugs);
 
     @FormUrlEncoded
     @POST("sl-delete-item/")
-    Call<OldBaseApiResponse> deleteItemFromShoppingList(@Field("product_id") String productId,
+    Call<OldBaseApiResponse> deleteItemFromShoppingList(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                        @Field("product_id") String productId,
                                                         @Field(Constants.SLUG) String shoppingListSlug);
 
     @GET("c-summary/")
-    Call<CartSummaryApiResponse> cartSummary();
+    Call<CartSummaryApiResponse> cartSummary(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx);
 
     @GET("product-details/")
-    Call<ProductDetailApiResponse> productDetails(@Query(Constants.PROD_ID) String productId,
+    Call<ProductDetailApiResponse> productDetails(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                  @Query(Constants.PROD_ID) String productId,
                                                   @Query(Constants.EAN_CODE) String eanCode);
 
     @GET("co-get-delivery-addresses/")
-    Call<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddresses();
+    Call<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddresses(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx);
 
     @GET("search-tc/")
-    Call<ApiResponse<AutoSearchApiResponseContent>> autoSearch(@Query("t") String term);
+    Call<ApiResponse<AutoSearchApiResponseContent>> autoSearch(@Query("t") String term, @Query(Constants.CITY_ID) String cityId);
 
     @FormUrlEncoded
     @POST("co-post-voucher/")
-    Call<ApiResponse<PostVoucherApiResponseContent>> postVoucher(@Field(Constants.P_ORDER_ID) String potentialOrderId,
+    Call<ApiResponse<PostVoucherApiResponseContent>> postVoucher(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                 @Field(Constants.P_ORDER_ID) String potentialOrderId,
                                                                  @Field(Constants.EVOUCHER_CODE) String evoucherCode);
 
     @GET("get-area-info/")
@@ -272,11 +307,13 @@ public interface BigBasketApiService {
                                                                                @Field(Constants.APP_VERSION) String appVersion);
 
     @GET("category-landing/")
-    Call<ApiResponse<SubCategoryApiResponse>> getSubCategoryData(@Query(Constants.CATEGORY_SLUG) String categorySlug,
+    Call<ApiResponse<SubCategoryApiResponse>> getSubCategoryData(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                 @Query(Constants.CATEGORY_SLUG) String categorySlug,
                                                                  @Query(Constants.VERSION) String version);
 
     @GET("get-products-for-order/")
-    Call<ApiResponse<GetProductsForOrderApiResponseContent>> getProductsForOrder(@Query(Constants.ORDER_ID) String orderId);
+    Call<ApiResponse<GetProductsForOrderApiResponseContent>> getProductsForOrder(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                                 @Query(Constants.ORDER_ID) String orderId);
 
     @FormUrlEncoded
     @POST("forgot-password/")
@@ -284,7 +321,8 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("remove-voucher/")
-    Call<ApiResponse<PostVoucherApiResponseContent>> removeVoucher(@Field(Constants.P_ORDER_ID) String potentialOrderId);
+    Call<ApiResponse<PostVoucherApiResponseContent>> removeVoucher(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                   @Field(Constants.P_ORDER_ID) String potentialOrderId);
 
     @GET("get-app-data/")
     Call<ApiResponse<AppDataResponse>> getAppData(@Query(Constants.CLIENT) String client,
@@ -292,41 +330,48 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("add-order-products/")
-    Call<OldApiResponseWithCart> addAllToBasketPastOrders(@Field(Constants.ORDER_ID) String orderId);
+    Call<OldApiResponseWithCart> addAllToBasketPastOrders(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                          @Field(Constants.ORDER_ID) String orderId);
 
     @GET("get-order-payment-params/")
-    Call<ApiResponse<PrePaymentParamsResponse>> getOrderPaymentParams(@Query(Constants.P_ORDER_ID) String potentialOrderId);
+    Call<ApiResponse<PrePaymentParamsResponse>> getOrderPaymentParams(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                      @Query(Constants.P_ORDER_ID) String potentialOrderId);
 
     @GET("get-order-payment-params/")
-    Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappOrderPaymentParams(@Query(Constants.P_ORDER_ID) String potentialOrderId);
+    Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappOrderPaymentParams(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                                    @Query(Constants.P_ORDER_ID) String potentialOrderId);
 
     @FormUrlEncoded
-    @POST("post-order-payment/")
-    Call<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPayment(@FieldMap Map<String, String> paymentParams);
-
-    @GET("validate-order-payment/")
-    Call<ApiResponse<ValidateOrderPaymentApiResponse>> validateOrderPayment(@Query(Constants.TXN_ID) String txnId,
-                                                                            @Query(Constants.P_ORDER_ID) String potentialOrderId,
-                                                                            @Query(Constants.ORDER_ID) String fullOrderId);
+    @POST("validate-payment/")
+    Call<ApiResponse<ValidateOrderPaymentApiResponse>> validatePayment(@Field(Constants.TXN_ID) String txnId,
+                                                                       @Field(Constants.P_ORDER_ID) String potentialOrderId,
+                                                                       @Field(Constants.ORDER_ID) String fullOrderId,
+                                                                       @Field(Constants.PAYMENT_TYPE) String paymentType,
+                                                                       @Field(Constants.PAY_NOW) String isPayNow,
+                                                                       @Field(Constants.WALLET) String isFundWallet,
+                                                                       @FieldMap Map<String, String> paymentParams);
 
     @GET("register-utm-params/")
     Call<BaseApiResponse> postUtmParams(@QueryMap Map<String, String> utmQueryMap);
 
     @GET("get-discount-page/")
-    Call<ApiResponse<DiscountDataModel>> getDiscount();
+    Call<ApiResponse<DiscountDataModel>> getDiscount(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx);
 
     @FormUrlEncoded
     @POST("co-create-po/")
-    Call<ApiResponse<CreatePotentialOrderResponseContent>> createPotentialOrder(@Field(Constants.ADDRESS_ID) String addressId);
+    Call<ApiResponse<CreatePotentialOrderResponseContent>> createPotentialOrder(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                                @Field(Constants.ADDRESS_ID) String addressId);
 
     @FormUrlEncoded
     @POST("co-post-gifts/")
-    Call<ApiResponse<PostGiftItemsResponseContent>> postGifts(@Field(Constants.P_ORDER_ID) String potentialOrderId,
+    Call<ApiResponse<PostGiftItemsResponseContent>> postGifts(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                              @Field(Constants.P_ORDER_ID) String potentialOrderId,
                                                               @Field(Constants.GIFTS) String gifts);
 
     @FormUrlEncoded
     @POST("co-post-shipment/")
-    Call<ApiResponse<PostShipmentResponseContent>> postShipment(@Field("shipments") String shipments,
+    Call<ApiResponse<PostShipmentResponseContent>> postShipment(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                @Field("shipments") String shipments,
                                                                 @Field(Constants.P_ORDER_ID) String potentialOrderId,
                                                                 @Field(Constants.SUPPORT_CC) String supportsCreditCard,
                                                                 @Field(Constants.SUPPORT_POWER_PAY) String supportsPowerPay,
@@ -336,11 +381,19 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("co-place-order/")
-    Call<OldApiResponse<PlaceOrderApiResponseContent>> placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId,
-                                                                  @Field(Constants.PAYMENT_METHOD) String paymentMethod);
+    Call<OldApiResponse<PlaceOrderApiPrePaymentResponseContent>> placeOrderWithPrePayment(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                                          @Field(Constants.P_ORDER_ID) String potentialOrderId,
+                                                                                          @Field(Constants.PAYMENT_METHOD) String paymentMethod);
+
+    @FormUrlEncoded
+    @POST("co-place-order/")
+    Call<OldApiResponse<PlaceOrderApiPayZappResponseContent>> placeOrderWithPayZapp(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                                    @Field(Constants.P_ORDER_ID) String potentialOrderId,
+                                                                                    @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @GET("pay-now/")
-    Call<ApiResponse<GetPayNowParamsResponse>> getPayNowDetails(@Query(Constants.ORDER_ID) String orderId,
+    Call<ApiResponse<GetPayNowParamsResponse>> getPayNowDetails(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                @Query(Constants.ORDER_ID) String orderId,
                                                                 @Query(Constants.SUPPORT_POWER_PAY) String supportPp,
                                                                 @Query(Constants.SUPPORT_CC) String supportPayu,
                                                                 @Query(Constants.SUPPORT_MOBIKWIK) String mobikWik,
@@ -349,16 +402,19 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("pay-now/")
-    Call<ApiResponse<PrePaymentParamsResponse>> postPayNowDetails(@Field(Constants.ORDER_ID) String orderId,
+    Call<ApiResponse<PrePaymentParamsResponse>> postPayNowDetails(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                  @Field(Constants.ORDER_ID) String orderId,
                                                                   @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @FormUrlEncoded
     @POST("pay-now/")
-    Call<ApiResponse<PayzappPrePaymentParamsResponse>> postPayzappPayNowDetails(@Field(Constants.ORDER_ID) String orderId,
+    Call<ApiResponse<PayzappPrePaymentParamsResponse>> postPayzappPayNowDetails(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                                @Field(Constants.ORDER_ID) String orderId,
                                                                                 @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @GET("fund-wallet/")
-    Call<ApiResponse<GetPaymentTypes>> getFundWalletPayments(@Query(Constants.SUPPORT_CC) String supportsPayu,
+    Call<ApiResponse<GetPaymentTypes>> getFundWalletPayments(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                             @Query(Constants.SUPPORT_CC) String supportsPayu,
                                                              @Query(Constants.SUPPORT_POWER_PAY) String supportPowerPay,
                                                              @Query(Constants.SUPPORT_MOBIKWIK) String mobikwik,
                                                              @Query(Constants.SUPPORT_PAYTM) String supportsPaytm,
@@ -366,31 +422,39 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("fund-wallet/")
-    Call<ApiResponse<PrePaymentParamsResponse>> postFundWallet(@Field(Constants.PAYMENT_METHOD) String payment_method,
+    Call<ApiResponse<PrePaymentParamsResponse>> postFundWallet(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                               @Field(Constants.PAYMENT_METHOD) String payment_method,
                                                                @Field(Constants.AMOUNT) String amount);
 
     @FormUrlEncoded
     @POST("fund-wallet/")
-    Call<ApiResponse<PayzappPrePaymentParamsResponse>> postPayzappFundWallet(@Field(Constants.PAYMENT_METHOD) String payment_method,
+    Call<ApiResponse<PayzappPrePaymentParamsResponse>> postPayzappFundWallet(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                             @Field(Constants.PAYMENT_METHOD) String payment_method,
                                                                              @Field(Constants.AMOUNT) String amount);
 
     @FormUrlEncoded
     @POST("set-current-address/")
-    Call<ApiResponse<SetAddressResponse>> setCurrentAddress(@Field(Constants.ID) String id,
+    Call<ApiResponse<SetAddressResponse>> setCurrentAddress(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                            @Field(Constants.ID) String id,
                                                             @Field(Constants.LAT) String latitude,
                                                             @Field(Constants.LNG) String longitude,
                                                             @Field(Constants.AREA) String area);
 
     @FormUrlEncoded
     @POST("set-current-address/")
-    Call<ApiResponse<SetAddressTransientResponse>> setCurrentAddress(@Field(Constants.ID) String id,
+    Call<ApiResponse<SetAddressTransientResponse>> setCurrentAddress(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                     @Field(Constants.ID) String id,
                                                                      @Field(Constants.LAT) String latitude,
                                                                      @Field(Constants.LNG) String longitude,
                                                                      @Field(Constants.TRANSIENT) String isTransient,
                                                                      @Field(Constants.AREA) String area);
 
     @GET("get-location-detail/")
-    Call<ApiResponse<AddressSummary>> getLocationDetail(@Query(Constants.LAT) String latitude,
+    Call<ApiResponse<AddressSummary>> getLocationDetail(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                        @Query(Constants.LAT) String latitude,
                                                         @Query(Constants.LNG) String longitude);
+
+    @POST("logout/")
+    Call<BaseApiResponse> logout();
 
 }

@@ -4,11 +4,10 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,7 +22,7 @@ import com.bigbasket.mobileapp.util.FontHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShoppingListNamesDialog extends DialogFragment {
+public class ShoppingListNamesDialog extends AppCompatDialogFragment {
     private List<ShoppingListName> shoppingListNames;
 
     public ShoppingListNamesDialog() {
@@ -53,7 +52,7 @@ public class ShoppingListNamesDialog extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setStyle(STYLE_NO_TITLE, 0);//removing the title using setStyle as using the AppCompatDialogFragment
         return dialog;
     }
 

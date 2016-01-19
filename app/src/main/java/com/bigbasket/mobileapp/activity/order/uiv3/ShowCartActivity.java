@@ -74,7 +74,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.my_basket_header));
-        setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
+        setCurrentScreenName(TrackEventkeys.CO_BASKET);
     }
 
     @Override
@@ -136,9 +136,9 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
                         cartItems.get(i).getPromoAppliedType() == 3) {
                     HashMap<String, String> map = new HashMap<>();
                     if (isCurrentPageRequest) {
-                        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     } else {
-                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentNavigationContext());
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getPreviousScreenName());
                     }
                     trackEvent(TrackingAware.PROMO_REDEEMED, map);
                 }
@@ -169,7 +169,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             @Override
             public void onClick(View v) {
                 HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                 trackEvent(TrackingAware.BASKET_CHECKOUT_CLICKED, map);
                 if (getCartSummary() != null && getCartSummary().getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
@@ -193,13 +193,25 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
         trackEvent(TrackingAware.BASKET_VIEW_SHOWN, eventAttribs, null, null, false, true);
+        trackEventsOnFabric(TrackingAware.BASKET_VIEW_SHOWN, eventAttribs);
     }
 
     private void startCheckout(String cartTotal) {
         Intent intent = new Intent(this, BackButtonActivity.class);
-        setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
+        setCurrentScreenName(TrackEventkeys.CO_BASKET);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
         intent.putExtra(Constants.TOTAL_BASKET_VALUE, cartTotal);
+        boolean hasGifts = false;
+        if (cartItemLists != null && cartItemLists.size() > 0) {
+            for (CartItemList cartItemList : cartItemLists) {
+                for (CartItem item : cartItemList.getCartItems())
+                    if (!TextUtils.isEmpty(item.getGiftMsg())) {
+                        hasGifts = true;
+                        break;
+                    }
+            }
+        }
+        intent.putExtra(Constants.HAS_GIFTS, hasGifts);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -225,7 +237,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
     private void emptyCart() {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) return;
         HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         trackEvent(TrackingAware.BASKET_EMPTY_CLICKED, map);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         final SharedPreferences.Editor editor = prefer.edit();
@@ -269,7 +281,7 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
         Call<ApiResponse<CartGetApiResponseContent>> call = bigBasketApiService.cartGet(
-                isCurrentPageRequest ? getNextScreenNavigationContext() : getCurrentNavigationContext(), fulfillmentIds);
+                isCurrentPageRequest ? getCurrentScreenName() : getPreviousScreenName(), fulfillmentIds);
         call.enqueue(new BBNetworkCallback<ApiResponse<CartGetApiResponseContent>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse) {
@@ -538,5 +550,4 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
             hideProgressDialog();
         }
     }
-
 }

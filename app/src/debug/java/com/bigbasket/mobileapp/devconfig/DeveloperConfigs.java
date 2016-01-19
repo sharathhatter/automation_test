@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.bigbasket.mobileapp.R;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
 /**
  * Created by bigbasket on 4/11/15.
@@ -13,6 +15,7 @@ public class DeveloperConfigs {
 
     public static final String IS_DEVELOPER = "is_developer";
     public static final String MAPI_SERVER_ADDRESS = "server_address";
+    public static final String HTTP_LOGGING_LEVEL = "http_logging_level";
 
     private static SharedPreferences getDevPrefrences(Context context) {
         return context.getSharedPreferences(DEVELOPER_PREF_FILE, Context.MODE_PRIVATE);
@@ -38,4 +41,26 @@ public class DeveloperConfigs {
                 .edit().putBoolean(IS_DEVELOPER, isDeveloper).apply();
     }
 
+    public static void saveHttpLoggingLevel(Context context, String newValue) {
+        getDevPrefrences(context.getApplicationContext())
+                .edit().putString(HTTP_LOGGING_LEVEL, newValue).apply();
+    }
+
+    public static HttpLoggingInterceptor.Level getHttpLoggingLevel(Context context) {
+        try {
+            String loggingLevel = getDevPrefrences(context.getApplicationContext())
+                    .getString(HTTP_LOGGING_LEVEL,
+                            String.valueOf(HttpLoggingInterceptor.Level.NONE));
+            return HttpLoggingInterceptor.Level.valueOf(loggingLevel);
+        } catch (Throwable t){
+            //Ignore
+        }
+        return HttpLoggingInterceptor.Level.NONE;
+    }
+
+    public static Interceptor getHttpLoggingInterceptor(Context context) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(getHttpLoggingLevel(context));
+        return interceptor;
+    }
 }

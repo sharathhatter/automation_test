@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PayzappPrePaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PrePaymentParamsResponse;
@@ -18,7 +19,6 @@ import com.bigbasket.mobileapp.factory.payment.impl.HDFCPayzappPayment;
 import com.bigbasket.mobileapp.factory.payment.impl.MobikwikPayment;
 import com.bigbasket.mobileapp.factory.payment.impl.PaytmPayment;
 import com.bigbasket.mobileapp.factory.payment.impl.PayuPayment;
-import com.bigbasket.mobileapp.handler.payment.MobikwikResponseHandler;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
@@ -26,7 +26,6 @@ import com.crashlytics.android.Crashlytics;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.WibmoSDKConfig;
 import com.payu.india.Payu.PayuConstants;
-import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -47,24 +46,45 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     protected String orderId;
     protected boolean isPayNow;
     protected boolean isFundWallet;
+    protected ErrorResponse errorResponse;
+    protected Callback callback;
+    protected boolean isPaymentParamsAlreadyAvailable;
     private MinDurationCountDownTimer minDurationCountDownTimer;
     private CountDownLatch countDownLatch;
     private long minDuation;
-    protected ErrorResponse errorResponse;
-    protected PrePaymentParamsResponse prePaymentParamsResponse;
-    protected PayzappPrePaymentParamsResponse payzappPrePaymentParamsResponse;
-    protected Callback callback;
     private boolean isPaused;
-
+    private boolean isPayUOptionVisible;
+    protected HashMap<String, String> mPaymentPostParams;
+    protected PayzappPostParams mPayzappPostParams;
 
     public AbstractPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
-                                            String paymentMethod, boolean isPayNow, boolean isFundWallet) {
+                                            String paymentMethod, boolean isPayNow, boolean isFundWallet, boolean isPayUOptionVisible) {
+
         this.ctx = ctx;
         this.potentialOrderId = potentialOrderId;
         this.paymentMethod = paymentMethod;
         this.orderId = orderId;
         this.isPayNow = isPayNow;
         this.isFundWallet = isFundWallet;
+        this.isPayUOptionVisible = isPayUOptionVisible;
+        this.isPaymentParamsAlreadyAvailable = false;
+    }
+
+    public AbstractPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
+                                            String paymentMethod, boolean isPayNow, boolean isFundWallet, boolean isPayUOptionVisible,
+                                            HashMap<String, String> mPaymentPostParams,
+                                            PayzappPostParams mPayzappPostParams) {
+
+        this.ctx = ctx;
+        this.potentialOrderId = potentialOrderId;
+        this.paymentMethod = paymentMethod;
+        this.orderId = orderId;
+        this.isPayNow = isPayNow;
+        this.isFundWallet = isFundWallet;
+        this.isPayUOptionVisible = isPayUOptionVisible;
+        this.mPaymentPostParams = mPaymentPostParams;
+        this.mPayzappPostParams = mPayzappPostParams;
+        this.isPaymentParamsAlreadyAvailable = true;
     }
 
     public void setMinDuration(long minDuration) {
@@ -118,27 +138,26 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     public synchronized
     @Nullable
     String getTransactionId() {
-        if (payzappPrePaymentParamsResponse != null
-                && payzappPrePaymentParamsResponse.payzappPostParams != null) {
-            return payzappPrePaymentParamsResponse.payzappPostParams.getTxnId();
+        if (mPayzappPostParams != null) {
+            return mPayzappPostParams.getTxnId();
         }
 
-        if (prePaymentParamsResponse != null && prePaymentParamsResponse.postParams != null) {
+        if (mPaymentPostParams != null) {
             String key = null;
             switch (paymentMethod) {
                 case Constants.PAYU:
                 case Constants.PAYUMONEY_WALLET:
                     key = PayuConstants.TXNID;
                     break;
-                case Constants.MOBIKWIK_PAYMENT:
-                    key = MobikwikResponseHandler.KEY_TRANS_ID;
+                case Constants.MOBIKWIK_WALLET:
+                    key = MobikwikPayment.MOBIKWIK_ORDERID;
                     break;
                 case Constants.PAYTM_WALLET:
                     key = PaytmPayment.TXN_ID;
                     break;
             }
             if (!TextUtils.isEmpty(key)) {
-                return prePaymentParamsResponse.postParams.get(key);
+                return mPaymentPostParams.get(key);
             }
         }
 
@@ -192,53 +211,72 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         } else {
             countDownLatch.countDown();
         }
-        try {
-            if (Constants.HDFC_POWER_PAY.equals(paymentMethod)) {
-                Call<ApiResponse<PayzappPrePaymentParamsResponse>> call =
-                        getPayzappPrepaymentParamsApiCall(bigBasketApiService);
-                Response<ApiResponse<PayzappPrePaymentParamsResponse>> response = call.execute();
-                if (response.isSuccess()) {
-                    if (response.body().status == 0) {
-                        synchronized (this) {
-                            payzappPrePaymentParamsResponse = response.body().apiResponseContent;
+        /**
+         * condition:
+         * 1. if isPaymentParamsAlreadyAvailable=false: means the task doesnt have the payment parameters
+         * call the service to get the payment parameters based on the payment method
+         *
+         * 2. if isPaymentParamsAlreadyAvailable=true, but the payment parameters are null(may be the task has been called with sending null as the parameters)
+         * call the service to get the payment parameters based on the payment method
+         *
+         */
+        if (!isPaymentParamsAlreadyAvailable || (mPayzappPostParams == null && mPaymentPostParams == null)) {
+            try {
+                if (Constants.HDFC_POWER_PAY.equals(paymentMethod)) {
+                    Call<ApiResponse<PayzappPrePaymentParamsResponse>> call =
+                            getPayzappPrepaymentParamsApiCall(bigBasketApiService);
+                    Response<ApiResponse<PayzappPrePaymentParamsResponse>> response = call.execute();
+                    if (response.isSuccess()) {
+                        if (response.body().status == 0) {
+                            synchronized (this) {
+                                mPayzappPostParams = response.body().apiResponseContent.payzappPostParams;
+                            }
+                            WibmoSDK.setWibmoIntentActionPackage(mPayzappPostParams.getPkgName());
+                            WibmoSDKConfig.setWibmoDomain(mPayzappPostParams.getServerUrl());
+                            WibmoSDK.init(context);
+                            countDownLatch.countDown();
+                            result = true;
+                        } else {
+                            errorResponse = new ErrorResponse(response.body().status,
+                                    response.body().message, ErrorResponse.API_ERROR);
                         }
-                        PayzappPostParams payzappPostParams = payzappPrePaymentParamsResponse.payzappPostParams;
-                        WibmoSDK.setWibmoIntentActionPackage(payzappPostParams.getPkgName());
-                        WibmoSDKConfig.setWibmoDomain(payzappPostParams.getServerUrl());
-                        WibmoSDK.init(context);
-                        countDownLatch.countDown();
-                        result = true;
                     } else {
-                        errorResponse = new ErrorResponse(-1 * response.body().status,
-                                response.body().message, null);
+                        errorResponse = new ErrorResponse(response.code(), response.message(),
+                                ErrorResponse.HTTP_ERROR);
                     }
                 } else {
-                    errorResponse = new ErrorResponse(response.code(), response.message(),
-                            response.errorBody());
-                }
-            } else {
-                Call<ApiResponse<PrePaymentParamsResponse>> call =
-                        getPrepaymentParamsApiCall(bigBasketApiService);
-                Response<ApiResponse<PrePaymentParamsResponse>> response = call.execute();
-                if (response.isSuccess()) {
-                    if (response.body().status == 0) {
-                        synchronized (this) {
-                            prePaymentParamsResponse = response.body().apiResponseContent;
+                    Call<ApiResponse<PrePaymentParamsResponse>> call =
+                            getPrepaymentParamsApiCall(bigBasketApiService);
+                    Response<ApiResponse<PrePaymentParamsResponse>> response = call.execute();
+                    if (response.isSuccess()) {
+                        if (response.body().status == 0) {
+                            synchronized (this) {
+                                mPaymentPostParams = response.body().apiResponseContent.postParams;
+                            }
+                            countDownLatch.countDown();
+                            result = true;
+                        } else {
+                            errorResponse = new ErrorResponse(response.body().status,
+                                    response.body().message, ErrorResponse.API_ERROR);
                         }
-                        countDownLatch.countDown();
-                        result = true;
                     } else {
-                        errorResponse = new ErrorResponse(-1 * response.body().status,
-                                response.body().message, null);
+                        errorResponse = new ErrorResponse(response.code(), response.message(),
+                                ErrorResponse.HTTP_ERROR);
                     }
-                } else {
-                    errorResponse = new ErrorResponse(response.code(), response.message(),
-                            response.errorBody());
                 }
+            } catch (IOException ex) {
+                Crashlytics.logException(ex);
+                errorResponse = new ErrorResponse(ex);
             }
-        } catch (IOException ex) {
-            Crashlytics.logException(ex);
-            errorResponse = new ErrorResponse(ex);
+        } else {
+            result = true;
+            countDownLatch.countDown();
+            //initializing the PayZapp SDK
+            if (Constants.HDFC_POWER_PAY.equals(paymentMethod)) {
+                WibmoSDK.setWibmoIntentActionPackage(mPayzappPostParams.getPkgName());
+                WibmoSDKConfig.setWibmoDomain(mPayzappPostParams.getServerUrl());
+                WibmoSDK.init(context);
+            }
         }
         if (!result) {
             countDownLatch.countDown(); // countdown for network operation
@@ -264,6 +302,10 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
             return;
         }
         if (success) {
+            /**payment parameters is already passed in the constructor
+             * open the gateway method based on that.
+             */
+
             try {
                 openGateway();
             } catch (IllegalStateException | IllegalArgumentException ex) {
@@ -271,6 +313,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                 success = false;
             }
         }
+
         if (callback != null) {
             if (success) {
                 callback.onSuccess();
@@ -280,48 +323,68 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         }
     }
 
+    /***
+     * startPaymentGateway passing the payment method
+     */
     protected void openGateway() {
-        HashMap<String, String> paymentParams = null;
-        Activity activity = ctx.getCurrentActivity();
         if (Constants.HDFC_POWER_PAY.equals(paymentMethod)) {
-            if (payzappPrePaymentParamsResponse == null ||
-                    payzappPrePaymentParamsResponse.payzappPostParams == null) {
+            if (mPayzappPostParams == null) {
                 throw new IllegalStateException("Payzapp prepayment params are null");
             }
         } else {
-            if (prePaymentParamsResponse == null ||
-                    prePaymentParamsResponse.postParams == null) {
+            if (mPaymentPostParams == null) {
                 throw new IllegalStateException("Prepayment params are null");
-            } else {
-                paymentParams = prePaymentParamsResponse.postParams;
             }
         }
+
+        startPaymentGateway(paymentMethod);
+
+    }
+
+
+    /**
+     * check payment method and initialize the corresponding payment sdk
+     *
+     * @param paymentMethod:String
+     */
+    private void startPaymentGateway(String paymentMethod) {
+        Activity activity = ctx.getCurrentActivity();
         switch (paymentMethod) {
             case Constants.PAYU:
-            case Constants.PAYUMONEY_WALLET:
-                PayuPayment.startPaymentGateway(paymentParams, activity);
+                PayuPayment.startPaymentGateway(mPaymentPostParams, activity, isPayUOptionVisible, false);
                 break;
-            case Constants.MOBIKWIK_PAYMENT:
-                MobikwikPayment.startPaymentGateway(paymentParams, activity);
+            case Constants.PAYUMONEY_WALLET:
+                PayuPayment.startPaymentGateway(mPaymentPostParams, activity, isPayUOptionVisible, true);
+                break;
+            case Constants.MOBIKWIK_WALLET:
+                MobikwikPayment.startPaymentGateway(mPaymentPostParams, activity);
                 break;
             case Constants.PAYTM_WALLET:
-                PaytmPayment.startPaymentGateway(paymentParams, activity,
+                PaytmPayment.startPaymentGateway(mPaymentPostParams, activity,
                         potentialOrderId, orderId, isPayNow, isFundWallet);
                 break;
             case Constants.HDFC_POWER_PAY:
                 HDFCPayzappPayment.startHDFCPayzapp(
-                        payzappPrePaymentParamsResponse.payzappPostParams,
+                        mPayzappPostParams,
                         activity);
                 break;
         }
-
     }
+
 
     protected abstract Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService);
 
     protected abstract Call<ApiResponse<PrePaymentParamsResponse>> getPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService);
+
+    public interface Callback {
+        void onSuccess();
+
+        void onFailure(ErrorResponse errorResponse);
+
+        void onMicDelayTick(long millisUntilFinished);
+    }
 
     private static class MinDurationCountDownTimer extends CountDownTimer {
 
@@ -344,50 +407,5 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         public boolean isFinished() {
             return isFinished;
         }
-    }
-
-    public static class ErrorResponse {
-        private int code;
-        private String message;
-        private ResponseBody errorResponseBody;
-        private Throwable throwable;
-
-        public ErrorResponse(int code, String message, ResponseBody errorResponseBody) {
-            this.code = code;
-            this.message = message;
-            this.errorResponseBody = errorResponseBody;
-        }
-
-        public ErrorResponse(Throwable throwable) {
-            this.throwable = throwable;
-        }
-
-        public boolean isException() {
-            return throwable != null;
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public ResponseBody getErrorResponseBody() {
-            return errorResponseBody;
-        }
-
-        public Throwable getThrowable() {
-            return throwable;
-        }
-    }
-
-    public interface Callback {
-        void onSuccess();
-
-        void onFailure(ErrorResponse errorResponse);
-
-        void onMicDelayTick(long millisUntilFinished);
     }
 }

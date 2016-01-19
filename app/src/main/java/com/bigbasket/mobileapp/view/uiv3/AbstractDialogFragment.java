@@ -1,11 +1,11 @@
 package com.bigbasket.mobileapp.view.uiv3;
 
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
 
-public abstract class AbstractDialogFragment extends DialogFragment {
+public abstract class AbstractDialogFragment extends AppCompatDialogFragment {
 
     public void onResume() {
         super.onResume();

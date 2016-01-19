@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
@@ -17,7 +18,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.internal.VersionUtils;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -26,26 +26,26 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.AppDataDynamicDbHelper;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.FlatPageFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
+import com.bigbasket.mobileapp.fragment.account.ChangeAddressFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
-import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
+import com.bigbasket.mobileapp.fragment.account.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.GiftOptionsFragment;
-import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
+import com.bigbasket.mobileapp.fragment.order.ViewDeliveryAddressFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
@@ -61,6 +61,7 @@ import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.NavigationDrawerAware;
 import com.bigbasket.mobileapp.interfaces.NavigationSelectionAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
+import com.bigbasket.mobileapp.interfaces.OnBasketDeltaListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -91,6 +92,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu;
 import com.bigbasket.mobileapp.view.uiv3.BasketDeltaDialog;
 import com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView;
+import com.crashlytics.android.Crashlytics;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -101,7 +103,7 @@ import java.util.Map;
 public abstract class BBActivity extends SocialLoginActivity implements BasketOperationAware,
         CartInfoAware, AppOperationAware, FloatingBasketUIAware,
         OnAddressChangeListener, BasketDeltaUserActionListener, NavigationSelectionAware,
-        NavigationDrawerAware, BBNavigationMenu.Callback {
+        NavigationDrawerAware, OnBasketDeltaListener, BBNavigationMenu.Callback {
 
     protected BigBasketMessageHandler handler;
     protected String mTitle;
@@ -118,7 +120,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     private FloatingBadgeCountView mBtnViewBasket;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getMainLayout());
 
@@ -133,7 +135,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
         Toolbar toolbar = getToolbar();
         setSupportActionBar(toolbar);
-        if (VersionUtils.isAtLeastL() && getSupportActionBar() != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && getSupportActionBar() != null) {
             getSupportActionBar().setElevation(20);
         }
 
@@ -198,15 +200,10 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             editor.putString(Constants.CITY, defaultAddress.getCityName());
             editor.putString(Constants.CITY_ID, String.valueOf(defaultAddress.getCityId()));
             editor.apply();
+            AuthParameters.resetCity(String.valueOf(defaultAddress.getCityId()));
             if (mMainMenuView != null) {
                 mMainMenuView.setCityText(defaultAddress.toString());
             }
-        }
-
-        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager()
-                .findFragmentByTag(HomeFragment.class.getName());
-        if (homeFragment != null) {
-            homeFragment.syncDynamicTiles();
         }
     }
 
@@ -232,7 +229,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 @Override
                 public void onClick(View v) {
                     HashMap<String, String> map = new HashMap<>();
-                    map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     trackEvent(TrackingAware.BASKET_VIEW_CLICKED, map, null, null, false, true);
                     launchViewBasketScreen();
                 }
@@ -278,7 +275,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 super.onDrawerOpened(drawerView);
 
                 Map<String, String> eventAttribs = new HashMap<>();
-                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                 trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
                 if (mMainMenuView != null) {
@@ -293,11 +290,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         }
     }
 
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
-    }
-
     public void addToMainLayout(AbstractFragment fragment) {
         addToMainLayout(fragment, null);
     }
@@ -309,7 +301,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
         if (frameLayout == null) return;
-        UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
+        UIUtil.addNavigationContextToBundle(fragment, getCurrentScreenName());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -327,11 +319,11 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
         if (fragment == null) return;
-        UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
+        UIUtil.addNavigationContextToBundle(fragment, getCurrentScreenName());
         FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
         this.currentFragmentTag = ftTag;
+        FragmentTransaction ft = fm.beginTransaction();
         ft.add(R.id.content_frame, fragment, ftTag);
         ft.addToBackStack(ftTag);
         if (stateLess) {
@@ -387,14 +379,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             case FragmentCodes.START_HOME:
                 addToMainLayout(new HomeFragment());
                 break;
-            case FragmentCodes.START_UPDATE_PROFILE:
-                UpdateProfileFragment updateProfileFragment = new UpdateProfileFragment();
-                Bundle updateProfileBundle = new Bundle();
-                updateProfileBundle.putParcelable(Constants.UPDATE_PROFILE_OBJ,
-                        getIntent().getParcelableExtra(Constants.UPDATE_PROFILE_OBJ));
-                updateProfileFragment.setArguments(updateProfileBundle);
-                addToMainLayout(updateProfileFragment);
-                break;
             case FragmentCodes.START_CHANGE_PASSWD:
                 addToMainLayout(new ChangePasswordFragment());
                 break;
@@ -405,14 +389,18 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 addToMainLayout(giftOptionsFragment);
                 break;
             case FragmentCodes.START_VIEW_DELIVERY_ADDRESS:
-                MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
+                ViewDeliveryAddressFragment viewDeliveryAddressFragment = new ViewDeliveryAddressFragment();
                 Bundle addressbundle = new Bundle();
-                addressbundle.putInt(Constants.ADDRESS_PAGE_MODE,
-                        getIntent().getIntExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.CHECKOUT));
                 addressbundle.putString(Constants.TOTAL_BASKET_VALUE,
                         getIntent().getStringExtra(Constants.TOTAL_BASKET_VALUE));
-                memberAddressListFragment.setArguments(addressbundle);
-                addToMainLayout(memberAddressListFragment);
+                viewDeliveryAddressFragment.setArguments(addressbundle);
+                addToMainLayout(viewDeliveryAddressFragment);
+                break;
+            case FragmentCodes.CHANGE_ADDRESS_FRAGMENT:
+                ChangeAddressFragment changeAddressFragment = new ChangeAddressFragment();
+                Bundle addressBundle = getIntent().getExtras();
+                changeAddressFragment.setArguments(addressBundle);
+                addToMainLayout(changeAddressFragment);
                 break;
             case FragmentCodes.START_COMMUNICATION_HUB:
                 launchMoEngageCommunicationHub();
@@ -513,7 +501,8 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             City newCity = new City(addressSummaries.get(0).getCityName(),
                     addressSummaries.get(0).getCityId());
             changeCity(newCity);
-            startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
+            //The srvice is started in AppDataDynamic.reset, no need to start the service here
+            //startService(new Intent(getCurrentActivity(), GetAppDataDynamicIntentService.class));
         } else {
             showToast(getString(R.string.unknownError));
         }
@@ -789,20 +778,23 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     }
 
     @Override
-    public void doLogout() {
+    public void doLogout(boolean wasSocialLogin) {
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawers();
         }
-        super.doLogout();
+        super.doLogout(wasSocialLogin);
     }
 
     public void changeAddressRequested() {
         if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
-            showChangeCity(false, getNextScreenNavigationContext(), false);
+            showChangeCity(false, getCurrentScreenName(), false);
         } else {
             Intent intent = new Intent(this, BackButtonActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.CHANGE_ADDRESS_FRAGMENT);
             intent.putExtra(Constants.ADDRESS_PAGE_MODE, MemberAddressPageMode.ADDRESS_SELECT);
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+            trackEvent(TrackingAware.DELIVERY_ADDRESS_CLICKED, map);
             startActivityForResult(intent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
         }
     }
@@ -827,12 +819,19 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         super.onSaveInstanceState(outState);
     }
 
-    protected FrameLayout getContentView() {
-        return (FrameLayout) findViewById(R.id.content_frame);
+    protected ViewGroup getContentView() {
+        return (ViewGroup) findViewById(R.id.content_frame);
     }
 
     public String getScreenTag() {
         return null;
+    }
+
+    @Override
+    protected void postLogout(boolean success) {
+        super.postLogout(success);
+        syncBasket();
+        markBasketDirty();
     }
 
     @Override
@@ -864,6 +863,15 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mMainMenuView != null) {
+            mMainMenuView.clear();
+            getSupportLoaderManager().destroyLoader(LoaderIds.MAIN_MENU_ID);
+        }
+    }
+
     private void syncCartInfoFromPreference() {
         // Update from preference
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
@@ -882,7 +890,12 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             boolean status = mMainMenuView.onBackPressed(mDrawerLayout);
             if (status) return;
         }
-        super.onBackPressed();
+        try {
+            super.onBackPressed();
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+            finish();
+        }
     }
 
     /**

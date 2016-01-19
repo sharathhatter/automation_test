@@ -31,17 +31,16 @@ public class DiscountActivity extends SearchActivity {
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_DISCOUNT_SCREEN);
+        setCurrentScreenName(TrackEventkeys.NC_DISCOUNT_SCREEN);
         setTitle(getString(R.string.discounts));
         getDiscountData();
-
     }
 
 
     private void getDiscountData() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getApplicationContext());
         showProgressView();
-        Call<ApiResponse<DiscountDataModel>> call = bigBasketApiService.getDiscount();
+        Call<ApiResponse<DiscountDataModel>> call = bigBasketApiService.getDiscount(getPreviousScreenName());
         call.enqueue(new BBNetworkCallback<ApiResponse<DiscountDataModel>>(this, true) {
             @Override
             public void onSuccess(ApiResponse<DiscountDataModel> discountDataModelApiResponse) {
@@ -102,7 +101,7 @@ public class DiscountActivity extends SearchActivity {
                     } else if (binSectionData.getScreenName() != null) {
                         eventAttribs.put(Constants.TAB_NAME, binSectionData.getScreenName());
                     }
-                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     trackEvent(TrackingAware.DISCOUNT_TAB_CHANGED, eventAttribs);
                 }
 

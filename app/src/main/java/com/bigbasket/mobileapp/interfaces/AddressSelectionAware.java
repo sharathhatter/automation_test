@@ -8,10 +8,6 @@ public interface AddressSelectionAware {
 
     void onAddressSelected(Address address);
 
-    void onAddNewAddressClicked();
-
-    void onEditAddressClicked(Address address);
-
     @Nullable
     Address getSelectedAddress();
 }

@@ -1,14 +1,23 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
-import android.text.SpannableString;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -25,43 +34,57 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
+import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.click.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
 import retrofit.Call;
 
-public class SignInActivity extends BackButtonActivity {
+public class SignInActivity extends SocialLoginActivity {
 
     // UI references.
     private EditText mPasswordView;
     private CheckBox mChkRememberMe;
     private EditText mEmailView;
     private boolean mIsPasswordVisible;
+    private TextInputLayout mTextInputEmail, mTextInputPasswd;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_LOGIN_SCREEN);
+        setContentView(R.layout.uiv3_login);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        setSupportActionBar(toolbar);
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
-        setTitle(getString(R.string.signInCapsVerb));
+        setCurrentScreenName(TrackEventkeys.NC_LOGIN_SCREEN);
 
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
-                findViewById(R.id.btnFBLogin));
+                findViewById(R.id.btn_fb_login));
 
+        mTextInputEmail = (TextInputLayout) findViewById(R.id.text_input_email);
+        mTextInputPasswd = (TextInputLayout) findViewById(R.id.text_input_passwd);
         // Set up the login form.
-        mEmailView = (EditText) findViewById(R.id.emailInput);
+        mEmailView = (EditText) findViewById(R.id.email_input);
 
-        ((TextView) findViewById(R.id.txtOrSeparator)).setTypeface(faceRobotoRegular);
-        ((TextView) findViewById(R.id.lblConnectUsing)).setTypeface(faceRobotoLight);
-        mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
+        ((TextView) findViewById(R.id.txt_or_separator)).setTypeface(faceRobotoRegular);
+        ((TextView) findViewById(R.id.lbl_connect_using)).setTypeface(faceRobotoLight);
+        mPasswordView = (EditText) findViewById(R.id.edit_text_passwd);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -86,7 +109,7 @@ public class SignInActivity extends BackButtonActivity {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.btnLogin);
+        Button mEmailSignInButton = (Button) findViewById(R.id.btn_login);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,30 +119,68 @@ public class SignInActivity extends BackButtonActivity {
         });
         mEmailSignInButton.setTypeface(faceRobotoRegular);
 
-        TextView txtForgotPasswd = (TextView) findViewById(R.id.txtForgotPasswd);
+        TextView txtForgotPasswd = (TextView) findViewById(R.id.txt_forgot_passwd);
         txtForgotPasswd.setTypeface(faceRobotoLight);
         txtForgotPasswd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                trackEvent(TrackingAware.FORGOT_PASSWORD_CLICKED, null);
                 onForgotPasswordClick();
             }
         });
 
-        TextView lblSignUp = (TextView) findViewById(R.id.lblSignUp);
+        TextView lblSignUp = (TextView) findViewById(R.id.lbl_sign_up);
         lblSignUp.setTypeface(faceRobotoLight);
-        SpannableString signUpSpannable = new SpannableString(lblSignUp.getText());
-        signUpSpannable.setSpan(new UnderlineSpan(), 0, signUpSpannable.length(),
-                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        lblSignUp.setText(signUpSpannable);
         lblSignUp.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                UIUtil.resetFormInputField(mTextInputEmail);
+                UIUtil.resetFormInputField(mTextInputPasswd);
                 launchRegistrationPage();
             }
         });
 
-        mChkRememberMe = (CheckBox) findViewById(R.id.chkRememberMe);
+        TextView txtTermsAndCond = (TextView) findViewById(R.id.txt_terms_and_conditions);
+
+        ClickableSpan termsAndCondClickSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                launchFlatPage(Constants.TERMS_AND_COND_URL);
+            }
+        };
+
+        final ClickableSpan privacyPolicyClickSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                launchFlatPage(Constants.PRIVACY_POLICY_URL);
+            }
+        };
+
+        final UnderlineSpan underLineSpan = new UnderlineSpan();
+        final ForegroundColorSpan whiteForegroundSpan =
+                new ForegroundColorSpan(ContextCompat.getColor(this, R.color.white_60p));
+
+        SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(getString(R.string.terms_and_cond_start));
+        int start = spannableBuilder.length();
+        spannableBuilder.append(getString(R.string.terms_and_cond));
+        int end = spannableBuilder.length();
+        spannableBuilder.setSpan(termsAndCondClickSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableBuilder.setSpan(whiteForegroundSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableBuilder.setSpan(underLineSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        spannableBuilder.append(getString(R.string.and));
+
+        start = spannableBuilder.length();
+        spannableBuilder.append(getString(R.string.privacy_policy));
+        end = spannableBuilder.length();
+        spannableBuilder.setSpan(privacyPolicyClickSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableBuilder.setSpan(whiteForegroundSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableBuilder.setSpan(underLineSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        txtTermsAndCond.setHighlightColor(Color.TRANSPARENT);
+        txtTermsAndCond.setText(spannableBuilder);
+        txtTermsAndCond.setMovementMethod(LinkMovementMethod.getInstance());
+
+        mChkRememberMe = (CheckBox) findViewById(R.id.chk_remember_me);
         mChkRememberMe.setTypeface(faceRobotoLight);
 
         initializeRememberedDataForLoginInput();
@@ -133,14 +194,15 @@ public class SignInActivity extends BackButtonActivity {
         trackEvent(TrackingAware.LOGIN_SHOWN, null);
     }
 
-    @Override
-    public int getMainLayout() {
-        return R.layout.uiv3_login;
-    }
 
-    @Override
-    public void handleIntent(Bundle savedInstanceState) {
-        // This activity doesn't support fragment operations
+    private void launchFlatPage(String url) {
+        try {
+            Intent intent = new Intent(SignInActivity.this, BackButtonActivity.class);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
+            intent.putExtra(Constants.WEBVIEW_URL, URLDecoder.decode(url, "UTF-8"));
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        } catch (UnsupportedEncodingException e) {
+        }
     }
 
     private void logRememberMeEnabled(String enabled) {
@@ -171,6 +233,36 @@ public class SignInActivity extends BackButtonActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onSignInCancelled();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        onSignInCancelled();
+    }
+
+    @Override
+    public void onChangeFragment(AbstractFragment newFragment) {
+
+    }
+
+    @Override
+    public void onChangeTitle(String title) {
+
+    }
+
+    private void onSignInCancelled() {
+        setResult(NavigationCodes.SIGN_IN_CANCELLED);
+        finish();
+    }
+
+
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -179,10 +271,8 @@ public class SignInActivity extends BackButtonActivity {
     private void attemptLogin() {
         // Reset errors.
 
-        TextInputLayout textInputEmail = (TextInputLayout) findViewById(R.id.textInputEmail);
-        TextInputLayout textInputPasswd = (TextInputLayout) findViewById(R.id.textInputPasswd);
-        UIUtil.resetFormInputField(textInputEmail);
-        UIUtil.resetFormInputField(textInputPasswd);
+        UIUtil.resetFormInputField(mTextInputEmail);
+        UIUtil.resetFormInputField(mTextInputPasswd);
 
         hideKeyboard(getCurrentActivity(), mEmailView);
 
@@ -195,12 +285,12 @@ public class SignInActivity extends BackButtonActivity {
 
         // Check for a valid password
         if (TextUtils.isEmpty(password)) {
-            UIUtil.reportFormInputFieldError(textInputPasswd, getString(R.string.empty_password_error));
-            focusView = textInputEmail;
+            UIUtil.reportFormInputFieldError(mTextInputPasswd, getString(R.string.empty_password_error));
+            focusView = mTextInputEmail;
             cancel = true;
         } else if (password.length() < 6) {
             // Check for a valid password length
-            UIUtil.reportFormInputFieldError(textInputPasswd,
+            UIUtil.reportFormInputFieldError(mTextInputPasswd,
                     getString(R.string.psswordMst6Digit));
             focusView = mPasswordView;
             cancel = true;
@@ -208,15 +298,14 @@ public class SignInActivity extends BackButtonActivity {
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            UIUtil.reportFormInputFieldError(textInputEmail, getString(R.string.empty_email_address_error));
+            UIUtil.reportFormInputFieldError(mTextInputEmail, getString(R.string.empty_email_address_error));
             focusView = mEmailView;
             cancel = true;
         } else if (!UIUtil.isValidEmail(email)) {
-            UIUtil.reportFormInputFieldError(textInputEmail, getString(R.string.error_invalid_email));
+            UIUtil.reportFormInputFieldError(mTextInputEmail, getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
         }
-
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -242,8 +331,8 @@ public class SignInActivity extends BackButtonActivity {
     }
 
     private void onForgotPasswordClick() {
-        TextInputLayout textInputEmail = (TextInputLayout) findViewById(R.id.textInputEmail);
-        TextInputLayout textInputPasswd = (TextInputLayout) findViewById(R.id.textInputPasswd);
+        TextInputLayout textInputEmail = (TextInputLayout) findViewById(R.id.text_input_email);
+        TextInputLayout textInputPasswd = (TextInputLayout) findViewById(R.id.text_input_passwd);
         UIUtil.resetFormInputField(textInputEmail);
         UIUtil.resetFormInputField(textInputPasswd);
 

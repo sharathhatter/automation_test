@@ -20,4 +20,7 @@
     <item name="basket_op_additional_query_map_tag_id" type="id" />
     <item name="basket_op_cart_info_map_tag_id" type="id" />
     <item name="basket_op_read_input_qty_tag_id" type="id" />
+    <item name="fullfillment_info_page_url_tag_id" type="id" />
+    <item name="address_id" type="id" />
+    <item name="section_item_tag_id" type="id" />
 </resources>

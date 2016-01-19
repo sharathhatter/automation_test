@@ -13,10 +13,13 @@ import retrofit.Call;
 public class ShoppingListNamesTask<T extends AppOperationAware> {
     private T ctx;
     private boolean showSystem;
+    private String navigationContext;
 
-    public ShoppingListNamesTask(T ctx, boolean showSystem) {
+
+    public ShoppingListNamesTask(T ctx, boolean showSystem, String navigationContext) {
         this.ctx = ctx;
         this.showSystem = showSystem;
+        this.navigationContext = navigationContext;
     }
 
     public void startTask() {
@@ -27,7 +30,7 @@ public class ShoppingListNamesTask<T extends AppOperationAware> {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(ctx.getCurrentActivity());
         ctx.showProgressDialog("Please wait...");
-        Call<GetShoppingListsApiResponse> call = bigBasketApiService.getShoppingLists(showSystem ? "1" : "0");
+        Call<GetShoppingListsApiResponse> call = bigBasketApiService.getShoppingLists(navigationContext, showSystem ? "1" : "0");
         call.enqueue(new BBNetworkCallback<GetShoppingListsApiResponse>(ctx, true) {
                          @Override
                          public void onSuccess(GetShoppingListsApiResponse getShoppingListsApiResponse) {

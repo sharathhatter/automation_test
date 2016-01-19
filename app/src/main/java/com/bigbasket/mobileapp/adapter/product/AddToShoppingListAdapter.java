@@ -34,7 +34,7 @@ public class AddToShoppingListAdapter<T> extends BaseAdapter {
         this.shoppingListNames = shoppingListNames != null ? shoppingListNames :
                 new ArrayList<ShoppingListName>();
         Context context = ((AppOperationAware) activityAware).getCurrentActivity();
-        textColor = context.getResources().getColor(R.color.uiv3_secondary_text_color);
+        textColor = ContextCompat.getColor(context, R.color.uiv3_secondary_text_color);
         drawable = ContextCompat.getDrawable(context, R.drawable.shopping_list);
         this.dp8 = (int) context.getResources().getDimension(R.dimen.padding_normal);
         this.dp16 = (int) context.getResources().getDimension(R.dimen.padding_large);
@@ -90,7 +90,7 @@ public class AddToShoppingListAdapter<T> extends BaseAdapter {
                     ContextCompat.getDrawable(context,
                             R.drawable.red_plus), null, null, null);
             textShoppingListItemName.setText(context.getString(R.string.createNewList));
-            textShoppingListItemName.setTextColor(context.getResources().getColor(R.color.uiv3_dialog_header_text_bkg));
+            textShoppingListItemName.setTextColor(ContextCompat.getColor(context, R.color.uiv3_dialog_header_text_bkg));
         } else {
             ShoppingListName shoppingListName = shoppingListNames.get(getActualListPosition(position));
             textShoppingListItemName.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);

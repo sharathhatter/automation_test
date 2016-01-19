@@ -18,7 +18,6 @@ import com.bigbasket.mobileapp.view.SectionView;
 
 public class DiscountFragment extends BaseFragment {
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,7 +41,7 @@ public class DiscountFragment extends BaseFragment {
 
         if (sectionData != null) {
             RecyclerView recyclerView = new SectionView(getCurrentActivity(), faceRobotoRegular,
-                    sectionData, Constants.DISCOUNT_PAGE).getRecyclerView(contentLayout);
+                    sectionData, Constants.DISCOUNT_PAGE, false, true).getRecyclerView(contentLayout);
             if (recyclerView != null) {
                 contentLayout.addView(recyclerView);
             }
@@ -69,5 +68,11 @@ public class DiscountFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return TrackEventkeys.DISCOUNT_SCREEN;
+    }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "DiscountFragment";
     }
 }

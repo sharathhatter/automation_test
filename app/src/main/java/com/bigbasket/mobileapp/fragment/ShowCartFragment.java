@@ -99,7 +99,7 @@ public class ShowCartFragment extends BaseFragment {
                 getCurrentActivity(),
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl,
-                getNextScreenNavigationContext(), currentTabIndex);
+                getCurrentScreenName(), currentTabIndex);
         RecyclerView listShowCart = (RecyclerView) getContentView().findViewById(R.id.list_show_cart);
         listShowCart.setLayoutManager(new LinearLayoutManager(getActivity()));
         listShowCart.setAdapter(activeOrderRowAdapter);
@@ -135,5 +135,11 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return TrackEventkeys.VIEW_BASKET_SCREEN;
+    }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "ShowCartFragment";
     }
 }

@@ -43,10 +43,10 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         }
 
         // Deep link can be from dynamic screen also, hence we need to preserve that referer
-        if (getCurrentNavigationContext() == null)
-            setNextScreenNavigationContext(TrackEventkeys.DEEP_LINK);
+        if (getPreviousScreenName() == null)
+            setCurrentScreenName(TrackEventkeys.DEEP_LINK);
         else
-            setNextScreenNavigationContext(getCurrentNavigationContext());
+            setCurrentScreenName(getPreviousScreenName());
 
         int resultCode = DeepLinkHandler.handleDeepLink(this, uri);
         if (resultCode == DeepLinkHandler.LOGIN_REQUIRED) {
@@ -133,11 +133,6 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     protected void onRestart() {
         super.onRestart();
         handleBackStack();
-    }
-
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
     }
 
     @Override

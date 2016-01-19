@@ -60,14 +60,25 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro', '../wibmoSDK/proguard-rules.pro'
             manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
             signingConfig signingConfigs.bigbasket.storeFile != null ? signingConfigs.bigbasket : null
         }
         debug {
             multiDexEnabled true
             signingConfig signingConfigs.bigbasket
+        }
+    }
+    productFlavors {
+        // For faster startup when building MultiDex app on a lollypop device
+        lollypop {
+            minSdkVersion 22
+        }
+        // For other devices
+        regular {
+            minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
         }
     }
     compileOptions {
@@ -122,35 +133,33 @@ int calculateVersionCodeFromDpi(int dpi, int delta) {
 
 dependencies {
     compile files('libs/localytics.jar')
-    //compile 'com.localytics.android:library:3.5+'
-    compile project(':androidImageSlider')
-    provided 'com.squareup.okhttp:okhttp:2.6.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.3@aar') {
         transitive = true;
     }
     compile project(':wibmoSDK')
-    compile files('libs/AF-Android-SDK-v2.3.1.17.jar')
+    compile files('libs/AF-Android-SDK-v3.3.0.jar')
     compile project(':moe-addon-ubox')
-    compile project(':mobikwik_Payment_Android_SDK')
+    compile project(':mobikwik-sdk')
     compile files('libs/pgsdk.jar')
     compile project(':payuSdkUi')
     compile files('libs/GoogleConversionTrackingSdk-2.2.4.jar')
     compile "com.squareup.picasso:picasso:${picassoLibVersion}"
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
-    compile "com.google.android.gms:play-services-ads:${playServicesLibVersion}"
+    provided 'com.squareup.okhttp:okhttp:2.7.0'
+    compile "com.google.android.gms:play-services-ads:${playServicesLibVersion}"  // Needed for AppsFlyer & is optional for MoEngage
     compile "com.google.android.gms:play-services-plus:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-gcm:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-location:${playServicesLibVersion}"
     compile 'com.newrelic.agent.android:android-agent:5.+'
     compile 'com.facebook.android:facebook-android-sdk:4.4.0'
-    compile 'com.journeyapps:zxing-android-embedded:3.0.1@aar'
+    compile 'com.journeyapps:zxing-android-embedded:3.1.0@aar'
     compile 'com.google.zxing:core:3.2.0'
     compile 'com.moengage:moe-android-sdk:5.3.14'
-    compile "com.android.support:support-v4:${supportLibVersion}"
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
+    debugCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryLibVersion}"
     debugCompile 'com.android.support:multidex:1.0.1'
+    debugCompile 'com.squareup.okhttp:logging-interceptor:2.7.0'
 }

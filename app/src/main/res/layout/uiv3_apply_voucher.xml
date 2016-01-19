@@ -14,9 +14,22 @@
         android:layout_marginTop="@dimen/margin_22"
         style="@style/RippleStyle"
         android:text="@string/applyAllCaps"
-        android:padding="@dimen/padding_small"
+        android:paddingRight="@dimen/margin_small"
+        android:paddingBottom="@dimen/padding_mini"
+        android:paddingTop="@dimen/padding_mini"
+        android:paddingLeft="@dimen/margin_small"
         android:textColor="@color/uiv3_dialog_header_text_bkg"
-        android:textSize="@dimen/primary_text_size" />
+        android:textSize="@dimen/primary_text_size"
+        android:background="@drawable/apply_button_rounded_background"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputVoucherCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/lblApply"
+        android:layout_centerVertical="@+id/lblApply"
+        android:layout_marginTop="@dimen/margin_15"
+        android:theme="@style/BBVoucherTextInputLayoutStyle">
 
     <EditText
         android:id="@+id/editTextVoucherCode"
@@ -24,19 +37,57 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_margin="@dimen/margin_normal"
-        android:layout_toLeftOf="@id/lblApply"
         android:hint="@string/enterVoucher"
         android:imeActionLabel="@string/apply"
         android:imeOptions="actionDone"
         android:inputType="text"
+        android:maxLines="1"
+        android:maxLength="50"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
+    </android.support.design.widget.TextInputLayout>
+
+    <RelativeLayout
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_below="@id/textInputVoucherCode"
+        android:layout_marginTop="@dimen/margin_normal">
+
+        <TextView
+            android:id="@+id/txtOrSeparator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/OR"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/large_text_size" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_toLeftOf="@id/txtOrSeparator"
+            android:background="@color/uiv3_secondary_text_color" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_toRightOf="@id/txtOrSeparator"
+            android:background="@color/uiv3_secondary_text_color" />
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/lstAvailableVouchers"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/editTextVoucherCode"
+        android:layout_below="@id/divider"
         android:layout_marginLeft="@dimen/margin_small"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"

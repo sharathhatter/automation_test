@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bb="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_add_new_address"
+        android:icon="@drawable/ic_add_location_white_36dp"
+        android:orderInCategory="9999"
+        android:title="@string/addNewAddress"
+        bb:showAsAction="ifRoom" />
+</menu>

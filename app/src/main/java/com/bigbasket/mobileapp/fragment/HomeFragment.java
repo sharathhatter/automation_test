@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.TutorialActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -49,6 +51,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
+import com.crashlytics.android.Crashlytics;
 import com.moengage.widgets.NudgeView;
 
 import java.util.ArrayList;
@@ -65,14 +68,21 @@ public class HomeFragment extends BaseSectionFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.home_fragment_layout, container, false);
+        saveSectionData(false);
+        View rootView = inflater.inflate(R.layout.home_fragment_layout, container, false);
+        NudgeView nudgeView = (NudgeView) rootView.findViewById(R.id.nudge);
+        if (getCurrentActivity() != null) {
+            nudgeView.setMoEHelper(getCurrentActivity().getMoEHelper());
+        }
+        return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
-        setNextScreenNavigationContext(TrackEventkeys.HOME);
+        trackEventsOnFabric(TrackingAware.HOME_PAGE_SHOWN, null);
+        setCurrentScreenName(TrackEventkeys.HOME);
     }
 
     @Override
@@ -84,8 +94,40 @@ public class HomeFragment extends BaseSectionFragment {
             showUpgradeAppDialog(appUpdateData.getAppExpireBy(), appUpdateData.getAppUpdateMsg(),
                     appUpdateData.getLatestAppVersion());
         }
+        launchTutorial();
+    }
 
-        getAppData(null);
+    protected void launchTutorial() {
+        if (getActivity() == null || isSuspended()) return;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean isTutorialShown = preferences.getBoolean(Constants.TUTORIAL_SEEN, false);
+        if (isTutorialShown) {
+            getAppData(null);
+        } else {
+            Intent intent = new Intent(getActivity(), TutorialActivity.class);
+            startActivityForResult(intent, NavigationCodes.TUTORIAL_SEEN);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        setSectionData(null);
+        ViewGroup contentView = getContentView();
+        if (contentView != null) {
+            contentView.removeAllViews();
+        }
+        if (mRecyclerView != null) {
+            mRecyclerView.setAdapter(null);
+            mRecyclerView.removeAllViews();
+        }
+        mRecyclerView = null;
+        if (getActivity() != null && !getActivity().isFinishing()) {
+            showProgressView();
+        }
+        mDynamicTiles = null;
+        getLoaderManager().destroyLoader(LoaderIds.HOME_PAGE_ID);
+        System.gc();
     }
 
     private void homePageGetter(Bundle savedInstanceState) {
@@ -103,7 +145,7 @@ public class HomeFragment extends BaseSectionFragment {
     protected void onBackResume() {
         super.onBackResume();
         // removed home event from here
-        setNextScreenNavigationContext(TrackEventkeys.HOME);
+        setCurrentScreenName(TrackEventkeys.HOME);
     }
 
     private boolean isVisitorUpdateNeeded() {
@@ -124,7 +166,7 @@ public class HomeFragment extends BaseSectionFragment {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        String imei = UIUtil.getIMEI(getActivity());
+        String imei = UIUtil.getUniqueDeviceIdentifier(getActivity());
         Call<ApiResponse<UpdateVersionInfoApiResponseContent>> call =
                 bigBasketApiService.updateVersionNumber(imei, preferences.getString(Constants.DEVICE_ID, null),
                         DataUtil.getAppVersion(getActivity()));
@@ -223,13 +265,9 @@ public class HomeFragment extends BaseSectionFragment {
         if (contentView == null || sectionData == null || sectionData.getSections() == null
                 || sectionData.getSections().size() == 0) return;
 
-        // Render sections
-        showProgressView();
-
         contentView.removeAllViews();
 
-        addNudgeView();
-
+        // Render sections
         Pair<RecyclerView, ArrayList<Integer>> pair = getSectionRecylerView(contentView);
         mRecyclerView = pair.first;
         if (mRecyclerView != null) {
@@ -239,12 +277,6 @@ public class HomeFragment extends BaseSectionFragment {
 
         // Check if any deep-link needs to be opened
         processPendingDeepLink();
-    }
-
-    private void addNudgeView() {
-        if (getCurrentActivity() == null || getView() == null) return;
-        NudgeView nudgeView = (NudgeView) getView().findViewById(R.id.nudge);
-        nudgeView.setMoEHelper(getCurrentActivity().getMoEHelper());
     }
 
     public void syncDynamicTiles() {
@@ -297,12 +329,6 @@ public class HomeFragment extends BaseSectionFragment {
         return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        retainSectionState(outState);
-        super.onSaveInstanceState(outState);
-    }
-
     private void displayHomePageError(String msg, int errorDrawableId) {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();
@@ -339,7 +365,7 @@ public class HomeFragment extends BaseSectionFragment {
 
     private void setAppCapability(AppCapability appCapability) {
         if (appCapability == null) return;
-        AuthParameters.getInstance(getCurrentActivity()).setAppCapability(appCapability.isMoEngageEnabled(),
+        AuthParameters.getInstance(getCurrentActivity()).setAppCapability(appCapability.isNewRelicEnabled(), appCapability.isMoEngageEnabled(),
                 appCapability.isAnalyticsEnabled(),
                 appCapability.isFBLoggerEnabled(),
                 appCapability.isMultiCityEnabled(),
@@ -422,7 +448,11 @@ public class HomeFragment extends BaseSectionFragment {
                 break;
             case Constants.SHOW_APP_EXPIRE_POPUP:
                 AppNotSupportedDialog appNotSupportedDialog = AppNotSupportedDialog.newInstance(upgradeMsg, latestAppVersion);
-                appNotSupportedDialog.show(getFragmentManager(), Constants.APP_EXPIRED_DIALOG_FLAG);
+                try {
+                    appNotSupportedDialog.show(getFragmentManager(), Constants.APP_EXPIRED_DIALOG_FLAG);
+                } catch (IllegalStateException ex) {
+                    Crashlytics.logException(ex);
+                }
                 break;
             default:
                 break;
@@ -451,6 +481,12 @@ public class HomeFragment extends BaseSectionFragment {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.HOME_SCREEN;
+    }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "HomeFragment";
     }
 
     public class HomePageHandler<T extends ApiErrorAware & AppOperationAware> extends BigBasketMessageHandler<T> {

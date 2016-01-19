@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.model.section;
 
+import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -31,6 +32,11 @@ public class Renderer implements Parcelable, Serializable {
     public static final int VERTICAL = 0;
     public static final int HORIZONTAL = 1;
 
+    public static final int TEXT_STYLE_NORMAL = 0x0000;
+    public static final int TEXT_STYLE_BOLD = 0x0001;
+    public static final int TEXT_STYLE_ITALIC = 0x0010;
+
+
     public static final String TITLE_IMG_DESC = "t,i,d";
     public static final String TITLE_DESC_IMG = "t,d,i";
     public static final String IMG_TITLE_DESC = "i,t,d";
@@ -59,6 +65,8 @@ public class Renderer implements Parcelable, Serializable {
     private int alignment;
     private int orientation;
     private String ordering;
+    @SerializedName(Constants.TEXT_STYLE)
+    private int textStyle;
 
     public Renderer(Parcel source) {
         boolean wasTextColorNull = source.readByte() == (byte) 1;
@@ -79,6 +87,7 @@ public class Renderer implements Parcelable, Serializable {
         if (!wasOrderingNull) {
             ordering = source.readString();
         }
+        textStyle = source.readInt();
     }
 
     public static int getSafeUnit(int coefficient, int unitValue, int defaultValue, int maxValue) {
@@ -118,6 +127,14 @@ public class Renderer implements Parcelable, Serializable {
         return ordering;
     }
 
+    public int getTextStyle() {
+        return textStyle;
+    }
+
+    public void setTextStyle(int textStyle) {
+        this.textStyle = textStyle;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -145,6 +162,7 @@ public class Renderer implements Parcelable, Serializable {
         if (!wasOrderingNull) {
             dest.writeString(ordering);
         }
+        dest.writeInt(textStyle);
     }
 
     public int getPadding() {
@@ -210,10 +228,22 @@ public class Renderer implements Parcelable, Serializable {
                     applyRightPadding ? padding : 0, applyBottomPadding ? padding : 0);
         }
         if (view instanceof TextView) {
+            TextView tv = (TextView) view;
             if (!TextUtils.isEmpty(textColor)) {
-                ((TextView) view).setTextColor(this.getNativeTextColor());
+                tv.setTextColor(this.getNativeTextColor());
             }
-            ((TextView) view).setGravity(this.getAsNativeAlignment());
+            tv.setGravity(this.getAsNativeAlignment());
+            int nativeTextStyle;
+            if ((textStyle & TEXT_STYLE_BOLD) != 0 && (textStyle & TEXT_STYLE_ITALIC) != 0) {
+                nativeTextStyle = Typeface.BOLD_ITALIC;
+            } else if ((textStyle & TEXT_STYLE_BOLD) != 0) {
+                nativeTextStyle = Typeface.BOLD;
+            } else if ((textStyle & TEXT_STYLE_ITALIC) != 0) {
+                nativeTextStyle = Typeface.ITALIC;
+            } else {
+                nativeTextStyle = Typeface.NORMAL;
+            }
+            tv.setTypeface(tv.getTypeface(), nativeTextStyle);
         }
         if (!TextUtils.isEmpty(backgroundColor)) {
             view.setBackgroundColor(this.getNativeBkgColor());

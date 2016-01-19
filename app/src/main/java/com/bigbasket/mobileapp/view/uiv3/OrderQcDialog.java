@@ -23,7 +23,6 @@ public class OrderQcDialog<T> {
 
         final boolean allOutOfStock = createPotentialOrderResponseContent.orderDetails.getTotalItems() == 0;
 
-
         QcListAdapter qcListAdapter = new QcListAdapter(activity, createPotentialOrderResponseContent.qcErrorDatas,
                 FontHolder.getInstance(activity).getFaceRobotoRegular());
         listView.setAdapter(qcListAdapter);

@@ -62,11 +62,6 @@ public class SectionHelpActivity extends BaseActivity {
     }
 
     @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
-    }
-
-    @Override
     public void onChangeFragment(AbstractFragment newFragment) {
         getSupportFragmentManager()
                 .beginTransaction()

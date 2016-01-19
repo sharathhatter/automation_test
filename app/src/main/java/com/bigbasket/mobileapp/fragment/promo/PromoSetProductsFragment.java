@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.TextUtils;
@@ -16,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.adapter.product.AbstractProductItem;
+import com.bigbasket.mobileapp.adapter.product.NormalProductItem;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -74,7 +77,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_PRODUCT_LISTING);
+        setCurrentScreenName(TrackEventkeys.NC_PROMO_PRODUCT_LISTING);
     }
 
     @Override
@@ -255,14 +258,14 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         TextView txtNumCompletedOffer = (TextView) promoProductListView.findViewById(R.id.txtNumCompletedOffer);
         txtNumCompletedOffer.setTypeface(faceRobotoRegular);
         txtNumCompletedOffer.setText(PromoDetail.
-                getNumCompletedInBasketSpannable(getResources().getColor(R.color.promo_txt_green_color),
+                getNumCompletedInBasketSpannable(ContextCompat.getColor(getActivity(), R.color.promo_txt_green_color),
                         numPromoCompletedInBasket));
 
         TextView txtSaving = (TextView) promoProductListView.findViewById(R.id.txtSaving);
         txtSaving.setTypeface(faceRobotoRegular);
         String savingFormattedAmount = UIUtil.formatAsMoney(saving);
         txtSaving.setText(PromoDetail.
-                getSavingSpannable(getResources().getColor(R.color.promo_txt_green_color),
+                getSavingSpannable(ContextCompat.getColor(getActivity(), R.color.promo_txt_green_color),
                         savingFormattedAmount, faceRupee));
     }
 
@@ -291,14 +294,17 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         layoutPromoProductList.removeAllViews();
 
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, layoutPromoProductList);
-
+        ArrayList<AbstractProductItem> productItems = new ArrayList<>(products.size());
+        for (Product p : products) {
+            productItems.add(new NormalProductItem(p));
+        }
         if (cartInfo == null) {
-            productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                    getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
+            productListAdapter = new ProductListRecyclerAdapter(productItems, baseImgUrl,
+                    getProductDisplayHolder(), this, products.size(), getCurrentScreenName(),
                     TrackEventkeys.SINGLE_TAB_NAME);
         } else {
-            productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                    getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
+            productListAdapter = new ProductListRecyclerAdapter(productItems, baseImgUrl,
+                    getProductDisplayHolder(), this, products.size(), getCurrentScreenName(),
                     cartInfo, TrackEventkeys.SINGLE_TAB_NAME);
         }
 
@@ -402,5 +408,11 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "PromoSetProductsFragment";
     }
 }

@@ -36,4 +36,23 @@ public class HelpDestinationInfo extends DestinationInfo {
     public String getHelpKey() {
         return helpKey;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        HelpDestinationInfo that = (HelpDestinationInfo) o;
+
+        return !(helpKey != null ? !helpKey.equals(that.helpKey) : that.helpKey != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (helpKey != null ? helpKey.hashCode() : 0);
+        return result;
+    }
 }

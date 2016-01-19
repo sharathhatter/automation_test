@@ -2,8 +2,8 @@
 <resources>
 
     <color name="button_selected_state_color">#F44336</color>
-    <color name="amt_txn_textColor">#C82506</color>
     <color name="uiv3_status_bar_background">#bd1c24</color>
-    <color name="uiv3_action_bar_background">#F44336</color>
-
+    <color name="payu_primary_text_color">#5F5F5F</color>
+    <color name="payu_divider_color">#B6B6B6</color>
+    <color name="uiv3_list_bkg_color">#EDEDED</color>
 </resources>

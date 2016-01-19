@@ -11,4 +11,20 @@ public class GetDynamicPageApiResponse {
 
     @SerializedName(Constants.CACHE_DURATION)
     public int cacheDuration;
+
+    public SectionData getSectionData() {
+        return sectionData;
+    }
+
+    public void setSectionData(SectionData sectionData) {
+        this.sectionData = sectionData;
+    }
+
+    public void setCacheDuration(int cacheDuration) {
+        this.cacheDuration = cacheDuration;
+    }
+
+    public int getCacheDuration() {
+        return cacheDuration;
+    }
 }

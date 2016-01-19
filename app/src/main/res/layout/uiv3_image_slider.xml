@@ -7,9 +7,9 @@
     android:layout_marginLeft="@dimen/margin_mini"
     android:layout_marginRight="@dimen/margin_mini">
 
-    <com.daimajia.slider.library.SliderLayout
+    <com.bigbasket.mobileapp.slider.SliderLayout
         android:id="@+id/imgSlider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/banner_slider_height"
-        app:auto_cycle="true" />
+        app:auto_cycle="false" />
 </LinearLayout>

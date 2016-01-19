@@ -10,12 +10,14 @@ import com.bigbasket.mobileapp.apiservice.models.response.SetAddressResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SetAddressTransientResponse;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
+import com.bigbasket.mobileapp.interfaces.OnBasketDeltaListener;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 
 import retrofit.Call;
 
-public class ChangeAddressTask<T extends OnAddressChangeListener & AppOperationAware> {
+public class ChangeAddressTask<T extends OnBasketDeltaListener & OnAddressChangeListener & AppOperationAware> {
     private T ctx;
     @Nullable
     private String addressId;
@@ -51,7 +53,7 @@ public class ChangeAddressTask<T extends OnAddressChangeListener & AppOperationA
         if (isTransient) {
             ctx.showProgressDialog("Checking for changes in basket...");
             Call<ApiResponse<SetAddressTransientResponse>> call =
-                    bigBasketApiService.setCurrentAddress(addressId, lat, lng, isTransient ? "1" : "0", area);
+                    bigBasketApiService.setCurrentAddress(ctx.getCurrentActivity().getPreviousScreenName(), addressId, lat, lng, isTransient ? "1" : "0", area);
             call.enqueue(new BBNetworkCallback<ApiResponse<SetAddressTransientResponse>>(ctx) {
                 @Override
                 public void onSuccess(ApiResponse<SetAddressTransientResponse> setAddressTransientResponse) {
@@ -71,6 +73,7 @@ public class ChangeAddressTask<T extends OnAddressChangeListener & AppOperationA
                             } else {
                                 ctx.onNoBasketDelta(addressId, lat, lng, area);
                             }
+
                             break;
                         default:
                             ctx.getHandler().sendEmptyMessage(setAddressTransientResponse.status,
@@ -91,7 +94,8 @@ public class ChangeAddressTask<T extends OnAddressChangeListener & AppOperationA
             });
         } else {
             ctx.showProgressDialog("Updating your address...");
-            Call<ApiResponse<SetAddressResponse>> call = bigBasketApiService.setCurrentAddress(addressId, lat, lng, area);
+            Call<ApiResponse<SetAddressResponse>> call =
+                    bigBasketApiService.setCurrentAddress(ctx.getCurrentActivity().getPreviousScreenName(), addressId, lat, lng, area);
             call.enqueue(new BBNetworkCallback<ApiResponse<SetAddressResponse>>(ctx) {
                 @Override
                 public void onSuccess(ApiResponse<SetAddressResponse> getAddressSummaryApiResponse) {
@@ -99,6 +103,18 @@ public class ChangeAddressTask<T extends OnAddressChangeListener & AppOperationA
                         case 0:
                             ctx.onAddressChanged(getAddressSummaryApiResponse.apiResponseContent.addressSummaries,
                                     addressId);
+
+                            /**
+                             * this is called to sync the count of the floating cart button
+                             * call this only when transient is false
+                             * i.e user has selected to change the address after seeing changes in the basket
+                             */
+
+                            if (ctx instanceof CartInfoAware) {
+                                ((CartInfoAware) ctx).syncBasket();
+                                ((CartInfoAware) ctx).markBasketDirty();
+
+                            }
                             break;
                         case ApiErrorCodes.ADDRESS_NOT_SERVED:
                             ctx.onAddressNotSupported(getAddressSummaryApiResponse.message);

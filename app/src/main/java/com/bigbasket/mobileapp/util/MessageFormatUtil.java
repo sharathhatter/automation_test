@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.util;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -132,7 +133,7 @@ public class MessageFormatUtil<T> {
             spannableString = new SpannableString(msgStr);
             // change str to link color
             int postIndex = preIndexOfFormatStr + messageParamInfoList.get(replacedStringIndex).getDisplayName().length();
-            spannableString.setSpan(new ForegroundColorSpan(((AppOperationAware) ctx).getCurrentActivity().getResources().getColor(R.color.link_color)),
+            spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(((AppOperationAware) ctx).getCurrentActivity(), R.color.link_color)),
                     preIndexOfFormatStr, postIndex, 0);
         }
         if (spannableString == null) return null;

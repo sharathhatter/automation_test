@@ -59,4 +59,23 @@ public class SectionTextItem implements Parcelable, Serializable {
     public int getRenderingId() {
         return renderingId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SectionTextItem that = (SectionTextItem) o;
+
+        if (renderingId != that.renderingId) return false;
+        return !(text != null ? !text.equals(that.text) : that.text != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = text != null ? text.hashCode() : 0;
+        result = 31 * result + renderingId;
+        return result;
+    }
 }

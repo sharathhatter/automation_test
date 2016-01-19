@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.view.uiv3;
 
 import android.content.DialogInterface;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
@@ -39,7 +40,7 @@ public class BasketDeltaDialog<T extends BasketDeltaUserActionListener> {
             if (!TextUtils.isEmpty(msg)) {
                 TextView txt = new TextView(((AppOperationAware) ctx).getCurrentActivity());
                 txt.setTextSize(14);
-                txt.setTextColor(activity.getResources().getColor(R.color.uiv3_primary_text_color));
+                txt.setTextColor(ContextCompat.getColor(activity, R.color.uiv3_primary_text_color));
                 txt.setText(msg);
                 listView.addHeaderView(txt);
             }

@@ -1,8 +1,10 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -47,22 +49,29 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     private AddressSummary mChosenAddressSummary;
     private boolean mIsFirstTime;
     private boolean mIsViaOnActivityResult;
+    private boolean setAsCurrentAddressBoolean;
+    private boolean autoModeBoolean;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseDeliveryLocation));
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
+        if (savedInstanceState == null) {
+            handlePermission(Manifest.permission.ACCESS_FINE_LOCATION, Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if (mIsViaOnActivityResult) return;
-        triggerLocationFetching();
+        if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION))
+            triggerLocationFetching();
     }
 
     private void triggerLocationFetching() {
+
         int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
         switch (playServicesAvailable) {
             case ConnectionResult.SUCCESS:
@@ -77,6 +86,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         }
     }
 
+
     private void renderLocation() {
         if (isSuspended()) return;
         if (!DataUtil.isLocationServiceEnabled(this)) {
@@ -85,14 +95,19 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                     DialogButton.YES, DialogButton.CANCEL, Constants.LOCATION_DIALOG_REQUEST, null,
                     getString(R.string.enable));
         } else {
-            showProgressDialog(getString(R.string.readingYourCurrentLocation));
-            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                updateLastKnownLocation(false, false);
+            if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                showProgressDialog(getString(R.string.readingYourCurrentLocation));
+                if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                    updateLastKnownLocation(false, false);
+                } else {
+                    buildGoogleApiClient();
+                }
             } else {
-                buildGoogleApiClient();
+                onLocationReadFailure();
             }
         }
     }
+
 
     @Override
     protected void setOptionsMenu(Menu menu) {
@@ -103,7 +118,10 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh) {
-            renderLocation();
+            if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION))
+                renderLocation();
+            else
+                onLocationReadFailure();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -148,6 +166,9 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     private void updateLastKnownLocation(boolean setAsCurrentAddress, boolean autoMode) {
         if (mGoogleApiClient == null) return;
+        setAsCurrentAddressBoolean = setAsCurrentAddress;
+        autoModeBoolean = autoMode;
+
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (lastLocation != null) {
             LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
@@ -165,6 +186,26 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                 onLocationReadFailure();
             }
         }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        updateLastKnownLocation(setAsCurrentAddressBoolean, autoModeBoolean);
+                    } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                        hideProgressDialog();
+                        onLocationReadFailure();
+                    }
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private void getCurrentLocationDetail(LatLng latLng) {
@@ -172,8 +213,9 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
             handler.sendOfflineError();
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        Call<ApiResponse<AddressSummary>> call = bigBasketApiService.getLocationDetail(String.valueOf(latLng.latitude),
-                String.valueOf(latLng.longitude));
+        Call<ApiResponse<AddressSummary>> call =
+                bigBasketApiService.getLocationDetail(getPreviousScreenName(), String.valueOf(latLng.latitude),
+                        String.valueOf(latLng.longitude));
         call.enqueue(new BBNetworkCallback<ApiResponse<AddressSummary>>(this) {
             @Override
             public void onSuccess(ApiResponse<AddressSummary> addressSummaryApiResponse) {
@@ -252,7 +294,10 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     public void onLocationButtonClicked(View v) {
         switch (v.getId()) {
             case R.id.btnToCurrentLocation:
-                updateLastKnownLocation(true, true);
+                if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    updateLastKnownLocation(true, true);
+                } else
+                    onLocationReadFailure();
                 break;
             case R.id.btnChooseLocation:
                 Intent intent = new Intent(this, PlacePickerApiActivity.class);

@@ -96,4 +96,27 @@ public class DestinationInfo implements Parcelable, Serializable {
             dest.writeString(cacheVersion);
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DestinationInfo that = (DestinationInfo) o;
+
+        if (destinationType != null ? !destinationType.equals(that.destinationType) : that.destinationType != null)
+            return false;
+        if (destinationSlug != null ? !destinationSlug.equals(that.destinationSlug) : that.destinationSlug != null)
+            return false;
+        return !(cacheVersion != null ? !cacheVersion.equals(that.cacheVersion) : that.cacheVersion != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = destinationType != null ? destinationType.hashCode() : 0;
+        result = 31 * result + (destinationSlug != null ? destinationSlug.hashCode() : 0);
+        result = 31 * result + (cacheVersion != null ? cacheVersion.hashCode() : 0);
+        return result;
+    }
 }
