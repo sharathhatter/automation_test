@@ -1,51 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawer_layout"
-    style="@style/WindowStyle"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <FrameLayout
+    <RelativeLayout
+        android:id="@+id/ssList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/ssList"
+        <include
+            android:id="@+id/toolbarMain"
+            layout="@layout/uiv3_tool_layout" />
+        <FrameLayout
+            android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <include
-                android:id="@+id/toolbarMain"
-                layout="@layout/uiv3_tool_layout" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/toolbarMain" >
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/store_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/toolbarMain" />
-
-
+                android:layout_height="match_parent" />
             <include layout="@layout/uiv3_header_dropdown_layout" />
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/textView_empty_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/primary_text_size"
+                android:layout_margin="@dimen/margin_normal"/>
 
-        <com.bigbasket.mobileapp.view.uiv3.search.BBSearchableToolbarView
-            android:id="@+id/bbSearchView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-    </FrameLayout>
+        </FrameLayout>
 
-    <com.bigbasket.mobileapp.view.uiv3.BBNavigationMenu
-        android:id="@+id/left_drawer"
-        style="@style/NavDrawer"
+    </RelativeLayout>
+
+    <com.bigbasket.mobileapp.view.uiv3.search.BBSearchableToolbarView
+        android:id="@+id/bbSearchView"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="left"
-        android:background="@color/white"
-        android:clickable="true"
-        app:insetForeground="@color/uiv3_main_menu_inset_foreground" />
-</com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>
+        android:visibility="gone" />
+</FrameLayout>

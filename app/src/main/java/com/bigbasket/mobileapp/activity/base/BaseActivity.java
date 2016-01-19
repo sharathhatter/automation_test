@@ -935,6 +935,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void launchStoreList(String destinationSlug) {
         if (!TextUtils.isEmpty(destinationSlug)) {
             Intent intent = new Intent(this, BBSpecialityShopsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra(Constants.CATEGORY, destinationSlug);
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }

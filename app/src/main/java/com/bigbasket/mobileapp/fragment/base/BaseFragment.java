@@ -136,7 +136,12 @@ public abstract class BaseFragment extends AbstractFragment implements
         if (mLoadingView == null) {
             LayoutInflater inflater = getActivity().getLayoutInflater();
             mLoadingView = inflater.inflate(R.layout.uiv3_loading_layout, view, false);
+        } else {
+            if (mLoadingView.getParent() != null) {
+                ((ViewGroup) mLoadingView.getParent()).removeView(mLoadingView);
+            }
         }
+        mLoadingView.setVisibility(View.VISIBLE);
         view.addView(mLoadingView);
     }
 
