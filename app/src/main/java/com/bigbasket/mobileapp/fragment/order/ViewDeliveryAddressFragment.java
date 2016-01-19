@@ -96,7 +96,7 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
         txtPh = (TextView) contentView.findViewById(R.id.txtPh);
         txtChangeAddress = (TextView) contentView.findViewById(R.id.txtChangeAddress);
         txtExpressDelivery = (TextView) contentView.findViewById(R.id.txtExpressDelivery);
-        ((ImageView) contentView.findViewById(R.id.imgLocation)).setVisibility(View.INVISIBLE);
+        contentView.findViewById(R.id.imgLocation).setVisibility(View.INVISIBLE);
         txtExpressDelivery.setVisibility(View.GONE);
         txtPartialAddress.setVisibility(View.GONE);
         txtPh.setVisibility(View.GONE);

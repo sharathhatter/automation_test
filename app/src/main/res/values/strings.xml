@@ -297,7 +297,6 @@
     <string name="birthday">Birthday</string>
     <string name="address">Address</string>
     <string name="default_address">Address</string>
-    <string name="addWithSpace">\u0020 Add</string>
     <string name="viewAll">View All</string>
 
     <!-- address -->
@@ -306,7 +305,6 @@
     <string name="addNewAddress">Add New Address</string>
     <string name="save">SAVE</string>
     <string name="saveAndContinue">Save and Continue</string>
-    <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
     <string name="incomplete">Incomplete</string>
     <string name="chooseAddress">Choose address</string>
     <string name="chooseDelAddress">Choose delivery address</string>

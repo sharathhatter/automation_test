@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
@@ -191,6 +192,11 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         }
         if (isSuspended()) {
             return;
+        }
+
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
+        if (appBarLayout != null) {
+            appBarLayout.setExpanded(true);
         }
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.

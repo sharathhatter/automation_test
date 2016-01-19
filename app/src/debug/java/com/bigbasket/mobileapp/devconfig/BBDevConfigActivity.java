@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.SplashActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.managers.CityManager;
