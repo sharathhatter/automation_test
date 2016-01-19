@@ -60,7 +60,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources true
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro', '../wibmoSDK/proguard-rules.pro'
             manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
