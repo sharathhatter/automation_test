@@ -18,8 +18,10 @@ public interface NavigationCodes {
     int LOCATION_CHOSEN = 1359;
     int RC_PAY_FROM_BB_WALLET = 1360;
 
+
     int RC_PERMISSIONS_SETTINGS = 1365;
 
+    int LOAD_ORDERS = 1499;
 
     /* RequestCode for resolutions involving sign-in */
     int RC_RESOLVE_CONNECT_ERROR = 49404;

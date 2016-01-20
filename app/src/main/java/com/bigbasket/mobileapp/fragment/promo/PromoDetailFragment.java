@@ -383,7 +383,7 @@ public class PromoDetailFragment extends BaseFragment {
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
                     String moreAmountNeeded = UIUtil.roundOrInt(Math.abs(promoSet.getPromoCriteriaVal() -
                             promoSet.getValueInBasket()));
-                    String txt = "`" + getString(R.string.promo_more_needed_format,moreAmountNeeded);
+                    String txt = "`" + getString(R.string.promo_more_needed_format, moreAmountNeeded);
                     Spannable spannable = new SpannableString(txt);
                     spannable.setSpan(new CustomTypefaceSpan("", faceRupee),
                             0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -464,6 +464,12 @@ public class PromoDetailFragment extends BaseFragment {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.PROMO_DETAIL_SCREEN;
+    }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "PromoDetailFragment";
     }
 
     private class PromoSetActivityHandler implements View.OnClickListener {
@@ -570,11 +576,5 @@ public class PromoDetailFragment extends BaseFragment {
             }
             return row;
         }
-    }
-
-    @NonNull
-    @Override
-    public String getInteractionName() {
-        return "PromoDetailFragment";
     }
 }

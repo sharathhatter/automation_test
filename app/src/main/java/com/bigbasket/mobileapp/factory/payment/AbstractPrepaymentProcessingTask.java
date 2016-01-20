@@ -40,6 +40,7 @@ import retrofit2.Response;
 
 public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAware>
         extends AsyncTask<Void, Long, Boolean> {
+    public String txnOrderId;
     protected T ctx;
     protected String potentialOrderId;
     protected String paymentMethod;
@@ -49,13 +50,13 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     protected ErrorResponse errorResponse;
     protected Callback callback;
     protected boolean isPaymentParamsAlreadyAvailable;
+    protected HashMap<String, String> mPaymentPostParams;
+    protected PayzappPostParams mPayzappPostParams;
     private MinDurationCountDownTimer minDurationCountDownTimer;
     private CountDownLatch countDownLatch;
     private long minDuation;
     private boolean isPaused;
     private boolean isPayUOptionVisible;
-    protected HashMap<String, String> mPaymentPostParams;
-    protected PayzappPostParams mPayzappPostParams;
 
     public AbstractPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
                                             String paymentMethod, boolean isPayNow, boolean isFundWallet, boolean isPayUOptionVisible) {
@@ -133,6 +134,14 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
 
     public synchronized boolean isPaused() {
         return isPaused;
+    }
+
+    public String getTxnOrderId() {
+        return txnOrderId;
+    }
+
+    public void setTxnOrderId(String txnOrderId){
+        this.txnOrderId = txnOrderId;
     }
 
     public synchronized
@@ -230,6 +239,8 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                         if (response.body().status == 0) {
                             synchronized (this) {
                                 mPayzappPostParams = response.body().apiResponseContent.payzappPostParams;
+                                txnOrderId = response.body().apiResponseContent.txnOrderId;
+                                setTxnOrderId(txnOrderId);
                             }
                             WibmoSDK.setWibmoIntentActionPackage(mPayzappPostParams.getPkgName());
                             WibmoSDKConfig.setWibmoDomain(mPayzappPostParams.getServerUrl());
@@ -252,6 +263,8 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                         if (response.body().status == 0) {
                             synchronized (this) {
                                 mPaymentPostParams = response.body().apiResponseContent.postParams;
+                                txnOrderId = response.body().apiResponseContent.txnOrderId;
+                                setTxnOrderId(txnOrderId);
                             }
                             countDownLatch.countDown();
                             result = true;
@@ -336,9 +349,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                 throw new IllegalStateException("Prepayment params are null");
             }
         }
-
         startPaymentGateway(paymentMethod);
-
     }
 
 
@@ -372,7 +383,6 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                 //TODO: invoke onActivityResult
         }
     }
-
 
     protected abstract Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService);

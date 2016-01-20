@@ -7,9 +7,6 @@ import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by manu on 28/12/15.
- */
 public class PlaceOrderApiPayZappResponseContent extends PlaceOrderReponseContent {
     public static final Parcelable.Creator<PlaceOrderApiPayZappResponseContent> CREATOR = new Parcelable.Creator<PlaceOrderApiPayZappResponseContent>() {
         @Override

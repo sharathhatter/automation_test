@@ -22,9 +22,6 @@ import com.bigbasket.mobileapp.util.FontHolder;
 
 import java.util.ArrayList;
 
-/**
- * Created by manu on 20/11/15.
- */
 public class PaymentMethodsView extends LinearLayout {
     private Context context;
     private LayoutInflater inflater;
@@ -118,7 +115,6 @@ public class PaymentMethodsView extends LinearLayout {
                 mPaymentOfferTextView.setText(paymentType.getOfferMsg());
             } else {
                 mPaymentOfferTextView.setVisibility(View.GONE);
-
             }
 
             /** setting the default payment method**/
@@ -198,7 +194,6 @@ public class PaymentMethodsView extends LinearLayout {
                 ((OnPaymentOptionSelectionListener) context).onPaymentOptionSelected(mSelectedPaymentMethod);
             }
         }
-
     }
 
     /**
@@ -240,5 +235,4 @@ public class PaymentMethodsView extends LinearLayout {
             destination.writeString(mSelectedPaymentMethodSavedState);
         }
     }
-
 }

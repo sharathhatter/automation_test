@@ -1,15 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/layoutOrderList">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:paddingBottom="@dimen/margin_normal"
-        android:id="@+id/listOrders" />
-</RelativeLayout>
+        android:background="@color/white">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listOrders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/layoutCheckoutFooter"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:paddingBottom="@dimen/margin_small" />
+
+        <include
+            android:id="@+id/layoutCheckoutFooter"
+            layout="@layout/uiv3_checkout_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

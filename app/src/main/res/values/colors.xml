@@ -49,6 +49,7 @@
     <color name="uiv3_highlighted_background">#44000000</color>
     <!--<color name="uiv3_rounded_btn_bkg">#e73937</color>-->
     <color name="uiv3_rounded_btn_bkg">@color/uiv3_dialog_header_text_bkg</color>
+    <color name="uiv3_thank_tou_red">#841206</color>
 
     <!-- LetterImageViewColor -->
     <string-array name="letterImageViewColors" translatable="false">

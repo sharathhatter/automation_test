@@ -670,6 +670,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <activity
             android:name="com.bigbasket.mobileapp.activity.payment.PayNowThankyouActivity"
             android:screenOrientation="portrait"

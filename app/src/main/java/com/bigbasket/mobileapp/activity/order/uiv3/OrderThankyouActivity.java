@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,6 +44,8 @@ import retrofit2.Call;
 
 public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAware {
 
+    private boolean showPayNow = false;
+
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
@@ -58,6 +62,38 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         showAddMoreText(addMoreLink, addMoreMsg);
 
         trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
+    }
+
+    private void renderFooter(final ArrayList<Order> orderArrayList) {
+        Button btnPayNow = (Button) findViewById(R.id.btnPayNow);
+        for (Order order : orderArrayList) {
+            if (order.canPay()) {
+                showPayNow = true;
+                break;
+            }
+        }
+        if (showPayNow) {
+            btnPayNow.setVisibility(View.VISIBLE);
+        } else {
+            btnPayNow.setVisibility(View.GONE);
+        }
+
+        btnPayNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<String> listSelectedOrderIds = new ArrayList<>();
+                Intent intent = new Intent(getCurrentActivity(), PayNowActivity.class);
+                for (Order order : orderArrayList) {
+                    if (!listSelectedOrderIds.contains(order.getOrderId()))
+                        listSelectedOrderIds.add(order.getOrderId());
+                }
+                intent.putExtra(Constants.ORDER_ID, android.text.TextUtils.join(",", listSelectedOrderIds));
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+                trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            }
+        });
     }
 
     private void showAddMoreText(final String addMoreLink, final String addMoreMsg) {
@@ -89,7 +125,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         if (orders == null || orders.size() == 0) return;
 
         TextView txtThankYou = (TextView) findViewById(R.id.txtThankYou);
-        txtThankYou.setTypeface(faceRobotoBold);
+        txtThankYou.setTypeface(faceRobotoRegular);
 
         TextView txtOrderPlaced = (TextView) findViewById(R.id.txtOrderPlaced);
         if (orders.size() > 1) {
@@ -99,11 +135,13 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
             txtOrderPlaced.setVisibility(View.GONE);
         }
 
+        renderFooter(orders);
+
         LinearLayout layoutOrderNumber = (LinearLayout) findViewById(R.id.layoutOrderNumber);
         LayoutInflater inflater = getLayoutInflater();
         //order list
         for (final Order order : orders) {
-            View base = inflater.inflate(R.layout.uiv3_order_thankyou_row, layoutOrderNumber, false);
+            View base = inflater.inflate(R.layout.uiv3_single_pay_now_row, layoutOrderNumber, false);
             TextView txtOrderNum = (TextView) base.findViewById(R.id.txtOrderNum);
 
             TextView txtAmount = (TextView) base.findViewById(R.id.txtAmount);
@@ -128,8 +166,8 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     showInvoice(order);
                 }
             });
-
             TextView txtVariableWeightMsg = (TextView) base.findViewById(R.id.txtVariableWeightMsg);
+
             if (!TextUtils.isEmpty(order.getVariableWeightMsg()) &&
                     !TextUtils.isEmpty(order.getVariableWeightLink())) {
                 txtVariableWeightMsg.setVisibility(View.VISIBLE);
@@ -147,51 +185,40 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 txtVariableWeightMsg.setMovementMethod(LinkMovementMethod.getInstance());
                 txtVariableWeightMsg.setText(spannableString);
-
-            } else {
-                txtVariableWeightMsg.setVisibility(View.GONE);
             }
+                CheckBox check = (CheckBox) base.findViewById(R.id.mOrderPos);
+                check.setVisibility(View.GONE);
 
-            TextView txtSlotTime = (TextView) base.findViewById(R.id.txtSlotTime);
-            if (order.getSlotDisplay() != null) {
-                String date = order.getSlotDisplay().getDate();
-                String time = order.getSlotDisplay().getTime();
-                String display = "";
-                if (!TextUtils.isEmpty(date)) {
-                    display += date + "\n";
+                TextView numOfItems = (TextView) base.findViewById(R.id.txtNumOfItems);
+                if (order.getItemsCount() > 0) {
+                    String itemString = order.getItemsCount() > 1 ? " Items" : " Item";
+                    numOfItems.setText(order.getItemsCount() + itemString);
                 }
-                if (!TextUtils.isEmpty(time)) {
-                    if (!TextUtils.isEmpty(display)) {
-                        display += " ";
-                    }
-                    display += time;
-                }
-                txtSlotTime.setText(getString(R.string.delivery_time_with_space) + display);
-                txtSlotTime.setTypeface(faceRobotoRegular);
-            } else {
-                txtSlotTime.setVisibility(View.GONE);
-            }
 
-            Button btnPayNow = (Button) base.findViewById(R.id.btnPayNow);
-            if (order.canPay()) {
-                btnPayNow.setTypeface(faceRobotoBold);
-                btnPayNow.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getCurrentActivity(), PayNowActivity.class);
-                        intent.putExtra(Constants.ORDER_ID, order.getOrderId());
-                        HashMap<String, String> map = new HashMap<>();
-                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
-                        trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
-                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                TextView txtSlotTime = (TextView) base.findViewById(R.id.txtStndDel);
+                txtSlotTime.setTextColor(ContextCompat.getColor(this, R.color.uiv3_thank_tou_red));
+                if (order.getSlotDisplay() != null) {
+                    String date = order.getSlotDisplay().getDate();
+                    String time = order.getSlotDisplay().getTime();
+                    String display = "";
+                    if (!TextUtils.isEmpty(date)) {
+                        display += date + "\n";
                     }
-                });
-            } else {
-                btnPayNow.setVisibility(View.GONE);
+                    if (!TextUtils.isEmpty(time)) {
+                        if (!TextUtils.isEmpty(display)) {
+                            display += " ";
+                        }
+                        display += time;
+                    }
+                    txtSlotTime.setText(getString(R.string.delivery_time_with_space) + display);
+                    txtSlotTime.setTypeface(faceRobotoRegular);
+                } else {
+                    txtSlotTime.setVisibility(View.GONE);
+                }
+                layoutOrderNumber.addView(base);
             }
-            layoutOrderNumber.addView(base);
         }
-    }
+
 
     private void showInvoice(Order order) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
@@ -231,6 +258,4 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
     public String getScreenTag() {
         return TrackEventkeys.THANK_YOU_SCREEN;
     }
-
-
 }

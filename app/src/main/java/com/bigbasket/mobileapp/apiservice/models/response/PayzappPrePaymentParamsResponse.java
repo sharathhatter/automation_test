@@ -7,4 +7,6 @@ import com.google.gson.annotations.SerializedName;
 public class PayzappPrePaymentParamsResponse {
     @SerializedName(Constants.POST_PARAMS)
     public PayzappPostParams payzappPostParams;
+    @SerializedName(Constants.TXT_ORDER_ID)
+    public String txnOrderId;
 }
