@@ -273,6 +273,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
             };
             txtCityName.setOnClickListener(changeAddressOnClickListener);
             btnChangeAddress.setOnClickListener(changeAddressOnClickListener);
+            btnChangeAddress.setVisibility(View.VISIBLE);
         } else {
             btnChangeAddress.setVisibility(View.GONE);
         }

@@ -693,7 +693,7 @@ public class UIUtil {
     }
 
     public static boolean isAlphaString(String matchString) {
-        return matchString.matches("[a-zA-Z]+");
+        return matchString.matches("[a-zA-Z]+( +[a-zA-Z]+)*");
     }
 
     public static boolean isAlphaNumericString(String matchString) {

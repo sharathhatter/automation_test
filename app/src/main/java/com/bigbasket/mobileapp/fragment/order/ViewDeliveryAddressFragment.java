@@ -153,21 +153,12 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
             if (data != null) {
                 Address address = data.getParcelableExtra(Constants.UPDATE_ADDRESS);
                 if (address != null) {
-                    changed = mSelectedAddress == null
-                            || mSelectedAddress.getId() == null || address.getId() == null
-                            || !mSelectedAddress.getId().equals(address.getId())
-                            || mSelectedAddress.getPincode() == null || address.getPincode() == null
-                            || !mSelectedAddress.getPincode().equals(address.getPincode());
                     this.mSelectedAddress = address;
                     if (layoutCheckoutFooter != null) {
                         layoutCheckoutFooter.setVisibility(View.VISIBLE);
                     }
                     showDeliveryAddress(address);
                 }
-            }
-            if (changed) {
-                // Forcefully calling get-app-data-dynamic, as user might have change location
-                AppDataDynamic.reset(getActivity());
             }
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
             postDeliveryAddress();
@@ -296,11 +287,9 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
             } else {
                 txtPh.setVisibility(View.GONE);
             }
-            if (!UIUtil.isEmpty(selectedAddress.getAddressNickName())) {
+            if (!UIUtil.isEmpty(selectedAddress.getDisplayableNickName())) {
                 txtName.setVisibility(View.VISIBLE);
-                txtName.setText(selectedAddress.getAddressNickName());
-            } else if (!UIUtil.isEmpty(selectedAddress.getAltAddressNickName())) {
-                txtName.setText(selectedAddress.getAltAddressNickName());
+                txtName.setText(selectedAddress.getDisplayableNickName());
             } else {
                 txtName.setVisibility(View.GONE);
             }
