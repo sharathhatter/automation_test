@@ -149,7 +149,7 @@ public class BasketOperationTask<T extends AppOperationAware> {
         eventAttribs.put(TrackEventkeys.PRODUCT_BRAND, product.getBrand());
         String desc = product.getDescription();
         if (!TextUtils.isEmpty(product.getPackageDescription()))
-            desc = " " + product.getWeightAndPackDesc();
+            desc += " " + product.getWeightAndPackDesc();
         eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
         eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
         eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());
@@ -167,7 +167,6 @@ public class BasketOperationTask<T extends AppOperationAware> {
         ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false, true);
         if (!TextUtils.isEmpty(eventName) && eventName.equals(TrackingAware.BASKET_ADD)) {
             ((TrackingAware) context).trackEventAppsFlyer(eventName);
-            ((TrackingAware) context).trackEventsOnFabric(eventName, eventAttribs, null, navigationCtx);
         }
     }
 

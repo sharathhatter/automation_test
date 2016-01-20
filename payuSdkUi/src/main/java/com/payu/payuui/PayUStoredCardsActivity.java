@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -59,6 +60,7 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
     private PayuConfig payuConfig;
     private PayuUtils payuUtils;
     private int storeOneClickHash;
+    private boolean cardsDeleted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +79,6 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
         // lets get the required data form bundle
         bundle = getIntent().getExtras();
 
-        storeOneClickHash = bundle.getInt(PayuConstants.STORE_ONE_CLICK_HASH);
-
         payuUtils = new PayuUtils();
 
         if (bundle != null && bundle.getParcelableArrayList(PayuConstants.STORED_CARD) != null) {
@@ -89,9 +89,11 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
 
         } else {
             // we gotta fetch data from server
-            Toast.makeText(this, "Could not get user card list from the previous activity", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.error_no_cards, Toast.LENGTH_LONG).show();
+            finish();
+            return;
         }
-
+        storeOneClickHash = bundle.getInt(PayuConstants.STORE_ONE_CLICK_HASH);
         payuHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
         mPaymentParams = bundle.getParcelable(PayuConstants.PAYMENT_PARAMS);
         payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
@@ -102,7 +104,7 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
             Window window = this.getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(this.getResources().getColor(R.color.uiv3_status_bar_background));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.uiv3_status_bar_background));
         }
 
 
@@ -140,7 +142,7 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
             merchantWebService.setHash(payuHashes.getStoredCardsHash());
 
             PostData postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
-
+            cardsDeleted = true;
             if (postData.getCode() == PayuErrors.NO_ERROR) {
                 // ok we got the post params, let make an api call to payu to fetch the payment related details
 
@@ -152,7 +154,9 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
             } else {
                 /***error when the postdata for the card entered is not correct***/
 //                Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
-                handleUnknownErrorCondition();
+                Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
+                setResult(Constants.RESULT_REFRESH_DETAILS);
+                finish();
             }
         } else {
             /***error in deleting the card***/
@@ -186,6 +190,14 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
             finish();
 
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(cardsDeleted){
+            setResult(Constants.RESULT_REFRESH_DETAILS);
+        }
+        super.onBackPressed();
     }
 
     private void makePayment(StoredCard storedCard, String cvv) {

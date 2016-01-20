@@ -125,7 +125,7 @@
 }
 
 # PayU
--keep class com.payu.sdk.** {
+-keep class com.payu.** {
  *;
 }
 

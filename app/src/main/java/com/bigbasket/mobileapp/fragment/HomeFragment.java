@@ -81,7 +81,6 @@ public class HomeFragment extends BaseSectionFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
-        trackEventsOnFabric(TrackingAware.HOME_PAGE_SHOWN, null);
         setCurrentScreenName(TrackEventkeys.HOME);
     }
 

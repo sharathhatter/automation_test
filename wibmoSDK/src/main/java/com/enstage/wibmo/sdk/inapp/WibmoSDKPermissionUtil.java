@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
@@ -80,7 +81,7 @@ public class WibmoSDKPermissionUtil {
     public static void showPermissionMissingUI(final Activity activity, String message) {
         Toast toast = Toast.makeText(activity.getApplicationContext(), message, Toast.LENGTH_LONG);
         View view = toast.getView();
-        view.setBackgroundColor(activity.getApplicationContext().getResources().getColor(R.color.logo_color_orange));
+        view.setBackgroundColor(ContextCompat.getColor(activity.getApplicationContext(), R.color.logo_color_orange));
         toast.show();
     }
 }

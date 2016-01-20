@@ -149,7 +149,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             mOrderAmount = savedInstanceState.getString(Constants.AMOUNT);
         } else {
             trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
-            trackEventsOnFabric(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
         }
     }
 
@@ -268,7 +267,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
                     map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
                     map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
-                    trackEventsOnFabric(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map);
 
                     SharedPreferences prefs =
                             PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -741,7 +739,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             map.put(TrackEventkeys.PAYMENT_MODE, order.getPaymentMethod());
             map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
             trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
-            trackEventsOnFabric(TrackingAware.CHECKOUT_ORDER_COMPLETE, map);
             trackEventAppsFlyer(TrackingAware.PLACE_ORDER, order.getOrderValue(), map);
         }
         setCurrentScreenName(TrackEventkeys.CO_PAYMENT);

@@ -59,7 +59,6 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         showAddMoreText(addMoreLink, addMoreMsg);
 
         trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
-        trackEventsOnFabric(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
     }
 
     private void showAddMoreText(final String addMoreLink, final String addMoreMsg) {
