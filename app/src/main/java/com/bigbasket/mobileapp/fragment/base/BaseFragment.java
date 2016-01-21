@@ -467,17 +467,6 @@ public abstract class BaseFragment extends AbstractFragment implements
     }
 
     @Override
-    public void trackEventsOnFabric(String eventName, Map<String, String> eventAttribs) {
-        trackEventsOnFabric(eventName, eventAttribs, null, null);
-    }
-
-    @Override
-    public void trackEventsOnFabric(String eventName, Map<String, String> eventAttribs, String source, String nc) {
-        if (getCurrentActivity() == null) return;
-        getCurrentActivity().trackEventsOnFabric(eventName, eventAttribs, source, nc);
-    }
-
-    @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         if (getCurrentActivity() == null) return;
         trackEvent(eventName, eventAttribs, null, null);

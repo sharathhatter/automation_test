@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -113,49 +114,46 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
             Window window = this.getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(this.getResources().getColor(R.color.uiv3_status_bar_background));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.uiv3_status_bar_background));
         }
+        renderPaymentOptions();
 
+    }
 
+    private void renderPaymentOptions() {
+        if(mPaymentParams == null || mPayUHashes == null) {
+            return;
+        }
+        // fetching for the first time.
         MerchantWebService merchantWebService = new MerchantWebService();
         merchantWebService.setKey(mPaymentParams.getKey());
         merchantWebService.setCommand(PayuConstants.PAYMENT_RELATED_DETAILS_FOR_MOBILE_SDK);
         merchantWebService.setVar1(mPaymentParams.getUserCredentials() == null ? "default" : mPaymentParams.getUserCredentials());
-
         // hash we have to generate
-
-
         merchantWebService.setHash(mPayUHashes.getPaymentRelatedDetailsForMobileSdkHash());
+        PostData postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
+        if (postData.getCode() == PayuErrors.NO_ERROR) {
+            // ok we got the post params, let make an api call to payu to fetch the payment related details
+            payuConfig.setData(postData.getResult());
 
-//        PostData postData = new PostParams(merchantWebService).getPostParams();
+            // lets set the visibility of progress bar
+            findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
 
-        // Dont fetch the data if calling activity is PaymentActivity
-
-        // fetching for the first time.
-        if (null == savedInstanceState) { // dont fetch the data if its been called from payment activity.
-            PostData postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
-            if (postData.getCode() == PayuErrors.NO_ERROR) {
-                // ok we got the post params, let make an api call to payu to fetch the payment related details
-                payuConfig.setData(postData.getResult());
-
-                // lets set the visibility of progress bar
-                findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
-
-                //Checking if the PayU is selected by the user
-                boolean isPayUSelected = getIntent().getBooleanExtra(Constants.PAYU_SELECTED, false);
-                if (isPayUSelected) {
-                    launchPayumoney();
-                } else {
-                    fetchPaymentRelatedDetails();
-                }
+            //Checking if the PayU is selected by the user
+            boolean isPayUSelected = getIntent().getBooleanExtra(Constants.PAYU_SELECTED, false);
+            if (isPayUSelected) {
+                launchPayumoney();
             } else {
-                /****error in getting merchant post params***/
-                // close the progress bar
-                findViewById(R.id.progress_bar).setVisibility(View.GONE);
-                handleUnknownErrorCondition();
+                fetchPaymentRelatedDetails();
             }
+        } else {
+            /****error in getting merchant post params***/
+            // close the progress bar
+            findViewById(R.id.progress_bar).setVisibility(View.GONE);
+            handleUnknownErrorCondition();
         }
     }
+
 
 
     private void fetchPaymentRelatedDetails() {
@@ -188,10 +186,16 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
             if (data.hasExtra("transaction_status")) {
                 setResult(resultCode, data);
                 finish();
+                return;
             } else if (requestCode == PayuConstants.PAYU_REQUEST_CODE && resultCode == RESULT_OK) {
                 setResult(resultCode, data);
                 finish();
+                return;
             }
+        }
+        if(resultCode == Constants.RESULT_REFRESH_DETAILS) {
+            findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+            renderPaymentOptions();
         }
     }
 
@@ -300,31 +304,57 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
 
             //making the view visible if payuresponse is success
             //findViewById(R.id.mOptionSelectionTextView).setVisibility(View.VISIBLE);
-
+            View view = findViewById(R.id.linear_layout_stored_card);
             if (payuResponse.isStoredCardsAvailable() && null != storedCards && storedCards.size() > 0) {
-                findViewById(R.id.linear_layout_stored_card).setVisibility(View.VISIBLE);
+                view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.GONE);
             }
-            if (payuResponse.isStoredCardsAvailable() && oneClickCards.size() > 0) {
-                findViewById(R.id.linear_layout_one_click_payment).setVisibility(View.VISIBLE);
+
+            view = findViewById(R.id.linear_layout_one_click_payment);
+            if (payuResponse.isStoredCardsAvailable() && oneClickCards != null && oneClickCards.size() > 0) {
+                view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.GONE);
             }
+
+            view = findViewById(R.id.linear_layout_netbanking);
             if (payuResponse.isNetBanksAvailable()) { // okay we have net banks now.
-                findViewById(R.id.linear_layout_netbanking).setVisibility(View.VISIBLE);
+                view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.GONE);
             }
+
+            view = findViewById(R.id.linear_layout_cash_card);
             if (payuResponse.isCashCardAvailable()) { // we have cash card too
-                findViewById(R.id.linear_layout_cash_card).setVisibility(View.VISIBLE);
+                view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.GONE);
             }
+
+            view = findViewById(R.id.linear_layout_credit_debit_card);
             if (payuResponse.isCreditCardAvailable() || payuResponse.isDebitCardAvailable()) {
-                findViewById(R.id.linear_layout_credit_debit_card).setVisibility(View.VISIBLE);
+                view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.GONE);
             }
+
+            view = findViewById(R.id.linear_layout_emi);
             if (payuResponse.isEmiAvailable()) {
-                findViewById(R.id.linear_layout_emi).setVisibility(View.VISIBLE);
+                view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.GONE);
             }
+
+            view = findViewById(R.id.linear_layout_payumoney);
             if (payuResponse.isPaisaWalletAvailable() && payuResponse.getPaisaWallet().get(0).getBankCode().contains(PayuConstants.PAYUW)) {
                 boolean isPayUOptionVisible = getIntent().getBooleanExtra(Constants.SHOW_PAYU, false);
                 if (isPayUOptionVisible)
-                    findViewById(R.id.linear_layout_payumoney).setVisibility(View.GONE);
+                    view.setVisibility(View.GONE);
                 else
-                    findViewById(R.id.linear_layout_payumoney).setVisibility(View.VISIBLE);
+                    view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.GONE);
             }
         } else {
             /****error either the payu response is not available or the response code is not success***/

@@ -39,4 +39,5 @@
     <string name="emi_pay_now">Emi Pay Now</string>
     <string name="select_net_banking">Select Net banking (of your choice):</string>
     <string name="delete_card">Delete</string>
+    <string name="error_no_cards">Internal error. No stored cards found</string>
 </resources>

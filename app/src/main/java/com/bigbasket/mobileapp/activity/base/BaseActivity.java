@@ -72,13 +72,11 @@ import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.analytics.AnswersWrapper;
 import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.bigbasket.mobileapp.util.analytics.NewRelicWrapper;
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.CustomEvent;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
@@ -653,46 +651,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                            String sourceValue, boolean isCustomerValueIncrease) {
         trackEvent(eventName, eventAttribs, source, sourceValue, getPreviousScreenName(),
                 isCustomerValueIncrease, false);
-    }
-
-    @Override
-    public void trackEventsOnFabric(String eventName, Map<String, String> eventAttribs) {
-        trackEventsOnFabric(eventName, eventAttribs, null, null);
-    }
-
-    @Override
-    public void trackEventsOnFabric(String eventName, Map<String, String> eventAttribs, String source, String nc) {
-        if (eventAttribs != null && eventAttribs.containsKey(TrackEventkeys.NAVIGATION_CTX)) {
-            // Someone has already set nc, so don't override it
-            nc = null;
-        }
-        if (!TextUtils.isEmpty(nc)) {
-            if (eventAttribs == null) {
-                eventAttribs = new HashMap<>();
-            }
-            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, nc);
-        }
-        if (eventAttribs != null && eventAttribs.containsKey(TrackEventkeys.NAVIGATION_CTX)) {
-            nc = eventAttribs.get(TrackEventkeys.NAVIGATION_CTX);
-            if (!TextUtils.isEmpty(nc)) {
-                nc = nc.replace(" ", "-").toLowerCase(Locale.getDefault());
-                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, nc);
-            }
-        }
-
-        if (!TextUtils.isEmpty(eventName)) {
-            try {
-                CustomEvent customEvent = new CustomEvent(eventName);
-                if (eventAttribs != null) {
-                    for (Map.Entry<String, String> entry : eventAttribs.entrySet()) {
-                        customEvent.putCustomAttribute(entry.getKey(), entry.getValue());
-                    }
-                }
-                AnswersWrapper.logCustom(customEvent);
-            } catch (Exception e) {
-                Log.e("Analytics", "Failed to send event = " + eventName + " to Crashlytics Answers");
-            }
-        }
     }
 
     @Override

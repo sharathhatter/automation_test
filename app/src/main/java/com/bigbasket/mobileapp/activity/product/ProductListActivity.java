@@ -635,7 +635,6 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         map.put(Constants.TAB_NAME, mTabType);
         map = getProductListEventParams(mNameValuePairs, map);
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
-        trackEventsOnFabric(TrackingAware.PRODUCT_LIST_SHOWN, map);
         trackEventAppsFlyer(TrackingAware.PRODUCT_LIST_SHOWN);
     }
 

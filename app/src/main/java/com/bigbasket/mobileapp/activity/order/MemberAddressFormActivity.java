@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -53,6 +54,7 @@ import retrofit.Call;
 public class MemberAddressFormActivity extends BackButtonActivity implements OtpDialogAware,
         CityListDisplayAware {
 
+    @Nullable
     private Address mAddress;
     private City mChoosenCity;
     private AutoCompleteTextView editTextPincode;
@@ -150,6 +152,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     }
 
     private void populateUiFields() {
+        if (mAddress == null) return;
         EditText editTextAddressNick = (EditText) findViewById(R.id.editTextAddressNick);
         EditText editTextFirstName = (EditText) findViewById(R.id.editTextFirstName);
         editTextFirstName.setNextFocusDownId(R.id.editTextLastName);
@@ -197,7 +200,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         final EditText editTextResidentialComplex = (EditText)
                 findViewById(R.id.editTextResidentialComplex);
         final EditText editTextLandmark = (EditText) findViewById(R.id.editTextLandmark);
-        if(chkIsAddrDefault == null) {
+        if (chkIsAddrDefault == null) {
             chkIsAddrDefault = (CheckBox) findViewById(R.id.chkIsAddrDefault);
         }
 
@@ -300,7 +303,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         payload.put(Constants.PIN, editTextPincode.getText().toString());
         payload.put(Constants.LANDMARK, editTextLandmark.getText().toString());
         payload.put(Constants.RES_CMPLX, editTextResidentialComplex.getText().toString());
-        payload.put(Constants.IS_DEFAULT, mAddress.isDefault() || chkIsAddrDefault.isChecked() ? "1" : "0");
+        boolean isDefault = (mAddress != null && mAddress.isDefault()) || chkIsAddrDefault.isChecked();
+        payload.put(Constants.IS_DEFAULT, isDefault ? "1" : "0");
 
         if (AuthParameters.getInstance(this).isMultiCityEnabled()) {
             payload.put(Constants.CITY_ID, String.valueOf(mChoosenCity.getId()));
@@ -319,7 +323,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                         DialogButton.OK, DialogButton.CANCEL,
                         Constants.UPDATE_ADDRESS_DIALOG_REQUEST,
                         null, getString(R.string.lblContinue));
-                return;
             } else {
                 uploadAddress(payload, true, isResendOtpRequested);
             }
@@ -330,11 +333,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
 
     private void uploadAddress(HashMap<String, String> payload, boolean forceCreate,
                                boolean isResendOtpRequested) {
-        if(chkIsAddrDefault == null) {
+        if (chkIsAddrDefault == null) {
             chkIsAddrDefault = (CheckBox) findViewById(R.id.chkIsAddrDefault);
         }
-        if(chkIsAddrDefault.getVisibility() == View.VISIBLE
-                && chkIsAddrDefault.isChecked() != mAddress.isDefault()) {
+        if (chkIsAddrDefault.getVisibility() == View.VISIBLE
+                && ((mAddress == null && chkIsAddrDefault.isChecked())
+                || (chkIsAddrDefault.isChecked() != mAddress.isDefault()))) {
             HashMap<String, String> eventAttribs = new HashMap<>();
             trackEvent(TrackingAware.ENABLE_DEFAULT_ADDRESS, eventAttribs);
         }

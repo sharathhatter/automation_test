@@ -12,6 +12,7 @@ public class Constants {
     public static final int UNKNOWN_ERROR_CODE = 200;
     public static final int BACKPRESSED_ERROR_CODE = 201;
     public static final int TRANSACTION_RETRY_CODE = 203;
+    public static final int RESULT_REFRESH_DETAILS = 204;
 
 
 

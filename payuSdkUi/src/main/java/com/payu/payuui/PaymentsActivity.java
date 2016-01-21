@@ -1,11 +1,9 @@
 package com.payu.payuui;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -53,7 +51,6 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
     private int storeOneClickHash;
     private String merchantHash;
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /**
@@ -69,7 +66,7 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
         setContentView(R.layout.activity_payments);
         mWebView = (WebView) findViewById(R.id.webview);
 
-        WebView.setWebContentsDebuggingEnabled(true);
+        // WebView.setWebContentsDebuggingEnabled(true);
         mPayuUtils = new PayuUtils();
 
         //region Replace the whole code by the commented code if you are NOT using custombrowser

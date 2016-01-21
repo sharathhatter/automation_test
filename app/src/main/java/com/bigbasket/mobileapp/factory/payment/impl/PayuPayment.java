@@ -76,6 +76,7 @@ public class PayuPayment {
         payuHashes.setDeleteCardHash(paymentParamsMap.remove("delete_card_hash"));
         payuHashes.setEditCardHash(paymentParamsMap.remove("edit_card_hash"));
         payuHashes.setSaveCardHash(paymentParamsMap.remove("save_card_hash"));
+        payuHashes.setStoredCardsHash(paymentParamsMap.remove("stored_card_hash"));
         payuHashes.setPaymentRelatedDetailsForMobileSdkHash(paymentParamsMap.remove("mobile_sdk_hash"));
         paymentParams.setHash(payuHashes.getPaymentHash());
 
