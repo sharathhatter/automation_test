@@ -337,8 +337,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             chkIsAddrDefault = (CheckBox) findViewById(R.id.chkIsAddrDefault);
         }
         if (chkIsAddrDefault.getVisibility() == View.VISIBLE
-                && ((mAddress == null && chkIsAddrDefault.isChecked())
-                || (chkIsAddrDefault.isChecked() != mAddress.isDefault()))) {
+                &&((mAddress != null && chkIsAddrDefault.isChecked() != mAddress.isDefault())
+                || (mAddress == null && chkIsAddrDefault.isChecked()))) {
             HashMap<String, String> eventAttribs = new HashMap<>();
             trackEvent(TrackingAware.ENABLE_DEFAULT_ADDRESS, eventAttribs);
         }
