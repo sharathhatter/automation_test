@@ -137,11 +137,7 @@ public class FilterActivity extends BackButtonActivity {
                             lstFilterItems.getAdapter().getItem(itemPosition);
                     CheckedTextView checkedTextView = (CheckedTextView) view.findViewById(android.R.id.text1);
                     boolean isChecked;
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-                        isChecked = !checkedTextView.isChecked();
-                    } else {
-                        isChecked = checkedTextView.isChecked();
-                    }
+                    isChecked = checkedTextView.isChecked();
                     onFilterOptionClick(filterOptionCategory, filterOptionItem,
                             isChecked);
                 }

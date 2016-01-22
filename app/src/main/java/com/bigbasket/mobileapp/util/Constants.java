@@ -511,7 +511,6 @@ public class Constants {
     public static final String DYNAMIC_PAGE = "dynamic_page";
     public static final String AUTH = "auth";
     public static final String INBOX = "inbox";
-    public static final String IS_PENDING_GO_TO_HOME = "isPendingGoToHome";
     public static final String HAS_USER_CHOSEN_CITY = "has_user_chosen_city";
 
     public static final String MERCHANT_ID = "mer_id";

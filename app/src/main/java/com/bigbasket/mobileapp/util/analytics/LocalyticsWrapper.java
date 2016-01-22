@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.util.analytics;
 
-import android.app.Application;
 import android.text.TextUtils;
 
 import com.localytics.android.Localytics;
@@ -13,14 +12,6 @@ public class LocalyticsWrapper {
     public static void setIdentifier(String key, String value) {
         try {
             Localytics.setIdentifier(key, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void integrate(Application application) {
-        try {
-            Localytics.integrate(application);
         } catch (Exception e) {
             e.printStackTrace();
         }

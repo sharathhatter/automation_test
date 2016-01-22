@@ -115,7 +115,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
 
         ImageView imgEmptyPage = (ImageView) findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setImageResource(R.drawable.empty_no_internet);
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (BuildConfig.DEBUG) {
             DevConfigViewHandler.setView(imgEmptyPage);
         }
 
@@ -171,9 +171,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
         Intent homePageIntent = new Intent(this, HomeActivity.class);
         homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
         startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            finish();
-        }
+        finish();
     }
 
     private void doRegisterDevice(final City city) {
@@ -303,7 +301,6 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
         setSuspended(false);
         mIsFromActivityResult = true;
         if (resultCode == NavigationCodes.GO_TO_HOME) {
-            removePendingGoToHome();
             handleResults();
         } else if (resultCode != NavigationCodes.SIGN_UP_CANCELLED
                 && resultCode != NavigationCodes.SIGN_IN_CANCELLED) {
