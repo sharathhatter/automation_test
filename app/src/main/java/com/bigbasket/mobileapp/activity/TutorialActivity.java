@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.common.OnSwipeTouchListener;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -53,23 +54,56 @@ public class TutorialActivity extends BaseActivity {
                 if (mCurrentTutorialIndex >= (drawableIdArray.length - 1)) {
                     onTutorialComplete();
                 } else {
+                    mCurrentTutorialIndex++;
                     slideNext();
                 }
             }
         });
+
+
+        mImageView.setOnTouchListener(new OnSwipeTouchListener(getCurrentActivity()) {
+            @Override
+            public void onSwipeLeft() {
+                mCurrentTutorialIndex++;
+                if (mCurrentTutorialIndex < drawableIdArray.length) {
+                    slideNext();
+                } else {
+                    mCurrentTutorialIndex = drawableIdArray.length - 1;
+                }
+            }
+
+            @Override
+            public void onSwipeRight() {
+                mCurrentTutorialIndex--;
+                if (mCurrentTutorialIndex < drawableIdArray.length && mCurrentTutorialIndex > 0) {
+                    slidePrevious();
+                } else {
+                    mCurrentTutorialIndex = 0;
+                }
+            }
+        });
+
     }
 
     private void slideNext() {
-        int nextPosition = ++mCurrentTutorialIndex;
-        if (nextPosition < drawableIdArray.length) {
-            UIUtil.displayAsyncImage(mImageView, drawableIdArray[nextPosition], true);
-            if (nextPosition == drawableIdArray.length - 1) {
+        if (mCurrentTutorialIndex < drawableIdArray.length) {
+            UIUtil.displayAsyncImage(mImageView, drawableIdArray[mCurrentTutorialIndex], true);
+            if (mCurrentTutorialIndex == drawableIdArray.length - 1) {
                 lblSkip.setVisibility(View.GONE);
                 lblNext.setText(R.string.startShopping);
             }
-
         } else {
             onTutorialComplete();
+        }
+    }
+
+    private void slidePrevious() {
+        if (mCurrentTutorialIndex < drawableIdArray.length) {
+            UIUtil.displayAsyncImage(mImageView, drawableIdArray[mCurrentTutorialIndex], true);
+            if (mCurrentTutorialIndex < drawableIdArray.length - 1) {
+                lblSkip.setVisibility(View.VISIBLE);
+                lblNext.setText(R.string.next);
+            }
         }
     }
 
