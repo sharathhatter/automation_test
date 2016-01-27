@@ -46,11 +46,7 @@ public class BBDevConfigActivity extends SocialLoginActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         setupActionBar();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            showServerPreferencesFragment(savedInstanceState);
-        } else {
-            finish();
-        }
+        showServerPreferencesFragment(savedInstanceState);
     }
 
     @Override

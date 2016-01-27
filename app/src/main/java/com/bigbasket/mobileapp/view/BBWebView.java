@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -52,15 +51,6 @@ public class BBWebView extends WebView {
                 }
             }
             return super.shouldOverrideUrlLoading(view, url);
-        }
-    }
-
-    @Override
-    public void loadData(String data, String mimeType, String encoding) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            super.loadDataWithBaseURL(null, data, mimeType, encoding, null);
-        } else {
-            super.loadData(data, mimeType, encoding);
         }
     }
 }

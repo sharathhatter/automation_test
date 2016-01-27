@@ -105,7 +105,18 @@
 
     <style name="BBNavDrawerTheme.SpinnerDatePickerTheme" parent="BaseAppTheme" />
 
-    <style name="BaseAppTheme.SearchViewTheme" parent="BBNavDrawerTheme" />
+    <style name="BaseAppTheme.SearchViewTheme" parent="BaseAppTheme">
+        <item name="colorControlNormal">@color/translucent_white</item>
+        <item name="colorControlHighlight">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+        <item name="android:autoCompleteTextViewStyle">
+            @style/BaseAppTheme.SearchViewTheme.CursorStyle
+        </item>
+    </style>
+
+    <style name="BaseAppTheme.SearchViewTheme.CursorStyle" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/search_cursor</item>
+    </style>
 
     <!-- Nav drawer style to set width specified by Material Design specification -->
     <style name="NavDrawer" parent="WindowStyle">
@@ -161,6 +172,7 @@
     <style name="DefaultButtonStyle" parent="Base.Widget.AppCompat.Button">
         <item name="android:textSize">@dimen/primary_text_size</item>
         <item name="android:textColor">@color/uiv3_primary_text_color</item>
+        <item name="android:textAllCaps">false</item>
         <item name="android:textStyle">normal</item>
     </style>
 
@@ -313,7 +325,9 @@
         <item name="android:src">@drawable/gplus_btn_img</item>
     </style>
 
-    <style name="SpinnerDialogMode" />
+    <style name="SpinnerDialogMode">
+        <item name="android:spinnerMode">dialog</item>
+    </style>
 
     <style name="Widget.Design.ScrimInsetsFrameLayout" parent="">
         <item name="insetForeground">#4000</item>

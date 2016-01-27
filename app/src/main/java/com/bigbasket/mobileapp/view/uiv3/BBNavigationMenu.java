@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.view.uiv3;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -235,7 +234,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
         } else {
             txtNavSalutation.setText(getContext().getString(R.string.bigbasketeer));
         }
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (BuildConfig.DEBUG) {
             DevConfigViewHandler.setView(lblWelCome);
         }
 

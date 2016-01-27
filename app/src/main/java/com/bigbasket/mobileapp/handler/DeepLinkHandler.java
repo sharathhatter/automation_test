@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.handler;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
@@ -173,14 +172,8 @@ public class DeepLinkHandler {
                 slug = uri.getQueryParameter(Constants.SLUG);
                 name = uri.getQueryParameter(Constants.NAME);
                 boolean isSystem;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    isSystem = uri.getBooleanQueryParameter(Constants.SHOPPING_LIST_IS_SYSTEM,
-                            false);
-                } else {
-                    String isSystemStr = uri.getQueryParameter(Constants.SHOPPING_LIST_IS_SYSTEM);
-                    isSystem = !TextUtils.isEmpty(isSystemStr) &&
-                            !isSystemStr.equals("false") && !isSystemStr.equals("0");
-                }
+                isSystem = uri.getBooleanQueryParameter(Constants.SHOPPING_LIST_IS_SYSTEM,
+                        false);
                 boolean isLoginRequiredToViewSl = authParameters.isAuthTokenEmpty() && (!isSystem
                         || (slug != null && slug.equalsIgnoreCase(Constants.SMART_BASKET_SLUG)));
                 if (isLoginRequiredToViewSl) {
