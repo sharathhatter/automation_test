@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -31,7 +30,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -78,11 +77,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                 @Override
                 public void onClick(View v) {
                     trackEvent(TrackingAware.CHECKOUT_KNOW_MORE_LINK_CLICKED, null);
-                    Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                    intent.putExtra(Constants.WEBVIEW_URL, addMoreLink);
-                    intent.putExtra(Constants.WEBVIEW_TITLE, addMoreMsg);
-                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    FlatPageHelper.openFlatPage(getCurrentActivity(), addMoreLink, addMoreMsg);
                 }
             });
         } else {
@@ -144,11 +139,8 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                                             @Override
                                             public void onClick(View view) {
                                                 trackEvent(TrackingAware.CHECKOUT_KNOW_MORE_LINK_CLICKED, null);
-                                                Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                                                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                                                intent.putExtra(Constants.WEBVIEW_URL, order.getVariableWeightLink());
-                                                intent.putExtra(Constants.WEBVIEW_TITLE, (order.getVariableWeightMsg()));
-                                                startActivity(intent);
+                                                FlatPageHelper.openFlatPage(getCurrentActivity(), order.getVariableWeightLink(),
+                                                        order.getVariableWeightMsg());
                                             }
                                         }, order.getVariableWeightMsg().length() + 1, order.getVariableWeightMsg().length() + 1 +
                                 getString(R.string.know_more).length(),

@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -28,7 +27,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -39,14 +37,12 @@ import com.bigbasket.mobileapp.handler.click.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -144,14 +140,14 @@ public class SignInActivity extends SocialLoginActivity {
         ClickableSpan termsAndCondClickSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                launchFlatPage(Constants.TERMS_AND_COND_URL);
+                FlatPageHelper.openFlatPage(getCurrentActivity(), Constants.TERMS_AND_COND_URL, null);
             }
         };
 
         final ClickableSpan privacyPolicyClickSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                launchFlatPage(Constants.PRIVACY_POLICY_URL);
+                FlatPageHelper.openFlatPage(getCurrentActivity(), Constants.PRIVACY_POLICY_URL, null);
             }
         };
 
@@ -192,17 +188,6 @@ public class SignInActivity extends SocialLoginActivity {
             }
         });
         trackEvent(TrackingAware.LOGIN_SHOWN, null);
-    }
-
-
-    private void launchFlatPage(String url) {
-        try {
-            Intent intent = new Intent(SignInActivity.this, BackButtonActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-            intent.putExtra(Constants.WEBVIEW_URL, URLDecoder.decode(url, "UTF-8"));
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        } catch (UnsupportedEncodingException e) {
-        }
     }
 
     private void logRememberMeEnabled(String enabled) {

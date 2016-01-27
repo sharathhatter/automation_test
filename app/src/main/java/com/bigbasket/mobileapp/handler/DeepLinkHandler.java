@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -206,10 +207,8 @@ public class DeepLinkHandler {
                 String url = uri.getQueryParameter("url");
                 try {
                     if (!TextUtils.isEmpty(url)) {
-                        intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                        intent.putExtra(Constants.WEBVIEW_URL, URLDecoder.decode(url, "UTF-8"));
-                        context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        FlatPageHelper.openFlatPage(context.getCurrentActivity(),
+                                URLDecoder.decode(url, "UTF-8"), null);
                         return SUCCESS;
                     }
                 } catch (UnsupportedEncodingException e) {

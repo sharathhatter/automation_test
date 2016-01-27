@@ -12,7 +12,6 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.model.general.MessageParamInfo;
 
@@ -50,10 +49,7 @@ public class MessageFormatUtil<T> {
                         }
                     } else if (messageParamInfoArrayList.getType().equals(Constants.WEB_LINK)) {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
-                            Intent intent = new Intent(activity, BackButtonActivity.class);
-                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                            intent.putExtra(Constants.WEBVIEW_URL, messageParamInfoArrayList.getInternalValue());
-                            activity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            FlatPageHelper.openFlatPage(activity, messageParamInfoArrayList.getInternalValue(), null);
                         }
                     }
                 }
@@ -89,10 +85,7 @@ public class MessageFormatUtil<T> {
                 public void onClick(View widget) {
                     if (messageParamInfoArrayList.getType().equals(Constants.WEB_LINK)) {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
-                            Intent intent = new Intent(activity, BackButtonActivity.class);
-                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                            intent.putExtra(Constants.WEBVIEW_URL, messageParamInfoArrayList.getInternalValue());
-                            activity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            FlatPageHelper.openFlatPage(activity, messageParamInfoArrayList.getInternalValue(), null);
                         }
                     }
                 }

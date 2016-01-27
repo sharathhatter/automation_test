@@ -22,6 +22,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.task.uiv3.PostGiftTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -119,10 +120,7 @@ public class GiftOptionsFragment extends BaseFragment {
             lblKnowMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                    intent.putExtra(Constants.WEBVIEW_URL, gift.getGiftLink());
-                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    FlatPageHelper.openFlatPage(getCurrentActivity(), gift.getGiftLink(), null);
                 }
             });
         }
