@@ -5,6 +5,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
+
 /**
  * Created by manu on 25/1/16.
  */
@@ -33,7 +35,6 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
         // Determines the fling velocity and then fires the appropriate swipe event accordingly
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            boolean result = false;
             try {
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();
@@ -55,9 +56,9 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
                     }
                 }
             } catch (Exception exception) {
-                exception.printStackTrace();
+                Crashlytics.logException(exception);
             }
-            return result;
+            return false;
         }
     }
 

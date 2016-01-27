@@ -225,6 +225,7 @@ public class Constants {
     public static final String HDFC_POWER_PAY = "hdfc-power-pay";
     public static final String PAYTM_WALLET = "paytm_wallet";
     public static final String PAYUMONEY_WALLET = "payumoney_wallet";
+    public static final String BB_WALLET = "walletPrepaid";
     public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
     public static final String PAYTM_HASH_GENERATION_URL = "GURL";
 

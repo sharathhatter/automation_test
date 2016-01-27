@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -463,6 +465,16 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
                     @Override
                     public void afterTextChanged(Editable s) {
 
+                    }
+                });
+                cvvEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
+                        if (((keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                                actionId == EditorInfo.IME_ACTION_DONE) {
+                            onClick(paynNowButton);
+                        }
+                        return false;
                     }
                 });
             }

@@ -28,7 +28,7 @@ public class BBUnifiedInboxActivity extends UnifiedInboxActivity {
             return super.onOptionsItemSelected(item);
     }
 
-    private void dispatchTakePictureIntent() {
+    private void takePicture() {
 
         Intent takePictureIntent = new Intent("android.media.action.IMAGE_CAPTURE");
         if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
@@ -46,7 +46,7 @@ public class BBUnifiedInboxActivity extends UnifiedInboxActivity {
 
     public void handlePermission(String permission, int requestCode) {
         if (checkPermission(permission)) {
-            dispatchTakePictureIntent();
+            this.takePicture();
         } else {
             requestPermission(permission, requestCode);
         }
@@ -69,7 +69,7 @@ public class BBUnifiedInboxActivity extends UnifiedInboxActivity {
                 if (grantResults.length > 0 && permissions.length > 0
                         && permissions[0].equals(Manifest.permission.CAMERA)
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    dispatchTakePictureIntent();
+                    this.takePicture();
                 }
                 break;
             default:

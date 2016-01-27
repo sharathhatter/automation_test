@@ -17,6 +17,7 @@ import android.util.Log;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -39,10 +40,6 @@ import java.lang.annotation.RetentionPolicy;
 public abstract class PlusBaseActivity extends BaseActivity {
 
     private static final String TAG = "PlusBaseActivity";
-
-    /* RequestCode for resolutions involving sign-in */
-    private static final int RC_RESOLVE_CONNECT_ERROR = 49404;
-    private static final int RC_RESOLVE_AUTH_ERROR = 49405;
 
     // An integer error argument for play services error dialog
     private static final String DIALOG_ERROR = "dialog_error";
@@ -203,7 +200,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                             try {
                                 mIsResolving = true;
                                 connectionResult.startResolutionForResult(PlusBaseActivity.this,
-                                        RC_RESOLVE_CONNECT_ERROR);
+                                        NavigationCodes.RC_RESOLVE_CONNECT_ERROR);
                             } catch (IntentSender.SendIntentException e) {
                                 // There was an error with the resolution intent. Try again.
                                 mGoogleApiClient.connect();
@@ -299,7 +296,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         setSuspended(false);
         Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
 
-        if (requestCode == RC_RESOLVE_CONNECT_ERROR) {
+        if (requestCode == NavigationCodes.RC_RESOLVE_CONNECT_ERROR) {
             if (mGoogleApiClient == null) {
                 initializeGoogleApiClient();
             }
@@ -321,7 +318,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 }
                 onGoogleClientConnectCancelled();
             }
-        } else if (requestCode == RC_RESOLVE_AUTH_ERROR) {
+        } else if (requestCode == NavigationCodes.RC_RESOLVE_AUTH_ERROR) {
             if (mGoogleApiClient == null) {
                 initializeGoogleApiClient();
             }
@@ -419,7 +416,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         if (authException != null) {
             if (authException instanceof UserRecoverableAuthException) {
                 startActivityForResult(((UserRecoverableAuthException) authException).getIntent(),
-                        RC_RESOLVE_AUTH_ERROR);
+                        NavigationCodes.RC_RESOLVE_AUTH_ERROR);
             } else {
                 //TODO: Show error and retry if is IOException
                 onPlusClientSignInFailed();
@@ -489,7 +486,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
             // Get the error code and retrieve the appropriate dialog
             int errorCode = this.getArguments().getInt(DIALOG_ERROR);
             return GooglePlayServicesUtil.getErrorDialog(errorCode, this.getActivity(),
-                    RC_RESOLVE_CONNECT_ERROR);
+                    NavigationCodes.RC_RESOLVE_CONNECT_ERROR);
 
         }
 
