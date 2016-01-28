@@ -39,8 +39,7 @@ public class SpecialityShopsListData implements Parcelable {
     public SpecialityShopsListData(Parcel source) {
         boolean isStoreListNull = source.readByte() == (byte) 1;
         if (!isStoreListNull) {
-            this.storeList = new ArrayList<>();
-            source.readTypedList(storeList, SpecialityStore.CREATOR);
+            this.storeList = source.createTypedArrayList(SpecialityStore.CREATOR);
         }
         boolean isBaseImgUrlNull = source.readByte() == (byte) 1;
         if (!isBaseImgUrlNull) {

@@ -1,5 +1,6 @@
 package com.payu.payuui;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -45,12 +46,11 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
     private BroadcastReceiver mReceiver = null;
     private String UTF = "UTF-8";
     private boolean viewPortWide = false;
-    private WebView mWebView;
 
-    private PayuUtils mPayuUtils;
     private int storeOneClickHash;
     private String merchantHash;
 
+    @SuppressLint({"JavascriptInterface", "SetJavaScriptEnabled"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /**
@@ -64,10 +64,8 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
             super.onCreate(savedInstanceState);
         }
         setContentView(R.layout.activity_payments);
-        mWebView = (WebView) findViewById(R.id.webview);
 
         // WebView.setWebContentsDebuggingEnabled(true);
-        mPayuUtils = new PayuUtils();
 
         //region Replace the whole code by the commented code if you are NOT using custombrowser
         // Replace the whole code by the commented code if you are NOT using custombrowser.
@@ -75,7 +73,7 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
         bundle = getIntent().getExtras();
         payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
         storeOneClickHash = bundle.getInt(PayuConstants.STORE_ONE_CLICK_HASH);
-        mWebView = (WebView) findViewById(R.id.webview);
+        WebView mWebView = (WebView) findViewById(R.id.webview);
 
         switch (payuConfig.getEnvironment()) {
             case PayuConstants.PRODUCTION_ENV:

@@ -813,6 +813,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         Intent loginIntent = new Intent(this, SignInActivity.class);
         loginIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         loginIntent.putExtra(Constants.GO_TO_HOME, shouldGoBackToHomePage);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         if (params != null) {
             if (params.containsKey(Constants.DEEPLINK_URL)) {
                 loginIntent.putExtra(Constants.DEEP_LINK, params.getString(Constants.DEEPLINK_URL));
@@ -839,6 +840,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, SignupActivity.class);
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
         intent.putExtra(Constants.FRAGMENT_CODE, getIntent().getStringExtra(Constants.FRAGMENT_CODE));
+        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

@@ -39,7 +39,11 @@
 # to avoid problem on Samsung 4.2.2 devices with appcompat v21
 # see https://code.google.com/p/android/issues/detail?id=78377
 -keep class !android.support.v7.internal.view.menu.**,android.support.** {*;}
+-keep class android.support.**$** {*;}
+-keep class android.support.design.widget.AppBarLayout$Behavior$SavedState { *; }
+-keep class android.support.v7.view.menu.MenuBuilder { *;}
 -keep interface android.support.** { *; }
+-keep interface android.support.**$** { *; }
 
 # Retrofit & OkHttp
 -dontwarn retrofit.**

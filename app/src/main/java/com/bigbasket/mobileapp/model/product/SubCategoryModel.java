@@ -35,7 +35,7 @@ public class SubCategoryModel implements Parcelable, Serializable {
         this.name = source.readString();
         boolean _wasCategoryNull = source.readByte() == (byte) 1;
         if (!_wasCategoryNull) {
-            source.readTypedList(category, Category.CREATOR);
+            category = source.createTypedArrayList(Category.CREATOR);
         }
     }
 

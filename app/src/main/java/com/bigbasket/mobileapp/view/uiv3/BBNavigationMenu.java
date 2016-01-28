@@ -105,7 +105,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
         }
     }
 
-    public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
+    public void onSubNavigationRequested(SectionItem sectionItem, String baseImgUrl,
                                          HashMap<Integer, Renderer> rendererHashMap) {
         Typeface faceRobotoMedium = FontHolder.getInstance(getContext()).getFaceRobotoMedium();
         if (sectionItem.getSubSectionItems() == null
@@ -127,7 +127,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
             mListSubNavigation.setLayoutManager(new LinearLayoutManager(getContext()));
         }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        section = new Section(sectionItem.getTitle(), sectionItem.getDescription(), Section.MENU,
+        Section section = new Section(sectionItem.getTitle(), sectionItem.getDescription(), Section.MENU,
                 subNavigationSectionItems, null);
         SectionCursorHelper.setSectionNavigationItemList(sectionNavigationItems,
                 subNavigationSectionItems, section);

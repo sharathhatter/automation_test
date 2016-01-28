@@ -53,45 +53,32 @@ import com.enstage.wibmo.sdk.R;
 public class InAppBrowserActivity extends Activity {
     private static final String TAG = "wibmo.sdk.InAppBrowser";
 
-    public static final int REQUEST_CODE = 0x0000c0c0; // Only use bottom 16 bits
-
-    private View view = null;
-
-    private Context context = null;
-
-    private String qrMsg;
-
-    private View mainView;
-    private WebView webView;
-
-    private W2faInitRequest w2faInitRequest;
     private W2faInitResponse w2faInitResponse;
 
-    private WPayInitRequest wPayInitRequest;
     private WPayInitResponse wPayInitResponse;
 
     private boolean resultSet;
 
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = (Context) this;
-
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
 
-            w2faInitRequest = (W2faInitRequest) extras
+            W2faInitRequest w2faInitRequest = (W2faInitRequest) extras
                     .getSerializable("W2faInitRequest");
             w2faInitResponse = (W2faInitResponse) extras
                     .getSerializable("W2faInitResponse");
 
-            wPayInitRequest = (WPayInitRequest) extras
+            WPayInitRequest wPayInitRequest = (WPayInitRequest) extras
                     .getSerializable("WPayInitRequest");
             wPayInitResponse = (WPayInitResponse) extras
                     .getSerializable("WPayInitResponse");
 
+            String qrMsg;
             if (w2faInitRequest != null && w2faInitResponse!=null) {
                 qrMsg = "Wibmo InApp payment";
             } else if (wPayInitRequest != null && wPayInitResponse!=null) {
@@ -108,12 +95,12 @@ public class InAppBrowserActivity extends Activity {
         setProgressBarIndeterminateVisibility(false);
 
         LayoutInflater inflator = getLayoutInflater();
-        view = inflator.inflate(R.layout.activity_inapp_browser, null, false);
+        View view = inflator.inflate(R.layout.activity_inapp_browser, null, false);
         view.startAnimation(AnimationUtils.loadAnimation(this,
                 android.R.anim.slide_in_left));
         setContentView(view);
 
-        webView = (WebView) findViewById(R.id.webView);
+        WebView webView = (WebView) findViewById(R.id.webView);
 
 
         final Activity activity = this;
@@ -122,28 +109,28 @@ public class InAppBrowserActivity extends Activity {
             boolean stopCalled = false;
 
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                if(WibmoSDKConfig.isTestMode()) {
+                if (WibmoSDKConfig.isTestMode()) {
                     Log.w(TAG, "We have bad certificate.. but this is test mode so okay");
                     Toast.makeText(activity, "Test Mode!! We have bad certificate.. but this is test mode so okay",
                             Toast.LENGTH_SHORT).show();
                     handler.proceed(); // Ignore SSL certificate errors
                 } else {
                     Log.w(TAG, "We have bad certificate.. but this is not test!! will abort");
-                    Toast.makeText(activity, "We have bad certificate.. will abort!!", Toast.LENGTH_LONG);
+                    Toast.makeText(activity, "We have bad certificate.. will abort!!", Toast.LENGTH_LONG).show();
                     handler.cancel();
                 }
             }
 
             public void onReceivedError(WebView view, int errorCode,
                                         String description, String failingUrl) {
-                Log.e(TAG, "onReceivedError: " + description+"; "+failingUrl);
+                Log.e(TAG, "onReceivedError: " + description + "; " + failingUrl);
                 Toast.makeText(activity, "Oh no! " + description,
                         Toast.LENGTH_SHORT).show();
             }
 
             public void onPageFinished(WebView view, String url) {
-                Log.i(TAG, "onPageFinished: ->" + url+"<-" + stopCalled);
-                if(WibmoSDKConfig.isTestMode()) {
+                Log.i(TAG, "onPageFinished: ->" + url + "<-" + stopCalled);
+                if (WibmoSDKConfig.isTestMode()) {
                     /*
                     Toast.makeText(activity, "Url " + url,
                             Toast.LENGTH_SHORT).show();
@@ -182,9 +169,9 @@ public class InAppBrowserActivity extends Activity {
                 // reach 100%
                 Log.i(TAG, "progress: " + progress);
                 webViewProgressBar.setProgress(progress);
-                if(progress==100) {
+                if (progress == 100) {
                     webViewProgressBar.setVisibility(View.GONE);
-                } else if(webViewProgressBar.getVisibility()==View.INVISIBLE) {
+                } else if (webViewProgressBar.getVisibility() == View.INVISIBLE) {
                     webViewProgressBar.setVisibility(View.VISIBLE);
                 }
             }

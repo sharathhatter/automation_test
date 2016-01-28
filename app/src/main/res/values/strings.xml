@@ -432,7 +432,6 @@
     <string name="available_in">\u0020available \nin </string>
     <string name="adding_newStores">\n\nWe will be adding new stores in this location soon. Meanwhile, please checkout other categories.\nThanks!</string>
     <string name="visit_store">VISIT STORE</string>
-    <string name="dismiss_">DISMISS</string>
     <string name="order_details">Order Details</string>
     <string name="empty_email_address_error">Please enter your e-mail address</string>
     <string name="empty_password_error">Please enter your password</string>
@@ -450,5 +449,6 @@
     <string name="terms_and_cond">Terms &amp; Conditions,</string>
     <string name="and">\u0020and\u0020</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="promo_more_needed_format">"%1$s more needed for the promo"</string>
 
 </resources>

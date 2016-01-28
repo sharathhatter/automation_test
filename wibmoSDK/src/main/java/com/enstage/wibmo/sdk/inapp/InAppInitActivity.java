@@ -50,8 +50,6 @@ public class InAppInitActivity extends Activity {
 
     public static final int REQUEST_CODE_IAP_READY = 0x00006061; // Only use bottom 16 bits
 
-    private View view = null;
-
     private Activity activity = null;
 
     private String qrMsg;
@@ -99,7 +97,7 @@ public class InAppInitActivity extends Activity {
         setProgressBarIndeterminateVisibility(false);
 
         LayoutInflater inflator = getLayoutInflater();
-        view = inflator.inflate(R.layout.activity_inapp_init, null, false);
+        View view = inflator.inflate(R.layout.activity_inapp_init, null, false);
         view.startAnimation(AnimationUtils.loadAnimation(this,
                 android.R.anim.slide_in_left));
         setContentView(view);
