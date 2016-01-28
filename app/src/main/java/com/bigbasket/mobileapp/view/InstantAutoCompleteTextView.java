@@ -28,7 +28,7 @@ public class InstantAutoCompleteTextView extends AppCompatAutoCompleteTextView {
     protected void onFocusChanged(boolean focused, int direction,
                                   Rect previouslyFocusedRect) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
-        if (focused) {
+        if (focused && getFilter() != null) {
             performFiltering(getText(), 0);
         }
     }
