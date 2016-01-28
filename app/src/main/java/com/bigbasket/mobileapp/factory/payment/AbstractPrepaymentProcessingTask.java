@@ -368,6 +368,8 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                         mPayzappPostParams,
                         activity);
                 break;
+            case Constants.BB_WALLET:
+                //TODO: invoke onActivityResult
         }
     }
 

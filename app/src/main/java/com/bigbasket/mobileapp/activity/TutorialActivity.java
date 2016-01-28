@@ -75,7 +75,7 @@ public class TutorialActivity extends BaseActivity {
             @Override
             public void onSwipeRight() {
                 mCurrentTutorialIndex--;
-                if (mCurrentTutorialIndex < drawableIdArray.length && mCurrentTutorialIndex > 0) {
+                if (mCurrentTutorialIndex < drawableIdArray.length && mCurrentTutorialIndex >= 0) {
                     slidePrevious();
                 } else {
                     mCurrentTutorialIndex = 0;
@@ -86,7 +86,7 @@ public class TutorialActivity extends BaseActivity {
     }
 
     private void slideNext() {
-        if (mCurrentTutorialIndex < drawableIdArray.length) {
+        if (mCurrentTutorialIndex >= 0 && mCurrentTutorialIndex < drawableIdArray.length) {
             UIUtil.displayAsyncImage(mImageView, drawableIdArray[mCurrentTutorialIndex], true);
             if (mCurrentTutorialIndex == drawableIdArray.length - 1) {
                 lblSkip.setVisibility(View.GONE);
@@ -98,7 +98,7 @@ public class TutorialActivity extends BaseActivity {
     }
 
     private void slidePrevious() {
-        if (mCurrentTutorialIndex < drawableIdArray.length) {
+        if (mCurrentTutorialIndex >= 0 && mCurrentTutorialIndex < drawableIdArray.length) {
             UIUtil.displayAsyncImage(mImageView, drawableIdArray[mCurrentTutorialIndex], true);
             if (mCurrentTutorialIndex < drawableIdArray.length - 1) {
                 lblSkip.setVisibility(View.VISIBLE);

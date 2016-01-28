@@ -170,7 +170,14 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         mPayNowPrepaymentProcessingTask = new PayNowPrepaymentProcessingTask<PayNowActivity>(this,
                 null, mOrderId, mSelectedPaymentMethod, true, false, isPayUOptionVisible) {
             @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showProgressDialog(getString(R.string.please_wait), false);
+            }
+
+            @Override
             protected void onPostExecute(Boolean success) {
+                hideProgressDialog();
                 super.onPostExecute(success);
                 if (isPaused() || isCancelled() || isSuspended()) {
                     return;
@@ -191,6 +198,10 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
                         //Should never happen
                         Crashlytics.logException(new IllegalStateException(
                                 "OrderPreprocessing error without error response"));
+                    }
+                } else {
+                    if(Constants.BB_WALLET.equals(paymentMethod)) {
+                        onPayNowSuccess();
                     }
                 }
             }

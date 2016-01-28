@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.crashlytics.android.Crashlytics;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
@@ -79,6 +80,9 @@ public final class ValidatePayment<T extends AppOperationAware> {
                         Crashlytics.logException(new IllegalArgumentException());
                     }
                 }
+                return true;
+            case NavigationCodes.RC_PAY_FROM_BB_WALLET:
+                validate(null);
                 return true;
             default:
                 return false;
