@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -266,7 +267,8 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS:
                 if (grantResults.length > 0 && permissions.length > 0
@@ -481,6 +483,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         public GooglePlayServicesErrorDialogFragment() {
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Get the error code and retrieve the appropriate dialog

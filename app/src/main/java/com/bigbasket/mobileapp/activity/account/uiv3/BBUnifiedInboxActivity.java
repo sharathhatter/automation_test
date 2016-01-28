@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.MenuItem;
@@ -63,7 +64,7 @@ public class BBUnifiedInboxActivity extends UnifiedInboxActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.PERMISSION_REQUEST_CODE_CAPTURE_CAMERA:
                 if (grantResults.length > 0 && permissions.length > 0

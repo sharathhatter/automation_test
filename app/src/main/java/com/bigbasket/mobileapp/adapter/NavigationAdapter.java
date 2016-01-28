@@ -361,7 +361,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (!sectionNavigationItem.isHeader()) {
                     if (sectionNavigationItem.getSectionItem() != null && sectionNavigationItem.getSectionItem().getSubSectionItems() != null
                             && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
-                        mainMenuView.onSubNavigationRequested(sectionNavigationItem.getSection(),
+                        mainMenuView.onSubNavigationRequested(
                                 sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
                     } else {
                         if (getSelectionComparisonStatus(getSelectedCategoryString(), sectionNavigationItem.getSectionItem())) {

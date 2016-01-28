@@ -13,7 +13,6 @@ import android.widget.Toast;
  */
 public class DevConfigViewHandler implements View.OnClickListener, Handler.Callback {
     private final View mView;
-    private final SharedPreferences mDevPrefs;
     private boolean mIsDeveloper;
     private Handler mHandler;
     private int clickCount = 0 ;
@@ -23,9 +22,7 @@ public class DevConfigViewHandler implements View.OnClickListener, Handler.Callb
         mView = view;
         view.setOnClickListener(this);
         mHandler = new Handler(this);
-        mDevPrefs = view.getContext().getSharedPreferences(DeveloperConfigs.DEVELOPER_PREF_FILE,
-                Context.MODE_PRIVATE);
-        mIsDeveloper = mDevPrefs.getBoolean(DeveloperConfigs.IS_DEVELOPER, false);
+        mIsDeveloper = DeveloperConfigs.isDeveloper(view.getContext());
     }
 
     public static void setView(View view) {

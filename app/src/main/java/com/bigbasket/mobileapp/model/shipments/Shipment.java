@@ -80,8 +80,7 @@ public class Shipment implements Parcelable {
             helpPage = source.readString();
         }
         linkedShipments = source.readParcelable(Shipment.class.getClassLoader());
-        slots = new ArrayList<>();
-        source.readTypedList(slots, Slot.CREATOR);
+        slots = source.createTypedArrayList(Slot.CREATOR);
         boolean wasSelectedSlotNull = source.readByte() == (byte) 1;
         if (!wasSelectedSlotNull) {
             selectedSlot = source.readParcelable(Shipment.class.getClassLoader());

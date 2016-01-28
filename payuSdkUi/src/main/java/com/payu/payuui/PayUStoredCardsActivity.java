@@ -52,12 +52,10 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
 
     private ListView storedCardListView;
     private PayUStoredCardsAdapter payUStoredCardsAdapter;
-    private Bundle bundle;
     private ArrayList<StoredCard> storedCardList;
 
     private PayuHashes payuHashes;
     private PaymentParams mPaymentParams;
-    private Toolbar toolbar;
 
     private PayuConfig payuConfig;
     private PayuUtils payuUtils;
@@ -70,7 +68,7 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
         setContentView(R.layout.activity_user_cards);
 
 
-        toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -79,7 +77,7 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
         storedCardListView = (ListView) findViewById(R.id.list_view_user_card);
 
         // lets get the required data form bundle
-        bundle = getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
 
         payuUtils = new PayuUtils();
 

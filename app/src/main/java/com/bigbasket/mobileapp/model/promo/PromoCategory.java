@@ -39,8 +39,7 @@ public class PromoCategory implements Parcelable {
         if (!isIconNull) {
             icon = source.readString();
         }
-        promos = new ArrayList<>();
-        source.readTypedList(promos, Promo.CREATOR);
+        promos = source.createTypedArrayList(Promo.CREATOR);
     }
 
     /**

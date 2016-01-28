@@ -196,7 +196,7 @@ public class DatabaseContentProvider extends ContentProvider {
     private void notifyChange(@NonNull Uri uri) {
         Context context = getContext();
         if (context == null) {
-            context = BaseApplication.getsContext();
+            context = BaseApplication.getContext();
         }
         context.getContentResolver().notifyChange(uri, null);
     }

@@ -38,8 +38,7 @@ public class CartItemList implements Parcelable {
     }
 
     CartItemList(Parcel source) {
-        cartItems = new ArrayList<>();
-        source.readTypedList(cartItems, CartItem.CREATOR);
+        cartItems = source.createTypedArrayList(CartItem.CREATOR);
         topCatName = source.readString();
         topCatTotal = source.readDouble();
         topCatItems = source.readInt();

@@ -22,8 +22,6 @@ import com.squareup.picasso.Picasso;
 import io.fabric.sdk.android.Fabric;
 
 import static android.content.pm.ApplicationInfo.FLAG_LARGE_HEAP;
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.HONEYCOMB;
 
 public class BaseApplication extends Application {
 
@@ -33,7 +31,7 @@ public class BaseApplication extends Application {
         sContext = this;
     }
 
-    public static Context getsContext() {
+    public static Context getContext() {
         return sContext;
     }
 
@@ -55,12 +53,12 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        NewRelic.withApplicationToken(getString(R.string.new_relic_app_token)).start(this);
+        NewRelic.withApplicationToken(getString(R.string.new_relic_app_token))
+                .start(this.getApplicationContext());
         Fabric.with(this, new Crashlytics());
         AuthParameters.reset();
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
-        registerActivityLifecycleCallbacks(new LocalyticsActivityLifecycleCallbacks(this));
         initializeLeakCanary();
         if (!BuildConfig.DEBUG) {
             AdWordsConversionReporter.reportWithConversionId(this.getApplicationContext(),
@@ -69,18 +67,19 @@ public class BaseApplication extends Application {
             //Read this value from dev config
             Localytics.setLoggingEnabled(false);
         }
-        Picasso p = new Picasso.Builder(this)
+        Picasso p = new Picasso.Builder(this.getApplicationContext())
                 .memoryCache(new LruCache(getMemCacheSize()))
                 .build();
         Picasso.setSingletonInstance(p);
+        registerActivityLifecycleCallbacks(
+                new LocalyticsActivityLifecycleCallbacks(this.getApplicationContext()));
     }
 
     private int getMemCacheSize() {
         ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        // FLAG_LARGE_HEAP is available in API 11 and onwards hence checking for it first
-        boolean largeHeap = SDK_INT >= HONEYCOMB && (getApplicationInfo().flags & FLAG_LARGE_HEAP) != 0;
+        boolean largeHeap = (getApplicationInfo().flags & FLAG_LARGE_HEAP) != 0;
         int memoryClass = am.getMemoryClass();
-        if (largeHeap && SDK_INT >= HONEYCOMB) {
+        if (largeHeap) {
             memoryClass = am.getLargeMemoryClass();
         }
         // Target ~10% of the available heap.

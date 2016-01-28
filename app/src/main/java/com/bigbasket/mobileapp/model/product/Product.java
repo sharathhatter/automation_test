@@ -96,8 +96,7 @@ public class Product extends BaseProduct {
         productStatus = source.readString();
         boolean isChildProductsNull = source.readByte() == (byte) 1;
         if (!isChildProductsNull) {
-            allProducts = new ArrayList<>();
-            source.readTypedList(allProducts, Product.CREATOR);
+            allProducts =  source.createTypedArrayList(Product.CREATOR);
         }
         boolean isProductPromoInfoNull = source.readByte() == (byte) 1;
         if (!isProductPromoInfoNull) {
@@ -105,8 +104,7 @@ public class Product extends BaseProduct {
         }
         boolean isProductAdditionInfoNull = source.readByte() == (byte) 1;
         if (!isProductAdditionInfoNull) {
-            productAdditionalInfos = new ArrayList<>();
-            source.readTypedList(productAdditionalInfos, ProductAdditionalInfo.CREATOR);
+            productAdditionalInfos = source.createTypedArrayList(ProductAdditionalInfo.CREATOR);
         }
         boolean isBrandSlugNull = source.readByte() == (byte) 1;
         if (!isBrandSlugNull) {

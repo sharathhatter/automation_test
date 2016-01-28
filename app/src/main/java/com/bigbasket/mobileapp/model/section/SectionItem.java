@@ -112,8 +112,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         }
         boolean wasSubSectionItemNull = source.readByte() == (byte) 1;
         if (!wasSubSectionItemNull) {
-            subSectionItems = new ArrayList<>();
-            source.readTypedList(subSectionItems, SubSectionItem.CREATOR);
+            subSectionItems = source.createTypedArrayList(SubSectionItem.CREATOR);
         }
         boolean wasImgNameNull = source.readByte() == (byte) 1;
         if (!wasImgNameNull) {
