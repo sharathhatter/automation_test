@@ -247,7 +247,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     public void setProductTabData(ProductTabData productTabData, boolean isFilterOrSortApplied,
                                   int currentTabIndx) {
 
-        if (productTabData.getProductTabInfos().size() > 0) {
+        if (productTabData.getProductTabInfos() != null && productTabData.getProductTabInfos().size() > 0) {
             ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(productTabData.getScreenName());
         } else {
             ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(mTitlePassedViaIntent);

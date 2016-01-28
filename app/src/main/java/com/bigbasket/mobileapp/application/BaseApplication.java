@@ -9,6 +9,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 import com.bigbasket.mobileapp.util.MultiDexHandler;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.google.ads.conversiontracking.AdWordsConversionReporter;
@@ -71,8 +72,12 @@ public class BaseApplication extends Application {
                 .memoryCache(new LruCache(getMemCacheSize()))
                 .build();
         Picasso.setSingletonInstance(p);
-        registerActivityLifecycleCallbacks(
-                new LocalyticsActivityLifecycleCallbacks(this.getApplicationContext()));
+        if (this.getApplicationContext().getFilesDir() != null) {
+            registerActivityLifecycleCallbacks(
+                    new LocalyticsActivityLifecycleCallbacks(this.getApplicationContext()));
+        } else {
+            LocalyticsWrapper.HAS_NO_DIR = true;
+        }
     }
 
     private int getMemCacheSize() {

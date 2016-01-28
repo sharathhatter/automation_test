@@ -9,7 +9,10 @@ import java.util.Map;
 
 public class LocalyticsWrapper {
 
+    public static boolean HAS_NO_DIR = false;  // If context.getFilesDir() returns null, then disable localytics
+
     public static void setIdentifier(String key, String value) {
+        if (HAS_NO_DIR) return;
         try {
             Localytics.setIdentifier(key, value);
         } catch (Exception e) {
@@ -18,6 +21,7 @@ public class LocalyticsWrapper {
     }
 
     public static void onPause() {
+        if (HAS_NO_DIR) return;
         try {
             Localytics.closeSession();
             Localytics.upload();
@@ -27,6 +31,7 @@ public class LocalyticsWrapper {
     }
 
     public static void onResume() {
+        if (HAS_NO_DIR) return;
         try {
             Localytics.openSession();
             Localytics.upload();
@@ -36,6 +41,7 @@ public class LocalyticsWrapper {
     }
 
     public static void tagScreen(String screenName) {
+        if (HAS_NO_DIR) return;
         try {
             if (!TextUtils.isEmpty(screenName))
                 Localytics.tagScreen(screenName);
@@ -45,6 +51,7 @@ public class LocalyticsWrapper {
     }
 
     public static void tagEvent(String eventName, Map<String, String> eventAttribs) {
+        if (HAS_NO_DIR) return;
         try {
             Localytics.tagEvent(eventName, eventAttribs);
         } catch (Exception e) {
@@ -53,6 +60,7 @@ public class LocalyticsWrapper {
     }
 
     public static void tagEvent(String eventName, Map<String, String> eventAttribs, long customerValueIncrease) {
+        if (HAS_NO_DIR) return;
         try {
             Localytics.tagEvent(eventName, eventAttribs, customerValueIncrease);
         } catch (Exception e) {
