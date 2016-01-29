@@ -13,16 +13,30 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.SplashActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.managers.CityManager;
+import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.squareup.okhttp.OkHttpClient;
+
+import java.util.ArrayList;
+
+import retrofit.Callback;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -78,6 +92,7 @@ public class BBDevConfigActivity extends SocialLoginActivity
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void showServerPreferencesFragment(Bundle savedInstanceState) {
+        mNewServerName = null;
         if (savedInstanceState == null) {
             ServerPreferencesFragment fragment = new ServerPreferencesFragment();
             getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
@@ -123,21 +138,61 @@ public class BBDevConfigActivity extends SocialLoginActivity
     }
 
     @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void postLogout(boolean success) {
+        super.postLogout(success);
         if (success) {
-            PreferenceManager.getDefaultSharedPreferences(this).edit()
-                    .remove(Constants.VISITOR_ID_KEY).commit();
-            CityManager.clearChosenCity(this);
-            DeveloperConfigs.saveMapiServerAddress(this, mNewServerName);
-            Intent intent = new Intent(getCurrentActivity(), SplashActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+
+            OkHttpClient httpClient = BigBasketApiAdapter.getBaseHttpClient();
+            httpClient.interceptors()
+                    .add(DeveloperConfigs.getHttpLoggingInterceptor(getApplicationContext()));
+            BigBasketApiService bbService = new Retrofit.Builder()
+                    .baseUrl(mNewServerName + MobileApiUrl.API_PATH)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(httpClient)
+                    .build()
+                    .create(BigBasketApiService.class);
+            bbService.listCities().enqueue(new Callback<ArrayList<City>>() {
+                @Override
+                public void onResponse(Response<ArrayList<City>> response, Retrofit retrofit) {
+                    hideProgressDialog();
+                    if(response.isSuccess()) {
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
+                                .remove(Constants.VISITOR_ID_KEY).commit();
+                        CityManager.clearChosenCity(getApplicationContext());
+                        AuthParameters.reset();
+                        DeveloperConfigs.saveMapiServerAddress(getApplicationContext(), mNewServerName);
+                        Intent intent = new Intent(getCurrentActivity(), SplashActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Log.e(getScreenTag(), response.code() + ": " + response.message());
+                        if(response.code() == 401) {
+                            Toast.makeText(getCurrentActivity(), "Unknown Protocol, Change the server domain to: "
+                                    + (mNewServerName.startsWith("https") ?
+                                            "http" + mNewServerName.substring(5) :
+                                            "https" + mNewServerName.substring(4)),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getCurrentActivity(), response.message(), Toast.LENGTH_LONG).show();
+                        }
+                        showServerPreferencesFragment(null);
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    hideProgressDialog();
+                    Log.e(getScreenTag(), "Error", t);
+                    Toast.makeText(getCurrentActivity(), "Invalid server address: " + t.toString(),
+                            Toast.LENGTH_LONG).show();
+                    showServerPreferencesFragment(null);
+                }
+            });
+
         } else {
             showServerPreferencesFragment(null);
         }
-        mNewServerName = null;
     }
 
     /**

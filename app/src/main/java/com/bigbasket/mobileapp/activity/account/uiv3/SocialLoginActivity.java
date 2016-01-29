@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.OnLogoutListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccountType;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.LogoutTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
@@ -216,8 +217,12 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     .remove(Constants.SOCIAL_ACCOUNT_TYPE)
                     .commit();
         }
-        LogoutTask logoutTask = new LogoutTask(this);
-        logoutTask.execute();
+        if(AuthParameters.getInstance(this).isAuthTokenEmpty()) {
+            LogoutTask logoutTask = new LogoutTask(this);
+            logoutTask.execute();
+        } else {
+            onLogoutSuccess();
+        }
     }
 
     @Override
