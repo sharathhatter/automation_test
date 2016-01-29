@@ -217,7 +217,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     .remove(Constants.SOCIAL_ACCOUNT_TYPE)
                     .commit();
         }
-        if(AuthParameters.getInstance(this).isAuthTokenEmpty()) {
+        if(!AuthParameters.getInstance(this).isAuthTokenEmpty()) {
             LogoutTask logoutTask = new LogoutTask(this);
             logoutTask.execute();
         } else {
