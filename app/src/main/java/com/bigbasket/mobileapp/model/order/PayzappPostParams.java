@@ -87,27 +87,6 @@ public class PayzappPostParams implements Parcelable {
         this.countryCode = countryCode;
     }
 
-    public PayzappPostParams(Parcel source) {
-        this.merchantId = source.readString();
-        this.pkgName = source.readString();
-        this.serverUrl = source.readString();
-        this.appData = source.readString();
-        this.msgHash = source.readString();
-        this.txnDesc = source.readString();
-        this.txnId = source.readString();
-        this.paymentChoices = source.createStringArray();
-        this.formattedAmount = source.readString();
-        this.mobile = source.readString();
-        this.currency = source.readString();
-        this.amount = source.readString();
-        this.dob = source.readString();
-        this.name = source.readString();
-        this.email = source.readString();
-        this.merchantAppId = source.readString();
-        this.countryCode = source.readString();
-
-    }
-
     public String getServerUrl() {
         return serverUrl;
     }
@@ -181,6 +160,26 @@ public class PayzappPostParams implements Parcelable {
         return 0;
     }
 
+    public PayzappPostParams(Parcel source) {
+        this.merchantId = source.readString();
+        this.pkgName = source.readString();
+        this.serverUrl = source.readString();
+        this.appData = source.readString();
+        this.msgHash = source.readString();
+        this.txnDesc = source.readString();
+        this.txnId = source.readString();
+        this.paymentChoices = source.createStringArray();
+        this.formattedAmount = source.readString();
+        this.mobile = source.readString();
+        this.currency = source.readString();
+        this.amount = source.readString();
+        this.dob = source.readString();
+        this.name = source.readString();
+        this.email = source.readString();
+        this.merchantAppId = source.readString();
+        this.countryCode = source.readString();
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(merchantId);
@@ -192,6 +191,7 @@ public class PayzappPostParams implements Parcelable {
         dest.writeString(txnId);
         dest.writeStringArray(paymentChoices);
         dest.writeString(formattedAmount);
+        dest.writeString(mobile);
         dest.writeString(currency);
         dest.writeString(amount);
         dest.writeString(dob);
