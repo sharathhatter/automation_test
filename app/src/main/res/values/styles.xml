@@ -336,6 +336,9 @@
     <style name="RippleStyle">
         <item name="android:background">@drawable/default_button_clicks</item>
     </style>
+    <style name="TransparentRippleStyle">
+        <item name="android:background">@drawable/transparent_button_click</item>
+    </style>
 
     <style name="BottomButtonStyle">
         <item name="android:background">@drawable/main_btn_bkg_not_rounded</item>
