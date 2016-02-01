@@ -65,7 +65,7 @@ public class BaseApplication extends Application {
             AdWordsConversionReporter.reportWithConversionId(this.getApplicationContext(),
                     "963141508", "hfTqCLOjpWAQhL-hywM", "0.00", false);
         } else {
-            //Read this value from dev config
+            //TODO: read localytics log enable state from dev config settings
             Localytics.setLoggingEnabled(false);
         }
         Picasso p = new Picasso.Builder(this.getApplicationContext())

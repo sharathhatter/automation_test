@@ -193,7 +193,9 @@ public class OTPValidationFragment extends BaseFragment implements OnOtpReceived
     }
 
     private void registerBroadcastForSMS() {
-        mSmsBroadcastReceiver = new OTPBroadcastReceiver(this);
+        if(mSmsBroadcastReceiver == null) {
+            mSmsBroadcastReceiver = new OTPBroadcastReceiver(this);
+        }
         getActivity().registerReceiver(mSmsBroadcastReceiver, OTPBroadcastReceiver.getIntentFilter());
     }
 

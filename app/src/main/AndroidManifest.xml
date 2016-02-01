@@ -681,6 +681,12 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
+        <activity
+            android:name=".activity.account.uiv3.ForgotPasswordActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LoginScreenTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
         <!-- Gift -->
 
         <activity
