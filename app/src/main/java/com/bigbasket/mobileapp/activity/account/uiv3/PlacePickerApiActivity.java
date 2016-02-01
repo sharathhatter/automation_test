@@ -73,35 +73,35 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         new LocationAutoSuggestHelper<>(this, mEditTextChooseArea, mGoogleApiClient,
                 new LatLngBounds(new LatLng(7.43231, 65.82658), new LatLng(36.93593, 99.04924)), false).init();
 
-        if (savedInstanceState == null) {
-            String mediaState = Environment.getExternalStorageState();
-            boolean hasStorage = !(mediaState == null || mediaState.equalsIgnoreCase(Environment.MEDIA_REMOVED)
-                    || mediaState.equalsIgnoreCase(Environment.MEDIA_BAD_REMOVAL)
-                    || mediaState.equalsIgnoreCase(Environment.MEDIA_UNMOUNTABLE)
-                    || mediaState.equalsIgnoreCase(Environment.MEDIA_UNMOUNTED));
-            if (hasStorage) {
-                // Map fragment crashes if the device doesn't have sd-card or
-                // a sd-card simulation storage area (e.g. Devices like Nexus don't have sd-card slot,
-                // but they still simulate it so that apps continue to work).
-                // Many Android One phones don't simulate this storage.
-                SupportMapFragment mapFragment = SupportMapFragment.newInstance();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.layout_map, mapFragment)
-                        .commit();
-                //map.setPadding(0, 160, 0, 0);
-                mapFragment.getMapAsync(this);
+        String mediaState = Environment.getExternalStorageState();
+        boolean hasStorage = (mediaState != null && mediaState.equalsIgnoreCase(Environment.MEDIA_MOUNTED));
+        if (hasStorage) {
+            // Map fragment crashes if the device doesn't have sd-card or
+            // a sd-card simulation storage area (e.g. Devices like Nexus don't have sd-card slot,
+            // but they still simulate it so that apps continue to work).
+            // Many Android One phones don't simulate this storage.
+            SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.layout_map, mapFragment)
+                    .commit();
+            //map.setPadding(0, 160, 0, 0);
+            mapFragment.getMapAsync(this);
 
-                boolean isAttached = mEditTextChooseArea.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setUpMyLocationButtonUI(true);
-                    }
-                });
-                if (!isAttached) {
-                    setUpMyLocationButtonUI(false);
+            boolean isAttached = mEditTextChooseArea.post(new Runnable() {
+                @Override
+                public void run() {
+                    setUpMyLocationButtonUI(true);
                 }
+            });
+            if (!isAttached) {
+                setUpMyLocationButtonUI(false);
             }
+        } else {
+            TextView txtErrorMessage = (TextView) findViewById(R.id.txtErrorMessage);
+            txtErrorMessage.setTypeface(faceRobotoLight);
+            txtErrorMessage.setVisibility(View.VISIBLE);
         }
+
 
         TextView txtAction = (TextView) findViewById(R.id.txtAction);
         txtAction.setTypeface(faceRobotoLight);

@@ -287,8 +287,8 @@
     <string name="productFound">product</string>
     <string name="productFoundPlural">products</string>
     <string name="createNewList">Create New List</string>
-    <string name="connectUsing">login using</string>
-    <string name="signUpUsing">signup using</string>
+    <string name="connectUsing">Login using</string>
+    <string name="signUpUsing">Sign-Up using</string>
     <string name="tutorial">Tutorial</string>
     <string name="promotions">Promotions</string>
     <string name="quantity">Quantity:&#160;</string>
@@ -453,5 +453,6 @@
     <string name="and">\u0020and\u0020</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="promo_more_needed_format">"%1$s more needed for the promo"</string>
+    <string name="sdcarderror">Please insert SD-card to display map.</string>
 
 </resources>
