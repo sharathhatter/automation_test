@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.util.CompressUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -45,12 +46,13 @@ public abstract class AbstractDynamicPageSyncService extends IntentService {
         OkHttpClient client = BigBasketApiAdapter.getHttpClient(this);
         String responseJson;
         int cacheDuration = 20; // Default
+        DynamicPageResponse dynamicPageResponse = null;
         try {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
                 responseJson = response.body().string();
                 // Parsing the json to extract duration for caching :(
-                DynamicPageResponse dynamicPageResponse = new Gson().fromJson(responseJson,
+                dynamicPageResponse = new Gson().fromJson(responseJson,
                         DynamicPageResponse.class);
                 if (dynamicPageResponse.status == 0) {
                     cacheDuration = dynamicPageResponse.apiResponseContent.cacheDuration;
@@ -65,13 +67,19 @@ public abstract class AbstractDynamicPageSyncService extends IntentService {
         }
         byte[] compressedResponse = null;
         DynamicPageDbHelper dynamicPageDbHelper = new DynamicPageDbHelper(this);
-        if (!TextUtils.isEmpty(responseJson)) {
+        if (!TextUtils.isEmpty(responseJson) && dynamicPageResponse != null
+                && dynamicPageResponse.apiResponseContent.sectionData != null
+                && dynamicPageResponse.apiResponseContent.sectionData.getSections() != null
+                && !dynamicPageResponse.apiResponseContent.sectionData.getSections().isEmpty()) {
             try {
                 compressedResponse = CompressUtil.gzipCompress(responseJson);
             } catch (IOException e) {
                 compressedResponse = null;
+                Crashlytics.logException(e);
             }
         }
-        dynamicPageDbHelper.save(dynamicScreenType, compressedResponse, cacheDuration);
+        if(compressedResponse != null) {
+            dynamicPageDbHelper.save(dynamicScreenType, compressedResponse, cacheDuration);
+        }
     }
 }

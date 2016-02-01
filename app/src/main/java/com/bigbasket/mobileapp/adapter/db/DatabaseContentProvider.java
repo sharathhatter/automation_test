@@ -68,7 +68,14 @@ public class DatabaseContentProvider extends ContentProvider {
                 }
                 break;
         }
-        int rowCount = sqlDB.delete(tableName, selection, selectionArgs);
+        int rowCount;
+        sqlDB.beginTransaction();
+        try {
+            rowCount = sqlDB.delete(tableName, selection, selectionArgs);
+            sqlDB.setTransactionSuccessful();
+        } finally {
+            sqlDB.endTransaction();
+        }
         notifyChange(uri);
         return rowCount;
     }
@@ -89,13 +96,21 @@ public class DatabaseContentProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
         String tableName = getTableName(uri);
-        long newID = sqlDB.insert(tableName, null, values);
+        long newID;
+        sqlDB.beginTransaction();
+        try {
+            newID = sqlDB.insert(tableName, null, values);
+            sqlDB.setTransactionSuccessful();
+        } finally {
+            sqlDB.endTransaction();
+        }
         if (newID > 0) {
             Uri newUri = ContentUris.withAppendedId(uri, newID);
             notifyChange(uri);
             return newUri;
+        } else {
+            return null;
         }
-        return uri;
     }
 
     @Override
@@ -107,8 +122,8 @@ public class DatabaseContentProvider extends ContentProvider {
         sqlDB.beginTransaction();
         try {
             for (ContentValues cv : values) {
-                long rowCount = sqlDB.insertOrThrow(tableName, null, cv);
-                insertedCount += rowCount;
+                sqlDB.insertOrThrow(tableName, null, cv);
+                insertedCount++;
             }
             sqlDB.setTransactionSuccessful();
         } catch (SQLException e) {
@@ -169,7 +184,14 @@ public class DatabaseContentProvider extends ContentProvider {
                 }
                 break;
         }
-        int rowCount = db.update(tableName, values, selection, selectionArgs);
+        db.beginTransaction();
+        int rowCount;
+        try {
+            rowCount = db.update(tableName, values, selection, selectionArgs);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
         if (rowCount > 0) {
             notifyChange(uri);
         }
