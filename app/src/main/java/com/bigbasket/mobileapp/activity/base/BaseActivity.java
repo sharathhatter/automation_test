@@ -41,8 +41,8 @@ import android.widget.Toast;
 
 import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.CommunicationHubActivity;
 import com.bigbasket.mobileapp.activity.HomeActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.BBUnifiedInboxActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
@@ -293,10 +293,42 @@ public abstract class BaseActivity extends AppCompatActivity implements
         FacebookEventTrackWrapper.activateApp(getApplicationContext());
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        moEHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        moEHelper.onRestoreInstanceState(savedInstanceState);
+    }
+
     public void launchMoEngageCommunicationHub() {
         AuthParameters authParameters = AuthParameters.getInstance(getApplicationContext());
         if (!authParameters.isAuthTokenEmpty()) {
-            Intent communicationHunIntent = new Intent(this, BBUnifiedInboxActivity.class);
+            Intent communicationHunIntent = new Intent(this, CommunicationHubActivity.class);
+            communicationHunIntent.putExtra(Constants.COMMUNICATION_HUB_FAQ_SHOW, false);
+            startActivity(communicationHunIntent);
+        } else {
+            showToast(getString(R.string.loginToContinue));
+            Bundle bundle = new Bundle(1);
+            bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_COMMUNICATION_HUB);
+            launchLogin(getPreviousScreenName(), bundle, true);
+        }
+
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
+        trackEvent(TrackingAware.COMMUNICATION_HUB_SHOWN, eventAttribs);
+    }
+
+    public void launchMoEngageCommunicationHubWithFAQ() {
+        AuthParameters authParameters = AuthParameters.getInstance(getApplicationContext());
+        if (!authParameters.isAuthTokenEmpty()) {
+            Intent communicationHunIntent = new Intent(this, CommunicationHubActivity.class);
+            communicationHunIntent.putExtra(Constants.COMMUNICATION_HUB_FAQ_SHOW, true);
+
             startActivity(communicationHunIntent);
         } else {
             showToast(getString(R.string.loginToContinue));

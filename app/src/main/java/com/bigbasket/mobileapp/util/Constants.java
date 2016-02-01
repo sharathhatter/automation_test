@@ -677,4 +677,15 @@ public class Constants {
 
     public static final String KEY_PERMISSION = "key_permission";
     public static final String KEY_PERMISSION_RC = "key_permission_rc";
+
+    //Communication Hub codes
+    public static final String COMMUNICATION_HUB_OFFER ="offer";
+    public static final String COMMUNICATION_HUB_ALERT ="alert";
+    public static final String COMMUNICATION_HUB_GENERAL ="general";
+    public static final String COMMUNICATION_HUB_FILTER="filter";
+    public static final String COMMUNICATION_HUB_BB_KEY ="bb";
+    public static final String NOTIFICATION_MSG_TAG="gcm_msg_tag"; //Shoulbe same as MoEngageNotificationUtils.NOTIFICATION_MSG_TAG
+    public static final String COMMUNICATION_HUB_FAQ_URL = "http://www.bigbasket.com/faq/?source=app";
+    public static final String COMMUNICATION_HUB_FAQ_SHOW = "is_show_FAQ";
+
 }

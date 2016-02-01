@@ -196,6 +196,12 @@ public interface TrackingAware {
     String SPECIALITYSHOPS_LIST_SHOWN = "Speciality.StoreListing Shown";
     String SPECIALITYSHOPS = "SPS.";
 
+
+    //Communication Hub
+    String COMMUNICATION_HUB_TAB_CHANGED = "Notifications.TabChanged";
+
+
+
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease,
                     boolean sendToFacebook);

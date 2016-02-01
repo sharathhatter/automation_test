@@ -526,6 +526,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     @Override
     public void onNoBasketDelta(String addressId, String lat, String lng, @Nullable String area) {
         new ChangeAddressTask<>(this, addressId, lat, lng, area, false).startTask();
+
     }
 
     @Override

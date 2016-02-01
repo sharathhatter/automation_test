@@ -108,11 +108,14 @@ public class PaymentSelectionActivity extends BackButtonActivity
         setTitle(getString(R.string.placeorder));
 
         mOrderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
-        if (mOrderDetails == null) return;
+        if (mOrderDetails == null) {
+            finish();
+            return;
+        }
         renderPaymentDetails();
         renderFooter(false);
         MoEngageWrapper.suppressInAppMessageHere(moEHelper);
-
+        trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
     }
 
     @Override

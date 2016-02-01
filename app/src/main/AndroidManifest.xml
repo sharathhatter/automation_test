@@ -782,11 +782,11 @@
             android:value="notification_icon" />
 
         <!-- moEngage UBox -->
-        <activity
-            android:name="com.bigbasket.mobileapp.activity.account.uiv3.BBUnifiedInboxActivity"
-            android:label="Communication Hub"
+       <activity
+            android:name="com.bigbasket.mobileapp.activity.CommunicationHubActivity"
             android:theme="@style/BackButtonTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:label="@string/title_activity_communication_hub"></activity>
 
         <service
             android:name="com.moengage.addon.ubox.UBoxMessenger"

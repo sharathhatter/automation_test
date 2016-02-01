@@ -32,8 +32,10 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
@@ -47,6 +49,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
     private boolean mWaitingForPermission;
 
 
+    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({NONE, SIGN_IN, SIGN_OUT, REVOKE})
     private @interface ConnectionMode {

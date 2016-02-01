@@ -83,5 +83,6 @@
     <color name="uic_btn_disable">#c2c1c1</color>
 
     <color name="ripple_dark">#33ffffff</color>
+    <color name="chat_timestamp_color">#66000000</color>
 
 </resources>
