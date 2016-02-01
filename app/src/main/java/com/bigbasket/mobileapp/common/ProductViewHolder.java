@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.common;
 
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public ImageView getImgPromoStar() {
         if (imgPromoStar == null) {
             imgPromoStar = (ImageView) itemView.findViewById(R.id.imgPromoStar);
+            imgPromoStar.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(), R.drawable.promo_star));
             imgPromoStar.setOnClickListener(promoClickListener);
         }
         return imgPromoStar;
@@ -228,6 +230,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public TextView getTxtGiftMsg() {
         if (txtGiftMsg == null) {
             txtGiftMsg = (TextView) itemView.findViewById(R.id.txtGiftMsg);
+            txtGiftMsg.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_gift_grey600_18dp, 0, 0, 0);
         }
         return txtGiftMsg;
     }
