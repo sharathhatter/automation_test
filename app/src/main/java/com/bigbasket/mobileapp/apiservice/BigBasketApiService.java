@@ -283,7 +283,7 @@ public interface BigBasketApiService {
     @GET("co-get-delivery-addresses/")
     Call<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddresses(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx);
 
-    @GET("search-tc/")
+    @GET("autosearch/")
     Call<ApiResponse<AutoSearchApiResponseContent>> autoSearch(@Query("t") String term, @Query(Constants.CITY_ID) String cityId);
 
     @FormUrlEncoded
