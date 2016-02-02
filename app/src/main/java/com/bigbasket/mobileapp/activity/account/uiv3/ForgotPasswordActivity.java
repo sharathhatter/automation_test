@@ -342,11 +342,9 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
         if (enable) {
             newPwdEditText.setEnabled(true);
             confirmPwdEditText.setEnabled(true);
-            txtUpdatePassword.setEnabled(true);
         } else {
             newPwdEditText.setEnabled(false);
             confirmPwdEditText.setEnabled(false);
-            txtUpdatePassword.setEnabled(false);
         }
     }
 

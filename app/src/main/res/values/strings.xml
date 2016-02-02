@@ -109,7 +109,7 @@
     <string name="otpCodeErrorMsg">Confirmation code entered is not valid.</string>
     <string name="otpCodeMissing">Please enter the confirmation code</string>
     <string name="numberUsedByAnotherMember">This mobile number is already in use, please use another mobile number.</string>
-    <string name="resendOtpMsg">Code has been resent</string>
+    <string name="resendOtpMsg">OTP has been resent</string>
     <string name="resending_otp">Resending verification code</string>
     <string name="more">More</string>
     <string name="moreAllCaps">MORE</string>
