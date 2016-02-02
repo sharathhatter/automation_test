@@ -435,8 +435,10 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
 
     private void onAuthComplete(String authToken) {
-        mGoogleApiClient.disconnect();
-        mGoogleApiClient = null;
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+            mGoogleApiClient = null;
+        }
         onPlusClientSignIn(authToken);
     }
 
