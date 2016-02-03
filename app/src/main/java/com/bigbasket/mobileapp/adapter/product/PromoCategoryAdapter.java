@@ -15,6 +15,7 @@ import com.bigbasket.mobileapp.interfaces.PromoDetailNavigationAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.List;
 
@@ -165,7 +166,12 @@ public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
             if (pos != RecyclerView.NO_POSITION) {
                 Object possiblePromoObj = promoConsolidatedList.get(pos);
                 if (possiblePromoObj instanceof Promo) {
-                    ((PromoDetailNavigationAware) context).loadPromoDetail((Promo) possiblePromoObj);
+                    try {
+                        ((PromoDetailNavigationAware) context).loadPromoDetail((Promo) possiblePromoObj);
+                    } catch (IllegalStateException ex) {
+                        Crashlytics.logException(ex);
+                    }
+
                 }
             }
         }
