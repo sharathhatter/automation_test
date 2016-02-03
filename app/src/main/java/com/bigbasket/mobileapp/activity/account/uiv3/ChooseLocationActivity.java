@@ -63,11 +63,12 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (mIsViaOnActivityResult) return;
-        if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION))
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        if (!mIsViaOnActivityResult
+                && hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
             triggerLocationFetching();
+        }
     }
 
     private void triggerLocationFetching() {

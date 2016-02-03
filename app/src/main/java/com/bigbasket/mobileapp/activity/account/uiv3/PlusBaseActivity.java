@@ -225,11 +225,11 @@ public abstract class PlusBaseActivity extends BaseActivity {
         Log.d(TAG, "signInViaGPlus");
         mConnectionMode = SIGN_IN;
         if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
+            mGoogleApiClient.reconnect();
+        } else {
+            initializeGoogleApiClient();
+            mGoogleApiClient.connect();
         }
-        //Always start with a fresh client for signin
-        initializeGoogleApiClient();
-        mGoogleApiClient.connect();
     }
 
     /**
@@ -258,8 +258,17 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
     private void signinUser() {
         try {
-            String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
-            fetchAuthToken(accountName);
+            if(mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                fetchAuthToken(accountName);
+            } else {
+                if(mGoogleApiClient == null){
+                    initializeGoogleApiClient();
+                    mGoogleApiClient.connect();
+                } else if(!mGoogleApiClient.isConnecting()){
+                    mGoogleApiClient.reconnect();
+                }
+            }
         } catch (Exception e) {
             Crashlytics.logException(e);
             showToast(getString(R.string.unknownError));
@@ -317,6 +326,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 } catch (IllegalStateException ex) {
                     //Will throw exception as client not connected,
                     //but there is no other API to clear the selected account, ignore the exception
+                    Crashlytics.logException(ex);
                 }
                 onGoogleClientConnectCancelled();
             }

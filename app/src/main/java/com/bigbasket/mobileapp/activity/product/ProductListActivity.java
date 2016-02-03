@@ -894,6 +894,13 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /*
+        Workaround to avoid IllegalStateException: Can not perform this action after onSaveInstanceState
+        Invoke onStateNotSaved() before performing fragment operations,
+        super.onActivityResult() would invoke the same and avoid this error
+        Otherwise fragment operations have to be performed after onResumeFragments call
+        */
+        onStateNotSaved();
         setSuspended(false);
         if (resultCode == NavigationCodes.FILTER_APPLIED) {
             ArrayList<FilteredOn> filteredOns = null;

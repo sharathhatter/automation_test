@@ -78,8 +78,8 @@ public class ShowCartActivity extends BackButtonActivity implements BasketChange
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void onResumeFragments() {
+        super.onResumeFragments();
         getCartItems(null, false);
     }
 

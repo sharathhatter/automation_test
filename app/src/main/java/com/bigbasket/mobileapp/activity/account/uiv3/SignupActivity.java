@@ -261,7 +261,6 @@ public class SignupActivity extends BackButtonActivity {
         super.onDataSyncFailure();
         showLocationView();
         hideProgressDialog();
-        showAlertDialog(getString(R.string.headingServerError), getString(R.string.server_error));
     }
 
     @Override
