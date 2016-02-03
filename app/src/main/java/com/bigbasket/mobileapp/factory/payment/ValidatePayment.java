@@ -64,7 +64,9 @@ public final class ValidatePayment<T extends AppOperationAware> {
                 return true;
             case MobikwikPayment.MOBIKWIK_REQ_CODE:
                 if (data != null) {
-                    MKTransactionResponse response = (MKTransactionResponse) data.getSerializableExtra(MobikwikSDK.EXTRA_TRANSACTION_RESPONSE);
+                    MKTransactionResponse response =
+                            (MKTransactionResponse) data.getSerializableExtra(
+                                    MobikwikSDK.EXTRA_TRANSACTION_RESPONSE);
                     if (response != null) {
                         if (!TextUtils.isEmpty(response.orderId)) {
                             try {
@@ -74,10 +76,10 @@ public final class ValidatePayment<T extends AppOperationAware> {
                                 Crashlytics.logException(e);
                             }
                         } else {
-                            Crashlytics.logException(new IllegalArgumentException());
+                            Crashlytics.logException(new IllegalArgumentException("OrderID is empty for Mobikwik payment"));
                         }
                     } else {
-                        Crashlytics.logException(new IllegalArgumentException());
+                        Crashlytics.logException(new IllegalArgumentException("No Mobikwik response"));
                     }
                 }
                 return true;
