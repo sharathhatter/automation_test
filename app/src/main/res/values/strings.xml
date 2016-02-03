@@ -152,6 +152,7 @@
     <string name="acceptedFoodCoupon">Accepted food coupon for this order is </string>
     <string name="deliveryCharges">Delivery Charges</string>
     <string name="noOrdersPlaced">You haven\'t placed any orders yet</string>
+    <string name="validationretry">Looks like there is some network issue.\nPlease check your internet connection.</string>
 
 
     <!-- Shopping list -->

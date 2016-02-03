@@ -36,29 +36,22 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
-import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPayZappResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPrePaymentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
-import com.bigbasket.mobileapp.factory.payment.OrderPrepaymentProcessingTask;
-import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentOptionsKnowMoreDialogCallback;
-import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
-import com.bigbasket.mobileapp.model.order.PaytmResponseHolder;
 import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -71,25 +64,21 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.bigbasket.mobileapp.view.PaymentMethodsView;
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import retrofit.Call;
 
 public class PaymentSelectionActivity extends BackButtonActivity
-        implements OnPaymentValidationListener, PaymentTxnInfoAware,
-        PaymentMethodsView.OnPaymentOptionSelectionListener, PaymentOptionsKnowMoreDialogCallback {
+        implements PaymentMethodsView.OnPaymentOptionSelectionListener, PaymentOptionsKnowMoreDialogCallback {
 
-    private static final java.lang.String IS_PREPAYMENT_TASK_PAUSED = "is_prepayment_task_paused";
-    private static final java.lang.String IS_PREPAYMENT_TASK_STARTED = "is_prepayment_task_started";
-    private static final java.lang.String IS_PREPAYMENT_ABORT_INITIATED = "is_prepayment_abort_initiated";
-    private final String PAYMENT_PARAMS = "payment_params";
-    private final String PAYZAPP_PAYMENT_PARAMS = "payzapp_payment_params";
+    public static final java.lang.String IS_PREPAYMENT_TASK_PAUSED = "is_prepayment_task_paused";
+    public static final java.lang.String IS_PREPAYMENT_TASK_STARTED = "is_prepayment_task_started";
+    public static final java.lang.String IS_PREPAYMENT_ABORT_INITIATED = "is_prepayment_abort_initiated";
+    public static final String PAYMENT_PARAMS = "payment_params";
+    public static final String PAYZAPP_PAYMENT_PARAMS = "payzapp_payment_params";
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private ArrayList<PaymentType> paymentTypeList;
     private String mPotentialOrderId;
@@ -107,9 +96,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mAddMoreLink;
     private String mAddMoreMsg;
     private MutableLong mElapsedTime;
-    private boolean mIsPrepaymentProcessingStarted;
-    private OrderPrepaymentProcessingTask<PaymentSelectionActivity> mOrderPrepaymentProcessingTask;
-    private boolean mIsPrepaymentAbortInitiated;
     private boolean isPayUOptionVisible;
     private PayzappPostParams mPayzappPostParams;
     private HashMap<String, String> mPaymentParams;
@@ -130,47 +116,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
         renderPaymentDetails();
         renderFooter(false);
         MoEngageWrapper.suppressInAppMessageHere(moEHelper);
-        if (savedInstanceState != null) {
-            if (mOrdersCreated == null) {
-                mOrdersCreated = savedInstanceState.getParcelableArrayList(Constants.ORDERS);
-            }
-            if (mTxnId == null) {
-                mTxnId = savedInstanceState.getString(Constants.TXN_ID);
-            }
-            if (mSelectedPaymentMethod == null) {
-                mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
-            }
-            mIsPrepaymentProcessingStarted =
-                    savedInstanceState.getBoolean(IS_PREPAYMENT_TASK_STARTED, false);
-            mIsPrepaymentAbortInitiated =
-                    savedInstanceState.getBoolean(IS_PREPAYMENT_ABORT_INITIATED, false);
-            if (isPaymentPending()) {
-                startPrepaymentProcessing(savedInstanceState);
-            }
-            mOrderAmount = savedInstanceState.getString(Constants.AMOUNT);
-        } else {
-            trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
-        }
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (mOrdersCreated != null) {
-            outState.putParcelableArrayList(Constants.ORDERS, mOrdersCreated);
-        }
-        if (mTxnId != null) {
-            outState.putString(Constants.TXN_ID, mTxnId);
-        }
         if (mSelectedPaymentMethod != null) {
             outState.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
-        }
-        if (mOrderPrepaymentProcessingTask != null) {
-            outState.putBoolean(IS_PREPAYMENT_TASK_STARTED, mIsPrepaymentProcessingStarted);
-            outState.putBoolean(IS_PREPAYMENT_TASK_PAUSED, mOrderPrepaymentProcessingTask.isPaused());
-            outState.putBoolean(IS_PREPAYMENT_ABORT_INITIATED, mIsPrepaymentAbortInitiated);
-        }
-        if (mOrderAmount != null) {
-            outState.putString(Constants.AMOUNT, mOrderAmount);
         }
         if (mPaymentParams != null) {
             Gson gson = new Gson();
@@ -181,53 +133,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             outState.putParcelable(PAYZAPP_PAYMENT_PARAMS, mPayzappPostParams);
         }
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mOrderPrepaymentProcessingTask != null && !mIsPrepaymentAbortInitiated) {
-            mOrderPrepaymentProcessingTask.resume();
-        }
-        if (PaytmResponseHolder.hasPendingTransaction()) {
-            PaytmResponseHolder.processPaytmResponse(this);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mOrderPrepaymentProcessingTask != null) {
-            mOrderPrepaymentProcessingTask.pause();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mOrderPrepaymentProcessingTask != null) {
-            mOrderPrepaymentProcessingTask.cancel(true);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (isPaymentPending()) {
-            if (mOrderPrepaymentProcessingTask != null) {
-                mOrderPrepaymentProcessingTask.pause();
-            }
-            showAlertDialog(null, getString(R.string.abort_payment_transaction_confirmation),
-                    getString(R.string.yesTxt), getString(R.string.noTxt),
-                    Constants.PREPAYMENT_ABORT_CONFIRMATION_DIALOG, null);
-            mIsPrepaymentAbortInitiated = true;
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    private boolean isPaymentPending() {
-        return mIsPrepaymentProcessingStarted && !TextUtils.isEmpty(mSelectedPaymentMethod)
-                && mOrdersCreated != null;
     }
 
     private void renderCheckOutProgressView() {
@@ -614,35 +519,25 @@ public class PaymentSelectionActivity extends BackButtonActivity
         */
         onStateNotSaved();
         setSuspended(false);
-        boolean handled = false;
-        if (mOrdersCreated != null) {
-            ValidatePaymentRequest validatePaymentRequest =
-                    new ValidatePaymentRequest(mTxnId, mOrdersCreated.get(0).getOrderNumber(),
-                            mPotentialOrderId, mSelectedPaymentMethod);
-            validatePaymentRequest.setFinalTotal(mOrderAmount);
-            ValidatePayment validatePayment = new ValidatePayment<>(this, validatePaymentRequest);
-            handled = validatePayment.onActivityResult(requestCode, resultCode, data);
-        }
-        if (!handled) {
-            switch (resultCode) {
-                case NavigationCodes.VOUCHER_APPLIED:
-                    if (data != null) {
-                        String voucherCode = data.getStringExtra(Constants.EVOUCHER_CODE);
-                        if (!TextUtils.isEmpty(voucherCode)) {
-                            applyVoucher(voucherCode);
-                        }
+        switch (resultCode) {
+            case NavigationCodes.VOUCHER_APPLIED:
+                if (data != null) {
+                    String voucherCode = data.getStringExtra(Constants.EVOUCHER_CODE);
+                    if (!TextUtils.isEmpty(voucherCode)) {
+                        applyVoucher(voucherCode);
                     }
-                    break;
-                case NavigationCodes.GO_TO_SLOT_SELECTION:
-                    setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
-                    finish();
-                    break;
-                default:
-                    super.onActivityResult(requestCode, resultCode, data);
-                    break;
-            }
+                }
+                break;
+            case NavigationCodes.GO_TO_SLOT_SELECTION:
+                setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
+                finish();
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
         }
     }
+
 
     /**
      * checking the payment type and based on the calling placeOrder API.
@@ -734,7 +629,26 @@ public class PaymentSelectionActivity extends BackButtonActivity
             mOrdersCreated = orders;
             mAddMoreLink = addMoreLink;
             mAddMoreMsg = addMoreMsg;
-            startPrepaymentProcessing(null);
+
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.P_ORDER_ID, mPotentialOrderId);
+            bundle.putParcelableArrayList(Constants.ORDERS, mOrdersCreated);
+            bundle.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
+            bundle.putBoolean(Constants.PAYU_SELECTED, isPayUOptionVisible);
+            Gson gson = new Gson();
+            String jsonPaymentParams = gson.toJson(mPaymentParams);
+            bundle.putString(PAYMENT_PARAMS, jsonPaymentParams);
+            bundle.putParcelable(PAYZAPP_PAYMENT_PARAMS, mPayzappPostParams);
+            bundle.putString(Constants.ADD_MORE_LINK, mAddMoreLink);
+            bundle.putString(Constants.ADD_MORE_MSG, mAddMoreMsg);
+
+            Intent postOrderIntent = new Intent(PaymentSelectionActivity.this, PostOrderCreationActivity.class);
+            postOrderIntent.putExtras(bundle);
+            postOrderIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(postOrderIntent);
+            setResult(NavigationCodes.GO_TO_HOME);
+            finish();
+
         } else {
             showOrderThankyou(orders, addMoreLink, addMoreMsg);
         }
@@ -781,159 +695,15 @@ public class PaymentSelectionActivity extends BackButtonActivity
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    private void startPrepaymentProcessing(Bundle savedInstanceState) {
-        mIsPrepaymentProcessingStarted = true;
-        final View paymentInProgressView = findViewById(R.id.layoutPaymentInProgress);
-        paymentInProgressView.setVisibility(View.VISIBLE);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
-
-        ((TextView) findViewById(R.id.lblOrderPlaced)).setTypeface(faceRobotoRegular);
-
-        //getting values from the bundle and setting the payment parameters
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(PAYMENT_PARAMS)) {
-                try {
-                    Gson gson = new Gson();
-                    Type stringStringMap = new TypeToken<HashMap<String, String>>() {
-                    }.getType();
-                    mPaymentParams = gson.fromJson(savedInstanceState.getString(PAYMENT_PARAMS), stringStringMap);
-                } catch (Exception e) {
-                    Crashlytics.logException(new ClassCastException(
-                            "Exception while getting values from bundle"));
-                }
-            }
-            if (savedInstanceState.containsKey(PAYZAPP_PAYMENT_PARAMS)) {
-                try {
-                    mPayzappPostParams = savedInstanceState.getParcelable(PAYZAPP_PAYMENT_PARAMS);
-                } catch (Exception e) {
-                    Crashlytics.logException(new ClassCastException(
-                            "Exception while getting values from bundle"));
-                }
-            }
-        }
-        mOrderPrepaymentProcessingTask =
-                new OrderPrepaymentProcessingTask<PaymentSelectionActivity>(this,
-                        mPotentialOrderId, mOrdersCreated.get(0).getOrderNumber(),
-                        mSelectedPaymentMethod, false, false, isPayUOptionVisible) {
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                        mIsPrepaymentProcessingStarted = true;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean success) {
-                        super.onPostExecute(success);
-                        if (isPaused() || isCancelled() || isSuspended()) {
-                            return;
-                        }
-                        mIsPrepaymentProcessingStarted = false;
-                        if (!success) {
-                            if (errorResponse != null) {
-                                if (errorResponse.isException()) {
-                                    //TODO: Possible network error retry
-                                    getHandler().handleRetrofitError(errorResponse.getThrowable(), false);
-                                } else if (errorResponse.getErrorType() == ErrorResponse.HTTP_ERROR) {
-                                    getHandler().handleHttpError(errorResponse.getCode(),
-                                            errorResponse.getMessage(), false);
-                                } else {
-                                    getHandler().sendEmptyMessage(errorResponse.getCode(),
-                                            errorResponse.getMessage(), false);
-                                }
-                            } else {
-                                //Should never happen
-                                Crashlytics.logException(new IllegalStateException(
-                                        "OrderPreprocessing error without error response"));
-                            }
-                        }
-                        mOrderPrepaymentProcessingTask = null;
-                    }
-                };
-        /**
-         * setting the payment parameters
-         */
-        mOrderPrepaymentProcessingTask.setPaymentParams(mPaymentParams);
-        mOrderPrepaymentProcessingTask.setPayZappPaymentParams(mPayzappPostParams);
-
-        if (savedInstanceState != null
-                && savedInstanceState.getBoolean(IS_PREPAYMENT_TASK_PAUSED, false)) {
-            mOrderPrepaymentProcessingTask.pause();
-        } else {
-            mOrderPrepaymentProcessingTask.setMinDuration(5000);
-        }
-        mOrderPrepaymentProcessingTask.execute();
-    }
-
-    @Override
-    public void setTxnDetails(String txnId, String amount) {
-        mTxnId = txnId;
-        mOrderAmount = amount;
-    }
-
-    @Override
-    public void onPaymentValidated(boolean status, @Nullable String msg, @NonNull ArrayList<Order> orders) {
-        mOrdersCreated = orders;
-        if (status || msg == null) {
-            showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
-        } else {
-            // Show a message and then take to Order thank-you page
-            showAlertDialog(null, msg, Constants.SOURCE_PLACE_ORDER_DIALOG_REQUEST);
-        }
-    }
-
     @Override
     protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
         switch (sourceName) {
             case Constants.REMOVE_VOUCHER_DIALOG_REQUEST:
                 removeVoucher();
                 break;
-            case Constants.SOURCE_PLACE_ORDER_DIALOG_REQUEST:
-                showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
-                break;
-            case Constants.PREPAYMENT_ABORT_CONFIRMATION_DIALOG:
-                String txnId = null;
-                mIsPrepaymentAbortInitiated = false;
-                if (mOrderPrepaymentProcessingTask != null) {
-                    mOrderPrepaymentProcessingTask.cancel(true);
-                    txnId = mOrderPrepaymentProcessingTask.getTransactionId();
-                    mOrderPrepaymentProcessingTask = null;
-                }
-                mIsPrepaymentProcessingStarted = false;
-                String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-                if (!TextUtils.isEmpty(txnId)) {
-                    ValidatePaymentRequest validatePaymentRequest =
-                            new ValidatePaymentRequest(txnId, fullOrderId, mPotentialOrderId,
-                                    null);  // Passing payment method as null to convert it to COD
-                    new ValidatePayment<>(this, validatePaymentRequest).validate(null);
-                } else {
-                    showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
-                }
-                break;
             default:
                 super.onPositiveButtonClicked(sourceName, valuePassed);
         }
-    }
-
-    @Override
-    protected void onNegativeButtonClicked(int requestCode, Bundle data) {
-        switch (requestCode) {
-            case Constants.PREPAYMENT_ABORT_CONFIRMATION_DIALOG:
-                mIsPrepaymentAbortInitiated = false;
-                if (mOrderPrepaymentProcessingTask != null
-                        && mOrderPrepaymentProcessingTask.isPaused()
-                        && !mOrderPrepaymentProcessingTask.isCancelled()) {
-                    mOrderPrepaymentProcessingTask.resume();
-                } else {
-                    startPrepaymentProcessing(null);
-                }
-                break;
-            default:
-                super.onNegativeButtonClicked(requestCode, data);
-        }
-
     }
 
     @Override

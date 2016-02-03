@@ -148,6 +148,7 @@ public interface TrackingAware {
     String CHECKOUT_PLACE_ORDER_CLICKED = "Checkout.Place Order Clicked";
     String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Completed";
     String PLACE_ORDER = "placeorder";
+    String ORDER_VALIDATION_RETRY_SELECTED = "OrderValidation.Retry Selected";
 
     String CHECKOUT_ADDRESS_CLICKED_CONTI = "Checkout.Address Continue Clicked ";
     String CHECKOUT_ADDRESS_SELECTED = "Checkout.Address Selected";

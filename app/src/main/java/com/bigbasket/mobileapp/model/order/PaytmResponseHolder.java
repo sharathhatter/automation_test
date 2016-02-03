@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.order;
 
 import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
+import com.bigbasket.mobileapp.handler.BigBasketRetryMessageHandler;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 
 import java.util.HashMap;
@@ -31,6 +32,11 @@ public class PaytmResponseHolder {
 
     public static <T extends AppOperationAware> void processPaytmResponse(T ctx) {
         new ValidatePayment<>(ctx, paytmResponseHolder.validatePaymentRequest)
+                .validatePaytm(paytmResponseHolder.status, paytmResponseHolder.paramsMap);
+        paytmResponseHolder = null;
+    }
+    public static <T extends AppOperationAware> void processPaytmResponse(T ctx, BigBasketRetryMessageHandler handler) {
+        new ValidatePayment<>(ctx, paytmResponseHolder.validatePaymentRequest,handler)
                 .validatePaytm(paytmResponseHolder.status, paytmResponseHolder.paramsMap);
         paytmResponseHolder = null;
     }

@@ -228,6 +228,8 @@ public class Constants {
     public static final String BB_WALLET = "walletPrepaid";
     public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
     public static final String PAYTM_HASH_GENERATION_URL = "GURL";
+    public static final String PAYU_SELECTED = "payu_selected";
+
 
     public static final String HOME = "home";
     public static final String ADDRESSES = "addresses";
@@ -654,6 +656,7 @@ public class Constants {
     public static final int EMPTY_BASKET_DIALOG_QUEST = 8004;
     public static final int LOCATION_DIALOG_REQUEST = 8005;
     public static final int PREPAYMENT_ABORT_CONFIRMATION_DIALOG = 8006;
+    public static final int OFFLINE_PAYMENT_SHOW_THANKYOU_ABORT_CONFIRMATION_DIALOG = 8007;
 
 
     // App Indexing params
