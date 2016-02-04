@@ -117,9 +117,8 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
         otpEditTxt.setTypeface(faceRobotoRegular);
         otpEditTxt.addTextChangedListener(OTPeditextWatcher);
 
-        newPwdEditText = (EditText) findViewById(R.id.new_pass_word_edit_txt);
-        newPwdEditText.setTypeface(faceRobotoRegular);
-        newPwdEditText.setOnTouchListener(new OnCompoundDrawableClickListener(OnCompoundDrawableClickListener.DRAWABLE_RIGHT) {
+        final OnCompoundDrawableClickListener passWdVisibilityClickListener =
+                new OnCompoundDrawableClickListener(OnCompoundDrawableClickListener.DRAWABLE_RIGHT) {
             @Override
             public void onRightDrawableClicked() {
                 mIsPasswordVisible = !mIsPasswordVisible;
@@ -131,23 +130,14 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
             public void onLeftDrawableClicked() {
 
             }
-        });
+        };
+        newPwdEditText = (EditText) findViewById(R.id.new_pass_word_edit_txt);
+        newPwdEditText.setTypeface(faceRobotoRegular);
+        newPwdEditText.setOnTouchListener(passWdVisibilityClickListener);
 
         confirmPwdEditText = (EditText) findViewById(R.id.confirm_pwd_edit_txt);
         confirmPwdEditText.setTypeface(faceRobotoRegular);
-        newPwdEditText.setOnTouchListener(new OnCompoundDrawableClickListener(OnCompoundDrawableClickListener.DRAWABLE_RIGHT) {
-            @Override
-            public void onRightDrawableClicked() {
-                mIsPasswordVisible = !mIsPasswordVisible;
-                togglePasswordView(newPwdEditText, mIsPasswordVisible);
-                togglePasswordView(confirmPwdEditText, mIsPasswordVisible);
-            }
-
-            @Override
-            public void onLeftDrawableClicked() {
-
-            }
-        });
+        confirmPwdEditText.setOnTouchListener(passWdVisibilityClickListener);
 
         txtUpdatePassword = (TextView) findViewById(R.id.txt_update_password);
         txtUpdatePassword.setTypeface(faceRobotoRegular);
