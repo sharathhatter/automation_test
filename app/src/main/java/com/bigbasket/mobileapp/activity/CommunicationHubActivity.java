@@ -52,15 +52,10 @@ public class CommunicationHubActivity extends BaseActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-
-        if (getIntent().getExtras() != null)
-            isFaqToBeShown = getIntent().getBooleanExtra(Constants.COMMUNICATION_HUB_FAQ_SHOW, false);
-        /**
-         * setting the tabs
-         * 1. Alerts: displays all the alerts like order status,wallet funding etc
-         * 2. Offers: displays all the offers available for the user.(can be fill image or if image is unaviable it will be replaced with title and description)
-         * TODO :description of tab 3
-         */
+        isFaqToBeShown = getIntent().getBooleanExtra(Constants.COMMUNICATION_HUB_FAQ_SHOW, false);
+        if(isFaqToBeShown) {
+            setTitle(R.string.help_and_support);
+        }
         setUpTabs();
     }
 
@@ -158,8 +153,13 @@ public class CommunicationHubActivity extends BaseActivity {
                     if (isFaqToBeShown) {
                         args.putString(Constants.WEBVIEW_URL, Constants.COMMUNICATION_HUB_FAQ_URL);
                         args.putString(Constants.WEBVIEW_TITLE, mContext.getResources()
-                                .getString(R.string.title_activity_communication_hub));
-                        FlatPageFragment flatPageFragment = new FlatPageFragment();
+                                .getString(R.string.help_and_support));
+                        FlatPageFragment flatPageFragment = new FlatPageFragment() {
+                            @Override
+                            protected void setTitle(String title) {
+                                //Ignore the Title from webview
+                            }
+                        };
                         flatPageFragment.setArguments(args);
                         return flatPageFragment;
                     } else {
@@ -179,18 +179,13 @@ public class CommunicationHubActivity extends BaseActivity {
                         args.putString(Constants.COMMUNICATION_HUB_FILTER, Constants.COMMUNICATION_HUB_OFFER);
                         return AlertsOffersScreenFragment.newInstance(args);
                     }
-                case 2:
-                    return new AskUsFragment();
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            if (isFaqToBeShown)
-                return 2;
-            return 3;
+            return 2;
         }
 
         @Override

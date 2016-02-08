@@ -70,6 +70,13 @@ public class BaseApplication extends Application {
         FacebookSdk.sdkInitialize(appContext);
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
         initializeLeakCanary();
+
+        MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
+        MoEHelper moeHelper = MoEHelper.getInstance(getApplicationContext());
+        moeHelper.optOutOfGeoFences(true);
+        moeHelper.optOutOfLocationTracking(true);
+        PushManager.getInstance(this).setMessageListener(new PushNotificationListener());
+
         if (!BuildConfig.DEBUG) {
             AdWordsConversionReporter.reportWithConversionId(appContext,
                     "963141508", "hfTqCLOjpWAQhL-hywM", "0.00", false);

@@ -466,9 +466,15 @@ public class UIUtil {
                                          Callback callback) {
 
         Picasso picasso = Picasso.with(imageView.getContext());
-        picasso.cancelRequest(imageView);
         RequestCreator requestCreator = picasso.load(url)
                 .error(R.drawable.noimage);
+        if(url == null) {
+            requestCreator.into(imageView, callback);
+            return;
+        } else {
+            picasso.cancelRequest(imageView);
+        }
+
         if(placeHolderDrawableId > 0) {
             requestCreator.placeholder(placeHolderDrawableId);
         }
@@ -477,11 +483,11 @@ public class UIUtil {
         }
         if (targetImageWidth > 0 && targetImageHeight > 0) {
             requestCreator.resize(targetImageWidth, targetImageHeight);
-            Log.i(imageView.getContext().getClass().getName(),
+            Log.i(imageView.getContext().getClass().getSimpleName(),
                     "Loading image " + (skipMemoryCache ? "[NO_MEM_CACHE] " : "")
                             + "(" + targetImageWidth + "," + targetImageHeight + ") = " + url);
         } else {
-            Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
+            Log.i(imageView.getContext().getClass().getSimpleName(), "Loading image = " + url);
         }
         if (!animate) {
             requestCreator.noFade();

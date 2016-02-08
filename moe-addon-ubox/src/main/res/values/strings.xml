@@ -17,5 +17,5 @@
     <string name="state_no_connection">You are not connected to internet</string>
     <string name="msg_connectivity_lost">Lost internet connectivity</string>
     <string name="msg_connectivity_gained">Connected to internet</string>
-    <string name="welcome_text">You can ask questions and share your feedback with our customer support team here. Our team will respond to your queries between 7:00AM to 10:00PM</string>
+    <string name="welcome_text">You can ask questions and share your feedback with our customer support team here. Our team will respond to your queries between 8:00AM to 10:00PM</string>
 </resources>

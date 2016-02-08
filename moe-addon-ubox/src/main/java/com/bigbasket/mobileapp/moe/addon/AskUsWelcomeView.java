@@ -60,7 +60,7 @@ public class AskUsWelcomeView extends RelativeLayout implements View.OnClickList
             Picasso.with(getContext()).load(R.drawable.ic_close_black_18dp)
                     .noFade().memoryPolicy(MemoryPolicy.NO_STORE).into(mButtonView);
         } else {
-            Picasso.with(getContext()).load(R.drawable.ic_announcement_black_24dp)
+            Picasso.with(getContext()).load(R.drawable.ic_announcement_24dp)
                     .noFade().memoryPolicy(MemoryPolicy.NO_STORE).into(mButtonView);
             setBackgroundColor(Color.TRANSPARENT);
         }
