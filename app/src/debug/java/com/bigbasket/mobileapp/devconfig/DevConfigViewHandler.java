@@ -17,6 +17,7 @@ public class DevConfigViewHandler implements View.OnClickListener, Handler.Callb
     private Handler mHandler;
     private int clickCount = 0 ;
     private Toast mToast;
+    public static final int DEFAULT_CLICK_COUNT = 7;
 
     private DevConfigViewHandler(View view) {
         mView = view;
@@ -39,13 +40,13 @@ public class DevConfigViewHandler implements View.OnClickListener, Handler.Callb
             startDeveloperConfigurations(context);
             return;
         }
-        if(clickCount >= 10) {
+        if(clickCount >= DEFAULT_CLICK_COUNT) {
             DeveloperConfigs.setIsDeveloper(context,true);
             mIsDeveloper = true;
             showToastMessage(context, "You are now a developer!!!");
             startDeveloperConfigurations(context);
         } else if (clickCount >= 5) {
-            showToastMessage(context, (10 - clickCount) + " clicks away from becoming a developer");
+            showToastMessage(context, (DEFAULT_CLICK_COUNT - clickCount) + " clicks away from becoming a developer");
         }
         clickCount++;
         mHandler.removeCallbacksAndMessages(null);
