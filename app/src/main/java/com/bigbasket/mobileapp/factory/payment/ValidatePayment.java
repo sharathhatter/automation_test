@@ -139,6 +139,7 @@ public final class ValidatePayment<T extends AppOperationAware> {
         } else {
             resId = R.string.validating_payment;
         }
+
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context.getCurrentActivity());
         context.showProgressDialog(context.getCurrentActivity().getString(resId));
         Call<ApiResponse<ValidateOrderPaymentApiResponse>> call = bigBasketApiService.
@@ -147,63 +148,65 @@ public final class ValidatePayment<T extends AppOperationAware> {
                         validatePaymentRequest.isPayNow() ? "1" : "0",
                         validatePaymentRequest.isWallet() ? "1" : "0", additionalParams);
         call.enqueue(new BBNetworkCallback<ApiResponse<ValidateOrderPaymentApiResponse>>(context) {
-            @Override
-            public void onSuccess(ApiResponse<ValidateOrderPaymentApiResponse> validateOrderPaymentResponse) {
-                switch (validateOrderPaymentResponse.status) {
-                    case 0:
-                        if (context instanceof OnPaymentValidationListener) {
-                            ((OnPaymentValidationListener) context).onPaymentValidated(true, null,
-                                    validateOrderPaymentResponse.apiResponseContent.orders);
-                        }
-                        break;
-                    case ApiErrorCodes.PAYMENT_ERROR:
-                        if (context instanceof OnPaymentValidationListener) {
-                            ((OnPaymentValidationListener) context).onPaymentValidated(false,
-                                    validateOrderPaymentResponse.message,
-                                    validateOrderPaymentResponse.apiResponseContent.orders);
-                        }
-                        break;
-                    default:
-                        if (handler != null) {
-                            handler.sendEmptyMessage(validateOrderPaymentResponse.status,
-                                    validateOrderPaymentResponse.message);
-                        } else {
-                            context.getHandler().sendEmptyMessage(validateOrderPaymentResponse.status,
-                                    validateOrderPaymentResponse.message);
-                        }
-                        break;
-                }
-            }
+                         @Override
+                         public void onSuccess
+                                 (ApiResponse<ValidateOrderPaymentApiResponse> validateOrderPaymentResponse) {
+                             switch (validateOrderPaymentResponse.status) {
+                                 case 0:
+                                     if (context instanceof OnPaymentValidationListener) {
+                                         ((OnPaymentValidationListener) context).onPaymentValidated(true, null,
+                                                 validateOrderPaymentResponse.apiResponseContent.orders);
+                                     }
+                                     break;
+                                 case ApiErrorCodes.PAYMENT_ERROR:
+                                     if (context instanceof OnPaymentValidationListener) {
+                                         ((OnPaymentValidationListener) context).onPaymentValidated(false,
+                                                 validateOrderPaymentResponse.message,
+                                                 validateOrderPaymentResponse.apiResponseContent.orders);
+                                     }
+                                     break;
+                                 default:
+                                     if (handler != null) {
+                                         handler.sendEmptyMessage(validateOrderPaymentResponse.status,
+                                                 validateOrderPaymentResponse.message);
+                                     } else {
+                                         context.getHandler().sendEmptyMessage(validateOrderPaymentResponse.status,
+                                                 validateOrderPaymentResponse.message);
+                                     }
+                                     break;
+                             }
+                         }
 
-            @Override
-            public void onFailure(int httpErrorCode, String msg) {
-                if (handler != null) {
-                    handler.handleHttpError(httpErrorCode, msg, false);
-                } else {
-                    super.onFailure(httpErrorCode, msg);
-                }
-            }
+                         @Override
+                         public void onFailure(int httpErrorCode, String msg) {
+                             if (handler != null) {
+                                 handler.handleHttpError(httpErrorCode, msg, false);
+                             } else {
+                                 super.onFailure(httpErrorCode, msg);
+                             }
+                         }
 
-            @Override
-            public void onFailure(Throwable t) {
-                if (handler != null) {
-                    if (context.isSuspended()) return;
-                    if (!updateProgress()) return;
-                    handler.handleRetrofitError(t, false);
-                } else {
-                    super.onFailure(t);
-                }
-            }
+                         @Override
+                         public void onFailure(Throwable t) {
+                             if (handler != null) {
+                                 if (context.isSuspended()) return;
+                                 if (!updateProgress()) return;
+                                 handler.handleRetrofitError(t, false);
+                             } else {
+                                 super.onFailure(t);
+                             }
+                         }
 
-            @Override
-            public boolean updateProgress() {
-                try {
-                    context.hideProgressDialog();
-                    return true;
-                } catch (IllegalArgumentException e) {
-                    return false;
-                }
-            }
-        });
+                         @Override
+                         public boolean updateProgress() {
+                             try {
+                                 context.hideProgressDialog();
+                                 return true;
+                             } catch (IllegalArgumentException e) {
+                                 return false;
+                             }
+                         }
+                     }
+        );
     }
 }

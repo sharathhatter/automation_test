@@ -102,6 +102,7 @@ public final class TrackEventkeys {
     public static final String APPLY_EVOUCHER_SCREEN = "offer";
     public static final String CREATE_OR_EDIT_DELIVERY_ADDRESS_SCREEN = "Create or Edit Address";
     public static final String PAYMENT_SELECTION_SCREEN = "Payment Options";
+    public static final String PAYMENT_SCREEN = "Post Order Payment Options";
     public static final String SLOT_SELECTION_SCREEN = "Slot Selection";
     public static final String CREDIT_CARD_SCREEN = "Credit Card";
     public static final String THANK_YOU_SCREEN = "Thank You";
@@ -121,7 +122,8 @@ public final class TrackEventkeys {
     public static final String CO_QC = "co.qc";
     public static final String CO_DELIVERY_OPS = "co.delivery-options";
     public static final String CO_GIFT_OPS = "co.gift-options";
-    public static final String CO_PAYMENT = "co.payment";
+    public static final String CO_PAYMENT = "co.payment-selection";
+    public static final String CO_PAYMENT_POST_ORDER_CREATION = "co.post-order-payment-options";
     public static final String ACCOUNT_MENU = "account-menu";
     public static final String ORDER_HISTORY = "order-history";
     public static final String ACCOUNT = NAVIGATION_CTX_MY_ACCOUNT;

@@ -626,6 +626,11 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
+            android:name=".activity.order.uiv3.PostOrderCreationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
             android:name=".activity.order.uiv3.OrderThankyouActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
