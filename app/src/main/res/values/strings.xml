@@ -109,7 +109,7 @@
     <string name="otpCodeErrorMsg">Confirmation code entered is not valid.</string>
     <string name="otpCodeMissing">Please enter the confirmation code</string>
     <string name="numberUsedByAnotherMember">This mobile number is already in use, please use another mobile number.</string>
-    <string name="resendOtpMsg">Code has been resent</string>
+    <string name="resendOtpMsg">OTP has been resent</string>
     <string name="resending_otp">Resending verification code</string>
     <string name="more">More</string>
     <string name="moreAllCaps">MORE</string>
@@ -119,6 +119,7 @@
     <string name="placeOrderPleaseWait">Please wait while we place your order and transfer you to payment gateway.</string>
     <string name="email">E-mail</string>
     <string name="oldPassword">Old password</string>
+    <string name="otpString">One time Password</string>
     <string name="newPassword">New Password</string>
     <string name="confirmPassword">Confirm Password</string>
     <string name="password">Password</string>
@@ -151,6 +152,7 @@
     <string name="acceptedFoodCoupon">Accepted food coupon for this order is </string>
     <string name="deliveryCharges">Delivery Charges</string>
     <string name="noOrdersPlaced">You haven\'t placed any orders yet</string>
+    <string name="validationretry">Looks like there is some network issue.\nPlease check your internet connection.</string>
 
 
     <!-- Shopping list -->
@@ -286,8 +288,8 @@
     <string name="productFound">product</string>
     <string name="productFoundPlural">products</string>
     <string name="createNewList">Create New List</string>
-    <string name="connectUsing">login using</string>
-    <string name="signUpUsing">signup using</string>
+    <string name="connectUsing">Login using</string>
+    <string name="signUpUsing">Sign-Up using</string>
     <string name="tutorial">Tutorial</string>
     <string name="promotions">Promotions</string>
     <string name="quantity">Quantity:&#160;</string>
@@ -432,7 +434,6 @@
     <string name="available_in">\u0020available \nin </string>
     <string name="adding_newStores">\n\nWe will be adding new stores in this location soon. Meanwhile, please checkout other categories.\nThanks!</string>
     <string name="visit_store">VISIT STORE</string>
-    <string name="dismiss_">DISMISS</string>
     <string name="order_details">Order Details</string>
     <string name="empty_email_address_error">Please enter your e-mail address</string>
     <string name="empty_password_error">Please enter your password</string>
@@ -445,10 +446,14 @@
     <string name="close">Close</string>
     <string name="no_delivery_address">No delivery address available. Please add a delivery address.</string>
     <string name="failed_to_add_basket">Could not add to basket</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="email_not_found">Email not found</string>
 
     <string name="terms_and_cond_start">By signing up, you agree to BigBasket’s\u0020</string>
     <string name="terms_and_cond">Terms &amp; Conditions,</string>
     <string name="and">\u0020and\u0020</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="promo_more_needed_format">"%1$s more needed for the promo"</string>
+    <string name="sdcarderror">Please insert SD-card to display map.</string>
 
 </resources>

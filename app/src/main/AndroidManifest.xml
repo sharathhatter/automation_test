@@ -42,10 +42,10 @@
         android:xlargeScreens="true" />
 
     <permission
-        android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"
+        android:name="${applicationId}.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
+    <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <uses-feature
@@ -53,9 +53,9 @@
         android:required="false" />
 
     <application
-        android:name=".application.BaseApplication"
+        android:name="com.bigbasket.mobileapp.application.BaseApplication"
         android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="${launcher_icon}"
         android:label="@string/app_name"
         android:theme="@style/BBNavDrawerTheme"
         tools:replace="android:theme,android:allowBackup">
@@ -64,7 +64,7 @@
             android:value=".activity.product.ProductListActivity" />
 
         <activity
-            android:name=".activity.SplashActivity"
+            android:name="com.bigbasket.mobileapp.activity.SplashActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
@@ -98,12 +98,12 @@
         </receiver>
 
         <activity
-            android:name=".activity.CustomerFeedbackActivity"
+            android:name="com.bigbasket.mobileapp.activity.CustomerFeedbackActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.DeepLinkDispatcherActivity"
+            android:name="com.bigbasket.mobileapp.activity.DeepLinkDispatcherActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan">
@@ -499,7 +499,7 @@
             <!-- end My orders -->
         </activity>
         <activity
-            android:name=".activity.base.uiv3.SearchActivity"
+            android:name="com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
@@ -511,7 +511,7 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".activity.product.ProductListActivity"
+            android:name="com.bigbasket.mobileapp.activity.product.ProductListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan">
@@ -529,59 +529,59 @@
             android:resource="@xml/noindex" />
 
         <activity
-            android:name=".activity.product.FilterActivity"
+            android:name="com.bigbasket.mobileapp.activity.product.FilterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.order.uiv3.ShowCartActivity"
+            android:name="com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.product.DiscountActivity"
+            android:name="com.bigbasket.mobileapp.activity.product.DiscountActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.HomeActivity"
+            android:name="com.bigbasket.mobileapp.activity.HomeActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.SectionHelpActivity"
+            android:name="com.bigbasket.mobileapp.activity.SectionHelpActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.order.uiv3.OrderDetailActivity"
+            android:name="com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.order.uiv3.AvailableVoucherListActivity"
+            android:name="com.bigbasket.mobileapp.activity.order.uiv3.AvailableVoucherListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.order.MemberAddressFormActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BackButtonTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name=".activity.account.uiv3.UpdateProfileActivity"
+            android:name="com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".activity.shoppinglist.ShoppingListActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.UpdateProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name="com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.shoppinglist.ShoppingListSummaryActivity"
+            android:name="com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.account.uiv3.SocialLoginConfirmActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginConfirmActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
@@ -591,42 +591,47 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
-            android:name=".activity.account.uiv3.ChooseLocationActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.account.uiv3.PlacePickerApiActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.PlacePickerApiActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.account.uiv3.SignInActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LoginScreenTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.TutorialActivity"
+            android:name="com.bigbasket.mobileapp.activity.TutorialActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.account.uiv3.SignupActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LoginScreenTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.order.uiv3.ShipmentSelectionActivity"
+            android:name="com.bigbasket.mobileapp.activity.order.uiv3.ShipmentSelectionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.order.uiv3.PaymentSelectionActivity"
+            android:name="com.bigbasket.mobileapp.activity.order.uiv3.PaymentSelectionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.order.uiv3.OrderThankyouActivity"
+            android:name="com.bigbasket.mobileapp.activity.order.uiv3.PostOrderCreationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name="com.bigbasket.mobileapp.activity.order.uiv3.OrderThankyouActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
@@ -636,68 +641,74 @@
             android:value="@string/fb_app_id" />
 
         <activity
-            android:name=".activity.account.uiv3.OrderListActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.base.uiv3.BackButtonActivity"
+            android:name="com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.base.uiv3.BackButtonWithBasketButtonActivity"
+            android:name="com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.account.uiv3.MyAccountActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.MyAccountActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.account.uiv3.DoWalletActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.payment.PayNowActivity"
+            android:name="com.bigbasket.mobileapp.activity.payment.PayNowActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.payment.PayNowThankyouActivity"
+            android:name="com.bigbasket.mobileapp.activity.payment.PayNowThankyouActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.payment.FundWalletActivity"
+            android:name="com.bigbasket.mobileapp.activity.payment.FundWalletActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.account.uiv3.WalletActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.WalletActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.ForgotPasswordActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LoginScreenTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!-- Gift -->
 
         <activity
-            android:name=".activity.gift.GiftHomeActivity"
+            android:name="com.bigbasket.mobileapp.activity.gift.GiftHomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.specialityshops.BBSpecialityShopsActivity"
+            android:name="com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity"
             android:theme="@style/BackButtonTheme"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <provider
-            android:name=".contentProvider.SearchSuggestionProvider"
-            android:authorities="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
+            android:name="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
+            android:authorities="${applicationId}.contentProvider.SearchSuggestionProvider"
             android:enabled="true"
             android:exported="false"
             android:multiprocess="true" />
@@ -717,7 +728,7 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <category android:name="com.bigbasket.mobileapp" />
+                <category android:name="${applicationId}" />
             </intent-filter>
         </receiver>
 
@@ -732,24 +743,24 @@
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
                 <data
-                    android:path="com.bigbasket.mobileapp"
+                    android:path="${applicationId}"
                     android:scheme="package" />
             </intent-filter>
         </receiver>
 
         <provider
             android:name="com.moe.pushlibrary.providers.MoEProvider"
-            android:authorities="com.bigbasket.mobileapp.moengage.provider"
+            android:authorities="${applicationId}.moengage.provider"
             android:exported="false" />
 
         <!-- push notification landing page Need to change parent Activity -->
         <activity
             android:name="com.moe.pushlibrary.activities.MoEActivity"
-            android:parentActivityName=".activity.SplashActivity"
+            android:parentActivityName="com.bigbasket.mobileapp.activity.SplashActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.SplashActivity" />
+                android:value="com.bigbasket.mobileapp.activity.SplashActivity" />
         </activity>
 
         <!-- MANDATORY FIELD: APP ID AS SEEN ON MOENGAGE DASHBOARD APP SETTINGS PAGE -->
@@ -772,7 +783,7 @@
 
         <!-- moEngage UBox -->
         <activity
-            android:name=".activity.account.uiv3.BBUnifiedInboxActivity"
+            android:name="com.bigbasket.mobileapp.activity.account.uiv3.BBUnifiedInboxActivity"
             android:label="Communication Hub"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="adjustResize" />
@@ -795,10 +806,10 @@
             android:value="@string/google_geo_api_key" />
 
         <service
-            android:name=".service.AreaPinInfoIntentService"
+            android:name="com.bigbasket.mobileapp.service.AreaPinInfoIntentService"
             android:exported="false" />
         <service
-            android:name=".service.GetAppDataDynamicIntentService"
+            android:name="com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService"
             android:exported="false" />
 
         <receiver
@@ -810,16 +821,16 @@
         </receiver>
 
         <provider
-            android:name=".adapter.db.DatabaseContentProvider"
+            android:name="com.bigbasket.mobileapp.adapter.db.DatabaseContentProvider"
             android:authorities="${applicationId}.bbprovider"
             android:enabled="true"
             android:exported="false" />
 
         <service
-            android:name=".service.HomePageSyncService"
+            android:name="com.bigbasket.mobileapp.service.HomePageSyncService"
             android:exported="false" />
         <service
-            android:name=".service.MainMenuSyncService"
+            android:name="com.bigbasket.mobileapp.service.MainMenuSyncService"
             android:exported="false" />
 
         <receiver
@@ -831,8 +842,8 @@
         </receiver>
 
         <service
-            android:name=".service.AnalyticsIntentService"
-            android:exported="false"/>
+            android:name="com.bigbasket.mobileapp.service.AnalyticsIntentService"
+            android:exported="false" />
     </application>
 
 </manifest>

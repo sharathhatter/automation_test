@@ -17,29 +17,19 @@ import retrofit.Retrofit;
 public class BigBasketApiAdapter {
 
     private static volatile BigBasketApiService bigBasketApiService;
-    private static final Object lock = new Object();
 
     private BigBasketApiAdapter() {
     }
 
-    public static BigBasketApiService getApiService(Context context) {
-        BigBasketApiService localInstance = bigBasketApiService;
-        if (localInstance == null) {
-            synchronized (lock) {
-                localInstance = bigBasketApiService;
-                if (localInstance == null) {
-                    localInstance = refreshBigBasketApiService(context);
-                    bigBasketApiService = localInstance;
-                }
-            }
+    public static synchronized BigBasketApiService getApiService(Context context) {
+        if (bigBasketApiService == null) {
+            bigBasketApiService = refreshBigBasketApiService(context);
         }
         return bigBasketApiService;
     }
 
-    public static void reset() {
-        synchronized (lock) {
-            bigBasketApiService = null;
-        }
+    public static synchronized void reset() {
+        bigBasketApiService = null;
     }
 
     private static BigBasketApiService refreshBigBasketApiService(Context context) {

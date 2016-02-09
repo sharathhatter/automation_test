@@ -40,4 +40,6 @@
     <string name="select_net_banking">Select Net banking (of your choice):</string>
     <string name="delete_card">Delete</string>
     <string name="error_no_cards">Internal error. No stored cards found</string>
+    <string name="empty_netbanking_list_error">Netbanking list is not found. Try again</string>
+    <string name="empty_one_click_cards_error">No stored cards found. Try again</string>
 </resources>

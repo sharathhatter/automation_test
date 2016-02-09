@@ -39,7 +39,7 @@ import com.bigbasket.mobileapp.model.shipments.Slot;
 import com.bigbasket.mobileapp.model.shipments.SlotDisplay;
 import com.bigbasket.mobileapp.task.PostShipmentTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -167,7 +167,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
             BaseShipmentAction shipmentAction = shipmentActionHashMap != null ?
                     shipmentActionHashMap.get(shipment.getShipmentId()) : null;
-            String shipmentName = shipment.getShipmentName();
+            final String shipmentName = shipment.getShipmentName();
             String actionName = null;
             boolean applyBottom = true;
             if (shipmentAction != null) {
@@ -259,11 +259,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 imgHelp.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                        intent.putExtra(Constants.WEBVIEW_TITLE, shipment.getShipmentName());
-                        intent.putExtra(Constants.WEBVIEW_URL, shipment.getHelpPage());
-                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        FlatPageHelper.openFlatPage(getCurrentActivity(), shipment.getHelpPage(),
+                                shipment.getShipmentName());
                     }
                 });
             } else {

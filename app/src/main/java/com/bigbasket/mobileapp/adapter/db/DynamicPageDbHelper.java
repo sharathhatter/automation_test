@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -59,7 +58,7 @@ public class DynamicPageDbHelper {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_DYNAMIC_SCREEN_TYPE, dynamicScreenType);
         cv.put(COLUMN_SCREEN_DATA, compressedDynamicScreenJson);
-        if (existingID <= 0) {
+        if (existingID < 0) {
             context.getContentResolver().insert(uri, cv);
         } else {
             context.getContentResolver().update(uri,
@@ -98,11 +97,7 @@ public class DynamicPageDbHelper {
     }
 
     public static void clearAllAsync(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            AsyncTask.THREAD_POOL_EXECUTOR.execute(new DynamicScreenResetRunnable(context));
-        } else {
-            new Thread(new DynamicScreenResetRunnable(context)).start();
-        }
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(new DynamicScreenResetRunnable(context));
     }
 
     public static void clearAll(Context context) {
@@ -124,6 +119,12 @@ public class DynamicPageDbHelper {
             clearAll(context);
         }
     }
+
+    /* Uncomment when needed
+    public static final int COLUMN_ID_INDEX = 0;
+    public static final int COLUMN_DYNAMIC_SCREEN_TYPE_INDEX = 1;
+    */
+    public static final int COLUMN_SCREEN_DATA_INDEX = 2;
 
     public static String[] getDefaultProjection() {
         return new String[]{COLUMN_ID, COLUMN_DYNAMIC_SCREEN_TYPE, COLUMN_SCREEN_DATA};

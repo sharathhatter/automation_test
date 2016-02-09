@@ -89,7 +89,7 @@ public final class SectionCursorHelper {
     public static void getSectionDataAsync(Cursor sectionCursor, @NonNull Callback callback) {
         if (sectionCursor != null && sectionCursor.moveToFirst()) {
             byte[] compressedSectionResp = sectionCursor.getBlob(
-                    sectionCursor.getColumnIndex(DynamicPageDbHelper.COLUMN_SCREEN_DATA));
+                    DynamicPageDbHelper.COLUMN_SCREEN_DATA_INDEX);
             new SectionJsonParserAsyncTask(callback).execute(compressedSectionResp);
         } else {
             callback.onParseSuccess(null);

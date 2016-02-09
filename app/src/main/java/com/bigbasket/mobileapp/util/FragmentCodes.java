@@ -16,8 +16,8 @@ public final class FragmentCodes {
     public static final int START_COMMUNICATION_HUB = 32;
     public static final int START_WEBVIEW = 33;
     public static final int START_GIFTFRAGMENT = 13;
-    public static final int CHANGE_ADDRESS_FRAGMENT = 35;
 
+    public static final int CHANGE_ADDRESS_FRAGMENT = 35;
     private FragmentCodes() {
     }
 }

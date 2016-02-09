@@ -61,15 +61,12 @@ public class OrderInvoice implements Parcelable {
         if (!_wasBaseImgUrlNull) {
             this.baseImgUrl = source.readString();
         }
-        this.cartItems = new ArrayList<>();
-        source.readTypedList(this.cartItems, CartItemList.CREATOR);
+        this.cartItems = source.createTypedArrayList(CartItemList.CREATOR);
         this.orderInvoiceDetails = source.readParcelable(OrderInvoice.class.getClassLoader());
-        this.orderModifications = new ArrayList<>();
-        source.readTypedList(this.orderModifications, OrderModification.CREATOR);
+        this.orderModifications =  source.createTypedArrayList(OrderModification.CREATOR);
         boolean _wasCreditDetailsNull = source.readByte() == (byte) 1;
         if (!_wasCreditDetailsNull) {
-            this.creditDetails = new ArrayList<>();
-            source.readTypedList(this.creditDetails, CreditDetails.CREATOR);
+            this.creditDetails =  source.createTypedArrayList(CreditDetails.CREATOR);
         }
         this.fulfillmentInfo = source.readParcelable(OrderInvoice.class.getClassLoader());
     }

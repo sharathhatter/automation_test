@@ -28,8 +28,7 @@ public class PromoRedemptionInfo implements Parcelable {
 
     public PromoRedemptionInfo(Parcel source) {
         promoMessage = source.readParcelable(PromoRedemptionInfo.class.getClassLoader());
-        promoSets = new ArrayList<>();
-        source.readTypedList(promoSets, PromoSet.CREATOR);
+        promoSets = source.createTypedArrayList(PromoSet.CREATOR);
     }
 
     @Override

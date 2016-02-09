@@ -84,6 +84,9 @@
     <style name="RippleStyle">
         <item name="android:background">@drawable/ripple</item>
     </style>
+    <style name="TransparentRippleStyle">
+        <item name="android:background">@drawable/ripple</item>
+    </style>
 
     <style name="BottomButtonStyle">
         <item name="android:background">@drawable/ripple_footer_button</item>

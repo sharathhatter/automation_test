@@ -62,8 +62,7 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
         sectionType = source.readString();
         boolean _wasSectionItemsNull = source.readByte() == (byte) 1;
         if (!_wasSectionItemsNull) {
-            sectionItems = new ArrayList<>();
-            source.readTypedList(sectionItems, SectionItem.CREATOR);
+            sectionItems = source.createTypedArrayList(SectionItem.CREATOR);
         }
         boolean _wasMoreSectionItemNull = source.readByte() == (byte) 1;
         if (!_wasMoreSectionItemNull) {

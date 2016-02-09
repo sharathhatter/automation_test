@@ -13,10 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
@@ -31,24 +29,15 @@ import com.payu.india.PostParams.PaymentPostParams;
 public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements View.OnClickListener {
 
     int storeOneClickHash;
-    private Button payNowButton;
     private EditText cardNameEditText;
     private EditText cardNumberEditText;
     private EditText cardCvvEditText;
     private EditText cardExpiryMonthEditText;
     private EditText cardExpiryYearEditText;
-    private Bundle bundle;
     private CheckBox saveCardCheckBox;
     private CheckBox enableOneClickPaymentCheckBox;
-    private String cardName;
-    private String cardNumber;
-    private String cvv;
-    private String expiryMonth;
-    private String expiryYear;
     private PayuHashes mPayuHashes;
     private PaymentParams mPaymentParams;
-    private PostData postData;
-    private Toolbar toolbar;
     private PayuConfig payuConfig;
     private PayuUtils payuUtils;
 
@@ -57,13 +46,13 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.credit_debit_card));
 
-        (payNowButton = (Button) findViewById(R.id.button_card_make_payment)).setOnClickListener(this);
+        findViewById(R.id.button_card_make_payment).setOnClickListener(this);
 
         cardNameEditText = (EditText) findViewById(R.id.edit_text_name_on_card);
         cardNumberEditText = (EditText) findViewById(R.id.edit_text_card_number);
@@ -73,14 +62,11 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
         saveCardCheckBox = (CheckBox) findViewById(R.id.check_box_save_card);
         enableOneClickPaymentCheckBox = (CheckBox) findViewById(R.id.check_box_enable_one_click_payment);
 
-        bundle = getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
 
         storeOneClickHash = bundle.getInt(PayuConstants.STORE_ONE_CLICK_HASH);
         if (storeOneClickHash == PayuConstants.STORE_ONE_CLICK_HASH_NONE)
             enableOneClickPaymentCheckBox.setVisibility(View.GONE);
-
-        bundle = getIntent().getExtras();
-
 
         // lets get payment default params and hashes
         mPayuHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
@@ -191,15 +177,12 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
             // setup the hash
             mPaymentParams.setHash(mPayuHashes.getPaymentHash());
 
-            // lets try to get the post params
-
-            postData = null;
             // lets get the current card number;
-            cardNumber = String.valueOf(cardNumberEditText.getText());
-            cardName = cardNameEditText.getText().toString();
-            expiryMonth = cardExpiryMonthEditText.getText().toString();
-            expiryYear = cardExpiryYearEditText.getText().toString();
-            cvv = cardCvvEditText.getText().toString();
+            String cardNumber = String.valueOf(cardNumberEditText.getText());
+            String cardName = cardNameEditText.getText().toString();
+            String expiryMonth = cardExpiryMonthEditText.getText().toString();
+            String expiryYear = cardExpiryYearEditText.getText().toString();
+            String cvv = cardCvvEditText.getText().toString();
 
             // lets not worry about ui validations.
             mPaymentParams.setCardNumber(cardNumber);
@@ -208,7 +191,9 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
             mPaymentParams.setExpiryMonth(expiryMonth);
             mPaymentParams.setExpiryYear(expiryYear);
             mPaymentParams.setCvv(cvv);
-            postData = new PaymentPostParams(mPaymentParams, PayuConstants.CC).getPaymentPostParams();
+
+            // lets try to get the post params
+            PostData postData = new PaymentPostParams(mPaymentParams, PayuConstants.CC).getPaymentPostParams();
             if (postData.getCode() == PayuErrors.NO_ERROR) {
                 // okay good to go.. lets make a transaction
                 // launch webview

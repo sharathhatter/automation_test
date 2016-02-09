@@ -318,7 +318,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     }
 
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
-        if (fragment == null) return;
+        if (fragment == null || fragment.isAdded()) return;
         UIUtil.addNavigationContextToBundle(fragment, getCurrentScreenName());
         FragmentManager fm = getSupportFragmentManager();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -474,6 +474,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 flatPageFragment.setArguments(bundle);
                 addToMainLayout(flatPageFragment);
                 break;
+
         }
     }
 

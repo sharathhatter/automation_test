@@ -38,8 +38,7 @@ public class LinkedShipments implements Parcelable {
     public LinkedShipments(Parcel source) {
         boolean wasSkuListNull = source.readByte() == (byte) 1;
         if (!wasSkuListNull) {
-            skuList = new ArrayList<>();
-            source.readTypedList(skuList, Product.CREATOR);
+            skuList = source.createTypedArrayList(Product.CREATOR);
         }
         count = source.readInt();
         total = source.readString();

@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.handler;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
@@ -26,6 +25,7 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -173,14 +173,8 @@ public class DeepLinkHandler {
                 slug = uri.getQueryParameter(Constants.SLUG);
                 name = uri.getQueryParameter(Constants.NAME);
                 boolean isSystem;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    isSystem = uri.getBooleanQueryParameter(Constants.SHOPPING_LIST_IS_SYSTEM,
-                            false);
-                } else {
-                    String isSystemStr = uri.getQueryParameter(Constants.SHOPPING_LIST_IS_SYSTEM);
-                    isSystem = !TextUtils.isEmpty(isSystemStr) &&
-                            !isSystemStr.equals("false") && !isSystemStr.equals("0");
-                }
+                isSystem = uri.getBooleanQueryParameter(Constants.SHOPPING_LIST_IS_SYSTEM,
+                        false);
                 boolean isLoginRequiredToViewSl = authParameters.isAuthTokenEmpty() && (!isSystem
                         || (slug != null && slug.equalsIgnoreCase(Constants.SMART_BASKET_SLUG)));
                 if (isLoginRequiredToViewSl) {
@@ -213,10 +207,8 @@ public class DeepLinkHandler {
                 String url = uri.getQueryParameter("url");
                 try {
                     if (!TextUtils.isEmpty(url)) {
-                        intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                        intent.putExtra(Constants.WEBVIEW_URL, URLDecoder.decode(url, "UTF-8"));
-                        context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        FlatPageHelper.openFlatPage(context.getCurrentActivity(),
+                                URLDecoder.decode(url, "UTF-8"), null);
                         return SUCCESS;
                     }
                 } catch (UnsupportedEncodingException e) {

@@ -5,8 +5,8 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.newrelic.agent.android:agent-gradle-plugin:5.+"
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath "com.newrelic.agent.android:agent-gradle-plugin:5.4.0"
+        classpath 'io.fabric.tools:gradle:1.21.2'
     }
 }
 
@@ -53,22 +53,47 @@ android {
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
-        manifestPlaceholders = [crashlytics_id: "d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827"]
+        manifestPlaceholders = [crashlytics_id: "d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827",
+         launcher_icon: "@mipmap/ic_launcher"]
         //Does not work on gradle build tool version 1.3.0 https://code.google.com/p/android/issues/detail?id=182016
         setProperty("archivesBaseName", "Bigbasket-" + versionName);
+        signingConfig signingConfigs.bigbasket.storeFile != null ? signingConfigs.bigbasket : null
     }
+
+    sourceSets {
+        beta {
+            java.srcDirs("src/beta/java", "src/debug/java")
+            res.srcDirs("src/beta/res", "src/debug/res")
+            manifest.srcFile('src/debug/AndroidManifest.xml')
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro', '../wibmoSDK/proguard-rules.pro'
-            manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
-            signingConfig signingConfigs.bigbasket.storeFile != null ? signingConfigs.bigbasket : null
+            manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277",
+                                    launcher_icon: "@mipmap/ic_launcher"]
         }
         debug {
             multiDexEnabled true
-            signingConfig signingConfigs.bigbasket
+            versionNameSuffix "-debug"
+            manifestPlaceholders = [crashlytics_id: "d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827",
+                                    launcher_icon: "@mipmap/ic_launcher_debug"]
+        }
+
+        beta {
+            initWith(buildTypes.debug)
+            minifyEnabled true
+            applicationIdSuffix ".beta"
+            versionNameSuffix "-beta"
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro', 'leak-canary-proguard-rules.pro',
+                    '../wibmoSDK/proguard-rules.pro'
+            manifestPlaceholders = [crashlytics_id: "d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827",
+                                    launcher_icon: "@mipmap/ic_launcher_beta"]
         }
     }
     productFlavors {
@@ -132,21 +157,22 @@ int calculateVersionCodeFromDpi(int dpi, int delta) {
 
 
 dependencies {
-    compile files('libs/localytics.jar')
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.3@aar') {
-        transitive = true;
-    }
     compile project(':wibmoSDK')
-    compile files('libs/AF-Android-SDK-v3.3.0.jar')
     compile project(':moe-addon-ubox')
     compile project(':mobikwik-sdk')
-    compile files('libs/pgsdk.jar')
     compile project(':payuSdkUi')
+    compile files('libs/AF-Android-SDK-v3.3.0.jar')
+    compile files('libs/pgsdk.jar')
     compile files('libs/GoogleConversionTrackingSdk-2.2.4.jar')
+    compile 'com.localytics.android:library:3.6.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+        transitive = true;
+    }
     compile "com.squareup.picasso:picasso:${picassoLibVersion}"
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    compile "com.android.support:customtabs:${supportLibVersion}"
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     provided 'com.squareup.okhttp:okhttp:2.7.0'
@@ -154,7 +180,7 @@ dependencies {
     compile "com.google.android.gms:play-services-plus:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-gcm:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-location:${playServicesLibVersion}"
-    compile 'com.newrelic.agent.android:android-agent:5.+'
+    compile 'com.newrelic.agent.android:android-agent:5.4.0'
     compile 'com.facebook.android:facebook-android-sdk:4.4.0'
     compile 'com.journeyapps:zxing-android-embedded:3.1.0@aar'
     compile 'com.google.zxing:core:3.2.0'
@@ -162,4 +188,7 @@ dependencies {
     debugCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryLibVersion}"
     debugCompile 'com.android.support:multidex:1.0.1'
     debugCompile 'com.squareup.okhttp:logging-interceptor:2.7.0'
+    betaCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryLibVersion}"
+    betaCompile 'com.android.support:multidex:1.0.1'
+    betaCompile 'com.squareup.okhttp:logging-interceptor:2.7.0'
 }

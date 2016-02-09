@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.util.Log;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -39,10 +41,6 @@ import java.lang.annotation.RetentionPolicy;
 public abstract class PlusBaseActivity extends BaseActivity {
 
     private static final String TAG = "PlusBaseActivity";
-
-    /* RequestCode for resolutions involving sign-in */
-    private static final int RC_RESOLVE_CONNECT_ERROR = 49404;
-    private static final int RC_RESOLVE_AUTH_ERROR = 49405;
 
     // An integer error argument for play services error dialog
     private static final String DIALOG_ERROR = "dialog_error";
@@ -203,7 +201,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                             try {
                                 mIsResolving = true;
                                 connectionResult.startResolutionForResult(PlusBaseActivity.this,
-                                        RC_RESOLVE_CONNECT_ERROR);
+                                        NavigationCodes.RC_RESOLVE_CONNECT_ERROR);
                             } catch (IntentSender.SendIntentException e) {
                                 // There was an error with the resolution intent. Try again.
                                 mGoogleApiClient.connect();
@@ -227,11 +225,11 @@ public abstract class PlusBaseActivity extends BaseActivity {
         Log.d(TAG, "signInViaGPlus");
         mConnectionMode = SIGN_IN;
         if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
+            mGoogleApiClient.reconnect();
+        } else {
+            initializeGoogleApiClient();
+            mGoogleApiClient.connect();
         }
-        //Always start with a fresh client for signin
-        initializeGoogleApiClient();
-        mGoogleApiClient.connect();
     }
 
     /**
@@ -260,8 +258,17 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
     private void signinUser() {
         try {
-            String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
-            fetchAuthToken(accountName);
+            if(mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                fetchAuthToken(accountName);
+            } else {
+                if(mGoogleApiClient == null){
+                    initializeGoogleApiClient();
+                    mGoogleApiClient.connect();
+                } else if(!mGoogleApiClient.isConnecting()){
+                    mGoogleApiClient.reconnect();
+                }
+            }
         } catch (Exception e) {
             Crashlytics.logException(e);
             showToast(getString(R.string.unknownError));
@@ -269,7 +276,8 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS:
                 if (grantResults.length > 0 && permissions.length > 0
@@ -299,7 +307,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         setSuspended(false);
         Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
 
-        if (requestCode == RC_RESOLVE_CONNECT_ERROR) {
+        if (requestCode == NavigationCodes.RC_RESOLVE_CONNECT_ERROR) {
             if (mGoogleApiClient == null) {
                 initializeGoogleApiClient();
             }
@@ -318,10 +326,11 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 } catch (IllegalStateException ex) {
                     //Will throw exception as client not connected,
                     //but there is no other API to clear the selected account, ignore the exception
+                    Crashlytics.logException(ex);
                 }
                 onGoogleClientConnectCancelled();
             }
-        } else if (requestCode == RC_RESOLVE_AUTH_ERROR) {
+        } else if (requestCode == NavigationCodes.RC_RESOLVE_AUTH_ERROR) {
             if (mGoogleApiClient == null) {
                 initializeGoogleApiClient();
             }
@@ -419,7 +428,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         if (authException != null) {
             if (authException instanceof UserRecoverableAuthException) {
                 startActivityForResult(((UserRecoverableAuthException) authException).getIntent(),
-                        RC_RESOLVE_AUTH_ERROR);
+                        NavigationCodes.RC_RESOLVE_AUTH_ERROR);
             } else {
                 //TODO: Show error and retry if is IOException
                 onPlusClientSignInFailed();
@@ -436,8 +445,10 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
 
     private void onAuthComplete(String authToken) {
-        mGoogleApiClient.disconnect();
-        mGoogleApiClient = null;
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+            mGoogleApiClient = null;
+        }
         onPlusClientSignIn(authToken);
     }
 
@@ -484,12 +495,13 @@ public abstract class PlusBaseActivity extends BaseActivity {
         public GooglePlayServicesErrorDialogFragment() {
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Get the error code and retrieve the appropriate dialog
             int errorCode = this.getArguments().getInt(DIALOG_ERROR);
             return GooglePlayServicesUtil.getErrorDialog(errorCode, this.getActivity(),
-                    RC_RESOLVE_CONNECT_ERROR);
+                    NavigationCodes.RC_RESOLVE_CONNECT_ERROR);
 
         }
 

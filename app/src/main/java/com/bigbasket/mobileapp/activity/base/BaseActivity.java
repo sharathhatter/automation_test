@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -259,9 +258,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         super.onPause();
         isActivitySuspended = true;
         MoEngageWrapper.onPause(moEHelper, this);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            LocalyticsWrapper.onPause();
-        }
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
@@ -277,13 +273,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         isActivitySuspended = false;
-        if (isPendingGoToHome()) {
-            goToHome();
-            return;
-        }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            LocalyticsWrapper.onResume();
-        }
 
         MoEngageWrapper.onResume(moEHelper, this);
         FacebookEventTrackWrapper.activateApp(getApplicationContext());
@@ -494,20 +483,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void goToHome() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        } else {
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
-            editor.putBoolean(Constants.IS_PENDING_GO_TO_HOME, true);
-            editor.apply();
-
-            Intent data = new Intent();
-            setResult(NavigationCodes.GO_TO_HOME, data);
-            finish();
-        }
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void setAreaPinCode(String areaName, AreaPinInfoDbHelper areaPinInfoDbHelper, EditText editTextPincode,
@@ -791,22 +770,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return preferences.getBoolean(Constants.IS_BASKET_COUNT_DIRTY, false);
     }
 
-    protected boolean isPendingGoToHome() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        return preferences.getBoolean(Constants.IS_PENDING_GO_TO_HOME, false);
-    }
-
-    protected void removePendingGoToHome() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
-        editor.remove(Constants.IS_PENDING_GO_TO_HOME);
-        editor.apply();
-    }
-
     public void removePendingCodes() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
         editor.remove(Constants.FRAGMENT_CODE);
         editor.remove(Constants.DEEP_LINK);
-        editor.remove(Constants.IS_PENDING_GO_TO_HOME);
         editor.apply();
     }
 
@@ -846,6 +813,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         Intent loginIntent = new Intent(this, SignInActivity.class);
         loginIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         loginIntent.putExtra(Constants.GO_TO_HOME, shouldGoBackToHomePage);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         if (params != null) {
             if (params.containsKey(Constants.DEEPLINK_URL)) {
                 loginIntent.putExtra(Constants.DEEP_LINK, params.getString(Constants.DEEPLINK_URL));
@@ -872,6 +840,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, SignupActivity.class);
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
         intent.putExtra(Constants.FRAGMENT_CODE, getIntent().getStringExtra(Constants.FRAGMENT_CODE));
+        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

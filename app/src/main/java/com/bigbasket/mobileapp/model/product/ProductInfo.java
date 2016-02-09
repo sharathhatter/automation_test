@@ -39,8 +39,7 @@ public class ProductInfo implements Parcelable {
 
         boolean isProductsNull = source.readByte() == (byte) 1;
         if (!isProductsNull) {
-            products = new ArrayList<>();
-            source.readTypedList(products, Product.CREATOR);
+            products =  source.createTypedArrayList(Product.CREATOR);
         }
     }
 

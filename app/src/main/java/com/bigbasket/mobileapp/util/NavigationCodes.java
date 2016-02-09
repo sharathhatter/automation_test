@@ -11,14 +11,18 @@ public interface NavigationCodes {
     int LAUNCH_FRAGMENT = 1348;
     int SHOPPING_LIST_CHANGED = 1349;
     int TUTORIAL_SEEN = 1350;
-    int LAUNCH_LOGIN = 1351;
-    int LAUNCH_SIGNUP = 1352;
-    int LAUNCH_CITY = 1353;
     int ACCOUNT_UPDATED = 1354;
     int GO_TO_BASKET = 1356;
     int BASKET_CHANGED = 1357;
     int FUND_WALLET = 1358;
     int LOCATION_CHOSEN = 1359;
+    int RC_PAY_FROM_BB_WALLET = 1360;
+
+
+    /* RequestCode for resolutions involving sign-in */
+    int RC_RESOLVE_CONNECT_ERROR = 49404;
+    int RC_RESOLVE_AUTH_ERROR = 49405;
+
 
     int ADD_TO_SHOPPINGLIST_OK = 1221;
     int DELETE_FROM_SHOPPING_LIST_OK = 200;

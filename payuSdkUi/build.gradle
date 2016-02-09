@@ -23,8 +23,10 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
-    compile project(':PayU-release') // Version 4.3.4
+    compile 'com.payu.india:payu-sdk:4.3.4'
     compile 'com.payu.magicretry:magicretry:1.0.3'
-    compile project(':CustomBrowser-release')  // Version 5.3.5
+    compile 'com.payu.custombrowser:payu-custom-browser:5.3.6'
+    //compile project(':CustomBrowser-release')  // Version 5.3.5
+    //compile project(':PayU-release') // Version 4.3.4
 
 }

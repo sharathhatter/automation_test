@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.view.uiv3;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -106,7 +105,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
         }
     }
 
-    public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
+    public void onSubNavigationRequested(SectionItem sectionItem, String baseImgUrl,
                                          HashMap<Integer, Renderer> rendererHashMap) {
         Typeface faceRobotoMedium = FontHolder.getInstance(getContext()).getFaceRobotoMedium();
         if (sectionItem.getSubSectionItems() == null
@@ -128,7 +127,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
             mListSubNavigation.setLayoutManager(new LinearLayoutManager(getContext()));
         }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        section = new Section(sectionItem.getTitle(), sectionItem.getDescription(), Section.MENU,
+        Section section = new Section(sectionItem.getTitle(), sectionItem.getDescription(), Section.MENU,
                 subNavigationSectionItems, null);
         SectionCursorHelper.setSectionNavigationItemList(sectionNavigationItems,
                 subNavigationSectionItems, section);
@@ -235,7 +234,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
         } else {
             txtNavSalutation.setText(getContext().getString(R.string.bigbasketeer));
         }
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (BuildConfig.DEBUG) {
             DevConfigViewHandler.setView(lblWelCome);
         }
 

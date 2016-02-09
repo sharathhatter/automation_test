@@ -48,6 +48,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ValidateOrderPaymentAp
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
+import com.bigbasket.mobileapp.model.account.OtpResponse;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.ads.AdAnalyticsData;
 import com.bigbasket.mobileapp.model.ads.SponsoredAds;
@@ -282,7 +283,7 @@ public interface BigBasketApiService {
     @GET("co-get-delivery-addresses/")
     Call<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddresses(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx);
 
-    @GET("search-tc/")
+    @GET("autosearch/")
     Call<ApiResponse<AutoSearchApiResponseContent>> autoSearch(@Query("t") String term, @Query(Constants.CITY_ID) String cityId);
 
     @FormUrlEncoded
@@ -317,7 +318,14 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("forgot-password/")
-    Call<OldBaseApiResponse> forgotPassword(@Field(Constants.EMAIL) String email);
+    Call<ApiResponse> updatePasswordWithOtp(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                            @Field(Constants.OTP_CODE) String otpCode,
+                                            @Field(Constants.EMAIL) String email,
+                                            @Field(Constants.NEW_PASSWORD) String newPassword);
+
+    @GET("forgot-password/")
+    Call<ApiResponse<OtpResponse>> getForgotPasswordOtp(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                        @Query(Constants.EMAIL) String email);
 
     @FormUrlEncoded
     @POST("remove-voucher/")

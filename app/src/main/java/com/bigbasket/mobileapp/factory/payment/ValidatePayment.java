@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.crashlytics.android.Crashlytics;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
@@ -63,7 +64,9 @@ public final class ValidatePayment<T extends AppOperationAware> {
                 return true;
             case MobikwikPayment.MOBIKWIK_REQ_CODE:
                 if (data != null) {
-                    MKTransactionResponse response = (MKTransactionResponse) data.getSerializableExtra(MobikwikSDK.EXTRA_TRANSACTION_RESPONSE);
+                    MKTransactionResponse response =
+                            (MKTransactionResponse) data.getSerializableExtra(
+                                    MobikwikSDK.EXTRA_TRANSACTION_RESPONSE);
                     if (response != null) {
                         if (!TextUtils.isEmpty(response.orderId)) {
                             try {
@@ -73,12 +76,15 @@ public final class ValidatePayment<T extends AppOperationAware> {
                                 Crashlytics.logException(e);
                             }
                         } else {
-                            Crashlytics.logException(new IllegalArgumentException());
+                            Crashlytics.logException(new IllegalArgumentException("OrderID is empty for Mobikwik payment"));
                         }
                     } else {
-                        Crashlytics.logException(new IllegalArgumentException());
+                        Crashlytics.logException(new IllegalArgumentException("No Mobikwik response"));
                     }
                 }
+                return true;
+            case NavigationCodes.RC_PAY_FROM_BB_WALLET:
+                validate(null);
                 return true;
             default:
                 return false;
@@ -133,6 +139,7 @@ public final class ValidatePayment<T extends AppOperationAware> {
         } else {
             resId = R.string.validating_payment;
         }
+
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context.getCurrentActivity());
         context.showProgressDialog(context.getCurrentActivity().getString(resId));
         Call<ApiResponse<ValidateOrderPaymentApiResponse>> call = bigBasketApiService.
@@ -141,63 +148,65 @@ public final class ValidatePayment<T extends AppOperationAware> {
                         validatePaymentRequest.isPayNow() ? "1" : "0",
                         validatePaymentRequest.isWallet() ? "1" : "0", additionalParams);
         call.enqueue(new BBNetworkCallback<ApiResponse<ValidateOrderPaymentApiResponse>>(context) {
-            @Override
-            public void onSuccess(ApiResponse<ValidateOrderPaymentApiResponse> validateOrderPaymentResponse) {
-                switch (validateOrderPaymentResponse.status) {
-                    case 0:
-                        if (context instanceof OnPaymentValidationListener) {
-                            ((OnPaymentValidationListener) context).onPaymentValidated(true, null,
-                                    validateOrderPaymentResponse.apiResponseContent.orders);
-                        }
-                        break;
-                    case ApiErrorCodes.PAYMENT_ERROR:
-                        if (context instanceof OnPaymentValidationListener) {
-                            ((OnPaymentValidationListener) context).onPaymentValidated(false,
-                                    validateOrderPaymentResponse.message,
-                                    validateOrderPaymentResponse.apiResponseContent.orders);
-                        }
-                        break;
-                    default:
-                        if (handler != null) {
-                            handler.sendEmptyMessage(validateOrderPaymentResponse.status,
-                                    validateOrderPaymentResponse.message);
-                        } else {
-                            context.getHandler().sendEmptyMessage(validateOrderPaymentResponse.status,
-                                    validateOrderPaymentResponse.message);
-                        }
-                        break;
-                }
-            }
+                         @Override
+                         public void onSuccess
+                                 (ApiResponse<ValidateOrderPaymentApiResponse> validateOrderPaymentResponse) {
+                             switch (validateOrderPaymentResponse.status) {
+                                 case 0:
+                                     if (context instanceof OnPaymentValidationListener) {
+                                         ((OnPaymentValidationListener) context).onPaymentValidated(true, null,
+                                                 validateOrderPaymentResponse.apiResponseContent.orders);
+                                     }
+                                     break;
+                                 case ApiErrorCodes.PAYMENT_ERROR:
+                                     if (context instanceof OnPaymentValidationListener) {
+                                         ((OnPaymentValidationListener) context).onPaymentValidated(false,
+                                                 validateOrderPaymentResponse.message,
+                                                 validateOrderPaymentResponse.apiResponseContent.orders);
+                                     }
+                                     break;
+                                 default:
+                                     if (handler != null) {
+                                         handler.sendEmptyMessage(validateOrderPaymentResponse.status,
+                                                 validateOrderPaymentResponse.message);
+                                     } else {
+                                         context.getHandler().sendEmptyMessage(validateOrderPaymentResponse.status,
+                                                 validateOrderPaymentResponse.message);
+                                     }
+                                     break;
+                             }
+                         }
 
-            @Override
-            public void onFailure(int httpErrorCode, String msg) {
-                if (handler != null) {
-                    handler.handleHttpError(httpErrorCode, msg, false);
-                } else {
-                    super.onFailure(httpErrorCode, msg);
-                }
-            }
+                         @Override
+                         public void onFailure(int httpErrorCode, String msg) {
+                             if (handler != null) {
+                                 handler.handleHttpError(httpErrorCode, msg, false);
+                             } else {
+                                 super.onFailure(httpErrorCode, msg);
+                             }
+                         }
 
-            @Override
-            public void onFailure(Throwable t) {
-                if (handler != null) {
-                    if (context.isSuspended()) return;
-                    if (!updateProgress()) return;
-                    handler.handleRetrofitError(t, false);
-                } else {
-                    super.onFailure(t);
-                }
-            }
+                         @Override
+                         public void onFailure(Throwable t) {
+                             if (handler != null) {
+                                 if (context.isSuspended()) return;
+                                 if (!updateProgress()) return;
+                                 handler.handleRetrofitError(t, false);
+                             } else {
+                                 super.onFailure(t);
+                             }
+                         }
 
-            @Override
-            public boolean updateProgress() {
-                try {
-                    context.hideProgressDialog();
-                    return true;
-                } catch (IllegalArgumentException e) {
-                    return false;
-                }
-            }
-        });
+                         @Override
+                         public boolean updateProgress() {
+                             try {
+                                 context.hideProgressDialog();
+                                 return true;
+                             } catch (IllegalArgumentException e) {
+                                 return false;
+                             }
+                         }
+                     }
+        );
     }
 }

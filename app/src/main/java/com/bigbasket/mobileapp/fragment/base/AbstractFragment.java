@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.crashlytics.android.Crashlytics;
 
 
 public abstract class AbstractFragment extends Fragment implements AppOperationAware {
@@ -86,7 +87,11 @@ public abstract class AbstractFragment extends Fragment implements AppOperationA
 
     protected void finish() {
         if (getActivity() != null) {
-            getActivity().getSupportFragmentManager().popBackStack();
+            try {
+                getActivity().getSupportFragmentManager().popBackStack();
+            } catch (IllegalStateException ex) {
+                Crashlytics.logException(ex);
+            }
         }
     }
 

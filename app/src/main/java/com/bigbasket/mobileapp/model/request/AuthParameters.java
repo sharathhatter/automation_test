@@ -28,7 +28,7 @@ public class AuthParameters {
     private boolean isNewRelicEnabled;
 
     private AuthParameters(Context context) {
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         if (prefer != null) {
             visitorId = prefer.getString(Constants.VISITOR_ID_KEY, null);
             if (TextUtils.isEmpty(visitorId)) {

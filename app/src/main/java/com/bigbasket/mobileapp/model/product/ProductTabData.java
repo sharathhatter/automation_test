@@ -49,8 +49,7 @@ public class ProductTabData implements Parcelable {
         }
         boolean isProductTabInfoNull = source.readByte() == (byte) 1;
         if (!isProductTabInfoNull) {
-            productTabInfos = new ArrayList<>();
-            source.readTypedList(productTabInfos, ProductTabInfo.CREATOR);
+            productTabInfos = source.createTypedArrayList(ProductTabInfo.CREATOR);
         }
         boolean isScreenNameNull = source.readByte() == (byte) 1;
         if (!isScreenNameNull) {

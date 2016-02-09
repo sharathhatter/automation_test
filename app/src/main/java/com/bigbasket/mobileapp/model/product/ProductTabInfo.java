@@ -58,18 +58,15 @@ public class ProductTabInfo implements Parcelable {
         }
         boolean isFilteredOnNull = source.readByte() == (byte) 1;
         if (!isFilteredOnNull) {
-            filteredOn = new ArrayList<>();
-            source.readTypedList(filteredOn, FilteredOn.CREATOR);
+            filteredOn = source.createTypedArrayList(FilteredOn.CREATOR);
         }
         boolean isSortOptionsNull = source.readByte() == (byte) 1;
         if (!isSortOptionsNull) {
-            sortOptions = new ArrayList<>();
-            source.readTypedList(sortOptions, Option.CREATOR);
+            sortOptions = source.createTypedArrayList(Option.CREATOR);
         }
         boolean isFilterOptionCategoryNull = source.readByte() == (byte) 1;
         if (!isFilterOptionCategoryNull) {
-            filterOptionItems = new ArrayList<>();
-            source.readTypedList(filterOptionItems, FilterOptionCategory.CREATOR);
+            filterOptionItems = source.createTypedArrayList(FilterOptionCategory.CREATOR);
         }
         headerSelectedIndex = source.readInt();
     }

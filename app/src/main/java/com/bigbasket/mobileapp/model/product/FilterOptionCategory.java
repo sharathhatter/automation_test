@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FilterOptionCategory implements Parcelable {
@@ -32,8 +31,7 @@ public class FilterOptionCategory implements Parcelable {
     public FilterOptionCategory(Parcel source) {
         filterSlug = source.readString();
         filterName = source.readString();
-        filterOptionItems = new ArrayList<>();
-        source.readTypedList(filterOptionItems, FilterOptionItem.CREATOR);
+        filterOptionItems = source.createTypedArrayList(FilterOptionItem.CREATOR);
     }
 
     @Override

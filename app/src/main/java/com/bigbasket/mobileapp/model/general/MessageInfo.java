@@ -31,8 +31,7 @@ public class MessageInfo implements Parcelable {
         this.messageStr = parcel.readString();
         boolean isParamsNull = parcel.readByte() == (byte) 1;
         if (!isParamsNull) {
-            params = new ArrayList<>();
-            parcel.readTypedList(params, MessageParamInfo.CREATOR);
+            params = parcel.createTypedArrayList(MessageParamInfo.CREATOR);
         }
     }
 
