@@ -44,6 +44,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
     // An integer error argument for play services error dialog
     private static final String DIALOG_ERROR = "dialog_error";
+    private boolean mWaitingForPermission;
 
 
     @Retention(RetentionPolicy.SOURCE)
@@ -63,6 +64,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
     /* Keys for persisting instance variables in savedInstanceState */
     private static final String KEY_IS_RESOLVING = "is_resolving";
     private static final String KEY_CONNECTION_MODE = "connection_mode";
+    private static final String KEY_WAIT_FOR_PERMISSION = "key_wait_for_permission";
 
     /* Client for accessing Google APIs */
     private GoogleApiClient mGoogleApiClient;
@@ -79,6 +81,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         // [START restore_saved_instance_state]
         if (savedInstanceState != null) {
             mIsResolving = savedInstanceState.getBoolean(KEY_IS_RESOLVING);
+            mWaitingForPermission = savedInstanceState.getBoolean(KEY_WAIT_FOR_PERMISSION);
             @ConnectionMode int mode = savedInstanceState.getInt(KEY_CONNECTION_MODE, NONE);
             mConnectionMode = mode;
             if (mConnectionMode != NONE) {
@@ -112,6 +115,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_IS_RESOLVING, mIsResolving);
         outState.putInt(KEY_CONNECTION_MODE, mConnectionMode);
+        outState.putBoolean(KEY_WAIT_FOR_PERMISSION, mWaitingForPermission);
     }
     // [END on_save_instance_state]
 
@@ -251,8 +255,13 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     private void signIn() {
-        if (handlePermission(Manifest.permission.GET_ACCOUNTS, Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS)) {
+        if (handlePermission(Manifest.permission.GET_ACCOUNTS,
+                getString(R.string.contacts_permission_rationale),
+                Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS)) {
             signinUser();
+            mWaitingForPermission = false;
+        } else {
+            mWaitingForPermission = true;
         }
     }
 
@@ -272,6 +281,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         } catch (Exception e) {
             Crashlytics.logException(e);
             showToast(getString(R.string.unknownError));
+            onAuthCancelled();
         }
     }
 
@@ -280,10 +290,13 @@ public abstract class PlusBaseActivity extends BaseActivity {
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS:
+                mWaitingForPermission = false;
                 if (grantResults.length > 0 && permissions.length > 0
                         && permissions[0].equals(Manifest.permission.GET_ACCOUNTS)
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     signinUser();
+                } else {
+                    onAuthCancelled();
                 }
                 break;
             default:
@@ -303,10 +316,34 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     @Override
+    protected void onNegativeButtonClicked(int requestCode, Bundle data) {
+        if(requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS &&
+                data != null &&
+                data.getInt(Constants.KEY_PERMISSION_RC) ==
+                        Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS ) {
+            onAuthCancelled();
+        } else {
+            super.onNegativeButtonClicked(requestCode, data);
+        }
+    }
+
+    @Override
+    public void onDialogCancelled(int requestCode, Bundle data) {
+        if(requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS &&
+                data != null &&
+                data.getInt(Constants.KEY_PERMISSION_RC) ==
+                        Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS ) {
+            onAuthCancelled();
+        } else {
+            super.onDialogCancelled(requestCode, data);
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
-
+        onStateNotSaved();
         if (requestCode == NavigationCodes.RC_RESOLVE_CONNECT_ERROR) {
             if (mGoogleApiClient == null) {
                 initializeGoogleApiClient();
@@ -343,6 +380,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                         onGoogleClientConnected(null);
                     } else if (!mGoogleApiClient.isConnecting()) {
                         mConnectionMode = SIGN_IN;
+                        initializeGoogleApiClient();
                         mGoogleApiClient.connect();
                     }
                 }
@@ -350,6 +388,9 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 //User cancelled
                 onAuthCancelled();
             }
+        } else if (requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS && mWaitingForPermission){
+            mConnectionMode = SIGN_IN;
+            signIn();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -409,6 +450,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
         } catch (IllegalStateException ex) {
             //Ignore, google client is not connected
+            Crashlytics.logException(ex);
         }
         try {
             PendingResult<Status> pr = Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
@@ -421,6 +463,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
             //TODO: wait for pr to complete
         } catch (IllegalStateException ex) {
             //Ignore for now
+            Crashlytics.logException(ex);
         }
     }
 

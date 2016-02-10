@@ -80,7 +80,9 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
             return;
         }
         if (savedInstanceState == null) {
-            if (handlePermission(Manifest.permission.RECEIVE_SMS, Constants.PERMISSION_REQUEST_CODE_RECEIVE_SMS)) {
+            if (handlePermission(Manifest.permission.RECEIVE_SMS,
+                    getString(R.string.sms_permission_rationale),
+                    Constants.PERMISSION_REQUEST_CODE_RECEIVE_SMS)) {
                 //register for SMS will happen in onResume().
             }
             trackEvent(TrackingAware.FORGOT_PASSWORD_SHOWN, null);

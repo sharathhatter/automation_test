@@ -431,13 +431,13 @@ public abstract class BaseFragment extends AbstractFragment implements
                 getCurrentActivity().finish();
             }
         } else {
-            onNegativeButtonClicked(reqCode);
+            onNegativeButtonClicked(reqCode, data);
         }
     }
 
 
     @Override
-    public void onDialogCancelled(int reqCode) {
+    public void onDialogCancelled(int reqCode, Bundle data) {
 
     }
 
@@ -446,6 +446,7 @@ public abstract class BaseFragment extends AbstractFragment implements
             switch (sourceName) {
                 case NavigationCodes.GO_TO_LOGIN:
                     Intent loginIntent = new Intent(getActivity(), SignInActivity.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
                     break;
                 case Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST_DIALOG:
@@ -454,7 +455,7 @@ public abstract class BaseFragment extends AbstractFragment implements
         }
     }
 
-    protected void onNegativeButtonClicked(int requestCode) {
+    protected void onNegativeButtonClicked(int requestCode, Bundle data) {
 
     }
 

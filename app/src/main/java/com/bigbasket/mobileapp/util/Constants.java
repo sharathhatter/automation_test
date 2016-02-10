@@ -675,4 +675,6 @@ public class Constants {
     public static final String TERMS_AND_COND_URL = "http://www.bigbasket.com/terms-and-conditions/?source=app";
     public static final String PRIVACY_POLICY_URL = "http://www.bigbasket.com/privacy-policy/?source=app";
 
+    public static final String KEY_PERMISSION = "key_permission";
+    public static final String KEY_PERMISSION_RC = "key_permission_rc";
 }

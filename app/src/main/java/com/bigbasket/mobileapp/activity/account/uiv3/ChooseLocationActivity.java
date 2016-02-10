@@ -58,7 +58,9 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         setTitle(getString(R.string.chooseDeliveryLocation));
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
         if (savedInstanceState == null) {
-            handlePermission(Manifest.permission.ACCESS_FINE_LOCATION, Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION);
+            handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                    getString(R.string.location_permission_rationale),
+                    Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION);
         }
     }
 
@@ -119,10 +121,11 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh) {
-            if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION))
-                renderLocation();
-            else
-                onLocationReadFailure();
+            if(handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                    getString(R.string.location_permission_rationale),
+                    Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION)) {
+                triggerLocationFetching();
+            }
         } else if (item.getItemId() == android.R.id.home) {
             setResult(NavigationCodes.RESULT_CHANGE_CITY_CANCELLED);
         }
@@ -303,10 +306,11 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     public void onLocationButtonClicked(View v) {
         switch (v.getId()) {
             case R.id.btnToCurrentLocation:
-                if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    updateLastKnownLocation(true, true);
-                } else
-                    onLocationReadFailure();
+                if(handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                        getString(R.string.location_permission_rationale),
+                        Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION)) {
+                    triggerLocationFetching();
+                }
                 break;
             case R.id.btnChooseLocation:
                 Intent intent = new Intent(this, PlacePickerApiActivity.class);
@@ -350,6 +354,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        onStateNotSaved();
         if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED) {
             mIsViaOnActivityResult = true;
             if (data != null && data.hasExtra(Constants.LAT)) {
