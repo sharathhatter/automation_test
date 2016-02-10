@@ -288,7 +288,7 @@ public class SignupActivity extends BackButtonActivity {
     }
 
     private void onSignupCancelled() {
-        setResult(NavigationCodes.SIGN_UP_CANCELLED);
+        setResult(NavigationCodes.RESULT_SIGN_UP_CANCELLED);
         finish();
     }
 

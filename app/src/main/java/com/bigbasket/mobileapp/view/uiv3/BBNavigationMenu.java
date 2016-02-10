@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.SectionCursorHelper;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +74,10 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
 
     private void init() {
         View.inflate(getContext(), R.layout.uiv3_left_nav_layout, this);
+        ImageView settingsImageView = (ImageView) findViewById(R.id.imgSwitchNav);
+        UIUtil.displayAsyncImage(settingsImageView, R.drawable.settings);
+        ImageView navHeaderImageView = (ImageView) findViewById(R.id.imgNavHeader);
+        UIUtil.displayAsyncImage(navHeaderImageView, R.drawable.nav_header);
         mNavRecyclerView = (RecyclerView) findViewById(R.id.listNavigation);
         if (mNavRecyclerView != null) {
             // Assign a layout manager as soon as RecyclerView is inflated to prevent onDestroy crash
