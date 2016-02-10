@@ -244,7 +244,7 @@ public class SignInActivity extends SocialLoginActivity {
     }
 
     private void onSignInCancelled() {
-        setResult(NavigationCodes.SIGN_IN_CANCELLED);
+        setResult(NavigationCodes.RESULT_SIGN_IN_CANCELLED);
         finish();
     }
 

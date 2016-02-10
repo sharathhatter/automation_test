@@ -9,8 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:contentDescription="@string/drawer_open"
-        android:scaleType="fitXY"
-        android:src="@drawable/nav_header" />
+        android:scaleType="fitXY" />
 
     <ImageView
         android:id="@+id/imgSwitchNav"
@@ -20,8 +19,7 @@
         android:contentDescription="@string/myAccount"
         android:paddingLeft="@dimen/padding_normal"
         android:paddingRight="@dimen/padding_normal"
-        android:paddingTop="@dimen/nav_img_margin_top"
-        android:src="@drawable/settings" />
+        android:paddingTop="@dimen/nav_img_margin_top"/>
 
     <TextView
         android:id="@+id/lblWelcome"

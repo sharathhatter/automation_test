@@ -303,8 +303,9 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
         mIsFromActivityResult = true;
         if (resultCode == NavigationCodes.GO_TO_HOME) {
             handleResults();
-        } else if (resultCode != NavigationCodes.SIGN_UP_CANCELLED
-                && resultCode != NavigationCodes.SIGN_IN_CANCELLED) {
+        } else if (resultCode != NavigationCodes.RESULT_SIGN_UP_CANCELLED
+                && resultCode != NavigationCodes.RESULT_SIGN_IN_CANCELLED
+                && resultCode != NavigationCodes.RESULT_CHANGE_CITY_CANCELLED) {
             finish();
         }
     }

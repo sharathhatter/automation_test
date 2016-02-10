@@ -123,6 +123,8 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                 renderLocation();
             else
                 onLocationReadFailure();
+        } else if (item.getItemId() == android.R.id.home) {
+            setResult(NavigationCodes.RESULT_CHANGE_CITY_CANCELLED);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -140,6 +142,12 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     public int getMainLayout() {
         return R.layout.uiv3_choose_location;
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(NavigationCodes.RESULT_CHANGE_CITY_CANCELLED);
+        super.onBackPressed();
     }
 
     @Override
