@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -144,9 +145,12 @@ public class BBDevConfigActivity extends SocialLoginActivity
         super.postLogout(success);
         if (success) {
 
-            OkHttpClient httpClient = BigBasketApiAdapter.getBaseHttpClient();
-            httpClient.interceptors()
-                    .add(DeveloperConfigs.getHttpLoggingInterceptor(getApplicationContext()));
+            OkHttpClient httpClient = new OkHttpClient().newBuilder()
+                    .connectTimeout(20, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .addInterceptor(
+                            DeveloperConfigs.getHttpLoggingInterceptor(getApplicationContext()))
+                    .build();
             BigBasketApiService bbService = new Retrofit.Builder()
                     .baseUrl(mNewServerName + MobileApiUrl.API_PATH)
                     .addConverterFactory(GsonConverterFactory.create())
