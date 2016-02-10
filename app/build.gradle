@@ -173,13 +173,14 @@ dependencies {
         transitive = true;
     }
     compile "com.squareup.picasso:picasso:${picassoLibVersion}"
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
     compile "com.android.support:customtabs:${supportLibVersion}"
-    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
-    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
-    provided 'com.squareup.okhttp:okhttp:2.7.0'
+    compile "com.squareup.okhttp3:okhttp:${okhttpLibVersion}"
+    compile "com.squareup.retrofit2:retrofit:${retrofitLibVersion}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofitLibVersion}"
     compile "com.google.android.gms:play-services-ads:${playServicesLibVersion}"  // Needed for AppsFlyer & is optional for MoEngage
     compile "com.google.android.gms:play-services-plus:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-gcm:${playServicesLibVersion}"
@@ -189,10 +190,10 @@ dependencies {
     compile 'com.journeyapps:zxing-android-embedded:3.1.0@aar'
     compile 'com.google.zxing:core:3.2.0'
     compile 'com.moengage:moe-android-sdk:5.3.14'
-    debugCompile 'com.android.support:multidex:1.0.1'
+    debugCompile "com.android.support:multidex:${multidexLibVersion}"
     debugCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryLibVersion}"
-    debugCompile 'com.squareup.okhttp:logging-interceptor:2.7.0'
-    betaCompile 'com.android.support:multidex:1.0.1'
+    debugCompile "com.squareup.okhttp3:logging-interceptor:${okhttpLibVersion}"
+    betaCompile "com.android.support:multidex:${multidexLibVersion}"
     betaCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryLibVersion}"
-    betaCompile 'com.squareup.okhttp:logging-interceptor:2.7.0'
+    betaCompile "com.squareup.okhttp3:logging-interceptor:${okhttpLibVersion}"
 }

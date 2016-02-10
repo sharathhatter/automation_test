@@ -19,8 +19,8 @@ import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
 
 import java.io.IOException;
 
-import retrofit.Call;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class SearchUtil {
 

@@ -31,7 +31,7 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SignupActivity extends BackButtonActivity {
 

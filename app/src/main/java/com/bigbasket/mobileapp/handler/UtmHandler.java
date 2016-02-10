@@ -15,7 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class UtmHandler {
     public static void postUtm(Context context, Uri uri) {

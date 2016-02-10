@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class ShopFromOrderFragment extends ProductListAwareFragment {
 

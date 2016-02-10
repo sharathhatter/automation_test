@@ -17,7 +17,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class ShoppingListDoAddDeleteTask<T extends AppOperationAware> {
     private static final String TAG = ShoppingListDoAddDeleteTask.class.getName();

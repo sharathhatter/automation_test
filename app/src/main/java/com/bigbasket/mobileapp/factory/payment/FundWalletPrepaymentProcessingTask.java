@@ -6,7 +6,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PayzappPrePaymentParam
 import com.bigbasket.mobileapp.apiservice.models.response.PrePaymentParamsResponse;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class FundWalletPrepaymentProcessingTask<T extends AppOperationAware>
         extends AbstractPrepaymentProcessingTask<T> {

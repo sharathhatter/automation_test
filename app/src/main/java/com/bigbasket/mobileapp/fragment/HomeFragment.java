@@ -56,7 +56,7 @@ import com.moengage.widgets.NudgeView;
 
 import java.util.ArrayList;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class HomeFragment extends BaseSectionFragment {
 
@@ -195,8 +195,9 @@ public class HomeFragment extends BaseSectionFragment {
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                if (isSuspended()) return;
+            public void onFailure(Call<ApiResponse<UpdateVersionInfoApiResponseContent>> call,
+                                  Throwable t) {
+                if (isSuspended() || (call != null && call.isCanceled())) return;
                 displayHomePageError(getString(R.string.networkError), R.drawable.empty_no_internet);
             }
 
@@ -420,7 +421,7 @@ public class HomeFragment extends BaseSectionFragment {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<ApiResponse<AppDataResponse>> call, Throwable t) {
                 // Fail silently
             }
         });

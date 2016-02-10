@@ -41,7 +41,7 @@ import com.crashlytics.android.Crashlytics;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 /**
  * Don't do the mistake of moving this to Fragment. I've done all that, and these 3rd Party SDKs

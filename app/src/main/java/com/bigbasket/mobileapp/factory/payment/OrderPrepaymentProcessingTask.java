@@ -9,7 +9,7 @@ import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 /**
  * Created by bigbasket on 26/11/15.

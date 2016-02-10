@@ -16,17 +16,17 @@ import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Call;
-import retrofit.Response;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 public class GetAppDataDynamicIntentService extends IntentService {
@@ -46,7 +46,7 @@ public class GetAppDataDynamicIntentService extends IntentService {
         OkHttpClient client = BigBasketApiAdapter.getHttpClient(this);
         String responseJson;
         try {
-            com.squareup.okhttp.Response response = client.newCall(request).execute();
+            okhttp3.Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
                 responseJson = response.body().string();
             } else {

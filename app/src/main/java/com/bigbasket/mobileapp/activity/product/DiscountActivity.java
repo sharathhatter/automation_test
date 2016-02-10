@@ -23,7 +23,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public class DiscountActivity extends SearchActivity {

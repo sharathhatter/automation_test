@@ -77,10 +77,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ProductListActivity extends SearchActivity implements ProductListDataAware, LazyProductListAware {
@@ -350,9 +349,10 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                             paramMap);
             mSponsoredProductsCall.enqueue(new Callback<ApiResponse<SponsoredAds>>() {
                 @Override
-                public void onResponse(Response<ApiResponse<SponsoredAds>> response,
-                                       Retrofit retrofit) {
-                    if (response != null && response.isSuccess() && response.body().status == 0) {
+                public void onResponse(Call<ApiResponse<SponsoredAds>> call,
+                                       Response<ApiResponse<SponsoredAds>> response) {
+                    if (response != null && response.isSuccess() && response.body().status == 0
+                            && call != null && !call.isCanceled()) {
                         //Set section data for all tabs for now
                         SponsoredAds sponsoredSectionData =
                                 response.body().apiResponseContent;
@@ -377,7 +377,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
+                public void onFailure(Call<ApiResponse<SponsoredAds>> call, Throwable t) {
                     //TODO: Ignore and log error
 
                 }
@@ -589,9 +589,9 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
-                    super.onFailure(t);
-                    if (isSuspended()) return;
+                public void onFailure(Call<ApiResponse<ProductNextPageResponse>> call, Throwable t) {
+                    super.onFailure(call, t);
+                    if (isSuspended() || (call != null && !call.isCanceled())) return;
                     notifyEmptyFragmentAboutFailure();
                 }
             });

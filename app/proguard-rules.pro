@@ -48,15 +48,24 @@
 # Retrofit & OkHttp
 -dontwarn retrofit.**
 -keep class retrofit.** { *; }
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
 -keep class com.squareup.okhttp.** { *; }
 -keep interface com.squareup.okhttp.** { *; }
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
 -keepclasseswithmembers class * {
     @retrofit.http.* <methods>;
 }
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
 -dontwarn rx.**
 -dontwarn retrofit.appengine.**
+-dontwarn retrofit2.appengine.**
 -dontwarn okio.**
 -dontwarn com.squareup.okhttp.**
+-dontwarn okhttp3.**
 
 # Facebook
 -keep class com.facebook.** { *; }

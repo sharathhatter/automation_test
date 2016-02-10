@@ -6,6 +6,7 @@ import android.content.Context;
 
 import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 import com.bigbasket.mobileapp.util.MultiDexHandler;
@@ -13,6 +14,7 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.google.ads.conversiontracking.AdWordsConversionReporter;
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.localytics.android.Localytics;
 import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
 import com.moe.pushlibrary.MoEHelper;
@@ -70,6 +72,7 @@ public class BaseApplication extends Application {
         }
         Picasso p = new Picasso.Builder(this.getApplicationContext())
                 .memoryCache(new LruCache(getMemCacheSize()))
+                .downloader(new OkHttp3Downloader(BigBasketApiAdapter.getHttpClient(this)))
                 .build();
         Picasso.setSingletonInstance(p);
         if (this.getApplicationContext().getFilesDir() != null) {

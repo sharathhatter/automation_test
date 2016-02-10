@@ -69,7 +69,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class PaymentSelectionActivity extends BackButtonActivity
         implements PaymentMethodsView.OnPaymentOptionSelectionListener, PaymentOptionsKnowMoreDialogCallback {
@@ -89,10 +89,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mAppliedVoucherCode;
     private String mSelectedPaymentMethod;
     private OrderDetails mOrderDetails;
-    @Nullable
-    private String mOrderAmount; // Only applicable for Payzapp
-    private String mTxnId;
-    private ArrayList<Order> mOrdersCreated;
     private String mAddMoreLink;
     private String mAddMoreMsg;
     private MutableLong mElapsedTime;
@@ -410,9 +406,11 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
-                    super.onFailure(t);
-                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
+                public void onFailure(Call<ApiResponse<PostVoucherApiResponseContent>> call, Throwable t) {
+                    super.onFailure(call, t);
+                    if (call != null && !call.isCanceled()) {
+                        trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
+                    }
                 }
 
                 @Override
@@ -626,13 +624,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
         ((CartInfoAware) getCurrentActivity()).markBasketDirty();
 
         if (isCreditCardPayment()) {
-            mOrdersCreated = orders;
             mAddMoreLink = addMoreLink;
             mAddMoreMsg = addMoreMsg;
 
             Bundle bundle = new Bundle();
             bundle.putString(Constants.P_ORDER_ID, mPotentialOrderId);
-            bundle.putParcelableArrayList(Constants.ORDERS, mOrdersCreated);
+            bundle.putParcelableArrayList(Constants.ORDERS, orders);
             bundle.putString(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
             bundle.putBoolean(Constants.PAYU_SELECTED, isPayUOptionVisible);
             Gson gson = new Gson();
@@ -686,11 +683,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mAppliedVoucherCode = null;
         mSelectedPaymentMethod = null;
         mOrderDetails = null;
-        mTxnId = null;
         mAddMoreLink = null;
         mAddMoreMsg = null;
         mElapsedTime = null;
-        mOrderAmount = null;
 
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
