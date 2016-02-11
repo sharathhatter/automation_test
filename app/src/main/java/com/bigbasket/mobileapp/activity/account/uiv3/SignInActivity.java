@@ -68,7 +68,7 @@ public class SignInActivity extends SocialLoginActivity {
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
-
+        setTitle(getString(R.string.signInCapsVerb));
         setCurrentScreenName(TrackEventkeys.NC_LOGIN_SCREEN);
 
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
