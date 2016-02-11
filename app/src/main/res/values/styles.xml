@@ -152,6 +152,7 @@
     <style name="ErrorStyle" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textColor">#B71C1C</item>
     </style>
+
     <style name="BBVoucherTextInputLayoutStyle" parent="Widget.Design.TextInputLayout">
         <item name="colorControlActivated">@color/uiv3_secondary_text_color</item>
     </style>
@@ -336,6 +337,7 @@
     <style name="RippleStyle">
         <item name="android:background">@drawable/default_button_clicks</item>
     </style>
+
     <style name="TransparentRippleStyle">
         <item name="android:background">@drawable/transparent_button_click</item>
     </style>
@@ -408,6 +410,10 @@
         <item name="selected_height">8dp</item>
         <item name="unselected_width">6dp</item>
         <item name="unselected_height">6dp</item>
+    </style>
+
+    <style name="ExpressDeliveryTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/dark_green</item>
     </style>
 
 </resources>
