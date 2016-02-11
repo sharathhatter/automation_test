@@ -170,22 +170,22 @@ public class CommunicationHubActivity extends BaseActivity {
                         return AlertsOffersScreenFragment.newInstance(args);
                     }
                 case 1:
-                    if (isFaqToBeShown) {
-                        return new AskUsFragment();
-                    } else {
+                    if (!isFaqToBeShown) {
                         /**
                          * sending filter as offers for the offers in bundle
                          */
                         args.putString(Constants.COMMUNICATION_HUB_FILTER, Constants.COMMUNICATION_HUB_OFFER);
                         return AlertsOffersScreenFragment.newInstance(args);
                     }
+                    //continue to return Chat fragment
+                default:
+                    return new AskUsFragment();
             }
-            return null;
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return isFaqToBeShown ? 2 : 3;
         }
 
         @Override
