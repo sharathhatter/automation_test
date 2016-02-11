@@ -77,6 +77,9 @@ public class LogoutTask extends AsyncTask<Void, Void, ErrorResponse> {
         editor.remove(Constants.MEMBER_EMAIL_KEY);
         editor.remove(Constants.UPDATE_PROFILE_IMG_URL);
         editor.remove(Constants.IS_KIRANA);
+        editor.remove(Constants.HAS_USER_GIVEN_RATING);
+        editor.remove(Constants.DATE_SINCE_RATING_HAS_SHOWN);
+        editor.remove(Constants.DAYS_PERIOD);
         editor.commit();
         AuthParameters.reset();
         AppDataDynamic.reset(appOperationAware.getCurrentActivity());

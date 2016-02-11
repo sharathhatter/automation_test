@@ -25,4 +25,5 @@ public class AppDataResponse {
 
     @SerializedName(Constants.CITY_CACHE_EXPIRY)
     public int cityCacheExpiry;
+
 }

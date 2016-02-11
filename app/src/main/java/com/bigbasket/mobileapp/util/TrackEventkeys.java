@@ -165,6 +165,10 @@ public final class TrackEventkeys {
 
     public static final String ADDRESS_LIST_SCREEN = "Address List Screen";
 
+    public static final String EMOTION_DIALOG_SCREEN = "emotion_dialog_screen";
+    public static final String RATINGS_DIALOG_SCREEN = "ratings_dialog_screen";
+    public static final String FEEDBACK_DIALOG_SCREEN = "feedback_dialog_screen";
+
     private TrackEventkeys() {
     }
 }

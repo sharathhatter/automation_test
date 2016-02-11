@@ -798,6 +798,10 @@
             android:name="com.moengage.addon.ubox.UBoxMessenger"
             android:exported="false" />
 
+        <service
+            android:name="com.bigbasket.mobileapp.service.BBMessenger"
+            android:exported="false" />
+
         <meta-data
             android:name="LOCALYTICS_APP_KEY"
             android:value="@string/localytics_api_key" />

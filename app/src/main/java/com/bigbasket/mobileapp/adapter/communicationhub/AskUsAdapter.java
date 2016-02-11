@@ -88,11 +88,19 @@ public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemV
             viewHolder.holderView.setBackgroundResource(R.drawable.bubble_outgoing);
             if (imageUrl == null) {
                 if (null == obj) {
-                    viewHolder.txtMessage.setText(msg.details);
+                    if (msg.details.startsWith(context.getString(R.string.preamble_feedback))) {
+                        viewHolder.txtMessage.setText(msg.details.substring(context.getString(R.string.preamble_feedback).length(), msg.details.length()));
+                    } else {
+                        viewHolder.txtMessage.setText(msg.details);
+                    }
                 } else {
                     String m = UBoxUtils.getAlternateMessageDetails(obj);
                     if (m != null) {
-                        viewHolder.txtMessage.setText(m);
+                        if (m.startsWith(context.getString(R.string.preamble_feedback))) {
+                            viewHolder.txtMessage.setText(m.substring(context.getString(R.string.preamble_feedback).length(), m.length()));
+                        } else {
+                            viewHolder.txtMessage.setText(m);
+                        }
                     }
                 }
                 msgView.setVisibility(View.VISIBLE);

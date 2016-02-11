@@ -93,4 +93,8 @@
     <color name="chat_window_background">#F0F0F0</color>
     <color name="product_tag">#898989</color>
 
+    <color name="ratings_pink">#f4dbdc</color>
+    <color name="ratings_green">#4caf50</color>
+    <color name="thank_pink">#fcf3f3</color>
+
 </resources>

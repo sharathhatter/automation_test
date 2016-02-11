@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbarMain"
+        layout="@layout/uiv3_tool_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:paddingLeft="@dimen/padding_normal"
+                android:paddingRight="@dimen/padding_normal"
+                android:text="@string/feedback_msg"
+                android:textColor="@color/dark_black"
+                android:textSize="@dimen/primary_text_size" />
+
+            <Spinner
+                android:id="@+id/spinnerFeedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_mini"
+                android:layout_marginRight="@dimen/margin_mini"
+                android:layout_marginTop="@dimen/margin_medium_large" />
+
+            <EditText
+                android:id="@+id/editTextComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:background="@drawable/grey_border_no_rounds"
+                android:gravity="top"
+                android:hint="@string/tell_us_more"
+                android:inputType="textMultiLine"
+                android:maxLength="3000"
+                android:minLines="5"
+                android:padding="@dimen/padding_small"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/primary_text_size" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/margin_small"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtErrorRetry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:gravity="center"
+                android:paddingLeft="@dimen/padding_normal"
+                android:paddingRight="@dimen/padding_normal"
+                android:text="@string/failed_feedback"
+                android:textColor="@color/cb_errorRed"
+                android:textSize="@dimen/secondary_text_size"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnSubmitFeedBack"
+                style="@style/EmptyPageButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_xlarge"
+                android:background="@drawable/red_primary_btn_bkg"
+                android:clickable="true"
+                android:text="@string/submit"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/secondary_text_size" />
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

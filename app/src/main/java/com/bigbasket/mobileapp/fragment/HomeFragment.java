@@ -369,6 +369,7 @@ public class HomeFragment extends BaseSectionFragment {
                 appCapability.isAnalyticsEnabled(),
                 appCapability.isFBLoggerEnabled(),
                 appCapability.isMultiCityEnabled(),
+                appCapability.isRatingsEnabled(),
                 getCurrentActivity());
         AuthParameters.reset();
     }
@@ -394,12 +395,13 @@ public class HomeFragment extends BaseSectionFragment {
                     AppCapability appCapability = callbackAppDataResponse.apiResponseContent.capabilities;
                     setAppCapability(appCapability);
                     LoginUserDetails userDetails = callbackAppDataResponse.apiResponseContent.userDetails;
+                    SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
                     if (userDetails != null) {
-                        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
                         UIUtil.updateStoredUserDetails(getCurrentActivity(), userDetails,
                                 prefer.getString(Constants.MEMBER_EMAIL_KEY, ""),
                                 prefer.getString(Constants.MID_KEY, ""));
                     }
+
                     HDFCPayzappHandler.setTimeOut(getCurrentActivity(),
                             callbackAppDataResponse.apiResponseContent.hdfcPayzappExpiry);
                     savePopulateSearcher(callbackAppDataResponse.apiResponseContent.topSearches);

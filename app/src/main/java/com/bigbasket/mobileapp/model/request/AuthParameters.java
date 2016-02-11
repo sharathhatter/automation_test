@@ -26,6 +26,7 @@ public class AuthParameters {
     private boolean isKirana;
     private boolean isMultiCityEnabled;
     private boolean isNewRelicEnabled;
+    private boolean isRatingsEnabled;
 
     private AuthParameters(Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -43,6 +44,7 @@ public class AuthParameters {
             memberFullName = prefer.getString(Constants.MEMBER_FULL_NAME_KEY, "");
             osVersion = prefer.getString(Constants.OS_PREFERENCE_KEY, "");
             isNewRelicEnabled = prefer.getBoolean(Constants.ENABLE_NEWRELIC, false);
+            isRatingsEnabled = prefer.getBoolean(Constants.ENABLE_RATINGS, true);
             isMoEngageEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, true);
             isLocalyticsEnabled = prefer.getBoolean(Constants.ENABLE_LOCALYTICS, true);
             isFBLoggerEnabled = prefer.getBoolean(Constants.ENABLE_FB_LOGGER, true);
@@ -127,6 +129,7 @@ public class AuthParameters {
                                  boolean isLocalyticsEnabled,
                                  boolean isFBLoggerEnabled,
                                  boolean isMultiCityEnabled,
+                                 boolean isRatingsEnabled,
                                  Context context) {
         if (context == null) return;
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
@@ -136,12 +139,14 @@ public class AuthParameters {
         editor.putBoolean(Constants.ENABLE_LOCALYTICS, isLocalyticsEnabled);
         editor.putBoolean(Constants.ENABLE_FB_LOGGER, isFBLoggerEnabled);
         editor.putBoolean(Constants.IS_MULTICITY_ENABLED, isMultiCityEnabled);
+        editor.putBoolean(Constants.ENABLE_RATINGS, isRatingsEnabled);
         editor.apply();
         this.isNewRelicEnabled = isNewRelicEnabled;
         this.isMoEngageEnabled = isMoEngaleEnabled;
         this.isLocalyticsEnabled = isLocalyticsEnabled;
         this.isFBLoggerEnabled = isFBLoggerEnabled;
         this.isMultiCityEnabled = isMultiCityEnabled;
+        this.isRatingsEnabled = isRatingsEnabled;
     }
 
     public String getCityId() {
@@ -163,5 +168,9 @@ public class AuthParameters {
 
     public boolean isMultiCityEnabled() {
         return isMultiCityEnabled;
+    }
+
+    public boolean isRatingsEnabled() {
+        return isRatingsEnabled;
     }
 }

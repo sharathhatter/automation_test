@@ -72,6 +72,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.bigbasket.mobileapp.util.analytics.NewRelicWrapper;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
@@ -86,6 +87,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,6 +98,11 @@ import java.util.Map;
 import java.util.TreeSet;
 
 public class UIUtil {
+
+    public static final int NONE = 0;
+    public static final int CENTER_INSIDE = 1;
+    public static final int CENTER_CROP = 2;
+    public static final int ONLY_SCALE_DOWN = 3;
 
     /**
      * @param pixel : Value in Pixel, which should be scaled according to screen density
@@ -126,7 +133,6 @@ public class UIUtil {
         textView.setTextSize(scaleToScreenIndependentPixel(14, context));
         return textView;
     }
-
 
     public static List<Spannable> createBulletSpannableList(ArrayList<String> criteriaMsgs) {
         ArrayList<Spannable> criteriaSpannableList = null;
@@ -175,7 +181,6 @@ public class UIUtil {
     public static boolean isEmpty(String str) {
         return str == null || TextUtils.isEmpty(str.trim());
     }
-
 
     public static String strJoin(String[] stringArray, String separator) {
         if (stringArray == null || stringArray.length == 0) return "";
@@ -342,6 +347,53 @@ public class UIUtil {
         AuthParameters.reset();
     }
 
+    public static boolean showEmotionsDialog(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean hasUserGivenRating = preferences.getBoolean(Constants.HAS_USER_GIVEN_RATING, false);
+        String stringLastShownDate = preferences.getString(Constants.DATE_SINCE_RATING_HAS_SHOWN, "");
+        if (!hasUserGivenRating) {
+            if (preferences.contains(Constants.DATE_SINCE_RATING_HAS_SHOWN)) {
+                try {
+                    int daysPeriod = preferences.getInt(Constants.DAYS_PERIOD, 0);
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_RATINGS, Locale.getDefault());
+                    Date lastShownDate = simpleDateFormat.parse(stringLastShownDate);
+                    Date currentDate = new Date();
+                    long diff = currentDate.getTime() - lastShownDate.getTime();
+                    long days = diff / (24 * 60 * 60 * 1000);
+                    if ((int) days >= 5 * Math.pow(2, daysPeriod)) {
+                        return true;
+                    }
+                } catch (ParseException e) {
+                    updateRatingPref(context, true);
+                    Crashlytics.logException(e);
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void updateRatingPref(Context context, boolean reset) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        String date = new SimpleDateFormat(Constants.DATE_FORMAT_RATINGS, Locale.getDefault()).format(new Date());
+        editor.putBoolean(Constants.HAS_USER_GIVEN_RATING, false);
+        editor.putString(Constants.DATE_SINCE_RATING_HAS_SHOWN, date);
+        if (reset) {
+            int n = 0;
+            editor.putInt(Constants.DAYS_PERIOD, n);
+        } else {
+            int n = preferences.getInt(Constants.DAYS_PERIOD, 0);
+            if (n == 0) {
+                editor.putInt(Constants.DAYS_PERIOD, n);
+            } else {
+                editor.putInt(Constants.DAYS_PERIOD, ++n);
+            }
+        }
+        editor.apply();
+    }
+
     public static void reportFormInputFieldError(TextInputLayout textInputLayout, String errMsg) {
         textInputLayout.setErrorEnabled(true);
         textInputLayout.setError(errMsg);
@@ -369,19 +421,19 @@ public class UIUtil {
         }
     }
 
-
     public static boolean isMoreThanXHour(long timeInMiliSeconds, int hour) {
         long timerDiff = System.currentTimeMillis() - timeInMiliSeconds;
         int hourDiff = (int) timerDiff / (60 * 60 * 1000);
         return hourDiff >= hour;
     }
 
-    public static void openPlayStoreLink(Activity activity) {
+    public static void openPlayStoreLink(Context context) {
+        if (context == null) return;
         final String appPackageName = Constants.BASE_PKG_NAME;
         try {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
         } catch (ActivityNotFoundException anfe) {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW,
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
         }
     }
@@ -450,17 +502,6 @@ public class UIUtil {
                 targetImageHeight, skipMemoryCache, NONE, null);
     }
 
-    public static final int NONE = 0;
-    public static final int CENTER_INSIDE = 1;
-    public static final int CENTER_CROP = 2;
-    public static final int ONLY_SCALE_DOWN = 3;
-
-    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({NONE, CENTER_INSIDE, CENTER_CROP, ONLY_SCALE_DOWN})
-    public @interface ImageScaleType {}
-
-
     public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
                                          @DrawableRes int placeHolderDrawableId,
                                          int targetImageWidth, int targetImageHeight,
@@ -470,14 +511,14 @@ public class UIUtil {
         Picasso picasso = Picasso.with(imageView.getContext());
         RequestCreator requestCreator = picasso.load(url)
                 .error(R.drawable.noimage);
-        if(url == null) {
+        if (url == null) {
             requestCreator.into(imageView, callback);
             return;
         } else {
             picasso.cancelRequest(imageView);
         }
 
-        if(placeHolderDrawableId > 0) {
+        if (placeHolderDrawableId > 0) {
             requestCreator.placeholder(placeHolderDrawableId);
         }
         if (skipMemoryCache) {
@@ -494,7 +535,7 @@ public class UIUtil {
         if (!animate) {
             requestCreator.noFade();
         }
-        switch (scaleType){
+        switch (scaleType) {
             case CENTER_INSIDE:
                 requestCreator.centerInside();
                 break;
@@ -576,8 +617,9 @@ public class UIUtil {
                 return 1;
         }
     }
+
     public static int adjustHeightForScreenWidth(int originalWidth, int originalHeight,
-                                                  int totalWidthAvailable) {
+                                                 int totalWidthAvailable) {
         double aspectRatio = (double) originalWidth / (double) originalHeight;
         return (int) ((double) totalWidthAvailable / aspectRatio);
     }
@@ -773,7 +815,6 @@ public class UIUtil {
         return false;
     }
 
-
     public static boolean isPhoneWithGoogleAccount(Context context) {
         return AccountManager.get(context).getAccountsByType("com.google").length > 0;
     }
@@ -877,7 +918,7 @@ public class UIUtil {
         }
     }
 
-    public static String getCustomerSupportPhoneNumber(Context context){
+    public static String getCustomerSupportPhoneNumber(Context context) {
         ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(context).getAddressSummaries();
         String phone = null;
         if (addressSummaries != null && addressSummaries.size() > 0) {
@@ -949,11 +990,19 @@ public class UIUtil {
             }
         }
         return url;
-   }
+    }
+
     //to get the dateinmillisec to another format
     // to use pass the format and dateinmillsec
     public static String getTimeStamp(long dateInMillis, String format) {
-        SimpleDateFormat formatter = new SimpleDateFormat(format,Locale.getDefault());
+        SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
         return formatter.format(new Date(dateInMillis));
+    }
+
+
+    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({NONE, CENTER_INSIDE, CENTER_CROP, ONLY_SCALE_DOWN})
+    public @interface ImageScaleType {
     }
 }

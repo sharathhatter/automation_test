@@ -16,6 +16,8 @@ public class AppCapability {
     private boolean isMultiCityEnabled;
     @SerializedName(Constants.ENABLE_NEWRELIC)
     private boolean isNewRelicEnabled;
+    @SerializedName(Constants.ENABLE_RATINGS)
+    private boolean isRatingsEnabled;
 
     public boolean isNewRelicEnabled() {
         return isNewRelicEnabled;
@@ -35,5 +37,9 @@ public class AppCapability {
 
     public boolean isMultiCityEnabled() {
         return isMultiCityEnabled;
+    }
+
+    public boolean isRatingsEnabled() {
+        return isRatingsEnabled;
     }
 }
