@@ -1,5 +1,7 @@
 package com.bigbasket.mobileapp.activity.base;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -10,11 +12,13 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -334,7 +338,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
 
     @Override
-    public final void onDialogCancelled(int reqCode) {
+    public void onDialogCancelled(int reqCode, Bundle data) {
 
     }
 
@@ -413,12 +417,18 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                 String msg, String positiveBtnText,
                                 String negativeBtnText, final int requestCode,
                                 final Bundle passedValue) {
+        showAlertDialog(title, msg, positiveBtnText, negativeBtnText, requestCode, passedValue,
+                false);
+    }
 
-        if (isSuspended())
-            return;
-        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
+    public void showAlertDialog(String title, String msg, String positiveBtnText,
+                                String negativeBtnText, final int requestCode,
+                                final Bundle passedValue, boolean isCancellable) {
+            if (isSuspended())
+                return;
+            ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
                 requestCode, title, msg, positiveBtnText,
-                negativeBtnText, passedValue, false);
+                negativeBtnText, passedValue, isCancellable);
         try {
             dialogFragment.show(getSupportFragmentManager(), getScreenTag() + "#AlertDialog");
         } catch (IllegalStateException ex) {
@@ -438,8 +448,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
             case NavigationCodes.GO_TO_LOGIN:
                 launchLogin(getPreviousScreenName(), valuePassed, true);
                 break;
+            case NavigationCodes.RC_PERMISSIONS_SETTINGS :
+                startPermissionsSettingsActivity(this);
+                break;
         }
-
     }
 
     public void launchViewBasketScreen() {
@@ -486,6 +498,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
     }
 
@@ -811,9 +824,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public void launchLogin(String navigationCtx, Bundle params, boolean shouldGoBackToHomePage) {
         Intent loginIntent = new Intent(this, SignInActivity.class);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         loginIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         loginIntent.putExtra(Constants.GO_TO_HOME, shouldGoBackToHomePage);
-        loginIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         if (params != null) {
             if (params.containsKey(Constants.DEEPLINK_URL)) {
                 loginIntent.putExtra(Constants.DEEP_LINK, params.getString(Constants.DEEPLINK_URL));
@@ -840,7 +853,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, SignupActivity.class);
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
         intent.putExtra(Constants.FRAGMENT_CODE, getIntent().getStringExtra(Constants.FRAGMENT_CODE));
-        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -905,11 +918,26 @@ public abstract class BaseActivity extends AppCompatActivity implements
      * code for Android M Support
      ******************/
 
-    public boolean handlePermission(String permission, int requestCode) {
+//    public boolean handlePermission(String permission, int requestCode) {
+//        return handlePermission(permission, null, requestCode);
+//    }
+    public boolean handlePermission(String permission, String rationale, int requestCode) {
         if (hasPermissionGranted(permission)) {
             return true;
         } else {
-            requestPermission(permission, requestCode);
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
+                    && !TextUtils.isEmpty(rationale)) {
+                Bundle bundle = new Bundle(2);
+                bundle.putString(Constants.KEY_PERMISSION, permission);
+                bundle.putInt(Constants.KEY_PERMISSION_RC, requestCode);
+                showAlertDialog(getString(R.string.permission_rationale_dialog_title), rationale,
+                        getString(R.string.action_settings),
+                        getString(R.string.cancel),
+                        NavigationCodes.RC_PERMISSIONS_SETTINGS,
+                        bundle, true);
+            } else {
+                requestPermission(permission, requestCode);
+            }
         }
         return false;
     }
@@ -923,4 +951,19 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private void requestPermission(String permission, int requestCode) {
         ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
     }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    protected static void startPermissionsSettingsActivity(Activity activity){
+        try {
+            final Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            intent.setData(Uri.parse("package:" + activity.getPackageName()));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+            activity.startActivityForResult(intent, NavigationCodes.RC_PERMISSIONS_SETTINGS);
+        } catch (ActivityNotFoundException ex){
+            Crashlytics.logException(ex);
+        }
+    }
+
 }

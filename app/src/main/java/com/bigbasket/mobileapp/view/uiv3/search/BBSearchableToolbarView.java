@@ -154,8 +154,11 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
             public void onClick(View v) {
 
                 if (mAttachedActivity instanceof BaseActivity) {
-                    if (((BaseActivity) mAttachedActivity).handlePermission(Manifest.permission.RECORD_AUDIO, Constants.PERMISSION_REQUEST_CODE_RECORD_AUDIO))
+                    if (((BaseActivity) mAttachedActivity).handlePermission(Manifest.permission.RECORD_AUDIO,
+                            getContext().getString(R.string.micro_phone_permission_rationale),
+                            Constants.PERMISSION_REQUEST_CODE_RECORD_AUDIO)) {
                         launchVoiceSearch();
+                    }
                 }
             }
         });
@@ -163,7 +166,9 @@ public class BBSearchableToolbarView extends LinearLayout implements OnSearchTer
             @Override
             public void onClick(View v) {
                 if (mAttachedActivity instanceof BaseActivity) {
-                    if (((BaseActivity) mAttachedActivity).handlePermission(Manifest.permission.CAMERA, Constants.PERMISSION_REQUEST_CODE_CAPTURE_CAMERA))
+                    if (((BaseActivity) mAttachedActivity).handlePermission(Manifest.permission.CAMERA,
+                            getContext().getString(R.string.scan_permission_rationale),
+                            Constants.PERMISSION_REQUEST_CODE_CAPTURE_CAMERA))
                         launchScanner();
                 }
             }

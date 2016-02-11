@@ -16,7 +16,9 @@ public final class OtpValidationHelper {
     }
 
     public static <T extends AppOperationAware & OtpDialogAware> void requestOtpUI(T ctx) {
-        if (ctx.getCurrentActivity().handlePermission(Manifest.permission.RECEIVE_SMS, Constants.PERMISSION_REQUEST_CODE_RECEIVE_SMS)) {
+        if (ctx.getCurrentActivity().handlePermission(Manifest.permission.RECEIVE_SMS,
+                ctx.getCurrentActivity().getString(R.string.sms_permission_rationale),
+                Constants.PERMISSION_REQUEST_CODE_RECEIVE_SMS)) {
             validateMobileNumber(ctx, false, null);
         }
     }
