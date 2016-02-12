@@ -12,7 +12,7 @@ public class BasketResponseProductInfo {
     private String totalSavings;
 
     @SerializedName(Constants.BASKET_CART_INNER_CART_COUNT)
-    private String totalQty;
+    private int totalQty;
 
     @SerializedName(Constants.BASKET_CART_INNER_PRICE)
     private String unitPrice;
@@ -25,7 +25,7 @@ public class BasketResponseProductInfo {
         return totalSavings;
     }
 
-    public String getTotalQty() {
+    public int getTotalQty() {
         return totalQty;
     }
 

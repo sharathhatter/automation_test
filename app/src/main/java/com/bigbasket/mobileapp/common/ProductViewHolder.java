@@ -46,6 +46,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private View.OnClickListener brandPageListener;
     private OnProductBasketActionListener basketIncActionListener;
     private OnProductBasketActionListener basketDecActionListener;
+    private ImageView imgProductFoodType;
 
 
     public ProductViewHolder(View itemView) {
@@ -256,5 +257,12 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             storeIconLayout = (RelativeLayout) itemView.findViewById(R.id.storeIconLayout);
         }
         return storeIconLayout;
+    }
+
+    public ImageView getImgProductFoodType() {
+        if (imgProductFoodType == null) {
+            imgProductFoodType = (ImageView) itemView.findViewById(R.id.imgProductFoodType);
+        }
+        return imgProductFoodType;
     }
 }

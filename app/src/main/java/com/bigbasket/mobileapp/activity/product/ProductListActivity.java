@@ -428,9 +428,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     }
 
     private void toggleFilterSortView(boolean isVisible) {
-        int visibility = isVisible ? View.VISIBLE : View.GONE;
-        findViewById(R.id.layoutFilter).setVisibility(visibility);
-        findViewById(R.id.layoutSort).setVisibility(visibility);
+        findViewById(R.id.layoutSort).setClickable(isVisible);
     }
 
     private void displayProductTabs(final ProductTabData productTabData, ViewGroup contentFrame,

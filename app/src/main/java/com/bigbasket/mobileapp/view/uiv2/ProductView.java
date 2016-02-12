@@ -68,10 +68,32 @@ public final class ProductView {
                 productDataAware, tabName, navigationCtx, appDataStoreAvailabilityMap,
                 cartInfo);
         setPromo(productViewHolder, product, productViewDisplayDataHolder);
+        setProductFoodTypeImage(productViewHolder, product);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
                     productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap,
                     specialityStoreInfoHashMap);
+        }
+    }
+
+    private static void setProductFoodTypeImage(ProductViewHolder productViewHolder, Product product) {
+        ImageView imgProductFoodType = productViewHolder.getImgProductFoodType();
+        if (product.getProductFoodType() != null) {
+            imgProductFoodType.setVisibility(View.VISIBLE);
+            switch (product.getProductFoodType().toLowerCase()) {
+                case Constants.PRODUCT_FOOD_TYPE_VEG:
+                    imgProductFoodType.setImageDrawable(ContextCompat.getDrawable(imgProductFoodType.getContext(), R.drawable.ic_food_type_veg));
+                    break;
+                case Constants.PRODUCT_FOOD_TYPE_NONVEG:
+                    imgProductFoodType.setImageDrawable(ContextCompat.getDrawable(imgProductFoodType.getContext(), R.drawable.ic_food_type_non_veg));
+                    break;
+                case Constants.PRODUCT_FOOD_TYPE_EGG:
+                    imgProductFoodType.setImageDrawable(ContextCompat.getDrawable(imgProductFoodType.getContext(), R.drawable.ic_food_type_egg));
+                    break;
+                default:imgProductFoodType.setVisibility(View.GONE);
+            }
+        } else {
+            imgProductFoodType.setVisibility(View.GONE);
         }
     }
 

@@ -50,6 +50,8 @@ public class Constants {
     public static final String PROMO_NAME = "promo_name";
     public static final String BASE_IMG_URL = "base_img_url";
     public static final String PROMO_LABEL = "promo_label";
+    public static final String PRODUCT_FOOD_TYPE = "p_type";
+    public static final String PRODUCT_TAG = "p_tag";
 
     public static final String QC_HAS_VALIDATION_ERRORS = "has_qc_errors";
     public static final String QC_VALIDATION_ERROR_DATA = "qc_validation_errors_data";
@@ -692,4 +694,8 @@ public class Constants {
     public static final String COMMUNICATION_HUB_FAQ_URL = "http://www.bigbasket.com/app-faqs/?source=app";
     public static final String COMMUNICATION_HUB_FAQ_SHOW = "is_show_FAQ";
 
+    //Product Type
+    public static final String PRODUCT_FOOD_TYPE_VEG = "veg";
+    public static final String PRODUCT_FOOD_TYPE_NONVEG = "non-veg";
+    public static final String PRODUCT_FOOD_TYPE_EGG = "egg";
 }

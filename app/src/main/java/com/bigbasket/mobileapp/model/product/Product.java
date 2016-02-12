@@ -69,6 +69,10 @@ public class Product extends BaseProduct {
     private String variableWeightMsg;
     @SerializedName(Constants.STORE_IDS)
     private List<String> storeIds;
+    @SerializedName(Constants.PRODUCT_FOOD_TYPE)
+    private String productFoodType;
+    @SerializedName(Constants.PRODUCT_TAG)
+    private ArrayList<ProductTag> productTag = new ArrayList<>();
 
     public Product(Parcel source) {
         super(source);
@@ -96,7 +100,7 @@ public class Product extends BaseProduct {
         productStatus = source.readString();
         boolean isChildProductsNull = source.readByte() == (byte) 1;
         if (!isChildProductsNull) {
-            allProducts =  source.createTypedArrayList(Product.CREATOR);
+            allProducts = source.createTypedArrayList(Product.CREATOR);
         }
         boolean isProductPromoInfoNull = source.readByte() == (byte) 1;
         if (!isProductPromoInfoNull) {
@@ -132,6 +136,10 @@ public class Product extends BaseProduct {
         if (!isStoreIdsNull) {
             storeIds = new ArrayList<>();
             source.readStringList(storeIds);
+        }
+        boolean isProductTypeNull = source.readByte() == (byte) 1;
+        if (!isProductTypeNull) {
+            productFoodType = source.readString();
         }
     }
 
@@ -242,6 +250,11 @@ public class Product extends BaseProduct {
         if (!isStoredIdsNull) {
             dest.writeStringList(storeIds);
         }
+        boolean isProductTypeNull = productFoodType == null;
+        dest.writeByte(isProductTypeNull ? (byte) 1 : (byte) 0);
+        if (!isProductTypeNull) {
+            dest.writeString(productFoodType);
+        }
     }
 
     public String getSellPrice() {
@@ -346,5 +359,17 @@ public class Product extends BaseProduct {
     @Nullable
     public List<String> getStoreIds() {
         return storeIds;
+    }
+
+    public String getProductFoodType() {
+        return productFoodType;
+    }
+
+    public ArrayList<ProductTag> getProductTag() {
+        return productTag;
+    }
+
+    public void setProductTag(ArrayList<ProductTag> productTag) {
+        this.productTag = productTag;
     }
 }
