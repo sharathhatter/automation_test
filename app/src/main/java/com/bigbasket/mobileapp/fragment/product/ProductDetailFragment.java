@@ -24,9 +24,11 @@ import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.handler.click.OnBrandPageListener;
 import com.bigbasket.mobileapp.handler.click.OnPromoClickListener;
+import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.handler.click.OnSpecialityShopIconClickListener;
 import com.bigbasket.mobileapp.handler.click.basket.OnProductBasketActionListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
@@ -199,36 +201,23 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
 
         //adding the food type to the detail view of a product
         if (mProduct.getProductTag() != null && mProduct.getProductTag().size() > 0) {
-            //on clicklistener for the food type
+//            on clicklistener for the food type
             View.OnClickListener onFoodTypeClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-                    DestinationInfo destinationInfo = (DestinationInfo) v.getTag(R.id.destination_info);
-                    nameValuePairs.add(new NameValuePair(Constants.TYPE, destinationInfo.getDestinationType()));
-                    nameValuePairs.add(new NameValuePair(Constants.SLUG, destinationInfo.getDestinationSlug()));
-                    launchProductList(nameValuePairs, null, null);
+                    new OnSectionItemClickListener<>((AppOperationAware) getActivity())
+                            .handleDestinationClick((DestinationInfo) v.getTag(R.id.destination_info));
                 }
             };
 
             for (ProductTag productTag : mProduct.getProductTag()) {
                 if (productTag.getType() == 1) {
-
                     View productFoodType = inflater.inflate(R.layout.uiv3_heading_textview, layoutProductDetail, false);
                     TextView txtFoodTypeHeading = (TextView) productFoodType.findViewById(R.id.txtFoodTypeHeading);
                     txtFoodTypeHeading.setTypeface(faceRobotoMedium);
                     txtFoodTypeHeading.setText(productTag.getHeader());
                     layoutProductDetail.addView(productFoodType);
-
                     FlowLayout tagsFlowLayout = (FlowLayout) productFoodType.findViewById(R.id.tagsFlowLayout);
-                    Resources r = getCurrentActivity().getResources();
-                    int margin = (int) TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP,
-                            getCurrentActivity().getResources().getDimensionPixelSize(R.dimen.padding_mini),
-                            r.getDisplayMetrics()
-                    );
-                    tagsFlowLayout.setMargin(margin, margin);
-
                     List<HashMap<String, DestinationInfo>> values = productTag.getValues();
                     for (HashMap<String, DestinationInfo> v : values) {
                         for (Map.Entry<String, DestinationInfo> e : v.entrySet()) {
@@ -240,9 +229,10 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                              * values of tags are used to launch the product list passing these values as parameters
                              */
                             DestinationInfo destinationInfo = e.getValue();
-
-                            txtFoodType.setTag(R.id.destination_info, destinationInfo);
-                            txtFoodType.setOnClickListener(onFoodTypeClickListener);
+                            if (destinationInfo != null) {
+                                txtFoodType.setTag(R.id.destination_info, destinationInfo);
+                                txtFoodType.setOnClickListener(onFoodTypeClickListener);
+                            }
                             //adding view to the flowlayout
                             tagsFlowLayout.addView(txtFoodType);
                         }

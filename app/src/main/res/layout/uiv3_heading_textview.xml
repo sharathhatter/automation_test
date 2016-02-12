@@ -19,9 +19,10 @@
     <com.bigbasket.mobileapp.view.uiv3.FlowLayout
         android:id="@+id/tagsFlowLayout"
         android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:paddingLeft="@dimen/margin_normal"
-        android:paddingTop="@dimen/padding_mini"
-        android:layout_height="wrap_content">
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/padding_mini">
     </com.bigbasket.mobileapp.view.uiv3.FlowLayout>
 </LinearLayout>

@@ -64,7 +64,6 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/txtProductDesc"
         android:layout_below="@id/txtProductDesc"
-        android:layout_marginLeft="@dimen/margin_mini"
         android:orientation="horizontal">
 
         <include

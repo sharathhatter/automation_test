@@ -72,7 +72,7 @@ public class Product extends BaseProduct {
     @SerializedName(Constants.PRODUCT_FOOD_TYPE)
     private String productFoodType;
     @SerializedName(Constants.PRODUCT_TAG)
-    private ArrayList<ProductTag> productTag = new ArrayList<>();
+    private ArrayList<ProductTag> productTag;
 
     public Product(Parcel source) {
         super(source);
@@ -140,6 +140,10 @@ public class Product extends BaseProduct {
         boolean isProductTypeNull = source.readByte() == (byte) 1;
         if (!isProductTypeNull) {
             productFoodType = source.readString();
+        }
+        boolean isProductTagNull = source.readByte() == (byte) 1;
+        if (!isProductTagNull) {
+            productTag = source.createTypedArrayList(ProductTag.CREATOR);
         }
     }
 
@@ -254,6 +258,11 @@ public class Product extends BaseProduct {
         dest.writeByte(isProductTypeNull ? (byte) 1 : (byte) 0);
         if (!isProductTypeNull) {
             dest.writeString(productFoodType);
+        }
+        boolean isProductTagNull = productTag == null;
+        dest.writeByte(isProductTagNull ? (byte) 1 : (byte) 0);
+        if (!isProductTagNull) {
+            dest.writeTypedList(productTag);
         }
     }
 
