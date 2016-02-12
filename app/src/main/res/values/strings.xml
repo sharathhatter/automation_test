@@ -456,12 +456,12 @@
     <string name="promo_more_needed_format">"%1$s more needed for the promo"</string>
     <string name="sdcarderror">Please insert SD-card to display map.</string>
 
-    <string name="contacts_permission_rationale">BigBasket needs permission to read the email address from Contacts. Please enable Contacts permission from application settings</string>
-    <string name="sms_permission_rationale">BigBasket needs permission to auto populate the OTP by reading the SMS. Please enable SMS permission from application settings</string>
-    <string name="location_permission_rationale">BigBasket needs permission to determine your address. Please enable Location permission from application settings</string>
-    <string name="attach_picture_permission_rationale">BigBasket needs permission to take the picture . Please enable Camera permission from application settings</string>
-    <string name="scan_permission_rationale">BigBasket needs permission to scan the barcode from camera . Please enable Camera permission from application settings</string>
-    <string name="micro_phone_permission_rationale">BigBasket needs permission to record the search term. Please enable Microphone permission from application settings</string>
+    <string name="contacts_permission_rationale">Bigbasket needs permission to read email address from Contacts.Please enable Contacts permission from application settings.</string>
+    <string name="sms_permission_rationale">Bigbasket needs permission to auto populate OTP by reading SMS. Please enable SMS permission from application settings.</string>
+    <string name="location_permission_rationale">Bigbasket needs GPS permission to automatically locate your location. Please enable Location permission from application settings.</string>
+    <string name="attach_picture_permission_rationale">Bigbasket needs camera permission to take picture . Please enable Camera permission from application settings.</string>
+    <string name="scan_permission_rationale">Bigbasket needs permission to scan the barcode from camera . Please enable Camera permission from application settings.</string>
+    <string name="micro_phone_permission_rationale">Bigbasket needs permission to record the search term. Please enable Microphone permission from application settings.</string>
     <string name="permission_rationale_dialog_title">Permission required</string>
 
 </resources>

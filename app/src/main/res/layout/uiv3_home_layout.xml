@@ -35,12 +35,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_normal" />
 
-                <Spinner
+                <android.support.v7.widget.AppCompatSpinner
                     android:id="@+id/spinnerArea"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:popupBackground="@color/uiv3_large_list_item_bck" />
+                    android:background="@android:color/transparent"
+                    android:popupBackground="@android:color/transparent"
+                    app:popupTheme="@style/SpinnerPopTheme"/>
+<!--                android:popupBackground="@color/uiv3_large_list_item_bck" -->
+
             </android.support.v7.widget.Toolbar>
 
             <FrameLayout

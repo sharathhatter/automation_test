@@ -549,9 +549,7 @@ public final class ProductView {
                     txtInBasket.setVisibility(View.VISIBLE);
                     viewDecBasketQty.setVisibility(View.VISIBLE);
                     viewIncBasketQty.setVisibility(View.VISIBLE);
-                    if (productViewDisplayDataHolder.isShowQtyInput()) {
-                        editTextQty.setVisibility(View.GONE);
-                    }
+                    editTextQty.setVisibility(View.GONE);
                     imgAddToBasket.setVisibility(View.GONE);
                 } else {
                     txtInBasket.setText("");
@@ -560,8 +558,11 @@ public final class ProductView {
                     viewIncBasketQty.setVisibility(View.GONE);
 
                     imgAddToBasket.setVisibility(View.VISIBLE);
+                    UIUtil.displayAsyncImage(imgAddToBasket, R.drawable.btn_add_basket);
                     if (productViewDisplayDataHolder.isShowQtyInput()) {
                         editTextQty.setVisibility(View.VISIBLE);
+                    } else {
+                        editTextQty.setVisibility(View.GONE);
                     }
                 }
 

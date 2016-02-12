@@ -309,7 +309,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                 if(handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
                         getString(R.string.location_permission_rationale),
                         Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION)) {
-                    triggerLocationFetching();
+                    updateLastKnownLocation(true, true);
                 }
                 break;
             case R.id.btnChooseLocation:

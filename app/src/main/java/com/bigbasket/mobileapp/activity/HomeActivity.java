@@ -32,6 +32,7 @@ public class HomeActivity extends SearchActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         super.onCreate(savedInstanceState);
         mSpinnerArea = (Spinner) findViewById(R.id.spinnerArea);
         mProgressBarArea = (ProgressBar) findViewById(R.id.progressBarArea);

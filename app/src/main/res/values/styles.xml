@@ -99,6 +99,9 @@
         <item name="colorControlNormal">@color/translucent_white</item>
         <item name="colorControlHighlight">@color/white</item>
         <item name="colorControlActivated">@color/white</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
 
     <style name="BBNavDrawerTheme" parent="BaseAppTheme" />
@@ -349,6 +352,9 @@
     <style name="LoginScreenTheme" parent="BaseAppTheme">
         <item name="colorPrimaryDark">@color/primary_dark_material_light</item>
         <item name="colorAccent">@color/white</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
 
     <style name="AndroidImageSlider_Corner_Oval_Orange">
@@ -414,6 +420,10 @@
 
     <style name="ExpressDeliveryTheme" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/dark_green</item>
+    </style>
+
+    <style name="SpinnerPopTheme" parent="Theme.AppCompat.Light">
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
 </resources>
