@@ -31,7 +31,7 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SignupActivity extends BackButtonActivity {
 
@@ -261,7 +261,6 @@ public class SignupActivity extends BackButtonActivity {
         super.onDataSyncFailure();
         showLocationView();
         hideProgressDialog();
-        showAlertDialog(getString(R.string.headingServerError), getString(R.string.server_error));
     }
 
     @Override
@@ -289,7 +288,7 @@ public class SignupActivity extends BackButtonActivity {
     }
 
     private void onSignupCancelled() {
-        setResult(NavigationCodes.SIGN_UP_CANCELLED);
+        setResult(NavigationCodes.RESULT_SIGN_UP_CANCELLED);
         finish();
     }
 

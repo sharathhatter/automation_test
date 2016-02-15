@@ -67,13 +67,11 @@ public class PromoDetail extends Promo {
         promoRedemptionInfo = source.readParcelable(PromoDetail.class.getClassLoader());
         boolean isFixedComboProductsNull = source.readByte() == (byte) 1;
         if (!isFixedComboProductsNull) {
-            fixedComboProducts = new ArrayList<>();
-            source.readTypedList(fixedComboProducts, Product.CREATOR);
+            fixedComboProducts = source.createTypedArrayList(Product.CREATOR);
         }
         boolean isFreeProducts = source.readByte() == (byte) 1;
         if (!isFreeProducts) {
-            freeProducts = new ArrayList<>();
-            source.readTypedList(freeProducts, Product.CREATOR);
+            freeProducts = source.createTypedArrayList(Product.CREATOR);
         }
     }
 

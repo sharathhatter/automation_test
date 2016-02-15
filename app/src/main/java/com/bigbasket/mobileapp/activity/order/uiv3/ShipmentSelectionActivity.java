@@ -39,7 +39,7 @@ import com.bigbasket.mobileapp.model.shipments.Slot;
 import com.bigbasket.mobileapp.model.shipments.SlotDisplay;
 import com.bigbasket.mobileapp.task.PostShipmentTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -167,7 +167,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
             BaseShipmentAction shipmentAction = shipmentActionHashMap != null ?
                     shipmentActionHashMap.get(shipment.getShipmentId()) : null;
-            String shipmentName = shipment.getShipmentName();
+            final String shipmentName = shipment.getShipmentName();
             String actionName = null;
             boolean applyBottom = true;
             if (shipmentAction != null) {
@@ -259,11 +259,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 imgHelp.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                        intent.putExtra(Constants.WEBVIEW_TITLE, shipment.getShipmentName());
-                        intent.putExtra(Constants.WEBVIEW_URL, shipment.getHelpPage());
-                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        FlatPageHelper.openFlatPage(getCurrentActivity(), shipment.getHelpPage(),
+                                shipment.getShipmentName());
                     }
                 });
             } else {
@@ -315,9 +312,9 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         ArrayList<Slot> slots = shipment.getSlots();
         if (slots == null || slots.size() == 0) return;
         TextView txtReadonlySelectedSlot = (TextView) shipmentView.findViewById(R.id.txtReadonlySelectedSlot);
-        txtReadonlySelectedSlot.setTypeface(faceRobotoMedium);
+        txtReadonlySelectedSlot.setTypeface(faceRobotoRegular);
         Button btnSelectedSlot = (Button) shipmentView.findViewById(R.id.btnSelectedSlot);
-        btnSelectedSlot.setTypeface(faceRobotoMedium);
+        btnSelectedSlot.setTypeface(faceRobotoRegular);
         Slot selectedSlot;
         if (slots.size() == 1) {
             btnSelectedSlot.setVisibility(View.GONE);
@@ -349,7 +346,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (selectedSlot.getSlotDisplay() != null) {
             SlotDisplay slotDisplay = selectedSlot.getSlotDisplay();
             String display = TextUtils.isEmpty(slotDisplay.getDate()) ? slotDisplay.getTime() :
-                    slotDisplay.getDate() + "     " + slotDisplay.getTime();
+                    slotDisplay.getDate() + "  " + slotDisplay.getTime();
             txtVw.setText(display);
         }
     }
@@ -486,7 +483,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 Shipment shipment = mShipments.get(shipmentIdx);
                 if (shipment.getSelectedSlot() == null) {
                     showToast(getString(R.string.selectAllSlotsErrMsg));
-                    break;
+                    return;
                 }
                 SelectedShipment selectedShipment = new
                         SelectedShipment(shipment.getShipmentId(), shipment.getFulfillmentId(),

@@ -44,7 +44,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public class SplashActivity extends BaseActivity implements AppOperationAware {
@@ -92,6 +92,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
     private void startSplashScreen() {
         setContentView(R.layout.splash_screen_layout);
         imgBBLogo = (ImageView) findViewById(R.id.imgBBLogo);
+        DevConfigViewHandler.setView(imgBBLogo);
         UIUtil.displayAsyncImage(imgBBLogo, R.drawable.bb_splash_logo, true);
         landingView = findViewById(R.id.layoutLoginButtons);
         progressView = findViewById(R.id.progressBar);
@@ -115,7 +116,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
 
         ImageView imgEmptyPage = (ImageView) findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setImageResource(R.drawable.empty_no_internet);
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (BuildConfig.DEBUG) {
             DevConfigViewHandler.setView(imgEmptyPage);
         }
 
@@ -171,9 +172,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
         Intent homePageIntent = new Intent(this, HomeActivity.class);
         homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
         startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            finish();
-        }
+        finish();
     }
 
     private void doRegisterDevice(final City city) {
@@ -247,8 +246,8 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                if (isSuspended()) return;
+            public void onFailure(Call<RegisterDeviceResponse> call, Throwable t) {
+                if (isSuspended() || (call != null && call.isCanceled())) return;
                 showNoInternetConnectionView(getString(R.string.networkError));
             }
 
@@ -303,10 +302,10 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
         setSuspended(false);
         mIsFromActivityResult = true;
         if (resultCode == NavigationCodes.GO_TO_HOME) {
-            removePendingGoToHome();
             handleResults();
-        } else if (resultCode != NavigationCodes.SIGN_UP_CANCELLED
-                && resultCode != NavigationCodes.SIGN_IN_CANCELLED) {
+        } else if (resultCode != NavigationCodes.RESULT_SIGN_UP_CANCELLED
+                && resultCode != NavigationCodes.RESULT_SIGN_IN_CANCELLED
+                && resultCode != NavigationCodes.RESULT_CHANGE_CITY_CANCELLED) {
             finish();
         }
     }

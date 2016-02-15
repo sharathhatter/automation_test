@@ -4,9 +4,10 @@ import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 
 import java.lang.ref.WeakReference;
 
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public abstract class BBNetworkCallback<K> implements Callback<K> {
 
@@ -23,8 +24,9 @@ public abstract class BBNetworkCallback<K> implements Callback<K> {
     }
 
     @Override
-    public void onResponse(Response<K> response, Retrofit retrofit) {
-        if (ctxWeakReference == null || ctxWeakReference.get() == null) return;
+    public void onResponse(Call<K> call, Response<K> response) {
+        if (ctxWeakReference == null || ctxWeakReference.get() == null
+                || (call != null && call.isCanceled())) return;
         if ((ctxWeakReference.get()).isSuspended()) return;
         if (!updateProgress()) return;
         if (response.isSuccess()) {
@@ -35,8 +37,9 @@ public abstract class BBNetworkCallback<K> implements Callback<K> {
     }
 
     @Override
-    public void onFailure(Throwable t) {
-        if (ctxWeakReference == null || ctxWeakReference.get() == null) return;
+    public void onFailure(Call<K> call, Throwable t) {
+        if (ctxWeakReference == null || ctxWeakReference.get() == null
+                || (call != null && call.isCanceled())) return;
         if ((ctxWeakReference.get()).isSuspended()) return;
         if (!updateProgress()) return;
         (ctxWeakReference.get()).getHandler().handleRetrofitError(t, finishOnFailure);

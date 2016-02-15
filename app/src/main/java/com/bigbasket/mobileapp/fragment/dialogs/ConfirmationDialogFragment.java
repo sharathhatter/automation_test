@@ -25,7 +25,7 @@ public class ConfirmationDialogFragment extends AppCompatDialogFragment {
     public interface ConfirmationDialogCallback {
         void onDialogConfirmed(int reqCode, Bundle data, boolean isPositive);
 
-        void onDialogCancelled(int reqCode);
+        void onDialogCancelled(int reqCode, Bundle data);
     }
 
     public static ConfirmationDialogFragment newInstance(int requestCode,
@@ -141,7 +141,9 @@ public class ConfirmationDialogFragment extends AppCompatDialogFragment {
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
         if (confirmationDialogCallback != null) {
-            confirmationDialogCallback.onDialogCancelled(requestCode);
+            Bundle args = getArguments();
+            confirmationDialogCallback.onDialogCancelled(requestCode,
+                    args != null ?args.getBundle(ARG_DATA) : null);
         }
     }
 }

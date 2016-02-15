@@ -28,29 +28,26 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.click.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.account.OtpResponse;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class SignInActivity extends SocialLoginActivity {
 
@@ -71,7 +68,7 @@ public class SignInActivity extends SocialLoginActivity {
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
-
+        setTitle(getString(R.string.signInCapsVerb));
         setCurrentScreenName(TrackEventkeys.NC_LOGIN_SCREEN);
 
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
@@ -144,14 +141,14 @@ public class SignInActivity extends SocialLoginActivity {
         ClickableSpan termsAndCondClickSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                launchFlatPage(Constants.TERMS_AND_COND_URL);
+                FlatPageHelper.openFlatPage(getCurrentActivity(), Constants.TERMS_AND_COND_URL, null);
             }
         };
 
         final ClickableSpan privacyPolicyClickSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                launchFlatPage(Constants.PRIVACY_POLICY_URL);
+                FlatPageHelper.openFlatPage(getCurrentActivity(), Constants.PRIVACY_POLICY_URL, null);
             }
         };
 
@@ -192,17 +189,6 @@ public class SignInActivity extends SocialLoginActivity {
             }
         });
         trackEvent(TrackingAware.LOGIN_SHOWN, null);
-    }
-
-
-    private void launchFlatPage(String url) {
-        try {
-            Intent intent = new Intent(SignInActivity.this, BackButtonActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-            intent.putExtra(Constants.WEBVIEW_URL, URLDecoder.decode(url, "UTF-8"));
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        } catch (UnsupportedEncodingException e) {
-        }
     }
 
     private void logRememberMeEnabled(String enabled) {
@@ -258,7 +244,7 @@ public class SignInActivity extends SocialLoginActivity {
     }
 
     private void onSignInCancelled() {
-        setResult(NavigationCodes.SIGN_IN_CANCELLED);
+        setResult(NavigationCodes.RESULT_SIGN_IN_CANCELLED);
         finish();
     }
 
@@ -352,35 +338,30 @@ public class SignInActivity extends SocialLoginActivity {
         }
 
         hideKeyboard(getCurrentActivity(), mEmailView);
-        requestNewPassword(email);
+        requestOtp(email);
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
-        trackEvent(TrackingAware.FORGOT_PASSWORD_DIALOG_SHOWN, eventAttribs);
         LocalyticsWrapper.tagScreen(TrackEventkeys.FORGOT_PASSWORD_SCREEN);
+        trackEvent(TrackingAware.FORGOT_PASSWORD_CLICKED, eventAttribs);
     }
 
-    private void requestNewPassword(String email) {
+    private void requestOtp(final String email) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        Call<OldBaseApiResponse> call = bigBasketApiService.forgotPassword(email);
-        call.enqueue(new BBNetworkCallback<OldBaseApiResponse>(this) {
+        Call<ApiResponse<OtpResponse>> call = bigBasketApiService.getForgotPasswordOtp(
+                getCurrentScreenName(), email);
+        call.enqueue(new BBNetworkCallback<ApiResponse<OtpResponse>>(this) {
             @Override
-            public void onSuccess(OldBaseApiResponse forgotPasswordApiResponse) {
-                switch (forgotPasswordApiResponse.status) {
-                    case Constants.OK:
-                        showToast(getString(R.string.newPasswordSent));
-                        break;
-                    default:
-                        logForgotPasswordFailure(forgotPasswordApiResponse.message);
-                        handler.sendEmptyMessage(forgotPasswordApiResponse.getErrorTypeAsInt(), forgotPasswordApiResponse.message);
-                        break;
+            public void onSuccess(ApiResponse<OtpResponse> otpResponse) {
+                if (otpResponse.status == 0) {
+                    Intent intent = new Intent(getCurrentActivity(), ForgotPasswordActivity.class);
+                    intent.putExtra(Constants.EMAIL, email);
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                } else {
+                    logForgotPasswordFailure(otpResponse.message);
+                    handler.sendEmptyMessage(otpResponse.status,
+                            otpResponse.message);
                 }
-            }
-
-            @Override
-            public void onFailure(int httpErrorCode, String msg) {
-                super.onFailure(httpErrorCode, msg);
-                logForgotPasswordFailure(msg);
             }
 
             @Override
@@ -392,13 +373,19 @@ public class SignInActivity extends SocialLoginActivity {
                     return false;
                 }
             }
+
+            @Override
+            public void onFailure(int httpErrorCode, String msg) {
+                super.onFailure(httpErrorCode, msg);
+                logForgotPasswordFailure(msg);
+            }
         });
     }
 
     private void logForgotPasswordFailure(String reason) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.FAILURE_REASON, reason);
-        trackEvent(TrackingAware.FORGOT_PASSWORD_EMAIL_CLICKED, eventAttribs);
+        trackEvent(TrackingAware.FORGOT_PASSWORD_FAILED, eventAttribs);
     }
 
     @Override

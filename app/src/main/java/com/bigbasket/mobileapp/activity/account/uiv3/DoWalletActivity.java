@@ -34,7 +34,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public class DoWalletActivity extends BackButtonActivity {

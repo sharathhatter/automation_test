@@ -131,7 +131,7 @@
         android:layout_toRightOf="@id/imgGiftIcon" />
 
     <LinearLayout
-        android:id="@+id/layoutProductPrice"
+        android:id="@+id/layout_price_basket_op"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtGiftMsg"
@@ -163,7 +163,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/margin_mini"
             android:inputType="numberSigned"
-            android:maxLength="2"
+            android:maxLength="3"
             android:minLines="1"
             android:paddingBottom="2dp"
             android:paddingLeft="@dimen/padding_small"
@@ -195,7 +195,7 @@
         android:id="@+id/layoutExpressMsg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layoutProductPrice"
+        android:layout_below="@id/layout_price_basket_op"
         android:layout_marginBottom="@dimen/margin_small"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"

@@ -38,7 +38,12 @@ import java.util.List;
 
 public class WibmoSDK {
 	private static final String TAG = WibmoSDK.class.getSimpleName();
-    public static final String VERSION = "1.2.0";
+    public static final String VERSION = "1.3.1";
+
+    public static final String RES_CODE_FAILURE_TIMED_OUT = "203"; //User Timedout
+    public static final String RES_CODE_FAILURE_USER_ABORT = "204";
+    public static final String RES_CODE_FAILURE_SYSTEM_ABORT = "205";
+    public static final String RES_CODE_FAILURE_INTERNAL_ERROR = "051";
 
     public static final int REQUEST_CODE_MPOS = 0x0000c0be; // Only use bottom 16 bits - 49342
     public static final int REQUEST_CODE_IAP_2FA  = 0x0000605f; // Only use bottom 16 bits - 24671
@@ -54,6 +59,12 @@ public class WibmoSDK {
 
     private static String wibmoIntentActionPackage = "com.enstage.wibmo.sdk.inapp.main";
     private static String wibmoAppPackage;
+
+    public static final String PAYMENT_TYPE_ALL = "*";
+    public static final String PAYMENT_TYPE_NONE = "w.ds.pt.none";
+    public static final String PAYMENT_TYPE_WALLET_CARD = "w.ds.pt.card_wallet";
+    //public static final String PAYMENT_TYPE_VISA_CARD = "w.ds.pt.card_visa";
+    //public static final String PAYMENT_TYPE_MASTER_CARD = "w.ds.pt.card_mastercard";
 
     public static void startForInApp(Activity activity, W2faInitRequest w2faInitRequest) {
         if(activity==null) {

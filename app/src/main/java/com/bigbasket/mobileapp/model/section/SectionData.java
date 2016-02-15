@@ -30,8 +30,7 @@ public class SectionData implements Parcelable, Serializable {
     public SectionData(Parcel source) {
         boolean wasSectionsNull = source.readByte() == (byte) 1;
         if (!wasSectionsNull) {
-            sections = new ArrayList<>();
-            source.readTypedList(sections, Section.CREATOR);
+            sections = source.createTypedArrayList(Section.CREATOR);
         }
         boolean wasRendererMapNull = source.readByte() == (byte) 1;
         if (!wasRendererMapNull) {

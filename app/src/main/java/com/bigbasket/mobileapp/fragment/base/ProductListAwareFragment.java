@@ -47,6 +47,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
 import java.lang.ref.WeakReference;
@@ -55,7 +56,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public abstract class ProductListAwareFragment extends BaseSectionFragment implements
@@ -116,7 +117,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
         mInjectWindowRetries = 0;
 
-        injectSponsoredProducts();
+        try {
+            injectSponsoredProducts();
+        } catch (Throwable ex) {
+            Crashlytics.logException(ex);
+        }
     }
 
     private void injectSponsoredProducts() {
@@ -137,8 +142,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     lastVisiblePosition = ((LinearLayoutManager) layoutManager)
                             .findLastVisibleItemPosition();
                 } else if (layoutManager instanceof StaggeredGridLayoutManager) {
-                    int[] pos = ((StaggeredGridLayoutManager) layoutManager)
-                            .findFirstVisibleItemPositions(null);
+                    StaggeredGridLayoutManager staggeredLayoutManager = ((StaggeredGridLayoutManager) layoutManager);
+                    int[] pos = staggeredLayoutManager.findFirstVisibleItemPositions(null);
                     if (pos != null && pos.length > 0) {
                         Arrays.sort(pos);
                         firstVisiblePosition = pos[0];
@@ -179,7 +184,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                         mProductRecyclerView.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                injectSponsoredProducts();
+                                try {
+                                    injectSponsoredProducts();
+                                } catch (Throwable ex) {
+                                    Crashlytics.logException(ex);
+                                }
                             }
                         }, 500);
                         mInjectWindowRetries++;
@@ -270,7 +279,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
+                public void onFailure(Call<ApiResponse<ProductNextPageResponse>> call, Throwable t) {
+                    if (call != null && call.isCanceled()) return;
                     failure();
                 }
 
@@ -300,7 +310,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         // +1 to include the product count label
         mProductListRecyclerAdapter.notifyItemRangeInserted(insertedAt + 1, products.size());
         if (mSponsoredSectionInfo != null && mSponsoredSectionInfo.hasMoreItems()) {
-            injectSponsoredProducts();
+            try {
+                injectSponsoredProducts();
+            } catch (Throwable ex) {
+                Crashlytics.logException(ex);
+            }
         }
     }
 
@@ -310,7 +324,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         mProductInfo.setCurrentPage(1);
         mProductInfo.setProducts(products);
         setProductListView();
-        injectSponsoredProducts();
+        try {
+            injectSponsoredProducts();
+        } catch (Throwable ex) {
+            Crashlytics.logException(ex);
+        }
     }
 
     public void updateProductInfo(@NonNull ProductInfo productInfo, ArrayList<NameValuePair> nameValuePairs) {
@@ -320,7 +338,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         mProductInfo.setProducts(productInfo.getProducts());
         mNameValuePairs = NameValuePair.toMap(nameValuePairs);
         setProductListView();
-        injectSponsoredProducts();
+        try {
+            injectSponsoredProducts();
+        } catch (Throwable ex) {
+            Crashlytics.logException(ex);
+        }
     }
 
     public void setLazyProductLoadingFailure() {

@@ -3,7 +3,9 @@ package com.bigbasket.mobileapp.devconfig;
 import android.content.Context;
 
 import com.bigbasket.mobileapp.R;
-import com.squareup.okhttp.Interceptor;
+
+import okhttp3.Interceptor;
+
 /**
  * Dummy class
  */

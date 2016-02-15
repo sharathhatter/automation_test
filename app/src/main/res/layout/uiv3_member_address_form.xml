@@ -13,26 +13,9 @@
             android:id="@+id/toolbarMain"
             layout="@layout/uiv3_tool_layout" />
 
-        <Button
-            android:id="@+id/txtSaveAddress"
-            style="@style/BottomButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:paddingBottom="@dimen/padding_small"
-            android:paddingLeft="@dimen/padding_normal"
-            android:paddingRight="@dimen/padding_normal"
-            android:paddingTop="@dimen/padding_small"
-            android:text="@string/save"
-            android:textColor="@color/white"
-            android:textSize="@dimen/primary_text_size" />
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@id/txtSaveAddress"
             android:layout_below="@id/toolbarMain"
             android:paddingTop="@dimen/padding_normal"
 
@@ -302,6 +285,19 @@
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/small_text_size" />
 
+                <Button
+                    android:id="@+id/txtSaveAddress"
+                    style="@style/BottomButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/padding_small"
+                    android:paddingLeft="@dimen/padding_normal"
+                    android:paddingRight="@dimen/padding_normal"
+                    android:paddingTop="@dimen/padding_small"
+                    android:text="@string/save"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/primary_text_size" />
 
             </LinearLayout>
         </ScrollView>

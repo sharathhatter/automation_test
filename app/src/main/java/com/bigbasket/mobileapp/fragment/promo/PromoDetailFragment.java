@@ -54,7 +54,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public class PromoDetailFragment extends BaseFragment {
@@ -370,8 +370,7 @@ public class PromoDetailFragment extends BaseFragment {
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
                     String moreQtyNeeded = UIUtil.roundOrInt(Math.abs(promoSet.getPromoCriteriaVal() - promoSet.getValueInBasket()));
                     txtValNeeded.setVisibility(View.VISIBLE);
-                    txtValNeeded.setText(moreQtyNeeded +
-                            " more needed for the promo");
+                    txtValNeeded.setText(getString(R.string.promo_more_needed_format, moreQtyNeeded));
                 }
                 break;
             case Constants.AMOUNT:
@@ -384,8 +383,7 @@ public class PromoDetailFragment extends BaseFragment {
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
                     String moreAmountNeeded = UIUtil.roundOrInt(Math.abs(promoSet.getPromoCriteriaVal() -
                             promoSet.getValueInBasket()));
-                    String txt = "`" + moreAmountNeeded
-                            + " more needed for the promo";
+                    String txt = "`" + getString(R.string.promo_more_needed_format,moreAmountNeeded);
                     Spannable spannable = new SpannableString(txt);
                     spannable.setSpan(new CustomTypefaceSpan("", faceRupee),
                             0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

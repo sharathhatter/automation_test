@@ -11,7 +11,7 @@ import com.bigbasket.mobileapp.model.account.City;
 
 import java.util.ArrayList;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class GetCitiesTask<T extends CityListDisplayAware & AppOperationAware> {
     private T context;

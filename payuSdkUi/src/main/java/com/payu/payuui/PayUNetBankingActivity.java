@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.payu.india.Model.PaymentDetails;
 import com.payu.india.Model.PaymentParams;
@@ -29,16 +30,12 @@ import java.util.ArrayList;
 public class PayUNetBankingActivity extends PaymentBaseActivity implements View.OnClickListener {
 
     private String bankcode;
-    private Bundle bundle;
     private ArrayList<PaymentDetails> netBankingList;
-    private Spinner spinnerNetbanking;
     //    private String[] netBanksNamesArray;
 //    private String[] netBanksCodesArray;
     private PaymentParams mPaymentParams;
     private PayuHashes payuHashes;
 
-    private PayUNetBankingAdapter payUNetBankingAdapter;
-    private Toolbar toolbar;
     private PayuConfig payuConfig;
 
     @Override
@@ -46,18 +43,18 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_net_banking);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.net_banking));
 
         findViewById(R.id.button_pay_now).setOnClickListener(this);
-        spinnerNetbanking = (Spinner) findViewById(R.id.spinner_netbanking);
+        Spinner spinnerNetbanking = (Spinner) findViewById(R.id.spinner_netbanking);
 
 
         // lets get the required data form bundle
-        bundle = getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
 
         if (bundle != null && bundle.getParcelableArrayList(PayuConstants.NETBANKING) != null) {
             netBankingList = new ArrayList<PaymentDetails>();
@@ -72,7 +69,7 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
 //                netBanksCodesArray[i] = netBankingList.get(i).getBankCode();
 //            }
 
-            payUNetBankingAdapter = new PayUNetBankingAdapter(this, netBankingList);
+            PayUNetBankingAdapter payUNetBankingAdapter = new PayUNetBankingAdapter(this, netBankingList);
             spinnerNetbanking.setAdapter(payUNetBankingAdapter);
             spinnerNetbanking.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -86,7 +83,10 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
                 }
             });
         } else {
-//            Toast.makeText(this, "Could not get netbanking list Data from the previous activity", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.empty_netbanking_list_error, Toast.LENGTH_LONG).show();
+            setResult(Constants.RESULT_REFRESH_DETAILS);
+            finish();
+            return;
         }
 
         mPaymentParams = bundle.getParcelable(PayuConstants.PAYMENT_PARAMS);

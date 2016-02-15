@@ -35,8 +35,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import retrofit.Call;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAware>
         extends AsyncTask<Void, Long, Boolean> {
@@ -368,6 +368,8 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                         mPayzappPostParams,
                         activity);
                 break;
+            case Constants.BB_WALLET:
+                //TODO: invoke onActivityResult
         }
     }
 

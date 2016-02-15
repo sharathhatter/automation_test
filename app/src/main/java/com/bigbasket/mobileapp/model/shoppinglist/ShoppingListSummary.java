@@ -33,8 +33,7 @@ public class ShoppingListSummary implements Parcelable {
 
     public ShoppingListSummary(Parcel source) {
         facetName = source.readString();
-        products = new ArrayList<>();
-        source.readTypedList(products, Product.CREATOR);
+        products = source.createTypedArrayList(Product.CREATOR);
         numProducts = source.readInt();
         facetSlug = source.readString();
         shoppingListName = source.readParcelable(ShoppingListSummary.class.getClassLoader());

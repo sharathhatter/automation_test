@@ -25,7 +25,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public class WalletActivity extends BackButtonActivity implements InvoiceDataAware {

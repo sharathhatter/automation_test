@@ -39,20 +39,33 @@
 # to avoid problem on Samsung 4.2.2 devices with appcompat v21
 # see https://code.google.com/p/android/issues/detail?id=78377
 -keep class !android.support.v7.internal.view.menu.**,android.support.** {*;}
+-keep class android.support.**$** {*;}
+-keep class android.support.design.widget.AppBarLayout$Behavior$SavedState { *; }
+-keep class android.support.v7.view.menu.MenuBuilder { *;}
 -keep interface android.support.** { *; }
+-keep interface android.support.**$** { *; }
 
 # Retrofit & OkHttp
 -dontwarn retrofit.**
 -keep class retrofit.** { *; }
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
 -keep class com.squareup.okhttp.** { *; }
 -keep interface com.squareup.okhttp.** { *; }
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
 -keepclasseswithmembers class * {
     @retrofit.http.* <methods>;
 }
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
 -dontwarn rx.**
 -dontwarn retrofit.appengine.**
+-dontwarn retrofit2.appengine.**
 -dontwarn okio.**
 -dontwarn com.squareup.okhttp.**
+-dontwarn okhttp3.**
 
 # Facebook
 -keep class com.facebook.** { *; }

@@ -99,13 +99,27 @@
         <item name="colorControlNormal">@color/translucent_white</item>
         <item name="colorControlHighlight">@color/white</item>
         <item name="colorControlActivated">@color/white</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
 
     <style name="BBNavDrawerTheme" parent="BaseAppTheme" />
 
     <style name="BBNavDrawerTheme.SpinnerDatePickerTheme" parent="BaseAppTheme" />
 
-    <style name="BaseAppTheme.SearchViewTheme" parent="BBNavDrawerTheme" />
+    <style name="BaseAppTheme.SearchViewTheme" parent="BaseAppTheme">
+        <item name="colorControlNormal">@color/translucent_white</item>
+        <item name="colorControlHighlight">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+        <item name="android:autoCompleteTextViewStyle">
+            @style/BaseAppTheme.SearchViewTheme.CursorStyle
+        </item>
+    </style>
+
+    <style name="BaseAppTheme.SearchViewTheme.CursorStyle" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/search_cursor</item>
+    </style>
 
     <!-- Nav drawer style to set width specified by Material Design specification -->
     <style name="NavDrawer" parent="WindowStyle">
@@ -141,6 +155,7 @@
     <style name="ErrorStyle" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textColor">#B71C1C</item>
     </style>
+
     <style name="BBVoucherTextInputLayoutStyle" parent="Widget.Design.TextInputLayout">
         <item name="colorControlActivated">@color/uiv3_secondary_text_color</item>
     </style>
@@ -161,6 +176,7 @@
     <style name="DefaultButtonStyle" parent="Base.Widget.AppCompat.Button">
         <item name="android:textSize">@dimen/primary_text_size</item>
         <item name="android:textColor">@color/uiv3_primary_text_color</item>
+        <item name="android:textAllCaps">false</item>
         <item name="android:textStyle">normal</item>
     </style>
 
@@ -313,7 +329,9 @@
         <item name="android:src">@drawable/gplus_btn_img</item>
     </style>
 
-    <style name="SpinnerDialogMode" />
+    <style name="SpinnerDialogMode">
+        <item name="android:spinnerMode">dialog</item>
+    </style>
 
     <style name="Widget.Design.ScrimInsetsFrameLayout" parent="">
         <item name="insetForeground">#4000</item>
@@ -323,6 +341,10 @@
         <item name="android:background">@drawable/default_button_clicks</item>
     </style>
 
+    <style name="TransparentRippleStyle">
+        <item name="android:background">@drawable/transparent_button_click</item>
+    </style>
+
     <style name="BottomButtonStyle">
         <item name="android:background">@drawable/main_btn_bkg_not_rounded</item>
     </style>
@@ -330,6 +352,9 @@
     <style name="LoginScreenTheme" parent="BaseAppTheme">
         <item name="colorPrimaryDark">@color/primary_dark_material_light</item>
         <item name="colorAccent">@color/white</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
 
     <style name="AndroidImageSlider_Corner_Oval_Orange">
@@ -392,4 +417,13 @@
         <item name="unselected_width">6dp</item>
         <item name="unselected_height">6dp</item>
     </style>
+
+    <style name="ExpressDeliveryTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/dark_green</item>
+    </style>
+
+    <style name="SpinnerPopTheme" parent="Theme.AppCompat.Light">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
 </resources>

@@ -7,7 +7,6 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 
 public class ProductViewDisplayDataHolder {
 
-    private Typeface sanSerifLightTypeface;
     private Typeface serifTypeface;
     private Typeface sansSerifMediumTypeface;
     private Typeface rupeeTypeface;
@@ -22,7 +21,6 @@ public class ProductViewDisplayDataHolder {
     private boolean useRadioButtonsForContextual;
 
     public ProductViewDisplayDataHolder(Builder builder) {
-        this.sanSerifLightTypeface = builder.sanSerifLightTypeface;
         this.serifTypeface = builder.serifTypeface;
         this.sansSerifMediumTypeface = builder.sansSerifMediumTypeface;
         this.rupeeTypeface = builder.rupeeTypeface;

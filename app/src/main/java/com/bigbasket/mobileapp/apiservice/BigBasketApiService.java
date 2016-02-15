@@ -48,6 +48,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ValidateOrderPaymentAp
 import com.bigbasket.mobileapp.model.account.AddressSummary;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
+import com.bigbasket.mobileapp.model.account.OtpResponse;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.ads.AdAnalyticsData;
 import com.bigbasket.mobileapp.model.ads.SponsoredAds;
@@ -62,16 +63,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
-import retrofit.http.Body;
-import retrofit.http.Field;
-import retrofit.http.FieldMap;
-import retrofit.http.FormUrlEncoded;
-import retrofit.http.GET;
-import retrofit.http.Headers;
-import retrofit.http.POST;
-import retrofit.http.Query;
-import retrofit.http.QueryMap;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public interface BigBasketApiService {
 
@@ -282,7 +283,7 @@ public interface BigBasketApiService {
     @GET("co-get-delivery-addresses/")
     Call<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddresses(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx);
 
-    @GET("search-tc/")
+    @GET("autosearch/")
     Call<ApiResponse<AutoSearchApiResponseContent>> autoSearch(@Query("t") String term, @Query(Constants.CITY_ID) String cityId);
 
     @FormUrlEncoded
@@ -317,7 +318,14 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("forgot-password/")
-    Call<OldBaseApiResponse> forgotPassword(@Field(Constants.EMAIL) String email);
+    Call<ApiResponse> updatePasswordWithOtp(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                            @Field(Constants.OTP_CODE) String otpCode,
+                                            @Field(Constants.EMAIL) String email,
+                                            @Field(Constants.NEW_PASSWORD) String newPassword);
+
+    @GET("forgot-password/")
+    Call<ApiResponse<OtpResponse>> getForgotPasswordOtp(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                        @Query(Constants.EMAIL) String email);
 
     @FormUrlEncoded
     @POST("remove-voucher/")

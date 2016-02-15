@@ -27,7 +27,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 
 public class DynamicScreenFragment extends BaseSectionFragment {
@@ -83,8 +83,8 @@ public class DynamicScreenFragment extends BaseSectionFragment {
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                if (isSuspended()) return;
+            public void onFailure(Call<ApiResponse<GetDynamicPageApiResponse>> call, Throwable t) {
+                if (isSuspended() || (call != null && call.isCanceled())) return;
                 onDynamicScreenFailure(t);
             }
         });

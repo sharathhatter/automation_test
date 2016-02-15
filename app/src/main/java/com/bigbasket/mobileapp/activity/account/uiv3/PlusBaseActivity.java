@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.util.Log;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -40,12 +42,9 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
     private static final String TAG = "PlusBaseActivity";
 
-    /* RequestCode for resolutions involving sign-in */
-    private static final int RC_RESOLVE_CONNECT_ERROR = 49404;
-    private static final int RC_RESOLVE_AUTH_ERROR = 49405;
-
     // An integer error argument for play services error dialog
     private static final String DIALOG_ERROR = "dialog_error";
+    private boolean mWaitingForPermission;
 
 
     @Retention(RetentionPolicy.SOURCE)
@@ -65,6 +64,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
     /* Keys for persisting instance variables in savedInstanceState */
     private static final String KEY_IS_RESOLVING = "is_resolving";
     private static final String KEY_CONNECTION_MODE = "connection_mode";
+    private static final String KEY_WAIT_FOR_PERMISSION = "key_wait_for_permission";
 
     /* Client for accessing Google APIs */
     private GoogleApiClient mGoogleApiClient;
@@ -81,6 +81,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         // [START restore_saved_instance_state]
         if (savedInstanceState != null) {
             mIsResolving = savedInstanceState.getBoolean(KEY_IS_RESOLVING);
+            mWaitingForPermission = savedInstanceState.getBoolean(KEY_WAIT_FOR_PERMISSION);
             @ConnectionMode int mode = savedInstanceState.getInt(KEY_CONNECTION_MODE, NONE);
             mConnectionMode = mode;
             if (mConnectionMode != NONE) {
@@ -114,6 +115,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_IS_RESOLVING, mIsResolving);
         outState.putInt(KEY_CONNECTION_MODE, mConnectionMode);
+        outState.putBoolean(KEY_WAIT_FOR_PERMISSION, mWaitingForPermission);
     }
     // [END on_save_instance_state]
 
@@ -203,7 +205,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                             try {
                                 mIsResolving = true;
                                 connectionResult.startResolutionForResult(PlusBaseActivity.this,
-                                        RC_RESOLVE_CONNECT_ERROR);
+                                        NavigationCodes.RC_RESOLVE_CONNECT_ERROR);
                             } catch (IntentSender.SendIntentException e) {
                                 // There was an error with the resolution intent. Try again.
                                 mGoogleApiClient.connect();
@@ -227,11 +229,11 @@ public abstract class PlusBaseActivity extends BaseActivity {
         Log.d(TAG, "signInViaGPlus");
         mConnectionMode = SIGN_IN;
         if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
+            mGoogleApiClient.reconnect();
+        } else {
+            initializeGoogleApiClient();
+            mGoogleApiClient.connect();
         }
-        //Always start with a fresh client for signin
-        initializeGoogleApiClient();
-        mGoogleApiClient.connect();
     }
 
     /**
@@ -253,29 +255,48 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     private void signIn() {
-        if (handlePermission(Manifest.permission.GET_ACCOUNTS, Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS)) {
+        if (handlePermission(Manifest.permission.GET_ACCOUNTS,
+                getString(R.string.contacts_permission_rationale),
+                Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS)) {
             signinUser();
+            mWaitingForPermission = false;
+        } else {
+            mWaitingForPermission = true;
         }
     }
 
     private void signinUser() {
         try {
-            String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
-            fetchAuthToken(accountName);
+            if(mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                fetchAuthToken(accountName);
+            } else {
+                if(mGoogleApiClient == null){
+                    initializeGoogleApiClient();
+                    mGoogleApiClient.connect();
+                } else if(!mGoogleApiClient.isConnecting()){
+                    mGoogleApiClient.reconnect();
+                }
+            }
         } catch (Exception e) {
             Crashlytics.logException(e);
             showToast(getString(R.string.unknownError));
+            onAuthCancelled();
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS:
+                mWaitingForPermission = false;
                 if (grantResults.length > 0 && permissions.length > 0
                         && permissions[0].equals(Manifest.permission.GET_ACCOUNTS)
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     signinUser();
+                } else {
+                    onAuthCancelled();
                 }
                 break;
             default:
@@ -295,11 +316,35 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     @Override
+    protected void onNegativeButtonClicked(int requestCode, Bundle data) {
+        if(requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS &&
+                data != null &&
+                data.getInt(Constants.KEY_PERMISSION_RC) ==
+                        Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS ) {
+            onAuthCancelled();
+        } else {
+            super.onNegativeButtonClicked(requestCode, data);
+        }
+    }
+
+    @Override
+    public void onDialogCancelled(int requestCode, Bundle data) {
+        if(requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS &&
+                data != null &&
+                data.getInt(Constants.KEY_PERMISSION_RC) ==
+                        Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS ) {
+            onAuthCancelled();
+        } else {
+            super.onDialogCancelled(requestCode, data);
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
-
-        if (requestCode == RC_RESOLVE_CONNECT_ERROR) {
+        onStateNotSaved();
+        if (requestCode == NavigationCodes.RC_RESOLVE_CONNECT_ERROR) {
             if (mGoogleApiClient == null) {
                 initializeGoogleApiClient();
             }
@@ -318,10 +363,11 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 } catch (IllegalStateException ex) {
                     //Will throw exception as client not connected,
                     //but there is no other API to clear the selected account, ignore the exception
+                    Crashlytics.logException(ex);
                 }
                 onGoogleClientConnectCancelled();
             }
-        } else if (requestCode == RC_RESOLVE_AUTH_ERROR) {
+        } else if (requestCode == NavigationCodes.RC_RESOLVE_AUTH_ERROR) {
             if (mGoogleApiClient == null) {
                 initializeGoogleApiClient();
             }
@@ -334,6 +380,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                         onGoogleClientConnected(null);
                     } else if (!mGoogleApiClient.isConnecting()) {
                         mConnectionMode = SIGN_IN;
+                        initializeGoogleApiClient();
                         mGoogleApiClient.connect();
                     }
                 }
@@ -341,6 +388,9 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 //User cancelled
                 onAuthCancelled();
             }
+        } else if (requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS && mWaitingForPermission){
+            mConnectionMode = SIGN_IN;
+            signIn();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -400,6 +450,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
         } catch (IllegalStateException ex) {
             //Ignore, google client is not connected
+            Crashlytics.logException(ex);
         }
         try {
             PendingResult<Status> pr = Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
@@ -412,6 +463,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
             //TODO: wait for pr to complete
         } catch (IllegalStateException ex) {
             //Ignore for now
+            Crashlytics.logException(ex);
         }
     }
 
@@ -419,7 +471,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         if (authException != null) {
             if (authException instanceof UserRecoverableAuthException) {
                 startActivityForResult(((UserRecoverableAuthException) authException).getIntent(),
-                        RC_RESOLVE_AUTH_ERROR);
+                        NavigationCodes.RC_RESOLVE_AUTH_ERROR);
             } else {
                 //TODO: Show error and retry if is IOException
                 onPlusClientSignInFailed();
@@ -436,8 +488,10 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
 
     private void onAuthComplete(String authToken) {
-        mGoogleApiClient.disconnect();
-        mGoogleApiClient = null;
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+            mGoogleApiClient = null;
+        }
         onPlusClientSignIn(authToken);
     }
 
@@ -484,12 +538,13 @@ public abstract class PlusBaseActivity extends BaseActivity {
         public GooglePlayServicesErrorDialogFragment() {
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Get the error code and retrieve the appropriate dialog
             int errorCode = this.getArguments().getInt(DIALOG_ERROR);
             return GooglePlayServicesUtil.getErrorDialog(errorCode, this.getActivity(),
-                    RC_RESOLVE_CONNECT_ERROR);
+                    NavigationCodes.RC_RESOLVE_CONNECT_ERROR);
 
         }
 

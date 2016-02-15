@@ -13,19 +13,17 @@ import android.widget.Toast;
  */
 public class DevConfigViewHandler implements View.OnClickListener, Handler.Callback {
     private final View mView;
-    private final SharedPreferences mDevPrefs;
     private boolean mIsDeveloper;
     private Handler mHandler;
     private int clickCount = 0 ;
     private Toast mToast;
+    public static final int DEFAULT_CLICK_COUNT = 7;
 
     private DevConfigViewHandler(View view) {
         mView = view;
         view.setOnClickListener(this);
         mHandler = new Handler(this);
-        mDevPrefs = view.getContext().getSharedPreferences(DeveloperConfigs.DEVELOPER_PREF_FILE,
-                Context.MODE_PRIVATE);
-        mIsDeveloper = mDevPrefs.getBoolean(DeveloperConfigs.IS_DEVELOPER, false);
+        mIsDeveloper = DeveloperConfigs.isDeveloper(view.getContext());
     }
 
     public static void setView(View view) {
@@ -42,13 +40,13 @@ public class DevConfigViewHandler implements View.OnClickListener, Handler.Callb
             startDeveloperConfigurations(context);
             return;
         }
-        if(clickCount >= 10) {
+        if(clickCount >= DEFAULT_CLICK_COUNT) {
             DeveloperConfigs.setIsDeveloper(context,true);
             mIsDeveloper = true;
             showToastMessage(context, "You are now a developer!!!");
             startDeveloperConfigurations(context);
         } else if (clickCount >= 5) {
-            showToastMessage(context, (10 - clickCount) + " clicks away from becoming a developer");
+            showToastMessage(context, (DEFAULT_CLICK_COUNT - clickCount) + " clicks away from becoming a developer");
         }
         clickCount++;
         mHandler.removeCallbacksAndMessages(null);

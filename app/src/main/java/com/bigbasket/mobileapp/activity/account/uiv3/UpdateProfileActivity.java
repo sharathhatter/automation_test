@@ -40,7 +40,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class UpdateProfileActivity extends BackButtonActivity implements OtpDialogAware {
 
@@ -336,9 +336,11 @@ public class UpdateProfileActivity extends BackButtonActivity implements OtpDial
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                super.onFailure(t);
-                logUpdateProfileEvent(getString(R.string.networkError), TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
+            public void onFailure(Call<ApiResponse<UpdateProfileApiResponse>> call, Throwable t) {
+                super.onFailure(call, t);
+                if (call != null && !call.isCanceled()) {
+                    logUpdateProfileEvent(getString(R.string.networkError), TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
+                }
             }
         });
     }

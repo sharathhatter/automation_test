@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class LogoutTask extends AsyncTask<Void, Void, ErrorResponse> {
 
@@ -116,7 +116,7 @@ public class LogoutTask extends AsyncTask<Void, Void, ErrorResponse> {
     @Override
     protected void onPostExecute(ErrorResponse errorResponse) {
         super.onPostExecute(errorResponse);
-        if (errorResponse == null) {
+        if (errorResponse == null || errorResponse.getCode() == 401/* Unauthorized, Already logged out */) {
             ((OnLogoutListener) ctx).onLogoutSuccess();
         } else {
             ((OnLogoutListener) ctx).onLogoutFailure(errorResponse);

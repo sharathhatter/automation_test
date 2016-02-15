@@ -15,7 +15,7 @@ import com.bigbasket.mobileapp.interfaces.OnAddressChangeListener;
 import com.bigbasket.mobileapp.interfaces.OnBasketDeltaListener;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class ChangeAddressTask<T extends OnBasketDeltaListener & OnAddressChangeListener & AppOperationAware> {
     private T ctx;

@@ -17,6 +17,6 @@
         <item>HEADERS</item>
         <item>BODY</item>
     </string-array>
-    <string name="pref_default_server_address" translatable="false">https://dev1.bigbasket.com</string>
+    <string name="pref_default_server_address" translatable="false">https://qa1.bigbasket.com</string>
 
 </resources>

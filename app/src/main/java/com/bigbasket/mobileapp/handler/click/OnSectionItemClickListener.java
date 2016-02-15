@@ -23,7 +23,6 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActi
 import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
 import com.bigbasket.mobileapp.activity.product.DiscountActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
-import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
@@ -43,6 +42,7 @@ import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.service.AnalyticsIntentService;
 import com.bigbasket.mobileapp.slider.SliderTypes.BaseSliderView;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -161,20 +161,20 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
             case DestinationInfo.FLAT_PAGE:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                     Intent intent;
+                    String title = null;
+                    if (sectionItem != null) {
+                        title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : null;
+                    }
                     if (destinationInfo instanceof HelpDestinationInfo) {
                         intent = new Intent(context.getCurrentActivity(), SectionHelpActivity.class);
                         intent.putExtra(Constants.SECTION_INFO, (Parcelable) section);
                         intent.putExtra(Constants.SECTION_ITEM, (Parcelable) sectionItem);
+                        intent.putExtra(Constants.WEBVIEW_TITLE, title);
+                        context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     } else {
-                        intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                        intent.putExtra(Constants.WEBVIEW_URL, destinationInfo.getDestinationSlug());
+                        FlatPageHelper.openFlatPage(context.getCurrentActivity(),
+                                destinationInfo.getDestinationSlug(), title);
                     }
-                    if (sectionItem != null) {
-                        intent.putExtra(Constants.WEBVIEW_TITLE, sectionItem.getTitle() != null ?
-                                sectionItem.getTitle().getText() : null);
-                    }
-                    context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
                 break;
             case DestinationInfo.PREVIOUS_ORDERS:

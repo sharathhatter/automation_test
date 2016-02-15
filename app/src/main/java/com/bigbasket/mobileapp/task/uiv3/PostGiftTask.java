@@ -16,7 +16,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class PostGiftTask<T extends AppOperationAware> {
     private T ctx;

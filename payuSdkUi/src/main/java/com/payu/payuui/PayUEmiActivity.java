@@ -33,12 +33,8 @@ import java.util.ArrayList;
 
 public class PayUEmiActivity extends PaymentBaseActivity implements View.OnClickListener {
 
-    private Spinner bankNameSpinner;
     private Spinner emiDurationSpinner;
-    private SpinnerAdapter emiNameAdapter;
     private SpinnerAdapter emiDurationAdapter;
-    private Bundle bundle;
-    private Button emiPayNowButton;
     private Emi selectedEmi;
 
     private EditText cardNumberEditText;
@@ -50,8 +46,6 @@ public class PayUEmiActivity extends PaymentBaseActivity implements View.OnClick
     private ArrayList<Emi> emiArrayList;
 
     private PaymentParams mPaymentParams;
-    private PayuHashes mPayuHashes;
-    private Toolbar toolbar;
 
     private PayuConfig payuConfig;
 
@@ -60,15 +54,15 @@ public class PayUEmiActivity extends PaymentBaseActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emi);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.emi));
 
-        bundle = getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
 
-        bankNameSpinner = (Spinner) findViewById(R.id.spinner_emi_bank_name);
+        Spinner bankNameSpinner = (Spinner) findViewById(R.id.spinner_emi_bank_name);
         emiDurationSpinner = (Spinner) findViewById(R.id.spinner_emi_duration);
         cardNumberEditText = (EditText) findViewById(R.id.edit_text_emi_card_number);
         nameOnCardEditText = (EditText) findViewById(R.id.edit_text_emi_name_on_card);
@@ -79,20 +73,20 @@ public class PayUEmiActivity extends PaymentBaseActivity implements View.OnClick
 
         // lets set the paymentdefault params and payu hashes;
         mPaymentParams = bundle.getParcelable(PayuConstants.PAYMENT_PARAMS);
-        mPayuHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
+        PayuHashes payuHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
         payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
         payuConfig = null != payuConfig ? payuConfig : new PayuConfig();
 
         // sethash
-        mPaymentParams.setHash(mPayuHashes.getPaymentHash());
+        mPaymentParams.setHash(payuHashes.getPaymentHash());
 
-        (emiPayNowButton = (Button) findViewById(R.id.button_emi_pay_now)).setOnClickListener(this);
+        findViewById(R.id.button_emi_pay_now).setOnClickListener(this);
 
         if (bundle.getParcelableArrayList(PayuConstants.EMI) != null) {
             // okay we have emi now!
             // lets setup emi name adapter.
             emiArrayList = bundle.getParcelableArrayList(PayuConstants.EMI);
-            emiNameAdapter = new PayUEmiNameAdapter(this, emiArrayList);
+            SpinnerAdapter emiNameAdapter = new PayUEmiNameAdapter(this, emiArrayList);
             bankNameSpinner.setAdapter(emiNameAdapter);
 
 

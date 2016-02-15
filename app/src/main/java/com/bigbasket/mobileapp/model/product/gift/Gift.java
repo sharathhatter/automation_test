@@ -44,8 +44,7 @@ public class Gift implements Parcelable {
     public Gift(Parcel source) {
         boolean isGiftNull = source.readByte() == (byte) 1;
         if (!isGiftNull) {
-            this.giftItems = new ArrayList<>();
-            source.readTypedList(giftItems, GiftItem.CREATOR);
+            this.giftItems = source.createTypedArrayList(GiftItem.CREATOR);
         }
         this.commonMsg = source.readString();
         this.count = source.readInt();
@@ -55,8 +54,7 @@ public class Gift implements Parcelable {
         }
         boolean isGiftMsgNull = source.readByte() == (byte) 1;
         if (!isGiftMsgNull) {
-            this.giftSummaryMsg = new ArrayList<>();
-            source.readStringList(this.giftSummaryMsg);
+            this.giftSummaryMsg = source.createStringArrayList();
         }
         boolean isGiftLinkNull = source.readByte() == (byte) 1;
         if (!isGiftLinkNull) {

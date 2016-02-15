@@ -18,6 +18,9 @@ package com.enstage.wibmo.sdk.inapp;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -42,6 +45,9 @@ import com.enstage.wibmo.sdk.inapp.pojo.WPayInitResponse;
 import com.google.gson.Gson;
 import android.support.v4.app.ActivityCompat;
 
+import java.io.IOError;
+import java.io.IOException;
+
 /**
  * Created by akshath on 17/10/14.
  */
@@ -49,8 +55,6 @@ public class InAppInitActivity extends Activity {
     private static final String TAG = "sdk.InAppInit";
 
     public static final int REQUEST_CODE_IAP_READY = 0x00006061; // Only use bottom 16 bits
-
-    private View view = null;
 
     private Activity activity = null;
 
@@ -90,7 +94,7 @@ public class InAppInitActivity extends Activity {
                 qrMsg = "InApp payment";
             } else {
                 Log.e(TAG, "W2faInitRequest and wPayInitRequest was null!");
-                sendAbort();
+                sendAbort(WibmoSDK.RES_CODE_FAILURE_SYSTEM_ABORT, "sdk init - W2faInitRequest and wPayInitRequest was null!");
                 return;
             }
         }
@@ -99,7 +103,7 @@ public class InAppInitActivity extends Activity {
         setProgressBarIndeterminateVisibility(false);
 
         LayoutInflater inflator = getLayoutInflater();
-        view = inflator.inflate(R.layout.activity_inapp_init, null, false);
+        View view = inflator.inflate(R.layout.activity_inapp_init, null, false);
         view.startAnimation(AnimationUtils.loadAnimation(this,
                 android.R.anim.slide_in_left));
         setContentView(view);
@@ -141,7 +145,7 @@ public class InAppInitActivity extends Activity {
                             @Override
                             public void run() {
                                 WibmoSDKPermissionUtil.showPermissionMissingUI(activity, getString(R.string.wibmosdk_phone_state_permission_missing_msg));
-                                sendAbort("no permission ph state");
+                                sendAbort(WibmoSDK.RES_CODE_FAILURE_SYSTEM_ABORT, "sdk init - no permission ph state");
                             }
                         });
 
@@ -197,7 +201,7 @@ public class InAppInitActivity extends Activity {
             } else {
                 Log.w(TAG, "Permission not got! READ_PHONE_STATE");//we need this
                 WibmoSDKPermissionUtil.showPermissionMissingUI(activity, getString(R.string.wibmosdk_phone_state_permission_missing_msg));
-                sendAbort("no permission ph state");
+                sendAbort(WibmoSDK.RES_CODE_FAILURE_SYSTEM_ABORT, "sdk init - no permission ph state");
             }
             return;
         }
@@ -288,13 +292,17 @@ public class InAppInitActivity extends Activity {
     }
 
     private void sendAbort() {
-        sendAbort("user abort");
+        sendAbort("sdk init - user abort");
     }
 
     private void sendAbort(String reason) {
+        sendAbort(WibmoSDK.RES_CODE_FAILURE_USER_ABORT, reason);
+    }
+
+    private void sendAbort(String resCode, String resDesc) {
         Intent resultData = new Intent();
-        resultData.putExtra("ResCode", "204");
-        resultData.putExtra("ResDesc", reason);
+        resultData.putExtra("ResCode", resCode);
+        resultData.putExtra("ResDesc", resDesc);
         if(w2faInitResponse!=null) {
             resultData.putExtra("WibmoTxnId", w2faInitResponse.getWibmoTxnId());
             if(w2faInitResponse.getTransactionInfo()!=null) {
@@ -375,8 +383,42 @@ public class InAppInitActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        sendAbort();
-        super.onBackPressed();
+        final Activity activity = this;
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage(
+                activity.getString(R.string.confirm_iap_cancel))
+                .setPositiveButton(
+                        activity.getString(R.string.title_yes),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(
+                                    DialogInterface dialog, int id) {
+                                sendAbort("sdk init - backpress");
+                            }
+                        })
+                .setNegativeButton(
+                        activity.getString(R.string.title_no),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(
+                                    DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                                if (dialog != null) {
+                                    try {
+                                        dialog.dismiss();
+                                    } catch (IllegalArgumentException e) {
+                                        Log.e(TAG, "Error: " + e);
+                                    }
+                                }
+                            }
+                        });
+
+        Dialog dialog = builder.create();
+        try {
+            dialog.show();
+        } catch (Throwable e) {
+            Log.e(TAG, "Error: " + e, e);
+
+            sendAbort("sdk init - backpress");
+        }
     }
 
     @SuppressLint("NewApi")
@@ -461,6 +503,7 @@ public class InAppInitActivity extends Activity {
 
     private class Init2FAReqTask extends AsyncTask<W2faInitRequest, Void, Void> {
         private boolean showError = false;
+        private String lastError;
 
         @Override
         protected void onPreExecute() {
@@ -473,6 +516,7 @@ public class InAppInitActivity extends Activity {
                 w2faInitResponse = InAppHandler.init2FA(data[0]);
             } catch (Exception ex) {
                 Log.e(TAG, "Error: " + ex, ex);
+                lastError = ex.toString();
                 showError = true;
             }
             return null;
@@ -483,8 +527,7 @@ public class InAppInitActivity extends Activity {
             Log.v(TAG, "pl wait.. done");
 
             if (showError) {
-                manageError(null);
-                sendFailure("051", "init failed with server error.. chk logs");
+                askRetryOnError(lastError);
             } else {
                 processInit2FARes();
             }
@@ -493,6 +536,7 @@ public class InAppInitActivity extends Activity {
 
     private class InitPayReqTask extends AsyncTask<WPayInitRequest, Void, Void> {
         private boolean showError = false;
+        private String lastError;
 
         @Override
         protected void onPreExecute() {
@@ -513,6 +557,7 @@ public class InAppInitActivity extends Activity {
                 //Log.v(TAG, "wPayInitResponse  "+ (new Gson()).toJson(wPayInitResponse));
             } catch (Exception ex) {
                 Log.e(TAG, "Error: " + ex, ex);
+                lastError = ex.toString();
                 showError = true;
             }
             return null;
@@ -523,11 +568,52 @@ public class InAppInitActivity extends Activity {
             Log.v(TAG, "pl wait.. done");
 
             if (showError) {
-                manageError(null);
-                sendFailure("051", "init failed with server error.. chk logs");
+                askRetryOnError(lastError);
             } else {
                 processInitPayRes();
             }
+        }
+    }
+
+    private void askRetryOnError(final String lastError) {
+        String msg = getString(R.string.msg_internet_issue);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage(msg)
+                .setPositiveButton(
+                        activity.getString(R.string.title_try_again),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                startIAP();
+                            }
+                        })
+                .setNegativeButton(
+                        activity.getString(R.string.title_cancel),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                if (dialog != null) {
+                                    try {
+                                        dialog.dismiss();
+                                    } catch (IllegalArgumentException e) {
+                                        Log.e(TAG, "Error: " + e);
+                                    }
+                                }
+
+                                manageError(null);
+                                sendFailure(WibmoSDK.RES_CODE_FAILURE_INTERNAL_ERROR,
+                                        "init failed with server error.. chk logs " + lastError);
+                            }
+                        });
+
+        Dialog dialog = builder.create();
+        try {
+            dialog.show();
+        } catch (Throwable e) {
+            Log.e(TAG, "Error: " + e, e);
+
+            manageError(null);
+            sendFailure(WibmoSDK.RES_CODE_FAILURE_INTERNAL_ERROR,
+                    "init failed with server error.. chk logs " + lastError);
         }
     }
 

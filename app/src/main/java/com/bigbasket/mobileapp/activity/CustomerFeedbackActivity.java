@@ -22,7 +22,8 @@ import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
-import retrofit.Call;
+import retrofit2.Call;
+
 
 public class CustomerFeedbackActivity extends BackButtonActivity {
 

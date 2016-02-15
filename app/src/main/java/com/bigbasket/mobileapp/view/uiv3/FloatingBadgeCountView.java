@@ -315,10 +315,6 @@ public class FloatingBadgeCountView extends FrameLayout {
         show(true);
     }
 
-    public void hide() {
-        hide(true);
-    }
-
     public void show(boolean animate) {
         toggle(true, animate, false);
     }
@@ -356,11 +352,6 @@ public class FloatingBadgeCountView extends FrameLayout {
             } else {
                 ViewCompat.setTranslationY(this, translationY);
             }
-
-            // On pre-Honeycomb a translated view is still clickable, so we need to disable clicks manually
-            if (!hasHoneycombApi()) {
-                setClickable(visible);
-            }
         }
     }
 
@@ -370,10 +361,6 @@ public class FloatingBadgeCountView extends FrameLayout {
 
     private boolean hasJellyBeanApi() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    }
-
-    private boolean hasHoneycombApi() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     }
 
     private static int darkenColor(int color) {

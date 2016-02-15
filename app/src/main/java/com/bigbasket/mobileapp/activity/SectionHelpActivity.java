@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.R;
@@ -58,6 +59,9 @@ public class SectionHelpActivity extends BaseActivity {
                 flatPageFragment.setArguments(bundle);
                 onChangeFragment(flatPageFragment);
                 break;
+            default:
+                Log.w("SectionHelpActivity", "Unknown destination: " + helpDestinationInfo.getDestinationType());
+                finish();
         }
     }
 

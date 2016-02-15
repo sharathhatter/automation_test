@@ -225,8 +225,11 @@ public class Constants {
     public static final String HDFC_POWER_PAY = "hdfc-power-pay";
     public static final String PAYTM_WALLET = "paytm_wallet";
     public static final String PAYUMONEY_WALLET = "payumoney_wallet";
+    public static final String BB_WALLET = "walletPrepaid";
     public static final String PAYTM_HASH_VERIFICATION_URL = "VURL";
     public static final String PAYTM_HASH_GENERATION_URL = "GURL";
+    public static final String PAYU_SELECTED = "payu_selected";
+
 
     public static final String HOME = "home";
     public static final String ADDRESSES = "addresses";
@@ -511,7 +514,6 @@ public class Constants {
     public static final String DYNAMIC_PAGE = "dynamic_page";
     public static final String AUTH = "auth";
     public static final String INBOX = "inbox";
-    public static final String IS_PENDING_GO_TO_HOME = "isPendingGoToHome";
     public static final String HAS_USER_CHOSEN_CITY = "has_user_chosen_city";
 
     public static final String MERCHANT_ID = "mer_id";
@@ -654,6 +656,7 @@ public class Constants {
     public static final int EMPTY_BASKET_DIALOG_QUEST = 8004;
     public static final int LOCATION_DIALOG_REQUEST = 8005;
     public static final int PREPAYMENT_ABORT_CONFIRMATION_DIALOG = 8006;
+    public static final int OFFLINE_PAYMENT_SHOW_THANKYOU_ABORT_CONFIRMATION_DIALOG = 8007;
 
 
     // App Indexing params
@@ -672,4 +675,6 @@ public class Constants {
     public static final String TERMS_AND_COND_URL = "http://www.bigbasket.com/terms-and-conditions/?source=app";
     public static final String PRIVACY_POLICY_URL = "http://www.bigbasket.com/privacy-policy/?source=app";
 
+    public static final String KEY_PERMISSION = "key_permission";
+    public static final String KEY_PERMISSION_RC = "key_permission_rc";
 }

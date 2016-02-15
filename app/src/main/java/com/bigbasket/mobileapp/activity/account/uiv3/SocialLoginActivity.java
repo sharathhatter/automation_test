@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.OnLogoutListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccountType;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.LogoutTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
@@ -36,7 +37,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActivity
         implements OnLogoutListener {
@@ -216,8 +217,12 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     .remove(Constants.SOCIAL_ACCOUNT_TYPE)
                     .commit();
         }
-        LogoutTask logoutTask = new LogoutTask(this);
-        logoutTask.execute();
+        if(!AuthParameters.getInstance(this).isAuthTokenEmpty()) {
+            LogoutTask logoutTask = new LogoutTask(this);
+            logoutTask.execute();
+        } else {
+            onLogoutSuccess();
+        }
     }
 
     @Override
@@ -395,9 +400,11 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            logFailureEvents("Network Error");
-            super.onFailure(t);
+        public void onFailure(Call<ApiResponse<LoginApiResponse>> call, Throwable t) {
+            if (call != null && !call.isCanceled()) {
+                logFailureEvents("Network Error");
+            }
+            super.onFailure(call, t);
         }
 
         private void logFailureEvents(String err) {

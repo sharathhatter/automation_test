@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -50,12 +52,10 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
 
     private ListView storedCardListView;
     private PayUStoredCardsAdapter payUStoredCardsAdapter;
-    private Bundle bundle;
     private ArrayList<StoredCard> storedCardList;
 
     private PayuHashes payuHashes;
     private PaymentParams mPaymentParams;
-    private Toolbar toolbar;
 
     private PayuConfig payuConfig;
     private PayuUtils payuUtils;
@@ -68,7 +68,7 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
         setContentView(R.layout.activity_user_cards);
 
 
-        toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -77,7 +77,7 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
         storedCardListView = (ListView) findViewById(R.id.list_view_user_card);
 
         // lets get the required data form bundle
-        bundle = getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
 
         payuUtils = new PayuUtils();
 
@@ -463,6 +463,16 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
                     @Override
                     public void afterTextChanged(Editable s) {
 
+                    }
+                });
+                cvvEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
+                        if (((keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                                actionId == EditorInfo.IME_ACTION_DONE) {
+                            onClick(paynNowButton);
+                        }
+                        return false;
                     }
                 });
             }

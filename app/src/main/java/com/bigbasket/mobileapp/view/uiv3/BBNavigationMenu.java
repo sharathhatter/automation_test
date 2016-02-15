@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.view.uiv3;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,6 +39,7 @@ import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.SectionCursorHelper;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,6 +74,10 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
 
     private void init() {
         View.inflate(getContext(), R.layout.uiv3_left_nav_layout, this);
+        ImageView settingsImageView = (ImageView) findViewById(R.id.imgSwitchNav);
+        UIUtil.displayAsyncImage(settingsImageView, R.drawable.settings);
+        ImageView navHeaderImageView = (ImageView) findViewById(R.id.imgNavHeader);
+        UIUtil.displayAsyncImage(navHeaderImageView, R.drawable.nav_header);
         mNavRecyclerView = (RecyclerView) findViewById(R.id.listNavigation);
         if (mNavRecyclerView != null) {
             // Assign a layout manager as soon as RecyclerView is inflated to prevent onDestroy crash
@@ -106,7 +110,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
         }
     }
 
-    public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
+    public void onSubNavigationRequested(SectionItem sectionItem, String baseImgUrl,
                                          HashMap<Integer, Renderer> rendererHashMap) {
         Typeface faceRobotoMedium = FontHolder.getInstance(getContext()).getFaceRobotoMedium();
         if (sectionItem.getSubSectionItems() == null
@@ -128,7 +132,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
             mListSubNavigation.setLayoutManager(new LinearLayoutManager(getContext()));
         }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        section = new Section(sectionItem.getTitle(), sectionItem.getDescription(), Section.MENU,
+        Section section = new Section(sectionItem.getTitle(), sectionItem.getDescription(), Section.MENU,
                 subNavigationSectionItems, null);
         SectionCursorHelper.setSectionNavigationItemList(sectionNavigationItems,
                 subNavigationSectionItems, section);
@@ -235,7 +239,7 @@ public class BBNavigationMenu extends ScrimInsetsFrameLayout {
         } else {
             txtNavSalutation.setText(getContext().getString(R.string.bigbasketeer));
         }
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (BuildConfig.DEBUG) {
             DevConfigViewHandler.setView(lblWelCome);
         }
 

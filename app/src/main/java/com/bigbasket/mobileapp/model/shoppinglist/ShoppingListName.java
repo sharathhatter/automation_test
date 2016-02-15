@@ -69,7 +69,7 @@ public class ShoppingListName implements Parcelable {
     }
 
     public boolean isSystem() {
-        return isSystem == 1 || 
+        return isSystem == 1 ||
                 (slug != null && slug.equalsIgnoreCase(Constants.SMART_BASKET_SLUG));
     }
 

@@ -42,8 +42,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_small"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small"
                 android:layout_marginTop="@dimen/margin_small"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/padding_normal"
@@ -56,9 +56,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="@dimen/margin_small"
-                    android:layout_marginStart="@dimen/margin_small"
-                    android:padding="@dimen/padding_small"
+                    android:padding="@dimen/padding_normal"
                     android:text="@string/fromWalletMsg"
                     android:background="@color/white"
                     android:textColor="@color/uiv3_dialog_header_text_bkg"
@@ -148,8 +146,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_small"
-                android:layout_marginLeft="@dimen/margin_large"
-                android:layout_marginRight="@dimen/margin_large"
+                android:layout_marginLeft="@dimen/margin_medium_large"
+                android:layout_marginRight="@dimen/margin_medium_large"
                 android:layout_marginTop="@dimen/margin_small"
                 android:orientation="vertical"
                 android:padding="@dimen/padding_normal">
@@ -157,36 +155,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/layoutPaymentInProgress"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:clickable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/lblOrderPlaced"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_large"
-            android:layout_marginRight="@dimen/margin_large"
-            android:gravity="center"
-            android:text="@string/orderPlacedTakingToPaymentGateway"
-            android:textSize="@dimen/heading_2_text_size" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_normal"
-            android:layout_marginLeft="@dimen/margin_large"
-            android:layout_marginRight="@dimen/margin_large"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:indeterminate="true" />
-
-    </LinearLayout>
 </RelativeLayout>

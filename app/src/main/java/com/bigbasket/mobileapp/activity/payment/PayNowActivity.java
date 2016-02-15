@@ -41,7 +41,7 @@ import com.crashlytics.android.Crashlytics;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 /**
  * Don't do the mistake of moving this to Fragment. I've done all that, and these 3rd Party SDKs
@@ -170,7 +170,14 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         mPayNowPrepaymentProcessingTask = new PayNowPrepaymentProcessingTask<PayNowActivity>(this,
                 null, mOrderId, mSelectedPaymentMethod, true, false, isPayUOptionVisible) {
             @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showProgressDialog(getString(R.string.please_wait), false);
+            }
+
+            @Override
             protected void onPostExecute(Boolean success) {
+                hideProgressDialog();
                 super.onPostExecute(success);
                 if (isPaused() || isCancelled() || isSuspended()) {
                     return;
@@ -191,6 +198,10 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
                         //Should never happen
                         Crashlytics.logException(new IllegalStateException(
                                 "OrderPreprocessing error without error response"));
+                    }
+                } else {
+                    if(Constants.BB_WALLET.equals(paymentMethod)) {
+                        onPayNowSuccess();
                     }
                 }
             }

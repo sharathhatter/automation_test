@@ -88,10 +88,8 @@ public class ProgressDialogFragment extends AppCompatDialogFragment {
         if (isDeterminate) {
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             progressDialog.setIndeterminate(false);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                progressDialog.setProgressNumberFormat(null);
-                progressDialog.setProgressPercentFormat(null);
-            }
+            progressDialog.setProgressNumberFormat(null);
+            progressDialog.setProgressPercentFormat(null);
         }
         progressDialog.setCancelable(cancellable);
         progressDialog.setCanceledOnTouchOutside(cancellable);

@@ -1,6 +1,6 @@
 package com.bigbasket.mobileapp.task;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 /**
  * Created by muniraju on 17/12/15.

@@ -41,7 +41,7 @@ import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class BBSpecialityShopsActivity extends BackButtonActivity implements LaunchStoreListAware {
 

@@ -26,14 +26,14 @@ public interface TrackingAware {
     String LOGIN_FAILED = "Login Failed";
     String SHOW_PASSWORD_ENABLED = "Show Password.Clicked";
     String LOGIN_REMEMBER_ME_ENABLED = "Remember Me.Enabled";
-    String FORGOT_PASSWORD_CLICKED = "Forgot PassWord.Clicked";
     //String NEW_USER_REGISTER_CLICKED = "Login.New User Register Clicked";
-    String FORGOT_PASSWORD_DIALOG_SHOWN = "Forgot Password.Dialog Shown";
-    String FORGOT_PASSWORD_EMAIL_CLICKED = "Forgot Password.Email New Password Clicked";
+    String FORGOT_PASSWORD_CLICKED = "ForgotPassword.Clicked";
     String REGISTRATION_PAGE_SHOWN = "Registration Page.Shown";
     String PROMO_MAILER_ENABLED = "Promotional Mailer Enabled";
     String REGISTER_BTN_CLICK = "SignUp Page.SignUp Clicked";
     String REGISTRATION_FAILED = "SignUp Page.Failed";
+    String FORGOT_PASSWORD_SHOWN = "ForgotPassword.Shown";
+    String FORGOT_PASSWORD_FAILED = "ForgotPassword.Failed";
 
     //Account
     String MY_ACCOUNT_CLICKED = "My Account.Clicked";
@@ -55,6 +55,7 @@ public interface TrackingAware {
     String CHANGE_PASSWORD_CLICKED = "Change Password.Clicked";
     String CHANGE_PASSWORD_SHOWN = "Change Password.Shown";
     String CHANGE_PASSWORD_FAILED = "Change Password.Update";
+
 
     //wallet
     String MY_ACCOUNT_WALLET_CLICKED = "My Wallet.Clicked";
@@ -147,6 +148,7 @@ public interface TrackingAware {
     String CHECKOUT_PLACE_ORDER_CLICKED = "Checkout.Place Order Clicked";
     String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Completed";
     String PLACE_ORDER = "placeorder";
+    String ORDER_VALIDATION_RETRY_SELECTED = "OrderValidation.Retry Selected";
 
     String CHECKOUT_ADDRESS_CLICKED_CONTI = "Checkout.Address Continue Clicked ";
     String CHECKOUT_ADDRESS_SELECTED = "Checkout.Address Selected";

@@ -39,7 +39,7 @@ import com.crashlytics.android.Crashlytics;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit.Call;
+import retrofit2.Call;
 
 public class FundWalletActivity extends BackButtonActivity implements OnPaymentValidationListener,
         CityListDisplayAware, PaymentTxnInfoAware, PaymentMethodsView.OnPaymentOptionSelectionListener {

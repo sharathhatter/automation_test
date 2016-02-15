@@ -277,7 +277,8 @@ public class SectionView {
             }
             if (sectionItemClickListener == null) {
                 sectionItemClickListener = new OnSectionItemClickListener<>(
-                        (AppOperationAware) context, section, sectionItem, screenName);
+                        (AppOperationAware) context, section, sectionItem, screenName,
+                        mSectionData.getAnalyticsAttrs(sectionItem.getId()));
             }
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtSalutationItem.setTypeface(faceRobotoRegular);
@@ -373,7 +374,8 @@ public class SectionView {
             }
             txtVw.setText(sectionItem.getTitle().getText());
             txtVw.setOnClickListener(new OnSectionItemClickListener<>(
-                    (AppOperationAware) context, section, sectionItem, screenName));
+                    (AppOperationAware) context, section, sectionItem, screenName,
+                    mSectionData.getAnalyticsAttrs(sectionItem.getId())));
             txtVw.setTypeface(faceRobotoRegular);
             linearLayout.addView(view);
         }
@@ -453,7 +455,8 @@ public class SectionView {
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
             itemView.setOnClickListener(new OnSectionItemClickListener<>(
-                    (AppOperationAware) context, section, sectionItem, screenName));
+                    (AppOperationAware) context, section, sectionItem, screenName,
+                    mSectionData.getAnalyticsAttrs(sectionItem.getId())));
             View viewSeparator = itemView.findViewById(R.id.viewSeparator);
             viewSeparator.setVisibility(i == numItems - 1 ? View.GONE : View.VISIBLE);
             menuContainer.addView(itemView);
@@ -685,7 +688,8 @@ public class SectionView {
             view.setTag(R.id.section_item_tag_id, sectionItem);
             if (sectionItemClickListener == null) {
                 sectionItemClickListener = new OnSectionItemClickListener<>(
-                        (AppOperationAware) context, section, sectionItem, screenName);
+                        (AppOperationAware) context, section, sectionItem, screenName,
+                        mSectionData.getAnalyticsAttrs(sectionItem.getId()));
             }
 
             view.setOnClickListener(sectionItemClickListener);
@@ -752,7 +756,8 @@ public class SectionView {
             }
         }
         view.setOnClickListener(new OnSectionItemClickListener<>(
-                (AppOperationAware) context, section, moreSectionItem, screenName));
+                (AppOperationAware) context, section, moreSectionItem, screenName,
+                mSectionData.getAnalyticsAttrs(moreSectionItem.getId())));
     }
 
     @Nullable

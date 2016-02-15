@@ -9,17 +9,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class CartSummary implements Parcelable {
 
-    public static final Parcelable.Creator<CartSummary> CREATOR = new Parcelable.Creator<CartSummary>() {
-        @Override
-        public CartSummary createFromParcel(Parcel source) {
-            return new CartSummary(source);
-        }
-
-        @Override
-        public CartSummary[] newArray(int size) {
-            return new CartSummary[size];
-        }
-    };
     @SerializedName(Constants.TOTAL)
     private double total;
     @SerializedName(Constants.SAVINGS)
