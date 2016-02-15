@@ -608,7 +608,7 @@
         <activity
             android:name="com.bigbasket.mobileapp.activity.TutorialActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:theme="@style/LandingPageTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name="com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity"

@@ -126,6 +126,9 @@ public class AddressSummaryDropdownAdapter<T extends AddressSummary> extends Arr
                 "\n" + addressSummary.getSlot();
         if (showSlotTime) {
             txtAddress.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+            convertView.setBackgroundResource(R.color.uiv3_large_list_item_bck);
+        } else {
+            convertView.setBackgroundResource(android.R.color.transparent);
         }
 
         SpannableString spannableString = new SpannableString(nick + area + cityName + slot);

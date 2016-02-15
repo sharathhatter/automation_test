@@ -175,6 +175,7 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
             @Override
             public void onSuccess(ApiResponse<OtpResponse> getForgotPasswordApiResponse) {
                 if (getForgotPasswordApiResponse.status == 0) {
+                    otpEditTxt.setText("");
                     showToast(getString(R.string.resendOtpMsg));
                 } else {
                     logForgotPasswordFailure(getForgotPasswordApiResponse.message);
@@ -217,9 +218,9 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
         UIUtil.resetFormInputField(textInputNewPasswd);
         UIUtil.resetFormInputField(textInputConfirmPasswd);
 
-        String otp = otpEditTxt.getText().toString();
-        String newPassword = newPwdEditText.getText().toString();
-        String confPassword = confirmPwdEditText.getText().toString();
+        String otp = otpEditTxt.getText().toString().trim();
+        String newPassword = newPwdEditText.getText().toString().trim();
+        String confPassword = confirmPwdEditText.getText().toString().trim();
         boolean cancel = false;
         View focusView = null;
         if (TextUtils.isEmpty(otp)) {
@@ -398,7 +399,7 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
 
     @Override
     public void onOTPReceived(String otp) {
-        if (TextUtils.isEmpty(otpEditTxt.getText().toString())) {
+        if (TextUtils.isEmpty(otpEditTxt.getText().toString().trim())) {
             otpEditTxt.append(otp);
             handleEditTextnUpdateViewState(true);
             newPwdEditText.requestFocus();
