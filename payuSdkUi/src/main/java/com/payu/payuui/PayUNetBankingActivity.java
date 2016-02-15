@@ -139,7 +139,7 @@ public class PayUNetBankingActivity extends PaymentBaseActivity implements View.
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
             } else {
                 /***error when the postdata for the netbanking entered is not correct***/
-                handleUnknownErrorCondition();
+                handleUnknownErrorCondition(postData.getResult(), false);
             }
         }
     }

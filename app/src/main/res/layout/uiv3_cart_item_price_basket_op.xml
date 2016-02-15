@@ -7,6 +7,15 @@
     android:layout_marginLeft="@dimen/margin_mini"
     android:layout_marginRight="@dimen/margin_small"
     android:layout_marginTop="@dimen/margin_small">
+    <TextView
+        android:id="@+id/txtSalePrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="@dimen/margin_small"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
 
     <include
         android:id="@+id/layoutInBasket"
@@ -14,18 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_below="@id/txtSalePrice"
         android:layout_centerVertical="true" />
 
-    <TextView
-        android:id="@+id/txtSalePrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_toLeftOf="@id/layoutInBasket"
-        android:text="123456 (save: 1234)"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size" />
 
 </RelativeLayout>
