@@ -1,5 +1,18 @@
 apply plugin: 'com.android.library'
 
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+}
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://maven.fabric.io/public'
+    }
+}
+
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
@@ -28,5 +41,8 @@ dependencies {
     compile 'com.payu.custombrowser:payu-custom-browser:5.3.6'
     //compile project(':CustomBrowser-release')  // Version 5.3.5
     //compile project(':PayU-release') // Version 4.3.4
+    compile ('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+        transitive = true;
+    }
 
 }
