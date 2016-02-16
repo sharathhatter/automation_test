@@ -54,6 +54,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/addressNick"
                         android:inputType="textPersonName"
+                        android:maxLength="50"
                         android:paddingLeft="@dimen/padding_small"
                         android:textColor="@color/uiv3_primary_text_color"
                         android:textColorHint="@color/uiv3_secondary_text_color"

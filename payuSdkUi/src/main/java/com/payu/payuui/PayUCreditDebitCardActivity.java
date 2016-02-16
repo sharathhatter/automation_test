@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -40,6 +41,11 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
     private PaymentParams mPaymentParams;
     private PayuConfig payuConfig;
     private PayuUtils payuUtils;
+    private TextInputLayout cardNumberInputLayout;
+    private TextInputLayout cardNameInputLayout;
+    private TextInputLayout expMonthInputLayout;
+    private TextInputLayout expYearInputLayout;
+    private TextInputLayout cvvInputLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +67,13 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
         cardExpiryYearEditText = (EditText) findViewById(R.id.edit_text_expiry_year);
         saveCardCheckBox = (CheckBox) findViewById(R.id.check_box_save_card);
         enableOneClickPaymentCheckBox = (CheckBox) findViewById(R.id.check_box_enable_one_click_payment);
+
+        cardNumberInputLayout =  (TextInputLayout)findViewById(R.id.card_number_input_layout);
+        cardNameInputLayout =  (TextInputLayout)findViewById(R.id.card_name_input_layout);
+        expMonthInputLayout =  (TextInputLayout)findViewById(R.id.exp_month_input_layout);
+        expYearInputLayout =  (TextInputLayout)findViewById(R.id.exp_year_input_layout);
+        cvvInputLayout =  (TextInputLayout)findViewById(R.id.cvv_input_layout);
+
 
         Bundle bundle = getIntent().getExtras();
 
@@ -173,6 +186,20 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
                 mPaymentParams.setEnableOneClickPayment(0);
             }
 
+            cardNameInputLayout.setErrorEnabled(false);
+            cardNameInputLayout.setError("");
+
+            cardNumberInputLayout.setErrorEnabled(false);
+            cardNumberInputLayout.setError("");
+
+            expMonthInputLayout.setErrorEnabled(false);
+            expMonthInputLayout.setError("");
+
+            expYearInputLayout.setErrorEnabled(false);
+            expYearInputLayout.setError("");
+
+            cvvInputLayout.setErrorEnabled(false);
+            cvvInputLayout.setError("");
 
             // setup the hash
             mPaymentParams.setHash(mPayuHashes.getPaymentHash());
@@ -204,8 +231,35 @@ public class PayUCreditDebitCardActivity extends PaymentBaseActivity implements 
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
 
             } else {
-                /***error when the postdata for the card entered is not correct***/
-                handleUnknownErrorCondition();
+                TextInputLayout inputLayout = null;
+                EditText editText = null;
+                switch (postData.getCode()) {
+                    case PayuErrors.INVALID_CARD_NUMBER_EXCEPTION:
+                        inputLayout = cardNumberInputLayout;
+                        editText = cardNumberEditText;
+                        break;
+                    case PayuErrors.INVALID_MONTH_EXCEPTION:
+                        inputLayout = expMonthInputLayout;
+                        editText = cardExpiryMonthEditText;
+                        break;
+                    case PayuErrors.INVALID_YEAR_EXCEPTION:
+                        inputLayout = expYearInputLayout;
+                        editText = cardExpiryYearEditText;
+                        break;
+                    case PayuErrors.INVALID_CVV_EXCEPTION:
+                        inputLayout = cvvInputLayout;
+                        editText = cardCvvEditText;
+                        break;
+
+                }
+                if(inputLayout != null && editText != null) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError(postData.getResult());
+                    editText.requestFocus();
+                } else {
+                    /***error when the postdata for the card entered is not correct***/
+                    handleUnknownErrorCondition(postData.getResult(), false);
+                }
             }
         } else {
             /***error if the click from something else****/

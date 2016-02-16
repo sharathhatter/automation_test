@@ -277,7 +277,7 @@ public class PayUStoredCardsActivity extends PaymentBaseActivity implements Dele
             startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
         } else {
             /***error when the postdata for the card entered is not correct***/
-            handleUnknownErrorCondition();
+            handleUnknownErrorCondition(postData.getResult(), false);
         }
 
     }
