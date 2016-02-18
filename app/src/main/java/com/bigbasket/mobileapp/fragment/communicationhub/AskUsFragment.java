@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.communicationhub.AskUsAdapter;
@@ -40,6 +41,7 @@ import com.moengage.addon.ubox.UBoxMessenger;
 import com.moengage.addon.ubox.UBoxUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,6 +66,7 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
         setHasOptionsMenu(true);
         PackageManager pm = getActivity().getPackageManager();
         mHasCamera = pm.hasSystemFeature(PackageManager.FEATURE_CAMERA);
+        mCurrentPhotoPath = savedInstanceState.getString(PHOTO_PATH);
     }
 
     @Override
@@ -199,11 +202,12 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
                 uploadImage(uri.toString());
             }
         } else if (requestCode == REQUEST_TAKE_PHOTO) {
-
+            if( getContext() == null) {
+                return;
+            }
             if (resultCode == Activity.RESULT_OK) {
                 uploadImage(mCurrentPhotoPath);
                 mCurrentPhotoPath = null;
-
             } else {
                 File filenew = new File(mCurrentPhotoPath);
                 if (filenew.length() == 0) {
@@ -275,11 +279,12 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
         return cache.getAbsolutePath();
     }
 
-    public File getOutputImageFile() {
+    public File getOutputImageFile() throws IOException {
 
         String tstamp = new SimpleDateFormat(UBoxUtils.TIME_FORMAT).format(new Date());
         File file = new File(getTempDirectoryPath(), UBoxUtils.FILE_NAME_PREFIX + tstamp + UBoxUtils.FILE_NAME_EXTN);
-        mCurrentPhotoPath = "file:" + file.getAbsolutePath();
+        file.createNewFile();
+        mCurrentPhotoPath = Uri.fromFile(file).toString();
         return file;
     }
 
@@ -288,18 +293,30 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = getOutputImageFile();
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
-                try {
-                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-                } catch (ActivityNotFoundException ex) {
-                    Crashlytics.logException(ex);
-                    photoFile.delete();
+            File photoFile = null;
+            try {
+                photoFile = getOutputImageFile();
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                            Uri.fromFile(photoFile));
+                    try {
+                        startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                    } catch (ActivityNotFoundException ex) {
+                        Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                        Crashlytics.logException(ex);
+                        photoFile.delete();
+                    }
                 }
+            } catch (IOException e) {
+                Toast.makeText(getContext(), R.string.failed_to_create_image_file,
+                        Toast.LENGTH_LONG).show();
+               Crashlytics.logException(e);
             }
+
+        } else {
+            Toast.makeText(getContext(), R.string.no_camera,
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

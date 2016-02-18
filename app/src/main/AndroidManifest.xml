@@ -786,7 +786,12 @@
             android:name="com.bigbasket.mobileapp.activity.CommunicationHubActivity"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="adjustResize"
-            android:label="@string/title_activity_communication_hub"/>
+            android:label="@string/title_activity_communication_hub"
+            android:parentActivityName="com.bigbasket.mobileapp.activity.SplashActivity">
+           <meta-data
+           android:name="android.support.PARENT_ACTIVITY"
+           android:value="com.bigbasket.mobileapp.activity.SplashActivity" />
+       </activity>
 
         <service
             android:name="com.moengage.addon.ubox.UBoxMessenger"

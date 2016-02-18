@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MarginLayoutParamsCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -83,9 +84,6 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         offersRecycleView.setLayoutManager(linearLayoutManager);
         offersRecycleView.setHasFixedSize(false);
-        //creating instance of AlertsOfferAdapter for the recycleview
-        alertsOffersAdapter = new AlertsOffersAdapter(getContext());
-        offersRecycleView.setAdapter(alertsOffersAdapter);
         txtEmptyMessage = (TextView) rootView.findViewById(R.id.txt_emptymessage);
         //getting the filter tag from the bundle
         String filterTag = null;
@@ -104,6 +102,9 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
         if (!TextUtils.isEmpty(filterTag) && filterTag.equals(Constants.COMMUNICATION_HUB_OFFER)) {
             mLoaderId = OFFERS_LOADER_ID;
         }
+        //creating instance of AlertsOfferAdapter for the recycleview
+        alertsOffersAdapter = new AlertsOffersAdapter(getContext(), mLoaderId);
+        offersRecycleView.setAdapter(alertsOffersAdapter);
         getLoaderManager().initLoader(mLoaderId, getArguments(), this);
         return rootView;
     }
@@ -118,7 +119,7 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
         JSONObject obj = null;
         try {
             obj = new JSONObject(payload);
-            if(obj.has(Constants.COMMUNICATION_HUB_BB_KEY)) {
+            if (obj.has(Constants.COMMUNICATION_HUB_BB_KEY)) {
                 //getting the value of the bb key and removing the extra '\', result is a json string
                 String bbValue = obj.getString(Constants.COMMUNICATION_HUB_BB_KEY).replace("\\", "");
                 //converting the json string to JSOnObject
@@ -136,7 +137,7 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
         if (bbOfferobj != null && bbOfferobj.has("expiry")) {
             try {
                 long expiryDate = bbOfferobj.getLong("expiry");
-                if (System.currentTimeMillis() < expiryDate) {
+                if (System.currentTimeMillis() > expiryDate) {
                     return true;
                 } else {
                     return false;
@@ -262,9 +263,11 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
 
         private Cursor mCursor;
         private Context mContext;
+        private int mLoaderId;
 
-        public AlertsOffersAdapter(Context mContext) {
+        public AlertsOffersAdapter(Context mContext, int mLoaderId) {
             this.mContext = mContext;
+            this.mLoaderId = mLoaderId;
         }
 
         public void changeCursor(Cursor cursor) {
@@ -295,7 +298,11 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
                         MoEDataContract.MessageEntity.COLUMN_INDEX_MSG_DETAILS);
                 Log.i("Alert/Offers", msgDetails);
                 holder.itemView.setTag(R.id.chat_item_view_holder_tag, msgDetails);
-                String campaignImageUrl = getCampaignImageUrl(msgDetails);
+
+                String campaignImageUrl = null;
+                if (mLoaderId == OFFERS_LOADER_ID) {
+                    campaignImageUrl = getCampaignImageUrl(msgDetails);
+                }
                 holder.setId(mCursor.getLong(MoEDataContract.MessageEntity.COLUMN_INDEX_ID));
                 holder.setDetails(msgDetails);
                 JSONObject msgObj = null;
@@ -394,8 +401,8 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
             ViewGroup.LayoutParams layoutParams = offersHolder.offerImageView.getLayoutParams();
             int margin = 0;
             if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
-                margin = ((ViewGroup.MarginLayoutParams) layoutParams).getMarginStart()
-                        + ((ViewGroup.MarginLayoutParams) layoutParams).rightMargin;
+                margin = MarginLayoutParamsCompat.getMarginStart((ViewGroup.MarginLayoutParams) layoutParams)
+                        + MarginLayoutParamsCompat.getMarginEnd((ViewGroup.MarginLayoutParams) layoutParams);
             }
             int widthScreen = res.getDisplayMetrics().widthPixels - margin;
             //getting the name of the image by getting the substring with last occurrence of /

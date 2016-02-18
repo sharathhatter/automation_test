@@ -310,6 +310,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (!authParameters.isAuthTokenEmpty()) {
             Intent communicationHunIntent = new Intent(this, CommunicationHubActivity.class);
             communicationHunIntent.putExtra(Constants.COMMUNICATION_HUB_FAQ_SHOW, false);
+            communicationHunIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(communicationHunIntent);
         } else {
             showToast(getString(R.string.loginToContinue));

@@ -81,7 +81,7 @@ public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemV
             //Outgoing
             ViewGroup.LayoutParams layoutParams = viewHolder.holderView.getLayoutParams();
             if (layoutParams instanceof RelativeLayout.LayoutParams) {
-                ((RelativeLayout.LayoutParams) layoutParams).removeRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                ((RelativeLayout.LayoutParams) layoutParams).addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
                 ((RelativeLayout.LayoutParams) layoutParams).addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 viewHolder.holderView.setLayoutParams(layoutParams);
             }
@@ -147,7 +147,7 @@ public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemV
             viewHolder.holderView.setBackgroundResource(R.drawable.bubble_incoming);
             ViewGroup.LayoutParams layoutParams = viewHolder.holderView.getLayoutParams();
             if (layoutParams instanceof RelativeLayout.LayoutParams) {
-                ((RelativeLayout.LayoutParams) layoutParams).removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                ((RelativeLayout.LayoutParams) layoutParams).addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
                 ((RelativeLayout.LayoutParams) layoutParams).addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                 viewHolder.holderView.setLayoutParams(layoutParams);
             }

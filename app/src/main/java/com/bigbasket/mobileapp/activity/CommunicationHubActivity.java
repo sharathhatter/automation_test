@@ -2,11 +2,15 @@ package com.bigbasket.mobileapp.activity;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -20,6 +24,7 @@ import com.bigbasket.mobileapp.fragment.communicationhub.AlertsOffersScreenFragm
 import com.bigbasket.mobileapp.fragment.communicationhub.AskUsFragment;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.moengage.push.MoEngageNotificationUtils;
 
 import java.util.HashMap;
 
@@ -36,6 +41,7 @@ public class CommunicationHubActivity extends BaseActivity {
     /**
      * The {@link ViewPager} that will host the section contents.
      */
+    @NonNull
     private ViewPager mViewPager;
 
     @Override
@@ -57,6 +63,9 @@ public class CommunicationHubActivity extends BaseActivity {
             setTitle(R.string.help_and_support);
         }
         setUpTabs();
+        if(MoEngageNotificationUtils.isChatMessage(getIntent().getExtras())){
+            mViewPager.setCurrentItem(isFaqToBeShown ? 1 : 2);
+        }
     }
 
     private void setUpTabs() {
@@ -118,7 +127,20 @@ public class CommunicationHubActivity extends BaseActivity {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            finish();
+            // Respond to the action bar's Up/Home button
+            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                // This activity is NOT part of this app's task, so create a new task
+                // when navigating up, with a synthesized back stack.
+                TaskStackBuilder.create(this)
+                        // Add all of this activity's parents to the back stack
+                        .addNextIntentWithParentStack(upIntent)
+                        // Navigate up to the closest parent
+                        .startActivities();
+            } else {
+                NavUtils.navigateUpTo(this, upIntent);
+            }
+            return true;
         }
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
