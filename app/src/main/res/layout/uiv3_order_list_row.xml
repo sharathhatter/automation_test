@@ -45,12 +45,13 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/secondary_text_size"
             android:visibility="gone" />
+
         <CheckBox
             android:id="@+id/checkboxPaynow"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_alignParentRight="true"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/txtSlotDate"
@@ -79,6 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtSlotTime"
+            android:layout_marginRight="@dimen/margin_mini"
             android:layout_marginTop="2dp"
             android:text="ID : BBO-130440-240914"
             android:textColor="@color/uiv3_primary_text_color"
@@ -89,6 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtOrderId"
+            android:layout_marginRight="@dimen/margin_mini"
             android:text="@string/order_pay_now_amount"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />

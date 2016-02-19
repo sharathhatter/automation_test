@@ -30,8 +30,9 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-import retrofit2.Call;
 import java.util.ArrayList;
+
+import retrofit2.Call;
 
 public class PayNowThankyouActivity extends BaseActivity implements InvoiceDataAware {
 
@@ -124,7 +125,7 @@ public class PayNowThankyouActivity extends BaseActivity implements InvoiceDataA
                 String time = order.getSlotDisplay().getTime();
                 String display = "";
                 if (!TextUtils.isEmpty(date)) {
-                    display += date + "\n";
+                    display += date + " ";
                 }
                 if (!TextUtils.isEmpty(time)) {
                     if (!TextUtils.isEmpty(display)) {

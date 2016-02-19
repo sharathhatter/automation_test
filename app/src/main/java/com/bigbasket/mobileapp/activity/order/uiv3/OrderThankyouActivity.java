@@ -186,38 +186,38 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                 txtVariableWeightMsg.setMovementMethod(LinkMovementMethod.getInstance());
                 txtVariableWeightMsg.setText(spannableString);
             }
-                CheckBox check = (CheckBox) base.findViewById(R.id.mOrderPos);
-                check.setVisibility(View.GONE);
+            CheckBox check = (CheckBox) base.findViewById(R.id.mOrderPos);
+            check.setVisibility(View.GONE);
 
-                TextView numOfItems = (TextView) base.findViewById(R.id.txtNumOfItems);
-                if (order.getItemsCount() > 0) {
-                    String itemString = order.getItemsCount() > 1 ? " Items" : " Item";
-                    numOfItems.setText(order.getItemsCount() + itemString);
-                }
-
-                TextView txtSlotTime = (TextView) base.findViewById(R.id.txtStndDel);
-                txtSlotTime.setTextColor(ContextCompat.getColor(this, R.color.uiv3_thank_tou_red));
-                if (order.getSlotDisplay() != null) {
-                    String date = order.getSlotDisplay().getDate();
-                    String time = order.getSlotDisplay().getTime();
-                    String display = "";
-                    if (!TextUtils.isEmpty(date)) {
-                        display += date + "\n";
-                    }
-                    if (!TextUtils.isEmpty(time)) {
-                        if (!TextUtils.isEmpty(display)) {
-                            display += " ";
-                        }
-                        display += time;
-                    }
-                    txtSlotTime.setText(getString(R.string.delivery_time_with_space) + display);
-                    txtSlotTime.setTypeface(faceRobotoRegular);
-                } else {
-                    txtSlotTime.setVisibility(View.GONE);
-                }
-                layoutOrderNumber.addView(base);
+            TextView numOfItems = (TextView) base.findViewById(R.id.txtNumOfItems);
+            if (order.getItemsCount() > 0) {
+                String itemString = order.getItemsCount() > 1 ? " Items" : " Item";
+                numOfItems.setText(order.getItemsCount() + itemString);
             }
+
+            TextView txtSlotTime = (TextView) base.findViewById(R.id.txtStndDel);
+            txtSlotTime.setTextColor(ContextCompat.getColor(this, R.color.uiv3_thank_tou_red));
+            if (order.getSlotDisplay() != null) {
+                String date = order.getSlotDisplay().getDate();
+                String time = order.getSlotDisplay().getTime();
+                String display = "";
+                if (!TextUtils.isEmpty(date)) {
+                    display += date + " ";
+                }
+                if (!TextUtils.isEmpty(time)) {
+                    if (!TextUtils.isEmpty(display)) {
+                        display += " ";
+                    }
+                    display += time;
+                }
+                txtSlotTime.setText(getString(R.string.delivery_time_with_space) + display);
+                txtSlotTime.setTypeface(faceRobotoRegular);
+            } else {
+                txtSlotTime.setVisibility(View.GONE);
+            }
+            layoutOrderNumber.addView(base);
         }
+    }
 
 
     private void showInvoice(Order order) {

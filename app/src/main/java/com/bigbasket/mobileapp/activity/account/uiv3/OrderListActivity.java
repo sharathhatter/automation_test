@@ -49,6 +49,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -61,7 +62,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     private boolean mIsInShopFromPreviousOrderMode;
     private OrderListAdapter orderListAdapter = null;
     private int currentPage = 1;
-    private ArrayList<Order> listSelectedOrders;
+    private Collection listSelectedOrders;
     private CoordinatorLayout base;
     private LayoutInflater inflater;
     private FrameLayout contentLayout;
@@ -106,35 +107,25 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             @Override
             public void onClick(View view) {
                 if (orderListAdapter != null) {
-                    listSelectedOrders = new ArrayList<>();
                     listSelectedOrders = orderListAdapter.getSelectedItems();
-                    if (listSelectedOrders != null && listSelectedOrders.size() > 0) {
-                        ArrayList<String> selectedOrderIds = new ArrayList<>();
-                        for (Order order : listSelectedOrders) {
-                            if (!selectedOrderIds.contains(order.getOrderId())) {
-                                selectedOrderIds.add(order.getOrderId());
-                            }
-                        }
-                        startPayNow(selectedOrderIds);
-                    }
+                    Collection<String> ids = orderListAdapter.getSelectedOrderIds();
+                    startPayNow(new ArrayList(ids));
                 }
             }
         });
     }
 
-    private void startPayNow(ArrayList<String> orderIds) {
+    private void startPayNow(ArrayList orderIds) {
+        if (orderIds == null || orderIds.size() == 0) return;
         Intent intent = new Intent(OrderListActivity.this, PayNowActivity.class);
         intent.putExtra(Constants.ORDER_ID, android.text.TextUtils.join(",", orderIds));
-        intent.putParcelableArrayListExtra(Constants.ORDER, listSelectedOrders);
+        intent.putParcelableArrayListExtra(Constants.ORDER,
+                new ArrayList<Order>(listSelectedOrders));
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
-        setTitle(getString(R.string.my_orders));
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        orderListAdapter.notifyDataSetChanged();
         orderListAdapter.clearSelection();
-        layoutCheckoutFooter.setVisibility(View.GONE);
-        onOrderSelectionChanged(0, 0);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override
@@ -153,6 +144,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 if (orderListAdapter.isInSelectionMode()) {
                     layoutCheckoutFooter.setVisibility(View.GONE);
                     orderListAdapter.clearSelection();
+                    orderListAdapter.notifyDataSetChanged();
                     onOrderSelectionChanged(0, 0);//resetting the action-bar
                 } else {
                     super.onBackPressed();
@@ -326,6 +318,19 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.REFRESH_ORDERS) {
+            onOrderSelectionChanged(0, 0);
+            if (orderListAdapter != null) {
+                orderListAdapter.notifyDataSetChanged();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
 
     @Override
     public String getScreenTag() {

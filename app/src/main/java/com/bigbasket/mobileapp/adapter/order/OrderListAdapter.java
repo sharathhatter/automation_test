@@ -28,6 +28,8 @@ import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class OrderListAdapter<T extends Context & AppOperationAware> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -44,7 +46,7 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
     private onPayNowButtonClickListener onPayNowButtonClickListener;
     private onHolderItemClickListener onHolderItemClickListener;
     private boolean isInSelectionMode = false;
-    private HashSet<Order> selectedItems;
+    private HashMap<String, Order> selectedItems;
 
     public OrderListAdapter(T context, ArrayList<Order> orders, int
             totalPages, int currentPage, int orderListSize) {
@@ -59,7 +61,7 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
         this.faceRupee = fontHolder.getFaceRupee();
         onPayNowButtonClickListener = new onPayNowButtonClickListener();
         onHolderItemClickListener = new onHolderItemClickListener();
-        selectedItems = new HashSet<>();
+        selectedItems = new HashMap<>(orderListSize);
     }
 
     public void setCurrentPage(int currentPage) {
@@ -203,11 +205,13 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
                 }
             } else {
                 btnPayNow.setVisibility(View.GONE);
-                if (selectedItems.contains(order)) { // selected
+                if (selectedItems.containsKey(order.getOrderId())) { // selected
                     txtSlotTime.setPadding(0, 10, 0, 0);
                     txtOrderId.setPadding(0, 0, 0, 0);
                     txtSlotTime.setVisibility(View.VISIBLE);
                     layoutOrderData.setBackgroundResource(R.drawable.red_border);
+                    imgOrderType.setVisibility(View.VISIBLE);
+                    imgOrderType.setImageResource(R.drawable.active_order);
                     layoutOrderData.setOnClickListener(onPayNowButtonClickListener);
                     checkBoxPayNow.setVisibility(View.VISIBLE);
                     checkBoxPayNow.setChecked(true);
@@ -216,6 +220,8 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
                     txtOrderId.setPadding(0, 0, 0, 0);
                     layoutOrderData.setBackgroundResource(R.drawable.red_border);
                     layoutOrderData.setOnClickListener(onPayNowButtonClickListener);
+                    imgOrderType.setImageResource(R.drawable.active_order);
+                    imgOrderType.setVisibility(View.VISIBLE);
                     txtSlotTime.setVisibility(View.VISIBLE);
                     // change icon to unchecked checkbox
                     checkBoxPayNow.setVisibility(View.VISIBLE);
@@ -231,7 +237,7 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
             }
 
             TextView txtAmount = rowHolder.getTxtAmount();
-            String prefix = " `";
+            String prefix = "`";
             String orderValStr = UIUtil.formatAsMoney(Double.parseDouble(order.getOrderValue()));
             int prefixLen = prefix.length();
             SpannableString spannableMrp = new SpannableString(prefix + orderValStr);
@@ -260,7 +266,6 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
     public void clearSelection() {
         selectedItems.clear();
         isInSelectionMode = false;
-        notifyDataSetChanged();
     }
 
     public boolean isInSelectionMode() {
@@ -268,7 +273,7 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
     }
 
     public void toggleSelection(Order selectedOrder, View view) {
-        if (selectedItems.contains(selectedOrder)) {
+        if (selectedItems.containsKey(selectedOrder.getOrderId())) {
             selectedItems.remove(selectedOrder);
             if (selectedItems.size() == 0) {
                 notifyDataSetChanged();
@@ -293,7 +298,7 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
                 }
             }
         } else {
-            selectedItems.add(selectedOrder);
+            selectedItems.put(selectedOrder.getOrderId(), selectedOrder);
             if (view != null) { // change the icon to select mode
                 ViewGroup group = (ViewGroup) view.getParent();
                 CheckBox checkBoxPayNow = (CheckBox) group.findViewById(R.id.checkboxPaynow);
@@ -307,7 +312,7 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
         ((OnOrderSelectionChanged) context).onOrderSelectionChanged(getSelectedItemCount(), calculatePrices(getSelectedItems()));
     }
 
-    private double calculatePrices(ArrayList<Order> orders) {
+    private double calculatePrices(Collection<Order> orders) {
         double total = 0.0;
         if (orders != null && orders.size() > 0) {
             for (Order mOrder : orders) {
@@ -321,8 +326,12 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
         return selectedItems.size();
     }
 
-    public ArrayList<Order> getSelectedItems() {
-        return new ArrayList<>(selectedItems);
+    public Collection<Order> getSelectedItems() {
+        return selectedItems.values();
+    }
+
+    public Collection<String> getSelectedOrderIds() {
+        return selectedItems.keySet();
     }
 
     private class onPayNowButtonClickListener implements View.OnClickListener {

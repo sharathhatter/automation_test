@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -197,7 +198,6 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
                         } else {
                             getHandler().sendEmptyMessage(errorResponse.getCode(),
                                     errorResponse.getMessage(), false);
-                            setResult(NavigationCodes.LOAD_ORDERS);
                         }
                     } else {
                         //Should never happen
@@ -252,6 +252,21 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else
+            return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(NavigationCodes.REFRESH_ORDERS);
+        super.onBackPressed();
+    }
+
     private void onPayNowSuccess(ArrayList<Order> orders) {
         if (orders != null && orders.size() > 0) {
             HashMap<String, String> attrs = new HashMap<>();
@@ -276,14 +291,12 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
 
     @Override
     public void onPaymentValidated(boolean status, @Nullable String msg, @Nullable ArrayList<Order> orders) {
-        setResult(NavigationCodes.LOAD_ORDERS);
         if (status) {
             onPayNowSuccess(orders);
         } else {
             onPayNowFailure();
         }
     }
-
 
     @Override
     protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
