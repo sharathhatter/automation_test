@@ -359,7 +359,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 //User cancelled
                 try {
                     //Clear the selected account
-                    mGoogleApiClient.clearDefaultAccountAndReconnect();
+                    revokeGPlusAccess();
                 } catch (IllegalStateException ex) {
                     //Will throw exception as client not connected,
                     //but there is no other API to clear the selected account, ignore the exception
@@ -475,14 +475,14 @@ public abstract class PlusBaseActivity extends BaseActivity {
             } else {
                 //TODO: Show error and retry if is IOException
                 onPlusClientSignInFailed();
-                clearAndRevokeAccount();
+                revokeGPlusAccess();
                 hideProgressView();
             }
         }
     }
 
     private void onAuthCancelled() {
-        clearAndRevokeAccount();
+        revokeGPlusAccess();
         onPlusClientSignInFailed();
     }
 

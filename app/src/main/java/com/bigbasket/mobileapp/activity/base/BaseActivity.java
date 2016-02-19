@@ -156,6 +156,17 @@ public abstract class BaseActivity extends AppCompatActivity implements
         NewRelic.setInteractionName(getClass().getSimpleName());
     }
 
+    @Override
+    public void onBackPressed() {
+        //Workaround to avoid IllegalStateException: Can not perform this action after onSaveInstanceState
+        onStateNotSaved();
+        try {
+            super.onBackPressed();
+        } catch (Exception ex) {
+            Crashlytics.logException(ex);
+        }
+    }
+
     public MoEHelper getMoEHelper() {
         return moEHelper;
     }

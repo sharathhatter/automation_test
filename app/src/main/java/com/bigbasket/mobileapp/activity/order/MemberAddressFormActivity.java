@@ -264,7 +264,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                 focusView = editTextHouseNum;
             cancel = true;
         }
-        if (isEditTextEmpty(editTextArea)) {
+        if (editTextArea != null && isEditTextEmpty(editTextArea)) {
             UIUtil.reportFormInputFieldError(textInputArea, getString(R.string.error_field_required));
             if (focusView == null)
                 focusView = editTextArea;
@@ -384,7 +384,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     }
 
     private boolean isEditTextEmpty(EditText editText) {
-        return TextUtils.isEmpty(editText.getText().toString().trim());
+        return editText.getText() == null || TextUtils.isEmpty(editText.getText().toString().trim());
     }
 
     private String getActivityTitle() {

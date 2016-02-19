@@ -228,6 +228,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
+        onStateNotSaved();
         ValidatePaymentRequest validatePaymentRequest =
                 new ValidatePaymentRequest(mTxnId, null, null, mSelectedPaymentMethod);
         validatePaymentRequest.setFinalTotal(mFinalTotal);
