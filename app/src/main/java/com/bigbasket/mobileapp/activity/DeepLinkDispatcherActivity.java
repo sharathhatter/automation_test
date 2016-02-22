@@ -27,7 +27,9 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handler = new SilentDeepLinkHandler<>(this);
-        launchCorrespondingActivity();
+        if(savedInstanceState == null) {
+            launchCorrespondingActivity();
+        }
     }
 
     @Override
@@ -162,4 +164,12 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == NavigationCodes.GO_TO_HOME) {
+            handleBackStack();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }
