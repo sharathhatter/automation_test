@@ -2,12 +2,16 @@ package com.bigbasket.mobileapp.task;
 
 import android.Manifest;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationFragment;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.crashlytics.android.Crashlytics;
 
 public final class OtpValidationHelper {
     private static OTPValidationFragment otpValidationFragment;
@@ -57,19 +61,35 @@ public final class OtpValidationHelper {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        ctx.getCurrentActivity().getSupportFragmentManager().beginTransaction()
-                                .add(R.id.content_frame,
-                                        otpValidationFragment, otpValidationFragment.getFragmentTxnTag())
-                                .addToBackStack(null)
-                                .commit();
+                        showOtpFragment(ctx.getCurrentActivity().getSupportFragmentManager(),
+                                R.id.content_frame, otpValidationFragment);
                     }
                 }, 200);
             } else {
-                ctx.getCurrentActivity().getSupportFragmentManager().beginTransaction()
-                        .add(R.id.content_frame, otpValidationFragment, otpValidationFragment.getFragmentTxnTag())
-                        .addToBackStack(null)
-                        .commit();
+                showOtpFragment(ctx.getCurrentActivity().getSupportFragmentManager(),
+                        R.id.content_frame, otpValidationFragment);
             }
+        }
+    }
+
+    private static void showOtpFragment(final FragmentManager fragmentManager, int id,
+                         OTPValidationFragment fragment) {
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+
+        Fragment f = fragmentManager.findFragmentById(R.id.content_frame);
+        if(f != null) {
+            try {
+                fragmentManager.popBackStackImmediate(id, 0);
+            } catch (Exception ex) {
+                Crashlytics.logException(ex);
+            }
+        }
+        try {
+            ft.add(id, fragment, fragment.getFragmentTxnTag())
+                    .addToBackStack(fragment.getFragmentTxnTag())
+                    .commit();
+        } catch (Exception ex){
+            Crashlytics.logException(ex);
         }
     }
 

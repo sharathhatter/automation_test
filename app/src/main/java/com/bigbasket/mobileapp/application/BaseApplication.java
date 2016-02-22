@@ -56,28 +56,30 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        NewRelic.withApplicationToken(getString(R.string.new_relic_app_token))
-                .start(this.getApplicationContext());
-        Fabric.with(this, new Crashlytics());
+        Context appContext = getApplicationContext();
+        sContext = appContext;
+        NewRelic.withApplicationToken(appContext.getString(R.string.new_relic_app_token))
+                .start(appContext);
+        Fabric.with(appContext, new Crashlytics());
         AuthParameters.reset();
-        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        FacebookSdk.sdkInitialize(appContext);
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
         initializeLeakCanary();
         if (!BuildConfig.DEBUG) {
-            AdWordsConversionReporter.reportWithConversionId(this.getApplicationContext(),
+            AdWordsConversionReporter.reportWithConversionId(appContext,
                     "963141508", "hfTqCLOjpWAQhL-hywM", "0.00", false);
         } else {
             //TODO: read localytics log enable state from dev config settings
             Localytics.setLoggingEnabled(false);
         }
-        Picasso p = new Picasso.Builder(this.getApplicationContext())
+        Picasso p = new Picasso.Builder(appContext)
                 .memoryCache(new LruCache(getMemCacheSize()))
                 .downloader(new OkHttp3Downloader(BigBasketApiAdapter.getHttpClient(this)))
                 .build();
         Picasso.setSingletonInstance(p);
-        if (this.getApplicationContext().getFilesDir() != null) {
+        if (appContext.getFilesDir() != null) {
             registerActivityLifecycleCallbacks(
-                    new LocalyticsActivityLifecycleCallbacks(this.getApplicationContext()));
+                    new LocalyticsActivityLifecycleCallbacks(appContext));
         } else {
             LocalyticsWrapper.HAS_NO_DIR = true;
         }

@@ -94,8 +94,11 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
             mPayzappPostParams = bundle.getParcelable(PaymentSelectionActivity.PAYZAPP_PAYMENT_PARAMS);
             mAddMoreLink = bundle.getString(Constants.ADD_MORE_LINK);
             mAddMoreMsg = bundle.getString(Constants.ADD_MORE_MSG);
-            if (isPaymentPending() && savedInstanceState != null) {
-                startPrepaymentProcessing(savedInstanceState);
+            if (savedInstanceState != null) {
+                //Start the payment processing only if it was kept pending before going to background
+                if(isPaymentPending()) {
+                    startPrepaymentProcessing(savedInstanceState);
+                }
             } else {
                 startPrepaymentProcessing(null);
             }
