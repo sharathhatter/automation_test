@@ -66,7 +66,9 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
         setHasOptionsMenu(true);
         PackageManager pm = getActivity().getPackageManager();
         mHasCamera = pm.hasSystemFeature(PackageManager.FEATURE_CAMERA);
-        mCurrentPhotoPath = savedInstanceState.getString(PHOTO_PATH);
+        if(savedInstanceState != null) {
+            mCurrentPhotoPath = savedInstanceState.getString(PHOTO_PATH);
+        }
     }
 
     @Override
@@ -202,7 +204,7 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
                 uploadImage(uri.toString());
             }
         } else if (requestCode == REQUEST_TAKE_PHOTO) {
-            if( getContext() == null) {
+            if( getContext() == null || mCurrentPhotoPath == null) {
                 return;
             }
             if (resultCode == Activity.RESULT_OK) {
