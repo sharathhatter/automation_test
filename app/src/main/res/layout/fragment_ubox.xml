@@ -82,7 +82,7 @@
         android:dividerHeight="5dp"
         android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <include layout="@layout/welcome_info_layout"
         android:layout_width="wrap_content"

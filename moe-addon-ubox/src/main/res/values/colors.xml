@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="send_enabled">#0090d4</color>
-    <color name="red">#ffff4444</color>
-    <color name="bkgrnd_chat">#48beab</color>
-    <color name="bkgrnd_msg">#e8e9e8</color>
-    <color name="chat_window_background">#F0F0F0</color>
-</resources>

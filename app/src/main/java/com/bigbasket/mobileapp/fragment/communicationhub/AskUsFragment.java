@@ -31,7 +31,7 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.communicationhub.AskUsAdapter;
-import com.bigbasket.mobileapp.moe.addon.AskUsWelcomeView;
+import com.moengage.addon.ubox.AskUsWelcomeView;
 import com.bigbasket.mobileapp.util.Constants;
 import com.crashlytics.android.Crashlytics;
 import com.moe.pushlibrary.models.UnifiedInboxMessage;
@@ -76,8 +76,8 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
         View view = super.onCreateView(inflater, container, savedInstanceState);
         welcomeInfoView = (AskUsWelcomeView) view.findViewById(R.id.welcome_view);
         //Work around to remove the color filter added by MoE
-        EditText textInputBox = (EditText) view.findViewById(com.moengage.addon.ubox.R.id.inputMsg);
-        final ImageButton btnSend = (ImageButton) view.findViewById(com.moengage.addon.ubox.R.id.btnSend);
+        EditText textInputBox = (EditText) view.findViewById(R.id.inputMsg);
+        final ImageButton btnSend = (ImageButton) view.findViewById(R.id.btnSend);
         textInputBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -86,7 +86,7 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                btnSend.setColorFilter(null);
+                btnSend.setEnabled(!TextUtils.isEmpty(s.toString().trim()));
             }
 
             @Override

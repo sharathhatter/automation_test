@@ -540,6 +540,8 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
                 mContext.getContentResolver().delete(uri, selectionBuilder.toString(),
                         expiredIdList.toArray(new String[expiredIdList.size()]));
                 //Fixme: Delete is not triggering data change, loader is not reloaded
+                mContext.getContentResolver().notifyChange(
+                        MoEDataContract.MessageEntity.getContentUri(mContext), null);
             }
         }
     }

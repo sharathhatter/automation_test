@@ -1,1 +1,1 @@
-include ':app', ':moe-addon-ubox', ':payuSdkUi', ':mobikwik-sdk', ':CustomBrowser-release', ':PayU-release', ':wibmoSDK', ':wibmosdklib'
+include ':app', ':payuSdkUi', ':mobikwik-sdk', ':CustomBrowser-release', ':PayU-release', ':wibmoSDK', ':wibmosdklib'

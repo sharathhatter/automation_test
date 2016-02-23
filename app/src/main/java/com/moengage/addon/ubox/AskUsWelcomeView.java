@@ -1,4 +1,4 @@
-package com.bigbasket.mobileapp.moe.addon;
+package com.moengage.addon.ubox;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.moengage.addon.ubox.R;
+import com.bigbasket.mobileapp.R;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 

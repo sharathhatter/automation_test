@@ -107,20 +107,20 @@ public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemV
             boolean isFailure = false;
             switch (msg.status) {
                 case UnifiedInboxMessage.STATUS_SENDING:
-                    statusView.setText(com.moengage.addon.ubox.R.string.lbl_sending_inprogress);
+                    statusView.setText(R.string.lbl_sending_inprogress);
                     viewHolder.itemHolder.retryRequired = false;
                     break;
                 case UnifiedInboxMessage.STATUS_UPLOADING:
-                    statusView.setText(com.moengage.addon.ubox.R.string.lbl_sending_upload);
+                    statusView.setText(R.string.lbl_sending_upload);
                     viewHolder.itemHolder.retryRequired = false;
                     break;
                 case UnifiedInboxMessage.STATUS_FAILED_TO_SEND:
-                    statusView.setText(com.moengage.addon.ubox.R.string.lbl_sending_failed);
+                    statusView.setText(R.string.lbl_sending_failed);
                     viewHolder.itemHolder.retryRequired = true;
                     isFailure = true;
                     break;
                 case UnifiedInboxMessage.STATUS_UPLOADING_FAILED:
-                    statusView.setText(com.moengage.addon.ubox.R.string.lbl_upload_failed);
+                    statusView.setText(R.string.lbl_upload_failed);
                     viewHolder.itemHolder.retryRequired = true;
                     isFailure = true;
                     break;

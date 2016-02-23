@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.bigbasket.mobileapp.moe.addon.AskUsWelcomeView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.moengage.addon.ubox.AskUsWelcomeView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp"
@@ -20,4 +20,4 @@
         android:layout_toStartOf="@+id/close_icon"
         android:text="@string/welcome_text"/>
 
-</com.bigbasket.mobileapp.moe.addon.AskUsWelcomeView>
+</com.moengage.addon.ubox.AskUsWelcomeView>
