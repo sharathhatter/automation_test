@@ -30,7 +30,6 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class OrderListAdapter<T extends Context & AppOperationAware> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -59,9 +58,13 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
         this.faceRobotoRegular = fontHolder.getFaceRobotoRegular();
         this.faceRobotoBold = fontHolder.getFaceRobotoBold();
         this.faceRupee = fontHolder.getFaceRupee();
-        onPayNowButtonClickListener = new onPayNowButtonClickListener();
-        onHolderItemClickListener = new onHolderItemClickListener();
+        onPayNowButtonClickListener = new onPayNowButtonClickListener(this);
+        onHolderItemClickListener = new onHolderItemClickListener(this);
         selectedItems = new HashMap<>(orderListSize);
+    }
+
+    public T getContext() {
+        return context;
     }
 
     public void setCurrentPage(int currentPage) {
@@ -250,7 +253,7 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
 
             btnPayNow.setOnClickListener(onPayNowButtonClickListener);
             if (isInSelectionMode) {
-                checkBoxPayNow.setOnClickListener(onPayNowButtonClickListener);
+                checkBoxPayNow.setOnClickListener(onHolderItemClickListener);
             } else {
                 checkBoxPayNow.setOnClickListener(null);
             }
@@ -274,27 +277,28 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
 
     public void toggleSelection(Order selectedOrder, View view) {
         if (selectedItems.containsKey(selectedOrder.getOrderId())) {
-            selectedItems.remove(selectedOrder);
+            selectedItems.remove(selectedOrder.getOrderId());
             if (selectedItems.size() == 0) {
-                notifyDataSetChanged();
                 isInSelectionMode = false;
-            }
-            if (view != null) {
-                CheckBox checkBoxPayNow;
-                ViewGroup layoutOrderData;
-                if (view instanceof CheckBox) {
-                    checkBoxPayNow = (CheckBox) view;
-                    ViewGroup group = (ViewGroup) view.getParent();
-                    layoutOrderData = (ViewGroup) group.findViewById(R.id.layoutOrderData);
-                } else {
-                    checkBoxPayNow = (CheckBox) view.findViewById(R.id.checkboxPaynow);
-                    layoutOrderData = (ViewGroup) view.findViewById(R.id.layoutOrderData);
-                }
-                if (layoutOrderData != null)
-                    layoutOrderData.setBackgroundResource(R.drawable.red_border);
-                if (checkBoxPayNow != null) {
-                    checkBoxPayNow.setVisibility(View.VISIBLE);
-                    checkBoxPayNow.setChecked(false); // change icon unchecked checkbox
+                notifyDataSetChanged();
+            } else {
+                if (view != null) {
+                    CheckBox checkBoxPayNow;
+                    ViewGroup layoutOrderData;
+                    if (view instanceof CheckBox) {
+                        checkBoxPayNow = (CheckBox) view;
+                        ViewGroup group = (ViewGroup) view.getParent();
+                        layoutOrderData = (ViewGroup) group.findViewById(R.id.layoutOrderData);
+                    } else {
+                        checkBoxPayNow = (CheckBox) view.findViewById(R.id.checkboxPaynow);
+                        layoutOrderData = (ViewGroup) view.findViewById(R.id.layoutOrderData);
+                    }
+                    if (layoutOrderData != null)
+                        layoutOrderData.setBackgroundResource(R.drawable.red_border);
+                    if (checkBoxPayNow != null) {
+                        checkBoxPayNow.setVisibility(View.VISIBLE);
+                        checkBoxPayNow.setChecked(false); // change icon unchecked checkbox
+                    }
                 }
             }
         } else {
@@ -334,36 +338,48 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
         return selectedItems.keySet();
     }
 
-    private class onPayNowButtonClickListener implements View.OnClickListener {
+    private static class onPayNowButtonClickListener implements View.OnClickListener {
+
+        private final OrderListAdapter adapter;
+
+        public onPayNowButtonClickListener(OrderListAdapter orderListAdapter) {
+            this.adapter = orderListAdapter;
+        }
 
         @Override
         public void onClick(View v) {
-            isInSelectionMode = true;
+            adapter.isInSelectionMode = true;
             Order mOrder = (Order) v.getTag(R.id.order_details);
             if (v instanceof Button) {
-                notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
             }
-            toggleSelection(mOrder, v);
+            adapter.toggleSelection(mOrder, v);
         }
     }
 
-    private class onHolderItemClickListener implements View.OnClickListener {
+    private static class onHolderItemClickListener implements View.OnClickListener {
+
+        private final OrderListAdapter adapter;
+
+        public onHolderItemClickListener(OrderListAdapter adapter) {
+            this.adapter = adapter;
+        }
 
         @Override
         public void onClick(View v) {
             Order order = (Order) v.getTag(R.id.order_details);
-            if (isInSelectionMode) {
-                boolean canPay = (boolean) v.getTag(R.id.can_pay);
+            if (adapter.isInSelectionMode()) {
+                boolean canPay = order.canPay();
                 if (canPay) {
-                    toggleSelection(order, v);
+                    adapter.toggleSelection(order, v);
                 }
             } else {
-                ((OrderItemClickAware) context).onOrderItemClicked(order);
+                ((OrderItemClickAware) adapter.getContext()).onOrderItemClicked(order);
             }
         }
     }
 
-    private class OrderListRowHolder extends RecyclerView.ViewHolder {
+    private static class OrderListRowHolder extends RecyclerView.ViewHolder {
 
         private TextView txtSlotDate;
         private TextView txtSlotTime;
