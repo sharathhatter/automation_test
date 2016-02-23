@@ -263,7 +263,6 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
 
     @Override
     public void onBackPressed() {
-        setResult(NavigationCodes.REFRESH_ORDERS);
         super.onBackPressed();
     }
 

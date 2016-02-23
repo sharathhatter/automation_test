@@ -26,10 +26,12 @@ import com.bigbasket.mobileapp.interfaces.payment.OnOrderSelectionChanged;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class OrderListAdapter<T extends Context & AppOperationAware> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -40,27 +42,25 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
     private static final int DELIVERED_ORDER = 1;
     private T context;
     private ArrayList<Order> orders;
-    private int totalPages, currentPage, orderListSize;
+    private int totalPages, currentPage;
     private Typeface faceRobotoRegular, faceRobotoBold, faceRupee;
     private onPayNowButtonClickListener onPayNowButtonClickListener;
     private onHolderItemClickListener onHolderItemClickListener;
-    private boolean isInSelectionMode = false;
     private HashMap<String, Order> selectedItems;
 
     public OrderListAdapter(T context, ArrayList<Order> orders, int
-            totalPages, int currentPage, int orderListSize) {
+            totalPages, int currentPage) {
         this.context = context;
         this.orders = orders;
         this.totalPages = totalPages;
         this.currentPage = currentPage;
-        this.orderListSize = orderListSize;
         FontHolder fontHolder = FontHolder.getInstance(context.getApplicationContext());
         this.faceRobotoRegular = fontHolder.getFaceRobotoRegular();
         this.faceRobotoBold = fontHolder.getFaceRobotoBold();
         this.faceRupee = fontHolder.getFaceRupee();
         onPayNowButtonClickListener = new onPayNowButtonClickListener(this);
         onHolderItemClickListener = new onHolderItemClickListener(this);
-        selectedItems = new HashMap<>(orderListSize);
+        selectedItems = new HashMap<>(orders != null ? orders.size() : 5);
     }
 
     public T getContext() {
@@ -79,15 +79,11 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
         this.totalPages = totalPages;
     }
 
-    public void setOrderListSize(int orderListSize) {
-        this.orderListSize = orderListSize;
-    }
-
     @Override
     public int getItemViewType(int position) {
         if (position >= orders.size() && currentPage == totalPages)
             return VIEW_TYPE_EMPTY;
-        return position == orders.size() ? VIEW_TYPE_LOADING : VIEW_TYPE_DATA;
+        return position >= orders.size() ? VIEW_TYPE_LOADING : VIEW_TYPE_DATA;
     }
 
     @Override
@@ -109,6 +105,10 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
 
     public ArrayList<Order> getOrders() {
         return orders;
+    }
+
+    public int getTotalPages() {
+        return totalPages;
     }
 
     @Override
@@ -181,7 +181,7 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
             layoutOrderData.setTag(R.id.order_details, order);
             layoutOrderData.setOnClickListener(onHolderItemClickListener);
 
-            if (!isInSelectionMode) {
+            if (selectedItems.isEmpty()) {
                 if (order.canPay()) {
                     btnPayNow.setVisibility(View.VISIBLE);
                 } else {
@@ -247,12 +247,12 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
             spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.setText(spannableMrp);
-            if (orderListSize - 1 == position && currentPage < totalPages && totalPages > 1) {
+            if (orders.size() - 1 == position && currentPage < totalPages && totalPages > 1) {
                 ((GetMoreOrderAware) context).getMoreOrders(currentPage + 1);
             }
 
             btnPayNow.setOnClickListener(onPayNowButtonClickListener);
-            if (isInSelectionMode) {
+            if (!selectedItems.isEmpty()) {
                 checkBoxPayNow.setOnClickListener(onHolderItemClickListener);
             } else {
                 checkBoxPayNow.setOnClickListener(null);
@@ -263,23 +263,66 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
 
     @Override
     public int getItemCount() {
-        return orders.size();
+        if(orders != null ) {
+            return orders.size() + 1; //+1 for loading View/empty view
+        } else {
+            return 0;
+        }
+    }
+
+    public void updateOrderList(ArrayList<Order> newOrderList,
+                                             int currentPage, int totalPages){
+        if(newOrderList == null){
+            return;
+        }
+        this.currentPage = currentPage;
+        this.totalPages = totalPages;
+        int oldLen = orders != null ? orders.size() : 0;
+        if (orders != null) {
+            orders.addAll(newOrderList);
+        } else {
+            orders = newOrderList;
+        }
+        notifyItemRangeInserted(oldLen, newOrderList.size());
     }
 
     public void clearSelection() {
-        selectedItems.clear();
-        isInSelectionMode = false;
+        if(selectedItems != null) {
+            selectedItems.clear();
+            notifyDataSetChanged();
+        }
     }
 
     public boolean isInSelectionMode() {
-        return isInSelectionMode;
+        return selectedItems != null && !selectedItems.isEmpty();
+    }
+
+    public void setSelectedList(List<String> selectedIdList) {
+        if(selectedIdList == null
+                || selectedIdList.isEmpty()
+                || orders == null
+                || orders.isEmpty()) {
+            clearSelection();
+            return;
+        }
+
+        for(String id:selectedIdList){
+            for(Order order: orders){
+                if(order.getOrderId().equals(id)){
+                    selectedItems.put(id, order);
+                    break;
+                }
+            }
+        }
+        ((OnOrderSelectionChanged) context).onOrderSelectionChanged(getSelectedItemCount(),
+                calculatePrices(getSelectedItems()));
+
     }
 
     public void toggleSelection(Order selectedOrder, View view) {
         if (selectedItems.containsKey(selectedOrder.getOrderId())) {
             selectedItems.remove(selectedOrder.getOrderId());
-            if (selectedItems.size() == 0) {
-                isInSelectionMode = false;
+            if (selectedItems.isEmpty()) {
                 notifyDataSetChanged();
             } else {
                 if (view != null) {
@@ -338,6 +381,12 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
         return selectedItems.keySet();
     }
 
+    public void clear() {
+        orders.clear();
+        totalPages = 0;
+        notifyDataSetChanged();
+    }
+
     private static class onPayNowButtonClickListener implements View.OnClickListener {
 
         private final OrderListAdapter adapter;
@@ -348,12 +397,12 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
 
         @Override
         public void onClick(View v) {
-            adapter.isInSelectionMode = true;
             Order mOrder = (Order) v.getTag(R.id.order_details);
+            adapter.toggleSelection(mOrder, v);
             if (v instanceof Button) {
                 adapter.notifyDataSetChanged();
             }
-            adapter.toggleSelection(mOrder, v);
+
         }
     }
 

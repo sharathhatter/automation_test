@@ -34,4 +34,5 @@ public interface NavigationCodes {
     int RESULT_SIGN_IN_CANCELLED = 1363;
     int RESULT_SIGN_UP_CANCELLED = 1364;
     int RESULT_CHANGE_CITY_CANCELLED = 1364;
+    int RC_PAY_NOW = 1400;
 }

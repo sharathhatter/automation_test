@@ -57,6 +57,7 @@ import retrofit2.Call;
 public class OrderListActivity extends BackButtonActivity implements InvoiceDataAware,
         GetMoreOrderAware, OrderItemClickAware, OnOrderSelectionChanged {
 
+    private static final String SELECTED_ORDER_IDS = "selected_list";
     private ViewGroup layoutCheckoutFooter;
     private String mOrderType;
     private boolean mIsInShopFromPreviousOrderMode;
@@ -91,13 +92,24 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         layoutCheckoutFooter = (ViewGroup) base.findViewById(R.id.layoutCheckoutFooter);
         txtTotal = (TextView) layoutCheckoutFooter.findViewById(R.id.txtTotal);
         txtAction = (TextView) layoutCheckoutFooter.findViewById(R.id.txtAction);
+        renderFooter();
         if (savedInstanceState != null) {
-            int savedCurrentPage = savedInstanceState.getInt(Constants.CURRENT_PAGE, 1);
-            loadOrders(savedCurrentPage);
+            currentPage = savedInstanceState.getInt(Constants.CURRENT_PAGE, 1);
+            if(savedInstanceState.containsKey(Constants.ORDERS)) {
+                ArrayList<Order> orders = savedInstanceState.getParcelableArrayList(Constants.ORDERS);
+                int totalPages = savedInstanceState.getInt(Constants.TOTAL);
+                initAdapter(orders, totalPages, currentPage);
+                if(savedInstanceState.containsKey(SELECTED_ORDER_IDS)) {
+                    orderListAdapter.setSelectedList(
+                            savedInstanceState.getStringArrayList(SELECTED_ORDER_IDS));
+                }
+            } else {
+                currentPage = 1;
+                loadOrders(currentPage);
+            }
         } else {
             loadOrders(currentPage);
         }
-        renderFooter();
     }
 
     private void renderFooter() {
@@ -124,8 +136,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
         trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
-        orderListAdapter.clearSelection();
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.RC_PAY_NOW);
     }
 
     @Override
@@ -143,8 +154,6 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             if (orderListAdapter != null) {
                 if (orderListAdapter.isInSelectionMode()) {
                     layoutCheckoutFooter.setVisibility(View.GONE);
-                    orderListAdapter.clearSelection();
-                    orderListAdapter.notifyDataSetChanged();
                     onOrderSelectionChanged(0, 0);//resetting the action-bar
                 } else {
                     super.onBackPressed();
@@ -158,6 +167,14 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(Constants.CURRENT_PAGE, currentPage);
+        if(orderListAdapter != null && orderListAdapter.getOrders() != null) {
+            outState.putInt(Constants.TOTAL, orderListAdapter.getTotalPages());
+            outState.putParcelableArrayList(Constants.ORDERS, orderListAdapter.getOrders());
+            if(orderListAdapter.isInSelectionMode()) {
+                outState.putStringArrayList(SELECTED_ORDER_IDS,
+                        new ArrayList<String>(orderListAdapter.getSelectedOrderIds()));
+            }
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -250,22 +267,24 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         contentLayout.addView(emptyPageView);
     }
 
+    private void initAdapter(ArrayList<Order> orders, int totalPages, int currentPage) {
+        orderListAdapter = new OrderListAdapter<>(this, orders, totalPages, currentPage);
+        orderListView.setAdapter(orderListAdapter);
+        contentLayout.removeAllViews();
+        contentLayout.addView(base);
+    }
+
     @SuppressWarnings("unchecked")
-    private void renderOrderList(final ArrayList<Order> mOrders, int currentPage, int totalPages) {
-        if (currentPage == 1 && (mOrders == null || mOrders.size() == 0)) {
+    private void renderOrderList(final ArrayList<Order> orders, int currentPage, int totalPages) {
+        if (currentPage == 1 && (orders == null || orders.size() == 0)) {
             showEmptyPage();
         } else {
             if (orderListAdapter == null) {
-                orderListAdapter = new OrderListAdapter<>(this, mOrders, totalPages, currentPage,
-                        mOrders.size());
-                orderListView.setAdapter(orderListAdapter);
-                contentLayout.removeAllViews();
-                contentLayout.addView(base);
-            }
-            ArrayList<Order> olderOrderList = orderListAdapter.getOrders();
-            if (currentPage > 1 && olderOrderList != null && olderOrderList.size() > 0
-                    && mOrders != null && mOrders.size() > 0) {
-                updateOrderList(olderOrderList, mOrders, currentPage, totalPages);
+                initAdapter(orders, totalPages, currentPage);
+            } else {
+                if (currentPage > 1 && orders != null && orders.size() > 0) {
+                    orderListAdapter.updateOrderList(orders, currentPage, totalPages);
+                }
             }
         }
         trackEvent(TrackingAware.MY_ORDER_SHOWN, null);
@@ -281,18 +300,6 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         } else {
             showInvoice(order);
         }
-    }
-
-    private void updateOrderList(ArrayList<Order> olderOrderList, ArrayList<Order> newOrderList,
-                                 int currentPage, int totalPages) {
-        olderOrderList.addAll(orderListAdapter.getOrders().size(), newOrderList);
-        orderListAdapter.setCurrentPage(currentPage);
-        orderListAdapter.setOrderList(olderOrderList);
-        orderListAdapter.setTotalPage(totalPages);
-        orderListAdapter.setOrderListSize(olderOrderList.size());
-        int olderOrderListsize = olderOrderList.size();
-        int newOrderListsize = newOrderList.size();
-        orderListAdapter.notifyItemRangeInserted(olderOrderListsize - newOrderListsize, newOrderListsize - 1);
     }
 
     private void showInvoice(Order order) {
@@ -321,11 +328,15 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == NavigationCodes.REFRESH_ORDERS) {
+        if (requestCode == NavigationCodes.RC_PAY_NOW) {
             onOrderSelectionChanged(0, 0);
-            if (orderListAdapter != null) {
-                orderListAdapter.notifyDataSetChanged();
+            if(resultCode == NavigationCodes.REFRESH_ORDERS) {
+                if(orderListAdapter != null) {
+                    orderListAdapter.clear();
+                }
+                loadOrders(1);
             }
+
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
