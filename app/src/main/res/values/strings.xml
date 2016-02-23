@@ -473,7 +473,7 @@
     <string name="emptyoffers_message">There are no offers for now</string>
     <string name="communication_hub_tab_offer">Offers</string>
     <string name="communication_hub_tab_alerts">Alerts</string>
-    <string name="communication_hub_tab_askme">Ask Us</string>
+    <string name="communication_hub_tab_askus">Ask Us</string>
     <string name="communication_hub_tab_faq">FAQ</string>
     <string name="help_and_support"><![CDATA[Help & Support]]></string>
     <string name="no_camera">There is no camera application to capture image</string>

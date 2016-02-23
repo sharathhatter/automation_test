@@ -92,6 +92,18 @@ public class CommunicationHubActivity extends BaseActivity {
                 attrs.put(TrackEventkeys.NAVIGATION_CTX, tab.getText().toString());
                 trackEvent(COMMUNICATION_HUB_TAB_CHANGED, attrs);
             }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                super.onTabUnselected(tab);
+                if(tab.getText().equals(getString(R.string.communication_hub_tab_askus))) {
+                    Fragment f = (Fragment)mSectionsPagerAdapter.instantiateItem(mViewPager,
+                            tab.getPosition());
+                    if(f != null) {
+                        f.onPause();
+                    }
+                }
+            }
         });
 
     }
@@ -219,10 +231,10 @@ public class CommunicationHubActivity extends BaseActivity {
                     return mContext.getString(R.string.communication_hub_tab_alerts);
                 case 1:
                     if (isFaqToBeShown)
-                        return mContext.getString(R.string.communication_hub_tab_askme);
+                        return mContext.getString(R.string.communication_hub_tab_askus);
                     return mContext.getString(R.string.communication_hub_tab_offer);
                 case 2:
-                    return mContext.getString(R.string.communication_hub_tab_askme);
+                    return mContext.getString(R.string.communication_hub_tab_askus);
             }
             return null;
         }

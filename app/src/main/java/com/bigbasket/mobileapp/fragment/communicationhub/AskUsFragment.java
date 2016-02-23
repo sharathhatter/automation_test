@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -25,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -58,6 +60,7 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
     private String mCurrentPhotoPath;
     private final String SHOW_INFO_MESSAGE = "show_info_message";
     private AskUsWelcomeView welcomeInfoView;
+    private EditText textInputBox;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,7 +79,7 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
         View view = super.onCreateView(inflater, container, savedInstanceState);
         welcomeInfoView = (AskUsWelcomeView) view.findViewById(R.id.welcome_view);
         //Work around to remove the color filter added by MoE
-        EditText textInputBox = (EditText) view.findViewById(R.id.inputMsg);
+        textInputBox = (EditText) view.findViewById(R.id.inputMsg);
         final ImageButton btnSend = (ImageButton) view.findViewById(R.id.btnSend);
         textInputBox.addTextChangedListener(new TextWatcher() {
             @Override
@@ -108,7 +111,7 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
 
         Calendar cal = Calendar.getInstance();
         long now = cal.getTimeInMillis();
-        cal.set(Calendar.HOUR_OF_DAY, 7); //TODO: 7AM is hard coded for now
+        cal.set(Calendar.HOUR_OF_DAY, 8); //TODO: 8AM is hard coded for now
         long csStartTime = cal.getTimeInMillis();
         cal.set(Calendar.HOUR_OF_DAY, 22); //TODO: 10PM is hard coded for nw
         long csEndTime = cal.getTimeInMillis();
@@ -119,6 +122,18 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
             welcomeInfoView.setExpanded(true);
         }
         super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(getContext() != null && textInputBox != null) {
+            IBinder token = textInputBox.getWindowToken();
+            if (token == null) return;
+            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(token, 0);
+        }
     }
 
     @Override
