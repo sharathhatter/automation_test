@@ -188,12 +188,7 @@ public class CommunicationHubActivity extends BaseActivity {
                         args.putString(Constants.WEBVIEW_URL, Constants.COMMUNICATION_HUB_FAQ_URL);
                         args.putString(Constants.WEBVIEW_TITLE, mContext.getResources()
                                 .getString(R.string.help_and_support));
-                        FlatPageFragment flatPageFragment = new FlatPageFragment() {
-                            @Override
-                            protected void setTitle(String title) {
-                                //Ignore the Title from webview
-                            }
-                        };
+                        FlatPageFragment flatPageFragment = new TitleOverrideFlatPageFragment();
                         flatPageFragment.setArguments(args);
                         return flatPageFragment;
                     } else {
@@ -237,6 +232,13 @@ public class CommunicationHubActivity extends BaseActivity {
                     return mContext.getString(R.string.communication_hub_tab_askus);
             }
             return null;
+        }
+    }
+
+    public static class TitleOverrideFlatPageFragment extends FlatPageFragment {
+        @Override
+        protected void setTitle(String title) {
+            //Ignore the Title from webview
         }
     }
 
