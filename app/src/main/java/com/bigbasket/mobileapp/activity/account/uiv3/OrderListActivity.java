@@ -129,6 +129,10 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
     private void startPayNow(ArrayList orderIds) {
         if (orderIds == null || orderIds.size() == 0) return;
+        if(!checkInternetConnection()) {
+            handler.sendOfflineError(false);
+            return;
+        }
         Intent intent = new Intent(OrderListActivity.this, PayNowActivity.class);
         intent.putExtra(Constants.ORDER_ID, android.text.TextUtils.join(",", orderIds));
         intent.putParcelableArrayListExtra(Constants.ORDER,

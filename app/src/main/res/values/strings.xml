@@ -143,7 +143,7 @@
     <string name="pleaseChooseAddress">Please choose an address</string>
     <string name="orderItems">Order Items</string>
     <string name="enterVoucher">Enter voucher code</string>
-    <string name="connectionOffline">Apologies, cannot proceed with the operation. No network connection!\nPlease check your Internet connection</string>
+    <string name="connectionOffline">Cannot proceed with the operation. No network connection!\nPlease check your Internet connection</string>
     <string name="contactHeading">ADDRESS</string>
     <string name="paymentHeading">PAYMENT DETAILS</string>
     <string name="subTotal">Sub Total</string>

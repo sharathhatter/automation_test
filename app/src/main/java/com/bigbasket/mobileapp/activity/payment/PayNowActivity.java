@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
+import com.bigbasket.mobileapp.managers.CityManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.PayNowDetail;
@@ -55,6 +56,8 @@ import retrofit2.Call;
 public class PayNowActivity extends BackButtonActivity implements OnPaymentValidationListener,
         CityListDisplayAware, PaymentTxnInfoAware, PaymentMethodsView.OnPaymentOptionSelectionListener {
 
+    private static final String PAY_NOW_DETAILS = "paynow_details";
+    private static final String TXN_ORDER_ID = "txn_order_id";
     @Nullable
     private String mSelectedPaymentMethod;
     @Nullable
@@ -64,6 +67,9 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     private String mFinalTotal;
     private PayNowPrepaymentProcessingTask<PayNowActivity> mPayNowPrepaymentProcessingTask;
     private boolean isPayUOptionVisible;
+    private ArrayList<PayNowDetail> mPayNowDetailList;
+    private ArrayList<PaymentType> mPaymentTypes;
+    private String mTxnOrderId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,9 +79,26 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         setTitle(getString(R.string.payNow));
 
         mOrderId = getIntent().getStringExtra(Constants.ORDER_ID);
-        //this task is needed to get the phone number for the city to be shown to user in case of issue in payment validation
-        new GetCitiesTask<>(this).startTask();
-
+        if(savedInstanceState != null) {
+            mTxnId = savedInstanceState.getString(Constants.TXN_ID);
+            mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
+            mFinalTotal = savedInstanceState.getString(Constants.FINAL_TOTAL);
+            mPayNowDetailList = savedInstanceState.getParcelableArrayList(PAY_NOW_DETAILS);
+            mPaymentTypes = savedInstanceState.getParcelableArrayList(Constants.PAYMENT_TYPES);
+            mTxnOrderId = savedInstanceState.getString(TXN_ORDER_ID);
+        }
+        if(mFinalTotal != null && mPayNowDetailList != null && mPaymentTypes != null) {
+            displayPayNowSummary(mFinalTotal, mPayNowDetailList, mPaymentTypes);
+        } else {
+            String csPhoneNumber = UIUtil.getCustomerSupportPhoneNumber(this);
+            if(TextUtils.isEmpty(csPhoneNumber) || CityManager.isCityDataExpired(this)) {
+                //this task is needed to get the phone number for the city
+                // to be shown to user in case of issue in payment validation
+                new GetCitiesTask<>(this).startTask();
+            } else {
+                getPayNowParams();
+            }
+        }
     }
 
     @Override
@@ -94,21 +117,16 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         if (mFinalTotal != null) {
             outState.putString(Constants.FINAL_TOTAL, mFinalTotal);
         }
+        if(mPayNowDetailList != null) {
+            outState.putParcelableArrayList(PAY_NOW_DETAILS, mPayNowDetailList);
+        }
+        if(mPaymentTypes != null) {
+            outState.putParcelableArrayList(Constants.PAYMENT_TYPES, mPaymentTypes);
+        }
+        if (mPayNowPrepaymentProcessingTask != null && mPayNowPrepaymentProcessingTask.getTxnOrderId() != null) {
+            outState.putString(TXN_ORDER_ID, mPayNowPrepaymentProcessingTask.getTxnOrderId());
+        }
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (mTxnId == null) {
-            mTxnId = savedInstanceState.getString(Constants.TXN_ID);
-        }
-        if (mSelectedPaymentMethod == null) {
-            mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
-        }
-        if (mFinalTotal == null) {
-            mFinalTotal = savedInstanceState.getString(Constants.FINAL_TOTAL);
-        }
     }
 
     private void getPayNowParams() {
@@ -151,6 +169,9 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
 
     private void displayPayNowSummary(final String amount, ArrayList<PayNowDetail> payNowDetailList,
                                       ArrayList<PaymentType> paymentTypes) {
+        mFinalTotal = amount;
+        mPayNowDetailList = payNowDetailList;
+        mPaymentTypes = paymentTypes;
         displayOrderSummary(payNowDetailList);
         displayPaymentMethods(paymentTypes);
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
@@ -159,7 +180,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startPayNow(amount);
+                startPayNow(mFinalTotal);
             }
         });
     }
@@ -205,6 +226,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
                                 "OrderPreprocessing error without error response"));
                     }
                 } else {
+                    mTxnOrderId = getTxnOrderId();
                     if (Constants.BB_WALLET.equals(paymentMethod)) {
                         onPayNowSuccess(getIntent().<Order>getParcelableArrayListExtra(Constants.ORDER));
                     }
@@ -239,9 +261,10 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         boolean handled = false;
-        if (mPayNowPrepaymentProcessingTask != null && mPayNowPrepaymentProcessingTask.getTxnOrderId() != null) {
+        if (mFinalTotal != null && mSelectedPaymentMethod != null) {
+            onStateNotSaved();
             ValidatePaymentRequest validatePaymentRequest =
-                    new ValidatePaymentRequest(mTxnId, mPayNowPrepaymentProcessingTask.getTxnOrderId(), null, mSelectedPaymentMethod);
+                    new ValidatePaymentRequest(mTxnId, mTxnOrderId, null, mSelectedPaymentMethod);
             validatePaymentRequest.setFinalTotal(mFinalTotal);
             validatePaymentRequest.setIsPayNow(true);
             handled = new ValidatePayment<>(this, validatePaymentRequest, new BigBasketRetryMessageHandler(this, this))
@@ -274,12 +297,15 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
             Intent intent = new Intent(this, PayNowThankyouActivity.class);
             intent.putExtra(Constants.ORDERS, orders);
             intent.putExtra(Constants.IS_FROM_PAYNOW, true);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            startActivity(intent);
+            setResult(NavigationCodes.REFRESH_ORDERS);
         }
+        finish();
     }
 
     private void onPayNowFailure() {
         UIUtil.showPaymentFailureDlg(this);
+
     }
 
     @Override

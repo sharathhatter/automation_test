@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import retrofit2.Call;
 
@@ -64,7 +65,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
     }
 
-    private void renderFooter(final ArrayList<Order> orderArrayList) {
+    private void showPayNowOption(final ArrayList<Order> orderArrayList) {
         Button btnPayNow = (Button) findViewById(R.id.btnPayNow);
         for (Order order : orderArrayList) {
             if (order.canPay()) {
@@ -74,26 +75,32 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         }
         if (showPayNow) {
             btnPayNow.setVisibility(View.VISIBLE);
+            btnPayNow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!checkInternetConnection()) {
+                        handler.sendOfflineError(false);
+                        return;
+                    }
+                    HashSet<String> listSelectedOrderIds = new HashSet<>(orderArrayList.size());
+                    Intent intent = new Intent(getCurrentActivity(), PayNowActivity.class);
+                    for (Order order : orderArrayList) {
+                        if (!listSelectedOrderIds.contains(order.getOrderId()))
+                            listSelectedOrderIds.add(order.getOrderId());
+                    }
+                    intent.putExtra(Constants.ORDER_ID, android.text.TextUtils.join(",", listSelectedOrderIds));
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
+                    trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                }
+            });
         } else {
             btnPayNow.setVisibility(View.GONE);
+            btnPayNow.setOnClickListener(null);
+            return;
         }
 
-        btnPayNow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArrayList<String> listSelectedOrderIds = new ArrayList<>();
-                Intent intent = new Intent(getCurrentActivity(), PayNowActivity.class);
-                for (Order order : orderArrayList) {
-                    if (!listSelectedOrderIds.contains(order.getOrderId()))
-                        listSelectedOrderIds.add(order.getOrderId());
-                }
-                intent.putExtra(Constants.ORDER_ID, android.text.TextUtils.join(",", listSelectedOrderIds));
-                HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
-                trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-            }
-        });
     }
 
     private void showAddMoreText(final String addMoreLink, final String addMoreMsg) {
@@ -135,7 +142,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
             txtOrderPlaced.setVisibility(View.GONE);
         }
 
-        renderFooter(orders);
+        showPayNowOption(orders);
 
         LinearLayout layoutOrderNumber = (LinearLayout) findViewById(R.id.layoutOrderNumber);
         LayoutInflater inflater = getLayoutInflater();

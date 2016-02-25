@@ -116,12 +116,13 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.uiv3_status_bar_background));
         }
-        renderPaymentOptions();
+        renderPaymentOptions(savedInstanceState);
 
     }
 
-    private void renderPaymentOptions() {
+    private void renderPaymentOptions(Bundle savedInstanceState) {
         if(mPaymentParams == null || mPayUHashes == null) {
+            handleUnknownErrorCondition(null, true);
             return;
         }
         // fetching for the first time.
@@ -142,7 +143,10 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
             //Checking if the PayU is selected by the user
             boolean isPayUSelected = getIntent().getBooleanExtra(Constants.PAYU_SELECTED, false);
             if (isPayUSelected) {
-                launchPayumoney();
+                //Dont launch PayuMoney again if the activity is being restarted
+                if(savedInstanceState == null) {
+                    launchPayumoney();
+                }
             } else {
                 fetchPaymentRelatedDetails();
             }
@@ -195,7 +199,7 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
         }
         if(resultCode == Constants.RESULT_REFRESH_DETAILS) {
             findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
-            renderPaymentOptions();
+            renderPaymentOptions(null);
         }
     }
 
@@ -251,7 +255,7 @@ public class PayUBaseActivity extends PaymentBaseActivity implements View.OnClic
             startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
         } else {
             /*** error if the post data is not proper transaction wont go through***/
-            handleUnknownErrorCondition();
+            handleUnknownErrorCondition(null, true);
 
         }
     }
