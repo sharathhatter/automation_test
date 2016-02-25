@@ -17,6 +17,7 @@ import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.BBWebView;
 
 import java.util.HashMap;
@@ -42,17 +43,8 @@ public class FlatPageFragment extends BaseFragment {
         BBWebView bbWebView = (BBWebView) getView().findViewById(R.id.webViewFulfillmentPage);
         bbWebView.getSettings().setJavaScriptEnabled(true);
         bbWebView.getSettings().setDomStorageEnabled(true);
-        if (webViewUrl != null) {
-            if (!webViewUrl.contains("source=app")) {
-                if (webViewUrl.contains("?")) {
-                    webViewUrl += "&source=app";
-                } else {
-                    webViewUrl += "?source=app";
-                }
-            }
-            bbWebView.loadUrl(webViewUrl); // To get responsive template
-        }
-
+        webViewUrl = UIUtil.makeFlatPageUrlAppFriendly(webViewUrl);
+        bbWebView.loadUrl(webViewUrl); // To get responsive template
         bbWebView.setWebChromeClient((new WebChromeClient() {
 
             // this will be called on page loading progress

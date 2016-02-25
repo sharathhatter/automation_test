@@ -878,4 +878,17 @@ public class UIUtil {
                     activity.getString(R.string.txnFailureMsg));
         }
     }
+
+    public static String makeFlatPageUrlAppFriendly(String url) {
+        if (url != null) {
+            if (!url.contains("source=app")) {
+                if (url.contains("?")) {
+                    url += "&source=app";
+                } else {
+                    url += "?source=app";
+                }
+            }
+        }
+        return url;
+    }
 }
