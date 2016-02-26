@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.adapter.order;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -12,50 +11,60 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.payment.PayNowActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.GetMoreOrderAware;
 import com.bigbasket.mobileapp.interfaces.OrderItemClickAware;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.interfaces.payment.OnOrderSelectionChanged;
 import com.bigbasket.mobileapp.model.order.Order;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
-import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class OrderListAdapter<T extends Context & AppOperationAware> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
 
     private static final int VIEW_TYPE_LOADING = 0;
     private static final int VIEW_TYPE_DATA = 1;
     private static final int VIEW_TYPE_EMPTY = 2;
-
+    private static final int ACTIVE_ORDER = 0;
+    private static final int DELIVERED_ORDER = 1;
     private T context;
     private ArrayList<Order> orders;
-    private int totalPages, currentPage, orderListSize;
+    private int totalPages, currentPage;
     private Typeface faceRobotoRegular, faceRobotoBold, faceRupee;
+    private onPayNowButtonClickListener onPayNowButtonClickListener;
+    private onHolderItemClickListener onHolderItemClickListener;
+    private HashMap<String, Order> selectedItems;
 
     public OrderListAdapter(T context, ArrayList<Order> orders, int
-            totalPages, int currentPage, int orderListSize) {
+            totalPages, int currentPage) {
         this.context = context;
         this.orders = orders;
         this.totalPages = totalPages;
         this.currentPage = currentPage;
-        this.orderListSize = orderListSize;
         FontHolder fontHolder = FontHolder.getInstance(context.getApplicationContext());
         this.faceRobotoRegular = fontHolder.getFaceRobotoRegular();
         this.faceRobotoBold = fontHolder.getFaceRobotoBold();
         this.faceRupee = fontHolder.getFaceRupee();
+        onPayNowButtonClickListener = new onPayNowButtonClickListener(this);
+        onHolderItemClickListener = new onHolderItemClickListener(this);
+        selectedItems = new HashMap<>(orders != null ? orders.size() : 5);
+    }
+
+    public T getContext() {
+        return context;
     }
 
     public void setCurrentPage(int currentPage) {
@@ -66,19 +75,15 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
         this.orders = orders;
     }
 
-
     public void setTotalPage(int totalPages) {
         this.totalPages = totalPages;
     }
 
-    public void setOrderListSize(int orderListSize) {
-        this.orderListSize = orderListSize;
-    }
-
     @Override
     public int getItemViewType(int position) {
-        if (position >= orders.size() && currentPage == totalPages) return VIEW_TYPE_EMPTY;
-        return position == orders.size() ? VIEW_TYPE_LOADING : VIEW_TYPE_DATA;
+        if (position >= orders.size() && currentPage == totalPages)
+            return VIEW_TYPE_EMPTY;
+        return position >= orders.size() ? VIEW_TYPE_LOADING : VIEW_TYPE_DATA;
     }
 
     @Override
@@ -102,12 +107,32 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
         return orders;
     }
 
+    public int getTotalPages() {
+        return totalPages;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_DATA) {
             OrderListRowHolder rowHolder = (OrderListRowHolder) holder;
             final Order order = orders.get(position);
+
+            View view = rowHolder.getItemView();
+            view.setTag(R.id.order_details, order);
+            RelativeLayout layoutOrderHolder = rowHolder.getLayoutDataHolder();
+            layoutOrderHolder.setTag(R.id.order_details, order);
+
+            Button btnPayNow = rowHolder.getBtnPayNow();
+
+            if (order.canPay()) {
+                view.setTag(R.id.can_pay, true);
+                btnPayNow.setVisibility(View.VISIBLE);
+                btnPayNow.setTag(R.id.order_details, order);
+            } else {
+                view.setTag(R.id.can_pay, false);
+                btnPayNow.setVisibility(View.GONE);
+            }
 
             String date = order.getSlotDisplay().getDate();
             String time = order.getSlotDisplay().getTime();
@@ -122,7 +147,6 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
                 txtSlotDate.setVisibility(View.INVISIBLE);
             }
 
-
             TextView txtSlotTime = rowHolder.getTxtSlotTime();
             if (!TextUtils.isEmpty(time)) {
                 txtSlotTime.setText(time);
@@ -132,11 +156,9 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
                 txtSlotTime.setVisibility(View.INVISIBLE);
             }
 
-
             TextView txtOrderId = rowHolder.getTxtOrderId();
             txtOrderId.setTypeface(faceRobotoRegular);
             txtOrderId.setText(order.getOrderNumber());
-
 
             TextView txtNumItems = rowHolder.getTxtNumItems();
             txtNumItems.setTypeface(faceRobotoRegular);
@@ -150,74 +172,263 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
             TextView txtOrderStatus = rowHolder.getTxtOrderStatus();
             txtOrderStatus.setText(order.getOrderStatus());
 
-
             ImageView imgOrderType = rowHolder.getImgOrderType();
+            imgOrderType.setTag(R.id.order_details, order);
+            CheckBox checkBoxPayNow = rowHolder.getCheckBoxPayNow();
+            checkBoxPayNow.setTag(R.id.order_details, order);
+            checkBoxPayNow.setVisibility(View.GONE);
             ViewGroup layoutOrderData = rowHolder.getLayoutOrderData();
-            Button btnPayNow = rowHolder.getBtnPayNow();
-            if (order.getOrderState() == 0) { //active order
-                txtSlotTime.setPadding(0, 10, 0, 0);
-                txtOrderId.setPadding(0, 0, 0, 0);
-                layoutOrderData.setBackgroundResource(R.drawable.red_border);
-                imgOrderType.setImageResource(R.drawable.active_order);
-                txtSlotTime.setVisibility(View.VISIBLE);
-            } else if (order.getOrderState() == 1) { //delivered
-                txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.uiv3_large_list_item_bck));
-                imgOrderType.setImageResource(R.drawable.complete_order);
-                txtSlotTime.setVisibility(View.GONE);
-            } else { //cancel
-                txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.uiv3_large_list_item_bck));
-                imgOrderType.setImageResource(R.drawable.order_cancel);
-                txtSlotTime.setVisibility(View.GONE);
-            }
+            layoutOrderData.setTag(R.id.order_details, order);
+            layoutOrderData.setOnClickListener(onHolderItemClickListener);
 
-            if (order.canPay()) {
-                btnPayNow.setVisibility(View.VISIBLE);
-                btnPayNow.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(context.getCurrentActivity(), PayNowActivity.class);
-                        intent.putExtra(Constants.ORDER_ID, order.getOrderId());
-                        HashMap<String, String> map = new HashMap<>();
-                        map.put(TrackEventkeys.NAVIGATION_CTX, context.getCurrentActivity().getCurrentScreenName());
-                        context.getCurrentActivity().trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
-                        context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    }
-                });
+            if (selectedItems.isEmpty()) {
+                if (order.canPay()) {
+                    btnPayNow.setVisibility(View.VISIBLE);
+                } else {
+                    btnPayNow.setVisibility(View.GONE);
+                }
+                if (order.getOrderState() == ACTIVE_ORDER) {
+                    txtOrderId.setPadding(0, 0, 0, 0);
+                    txtSlotTime.setPadding(0, 10, 0, 0);
+                    layoutOrderData.setBackgroundResource(R.drawable.red_border);
+                    imgOrderType.setImageResource(R.drawable.active_order);
+                    imgOrderType.setVisibility(View.VISIBLE);
+                    txtSlotTime.setVisibility(View.VISIBLE);
+                } else if (order.getOrderState() == DELIVERED_ORDER) {
+                    layoutOrderData.setBackgroundColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.uiv3_large_list_item_bck));
+                    imgOrderType.setImageResource(R.drawable.complete_order);
+                    imgOrderType.setVisibility(View.VISIBLE);
+                    txtSlotTime.setVisibility(View.GONE);
+                } else { //cancel
+                    txtOrderId.setPadding(0, 10, 0, 0);
+                    layoutOrderData.setBackgroundColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.uiv3_large_list_item_bck));
+                    imgOrderType.setImageResource(R.drawable.order_cancel);
+                    imgOrderType.setVisibility(View.VISIBLE);
+                    txtSlotTime.setVisibility(View.GONE);
+                }
             } else {
                 btnPayNow.setVisibility(View.GONE);
+                if (selectedItems.containsKey(order.getOrderId())) { // selected
+                    txtSlotTime.setPadding(0, 10, 0, 0);
+                    txtOrderId.setPadding(0, 0, 0, 0);
+                    txtSlotTime.setVisibility(View.VISIBLE);
+                    layoutOrderData.setBackgroundResource(R.drawable.red_border);
+                    imgOrderType.setVisibility(View.VISIBLE);
+                    imgOrderType.setImageResource(R.drawable.active_order);
+                    layoutOrderData.setOnClickListener(onPayNowButtonClickListener);
+                    checkBoxPayNow.setVisibility(View.VISIBLE);
+                    checkBoxPayNow.setChecked(true);
+                } else if (order.canPay()) { // can pay
+                    txtSlotTime.setPadding(0, 10, 0, 0);
+                    txtOrderId.setPadding(0, 0, 0, 0);
+                    layoutOrderData.setBackgroundResource(R.drawable.red_border);
+                    layoutOrderData.setOnClickListener(onPayNowButtonClickListener);
+                    imgOrderType.setImageResource(R.drawable.active_order);
+                    imgOrderType.setVisibility(View.VISIBLE);
+                    txtSlotTime.setVisibility(View.VISIBLE);
+                    // change icon to unchecked checkbox
+                    checkBoxPayNow.setVisibility(View.VISIBLE);
+                    checkBoxPayNow.setChecked(false);
+                } else { //canceled or delivered
+                    txtOrderId.setPadding(0, 10, 0, 0);
+                    layoutOrderData.setBackgroundColor(ContextCompat.getColor(context.getCurrentActivity(), R.color.uiv3_large_list_item_bck));
+                    layoutOrderData.setOnClickListener(null);
+                    txtSlotTime.setVisibility(View.GONE);
+                    imgOrderType.setVisibility(View.INVISIBLE);
+                    checkBoxPayNow.setVisibility(View.GONE);
+                }
             }
 
             TextView txtAmount = rowHolder.getTxtAmount();
-            String prefix = " `";
+            String prefix = "`";
             String orderValStr = UIUtil.formatAsMoney(Double.parseDouble(order.getOrderValue()));
             int prefixLen = prefix.length();
             SpannableString spannableMrp = new SpannableString(prefix + orderValStr);
             spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtAmount.setText(spannableMrp);
-            if (orderListSize - 1 == position && currentPage < totalPages && totalPages > 1) {
+            if (orders.size() - 1 == position && currentPage < totalPages && totalPages > 1) {
                 ((GetMoreOrderAware) context).getMoreOrders(currentPage + 1);
             }
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((OrderItemClickAware) context).onOrderItemClicked(order);
-                }
-            });
+            btnPayNow.setOnClickListener(onPayNowButtonClickListener);
+            if (!selectedItems.isEmpty()) {
+                checkBoxPayNow.setOnClickListener(onHolderItemClickListener);
+            } else {
+                checkBoxPayNow.setOnClickListener(null);
+            }
+            holder.itemView.setOnClickListener(onHolderItemClickListener);
         }
     }
 
-
     @Override
     public int getItemCount() {
-        return orders.size() + 1;
+        if(orders != null ) {
+            return orders.size() + 1; //+1 for loading View/empty view
+        } else {
+            return 0;
+        }
     }
 
+    public void updateOrderList(ArrayList<Order> newOrderList,
+                                             int currentPage, int totalPages){
+        if(newOrderList == null){
+            return;
+        }
+        this.currentPage = currentPage;
+        this.totalPages = totalPages;
+        int oldLen = orders != null ? orders.size() : 0;
+        if (orders != null) {
+            orders.addAll(newOrderList);
+        } else {
+            orders = newOrderList;
+        }
+        notifyItemRangeInserted(oldLen, newOrderList.size());
+    }
 
-    private class OrderListRowHolder extends RecyclerView.ViewHolder {
+    public void clearSelection() {
+        if(selectedItems != null) {
+            selectedItems.clear();
+            notifyDataSetChanged();
+        }
+    }
+
+    public boolean isInSelectionMode() {
+        return selectedItems != null && !selectedItems.isEmpty();
+    }
+
+    public void setSelectedList(List<String> selectedIdList) {
+        if(selectedIdList == null
+                || selectedIdList.isEmpty()
+                || orders == null
+                || orders.isEmpty()) {
+            clearSelection();
+            return;
+        }
+
+        for(String id:selectedIdList){
+            for(Order order: orders){
+                if(order.getOrderId().equals(id)){
+                    selectedItems.put(id, order);
+                    break;
+                }
+            }
+        }
+        ((OnOrderSelectionChanged) context).onOrderSelectionChanged(getSelectedItemCount(),
+                calculatePrices(getSelectedItems()));
+
+    }
+
+    public void toggleSelection(Order selectedOrder, View view) {
+        if (selectedItems.containsKey(selectedOrder.getOrderId())) {
+            selectedItems.remove(selectedOrder.getOrderId());
+            if (selectedItems.isEmpty()) {
+                notifyDataSetChanged();
+            } else {
+                if (view != null) {
+                    CheckBox checkBoxPayNow;
+                    ViewGroup layoutOrderData;
+                    if (view instanceof CheckBox) {
+                        checkBoxPayNow = (CheckBox) view;
+                        ViewGroup group = (ViewGroup) view.getParent();
+                        layoutOrderData = (ViewGroup) group.findViewById(R.id.layoutOrderData);
+                    } else {
+                        checkBoxPayNow = (CheckBox) view.findViewById(R.id.checkboxPaynow);
+                        layoutOrderData = (ViewGroup) view.findViewById(R.id.layoutOrderData);
+                    }
+                    if (layoutOrderData != null)
+                        layoutOrderData.setBackgroundResource(R.drawable.red_border);
+                    if (checkBoxPayNow != null) {
+                        checkBoxPayNow.setVisibility(View.VISIBLE);
+                        checkBoxPayNow.setChecked(false); // change icon unchecked checkbox
+                    }
+                }
+            }
+        } else {
+            selectedItems.put(selectedOrder.getOrderId(), selectedOrder);
+            if (view != null) { // change the icon to select mode
+                ViewGroup group = (ViewGroup) view.getParent();
+                CheckBox checkBoxPayNow = (CheckBox) group.findViewById(R.id.checkboxPaynow);
+                // change icon to checked checkbox
+                if (checkBoxPayNow != null) {
+                    checkBoxPayNow.setVisibility(View.VISIBLE);
+                    checkBoxPayNow.setChecked(true);
+                }
+            }
+        }
+        ((OnOrderSelectionChanged) context).onOrderSelectionChanged(getSelectedItemCount(), calculatePrices(getSelectedItems()));
+    }
+
+    private double calculatePrices(Collection<Order> orders) {
+        double total = 0.0;
+        if (orders != null && orders.size() > 0) {
+            for (Order mOrder : orders) {
+                total = total + Double.parseDouble(mOrder.getOrderValue());
+            }
+        }
+        return total;
+    }
+
+    public int getSelectedItemCount() {
+        return selectedItems.size();
+    }
+
+    public Collection<Order> getSelectedItems() {
+        return selectedItems.values();
+    }
+
+    public Collection<String> getSelectedOrderIds() {
+        return selectedItems.keySet();
+    }
+
+    public void clear() {
+        orders.clear();
+        totalPages = 0;
+        notifyDataSetChanged();
+    }
+
+    private static class onPayNowButtonClickListener implements View.OnClickListener {
+
+        private final OrderListAdapter adapter;
+
+        public onPayNowButtonClickListener(OrderListAdapter orderListAdapter) {
+            this.adapter = orderListAdapter;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Order mOrder = (Order) v.getTag(R.id.order_details);
+            adapter.toggleSelection(mOrder, v);
+            if (v instanceof Button) {
+                adapter.notifyDataSetChanged();
+            }
+
+        }
+    }
+
+    private static class onHolderItemClickListener implements View.OnClickListener {
+
+        private final OrderListAdapter adapter;
+
+        public onHolderItemClickListener(OrderListAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Order order = (Order) v.getTag(R.id.order_details);
+            if (adapter.isInSelectionMode()) {
+                boolean canPay = order.canPay();
+                if (canPay) {
+                    adapter.toggleSelection(order, v);
+                }
+            } else {
+                ((OrderItemClickAware) adapter.getContext()).onOrderItemClicked(order);
+            }
+        }
+    }
+
+    private static class OrderListRowHolder extends RecyclerView.ViewHolder {
 
         private TextView txtSlotDate;
         private TextView txtSlotTime;
@@ -226,9 +437,10 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
         private ViewGroup layoutOrderData;
         private ImageView imgOrderType;
         private TextView txtOrderStatus;
-        private Button btnPayNow;
         private TextView txtAmount;
-
+        private RelativeLayout layoutOrderHolder;
+        private Button btnPayNow;
+        private CheckBox checkBoxPayNow;
 
         private OrderListRowHolder(View itemView) {
             super(itemView);
@@ -238,6 +450,22 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
             if (txtOrderStatus == null)
                 txtOrderStatus = (TextView) itemView.findViewById(R.id.txtOrderStatus);
             return txtOrderStatus;
+        }
+
+        public Button getBtnPayNow() {
+            if (btnPayNow == null)
+                btnPayNow = (Button) itemView.findViewById(R.id.btnPayNow);
+            return btnPayNow;
+        }
+
+        public RelativeLayout getLayoutDataHolder() {
+            if (layoutOrderHolder == null)
+                layoutOrderHolder = (RelativeLayout) itemView.findViewById(R.id.layoutOrderHolder);
+            return layoutOrderHolder;
+        }
+
+        public View getItemView() {
+            return this.itemView;
         }
 
         public TextView getTxtSlotDate() {
@@ -280,16 +508,16 @@ public class OrderListAdapter<T extends Context & AppOperationAware> extends Rec
             return imgOrderType;
         }
 
-        public Button getBtnPayNow() {
-            if (btnPayNow == null)
-                btnPayNow = (Button) itemView.findViewById(R.id.btnPayNow);
-            return btnPayNow;
-        }
-
         public TextView getTxtAmount() {
             if (txtAmount == null)
                 txtAmount = (TextView) itemView.findViewById(R.id.txtAmount);
             return txtAmount;
+        }
+
+        public CheckBox getCheckBoxPayNow() {
+            if (checkBoxPayNow == null)
+                checkBoxPayNow = (CheckBox) itemView.findViewById(R.id.checkboxPaynow);
+            return checkBoxPayNow;
         }
     }
 }

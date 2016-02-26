@@ -20,6 +20,7 @@ public interface NavigationCodes {
 
     int RC_PERMISSIONS_SETTINGS = 1365;
 
+    int REFRESH_ORDERS = 1599;
 
     /* RequestCode for resolutions involving sign-in */
     int RC_RESOLVE_CONNECT_ERROR = 49404;
@@ -33,4 +34,5 @@ public interface NavigationCodes {
     int RESULT_SIGN_IN_CANCELLED = 1363;
     int RESULT_SIGN_UP_CANCELLED = 1364;
     int RESULT_CHANGE_CITY_CANCELLED = 1364;
+    int RC_PAY_NOW = 1400;
 }

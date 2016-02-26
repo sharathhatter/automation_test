@@ -91,12 +91,18 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
         layoutAddressDetails = (RelativeLayout) contentView.findViewById(R.id.layoutAddressDetails);
         txtAddressLabel = (TextView) contentView.findViewById(R.id.txtAddressLbl);
         txtPartialAddress = (TextView) contentView.findViewById(R.id.txtPartialAddress);
+
         txtDeliveryAddress = (TextView) contentView.findViewById(R.id.txtAddress);
+        int left = (int) getResources().getDimension(R.dimen.margin_normal);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) txtDeliveryAddress.getLayoutParams();
+        params.setMargins(left, 0, 0, 0);
+        txtDeliveryAddress.setLayoutParams(params);
+
         txtName = (TextView) contentView.findViewById(R.id.txtName);
         txtPh = (TextView) contentView.findViewById(R.id.txtPh);
         txtChangeAddress = (TextView) contentView.findViewById(R.id.txtChangeAddress);
         txtExpressDelivery = (TextView) contentView.findViewById(R.id.txtExpressDelivery);
-        contentView.findViewById(R.id.imgLocation).setVisibility(View.INVISIBLE);
+        contentView.findViewById(R.id.imgLocation).setVisibility(View.GONE);
         txtExpressDelivery.setVisibility(View.GONE);
         txtPartialAddress.setVisibility(View.GONE);
         txtPh.setVisibility(View.GONE);
@@ -313,7 +319,6 @@ public class ViewDeliveryAddressFragment extends BaseFragment implements Address
             trackEvent(TrackingAware.CHECKOUT_ADDRESS_SHOWN, null);
             String total = getArguments() != null ? getArguments().getString(Constants.TOTAL_BASKET_VALUE) : null;
             UIUtil.setUpFooterButton(getCurrentActivity(), layoutCheckoutFooter, total,
-
                     getString(R.string.continueCaps), true);
             layoutCheckoutFooter.setVisibility(View.VISIBLE);
         } else {

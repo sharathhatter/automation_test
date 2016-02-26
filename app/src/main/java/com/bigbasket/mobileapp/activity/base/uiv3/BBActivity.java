@@ -736,6 +736,14 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             actionBar.setTitle(formatToolbarTitle(mTitle));
         }
     }
+    public void setTitleandSubTitle(String title,String subTitle) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            mTitle = title == null ? "" : title;
+            actionBar.setTitle(formatToolbarTitle(mTitle));
+            actionBar.setSubtitle(subTitle);
+        }
+    }
 
     private SpannableString formatToolbarTitle(String title) {
         SpannableString spannableString = new SpannableString(title);

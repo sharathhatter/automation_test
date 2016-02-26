@@ -875,15 +875,21 @@ public class UIUtil {
         }
     }
 
-    public static void showPaymentFailureDlg(final BaseActivity activity) {
-        ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(activity).getAddressSummaries();
+    public static String getCustomerSupportPhoneNumber(Context context){
+        ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(context).getAddressSummaries();
         String phone = null;
         if (addressSummaries != null && addressSummaries.size() > 0) {
-            City city = CityManager.getCity(addressSummaries.get(0).getCityId(), activity);
+            City city = CityManager.getCity(addressSummaries.get(0).getCityId(), context);
             if (city != null) {
                 phone = city.getPhone();
             }
         }
+        return phone;
+    }
+
+
+    public static void showPaymentFailureDlg(final BaseActivity activity) {
+        String phone = getCustomerSupportPhoneNumber(activity);
         if (!TextUtils.isEmpty(phone)) {
             View dlg = activity.getLayoutInflater().inflate(R.layout.uiv3_msg_text, null);
             TextView txtMsg = (TextView) dlg.findViewById(R.id.txtMsg);

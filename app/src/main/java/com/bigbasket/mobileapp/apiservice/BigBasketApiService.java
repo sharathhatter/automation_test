@@ -399,9 +399,11 @@ public interface BigBasketApiService {
                                                                                     @Field(Constants.P_ORDER_ID) String potentialOrderId,
                                                                                     @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
+
+    //for v2.3.3 ,pay-now irrespective of the payment type, key to send order id is 'order_ids'
     @GET("pay-now/")
     Call<ApiResponse<GetPayNowParamsResponse>> getPayNowDetails(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
-                                                                @Query(Constants.ORDER_ID) String orderId,
+                                                                @Query(Constants.ORDER_IDS) String orderId,
                                                                 @Query(Constants.SUPPORT_POWER_PAY) String supportPp,
                                                                 @Query(Constants.SUPPORT_CC) String supportPayu,
                                                                 @Query(Constants.SUPPORT_MOBIKWIK) String mobikWik,
@@ -411,13 +413,13 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("pay-now/")
     Call<ApiResponse<PrePaymentParamsResponse>> postPayNowDetails(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
-                                                                  @Field(Constants.ORDER_ID) String orderId,
+                                                                  @Field(Constants.ORDER_IDS) String orderId,
                                                                   @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @FormUrlEncoded
     @POST("pay-now/")
     Call<ApiResponse<PayzappPrePaymentParamsResponse>> postPayzappPayNowDetails(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
-                                                                                @Field(Constants.ORDER_ID) String orderId,
+                                                                                @Field(Constants.ORDER_IDS) String orderId,
                                                                                 @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @GET("fund-wallet/")

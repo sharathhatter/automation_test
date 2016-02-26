@@ -119,7 +119,6 @@
     <string name="placeOrderPleaseWait">Please wait while we place your order and transfer you to payment gateway.</string>
     <string name="email">E-mail</string>
     <string name="oldPassword">Old password</string>
-    <string name="otpString">One time Password</string>
     <string name="newPassword">New Password</string>
     <string name="confirmPassword">Confirm Password</string>
     <string name="password">Password</string>
@@ -144,7 +143,7 @@
     <string name="pleaseChooseAddress">Please choose an address</string>
     <string name="orderItems">Order Items</string>
     <string name="enterVoucher">Enter voucher code</string>
-    <string name="connectionOffline">Apologies, cannot proceed with the operation. No network connection!\nPlease check your Internet connection</string>
+    <string name="connectionOffline">Cannot proceed with the operation. No network connection!\nPlease check your Internet connection</string>
     <string name="contactHeading">ADDRESS</string>
     <string name="paymentHeading">PAYMENT DETAILS</string>
     <string name="subTotal">Sub Total</string>
@@ -321,7 +320,7 @@
 
     <!-- order invoice -->
     <string name="multi_order_place_txt">You will receive the orders in multiple deliveries</string>
-    <string name="continue_shopping">CONTINUE SHOPPING!</string>
+    <string name="continue_shopping">CONTINUE SHOPPING</string>
     <string name="know_more">Know more</string>
 
     <string name="expressDelAvailable">\u0020 Express Delivery may be available</string>
@@ -434,6 +433,7 @@
     <string name="available_in">\u0020available \nin </string>
     <string name="adding_newStores">\n\nWe will be adding new stores in this location soon. Meanwhile, please checkout other categories.\nThanks!</string>
     <string name="visit_store">VISIT STORE</string>
+    <string name="dismiss_">DISMISS</string>
     <string name="order_details">Order Details</string>
     <string name="empty_email_address_error">Please enter your e-mail address</string>
     <string name="empty_password_error">Please enter your password</string>
@@ -446,8 +446,6 @@
     <string name="close">Close</string>
     <string name="no_delivery_address">No delivery address available. Please add a delivery address.</string>
     <string name="failed_to_add_basket">Could not add to basket</string>
-    <string name="reset_password">Reset Password</string>
-    <string name="email_not_found">Email not found</string>
 
     <string name="terms_and_cond_start">By signing up, you agree to BigBasket’s\u0020</string>
     <string name="terms_and_cond">Terms &amp; Conditions</string>
@@ -478,4 +476,13 @@
     <string name="help_and_support"><![CDATA[Help & Support]]></string>
     <string name="no_camera">There is no camera application to capture image</string>
     <string name="failed_to_create_image_file">Failed to create an image file</string>
+
+    <string name="amount_to_pay">Amount To Pay :</string>
+    <string name="selected_count">%1$s selected</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="email_not_found">Email not found</string>
+    <string name="otpString">One time Password</string>
+
+    <string name="pay_for_multiple_orders">Select multiple orders to pay at once.</string>
+
 </resources>

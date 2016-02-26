@@ -155,6 +155,8 @@ public interface TrackingAware {
     String CHECKOUT_SLOT_SELECTED_CLICKED = "Checkout.Delivery Options Continue Clicked";
     String CHECKOUT_DELIVERY_OPTION_SHOWN = "Checkout.Delivery Options Shown";
 
+    String VALIDATE_PAYMENT_API_ERROR_ORDER_ID = "ValidatePayment.apiinvalitefield Retry";
+
     //thank you
     String THANK_YOU_PAGE_SHOWN = "Checkout.Thank You Page Shown";
     String BASKET_ADD_PROMO_BUNDLE = "Promo.Add Bundle";
@@ -178,7 +180,7 @@ public interface TrackingAware {
 
     String FLAT_PAGE_SHOWN = "Flat Page Shown";
     String PAY_NOW_CLICKED = "PayNow.Clicked";
-    String PAY_NOW_SHOWN = "PayNow.Shown";
+    String SINGLE_PAY_NOW_SHOWN = "SinglePayNow.Shown";
     String PAY_NOW_DONE = "PayNow.Done";
 
     String FUND_WALLET_SHOWN = "Fund Wallet.Shown";

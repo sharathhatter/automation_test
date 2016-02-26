@@ -11,9 +11,6 @@ import java.util.HashMap;
 
 import retrofit2.Call;
 
-/**
- * Created by bigbasket on 26/11/15.
- */
 public class OrderPrepaymentProcessingTask<T extends AppOperationAware>
         extends AbstractPrepaymentProcessingTask<T> {
 

@@ -187,6 +187,8 @@ public class Constants {
     public static final String ITEMS = "items";
     public static final String SUB_ITEMS = "sub_items";
     public static final String ORDER_ID = "order_id";
+    public static final String IS_FROM_PAYNOW = "is_from_paynow";
+    public static final String ORDER_IDS = "order_ids";
     public static final String GET_CART = "getcart";
     public static final String IS_BASKET_COUNT_DIRTY = "isBasketDirty";
     public static final String ERROR = "ERROR";
@@ -218,6 +220,7 @@ public class Constants {
 
     public static final String POST_PARAMS = "post_params";
     public static final String TXN_ID = "txn_id";
+    public static final String TXT_ORDER_ID = "txn_order_id";
     public static final String P_ORDER_ID = "p_order_id";
     public static final String SUPPORT_CC = "support_cc";
     public static final String PAYU = "payu";
@@ -515,6 +518,7 @@ public class Constants {
     public static final String AUTH = "auth";
     public static final String INBOX = "inbox";
     public static final String HAS_USER_CHOSEN_CITY = "has_user_chosen_city";
+    public static final String HAS_USER_SEEN_PAYMENT_MSG = "has_user_seen_payment_msg";
 
     public static final String MERCHANT_ID = "mer_id";
     public static final String COUNTRY_CODE = "country_code";
