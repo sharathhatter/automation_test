@@ -3,6 +3,7 @@ package com.payu.payuui;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -36,7 +37,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class PaymentsActivity extends AppCompatActivity implements MagicRetryFragment.ActivityCallback, TransactionDialogFragment.TransactionDialogListener {
+public class PaymentsActivity extends AppCompatActivity implements
+        MagicRetryFragment.ActivityCallback,
+        TransactionDialogFragment.TransactionDialogListener,
+        BankFragmentCallback {
 
     Bundle bundle;
     String url;
@@ -202,42 +206,8 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
 
         try {
             Class.forName("com.payu.custombrowser.Bank");
-            final Bank bank = new Bank() {
-                @Override
-                public void registerBroadcast(BroadcastReceiver broadcastReceiver, IntentFilter filter) {
-                    mReceiver = broadcastReceiver;
-                    registerReceiver(broadcastReceiver, filter);
-                }
+            final Bank bank = new BankFragment();
 
-                @Override
-                public void unregisterBroadcast(BroadcastReceiver broadcastReceiver) {
-                    if (mReceiver != null) {
-                        try {
-                            unregisterReceiver(mReceiver);
-                            mReceiver = null;
-                        } catch (Exception e) {
-                            //let the crash happen silently
-                        }
-                    }
-                }
-
-                @Override
-                public void onHelpUnavailable() {
-                    findViewById(R.id.parent).setVisibility(View.GONE);
-                    findViewById(R.id.trans_overlay).setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onBankError() {
-                    findViewById(R.id.parent).setVisibility(View.GONE);
-                    findViewById(R.id.trans_overlay).setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onHelpAvailable() {
-                    findViewById(R.id.parent).setVisibility(View.VISIBLE);
-                }
-            };
             Bundle args = new Bundle();
             args.putInt(Bank.WEBVIEW, R.id.webview);
             args.putInt(Bank.TRANS_LAYOUT, R.id.trans_overlay);
@@ -379,6 +349,41 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
     }
 
     @Override
+    public void registerBroadcast(BroadcastReceiver broadcastReceiver, IntentFilter filter) {
+        mReceiver = broadcastReceiver;
+        registerReceiver(broadcastReceiver, filter);
+    }
+
+    @Override
+    public void unregisterBroadcast(BroadcastReceiver broadcastReceiver) {
+        if (mReceiver != null) {
+            try {
+                unregisterReceiver(mReceiver);
+                mReceiver = null;
+            } catch (Exception e) {
+                //let the crash happen silently
+            }
+        }
+    }
+
+    @Override
+    public void onHelpUnavailable() {
+        findViewById(R.id.parent).setVisibility(View.GONE);
+        findViewById(R.id.trans_overlay).setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onBankError() {
+        findViewById(R.id.parent).setVisibility(View.GONE);
+        findViewById(R.id.trans_overlay).setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onHelpAvailable() {
+        findViewById(R.id.parent).setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
@@ -485,4 +490,52 @@ public class PaymentsActivity extends AppCompatActivity implements MagicRetryFra
                 break;
         }
     }
+
+    public static class BankFragment extends Bank {
+
+        private BankFragmentCallback mCallback;
+        @Override
+        public void onAttach(Context context) {
+            super.onAttach(context);
+            if(mCallback instanceof BankFragment) {
+                mCallback = (BankFragmentCallback)context;
+            }
+        }
+
+        @Override
+        public void registerBroadcast(BroadcastReceiver broadcastReceiver, IntentFilter filter) {
+            if(mCallback != null) {
+                mCallback.registerBroadcast(broadcastReceiver, filter);
+            }
+        }
+
+        @Override
+        public void unregisterBroadcast(BroadcastReceiver broadcastReceiver) {
+            if(mCallback != null) {
+                mCallback.unregisterBroadcast(broadcastReceiver);
+            }
+        }
+
+        @Override
+        public void onHelpUnavailable() {
+            if(mCallback != null) {
+                mCallback.onHelpUnavailable();
+            }
+        }
+
+        @Override
+        public void onBankError() {
+            if(mCallback != null) {
+                mCallback.onBankError();
+            }
+        }
+
+        @Override
+        public void onHelpAvailable() {
+            if(mCallback != null) {
+                mCallback.onHelpAvailable();
+            }
+        }
+    }
+
 }

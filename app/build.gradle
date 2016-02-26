@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.newrelic.agent.android:agent-gradle-plugin:5.4.0"
+        classpath "com.newrelic.agent.android:agent-gradle-plugin:5.+"
         classpath 'io.fabric.tools:gradle:1.21.2'
     }
 }
@@ -166,7 +166,7 @@ dependencies {
     compile project(':mobikwik-sdk')
     compile project(':payuSdkUi')
     compile files('libs/AF-Android-SDK-v3.3.0.jar')
-    compile files('libs/pgsdk.jar')
+    compile files('libs/PGSDK_v1.0.jar')
     compile files('libs/GoogleConversionTrackingSdk-2.2.4.jar')
     compile 'com.localytics.android:library:3.6.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
@@ -185,7 +185,7 @@ dependencies {
     compile "com.google.android.gms:play-services-plus:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-gcm:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-location:${playServicesLibVersion}"
-    compile 'com.newrelic.agent.android:android-agent:5.4.0'
+    compile 'com.newrelic.agent.android:android-agent:5.+'
     compile 'com.facebook.android:facebook-android-sdk:4.4.0'
     compile 'com.journeyapps:zxing-android-embedded:3.1.0@aar'
     compile 'com.google.zxing:core:3.2.0'

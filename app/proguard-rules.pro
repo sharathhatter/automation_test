@@ -146,6 +146,10 @@
  @android.webkit.JavascriptInterface <methods>;
 }
 
+-keepclassmembers class com.paytm.pgsdk.PaytmWebView$PaytmJavaScriptInterface {
+   public *;
+}
+
 -keepclassmembers class com.payu.custombrowser.** {
  *;
 }

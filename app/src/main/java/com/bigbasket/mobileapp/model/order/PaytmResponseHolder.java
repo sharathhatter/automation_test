@@ -40,24 +40,44 @@ public class PaytmResponseHolder {
     }
 
     public static <T extends AppOperationAware> void processPaytmResponse(T ctx) {
-        new ValidatePayment<>(ctx, paytmResponseHolder.validatePaymentRequest)
-                .validatePaytm(paytmResponseHolder.status, paytmResponseHolder.paramsMap);
-        paytmResponseHolder = null;
+        boolean status ;
+        ValidatePaymentRequest validateRequest;
+        HashMap<String, String> params ;
+        synchronized (PaytmResponseHolder.class){
+            status = paytmResponseHolder.status;
+            params = paytmResponseHolder.paramsMap;
+            validateRequest = paytmResponseHolder.validatePaymentRequest;
+
+        }
+        new ValidatePayment<>(ctx, validateRequest).validatePaytm(status, params);
+        synchronized (PaytmResponseHolder.class) {
+            paytmResponseHolder = null;
+        }
     }
 
     public static <T extends AppOperationAware> void processPaytmResponse(T ctx, BigBasketRetryMessageHandler handler) {
+        boolean status ;
+        ValidatePaymentRequest validateRequest;
+        HashMap<String, String> params ;
+        synchronized (PaytmResponseHolder.class){
+            status = paytmResponseHolder.status;
+            params = paytmResponseHolder.paramsMap;
+            validateRequest = paytmResponseHolder.validatePaymentRequest;
+
+        }
         //saving the parameters in handler to be used in case of retry of validatepayment
         Bundle bundle = new Bundle(3);
-        bundle.putParcelable(PAYMENT_REQUEST, paytmResponseHolder.validatePaymentRequest);
-        bundle.putBoolean(PAYMENT_STATUS, paytmResponseHolder.status);
+        bundle.putParcelable(PAYMENT_REQUEST, validateRequest);
+        bundle.putBoolean(PAYMENT_STATUS, status);
         Gson gson = new Gson();
-        String jsonPaymentParams = gson.toJson(paytmResponseHolder.paramsMap);
+        String jsonPaymentParams = gson.toJson(params);
         bundle.putString(ADDITIONAL_PARAMS, jsonPaymentParams);
         handler.bundleData = bundle;
 
-        new ValidatePayment<>(ctx, paytmResponseHolder.validatePaymentRequest, handler)
-                .validatePaytm(paytmResponseHolder.status, paytmResponseHolder.paramsMap);
-        paytmResponseHolder = null;
+        new ValidatePayment<>(ctx, validateRequest, handler).validatePaytm(status, params);
+        synchronized (PaytmResponseHolder.class) {
+            paytmResponseHolder = null;
+        }
     }
 
     //this method is used to validate the paytm response in case of retry

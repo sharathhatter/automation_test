@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.BuildConfig;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
 import com.bigbasket.mobileapp.interfaces.payment.PaymentTxnInfoAware;
 import com.bigbasket.mobileapp.util.Constants;
