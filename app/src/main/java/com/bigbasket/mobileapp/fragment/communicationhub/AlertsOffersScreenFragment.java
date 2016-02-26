@@ -296,7 +296,6 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
             if (mCursor.moveToPosition(pos)) {
                 String msgDetails = mCursor.getString(
                         MoEDataContract.MessageEntity.COLUMN_INDEX_MSG_DETAILS);
-                Log.i("Alert/Offers", msgDetails);
                 holder.itemView.setTag(R.id.chat_item_view_holder_tag, msgDetails);
 
                 String campaignImageUrl = null;
@@ -311,6 +310,9 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
                 } catch (JSONException e) {
                     //Ignore
                 }
+                holder.timeStamp.setVisibility(View.VISIBLE);
+                holder.alertLayout.setVisibility(View.VISIBLE);
+                holder.imageLayout.setVisibility(View.VISIBLE);
                 if (msgObj != null) {
                     holder.title.setText(UBoxUtils.getTitle(msgObj));
                     holder.message.setText(UBoxUtils.getMessage(msgObj));
@@ -323,23 +325,14 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
                     return;
                 }
 
-                boolean showDetails;
                 if (!TextUtils.isEmpty(campaignImageUrl)) {
                     holder.offerImageView.setVisibility(View.GONE);
                     holder.progressBar.setVisibility(View.VISIBLE);
-                    showDetails = !displayOfferImage(campaignImageUrl, holder);
+                    displayOfferImage(campaignImageUrl, holder);
+                    holder.timeStamp.setVisibility(View.GONE);
                 } else {
                     UIUtil.displayAsyncImage(holder.offerImageView, null);
-                    showDetails = true;
                 }
-                if (showDetails) {
-                    holder.alertLayout.setVisibility(View.VISIBLE);
-                    holder.imageLayout.setVisibility(View.GONE);
-                } else {
-                    holder.alertLayout.setVisibility(View.GONE);
-                    holder.imageLayout.setVisibility(View.VISIBLE);
-                }
-
             }
         }
 
