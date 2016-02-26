@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
 import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.factory.payment.PayNowPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
@@ -207,6 +208,11 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
             }
         };
         mPayNowPrepaymentProcessingTask.execute();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override

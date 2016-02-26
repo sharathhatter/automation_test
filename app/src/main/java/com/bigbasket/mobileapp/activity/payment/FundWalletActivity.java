@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
 import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.factory.payment.FundWalletPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
@@ -52,6 +53,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
     private FundWalletPrepaymentProcessingTask<FundWalletActivity> mFundWalletPrepaymentProcessingTask;
     private boolean isPayUOptionVisible;
     private ViewGroup mProgressLayout;
+    private ArrayList<PaymentType> mPaymentTypeList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,18 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
         trackEvent(TrackingAware.FUND_WALLET_SHOWN, null);
         setTitle(getString(R.string.fundWallet));
         mProgressLayout = (ViewGroup) findViewById(R.id.layoutLoading);
-        new GetCitiesTask<>(this).startTask();
+        if(savedInstanceState != null){
+            mTxnId = savedInstanceState.getString(Constants.TXN_ID);
+            mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
+            mFinalTotal = savedInstanceState.getString(Constants.FINAL_TOTAL);
+            mPaymentTypeList = savedInstanceState.getParcelableArrayList(Constants.PAYMENT_TYPES);
+        }
+
+        if(mPaymentTypeList != null) {
+            renderFundWallet(mPaymentTypeList);
+        } else {
+            new GetCitiesTask<>(this).startTask();
+        }
     }
 
     @Override
@@ -79,6 +92,9 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
         if (mFinalTotal != null) {
             outState.putString(Constants.FINAL_TOTAL, mFinalTotal);
         }
+        if(mPaymentTypeList != null) {
+            outState.putParcelableArrayList(Constants.PAYMENT_TYPES, mPaymentTypeList);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -94,6 +110,11 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
         if (mFinalTotal == null) {
             mFinalTotal = savedInstanceState.getString(Constants.FINAL_TOTAL);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -149,6 +170,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
     }
 
     private void renderFundWallet(ArrayList<PaymentType> paymentTypeList) {
+        mPaymentTypeList = paymentTypeList;
         final TextView txtAmount = (TextView) findViewById(R.id.txtAmount);
         txtAmount.setTypeface(faceRobotoRegular);
 
@@ -193,6 +215,10 @@ public class FundWalletActivity extends BackButtonActivity implements OnPaymentV
     }
 
     public void initFundWalletPrepaymentProcessingTask(String amount) {
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError(false);
+            return;
+        }
         mFundWalletPrepaymentProcessingTask =
                 new FundWalletPrepaymentProcessingTask<FundWalletActivity>(this, null, null,
                         mSelectedPaymentMethod, false, true, amount, isPayUOptionVisible) {
