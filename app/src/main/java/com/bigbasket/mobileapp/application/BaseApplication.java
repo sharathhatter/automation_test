@@ -3,12 +3,13 @@ package com.bigbasket.mobileapp.application;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
-import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.BuildConfig;
+import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
-import com.bigbasket.mobileapp.handler.payment.PaytmTxnCallback;
+import com.bigbasket.mobileapp.adapter.communicationhub.PushNotificationListener;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.LeakCanaryObserver;
 import com.bigbasket.mobileapp.util.MultiDexHandler;
@@ -20,7 +21,7 @@ import com.jakewharton.picasso.OkHttp3Downloader;
 import com.localytics.android.Localytics;
 import com.localytics.android.LocalyticsActivityLifecycleCallbacks;
 import com.moe.pushlibrary.MoEHelper;
-import com.newrelic.agent.android.Agent;
+import com.moengage.push.PushManager;
 import com.newrelic.agent.android.NewRelic;
 import com.newrelic.agent.android.logging.AgentLog;
 import com.squareup.picasso.LruCache;
@@ -69,6 +70,13 @@ public class BaseApplication extends Application {
         FacebookSdk.sdkInitialize(appContext);
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
         initializeLeakCanary();
+
+        MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
+        MoEHelper moeHelper = MoEHelper.getInstance(getApplicationContext());
+        moeHelper.optOutOfGeoFences(true);
+        moeHelper.optOutOfLocationTracking(true);
+        PushManager.getInstance(this).setMessageListener(new PushNotificationListener());
+
         if (!BuildConfig.DEBUG) {
             AdWordsConversionReporter.reportWithConversionId(appContext,
                     "963141508", "hfTqCLOjpWAQhL-hywM", "0.00", false);
@@ -81,6 +89,7 @@ public class BaseApplication extends Application {
                 .downloader(new OkHttp3Downloader(BigBasketApiAdapter.getHttpClient(this)))
                 .build();
         Picasso.setSingletonInstance(p);
+        PushManager.getInstance(this).setMessageListener(new PushNotificationListener());
         if (appContext.getFilesDir() != null) {
             registerActivityLifecycleCallbacks(
                     new LocalyticsActivityLifecycleCallbacks(appContext));
@@ -99,4 +108,5 @@ public class BaseApplication extends Application {
         // Target ~10% of the available heap.
         return 1024 * 1024 * memoryClass / 10;
     }
+
 }

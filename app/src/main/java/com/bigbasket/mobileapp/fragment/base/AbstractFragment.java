@@ -93,6 +93,7 @@ public abstract class AbstractFragment extends Fragment implements AppOperationA
                 Crashlytics.logException(ex);
             }
         }
+
     }
 
     @Override

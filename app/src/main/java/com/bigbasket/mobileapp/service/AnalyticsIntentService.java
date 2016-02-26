@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.bigbasket.mobileapp.contentProvider.SectionItemAnalyticsData;
 import com.bigbasket.mobileapp.util.Constants;
@@ -54,6 +55,8 @@ public class AnalyticsIntentService extends IntentService {
         intent.putExtra(EXTRA_CITY_ID, cityId);
         intent.putExtra(EXTRA_ANALYTICS_ATTRIBUTES, analyticsAttributes);
         context.startService(intent);
+        Log.d("AnalyticsIntentService", "startUpdateAnalyticsEvent, clicks: " + clickCount
+                + " imps:" + impressionsCount);
     }
 
     public static void startUpdateAnalyticsEvent(Context context, boolean isClickEvent,
@@ -129,10 +132,15 @@ public class AnalyticsIntentService extends IntentService {
                 values.put(SectionItemAnalyticsData.IMPRESSIONS,
                         sectionItemAnalyticsData.getImpressions() + impressions);
                 values.put(SectionItemAnalyticsData.ANALYTICS_ATTRS, analyticsAttributes);
-                getContentResolver().update(
+                int updated = getContentResolver().update(
                         ContentUris.withAppendedId(SectionItemAnalyticsData.CONTENT_URI,
                                 sectionItemAnalyticsData.getId()),
                         values, null, null);
+                Log.d("AnalyticsIntentService",
+                        "updated, clicks: " + values.get(SectionItemAnalyticsData.CLICKS)
+                                + " imps:" + values.get(SectionItemAnalyticsData.IMPRESSIONS)
+                                + " attrs: " + values.get(SectionItemAnalyticsData.ANALYTICS_ATTRS)
+                                + " rows updated: " + updated);
             } else {
                 ContentValues values = new ContentValues(SectionItemAnalyticsData.PROJECTION.length);
                 values.put(SectionItemAnalyticsData.CLICKS, clicks);
@@ -141,6 +149,10 @@ public class AnalyticsIntentService extends IntentService {
                 values.put(SectionItemAnalyticsData.SECTION_ID, sectionId);
                 values.put(SectionItemAnalyticsData.ANALYTICS_ATTRS, analyticsAttributes);
                 getContentResolver().insert(SectionItemAnalyticsData.CONTENT_URI, values);
+                Log.d("AnalyticsIntentService",
+                        "insert, clicks: " + values.get(SectionItemAnalyticsData.CLICKS)
+                                + " imps:" + values.get(SectionItemAnalyticsData.IMPRESSIONS)
+                                + " attrs: " + values.get(SectionItemAnalyticsData.ANALYTICS_ATTRS));
             }
         }
     }

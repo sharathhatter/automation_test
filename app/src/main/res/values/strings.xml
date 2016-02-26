@@ -82,7 +82,7 @@
     <string name="createList">Create list</string>
     <string name="isSystemShoppingListMsg">Lists created by BigBasket cannot be edited!They are system generated lists.</string>
     <string name="my_orders">My Orders</string>
-    <string name="bbCommHub">Communication Hub</string>
+    <string name="bbCommHub">Notifications</string>
     <string name="rating">Please rate our service:</string>
     <string name="rating_toast_msg">Please rate our service</string>
     <string name="yourComments">Your comments (optional)</string>
@@ -450,8 +450,8 @@
     <string name="email_not_found">Email not found</string>
 
     <string name="terms_and_cond_start">By signing up, you agree to BigBasket’s\u0020</string>
-    <string name="terms_and_cond">Terms &amp; Conditions,</string>
-    <string name="and">\u0020and\u0020</string>
+    <string name="terms_and_cond">Terms &amp; Conditions</string>
+    <string name="and">,\u0020and\u0020</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="promo_more_needed_format">"%1$s more needed for the promo"</string>
     <string name="sdcarderror">Please insert SD-card to display map.</string>
@@ -464,4 +464,18 @@
     <string name="micro_phone_permission_rationale">Bigbasket needs permission to record the search term. Please enable Microphone permission from application settings.</string>
     <string name="permission_rationale_dialog_title">Permission required</string>
 
+    <string name="title_activity_communication_hub">Notifications</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+
+    <string name="emptyalert_message">There are no alerts for now</string>
+    <string name="emptyoffers_message">There are no offers for now</string>
+    <string name="communication_hub_tab_offer">Offers</string>
+    <string name="communication_hub_tab_alerts">Alerts</string>
+    <string name="communication_hub_tab_askus">Ask Us</string>
+    <string name="communication_hub_tab_faq">FAQ</string>
+    <string name="help_and_support"><![CDATA[Help & Support]]></string>
+    <string name="no_camera">There is no camera application to capture image</string>
+    <string name="failed_to_create_image_file">Failed to create an image file</string>
 </resources>

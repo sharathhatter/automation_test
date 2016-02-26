@@ -283,6 +283,9 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
                             context.getCurrentActivity());
                 }
                 break;
+            case DestinationInfo.COMMUNICATION_HUB_FAQ:
+                context.getCurrentActivity().launchMoEngageCommunicationHubWithFAQ();
+                break;
             case DestinationInfo.DYNAMIC_PAGE:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                     if (destinationInfo instanceof HelpDestinationInfo) {

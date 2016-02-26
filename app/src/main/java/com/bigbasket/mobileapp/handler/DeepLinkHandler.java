@@ -232,7 +232,7 @@ public class DeepLinkHandler {
                     context.getCurrentActivity().launchMoEngageCommunicationHub();
                     return SUCCESS;
                 }
-                return FAILED;
+                return LOGIN_REQUIRED;
             case Constants.DISCOUNT:
                 intent = new Intent(context.getCurrentActivity(), DiscountActivity.class);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);

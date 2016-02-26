@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -73,10 +74,15 @@ import com.bigbasket.mobileapp.util.analytics.NewRelicWrapper;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -438,27 +444,67 @@ public class UIUtil {
                                          @DrawableRes int placeHolderDrawableId,
                                          int targetImageWidth, int targetImageHeight,
                                          boolean skipMemoryCache) {
+        displayAsyncImage(imageView, url, animate, placeHolderDrawableId, targetImageWidth,
+                targetImageHeight, skipMemoryCache, NONE, null);
+    }
+
+    public static final int NONE = 0;
+    public static final int CENTER_INSIDE = 1;
+    public static final int CENTER_CROP = 2;
+    public static final int ONLY_SCALE_DOWN = 3;
+
+    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({NONE, CENTER_INSIDE, CENTER_CROP, ONLY_SCALE_DOWN})
+    public @interface ImageScaleType {}
+
+
+    public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
+                                         @DrawableRes int placeHolderDrawableId,
+                                         int targetImageWidth, int targetImageHeight,
+                                         boolean skipMemoryCache, @ImageScaleType int scaleType,
+                                         Callback callback) {
+
         Picasso picasso = Picasso.with(imageView.getContext());
-        picasso.cancelRequest(imageView);
         RequestCreator requestCreator = picasso.load(url)
-                .error(R.drawable.noimage)
-                .placeholder(placeHolderDrawableId);
+                .error(R.drawable.noimage);
+        if(url == null) {
+            requestCreator.into(imageView, callback);
+            return;
+        } else {
+            picasso.cancelRequest(imageView);
+        }
+
+        if(placeHolderDrawableId > 0) {
+            requestCreator.placeholder(placeHolderDrawableId);
+        }
         if (skipMemoryCache) {
             requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE);
         }
         if (targetImageWidth > 0 && targetImageHeight > 0) {
             requestCreator.resize(targetImageWidth, targetImageHeight);
-            Log.i(imageView.getContext().getClass().getName(),
+            Log.i(imageView.getContext().getClass().getSimpleName(),
                     "Loading image " + (skipMemoryCache ? "[NO_MEM_CACHE] " : "")
                             + "(" + targetImageWidth + "," + targetImageHeight + ") = " + url);
         } else {
-            Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
+            Log.i(imageView.getContext().getClass().getSimpleName(), "Loading image = " + url);
         }
         if (!animate) {
             requestCreator.noFade();
         }
+        switch (scaleType){
+            case CENTER_INSIDE:
+                requestCreator.centerInside();
+                break;
+            case CENTER_CROP:
+                requestCreator.centerCrop();
+                break;
+            case ONLY_SCALE_DOWN:
+                requestCreator.onlyScaleDown();
+                break;
+        }
         try {
-            requestCreator.into(imageView);
+            requestCreator.into(imageView, callback);
         } catch (OutOfMemoryError e) {
             System.gc();
         }
@@ -527,6 +573,11 @@ public class UIUtil {
             default:
                 return 1;
         }
+    }
+    public static int adjustHeightForScreenWidth(int originalWidth, int originalHeight,
+                                                  int totalWidthAvailable) {
+        double aspectRatio = (double) originalWidth / (double) originalHeight;
+        return (int) ((double) totalWidthAvailable / aspectRatio);
     }
 
     public static View getCheckoutProgressView(Context context, @Nullable ViewGroup parent, String[] array_txtValues,
@@ -890,5 +941,11 @@ public class UIUtil {
             }
         }
         return url;
+   }
+    //to get the dateinmillisec to another format
+    // to use pass the format and dateinmillsec
+    public static String getTimeStamp(long dateInMillis, String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format,Locale.getDefault());
+        return formatter.format(new Date(dateInMillis));
     }
 }
