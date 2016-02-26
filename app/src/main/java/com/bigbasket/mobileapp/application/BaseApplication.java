@@ -80,6 +80,8 @@ public class BaseApplication extends Application {
         if (!BuildConfig.DEBUG) {
             AdWordsConversionReporter.reportWithConversionId(appContext,
                     "963141508", "hfTqCLOjpWAQhL-hywM", "0.00", false);
+            AdWordsConversionReporter.reportWithConversionId(this.getApplicationContext(),
+                    "963141508", "MZhLCK_E0GEQhL-hywM", "0.00", true);
         } else {
             //TODO: read localytics log enable state from dev config settings
             Localytics.setLoggingEnabled(false);
