@@ -92,7 +92,7 @@ public class DeepLinkHandler {
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
-                    Intent intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
+                    Intent intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
                     intent.putExtra(Constants.PROMO_ID, Integer.parseInt(id));
                     context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -189,7 +189,7 @@ public class DeepLinkHandler {
                 }
                 return FAILED;
             case Constants.PROMO_LIST:
-                intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
+                intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
