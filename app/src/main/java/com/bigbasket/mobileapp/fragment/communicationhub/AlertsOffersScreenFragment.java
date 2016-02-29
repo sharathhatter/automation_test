@@ -319,9 +319,7 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
                     holder.timeStamp.setText(UBoxUtils.getTimeStamp(msgObj,
                             "MMMM d, yyyy \'at\' h:mm a"));
                 } else {
-                    Crashlytics.log("Image and Alert both are null, Should never happen");
                     holder.alertLayout.setVisibility(View.GONE);
-                    holder.offerImageView.setVisibility(View.GONE);
                     return;
                 }
 
@@ -332,6 +330,7 @@ public class AlertsOffersScreenFragment extends Fragment implements LoaderManage
                     holder.timeStamp.setVisibility(View.GONE);
                 } else {
                     UIUtil.displayAsyncImage(holder.offerImageView, null);
+                    holder.imageLayout.setVisibility(View.GONE);
                 }
             }
         }
