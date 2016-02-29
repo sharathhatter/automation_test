@@ -10,16 +10,17 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.adapter.AddressAutoCompleteAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -32,17 +33,19 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.address.AreaSearchResult;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.OtpValidationHelper;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.HashMapParcelUtils;
 import com.bigbasket.mobileapp.util.MemberAddressPageMode;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.InstantAutoCompleteTextView;
+import com.bigbasket.mobileapp.view.DelayAutoCompleteTextView;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 
 import java.util.ArrayList;
@@ -57,13 +60,28 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     @Nullable
     private Address mAddress;
     private City mChoosenCity;
-    private AutoCompleteTextView editTextPincode;
-    private InstantAutoCompleteTextView editTextArea;
     private String mErrorMsg;
     private int mAddressPageMode;
     private ArrayList<City> mCities;
-    private HashMap<String, String> mPayload;
     private CheckBox chkIsAddrDefault;
+    private DelayAutoCompleteTextView editTextPincode;
+    private DelayAutoCompleteTextView editTextArea;
+    private DelayAutoCompleteTextView editTextResidentialComplex;
+    private AddressAutoCompleteAdapter resComplexSearchAdapter;
+    private AddressAutoCompleteAdapter areaSearchAdapter;
+    private AddressAutoCompleteAdapter pincodeSearchAdapter;
+    private EditText editTextAddressNick;
+    private EditText editTextFirstName;
+    private EditText editTextLastName;
+    private EditText editTextMobileNumber;
+    private EditText editTextHouseNum;
+    private EditText editTextStreetName;
+    private EditText editTextLandmark;
+    private Spinner citySpinner;
+    private AreaSearchResult resComplexSearchResult;
+
+    //MIN CHAR count for autocomplete
+    private static final int THRESHOLD = 2;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +97,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             int cityId = Integer.parseInt(preferences.getString(Constants.CITY_ID, "1"));
             mChoosenCity = new City(cityName, cityId);
         }
+        if (savedInstanceState != null) {
+            resComplexSearchResult = savedInstanceState.getParcelable(Constants.AREA_SEARCH_FIELD_LOCATION);
+        }
         new GetCitiesTask<>(this).startTask();  // Sync the cities
     }
 
@@ -93,10 +114,49 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         showForm(cities);
     }
 
+    private class CitySelectionListener implements AdapterView.OnItemSelectedListener {
+        private boolean isFirstTime = true;
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            mChoosenCity = mCities.get(position);
+            int cityId = mChoosenCity.getId();
+            resComplexSearchAdapter.setCityId(cityId);
+            areaSearchAdapter.setCityId(cityId);
+            pincodeSearchAdapter.setCityId(cityId);
+            if(!isFirstTime) {
+                //clear the auto update fields
+                editTextResidentialComplex.setText("", false);
+                editTextArea.setText("", false);
+                editTextPincode.setText("", false);
+            } else {
+                isFirstTime = false ;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+
+        public void setFirstTime(boolean firstTime) {
+            isFirstTime = firstTime;
+        }
+    }
+
     private void showForm(ArrayList<City> cities) {
-        editTextArea = (InstantAutoCompleteTextView) findViewById(R.id.editTextArea);
-        editTextPincode = (AutoCompleteTextView) findViewById(R.id.editTextPincode);
-        Spinner citySpinner = (Spinner) findViewById(R.id.spinnerCity);
+        editTextArea = (DelayAutoCompleteTextView) findViewById(R.id.editTextArea);
+        editTextPincode = (DelayAutoCompleteTextView) findViewById(R.id.editTextPincode);
+        editTextResidentialComplex = (DelayAutoCompleteTextView) findViewById(R.id.editTextResidentialComplex);
+        editTextAddressNick = (EditText) findViewById(R.id.editTextAddressNick);
+        editTextFirstName = (EditText) findViewById(R.id.editTextFirstName);
+        editTextFirstName.setNextFocusDownId(R.id.editTextLastName);
+        editTextLastName = (EditText) findViewById(R.id.editTextLastName);
+        editTextMobileNumber = (EditText) findViewById(R.id.editTextMobileNumber);
+        editTextHouseNum = (EditText) findViewById(R.id.editTextHouseNum);
+        editTextStreetName = (EditText) findViewById(R.id.editTextStreetName);
+        editTextLandmark = (EditText) findViewById(R.id.editTextLandmark);
+        chkIsAddrDefault = (CheckBox) findViewById(R.id.chkIsAddrDefault);
+        citySpinner = (Spinner) findViewById(R.id.spinnerCity);
 
         int color = ContextCompat.getColor(this, R.color.uiv3_primary_text_color);
         mCities = cities;
@@ -105,18 +165,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                 color, color);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         citySpinner.setAdapter(arrayAdapter);
-        citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mChoosenCity = mCities.get(position);
-                setAdapterArea(editTextArea, editTextPincode, mChoosenCity.getName());
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         int selectedPosition = 0;
         for (int i = 0; i < mCities.size(); i++) {
             if (mCities.get(i).getId() == mChoosenCity.getId()) {
@@ -127,6 +176,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         }
         citySpinner.setSelection(selectedPosition);
         citySpinner.setEnabled(AuthParameters.getInstance(this).isMultiCityEnabled());
+        CitySelectionListener selectionListener = new CitySelectionListener();
+        if(mAddress == null) {
+            selectionListener.setFirstTime(false);
+        }
+        citySpinner.setOnItemSelectedListener(selectionListener);
 
         Button txtSaveAddress = (Button) findViewById(R.id.txtSaveAddress);
         txtSaveAddress.setTypeface(faceRobotoMedium);
@@ -148,22 +202,107 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
             lblNeedMoreAddressInfo.setVisibility(View.GONE);
         }
 
-        setAdapterArea(editTextArea, editTextPincode, mChoosenCity.getName());
+        resComplexSearchAdapter = new AddressAutoCompleteAdapter(this, mChoosenCity.getId(),
+                Constants.AREA_SEARCH_TYPE_APARTMENT);
+        resComplexSearchAdapter.setResultFields(Constants.AREA_SEARCH_FIELD_DISPLAY_NAME,
+                Constants.AREA_SEARCH_FIELD_AREA,
+                Constants.AREA_SEARCH_FIELD_PINCODE,
+                Constants.AREA_SEARCH_FIELD_STREET,
+                Constants.AREA_SEARCH_FIELD_LANDMARK,
+                Constants.AREA_SEARCH_FIELD_LOCATION);
+        areaSearchAdapter = new AddressAutoCompleteAdapter(this, mChoosenCity.getId(),
+                Constants.AREA_SEARCH_TYPE_AREA);
+        areaSearchAdapter.setResultFields(Constants.AREA_SEARCH_FIELD_DISPLAY_NAME,
+                Constants.AREA_SEARCH_FIELD_PINCODE,
+                Constants.AREA_SEARCH_FIELD_STREET,
+                Constants.AREA_SEARCH_FIELD_LANDMARK);
+        pincodeSearchAdapter = new AddressAutoCompleteAdapter(this, mChoosenCity.getId(),
+                Constants.AREA_SEARCH_TYPE_PINCODE);
+        pincodeSearchAdapter.setResultFields(Constants.AREA_SEARCH_FIELD_DISPLAY_NAME,
+                Constants.AREA_SEARCH_FIELD_STREET,
+                Constants.AREA_SEARCH_FIELD_LANDMARK);
+
+        editTextResidentialComplex.setLoadingIndicator(
+                (ProgressBar) findViewById(R.id.res_complex_loading_indicator));
+        editTextResidentialComplex.setThreshold(THRESHOLD);
+        editTextResidentialComplex.setAdapter(resComplexSearchAdapter);
+
+        editTextArea.setLoadingIndicator(
+                (ProgressBar) findViewById(R.id.area_loading_indicator));
+        editTextArea.setThreshold(THRESHOLD);
+        editTextArea.setAdapter(areaSearchAdapter);
+
+        editTextPincode.setLoadingIndicator(
+                (ProgressBar) findViewById(R.id.pincode_loading_indicator));
+        editTextPincode.setThreshold(THRESHOLD);
+        editTextPincode.setAdapter(pincodeSearchAdapter);
+
+        editTextResidentialComplex.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AreaSearchResult searchResult = (AreaSearchResult) resComplexSearchAdapter.getItem(position);
+                if(searchResult != null) {
+                    editTextResidentialComplex.setText(searchResult.getDisplayName(), false);
+                    if(!TextUtils.isEmpty(searchResult.getArea())){
+                        editTextArea.setText(searchResult.getArea(), false);
+                    }
+                    if(!TextUtils.isEmpty(searchResult.getPincode())){
+                        editTextPincode.setText(searchResult.getPincode(), false);
+                    }
+                    if(!TextUtils.isEmpty(searchResult.getLandmark())){
+                        editTextLandmark.setText(searchResult.getLandmark());
+                    }
+                    if(!TextUtils.isEmpty(searchResult.getStreet())){
+                        editTextStreetName.setText(searchResult.getStreet());
+                    }
+                    resComplexSearchResult = searchResult;
+                }
+            }
+        });
+
+        editTextArea.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AreaSearchResult searchResult = (AreaSearchResult)areaSearchAdapter.getItem(position);
+                if(searchResult != null) {
+                    editTextArea.setText(searchResult.getDisplayName(), false);
+                    if(!TextUtils.isEmpty(searchResult.getPincode())){
+                        editTextPincode.setText(searchResult.getPincode(), false);
+                    }
+                    if(!TextUtils.isEmpty(searchResult.getLandmark())){
+                        editTextLandmark.setText(searchResult.getLandmark());
+                    }
+                    if(!TextUtils.isEmpty(searchResult.getStreet())){
+                        editTextStreetName.setText(searchResult.getStreet());
+                    }
+                }
+            }
+        });
+
+        editTextPincode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AreaSearchResult searchResult = (AreaSearchResult)pincodeSearchAdapter.getItem(position);
+                if(searchResult != null) {
+                    if(!TextUtils.isEmpty(searchResult.getDisplayName())) {
+                        editTextPincode.setText(searchResult.getDisplayName(), false);
+                    } else {
+                        editTextPincode.setText(searchResult.getPincode(), false);
+                    }
+                    if(!TextUtils.isEmpty(searchResult.getLandmark())){
+                        editTextLandmark.setText(searchResult.getLandmark());
+                    }
+                    if(!TextUtils.isEmpty(searchResult.getStreet())){
+                        editTextStreetName.setText(searchResult.getStreet());
+                    }
+                }
+            }
+        });
+
     }
 
     private void populateUiFields() {
         if (mAddress == null) return;
-        EditText editTextAddressNick = (EditText) findViewById(R.id.editTextAddressNick);
-        EditText editTextFirstName = (EditText) findViewById(R.id.editTextFirstName);
-        editTextFirstName.setNextFocusDownId(R.id.editTextLastName);
-        EditText editTextLastName = (EditText) findViewById(R.id.editTextLastName);
-        EditText editTextMobileNumber = (EditText) findViewById(R.id.editTextMobileNumber);
-        EditText editTextHouseNum = (EditText) findViewById(R.id.editTextHouseNum);
-        EditText editTextStreetName = (EditText) findViewById(R.id.editTextStreetName);
-        EditText editTextResidentialComplex = (EditText) findViewById(R.id.editTextResidentialComplex);
-        EditText editTextLandmark = (EditText) findViewById(R.id.editTextLandmark);
-        CheckBox chkIsAddrDefault = (CheckBox) findViewById(R.id.chkIsAddrDefault);
-        Spinner spinnerCity = (Spinner) findViewById(R.id.spinnerCity);
 
         if (!mAddress.getCityName().equals(mChoosenCity.getName())) {
             // Update the spinner
@@ -174,7 +313,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
                     selectedPosition = 0;
                 }
             }
-            spinnerCity.setSelection(selectedPosition);
+            citySpinner.setSelection(selectedPosition);
         }
 
         editTextAddressNick.setText(getValueOrBlank(mAddress.getAddressNickName()));
@@ -183,23 +322,14 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         editTextMobileNumber.setText(getValueOrBlank(mAddress.getContactNum()));
         editTextHouseNum.setText(getValueOrBlank(mAddress.getHouseNumber()));
         editTextStreetName.setText(getValueOrBlank(mAddress.getStreet()));
-        editTextResidentialComplex.setText(getValueOrBlank(mAddress.getResidentialComplex()));
+        editTextResidentialComplex.setText(getValueOrBlank(mAddress.getResidentialComplex()), false);
         editTextLandmark.setText(getValueOrBlank(mAddress.getLandmark()));
-        editTextArea.setText(getValueOrBlank(mAddress.getArea()));
-        editTextPincode.setText(getValueOrBlank(mAddress.getPincode()));
+        editTextArea.setText(getValueOrBlank(mAddress.getArea()), false);
+        editTextPincode.setText(getValueOrBlank(mAddress.getPincode()), false);
         chkIsAddrDefault.setVisibility(mAddress.isDefault() ? View.GONE : View.VISIBLE);
     }
 
     private void uploadAddress(String otpCode, boolean isResendOtpRequested) {
-        final EditText editTextAddressNick = (EditText) findViewById(R.id.editTextAddressNick);
-        final EditText editTextFirstName = (EditText) findViewById(R.id.editTextFirstName);
-        final EditText editTextLastName = (EditText) findViewById(R.id.editTextLastName);
-        final EditText editTextMobileNumber = (EditText) findViewById(R.id.editTextMobileNumber);
-        final EditText editTextHouseNum = (EditText) findViewById(R.id.editTextHouseNum);
-        final EditText editTextStreetName = (EditText) findViewById(R.id.editTextStreetName);
-        final EditText editTextResidentialComplex = (EditText)
-                findViewById(R.id.editTextResidentialComplex);
-        final EditText editTextLandmark = (EditText) findViewById(R.id.editTextLandmark);
         if (chkIsAddrDefault == null) {
             chkIsAddrDefault = (CheckBox) findViewById(R.id.chkIsAddrDefault);
         }
@@ -306,6 +436,32 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
         boolean isDefault = (mAddress != null && mAddress.isDefault()) || chkIsAddrDefault.isChecked();
         payload.put(Constants.IS_DEFAULT, isDefault ? "1" : "0");
 
+        AreaSearchResult complexDetails = resComplexSearchResult;
+
+        if(complexDetails == null && mAddress != null) {
+            complexDetails = new AreaSearchResult();
+            complexDetails.setDisplayName(mAddress.getResidentialComplex());
+            complexDetails.setArea(mAddress.getArea());
+            complexDetails.setPincode(mAddress.getPincode());
+            complexDetails.setLocation(mAddress.getLocation());
+        }
+
+        //Set the location(GeoCode) only if complex name, area and pincode match
+        if(complexDetails != null && complexDetails.getLocation() != null) {
+            String resComplex = payload.get(Constants.RES_CMPLX);
+            String area = payload.get(Constants.AREA);
+            String pin = payload.get(Constants.PIN);
+            if(resComplex != null && resComplex.equals(complexDetails.getDisplayName())){
+                if(complexDetails.getArea() != null
+                        && area.equalsIgnoreCase(complexDetails.getArea())) {
+                    if(complexDetails.getPincode() != null
+                            && pin.equalsIgnoreCase(complexDetails.getPincode())) {
+                        payload.put(Constants.LOCATION,
+                                TextUtils.join(",", complexDetails.getLocation()));
+                    }
+                }
+            }
+        }
         if (AuthParameters.getInstance(this).isMultiCityEnabled()) {
             payload.put(Constants.CITY_ID, String.valueOf(mChoosenCity.getId()));
         }
@@ -316,13 +472,13 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
 
         if (mAddress != null && mChoosenCity.getId() != mAddress.getCityId()) {
             if (TextUtils.isEmpty(otpCode)) {
+                Bundle data = HashMapParcelUtils.mapToBundle(payload);
                 // User is trying to change the city, show an alert
-                mPayload = payload;
                 showAlertDialog(getString(R.string.createNewAddress),
                         getString(R.string.newAddressNotAllowed),
                         DialogButton.OK, DialogButton.CANCEL,
                         Constants.UPDATE_ADDRESS_DIALOG_REQUEST,
-                        null, getString(R.string.lblContinue));
+                        data, getString(R.string.lblContinue));
             } else {
                 uploadAddress(payload, true, isResendOtpRequested);
             }
@@ -398,9 +554,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
         switch (sourceName) {
             case Constants.UPDATE_ADDRESS_DIALOG_REQUEST:
-                if (mPayload != null) {
-                    uploadAddress(mPayload, true, false);
-                    mPayload = null;
+                if (valuePassed != null) {
+                    HashMap<String, String> payLoad = HashMapParcelUtils.bundleToMap(valuePassed);
+                    uploadAddress(payLoad, true, false);
                 }
                 break;
             default:
@@ -447,8 +603,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Otp
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(resComplexSearchResult != null) {
+            outState.putParcelable(Constants.AREA_SEARCH_FIELD_LOCATION, resComplexSearchResult);
+        }
     }
 
     @Override

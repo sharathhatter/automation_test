@@ -50,7 +50,6 @@ import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProgressDialogFragment;
@@ -545,58 +544,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
-    }
-
-    private void setAreaPinCode(String areaName, AreaPinInfoDbHelper areaPinInfoDbHelper, EditText editTextPincode,
-                                String cityName) {
-        if (!TextUtils.isEmpty(areaName)) {
-            String pinCode = areaPinInfoDbHelper.getAreaPin(areaName, cityName);
-            editTextPincode.setText(pinCode);
-        }
-    }
-
-    protected void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode,
-                                  final String cityName) {
-        final AreaPinInfoDbHelper areaPinInfoDbHelper = new AreaPinInfoDbHelper(getApplicationContext());
-        ArrayList<String> areaPinArrayList = areaPinInfoDbHelper.getPinList(cityName);
-        ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(this,
-                android.R.layout.select_dialog_item, areaPinArrayList);
-        editTextPincode.setThreshold(1);
-        editTextPincode.setAdapter(pinAdapter);
-
-        ArrayList<String> areaNameArrayList = areaPinInfoDbHelper.getAreaNameList(cityName);
-        final ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(this,
-                android.R.layout.select_dialog_item, areaNameArrayList);
-        editTextArea.setThreshold(1);
-        editTextArea.setAdapter(areaAdapter);
-
-        editTextPincode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                editTextArea.setText("");
-                String pinCode = editTextPincode.getText().toString();
-                ArrayList<String> areaNameArrayList = areaPinInfoDbHelper.getAreaName(pinCode, cityName);
-                if (areaNameArrayList.size() > 1) {
-                    areaAdapter.clear();
-                    for (String areaName : areaNameArrayList)
-                        areaAdapter.add(areaName);
-                    areaAdapter.notifyDataSetChanged();
-                    editTextArea.requestFocus();
-                    editTextArea.showDropDown();
-                } else if (areaNameArrayList.size() == 1) {
-                    editTextArea.setText(areaNameArrayList.get(0));
-                }
-            }
-        });
-
-
-        editTextArea.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                String areaName = editTextArea.getText().toString();
-                setAreaPinCode(areaName, areaPinInfoDbHelper, editTextPincode, cityName);
-            }
-        });
     }
 
     @Override

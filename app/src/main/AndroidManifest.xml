@@ -807,9 +807,6 @@
             android:value="@string/google_geo_api_key" />
 
         <service
-            android:name="com.bigbasket.mobileapp.service.AreaPinInfoIntentService"
-            android:exported="false" />
-        <service
             android:name="com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService"
             android:exported="false" />
 

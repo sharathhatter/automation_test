@@ -54,7 +54,6 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
@@ -286,7 +285,6 @@ public class UIUtil {
         if (!TextUtils.isEmpty(cityId) &&
                 !cityId.equals(String.valueOf(userDetails.analytics.cityId))) {
             editor.remove(Constants.AREA_INFO_CALL_LAST);
-            AreaPinInfoDbHelper.clearAll(ctx);
         }
 
         if (userDetails.analytics != null) {

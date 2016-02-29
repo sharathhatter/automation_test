@@ -713,4 +713,17 @@ public class Constants {
 
     public static final String ENABLE_RATINGS = "enable_rating";
     public static final String INVOICE_DOWNLOAD_URL = "invoice_url";
+
+    public static final String FIELDS = "fields";
+    public static final String LIMIT = "limit";
+    public static final String AREA_SEARCH_TYPE_APARTMENT = "apartment";
+    public static final String AREA_SEARCH_TYPE_AREA = "area";
+    public static final String AREA_SEARCH_TYPE_PINCODE = "pincode";
+    public static final String AREA_SEARCH_FIELD_DISPLAY_NAME = "display_name";
+    public static final String AREA_SEARCH_FIELD_AREA = AREA_SEARCH_TYPE_AREA;
+    public static final String AREA_SEARCH_FIELD_PINCODE = AREA_SEARCH_TYPE_PINCODE;
+    public static final String AREA_SEARCH_FIELD_STREET = "street";
+    public static final String AREA_SEARCH_FIELD_LANDMARK = "landmark";
+    public static final String AREA_SEARCH_FIELD_LOCATION = "location";
+
 }

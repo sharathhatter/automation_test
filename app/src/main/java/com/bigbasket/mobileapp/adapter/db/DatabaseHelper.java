@@ -27,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Version 18: Added section_item_analytics_data table
      * Version 19: Converted section_data from TEXT to BLOB
      * Version 20: Added 'date' column sectionItemAnalyticsTable
-     * Version 21: Updated triggers for mostsearches table
+     * Version 21: Updated triggers for mostsearches table and remove area pin info table
      */
     protected static final int DATABASE_VERSION = 21;
     private static volatile DatabaseHelper dbAdapter = null;
@@ -88,10 +88,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion < 19) {
             upgradeTo19(db);
         }
-        if(oldVersion < 20) {
+        if (oldVersion < 20) {
             upgradeTo20(db);
         }
-        if(oldVersion < 21) {
+        if (oldVersion < 21) {
             upgradeTo21(db);
         }
     }
@@ -100,7 +100,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(DynamicPageDbHelper.CREATE_TABLE);
         db.execSQL(AppDataDynamicDbHelper.CREATE_TABLE);
         db.execSQL(SubCategoryAdapter.CREATE_TABLE);
-        db.execSQL(AreaPinInfoDbHelper.CREATE_TABLE);
     }
 
     private void upgradeTo17(SQLiteDatabase db) {
@@ -183,15 +182,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Crashlytics.logException(ex);
         }
         try {
-            db.execSQL("DROP TABLE IF EXISTS " + SubCategoryAdapter.TABLE_NAME);
-        } catch (SQLiteException ex) {
+            db.execSQL("DROP TABLE IF EXISTS " + AreaPinInfoDbHelper.TABLE_NAME);
+        } catch (Exception ex) {
             Crashlytics.logException(ex);
         }
     }
 
     private void initializeDatabase(SQLiteDatabase db) {
         db.execSQL(SubCategoryAdapter.CREATE_TABLE);
-        db.execSQL(AreaPinInfoDbHelper.CREATE_TABLE);
         db.execSQL(SearchSuggestionDbHelper.CREATE_TABLE);
         db.execSQL(MostSearchesDbHelper.CREATE_TABLE);
         db.execSQL(DynamicPageDbHelper.CREATE_TABLE);  // Added in version 16

@@ -14,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.bigbasket.mobileapp.BuildConfig;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.contentProvider.SectionItemAnalyticsData;
@@ -29,7 +28,6 @@ public class DatabaseContentProvider extends ContentProvider {
 
     public static final Uri CONTENT_URI_PREFIX = Uri.parse("content://" + AUTHORITY);
 
-    public static final int AREA_PIN_INFO_URI_MATCHER_CODE = 100;
     public static final int HOME_SECTION_URI_MATCHER_CODE = 101;
     public static final int MAIN_MENU_SECTION_URI_MATCHER_CODE = 102;
     public static final int APP_DATA_DYNAMIC_URI_MATCHER_CODE = 103;
@@ -45,7 +43,6 @@ public class DatabaseContentProvider extends ContentProvider {
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        sURIMatcher.addURI(AUTHORITY, AreaPinInfoDbHelper.TABLE_NAME, AREA_PIN_INFO_URI_MATCHER_CODE);
         sURIMatcher.addURI(AUTHORITY, DynamicPageDbHelper.TABLE_NAME + "/" + AbstractDynamicPageSyncService.MAIN_MENU,
                 MAIN_MENU_SECTION_URI_MATCHER_CODE);
         sURIMatcher.addURI(AUTHORITY, DynamicPageDbHelper.TABLE_NAME + "/" + AbstractDynamicPageSyncService.HOME_PAGE,
@@ -238,8 +235,6 @@ public class DatabaseContentProvider extends ContentProvider {
 
     private String getTableName(Uri uri) throws IllegalArgumentException {
         switch (sURIMatcher.match(uri)) {
-            case AREA_PIN_INFO_URI_MATCHER_CODE:
-                return AreaPinInfoDbHelper.TABLE_NAME;
             case HOME_SECTION_URI_MATCHER_CODE:
             case MAIN_MENU_SECTION_URI_MATCHER_CODE:
                 return DynamicPageDbHelper.TABLE_NAME;
