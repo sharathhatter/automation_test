@@ -865,8 +865,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void launchLogin(String navigationCtx, boolean shouldGoBackToHomePage) {
         launchLogin(navigationCtx, null, shouldGoBackToHomePage);
     }
-
     public void launchLogin(String navigationCtx, Bundle params, boolean shouldGoBackToHomePage) {
+        launchLogin(navigationCtx, params, shouldGoBackToHomePage, NavigationCodes.GO_TO_HOME);
+    }
+
+    public void launchLogin(String navigationCtx, Bundle params, boolean shouldGoBackToHomePage,
+                            int requestCode) {
         Intent loginIntent = new Intent(this, SignInActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         loginIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
@@ -878,7 +882,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 loginIntent.putExtra(Constants.FRAGMENT_CODE, params.getInt(Constants.FRAGMENT_CODE));
             }
         }
-        startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
+        startActivityForResult(loginIntent, requestCode);
     }
 
     protected void changeCity(City city) {
