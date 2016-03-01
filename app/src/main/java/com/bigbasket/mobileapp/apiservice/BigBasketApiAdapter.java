@@ -14,6 +14,8 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import com.newrelic.instrumentation.okhttp3.OkHttpClientExtension;
+
 
 public class BigBasketApiAdapter {
 
@@ -62,7 +64,7 @@ public class BigBasketApiAdapter {
         if (loggingInterceptor != null) {
             builder.addInterceptor(loggingInterceptor);
         }
-        okHttpClient = builder.build();
+        okHttpClient = new OkHttpClientExtension(builder.build());
         return okHttpClient;
     }
 
