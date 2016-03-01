@@ -698,7 +698,6 @@ public class Constants {
     public static final String PRODUCT_FOOD_TYPE_VEG = "veg";
     public static final String PRODUCT_FOOD_TYPE_NONVEG = "non-veg";
     public static final String PRODUCT_FOOD_TYPE_EGG = "egg";
-
     public static final String HAS_USER_GIVEN_RATING = "has_user_given_rating";
     public static final String DATE_SINCE_RATING_HAS_SHOWN = "date_since_rating_has_shown";
     public static final String DAYS_PERIOD = "days_period";

@@ -408,6 +408,7 @@ public class HomeFragment extends BaseSectionFragment {
                     AppDataSyncHandler.updateLastAppDataCall(getCurrentActivity());
                     CityManager.setCityCacheExpiry(getCurrentActivity(),
                             callbackAppDataResponse.apiResponseContent.cityCacheExpiry);
+
                 }
                 // Fail silently
             }

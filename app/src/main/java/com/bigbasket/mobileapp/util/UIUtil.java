@@ -381,14 +381,13 @@ public class UIUtil {
         editor.putBoolean(Constants.HAS_USER_GIVEN_RATING, false);
         editor.putString(Constants.DATE_SINCE_RATING_HAS_SHOWN, date);
         if (reset) {
-            int n = 0;
-            editor.putInt(Constants.DAYS_PERIOD, n);
+            editor.putInt(Constants.DAYS_PERIOD, 0);
         } else {
-            int n = preferences.getInt(Constants.DAYS_PERIOD, 0);
-            if (n == 0) {
-                editor.putInt(Constants.DAYS_PERIOD, n);
-            } else {
+            if (preferences.contains(Constants.DAYS_PERIOD)) {
+                int n = preferences.getInt(Constants.DAYS_PERIOD, 0);
                 editor.putInt(Constants.DAYS_PERIOD, ++n);
+            } else {
+                editor.putInt(Constants.DAYS_PERIOD, 0);
             }
         }
         editor.apply();

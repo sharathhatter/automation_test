@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -53,6 +54,7 @@ public class HappyRatingFragment extends AbstractDialogFragment {
                 @Override
                 public void onClick(View v) {
                     try {
+                        ((TrackingAware) getContext()).trackEvent(TrackingAware.RATE_LATER_CLICKED, null);
                         UIUtil.updateRatingPref(getContext(), false);
                         dismiss();
                     } catch (Exception e) {
@@ -100,6 +102,7 @@ public class HappyRatingFragment extends AbstractDialogFragment {
         view.findViewById(R.id.btnGoToPlayStore).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((TrackingAware) getContext()).trackEvent(TrackingAware.RATEUS_CLICKED, null);
                 UIUtil.openPlayStoreLink(getContext());
                 updatePrefAfterPlayStoreLaunch();
                 try {

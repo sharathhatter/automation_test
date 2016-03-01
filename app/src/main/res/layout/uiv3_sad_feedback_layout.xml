@@ -48,6 +48,7 @@
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:background="@drawable/grey_border_no_rounds"
+                android:focusableInTouchMode="true"
                 android:gravity="top"
                 android:hint="@string/tell_us_more"
                 android:inputType="textMultiLine"

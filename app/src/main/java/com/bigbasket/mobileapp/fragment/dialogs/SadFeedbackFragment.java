@@ -14,12 +14,10 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -27,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.service.BBMessenger;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -53,6 +52,18 @@ public class SadFeedbackFragment extends AbstractDialogFragment {
     private boolean isResendReq = false;
     private Spinner feedbackSpinner;
     private Messenger mService = null;
+    ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mService = new Messenger(service);
+            sendMessage(mStatusCallbackHandler.obtainMessage(UBoxMessenger.MSG_REGISTER_CLIENT, mStatusCallbackHandler));
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+        }
+    };
     private long msgId;
     private boolean isOperationGoingOn = false;
     Handler mStatusCallbackHandler = new Handler(new Handler.Callback() {
@@ -66,18 +77,6 @@ public class SadFeedbackFragment extends AbstractDialogFragment {
             return false;
         }
     });
-    ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mService = new Messenger(service);
-            sendMessage(mStatusCallbackHandler.obtainMessage(UBoxMessenger.MSG_REGISTER_CLIENT, mStatusCallbackHandler));
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mService = null;
-        }
-    };
 
     public SadFeedbackFragment() {
 
@@ -88,13 +87,18 @@ public class SadFeedbackFragment extends AbstractDialogFragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         alertDialog = new Dialog(getActivity(), R.style.CustomDialog);
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.uiv3_sad_feedback_layout, null, false);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
         FontHolder fontHolder = FontHolder.getInstance(getActivity());
         Typeface faceRobotoRegular = fontHolder.getFaceRobotoRegular();
         int color = ContextCompat.getColor(getActivity(), R.color.uiv3_primary_text_color);
@@ -147,13 +151,14 @@ public class SadFeedbackFragment extends AbstractDialogFragment {
             @Override
             public void onClick(View v) {
                 hideKeyboard(getContext(), editTextComments);
+                ((TrackingAware) getContext()).trackEvent(TrackingAware.SEND_CS_CLICKED, null);
                 if (!isOperationGoingOn) {
                     if (DataUtil.isInternetAvailable(getContext())) {
-                        isOperationGoingOn = true;
                         if (!isResendReq) {
                             if (feedbackSpinner.getSelectedItem().toString().equalsIgnoreCase(getString(R.string.choose_category))) {
                                 showToast(getString(R.string.select_reason_to_proceed));
                             } else {
+                                isOperationGoingOn = true;
                                 if (txtErrorRetry.isShown())
                                     txtErrorRetry.setVisibility(View.GONE);
                                 String msg;
@@ -171,6 +176,7 @@ public class SadFeedbackFragment extends AbstractDialogFragment {
                                 progressBar.setVisibility(View.VISIBLE);
                             }
                         } else {
+                            isOperationGoingOn = true;
                             resendMessage(msgId);
                         }
                     } else {
