@@ -292,7 +292,7 @@ public abstract class BaseFragment extends AbstractFragment implements
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
-            productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+            productQtyInBasket = basketOperationResponse.getBasketResponseProductInfo().getTotalQty();
         }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 

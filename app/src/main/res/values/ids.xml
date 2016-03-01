@@ -28,4 +28,5 @@
     <item name="order_id" type="id" />
     <item name="order_details" type="id" />
     <item name="can_pay" type="id" />
+    <item name="destination_info" type="id" />
 </resources>

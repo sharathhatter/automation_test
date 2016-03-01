@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+<TextView
+    android:id="@+id/txtFoodTypeHeading"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="@color/uiv3_primary_text_color"
+    android:textSize="@dimen/secondary_text_size"
+    android:paddingLeft="@dimen/margin_normal"
+    android:paddingTop="@dimen/margin_normal"
+    android:textAllCaps="true"
+  />
+
+    <com.bigbasket.mobileapp.view.uiv3.FlowLayout
+        android:id="@+id/tagsFlowLayout"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/padding_mini">
+    </com.bigbasket.mobileapp.view.uiv3.FlowLayout>
+</LinearLayout>
