@@ -58,6 +58,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     private boolean isPaused;
     private boolean isPayUOptionVisible;
     protected int wallet;
+    protected boolean paymentGatewayOpened = false;
 
     public AbstractPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
                                             String paymentMethod, boolean isPayNow, boolean isFundWallet, boolean isPayUOptionVisible, int wallet) {
@@ -375,6 +376,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
      * @param paymentMethod:String
      */
     private void startPaymentGateway(String paymentMethod) {
+        paymentGatewayOpened = true;
         Activity activity = ctx.getCurrentActivity();
         switch (paymentMethod) {
             case Constants.PAYU:
@@ -397,6 +399,8 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                 break;
             case Constants.BB_WALLET:
                 //TODO: invoke onActivityResult
+            default:
+                paymentGatewayOpened = false;
         }
     }
 

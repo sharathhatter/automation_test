@@ -42,7 +42,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPayZappRe
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiPrePaymentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
-import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
@@ -347,14 +346,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
      * and set the balance
      */
     private void renderPaymentMethodsView() {
-        String orderPrefix = mWalletOption.getWalletMessage().concat(getString(R.string.balance)).concat(" `");
-        String orderValStr = UIUtil.formatAsMoney(Double.parseDouble(mWalletOption.getWalletBalance()));
-        int prefixLen = orderPrefix.length();
-        SpannableStringBuilder spannableMrp = new SpannableStringBuilder(orderPrefix);
-        spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
-                prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableMrp.append(orderValStr);
-        walletOptionsCheckBox.setText(spannableMrp);
+        String orderPrefix = mWalletOption.getWalletMessage().concat(getString(R.string.balance));
+        walletOptionsCheckBox.setText(UIUtil.asRupeeSpannable(orderPrefix,
+                UIUtil.formatAsMoney(Double.parseDouble(mWalletOption.getWalletBalance())),
+                faceRupee));
         switch (mWalletOption.getWalletState().toLowerCase()) {
             case Constants.DISABLED:
                 /*

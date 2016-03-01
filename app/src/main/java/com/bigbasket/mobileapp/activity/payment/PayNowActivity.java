@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -21,7 +19,6 @@ import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
 import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
-import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.factory.payment.PayNowPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.handler.BigBasketRetryMessageHandler;
@@ -51,6 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import retrofit2.Call;
+
 
 /**
  * Don't do the mistake of moving this to Fragment. I've done all that, and these 3rd Party SDKs
@@ -206,7 +204,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         mWalletOption = walletOption;
         renderWalletOptionCheckbox();
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
-        UIUtil.setUpFooterButton(this, layoutCheckoutFooter, null,
+        UIUtil.setUpFooterButton(this, layoutCheckoutFooter, mFinalTotal,
                 getString(R.string.payNow), true);
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,14 +218,10 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
      * render the state of the checkbox based on the response of server
      */
     private void renderWalletOptionCheckbox() {
-        String orderPrefix = mWalletOption.getWalletMessage().concat(getString(R.string.balance)).concat(" `");
-        String orderValStr = UIUtil.formatAsMoney(Double.parseDouble(mWalletOption.getWalletBalance()));
-        int prefixLen = orderPrefix.length();
-        SpannableStringBuilder spannableMrp = new SpannableStringBuilder(orderPrefix);
-        spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
-                prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableMrp.append(orderValStr);
-        walletOptionsCheckBox.setText(spannableMrp);
+        String orderPrefix = mWalletOption.getWalletMessage().concat(getString(R.string.balance));
+        walletOptionsCheckBox.setText(UIUtil.asRupeeSpannable(orderPrefix,
+                UIUtil.formatAsMoney(Double.parseDouble(mWalletOption.getWalletBalance())),
+                faceRupee));
         switch (mWalletOption.getWalletState().toLowerCase()) {
             case Constants.DISABLED:
                 /*
@@ -319,7 +313,18 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
                     }
                 } else {
                     mTxnOrderId = getTxnOrderId();
-                    if (TextUtils.isEmpty(paymentMethod)) {
+                    /**
+                     * paymentGatewayOpened is checked to know if any payment gateway was opened
+                     * flow can come here.
+                     * if the selected payment type by user is:
+                     * wallet
+                     * wallet+cash on delivery
+                     * wallet+card on delivery
+                     * card on delivery
+                     * cash on delivery
+                     * in the above cases ThankYou page is shown to user.
+                     */
+                    if (!paymentGatewayOpened) {
                         onPayNowSuccess(getIntent().<Order>getParcelableArrayListExtra(Constants.ORDER));
                     }
                 }
