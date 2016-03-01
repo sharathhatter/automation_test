@@ -3,11 +3,8 @@ package com.bigbasket.mobileapp.view;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -69,6 +66,7 @@ public class PaymentMethodsView extends LinearLayout {
             @Override
             public void onClick(View view) {
                 onPaymentTypeSelection(view);
+
             }
         };
     }

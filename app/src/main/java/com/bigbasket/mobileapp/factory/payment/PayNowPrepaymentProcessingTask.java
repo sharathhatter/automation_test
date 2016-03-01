@@ -12,18 +12,18 @@ public class PayNowPrepaymentProcessingTask<T extends AppOperationAware>
         extends AbstractPrepaymentProcessingTask<T> {
     public PayNowPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
                                           String paymentMethod, boolean isPayNow,
-                                          boolean isFundWallet, boolean showPayUOption) {
-        super(ctx, potentialOrderId, orderId, paymentMethod, isPayNow, isFundWallet, showPayUOption);
+                                          boolean isFundWallet, boolean showPayUOption, int wallet) {
+        super(ctx, potentialOrderId, orderId, paymentMethod, isPayNow, isFundWallet, showPayUOption, wallet);
     }
 
     @Override
     protected Call<ApiResponse<PayzappPrePaymentParamsResponse>> getPayzappPrepaymentParamsApiCall(
             BigBasketApiService bigBasketApiService) {
-        return bigBasketApiService.postPayzappPayNowDetails(ctx.getCurrentActivity().getPreviousScreenName(), orderId, paymentMethod);
+        return bigBasketApiService.postPayzappPayNowDetails(ctx.getCurrentActivity().getPreviousScreenName(), orderId, wallet, paymentMethod);
     }
 
     @Override
     protected Call<ApiResponse<PrePaymentParamsResponse>> getPrepaymentParamsApiCall(BigBasketApiService bigBasketApiService) {
-        return bigBasketApiService.postPayNowDetails(ctx.getCurrentActivity().getPreviousScreenName(), orderId, paymentMethod);
+        return bigBasketApiService.postPayNowDetails(ctx.getCurrentActivity().getPreviousScreenName(), orderId, wallet, paymentMethod);
     }
 }

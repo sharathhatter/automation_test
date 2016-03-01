@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     tools:context=".activity.order.uiv3.PaymentSelectionActivity">
 
     <include
@@ -37,11 +38,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
+
             <LinearLayout
                 android:id="@+id/layoutChoosePayment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_small"
                 android:layout_marginLeft="@dimen/margin_small"
                 android:layout_marginRight="@dimen/margin_small"
                 android:layout_marginTop="@dimen/margin_small"
@@ -50,17 +51,6 @@
                 android:paddingLeft="@dimen/padding_small"
                 android:paddingRight="@dimen/padding_small"
                 android:paddingTop="@dimen/padding_normal">
-
-                <TextView
-                    android:id="@+id/lblAmountFromWallet"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="@dimen/padding_normal"
-                    android:text="@string/fromWalletMsg"
-                    android:background="@color/white"
-                    android:textColor="@color/uiv3_dialog_header_text_bkg"
-                    android:textSize="@dimen/primary_text_size" />
                 <LinearLayout
                     android:id="@+id/layoutVoucher"
                     android:layout_width="match_parent"
@@ -72,7 +62,6 @@
                     android:paddingLeft="@dimen/margin_normal"
                     android:orientation="horizontal"
                     android:paddingRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/dimen_10"
                     android:paddingTop="@dimen/padding_normal">
 
                     <TextView
@@ -81,6 +70,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="@color/uiv3_secondary_text_color" />
+
                     <EditText
                         android:id="@+id/editTextVoucherCode"
                         android:layout_width="0dp"
@@ -94,8 +84,7 @@
                         android:textSize="@dimen/primary_text_size"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:layout_marginRight="@dimen/margin_normal"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/txtApplyVoucher"
@@ -130,10 +119,24 @@
                         android:visibility="gone" />
                 </LinearLayout>
 
+                <CheckBox
+                    android:id="@+id/wallet_option_checkbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:button="@null"
+                    android:padding="@dimen/padding_small"
+                    android:background="@drawable/paymentoptions_background"
+                    android:textSize="@dimen/secondary_text_size"
+                    android:drawableRight="?android:attr/listChoiceIndicatorMultiple" />
+
+
+
                 <com.bigbasket.mobileapp.view.PaymentMethodsView
                     android:id="@+id/layoutPaymentOptions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_small"
+                    android:paddingBottom="@dimen/padding_small"
                     android:background="@color/white"
                     android:orientation="vertical">
 
@@ -148,9 +151,10 @@
                 android:layout_marginBottom="@dimen/margin_small"
                 android:layout_marginLeft="@dimen/margin_mini"
                 android:layout_marginRight="@dimen/margin_mini"
-                android:layout_marginTop="@dimen/margin_small"
                 android:orientation="vertical"
-                android:padding="@dimen/padding_normal">
+                android:paddingLeft="@dimen/padding_normal"
+                android:paddingRight="@dimen/padding_normal"
+                android:paddingBottom="@dimen/padding_normal">
 
             </LinearLayout>
         </LinearLayout>
