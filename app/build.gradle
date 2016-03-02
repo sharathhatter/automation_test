@@ -183,6 +183,7 @@ dependencies {
     compile "com.google.android.gms:play-services-plus:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-gcm:${playServicesLibVersion}"
     compile "com.google.android.gms:play-services-location:${playServicesLibVersion}"
+    compile "com.google.android.gms:play-services-analytics:${playServicesLibVersion}"
     debugCompile "com.android.support:multidex:${multidexLibVersion}"
     debugCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryLibVersion}"
     debugCompile "com.squareup.okhttp3:logging-interceptor:${okhttpLibVersion}"

@@ -6,7 +6,10 @@ import android.net.Uri;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -19,7 +22,6 @@ import retrofit2.Call;
 
 public class UtmHandler {
     public static void postUtm(Context context, Uri uri) {
-        if (!DataUtil.isInternetAvailable(context)) return;
         Set<String> queryParameterNames;
         try {
             queryParameterNames = getQueryParameterNames(uri);
@@ -39,8 +41,16 @@ public class UtmHandler {
         }
 
         if (utmQueryMap == null || utmQueryMap.size() == 0) return;
+        Tracker t = BaseApplication.getDefaultGATracker(context);
+        // Campaign data sent with this hit.
+        t.send(new HitBuilders.ScreenViewBuilder()
+                .setCampaignParamsFromUrl(uri.toString())
+                .build());
+        BaseApplication.getDefaultGATracker(context).setCampaignParamsOnNextHit(uri);
         final HashMap<String, String> utmQueryMapHolder = utmQueryMap;
         final BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
+        if (!DataUtil.isInternetAvailable(context)) return;
+        //TODO: Send these utm params later when network is available
         new Thread() {
             @Override
             public void run() {
