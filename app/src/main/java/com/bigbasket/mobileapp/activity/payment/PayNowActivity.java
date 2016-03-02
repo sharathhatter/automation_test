@@ -374,14 +374,20 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     }
 
     private void displayPaymentMethods(ArrayList<PaymentType> paymentTypeList) {
+        int i = 0;
+        int selectedPaymentMethodPos = 0;
+        boolean showDefaultSelection = TextUtils.isEmpty(mSelectedPaymentMethod);
         for (PaymentType paymentType : paymentTypeList) {
             if (paymentType.getValue().equals(Constants.PAYUMONEY_WALLET)) {
                 isPayUOptionVisible = true;
-                break;
             }
+            if(!showDefaultSelection && paymentType.getValue().equals(mSelectedPaymentMethod)) {
+                selectedPaymentMethodPos = i;
+            }
+            i++;
         }
         PaymentMethodsView paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
-        paymentMethodsView.setPaymentMethods(paymentTypeList, 0, true, false);
+        paymentMethodsView.setPaymentMethods(paymentTypeList, selectedPaymentMethodPos, showDefaultSelection, false);
     }
 
     @Override

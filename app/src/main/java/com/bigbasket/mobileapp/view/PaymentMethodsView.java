@@ -29,7 +29,7 @@ public class PaymentMethodsView extends LinearLayout {
     private RelativeLayout previousSelectedLayout;
     private String mSelectedPaymentMethod;
     private OnClickListener paymentTypeClicked;
-    private int selectedDefaultPosition;
+    private int selectedDefaultPosition = -1;
 
     public PaymentMethodsView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -118,7 +118,7 @@ public class PaymentMethodsView extends LinearLayout {
             }
 
             /** setting the default payment method**/
-            if (paymentType.isSelected() || (showDefaultSelection && selectedDefaultPosition == i)
+            if ((showDefaultSelection && paymentType.isSelected()) || (selectedDefaultPosition == i)
                     || (!TextUtils.isEmpty(mSelectedPaymentMethod) && paymentType.getValue().equalsIgnoreCase(mSelectedPaymentMethod))) {
                 mPaymentParentRelativelayout.setSelected(true);
                 mSelectionImageView.setSelected(true);
@@ -139,37 +139,6 @@ public class PaymentMethodsView extends LinearLayout {
             addView(paymentOptionRow);
             i++;
         }
-    }
-
-    /**
-     * saving the instance state
-     *
-     * @return saved state
-     */
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        Parcelable superState = super.onSaveInstanceState();
-        return new SavedState(superState, mSelectedPaymentMethod);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        SavedState savedState = (SavedState) state;
-        super.onRestoreInstanceState(savedState.getSuperState());
-        setSelectedPaymentMethod(savedState.getSelectedPaymentMethodSavedState());
-    }
-
-    /**
-     * overriding to ensure children don't save and restore their state as well.
-     **/
-    @Override
-    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
-        super.dispatchFreezeSelfOnly(container);
-    }
-
-    @Override
-    protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
-        super.dispatchThawSelfOnly(container);
     }
 
     private void onPaymentTypeSelection(View view) {
@@ -201,38 +170,5 @@ public class PaymentMethodsView extends LinearLayout {
      */
     public interface OnPaymentOptionSelectionListener {
         void onPaymentOptionSelected(String paymentTypeValue);
-    }
-
-    protected static class SavedState extends BaseSavedState {
-        public static final Parcelable.Creator<SavedState> CREATOR = new Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-        private final String mSelectedPaymentMethodSavedState;
-
-        private SavedState(Parcelable superState, String mSelectedPaymentMethodSavedState) {
-            super(superState);
-            this.mSelectedPaymentMethodSavedState = mSelectedPaymentMethodSavedState;
-        }
-
-        private SavedState(Parcel in) {
-            super(in);
-            mSelectedPaymentMethodSavedState = in.readString();
-        }
-
-        public String getSelectedPaymentMethodSavedState() {
-            return mSelectedPaymentMethodSavedState;
-        }
-
-        @Override
-        public void writeToParcel(Parcel destination, int flags) {
-            super.writeToParcel(destination, flags);
-            destination.writeString(mSelectedPaymentMethodSavedState);
-        }
     }
 }
