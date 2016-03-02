@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -68,6 +69,10 @@ public final class ValidatePayment<T extends AppOperationAware> {
                             (MKTransactionResponse) data.getSerializableExtra(
                                     MobikwikSDK.EXTRA_TRANSACTION_RESPONSE);
                     if (response != null) {
+                        Log.d("ValidatePayment", "Mobikwik status code:" + response.statusCode
+                                + ", statusMessage: " + response.statusMessage
+                                + ", Amount: " + response.amount
+                                + ", orderId: " + response.orderId);
                         if (!TextUtils.isEmpty(response.orderId)) {
                             try {
                                 validatePaymentRequest.setTxnId(response.orderId);
