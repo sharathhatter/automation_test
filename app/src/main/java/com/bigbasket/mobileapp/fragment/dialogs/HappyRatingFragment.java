@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -26,6 +27,8 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
 import com.crashlytics.android.Crashlytics;
+
+import java.util.HashMap;
 
 public class HappyRatingFragment extends AbstractDialogFragment {
 
@@ -54,7 +57,10 @@ public class HappyRatingFragment extends AbstractDialogFragment {
                 @Override
                 public void onClick(View v) {
                     try {
-                        ((TrackingAware) getContext()).trackEvent(TrackingAware.RATE_LATER_CLICKED, null);
+                        if (getContext() == null) return;
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put(TrackEventkeys.NAVIGATION_CTX, ((AnalyticsNavigationContextAware) getContext()).getCurrentScreenName());
+                        ((TrackingAware) getContext()).trackEvent(TrackingAware.RATE_LATER_CLICKED, map);
                         UIUtil.updateRatingPref(getContext(), false);
                         dismiss();
                     } catch (Exception e) {
@@ -102,7 +108,10 @@ public class HappyRatingFragment extends AbstractDialogFragment {
         view.findViewById(R.id.btnGoToPlayStore).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((TrackingAware) getContext()).trackEvent(TrackingAware.RATEUS_CLICKED, null);
+                if (getContext() == null) return;
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, ((AnalyticsNavigationContextAware) getContext()).getCurrentScreenName());
+                ((TrackingAware) getContext()).trackEvent(TrackingAware.RATEUS_CLICKED, map);
                 UIUtil.openPlayStoreLink(getContext());
                 updatePrefAfterPlayStoreLaunch();
                 try {

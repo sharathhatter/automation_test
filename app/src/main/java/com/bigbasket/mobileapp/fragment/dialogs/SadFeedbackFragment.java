@@ -25,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.service.BBMessenger;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 public class SadFeedbackFragment extends AbstractDialogFragment {
@@ -151,7 +153,10 @@ public class SadFeedbackFragment extends AbstractDialogFragment {
             @Override
             public void onClick(View v) {
                 hideKeyboard(getContext(), editTextComments);
-                ((TrackingAware) getContext()).trackEvent(TrackingAware.SEND_CS_CLICKED, null);
+                if (getContext() == null) return;
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, ((AnalyticsNavigationContextAware) getContext()).getCurrentScreenName());
+                ((TrackingAware) getContext()).trackEvent(TrackingAware.SEND_CS_CLICKED, map);
                 if (!isOperationGoingOn) {
                     if (DataUtil.isInternetAvailable(getContext())) {
                         if (!isResendReq) {
