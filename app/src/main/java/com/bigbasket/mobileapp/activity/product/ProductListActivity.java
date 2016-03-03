@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -825,7 +826,11 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             // New product list is requested over current page, so change nc by copying next-nc
             setPreviousScreenName(getCurrentScreenName());
         }
-        loadProductTabs(false, 0);
+        if (mFilteredOns != null && mFilteredOns.size() > 0) {
+            applyFilter(mFilteredOns);
+        } else {
+            loadProductTabs(false, 0);
+        }
     }
 
     public void onFooterViewClicked(View v) {
