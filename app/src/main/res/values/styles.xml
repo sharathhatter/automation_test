@@ -429,4 +429,9 @@
         <item name="android:textSize">@dimen/primary_text_size</item>
     </style>
 
+    <style name="CustomDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
 </resources>

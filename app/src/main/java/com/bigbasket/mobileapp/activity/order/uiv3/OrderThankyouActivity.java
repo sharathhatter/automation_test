@@ -2,6 +2,8 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -27,15 +29,18 @@ import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.fragment.dialogs.EmotionDialogFragment;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,6 +68,10 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         showAddMoreText(addMoreLink, addMoreMsg);
 
         trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
+
+        if (saveInstanceState == null && AuthParameters.getInstance(this).isRatingsEnabled() && UIUtil.showEmotionsDialog(this)) {
+            showEmotionsFragment();
+        }
     }
 
     private void showPayNowOption(final ArrayList<Order> orderArrayList) {
@@ -78,7 +87,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
             btnPayNow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(!checkInternetConnection()) {
+                    if (!checkInternetConnection()) {
                         handler.sendOfflineError(false);
                         return;
                     }
@@ -226,6 +235,19 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         }
     }
 
+    private void showEmotionsFragment() {
+        FragmentTransaction ft = getCurrentActivity().getSupportFragmentManager().beginTransaction();
+        Fragment f = getCurrentActivity().getSupportFragmentManager().findFragmentByTag("rating_flag");
+        if (f != null) {
+            ft.remove(f);
+        }
+        EmotionDialogFragment emotionDialogFragment = EmotionDialogFragment.newInstance();
+        try {
+            emotionDialogFragment.show(ft, "rating_flag");
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+        }
+    }
 
     private void showInvoice(Order order) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);

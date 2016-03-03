@@ -685,12 +685,12 @@ public class Constants {
     public static final String KEY_PERMISSION_RC = "key_permission_rc";
 
     //Communication Hub codes
-    public static final String COMMUNICATION_HUB_OFFER ="offer";
-    public static final String COMMUNICATION_HUB_ALERT ="alert";
-    public static final String COMMUNICATION_HUB_GENERAL ="general";
-    public static final String COMMUNICATION_HUB_FILTER="filter";
-    public static final String COMMUNICATION_HUB_BB_KEY ="bb";
-    public static final String NOTIFICATION_MSG_TAG="gcm_msg_tag"; //Shoulbe same as MoEngageNotificationUtils.NOTIFICATION_MSG_TAG
+    public static final String COMMUNICATION_HUB_OFFER = "offer";
+    public static final String COMMUNICATION_HUB_ALERT = "alert";
+    public static final String COMMUNICATION_HUB_GENERAL = "general";
+    public static final String COMMUNICATION_HUB_FILTER = "filter";
+    public static final String COMMUNICATION_HUB_BB_KEY = "bb";
+    public static final String NOTIFICATION_MSG_TAG = "gcm_msg_tag"; //Shoulbe same as MoEngageNotificationUtils.NOTIFICATION_MSG_TAG
     public static final String COMMUNICATION_HUB_FAQ_URL = "http://www.bigbasket.com/app-faqs/?source=app";
     public static final String COMMUNICATION_HUB_FAQ_SHOW = "is_show_FAQ";
 
@@ -698,4 +698,12 @@ public class Constants {
     public static final String PRODUCT_FOOD_TYPE_VEG = "veg";
     public static final String PRODUCT_FOOD_TYPE_NONVEG = "non-veg";
     public static final String PRODUCT_FOOD_TYPE_EGG = "egg";
+    public static final String HAS_USER_GIVEN_RATING = "has_user_given_rating";
+    public static final String DATE_SINCE_RATING_HAS_SHOWN = "date_since_rating_has_shown";
+    public static final String DAYS_PERIOD = "days_period";
+
+    public static final String DATE_FORMAT_RATINGS = "dd-MM-yyyy-hh-mm-ss";
+
+    public static final String ENABLE_RATINGS = "enable_rating";
+
 }

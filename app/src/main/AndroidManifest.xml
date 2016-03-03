@@ -739,7 +739,7 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver">
+        <receiver android:name="com.bigbasket.mobileapp.receivers.AppUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
@@ -796,6 +796,10 @@
 
         <service
             android:name="com.moengage.addon.ubox.UBoxMessenger"
+            android:exported="false" />
+
+        <service
+            android:name="com.bigbasket.mobileapp.service.BBMessenger"
             android:exported="false" />
 
         <meta-data
