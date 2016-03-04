@@ -209,8 +209,12 @@ public class SliderLayout extends RelativeLayout {
         mSliderAdapter.addSlider(imageContent);
     }
 
-    public <T extends BaseSliderView> void addSlider(Collection<? extends T> imageContent) {
+    public <T extends BaseSliderView> void addSliders(Collection<? extends T> imageContent) {
         mSliderAdapter.addSlider(imageContent);
+    }
+
+    public <T extends BaseSliderView> void changeSliders(Collection<? extends T> imageContent) {
+        mSliderAdapter.changeSliders(imageContent);
     }
 
     private static class AutoCycleHandler extends Handler {

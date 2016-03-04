@@ -44,6 +44,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class SectionView {
@@ -60,6 +61,8 @@ public class SectionView {
     private ArrayList<Integer> dynamicTiles;
     private int availableScreenWidth;
     private boolean skipImageMemoryCache;
+    private RecyclerView recyclerView;
+    private SectionRowAdapter sectionRowAdapter;
 
     public SectionView(Context context, Typeface faceRobotoRegular, SectionData sectionData, String screenName) {
         this.context = context;
@@ -95,6 +98,18 @@ public class SectionView {
             }
         }
     }
+
+    public void setSectionData(SectionData mSectionData) {
+        this.mSectionData = mSectionData;
+        parseRendererColors();
+        if(sectionRowAdapter != null) {
+            sectionRowAdapter.notifyDataSetChanged();
+            if(recyclerView != null && recyclerView.getAdapter() == null) {
+                recyclerView.setAdapter(sectionRowAdapter);
+            }
+        }
+    }
+
 
     /**
      * Don't use function view as much as possible since it puts all the views into memory
@@ -142,8 +157,11 @@ public class SectionView {
     public RecyclerView getRecyclerView(ViewGroup parent) {
         if (mSectionData == null || mSectionData.getSections() == null || mSectionData.getSections().size() == 0)
             return null;
-        RecyclerView recyclerView = UIUtil.getResponsiveRecyclerView(context, 1, 1, parent);
-        recyclerView.setAdapter(new SectionRowAdapter());
+        if(recyclerView == null) {
+            recyclerView = UIUtil.getResponsiveRecyclerView(context, 1, 1, parent);
+            sectionRowAdapter = new SectionRowAdapter();
+            recyclerView.setAdapter(sectionRowAdapter);
+        }
         return recyclerView;
     }
 
@@ -179,8 +197,18 @@ public class SectionView {
 
     private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent,
                                OnSectionItemClickListener sectionItemClickListener) {
-        View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, parent, false);
+        View baseSlider = createBannerView(inflater, parent);
         final SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
+        bindBannerData(bannerSlider, section, sectionItemClickListener);
+        return baseSlider;
+    }
+
+    private View createBannerView(LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(R.layout.uiv3_image_slider, parent, false);
+    }
+
+    private void bindBannerData(SliderLayout bannerSlider, Section section,
+                                OnSectionItemClickListener sectionItemClickListener) {
         ViewGroup.LayoutParams bannerLayoutParams = bannerSlider.getLayoutParams();
         if (bannerLayoutParams != null && !isHelp) {
             bannerLayoutParams.height = section.getWidgetHeight(context, mSectionData.getRenderersMap(), true);
@@ -223,7 +251,7 @@ public class SectionView {
             }
 
         }
-        bannerSlider.addSlider(sliderViews);
+        bannerSlider.changeSliders(sliderViews);
 
         if (sliderViews.size() > 1) {
             bannerSlider.setAutoCycle(true);
@@ -236,7 +264,6 @@ public class SectionView {
             }
         }
 
-        return baseSlider;
     }
 
     private View getSalutationView(Section section, LayoutInflater inflater, ViewGroup parent,
@@ -558,11 +585,11 @@ public class SectionView {
             if (txtTitle != null) {
                 if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                     txtTitle.setTypeface(titleTypeface);
-                    String titleText = sectionItem.getTitle().getText();
+                    StringBuilder titleText = new StringBuilder(sectionItem.getTitle().getText());
                     if (sectionItem.isExpressDynamicTitle()) {
                         String expressAvailability = AppDataDynamic.getInstance(context).getExpressAvailability();
                         if (!TextUtils.isEmpty(expressAvailability)) {
-                            titleText += " " + expressAvailability;
+                            titleText.append(" ").append(expressAvailability);
                             if (dynamicTiles == null) {
                                 dynamicTiles = new ArrayList<>();
                             }
@@ -768,21 +795,59 @@ public class SectionView {
     private class SectionRowAdapter extends RecyclerView.Adapter<SectionRowHolder> {
 
         @Override
+        public int getItemViewType(int position) {
+            SectionData sectionData = mSectionData;
+            if(sectionData == null) {
+                return super.getItemViewType(position);
+            }
+            Section section = sectionData.getSections().get(position);
+            switch (section.getSectionType()) {
+                case Section.BANNER:
+                    return 1;
+            }
+            return super.getItemViewType(position);
+        }
+
+        @Override
         public SectionRowHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(context).inflate(R.layout.uiv3_section_row, parent, false);
-            return new SectionRowHolder(view);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            switch (viewType) {
+                case 1:
+                    View banner = createBannerView(inflater, parent);
+                    return new BannerRowHolder(banner);
+                default:
+                    LinearLayout viewGroup = (LinearLayout)inflater.inflate(R.layout.uiv3_section_row, parent, false);
+                    return new SectionRowHolder(viewGroup);
+
+            }
+
         }
 
         @Override
         public void onBindViewHolder(SectionRowHolder holder, int position) {
             Log.d("Section", "Requesting UI view for position = " + position);
-            Section section = mSectionData.getSections().get(position);
-            ViewGroup sectionViewHolderRow = holder.getRow();
-            sectionViewHolderRow.removeAllViews();
+            SectionData sectionData = mSectionData;
+            if(sectionData == null) {
+                holder.itemView.setVisibility(View.GONE);
+                return;
+            } else {
+                holder.itemView.setVisibility(View.VISIBLE);
+            }
+            Section section = sectionData.getSections().get(position);
+            ViewGroup sectionViewHolderRow = null;
 
             try {
-                View sectionView = getViewToRender(section, LayoutInflater.from(context),
-                        sectionViewHolderRow, position, null);
+                View sectionView;
+                if(holder instanceof BannerRowHolder) {
+                    BannerRowHolder bannerRowHolder = (BannerRowHolder)holder;
+                    sectionView = bannerRowHolder.itemView;
+                    bindBannerData(bannerRowHolder.bannerView, section, null);
+                } else {
+                    sectionViewHolderRow = holder.getRow();
+                    sectionViewHolderRow.removeAllViews();
+                    sectionView = getViewToRender(section, LayoutInflater.from(context),
+                            sectionViewHolderRow, position, null);
+                }
                 if (sectionView == null || sectionView.getLayoutParams() == null) {
                     return;
                 }
@@ -800,7 +865,7 @@ public class SectionView {
                         if (TextUtils.isEmpty(sectionItem.getId())) {
                             continue;
                         }
-                        analyticsAttrs = mSectionData.getAnalyticsAttrs(sectionItem.getId());
+                        analyticsAttrs = sectionData.getAnalyticsAttrs(sectionItem.getId());
                         if (analyticsAttrs != null && !analyticsAttrs.isEmpty()) {
                             AnalyticsIntentService.startUpdateAnalyticsEvent(
                                     context,
@@ -820,7 +885,9 @@ public class SectionView {
                     layoutParams.bottomMargin = marginBetweenWidgets;
                 }
                 sectionView.setLayoutParams(layoutParams);
-                sectionViewHolderRow.addView(sectionView);
+                if(! (holder instanceof BannerRowHolder)) {
+                    sectionViewHolderRow.addView(sectionView);
+                }
             } catch (Exception e) {
                 //Ignore
                 Crashlytics.logException(e);
@@ -829,11 +896,12 @@ public class SectionView {
 
         @Override
         public int getItemCount() {
-            return mSectionData.getSections().size();
+            return mSectionData != null && mSectionData.getSections() != null
+                    ? mSectionData.getSections().size() : 0;
         }
     }
 
-    private class SectionRowHolder extends RecyclerView.ViewHolder {
+    private static class SectionRowHolder extends RecyclerView.ViewHolder {
 
         public SectionRowHolder(View itemView) {
             super(itemView);
@@ -842,5 +910,16 @@ public class SectionView {
         public ViewGroup getRow() {
             return (ViewGroup) itemView;
         }
+    }
+
+    private static class BannerRowHolder extends SectionRowHolder {
+
+        public SliderLayout bannerView;
+
+        public BannerRowHolder(View bannerSectionView) {
+            super(bannerSectionView);
+            this.bannerView = (SliderLayout) bannerSectionView.findViewById(R.id.imgSlider);
+        }
+
     }
 }

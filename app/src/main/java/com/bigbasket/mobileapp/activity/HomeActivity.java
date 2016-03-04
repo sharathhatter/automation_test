@@ -20,6 +20,8 @@ import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.newrelic.agent.android.instrumentation.MetricCategory;
+import com.newrelic.agent.android.instrumentation.Trace;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +32,7 @@ public class HomeActivity extends SearchActivity {
     private ProgressBar mProgressBarArea;
     private int mCurrentSpinnerIdx;
 
+    @Trace(category = MetricCategory.VIEW_LAYOUT)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -54,6 +57,7 @@ public class HomeActivity extends SearchActivity {
         return R.layout.uiv3_home_layout;
     }
 
+    @Trace(category = MetricCategory.VIEW_LOADING)
     private void setUpAddressSpinner() {
         mCurrentSpinnerIdx = 0;
         final ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(this).getAddressSummaries();

@@ -64,11 +64,7 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
         setCurrentScreenName(TrackEventkeys.CO_PAYMENT_POST_ORDER_CREATION);
 
         if (savedInstanceState != null) {
-
-            if (mTxnId == null) {
-                mTxnId = savedInstanceState.getString(Constants.TXN_ID);
-            }
-
+            mTxnId = savedInstanceState.getString(Constants.TXN_ID);
             mIsPrepaymentProcessingStarted =
                     savedInstanceState.getBoolean(PaymentSelectionActivity.IS_PREPAYMENT_TASK_STARTED, false);
             mIsPrepaymentAbortInitiated =
@@ -206,7 +202,20 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
                     validatePaymentRequest =
                             new ValidatePaymentRequest(txnId, fullOrderId, mPotentialOrderId,
                                     null);  // Passing payment method as null to convert it to COD
-                    new ValidatePayment<>(this, validatePaymentRequest, new BigBasketRetryMessageHandler(this, this)).validate(null);
+                    HashMap<String, String> additionalParams = null;
+                    if(mSelectedPaymentMethod != null) {
+                        switch (mSelectedPaymentMethod) {
+                            case Constants.HDFC_POWER_PAY:
+                                additionalParams = new HashMap<>(3);
+                                additionalParams.put(Constants.ERR_RES_CODE, "-1");
+                                additionalParams.put(Constants.ERR_RES_DESC, "User cancelled");
+                                additionalParams.put(Constants.STATUS, "0");
+                                break;
+                        }
+                    }
+                    new ValidatePayment<>(this, validatePaymentRequest,
+                            new BigBasketRetryMessageHandler(this, this))
+                            .validate(additionalParams);
                 } else {
                     showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
                 }

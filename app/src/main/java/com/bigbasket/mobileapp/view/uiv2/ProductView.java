@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StrikethroughSpan;
@@ -205,9 +206,12 @@ public final class ProductView {
             String prefix = "`";
             String mrpStr = UIUtil.formatAsMoney(Double.parseDouble(product.getMrp()));
             int prefixLen = prefix.length();
-            SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
-            spannableMrp.setSpan(new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()), prefixLen - 1,
+            SpannableStringBuilder spannableMrp = new SpannableStringBuilder(prefix);
+            spannableMrp.setSpan(
+                    new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()),
+                    prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            spannableMrp.append(mrpStr);
             spannableMrp.setSpan(new StrikethroughSpan(), 0,
                     spannableMrp.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtMrp.setText(spannableMrp);

@@ -385,13 +385,14 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
             String prefix = "`";
             String salePriceStr = UIUtil.formatAsMoney(cartItem.getTotalPrice());
             int prefixLen = prefix.length();
-            SpannableString spannableSalePrice = new SpannableString(prefix + salePriceStr);
+            SpannableStringBuilder spannableSalePrice = new SpannableStringBuilder(prefix);
             spannableSalePrice.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            spannableSalePrice.append(salePriceStr);
             txtSalePrice.setText(spannableSalePrice);
             txtSalePrice.setVisibility(View.VISIBLE);
         } else {
-            txtSalePrice.setText("Free!");
+            txtSalePrice.setText(R.string.free);
             txtInBasket.setVisibility(View.INVISIBLE);
             imgIncBasketQty.setVisibility(View.INVISIBLE);
             imgDecBasketQty.setVisibility(View.INVISIBLE);
