@@ -747,7 +747,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
     private SpannableString formatToolbarTitle(String title) {
         SpannableString spannableString = new SpannableString(title);
-        spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoRegular),
+        spannableString.setSpan(new CustomTypefaceSpan(faceRobotoRegular),
                 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         return spannableString;
     }

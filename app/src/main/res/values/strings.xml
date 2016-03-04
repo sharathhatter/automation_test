@@ -289,6 +289,10 @@
         <item quantity="one">%1$d product</item>
         <item quantity="other">%1$d products</item>
     </plurals>
+    <plurals name="numberOfItems">
+        <item quantity="one">%1$d Item</item>
+        <item quantity="other">%1$d Items</item>
+    </plurals>
     <string name="createNewList">Create New List</string>
     <string name="connectUsing">Login using</string>
     <string name="signUpUsing">Sign-Up using</string>
@@ -396,9 +400,9 @@
     <string name="selectQtySnum">1. Select Quantity</string>
     <string name="addMsgSnum">2. Add Message</string>
     <string name="addMsg">Add Message</string>
-    <string name="qtyInBasket">Qty in basket:</string>
+    <string name="qtyInBasket">Qty in basket: %1$d</string>
     <string name="giftWrapCharge">Gift wrap charge:</string>
-    <string name="qtyToGiftWrapOrMsg">Qty to gift-wrap/add message</string>
+    <string name="qtyToGiftWrapOrMsg">%1$d Qty to gift-wrap/add message</string>
     <string name="giftWrapChargeTotal">Gift wrap charge total:</string>
     <string name="perItem">per qty.</string>
     <string name="rupeeTerminator">/-</string>
@@ -467,7 +471,6 @@
 
     <string name="title_activity_communication_hub">Notifications</string>
     <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
 
     <string name="emptyalert_message">There are no alerts for now</string>
     <string name="emptyoffers_message">There are no offers for now</string>
@@ -488,7 +491,7 @@
     <string name="pay_for_multiple_orders">Select multiple orders to pay at once.</string>
 
     <string name="rate_msg">How about rating on the Play Store?</string>
-    <string name="feedback_msg">We are sad to hear about your unhappiness. Kindly let us know more about your experience to make it better.</string>
+    <string name="feedback_msg">We are sad to hear about your unhappiness. Kindly let us know how we can improve your shopping experience.</string>
     <string name="enjoy_shopping">How was your shopping experience?</string>
     <string name="select_reason_to_proceed">Please choose a category to proceed</string>
     <string name="tell">Tell Us</string>
@@ -503,21 +506,22 @@
     <string name="choose_category">Choose a category</string>
 
     <string-array name="feedback_reasons">
-        <item>App user experience needs improvement.</item>
-        <item>Payment failure all the time.</item>
-        <item>Voucher related issues.</item>
-        <item>No Cancel order feature.</item>
-        <item>Can\'t place an order.</item>
-        <item>Delivery service needs improvement.</item>
-        <item>Delivery boy was not courteous.</item>
-        <item>Broken/Expired products delivered.</item>
-        <item>Not received my cashback yet.</item>
-        <item>Customer support needs improvement.</item>
-        <item>I do not want to give reasons.</item>
+        <item>App user experience needs improvement</item>
+        <item>Payment failure all the time</item>
+        <item>Voucher related issues</item>
+        <item>No Cancel order feature</item>
+        <item>Can\'t place an order</item>
+        <item>Delivery service needs improvement</item>
+        <item>Delivery boy was not courteous</item>
+        <item>Broken/Expired products delivered</item>
+        <item>Not received my cashback yet</item>
+        <item>Customer support needs improvement</item>
+        <item>I do not want to give reasons</item>
     </string-array>
 
     <string name="preamble_feedback">[App Ratings - Feedback]:</string>
     <string name="failed_feedback">Failed to send your feedback.Please try again.</string>
     <string name="feedback_success">Your feedback submitted successfully!</string>
     <string name="free">Free!</string>
+    <string name="Rs_char">`</string>
 </resources>

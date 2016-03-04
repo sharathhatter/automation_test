@@ -9,6 +9,10 @@ public class CustomTypefaceSpan extends TypefaceSpan {
 
     private final Typeface newType;
 
+    public CustomTypefaceSpan(Typeface type) {
+        this("", type);
+    }
+
     public CustomTypefaceSpan(String family, Typeface type) {
         super(family);
         newType = type;
