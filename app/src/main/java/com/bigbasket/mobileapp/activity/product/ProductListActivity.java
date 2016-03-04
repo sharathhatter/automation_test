@@ -15,7 +15,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,7 +126,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         super.onCreate(savedInstanceState);
         mSlidingTabs = (TabLayout) findViewById(R.id.slidingTabs);
         appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             mFilteredOns = savedInstanceState.getParcelableArrayList(Constants.FILTERED_ON);
         }
         getProducts();
@@ -143,7 +142,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(mFilteredOns != null) {
+        if (mFilteredOns != null) {
             outState.putParcelableArrayList(Constants.FILTERED_ON, mFilteredOns);
         }
     }
@@ -266,7 +265,6 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         } else {
             ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(mTitlePassedViaIntent);
         }
-
 
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawers();
@@ -443,7 +441,9 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     }
 
     private void toggleFilterSortView(boolean isVisible) {
-        findViewById(R.id.layoutSort).setClickable(isVisible);
+        int visibility = isVisible ? View.VISIBLE : View.GONE;
+        findViewById(R.id.layoutFilter).setVisibility(visibility);
+        findViewById(R.id.layoutSort).setVisibility(visibility);
     }
 
     private void displayProductTabs(final ProductTabData productTabData, ViewGroup contentFrame,
