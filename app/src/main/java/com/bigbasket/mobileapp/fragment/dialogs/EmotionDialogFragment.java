@@ -14,11 +14,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
 import com.crashlytics.android.Crashlytics;
+
+import java.util.HashMap;
 
 public class EmotionDialogFragment extends AbstractDialogFragment {
 
@@ -50,7 +53,10 @@ public class EmotionDialogFragment extends AbstractDialogFragment {
         layoutHappy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((TrackingAware) getActivity()).trackEvent(TrackingAware.HAPPY_CLICKED, null);
+                if (getContext() == null) return;
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, ((AnalyticsNavigationContextAware) getContext()).getCurrentScreenName());
+                ((TrackingAware) getActivity()).trackEvent(TrackingAware.HAPPY_CLICKED, map);
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment f = getActivity().getSupportFragmentManager().findFragmentByTag("rating_happy_flag");
                 if (f != null) {
@@ -69,7 +75,10 @@ public class EmotionDialogFragment extends AbstractDialogFragment {
         layoutSad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((TrackingAware) getActivity()).trackEvent(TrackingAware.SAD_CLICKED, null);
+                if (getContext() == null) return;
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, ((AnalyticsNavigationContextAware) getContext()).getCurrentScreenName());
+                ((TrackingAware) getActivity()).trackEvent(TrackingAware.SAD_CLICKED, map);
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment f = getActivity().getSupportFragmentManager().findFragmentByTag("rating_sad_flag");
                 if (f != null) {
