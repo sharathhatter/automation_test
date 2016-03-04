@@ -19,6 +19,9 @@ public class AdAnalyticsData {
     @SerializedName(Constants.CITY_ID)
     private int cityId;
 
+    @SerializedName("timestamp")
+    private String timestamp;
+
     @SerializedName(Constants.CLIENT)
     private String client = Constants.CLIENT_NAME;
 
@@ -63,5 +66,9 @@ public class AdAnalyticsData {
 
     public void setAnalyticsAttr(Map<String, String> analyticsAttr) {
         this.analyticsAttr = analyticsAttr;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 }

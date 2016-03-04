@@ -337,9 +337,6 @@ public class UIUtil {
                 }
                 editor.putString(Constants.ANALYTICS_ADDITIONAL_ATTRS, new Gson().toJson(userDetails.analytics.additionalAttrs));
             }
-            if(TextUtils.isEmpty(mId)) {
-                mId = preferences.getString(Constants.VISITOR_ID_KEY, null);
-            }
             BaseApplication.updateGAUserId(ctx, mId);
         }
         editor.commit();

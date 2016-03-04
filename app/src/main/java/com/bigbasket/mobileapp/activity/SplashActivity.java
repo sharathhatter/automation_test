@@ -226,9 +226,6 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
                 editor.putString(Constants.MEMBER_EMAIL_KEY, null);
                 editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
 
-                BaseApplication.updateGAUserId(getCurrentActivity(),
-                        registerDeviceResponse.visitorId);
-
                 editor.commit();
                 AuthParameters.reset();
 
