@@ -9,14 +9,13 @@
     <!-- Min height has been intentionally set in PX don't change it -->
     <ImageView
         android:id="@+id/imgProduct"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/product_image"
         android:minHeight="400px"
         android:padding="2dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/noimage"
         tools:ignore="PxUsage" />
 
     <ImageView
