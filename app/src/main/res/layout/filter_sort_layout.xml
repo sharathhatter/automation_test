@@ -39,6 +39,7 @@
                 android:textColor="@color/uiv3_product_list_footer_txt_color"
                 android:textSize="@dimen/primary_text_size" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/layoutSort"
             style="@style/RippleStyle"
