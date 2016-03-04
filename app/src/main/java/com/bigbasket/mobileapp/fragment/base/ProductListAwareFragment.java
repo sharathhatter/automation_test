@@ -49,6 +49,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
+import com.newrelic.agent.android.instrumentation.Trace;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -90,6 +91,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         loadProducts();
     }
 
+    @Trace
     public void loadProducts() {
         if (getArguments() != null) {
             mProductInfo = getArguments().getParcelable(Constants.PRODUCT_INFO);
@@ -124,6 +126,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
+    @Trace
     private void injectSponsoredProducts() {
         if (getCurrentActivity() == null || mSponsoredSectionInfo == null
                 || !mSponsoredSectionInfo.hasMoreItems()
@@ -241,6 +244,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         mProductListRecyclerAdapter.notifyDataSetChanged();
     }
 
+    @Trace
     public void loadMoreProducts() {
         if (!checkInternetConnection()) {
             mProductListRecyclerAdapter.setLoadingFailed(true);
@@ -318,6 +322,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
+    @Trace
     public void insertProductList(@Nullable ArrayList<Product> products) {
         if (mProductInfo == null) return;
         hideProgressView();
@@ -331,6 +336,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
+    @Trace
     public void updateProductInfo(@NonNull ProductInfo productInfo, ArrayList<NameValuePair> nameValuePairs) {
         hideProgressView();
         mProductInfo = productInfo;
@@ -349,6 +355,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         mHasProductLoadingFailed = true;
     }
 
+    @Trace
     public void setProductListView() {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();

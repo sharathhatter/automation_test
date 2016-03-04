@@ -285,8 +285,10 @@
     <string name="welcome">Welcome,</string>
     <string name="bigbasketeer">BigBasketeer</string>
     <string name="bigbasket">bigbasket</string>
-    <string name="productFound">product</string>
-    <string name="productFoundPlural">products</string>
+    <plurals name="numberOfProductsFound">
+        <item quantity="one">%1$d product</item>
+        <item quantity="other">%1$d products</item>
+    </plurals>
     <string name="createNewList">Create New List</string>
     <string name="connectUsing">Login using</string>
     <string name="signUpUsing">Sign-Up using</string>
@@ -517,4 +519,5 @@
     <string name="preamble_feedback">[App Ratings - Feedback]:</string>
     <string name="failed_feedback">Failed to send your feedback.Please try again.</string>
     <string name="feedback_success">Your feedback submitted successfully!</string>
+    <string name="free">Free!</string>
 </resources>
