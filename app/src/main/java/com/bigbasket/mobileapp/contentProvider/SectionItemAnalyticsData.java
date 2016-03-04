@@ -6,6 +6,8 @@ import android.provider.BaseColumns;
 
 import com.bigbasket.mobileapp.adapter.db.DatabaseContentProvider;
 
+import java.util.Calendar;
+
 /**
  * Created by muniraju on 17/12/15.
  */
@@ -26,6 +28,8 @@ public class SectionItemAnalyticsData {
     public static final String CLICKS = "clicks";
     public static final String IMPRESSIONS = "impressions";
     public static final String ANALYTICS_ATTRS = "analytics_attr";
+    //DATE in epochtime format, time is only date part is stored
+    public static final String DATE = "date";
 
     public static final String[] PROJECTION = new String[]{
             ID,
@@ -33,7 +37,8 @@ public class SectionItemAnalyticsData {
             CITY_ID,
             CLICKS,
             IMPRESSIONS,
-            ANALYTICS_ATTRS
+            ANALYTICS_ATTRS,
+            DATE
     };
 
     public static final int COLUMN_ID = 0;
@@ -42,6 +47,7 @@ public class SectionItemAnalyticsData {
     public static final int COLUMN_CLICKS = COLUMN_CITY_ID + 1;
     public static final int COLUMN_IMPRESSIONS = COLUMN_CLICKS + 1;
     public static final int COLUMN_ANALYTICS_ATTRS = COLUMN_IMPRESSIONS + 1;
+    public static final int COLUMN_DATE = COLUMN_ANALYTICS_ATTRS + 1;
 
     private long id;
     private String sectionId;
@@ -49,6 +55,7 @@ public class SectionItemAnalyticsData {
     private int clicks;
     private int impressions;
     private String analyticsAttrs;
+    private long date;
 
     public SectionItemAnalyticsData() {
     }
@@ -60,6 +67,7 @@ public class SectionItemAnalyticsData {
         clicks = cursor.getInt(COLUMN_CLICKS);
         impressions = cursor.getInt(COLUMN_IMPRESSIONS);
         analyticsAttrs = cursor.getString(COLUMN_ANALYTICS_ATTRS);
+        date = cursor.getLong(COLUMN_DATE);
     }
 
     public long getId() {
@@ -109,4 +117,18 @@ public class SectionItemAnalyticsData {
     public void setAnalyticsAttrs(String analyticsAttrs) {
         this.analyticsAttrs = analyticsAttrs;
     }
+
+    public long getDate() {
+        return date;
+    }
+
+    public static long dateNow() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
+    }
+
 }

@@ -734,11 +734,6 @@
         </receiver>
 
         <!-- MOENGAGE RECEIVER FOR RECEIVING INSTALLATION INTENT -->
-        <receiver android:name="com.moe.pushlibrary.InstallReceiver">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
         <receiver android:name="com.bigbasket.mobileapp.receivers.AppUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
@@ -823,7 +818,7 @@
             android:exported="false" />
 
         <receiver
-            android:name="com.google.ads.conversiontracking.InstallReceiver"
+            android:name="com.bigbasket.mobileapp.receivers.InstallReferrerReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
@@ -844,14 +839,6 @@
             android:exported="false" />
 
         <receiver
-            android:name="com.localytics.android.ReferralReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
             <intent-filter>
@@ -861,6 +848,9 @@
 
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false" />
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService"
             android:enabled="true"
             android:exported="false" />
         <service

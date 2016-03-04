@@ -26,8 +26,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Version 17: Fix crashes
      * Version 18: Added section_item_analytics_data table
      * Version 19: Converted section_data from TEXT to BLOB
+     * Version 20: Added 'date' column sectionItemAnalyticsTable
      */
-    protected static final int DATABASE_VERSION = 19;
+    protected static final int DATABASE_VERSION = 20;
     public static SQLiteDatabase db = null;
     private static volatile DatabaseHelper dbAdapter = null;
     private static boolean isConnectionOpen = false;
@@ -109,6 +110,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion < 19) {
             upgradeTo19(db);
         }
+        if(oldVersion < 20) {
+            upgradeTo20(db);
+        }
     }
 
     private void upgradeTo16(SQLiteDatabase db) {
@@ -179,6 +183,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    private void upgradeTo20(SQLiteDatabase db) {
+        try {
+            db.execSQL("ALTER TABLE " + SectionItemAnalyticsData.TABLE_NAME
+                    + " ADD COLUMN " + SectionItemAnalyticsData.DATE + " INTEGER");
+            db.execSQL("UPDATE TABLE " + SectionItemAnalyticsData.TABLE_NAME
+                    + " SET " + SectionItemAnalyticsData.DATE + " = " + SectionItemAnalyticsData.dateNow());
+        } catch (SQLiteException ex) {
+            Crashlytics.logException(ex);
+        }
+    }
+
     private void createTable(SQLiteDatabase db) {
         db.execSQL(CategoryAdapter.CREATE_TABLE);
         db.execSQL(SubCategoryAdapter.CREATE_TABLE);
@@ -197,7 +212,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + SectionItemAnalyticsData.CITY_ID + " TEXT, "
                 + SectionItemAnalyticsData.CLICKS + " INTEGER, "
                 + SectionItemAnalyticsData.IMPRESSIONS + " INTEGER, "
-                + SectionItemAnalyticsData.ANALYTICS_ATTRS + " TEXT );";
+                + SectionItemAnalyticsData.ANALYTICS_ATTRS + " TEXT, "
+                + SectionItemAnalyticsData.DATE + " INTEGER );";
         db.execSQL(createStmt);
     }
 }

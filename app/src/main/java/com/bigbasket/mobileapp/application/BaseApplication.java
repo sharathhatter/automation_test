@@ -117,11 +117,9 @@ public class BaseApplication extends Application {
         }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
         String userId = preferences.getString(Constants.MID_KEY, null);
-        if(TextUtils.isEmpty(userId)){
-           userId =  preferences.getString(Constants.VISITOR_ID_KEY, null);
+        if (!TextUtils.isEmpty(userId)) {
+            updateGAUserId(appContext, userId);
         }
-        updateGAUserId(appContext, userId);
-
     }
 
     private int getMemCacheSize() {

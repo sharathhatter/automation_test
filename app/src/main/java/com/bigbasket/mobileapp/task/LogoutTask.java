@@ -104,8 +104,7 @@ public class LogoutTask extends AsyncTask<Void, Void, ErrorResponse> {
         NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, null);
         NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
 
-        BaseApplication.updateGAUserId(appOperationAware.getCurrentActivity(),
-                preferences.getString(Constants.VISITOR_ID_KEY, null));
+        BaseApplication.updateGAUserId(appOperationAware.getCurrentActivity(), null);
 
         if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
             Gson gson = new Gson();

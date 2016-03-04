@@ -107,12 +107,14 @@ public class AnalyticsIntentService extends IntentService {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 cityId = preferences.getString(Constants.CITY_ID, "");
             }
+            long dateNow = SectionItemAnalyticsData.dateNow();
             //Get the existing data for sectionId and cityId
             Cursor cursor = getContentResolver().query(SectionItemAnalyticsData.CONTENT_URI,
                     SectionItemAnalyticsData.PROJECTION,
                     SectionItemAnalyticsData.SECTION_ID + " = ? AND "
-                            + SectionItemAnalyticsData.CITY_ID + " = ?",
-                    new String[]{sectionId, cityId},
+                            + SectionItemAnalyticsData.CITY_ID + " = ? AND "
+                            + SectionItemAnalyticsData.DATE + " = ?",
+                    new String[]{sectionId, cityId, String.valueOf(dateNow)},
                     null);
             SectionItemAnalyticsData sectionItemAnalyticsData = null;
             try {
@@ -148,6 +150,7 @@ public class AnalyticsIntentService extends IntentService {
                 values.put(SectionItemAnalyticsData.CITY_ID, cityId);
                 values.put(SectionItemAnalyticsData.SECTION_ID, sectionId);
                 values.put(SectionItemAnalyticsData.ANALYTICS_ATTRS, analyticsAttributes);
+                values.put(SectionItemAnalyticsData.DATE, dateNow);
                 getContentResolver().insert(SectionItemAnalyticsData.CONTENT_URI, values);
                 Log.d("AnalyticsIntentService",
                         "insert, clicks: " + values.get(SectionItemAnalyticsData.CLICKS)
