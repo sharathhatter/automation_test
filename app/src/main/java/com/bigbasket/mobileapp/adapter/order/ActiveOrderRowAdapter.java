@@ -8,7 +8,6 @@ import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -41,6 +40,7 @@ import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.SpannableStringBuilderCompat;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -209,8 +209,8 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
             topCatTotal.setVisibility(View.VISIBLE);
             String separator = "  |  ";
             String rupeeChar = resources.getString(R.string.Rs_char);
-            SpannableStringBuilder topCatTotalSpannableBuilder =
-                    new SpannableStringBuilder(separator)
+            SpannableStringBuilderCompat topCatTotalSpannableBuilder =
+                    new SpannableStringBuilderCompat(separator)
                     .append(rupeeChar, rupeeSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                     .append(topCatTotalAmount);
             topCatTotal.setText(topCatTotalSpannableBuilder);
@@ -239,7 +239,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         final TextView txtFulfilledBy = holder.getTxtFulfilledBy();
         if (!TextUtils.isEmpty(fulfillmentInfo.getFulfilledBy()) && !fulfillmentInfo.getFulfilledBy().equalsIgnoreCase("null")) {
 
-            SpannableStringBuilder content = new SpannableStringBuilder(" - Indicates ")
+            SpannableStringBuilderCompat content = new SpannableStringBuilderCompat(" - Indicates ")
                     .append(fulfillmentInfo.getDisplayName()).append(" products fulfilled by ");
             String fulfilledBy = fulfillmentInfo.getFulfilledBy();
             if (!TextUtils.isEmpty(fulfillmentInfo.getFulfilledByInfoPage())) {
@@ -382,7 +382,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         final ImageView imgRemove = rowHolder.getImgRemove();
 
         if (cartItem.getTotalPrice() > 0) {
-            txtSalePrice.setText(UIUtil.asRupeeSpannable(cartItem.getTotalPrice(), faceRupee));
+            txtSalePrice.setText(UIUtil.asRupeeSpannable(cartItem.getTotalPrice(), rupeeSpan));
             txtSalePrice.setVisibility(View.VISIBLE);
         } else {
             txtSalePrice.setText(R.string.free);
@@ -598,7 +598,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         String regularQtyStr = UIUtil.roundOrInt(cartItem.getCartItemPromoInfo().
                 getRegularInfo().getNumItemInCart());
         String separator = " @ ";
-        SpannableStringBuilder regularSpannable = new SpannableStringBuilder(regularQtyStr)
+        SpannableStringBuilderCompat regularSpannable = new SpannableStringBuilderCompat(regularQtyStr)
                 .append(separator);
         int labelLength = regularSpannable.length();
         regularSpannable.setSpan(
@@ -619,7 +619,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         if (cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice() > 0) {
             String promoQtyStr = UIUtil.roundOrInt(cartItem.getCartItemPromoInfo().
                     getPromoInfo().getNumItemInCart());
-            Spannable promoSpannable = new SpannableStringBuilder(promoQtyStr)
+            Spannable promoSpannable = new SpannableStringBuilderCompat(promoQtyStr)
                     .append(separator)
                     .append(rupeeChar, rupeeSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                     .append(UIUtil.formatAsMoney(cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice()));

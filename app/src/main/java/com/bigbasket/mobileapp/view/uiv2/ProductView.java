@@ -43,6 +43,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.SpannableStringBuilderCompat;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
@@ -405,7 +406,7 @@ public final class ProductView {
             //Show Promo Saving
             if (product.getProductPromoInfo().getPromoSavings() > 0) {
                 String label = product.hasSavings() ? "Save Additional " : "Save ";
-                SpannableStringBuilder savingSpannable = new SpannableStringBuilder(label)
+                SpannableStringBuilderCompat savingSpannable = new SpannableStringBuilderCompat(label)
                         .append(txtPromoAddSavings.getResources().getString(R.string.Rs_char),
                                 productViewDisplayDataHolder.getRupeeSpan(),
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
