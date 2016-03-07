@@ -5,8 +5,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +20,7 @@ import com.bigbasket.mobileapp.interfaces.gift.GiftOperationAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.SpannableStringBuilderCompat;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 
@@ -133,9 +132,9 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
 
             if (giftItem.getGiftWrapCharge() > 0) {
                 String rupeeChar = context.getString(R.string.Rs_char);
-                CustomTypefaceSpan rupeeTypefaceSpan = new CustomTypefaceSpan("", faceRupee);
-                SpannableStringBuilder giftWrapChargeSpannable =
-                        new SpannableStringBuilder(context.getString(R.string.giftWrapCharge))
+                CustomTypefaceSpan rupeeTypefaceSpan = new CustomTypefaceSpan(faceRupee);
+                SpannableStringBuilderCompat giftWrapChargeSpannable =
+                        new SpannableStringBuilderCompat(context.getString(R.string.giftWrapCharge))
                                 .append(" ")
                                 .append(rupeeChar, rupeeTypefaceSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                                 .append(UIUtil.formatAsMoney(giftItem.getGiftWrapCharge()))
@@ -146,8 +145,8 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
                 txtProductGiftWrapPrice.setText(giftWrapChargeSpannable);
                 txtProductGiftWrapPrice.setVisibility(View.VISIBLE);
 
-                SpannableStringBuilder giftWrapTotalChargeSpannable =
-                        new SpannableStringBuilder(context.getString(R.string.giftWrapChargeTotal))
+                SpannableStringBuilderCompat giftWrapTotalChargeSpannable =
+                        new SpannableStringBuilderCompat(context.getString(R.string.giftWrapChargeTotal))
                                 .append(" ")
                                 .append(rupeeChar, rupeeTypefaceSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                                 .append(UIUtil.formatAsMoney(giftItem.getGiftWrapCharge() * reservedQty))

@@ -31,7 +31,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -202,28 +201,28 @@ public class UIUtil {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public static SpannableStringBuilder asRupeeSpannable(String amtTxt, Typeface faceRupee) {
+    public static SpannableStringBuilderCompat asRupeeSpannable(String amtTxt, Typeface faceRupee) {
         return asRupeeSpannable(amtTxt, new CustomTypefaceSpan(faceRupee));
     }
 
-    public static SpannableStringBuilder asRupeeSpannable(String prefix, String amtTxt, Typeface faceRupee) {
+    public static SpannableStringBuilderCompat asRupeeSpannable(String prefix, String amtTxt, Typeface faceRupee) {
         String rupeeSym = BaseApplication.getContext().getString(R.string.Rs_char);
-        SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(prefix);
+        SpannableStringBuilderCompat spannableBuilder = new SpannableStringBuilderCompat(prefix);
         spannableBuilder.append(rupeeSym, new CustomTypefaceSpan(faceRupee),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE).append(amtTxt);
         return spannableBuilder;
     }
 
-    public static SpannableStringBuilder asRupeeSpannable(double amt, Typeface faceRupee) {
+    public static SpannableStringBuilderCompat asRupeeSpannable(double amt, Typeface faceRupee) {
         return asRupeeSpannable(formatAsMoney(amt), faceRupee);
     }
 
-    public static SpannableStringBuilder asRupeeSpannable(double amt, TypefaceSpan rupeeSpan) {
+    public static SpannableStringBuilderCompat asRupeeSpannable(double amt, TypefaceSpan rupeeSpan) {
         return asRupeeSpannable(formatAsMoney(amt), rupeeSpan);
     }
-    public static SpannableStringBuilder asRupeeSpannable(String amtTxt, TypefaceSpan rupeeSpan) {
+    public static SpannableStringBuilderCompat asRupeeSpannable(String amtTxt, TypefaceSpan rupeeSpan) {
         String rupeeSym = BaseApplication.getContext().getString(R.string.Rs_char);
-        return new SpannableStringBuilder()
+        return new SpannableStringBuilderCompat()
                 .append(rupeeSym, rupeeSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 .append(amtTxt);
     }
