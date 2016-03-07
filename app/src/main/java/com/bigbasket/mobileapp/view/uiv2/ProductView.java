@@ -201,19 +201,12 @@ public final class ProductView {
 
         TextView txtMrp = productViewHolder.getTxtMrp();
         txtMrp.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-
         if (hasSavings && !TextUtils.isEmpty(product.getMrp())) {
-            String prefix = "`";
-            String mrpStr = UIUtil.formatAsMoney(Double.parseDouble(product.getMrp()));
-            int prefixLen = prefix.length();
-            SpannableStringBuilder spannableMrp = new SpannableStringBuilder(prefix);
-            spannableMrp.setSpan(
-                    new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()),
-                    prefixLen - 1,
-                    prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            spannableMrp.append(mrpStr);
+            SpannableStringBuilder spannableMrp =
+                    UIUtil.asRupeeSpannable(Double.parseDouble(product.getMrp()),
+                            productViewDisplayDataHolder.getRupeeSpan());
             spannableMrp.setSpan(new StrikethroughSpan(), 0,
-                    spannableMrp.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                    spannableMrp.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             txtMrp.setText(spannableMrp);
             txtMrp.setVisibility(View.VISIBLE);
         } else {
@@ -221,7 +214,8 @@ public final class ProductView {
         }
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         txtSalePrice.setText(UIUtil.asRupeeSpannable(
-                UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())), productViewDisplayDataHolder.getRupeeTypeface()));
+                UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())),
+                productViewDisplayDataHolder.getRupeeSpan()));
     }
 
     private static boolean hasText(ArrayList<HashMap<String, String>> storeAvailabilityArrayList,
@@ -410,17 +404,12 @@ public final class ProductView {
                 Promo.getAllTypes().contains(product.getProductPromoInfo().getPromoType())) {
             //Show Promo Saving
             if (product.getProductPromoInfo().getPromoSavings() > 0) {
-                String label = product.hasSavings() ? "Save Additional `" : "Save `";
-                String promoSavingStr = label +
-                        product.getProductPromoInfo().getFormattedPromoSavings();
-                SpannableString savingSpannable =
-                        new SpannableString(promoSavingStr);
-                int labelLength = label.length();
-                savingSpannable.setSpan(new
-                                CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()),
-                        labelLength - 1,
-                        labelLength, Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-                );
+                String label = product.hasSavings() ? "Save Additional " : "Save ";
+                SpannableStringBuilder savingSpannable = new SpannableStringBuilder(label)
+                        .append(txtPromoAddSavings.getResources().getString(R.string.Rs_char),
+                                productViewDisplayDataHolder.getRupeeSpan(),
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        .append(product.getProductPromoInfo().getFormattedPromoSavings());
                 txtPromoAddSavings.setVisibility(View.VISIBLE);
                 txtPromoAddSavings.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
                 txtPromoAddSavings.setText(savingSpannable);
@@ -706,7 +695,8 @@ public final class ProductView {
             final ProductListSpinnerAdapter productListSpinnerAdapter =
                     new ProductListSpinnerAdapter(productDataAware.getCurrentActivity(),
                             childProducts, productViewDisplayDataHolder.getSerifTypeface(),
-                            productViewDisplayDataHolder.getRupeeTypeface(), product);
+                            productViewDisplayDataHolder.getRupeeTypeface(),
+                            productViewDisplayDataHolder.getRupeeSpan(), product);
             productListSpinnerAdapter.setCurrentProduct(currentProduct);
             listView.setAdapter(productListSpinnerAdapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

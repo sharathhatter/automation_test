@@ -31,12 +31,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.text.style.ClickableSpan;
+import android.text.style.TypefaceSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
@@ -200,25 +202,30 @@ public class UIUtil {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public static SpannableString asRupeeSpannable(String amtTxt, Typeface faceRupee) {
-        String rupeeSym = "`";
-        SpannableString spannableString = new SpannableString(rupeeSym + amtTxt);
-        spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0, rupeeSym.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        return spannableString;
+    public static SpannableStringBuilder asRupeeSpannable(String amtTxt, Typeface faceRupee) {
+        return asRupeeSpannable(amtTxt, new CustomTypefaceSpan(faceRupee));
     }
 
-    public static SpannableString asRupeeSpannable(String prefix, String amtTxt, Typeface faceRupee) {
-        String rupeeSym = "`";
-        SpannableString spannableString = new SpannableString(prefix + rupeeSym + amtTxt);
-        spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), prefix.length(),
-                prefix.length() + rupeeSym.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        return spannableString;
+    public static SpannableStringBuilder asRupeeSpannable(String prefix, String amtTxt, Typeface faceRupee) {
+        String rupeeSym = BaseApplication.getContext().getString(R.string.Rs_char);
+        SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(prefix);
+        spannableBuilder.append(rupeeSym, new CustomTypefaceSpan(faceRupee),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE).append(amtTxt);
+        return spannableBuilder;
     }
 
-    public static SpannableString asRupeeSpannable(double amt, Typeface faceRupee) {
+    public static SpannableStringBuilder asRupeeSpannable(double amt, Typeface faceRupee) {
         return asRupeeSpannable(formatAsMoney(amt), faceRupee);
+    }
+
+    public static SpannableStringBuilder asRupeeSpannable(double amt, TypefaceSpan rupeeSpan) {
+        return asRupeeSpannable(formatAsMoney(amt), rupeeSpan);
+    }
+    public static SpannableStringBuilder asRupeeSpannable(String amtTxt, TypefaceSpan rupeeSpan) {
+        String rupeeSym = BaseApplication.getContext().getString(R.string.Rs_char);
+        return new SpannableStringBuilder()
+                .append(rupeeSym, rupeeSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                .append(amtTxt);
     }
 
     public static String formatAsMoney(Double amount) {

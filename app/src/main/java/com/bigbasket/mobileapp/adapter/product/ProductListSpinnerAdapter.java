@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import java.util.List;
 
 
 public class ProductListSpinnerAdapter extends BaseAdapter {
+    private final CustomTypefaceSpan rupeeSpan;
+    private final CustomTypefaceSpan typefaceSpan;
     List<Product> productArrayList;
     private Context ctx;
     private Typeface typeface;
@@ -32,11 +35,13 @@ public class ProductListSpinnerAdapter extends BaseAdapter {
 
     public ProductListSpinnerAdapter(Context ctx, List<Product> productArrayList,
                                      Typeface typeface, Typeface faceRupee,
-                                     Product currentProduct) {
+                                     CustomTypefaceSpan rupeeSpan, Product currentProduct) {
         this.ctx = ctx;
         this.productArrayList = productArrayList;
         this.typeface = typeface;
+        this.typefaceSpan = new CustomTypefaceSpan(typeface);
         this.faceRupee = faceRupee;
+        this.rupeeSpan = rupeeSpan;
         this.dp16 = (int) ctx.getResources().getDimension(R.dimen.padding_normal);
         this.dp32 = (int) ctx.getResources().getDimension(R.dimen.padding_large);
         this.currentProduct = currentProduct;
@@ -84,15 +89,8 @@ public class ProductListSpinnerAdapter extends BaseAdapter {
         } else {
             txtProductPkgDesc.setTextColor(unSelectedTextColor);
         }
-        String rupeeSymbol = "`";
-        String sellPrice = UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())) + "";
-        SpannableString spannableString = new SpannableString(rupeeSymbol + sellPrice);
-        spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0,
-                rupeeSymbol.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableString.setSpan(new CustomTypefaceSpan("", typeface),
-                rupeeSymbol.length(),
-                spannableString.length(),
-                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        SpannableStringBuilder spannableString = UIUtil.asRupeeSpannable(product.getSellPrice(), rupeeSpan);
+        spannableString.setSpan(typefaceSpan, 1, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         txtProductSellPrice.setVisibility(View.VISIBLE);
         txtProductSellPrice.setText(spannableString);
         return row;

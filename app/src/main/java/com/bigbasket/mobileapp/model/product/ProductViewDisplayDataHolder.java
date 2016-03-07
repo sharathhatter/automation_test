@@ -2,11 +2,13 @@ package com.bigbasket.mobileapp.model.product;
 
 import android.graphics.Typeface;
 
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 
 public class ProductViewDisplayDataHolder {
 
+    private CustomTypefaceSpan rupeeSpan;
     private Typeface serifTypeface;
     private Typeface sansSerifMediumTypeface;
     private Typeface rupeeTypeface;
@@ -24,6 +26,7 @@ public class ProductViewDisplayDataHolder {
         this.serifTypeface = builder.serifTypeface;
         this.sansSerifMediumTypeface = builder.sansSerifMediumTypeface;
         this.rupeeTypeface = builder.rupeeTypeface;
+        this.rupeeSpan = new CustomTypefaceSpan(rupeeTypeface);
         this.showShoppingListBtn = builder.showShoppingListBtn;
         this.isLoggedInMember = builder.isLoggedInMember;
         this.showBasketBtn = builder.showBasketBtn;
@@ -53,6 +56,10 @@ public class ProductViewDisplayDataHolder {
 
     public Typeface getRupeeTypeface() {
         return rupeeTypeface;
+    }
+
+    public CustomTypefaceSpan getRupeeSpan() {
+        return rupeeSpan;
     }
 
     public boolean isShowShoppingListBtn() {

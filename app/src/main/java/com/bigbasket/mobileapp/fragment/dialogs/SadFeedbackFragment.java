@@ -129,12 +129,6 @@ public class SadFeedbackFragment extends AbstractDialogFragment {
         txtErrorRetry = (TextView) view.findViewById(R.id.txtErrorRetry);
 
         List<String> list = Arrays.asList(getResources().getStringArray(R.array.feedback_reasons));
-        Collections.sort(list, new Comparator<String>() {
-            @Override
-            public int compare(String s1, String s2) {
-                return s1.compareToIgnoreCase(s2);
-            }
-        });
         List<String> finalList = new ArrayList<>(list);
         finalList.add(0, getString(R.string.choose_category));
 
@@ -216,7 +210,8 @@ public class SadFeedbackFragment extends AbstractDialogFragment {
                     progressBar.setVisibility(View.GONE);
                     txtErrorRetry.setVisibility(View.VISIBLE);
                 }
-                isResendReq = true;
+                isResendReq = false;
+                doneAndDismiss();
                 break;
             case UnifiedInboxMessage.STATUS_SENT:
                 isOperationGoingOn = false;
@@ -225,23 +220,28 @@ public class SadFeedbackFragment extends AbstractDialogFragment {
                 if (progressBar != null && alertDialog != null && txtErrorRetry != null) {
                     progressBar.setVisibility(View.GONE);
                     txtErrorRetry.setVisibility(View.GONE);
-                    showToast(getString(R.string.feedback_success));
-                    try {
-                        if (editTextComments != null) {
-                            hideKeyboard(getContext(), editTextComments);
-                        }
-                        doUnbindService();
-                        UIUtil.updateRatingPref(getContext(), false);
-                        dismiss();
-                    } catch (Exception e) {
-                        Crashlytics.logException(e);
-                    }
                 }
+                showToast(getString(R.string.feedback_success));
+                doneAndDismiss();
                 break;
             default:
                 break;
         }
     }
+
+    private void doneAndDismiss() {
+        try {
+            if (editTextComments != null) {
+                hideKeyboard(getContext(), editTextComments);
+            }
+            doUnbindService();
+            UIUtil.updateRatingPref(getContext(), false);
+            dismiss();
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+        }
+    }
+
 
     private UnifiedInboxMessage getPreburntMessage() {
         UnifiedInboxMessage chatItem = new UnifiedInboxMessage();
