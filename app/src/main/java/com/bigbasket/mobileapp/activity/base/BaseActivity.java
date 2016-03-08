@@ -83,6 +83,7 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
+import com.newrelic.agent.android.instrumentation.Trace;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,7 +106,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected MoEHelper moEHelper;
     private boolean isActivitySuspended;
     private ProgressDialog progressDialog = null;
-    private AppEventsLogger fbLogger;
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
 
@@ -151,7 +151,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         faceRobotoBold = fontHolder.getFaceRobotoBold();
         faceRobotoLight = fontHolder.getFaceRobotoLight();
         moEHelper = MoEngageWrapper.getMoHelperObj(getApplicationContext());
-        fbLogger = AppEventsLogger.newLogger(getApplicationContext());
         mNavigationContext = getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX);
         NewRelic.setInteractionName(getClass().getSimpleName());
     }
@@ -253,6 +252,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return this;
     }
 
+    @Trace
     @Override
     protected void onStart() {
         super.onStart();
@@ -656,6 +656,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 for (Map.Entry<String, String> entry : mapAttr.entrySet()) {
                     bundleAttr.putString(entry.getKey(), entry.getValue());
                 }
+                AppEventsLogger fbLogger = AppEventsLogger.newLogger(getApplicationContext());
                 FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName, Double.parseDouble(valueToSum), bundleAttr);
             }
         } catch (Exception e) {
@@ -753,6 +754,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         if (sendToFacebook && authParameters.isFBLoggerEnabled()) {
+            AppEventsLogger fbLogger = AppEventsLogger.newLogger(getApplicationContext());
             if (eventAttribs != null) {
                 Bundle paramBundle = new Bundle();
                 for (Map.Entry<String, String> eventAttrib : eventAttribs.entrySet())

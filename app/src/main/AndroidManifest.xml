@@ -337,7 +337,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/member/credit/"
                     android:scheme="http" />
             </intent-filter>
@@ -348,7 +348,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/member/credit/"
                     android:scheme="https" />
             </intent-filter>
@@ -385,7 +385,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/payment/wallet/"
                     android:scheme="http" />
             </intent-filter>
@@ -396,7 +396,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/payment/wallet/"
                     android:scheme="https" />
             </intent-filter>
@@ -433,7 +433,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/payment/pay_now/"
                     android:pathPattern="/payment/pay_now/.*"
                     android:scheme="http" />
@@ -445,7 +445,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/payment/pay_now/"
                     android:pathPattern="/payment/pay_now/.*"
                     android:scheme="https" />
@@ -481,7 +481,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/member/active-orders/"
                     android:scheme="http" />
             </intent-filter>
@@ -492,7 +492,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/member/active-orders/"
                     android:scheme="https" />
             </intent-filter>
