@@ -94,7 +94,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     HashSet<String> listSelectedOrderIds = new HashSet<>(orderArrayList.size());
                     Intent intent = new Intent(getCurrentActivity(), PayNowActivity.class);
                     for (Order order : orderArrayList) {
-                        if (!listSelectedOrderIds.contains(order.getOrderId()))
+                        if (!listSelectedOrderIds.contains(order.getOrderId()) && order.canPay())
                             listSelectedOrderIds.add(order.getOrderId());
                     }
                     intent.putExtra(Constants.ORDER_ID, android.text.TextUtils.join(",", listSelectedOrderIds));
