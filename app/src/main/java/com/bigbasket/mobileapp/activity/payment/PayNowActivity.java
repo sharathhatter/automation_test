@@ -304,7 +304,11 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     }
 
     private void onPayNowFailure() {
-        UIUtil.showPaymentFailureDlg(this);
+        showAlertDialog(getString(R.string.transactionFailed),
+                UIUtil.getPaymentFailureDialogtext(this),
+                getString(R.string.ok),
+                null,
+                Constants.PAYMENT_VALIDATION_FAILED, null);
 
     }
 
@@ -340,6 +344,10 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
                     validatePaymentRequest.setIsPayNow(true);
                     new ValidatePayment<>(this, validatePaymentRequest, new BigBasketRetryMessageHandler(this, this)).validate(null);
                 }
+                break;
+            case Constants.PAYMENT_VALIDATION_FAILED:
+                setResult(NavigationCodes.REFRESH_ORDERS);
+                finish();
                 break;
             default:
                 super.onPositiveButtonClicked(sourceName, valuePassed);

@@ -101,7 +101,9 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
-                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    startActivity(intent);
+                    setResult(NavigationCodes.GO_TO_HOME);
+                    finish();
                 }
             });
         } else {

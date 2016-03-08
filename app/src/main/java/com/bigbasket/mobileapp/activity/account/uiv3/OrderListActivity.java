@@ -95,11 +95,11 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         renderFooter();
         if (savedInstanceState != null) {
             currentPage = savedInstanceState.getInt(Constants.CURRENT_PAGE, 1);
-            if(savedInstanceState.containsKey(Constants.ORDERS)) {
+            if (savedInstanceState.containsKey(Constants.ORDERS)) {
                 ArrayList<Order> orders = savedInstanceState.getParcelableArrayList(Constants.ORDERS);
                 int totalPages = savedInstanceState.getInt(Constants.TOTAL);
                 initAdapter(orders, totalPages, currentPage);
-                if(savedInstanceState.containsKey(SELECTED_ORDER_IDS)) {
+                if (savedInstanceState.containsKey(SELECTED_ORDER_IDS)) {
                     orderListAdapter.setSelectedList(
                             savedInstanceState.getStringArrayList(SELECTED_ORDER_IDS));
                 }
@@ -129,7 +129,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
     private void startPayNow(ArrayList orderIds) {
         if (orderIds == null || orderIds.size() == 0) return;
-        if(!checkInternetConnection()) {
+        if (!checkInternetConnection()) {
             handler.sendOfflineError(false);
             return;
         }
@@ -171,10 +171,10 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(Constants.CURRENT_PAGE, currentPage);
-        if(orderListAdapter != null && orderListAdapter.getOrders() != null) {
+        if (orderListAdapter != null && orderListAdapter.getOrders() != null) {
             outState.putInt(Constants.TOTAL, orderListAdapter.getTotalPages());
             outState.putParcelableArrayList(Constants.ORDERS, orderListAdapter.getOrders());
-            if(orderListAdapter.isInSelectionMode()) {
+            if (orderListAdapter.isInSelectionMode()) {
                 outState.putStringArrayList(SELECTED_ORDER_IDS,
                         new ArrayList<String>(orderListAdapter.getSelectedOrderIds()));
             }
@@ -286,7 +286,10 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             if (orderListAdapter == null) {
                 initAdapter(orders, totalPages, currentPage);
             } else {
-                if (currentPage > 1 && orders != null && orders.size() > 0) {
+                if (currentPage == 1) {
+                    orderListAdapter.clear();
+                    orderListAdapter.updateOrderList(orders, currentPage, totalPages);
+                } else if (orders != null && orders.size() > 0) {
                     orderListAdapter.updateOrderList(orders, currentPage, totalPages);
                 }
             }
@@ -334,8 +337,8 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NavigationCodes.RC_PAY_NOW) {
             onOrderSelectionChanged(0, 0);
-            if(resultCode == NavigationCodes.REFRESH_ORDERS) {
-                if(orderListAdapter != null) {
+            if (resultCode == NavigationCodes.REFRESH_ORDERS) {
+                if (orderListAdapter != null) {
                     orderListAdapter.clear();
                 }
                 loadOrders(1);

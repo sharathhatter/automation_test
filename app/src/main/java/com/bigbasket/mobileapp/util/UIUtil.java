@@ -220,6 +220,7 @@ public class UIUtil {
     public static SpannableStringBuilderCompat asRupeeSpannable(double amt, TypefaceSpan rupeeSpan) {
         return asRupeeSpannable(formatAsMoney(amt), rupeeSpan);
     }
+
     public static SpannableStringBuilderCompat asRupeeSpannable(String amtTxt, TypefaceSpan rupeeSpan) {
         String rupeeSym = BaseApplication.getContext().getString(R.string.Rs_char);
         return new SpannableStringBuilderCompat()
@@ -979,6 +980,38 @@ public class UIUtil {
             activity.showAlertDialog(activity.getString(R.string.transactionFailed),
                     activity.getString(R.string.txnFailureMsg));
         }
+    }
+
+    public static SpannableString getPaymentFailureDialogtext(final BaseActivity activity) {
+        String phone = getCustomerSupportPhoneNumber(activity);
+        if (!TextUtils.isEmpty(phone)) {
+            String prefix = activity.getString(R.string.txnFailureMsgPrefix) + " ";
+            String suffix = activity.getString(R.string.txnFailureMsgSuffix) + " ";
+            final String csEmail = "customerservice@bigbasket.com";
+            SpannableString spannableString = new SpannableString(prefix + phone + " " +
+                    suffix + csEmail);
+            final String passedPhoneNum = phone;
+            spannableString.setSpan(new ClickableSpan() {
+                                        @Override
+                                        public void onClick(View widget) {
+                                            UIUtil.dialNumber(passedPhoneNum, activity);
+                                        }
+                                    }, prefix.length(), prefix.length() + phone.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new ClickableSpan() {
+                                        @Override
+                                        public void onClick(View widget) {
+                                            UIUtil.invokeMailClient(csEmail, activity);
+                                        }
+                                    }, prefix.length() + phone.length() + 1 + suffix.length(),
+                    spannableString.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            return spannableString;
+        } else {
+            return new SpannableString(activity.getString(R.string.txnFailureMsg));
+        }
+
+
     }
 
     public static String makeFlatPageUrlAppFriendly(String url) {

@@ -343,15 +343,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
         trackEvent(TrackingAware.COMMUNICATION_HUB_SHOWN, eventAttribs);
     }
 
-    public void showAlertDialog(String title, String msg) {
+    public void showAlertDialog(CharSequence title, CharSequence msg) {
         showAlertDialog(title, msg, -1);
     }
 
-    public void showAlertDialog(String title, String msg, int requestCode) {
+    public void showAlertDialog(CharSequence title, CharSequence msg, int requestCode) {
         showAlertDialog(title, msg, requestCode, null);
     }
 
-    public void showAlertDialog(String title, String msg, final int requestCode, final Bundle valuePassed) {
+    public void showAlertDialog(CharSequence title, CharSequence msg, final int requestCode, final Bundle valuePassed) {
 
         if (isSuspended())
             return;
@@ -386,11 +386,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     }
 
-    public void showAlertDialogFinish(String title, String msg) {
+    public void showAlertDialogFinish(CharSequence title, CharSequence msg) {
         showAlertDialogFinish(title, msg, -1);
     }
 
-    public void showAlertDialogFinish(String title, String msg, final int resultCode) {
+    public void showAlertDialogFinish(CharSequence title, CharSequence msg, final int resultCode) {
         if (isSuspended())
             return;
         Bundle data = new Bundle(2);
@@ -406,25 +406,25 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void showAlertDialog(String msg) {
+    public void showAlertDialog(CharSequence msg) {
         showAlertDialog(null, msg);
     }
 
-    public void showAlertDialog(String title,
-                                String msg, @DialogButton.ButtonType int dialogButton,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton, final int requestCode) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, requestCode, null, null);
     }
 
-    public void showAlertDialog(String title,
-                                String msg, @DialogButton.ButtonType int dialogButton,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
                                 final Bundle passedValue) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, requestCode, passedValue, null);
     }
 
-    public void showAlertDialog(String title,
-                                String msg, @DialogButton.ButtonType int dialogButton,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
                                 final Bundle passedValue, String positiveBtnText) {
         String negativeButtonText = null;
@@ -457,15 +457,16 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void showAlertDialog(String title,
-                                String msg, String positiveBtnText,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, String positiveBtnText,
                                 String negativeBtnText, final int requestCode,
                                 final Bundle passedValue) {
         showAlertDialog(title, msg, positiveBtnText, negativeBtnText, requestCode, passedValue,
                 false);
     }
 
-    public void showAlertDialog(String title, String msg, String positiveBtnText,
+
+    public void showAlertDialog(CharSequence title, CharSequence msg, String positiveBtnText,
                                 String negativeBtnText, final int requestCode,
                                 final Bundle passedValue, boolean isCancellable) {
             if (isSuspended())
@@ -480,8 +481,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void showAlertDialog(String title,
-                                String msg, @DialogButton.ButtonType int dialogButton,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, 0);
     }
@@ -767,12 +768,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message) {
         showAlertDialog(title, message);
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, boolean finish) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, boolean finish) {
         if (finish) {
             showAlertDialogFinish(title, message);
         } else {
@@ -781,12 +782,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, int requestCode, Bundle valuePassed) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, int requestCode, Bundle valuePassed) {
         showAlertDialog(title, message, requestCode, valuePassed);
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, int resultCode) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, int resultCode) {
         showAlertDialogFinish(title, message, resultCode);
     }
 

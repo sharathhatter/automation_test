@@ -37,7 +37,7 @@ public class ConfirmationDialogFragment extends AppCompatDialogFragment {
     }
 
     public static ConfirmationDialogFragment newInstance(int requestCode,
-                                                         @Nullable String title, String message,
+                                                         @Nullable CharSequence title, CharSequence message,
                                                          String positiveButtonText,
                                                          @Nullable String negativeButtonText,
                                                          boolean isCancellable) {
@@ -46,7 +46,7 @@ public class ConfirmationDialogFragment extends AppCompatDialogFragment {
     }
 
     public static ConfirmationDialogFragment newInstance(int requestCode,
-                                                         @Nullable String title, String message,
+                                                         @Nullable CharSequence title, CharSequence message,
                                                          String positiveButtonText,
                                                          @Nullable String negativeButtonText,
                                                          @Nullable Bundle data,
@@ -56,15 +56,15 @@ public class ConfirmationDialogFragment extends AppCompatDialogFragment {
     }
 
     public static ConfirmationDialogFragment newInstance(@Nullable Fragment fragment, int requestCode,
-                                                         @Nullable String title, String message,
+                                                         @Nullable CharSequence title, CharSequence message,
                                                          String positiveButtonText,
                                                          @Nullable String negativeButtonText,
                                                          @Nullable Bundle data,
                                                          boolean isCancellable) {
         Bundle args = new Bundle();
         args.putInt(ARG_REQUEST_CODE, requestCode);
-        args.putString(ARG_TITLE, title);
-        args.putString(ARG_MESSAGE, message);
+        args.putCharSequence(ARG_TITLE, title);
+        args.putCharSequence(ARG_MESSAGE, message);
         args.putString(ARG_POSITIVE_BUTTON_TEXT, positiveButtonText);
         args.putString(ARG_NEGATIVE_BUTTON_TEXT, negativeButtonText);
         args.putBoolean(ARG_IS_CANCELLABLE, isCancellable);
@@ -97,11 +97,11 @@ public class ConfirmationDialogFragment extends AppCompatDialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final Bundle args = getArguments();
         requestCode = args.getInt(ARG_REQUEST_CODE, 0);
-        String title = args.getString(ARG_TITLE);
+        CharSequence title = args.getCharSequence(ARG_TITLE);
         if (!TextUtils.isEmpty(title)) {
             builder.setTitle(title);
         }
-        String message = args.getString(ARG_MESSAGE);
+        CharSequence message = args.getCharSequence(ARG_MESSAGE);
         if (!TextUtils.isEmpty(message)) {
             builder.setMessage(message);
         }

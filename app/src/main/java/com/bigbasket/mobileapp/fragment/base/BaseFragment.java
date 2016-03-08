@@ -387,8 +387,8 @@ public abstract class BaseFragment extends AbstractFragment implements
         }
     }
 
-    public void showAlertDialog(String title,
-                                String msg, @DialogButton.ButtonType int dialogButton,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
                                 final Bundle passedValue, String positiveBtnText) {
         if (getActivity() == null) return;
@@ -503,13 +503,13 @@ public abstract class BaseFragment extends AbstractFragment implements
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message) {
         if (getCurrentActivity() == null) return;
         getCurrentActivity().showAlertDialog(title, message);
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, boolean finish) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, boolean finish) {
         // Fix this implementation as fragment shouldn't finish activity
         if (getCurrentActivity() == null) return;
         if (finish) {
@@ -519,7 +519,7 @@ public abstract class BaseFragment extends AbstractFragment implements
         }
     }
 
-    public void showAlertDialogFinish(String title, String msg) {
+    public void showAlertDialogFinish(CharSequence title, CharSequence msg) {
         if (getCurrentActivity() == null || isSuspended()) return;
 
         Bundle data = new Bundle(2);
@@ -536,13 +536,13 @@ public abstract class BaseFragment extends AbstractFragment implements
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, int requestCode, Bundle valuePassed) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, int requestCode, Bundle valuePassed) {
         if (getCurrentActivity() == null) return;
         showAlertDialog(title, message, DialogButton.OK, DialogButton.NONE, requestCode, valuePassed, null);
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, int resultCode) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, int resultCode) {
         if (getCurrentActivity() == null) return;
         getCurrentActivity().showAlertDialog(title, message, resultCode);
     }
