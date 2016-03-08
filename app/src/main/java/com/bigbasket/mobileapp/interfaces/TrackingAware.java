@@ -208,6 +208,8 @@ public interface TrackingAware {
     String RATE_LATER_CLICKED = "RateLater.Clicked";
     String RATEUS_CLICKED = "RateUs.Clicked";
 
+    String SPONSORED_CLICKED = "SponsoredItem.Clicked";
+
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease,
                     boolean sendToFacebook);

@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.handler.click;
 import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 
@@ -28,5 +29,11 @@ public class OnSponsoredItemClickListener<T extends AppOperationAware>
     @Override
     protected String getAdditionalNcValue() {
         return "spons.promo";
+    }
+
+    @Nullable
+    @Override
+    protected String getAnalyticsFormattedScreeName() {
+        return TrackingAware.SPONSORED_CLICKED;
     }
 }

@@ -436,6 +436,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         ArrayList<CreditDetails> creditDetails = postShipmentResponseContent.creditDetails;
         renderPaymentMethodsView();
         renderOrderSummary(creditDetails);
+        renderFooter(true);
 
     }
 
