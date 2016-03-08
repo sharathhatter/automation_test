@@ -21,7 +21,7 @@ public class SpannableStringBuilderCompat extends SpannableStringBuilder {
 
     @Override
     public SpannableStringBuilderCompat append(CharSequence text, Object what, int flags) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             super.append(text, what, flags);
         } else {
             int start = length();
