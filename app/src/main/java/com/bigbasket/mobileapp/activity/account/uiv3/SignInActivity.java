@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.handler.click.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.OtpResponse;
+import com.bigbasket.mobileapp.util.BBUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -206,7 +207,7 @@ public class SignInActivity extends SocialLoginActivity {
             if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(passwd)) {
                 mChkRememberMe.setChecked(true);
                 mEmailView.setText(email);
-                mPasswordView.setText(passwd);
+                mPasswordView.setText(BBUtil.getDecryptedString(passwd));
             }
         }
     }

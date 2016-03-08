@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
-
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
@@ -114,7 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             upgradeTo20(db);
         }
     }
-
+    
     private void upgradeTo16(SQLiteDatabase db) {
         db.execSQL(DynamicPageDbHelper.CREATE_TABLE);
         db.execSQL(AppDataDynamicDbHelper.CREATE_TABLE);
