@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -608,6 +609,13 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
+        if (product != null) {
+            product.setNoOfItemsInCart(productQtyInBasket);
+            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
+                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
+            }
+        }
+
         if (productQtyInBasket == 0) {
             if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
                 viewDecQtyRef.get().setVisibility(View.GONE);
@@ -616,7 +624,11 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 viewIncQtyRef.get().setVisibility(View.GONE);
             }
             if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
-                btnAddToBasketRef.get().setVisibility(View.VISIBLE);
+                View view = btnAddToBasketRef.get();
+                view.setVisibility(View.VISIBLE);
+                if(view instanceof ImageView) {
+                    UIUtil.displayAsyncImage((ImageView) view, R.drawable.btn_add_basket);
+                }
             }
             if (editTextQtyRef != null && editTextQtyRef.get() != null
                     && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
@@ -643,13 +655,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             if (editTextQtyRef != null && editTextQtyRef.get() != null
                     && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
                 editTextQtyRef.get().setVisibility(View.GONE);
-            }
-        }
-
-        if (product != null) {
-            product.setNoOfItemsInCart(productQtyInBasket);
-            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
-                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
             }
         }
 

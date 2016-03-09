@@ -10,13 +10,16 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -295,6 +298,12 @@ public abstract class BaseFragment extends AbstractFragment implements
             productQtyInBasket = basketOperationResponse.getBasketResponseProductInfo().getTotalQty();
         }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
+        if (product != null) {
+            product.setNoOfItemsInCart(productQtyInBasket);
+            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
+                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
+            }
+        }
 
         if (productQtyInBasket == 0) {
             if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
@@ -304,7 +313,11 @@ public abstract class BaseFragment extends AbstractFragment implements
                 viewIncQtyRef.get().setVisibility(View.GONE);
             }
             if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
-                btnAddToBasketRef.get().setVisibility(View.VISIBLE);
+                View view = btnAddToBasketRef.get();
+                view.setVisibility(View.VISIBLE);
+                if(view instanceof ImageView) {
+                    UIUtil.displayAsyncImage((ImageView) view, R.drawable.btn_add_basket);
+                }
             }
             if (basketCountTextViewRef != null && basketCountTextViewRef.get() != null) {
                 basketCountTextViewRef.get().setVisibility(View.GONE);
@@ -334,12 +347,6 @@ public abstract class BaseFragment extends AbstractFragment implements
             if (editTextQtyRef != null && editTextQtyRef.get() != null
                     && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
                 editTextQtyRef.get().setVisibility(View.GONE);
-            }
-        }
-        if (product != null) {
-            product.setNoOfItemsInCart(productQtyInBasket);
-            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
-                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
             }
         }
 
@@ -630,4 +637,18 @@ public abstract class BaseFragment extends AbstractFragment implements
 
     @NonNull
     public abstract String getInteractionName();  // Don't use class.getName(), as with Proguard it returns obfuscated value
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            FragmentManager fragmentMgr = getFragmentManager();
+            int backStackCount = fragmentMgr.getBackStackEntryCount();
+            if(backStackCount > 0 && fragmentMgr.getBackStackEntryAt(backStackCount -1) == this) {
+                fragmentMgr.popBackStack();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }
