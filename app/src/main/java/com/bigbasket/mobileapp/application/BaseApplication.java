@@ -40,7 +40,7 @@ import static android.content.pm.ApplicationInfo.FLAG_LARGE_HEAP;
 
 public class BaseApplication extends Application {
 
-    private static Context sContext;
+    private static volatile Context sContext;
     private static volatile Tracker sTracker;
 
     public BaseApplication() {

@@ -123,6 +123,10 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if(savedInstanceState != null) {
+            //Fixme: DIRTY HACK to avoid View pager fragments restore on re-creation
+            savedInstanceState.remove("android:support:fragments");
+        }
         super.onCreate(savedInstanceState);
         mSlidingTabs = (TabLayout) findViewById(R.id.slidingTabs);
         appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
@@ -397,6 +401,9 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             });
         } else if (contentSectionView == null) {
             mSlidingTabs.setVisibility(View.GONE);
+            if(mViewPager != null) {
+                mViewPager.setAdapter(null);
+            }
             UIUtil.showEmptyProductsView(this, contentFrame, getString(R.string.noProducts),
                     R.drawable.empty_smart_basket);
             toggleFilterSortView(false);
@@ -448,12 +455,15 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
 
     private void displayProductTabs(final ProductTabData productTabData, ViewGroup contentFrame,
                                     final boolean hasProducts) {
+        if(mViewPager != null) {
+            mViewPager.setAdapter(null);
+        }
         mViewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
         if (mViewPager == null) return;
 
-        ArrayList<BBTab> bbTabs = new ArrayList<>();
-        ArrayList<String> tabTypeWithNoProducts = new ArrayList<>();
         final ArrayList<ProductTabInfo> productTabInfos = productTabData.getProductTabInfos();
+        ArrayList<String> tabTypeWithNoProducts = new ArrayList<>(productTabInfos.size());
+        ArrayList<BBTab> bbTabs = new ArrayList<>(productTabInfos.size());
         for (int i = 0; i < productTabInfos.size(); i++) {
             ProductTabInfo productTabInfo = productTabInfos.get(i);
             ProductInfo productInfo = productTabInfo.getProductInfo();

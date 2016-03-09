@@ -12,7 +12,7 @@ import com.bigbasket.mobileapp.model.product.ProductTabInfo;
 
 import java.util.ArrayList;
 
-public class ProductListApiResponseCallback<T extends AppOperationAware> extends BBNetworkCallback<ApiResponse<ProductTabData>> {
+public class ProductListApiResponseCallback<T extends AppOperationAware & ProductListDataAware> extends BBNetworkCallback<ApiResponse<ProductTabData>> {
 
     private T ctx;
     private boolean isInlineProgressBar;
@@ -34,35 +34,34 @@ public class ProductListApiResponseCallback<T extends AppOperationAware> extends
         if (productListDataApiResponse.status == 0) {
             ProductTabData productTabData = productListDataApiResponse.apiResponseContent;
             if (productTabData != null && productTabData.getProductTabInfos() != null) {
-                for (ProductTabInfo productTabInfo : productTabData.getProductTabInfos()) {
-                    if (productTabInfo.getFilteredOn() == null) {
-                        productTabInfo.setFilteredOn(new ArrayList<FilteredOn>());
-                    }
-                }
 
                 for (ProductTabInfo productTabInfo : productTabData.getProductTabInfos()) {
                     ArrayList<FilterOptionCategory> filterOptionCategories = productTabInfo.getFilterOptionItems();
                     ArrayList<FilteredOn> filteredOns = productTabInfo.getFilteredOn();
-                    if (filteredOns != null && filteredOns.size() > 0 && filterOptionCategories != null) {
-                        for (FilterOptionCategory filterOptionCategory : filterOptionCategories) {
-                            for (FilteredOn filteredOn : filteredOns) {
-                                if (filteredOn.getFilterSlug() != null &&
-                                        filteredOn.getFilterSlug().equals(filterOptionCategory.getFilterSlug())
-                                        && filterOptionCategory.getFilterOptionItems() != null) {
-                                    for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
-                                        if (filterOptionItem.getFilterValueSlug() != null &&
-                                                filteredOn.getFilterValues() != null &&
-                                                filteredOn.getFilterValues().contains(filterOptionItem.getFilterValueSlug())) {
-                                            filterOptionItem.setSelected(true);
+                    if (filteredOns != null ){
+                        if (filterOptionCategories != null) {
+                            for (FilterOptionCategory filterOptionCategory : filterOptionCategories) {
+                                for (FilteredOn filteredOn : filteredOns) {
+                                    if (filteredOn.getFilterSlug() != null &&
+                                            filteredOn.getFilterSlug().equals(filterOptionCategory.getFilterSlug())
+                                            && filterOptionCategory.getFilterOptionItems() != null) {
+                                        for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
+                                            if (filterOptionItem.getFilterValueSlug() != null &&
+                                                    filteredOn.getFilterValues() != null &&
+                                                    filteredOn.getFilterValues().contains(filterOptionItem.getFilterValueSlug())) {
+                                                filterOptionItem.setSelected(true);
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                    } else {
+                        productTabInfo.setFilteredOn(new ArrayList<FilteredOn>());
                     }
                 }
             }
-            ((ProductListDataAware) ctx).setProductTabData(productTabData,
+            ctx.setProductTabData(productTabData,
                     isFilterOrSortApplied, currentTabIndx);
 
         } else {
