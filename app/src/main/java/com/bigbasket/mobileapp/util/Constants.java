@@ -374,6 +374,7 @@ public class Constants {
     public static final String REMEMBER_ME_PREF = "CHECKBOX"; // Sybrant gave this name, can't change it for compatibility with older versions
     public static final String EMAIL_PREF = "NAME";
     public static final String PASSWD_PREF = "PWD";
+    public static final String ENCRYPTED = "ENCRYPTED";
     public static final String USER_DETAILS = "user_details";
     public static final String MOBILE_NUMBER = "mobile_number";
     public static final String CITY_ID = "city_id";
@@ -706,5 +707,4 @@ public class Constants {
     public static final String DATE_FORMAT_RATINGS = "dd-MM-yyyy-hh-mm-ss";
 
     public static final String ENABLE_RATINGS = "enable_rating";
-
 }

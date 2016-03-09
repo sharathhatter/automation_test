@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.interfaces.OnOtpReceivedListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.OtpResponse;
 import com.bigbasket.mobileapp.receivers.OTPBroadcastReceiver;
+import com.bigbasket.mobileapp.util.BBUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -304,7 +305,7 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (preferences.contains(Constants.PASSWD_PREF)) {
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(Constants.PASSWD_PREF, newPassword);
+            editor.putString(Constants.PASSWD_PREF, BBUtil.getEncryptedString(newPassword));
             editor.commit();
         }
         showToast(getString(R.string.passwordUpdated));
