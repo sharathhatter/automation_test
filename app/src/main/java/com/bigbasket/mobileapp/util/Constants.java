@@ -433,6 +433,12 @@ public class Constants {
     public static final String WALLET_DATA = "wallet_data";
     public static final String DATE_FROM = "date_from";
     public static final String DATE_TO = "date_to";
+    public static final String WALLET_OPTION = "wallet_option";
+    public static final String WALLET_OPTION_BALANCE = "balance";
+    public static final String WALLET_OPTION_MSG = "msg";
+    public static final String WALLET_OPTION_STATE = "state";
+    public static final String OFF="off";
+
 
     //change password
     public static final String OLD_PASSWORD = "old_password";

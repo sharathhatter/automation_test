@@ -340,8 +340,10 @@
     <string name="help">Help</string>
     <string name="deliverableTextPlural">Based on the items in your basket, deliveries will come in multiple shipments.</string>
     <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
-    <string name="voucherApplicableSingular">Voucher applicable</string>
-    <string name="voucherApplicablePlural">Vouchers applicable</string>
+    <plurals name="vouchers_applicable">
+        <item quantity="one">%1$d Voucher applicable</item>
+        <item quantity="other">%1$d Vouchers applicable</item>
+    </plurals>
 
     <string name="add_bundle">ADD BUNDLE</string>
     <string name="error">Error!</string>
@@ -525,4 +527,5 @@
     <string name="free">Free!</string>
     <string name="Rs_char">`</string>
     <string name="val_in_basket_format">%1$s in basket"</string>
+    <string name="balance">\nBalance:&#160;</string>
 </resources>
