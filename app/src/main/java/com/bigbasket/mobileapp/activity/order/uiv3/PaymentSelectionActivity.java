@@ -308,10 +308,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mTxtApplicableVoucherCount.setTypeface(faceRobotoRegular);
         editTextVoucherCode = (EditText) findViewById(R.id.editTextVoucherCode);
         if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
-            mTxtApplicableVoucherCount.setText(mActiveVouchersList.size() + " " +
-                    (mActiveVouchersList.size() > 1 ?
-                            getString(R.string.voucherApplicablePlural) :
-                            getString(R.string.voucherApplicableSingular)));
+            mTxtApplicableVoucherCount.setText(getResources().getQuantityString(R.plurals.vouchers_applicable,
+                    mActiveVouchersList.size(), mActiveVouchersList.size()));
             mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
         } else {
             handleNoVoucherApplicable();
@@ -346,38 +344,43 @@ public class PaymentSelectionActivity extends BackButtonActivity
      * and set the balance
      */
     private void renderPaymentMethodsView() {
-        String orderPrefix = mWalletOption.getWalletMessage().concat(getString(R.string.balance));
-        walletOptionsCheckBox.setText(UIUtil.asRupeeSpannable(orderPrefix,
-                UIUtil.formatAsMoney(Double.parseDouble(mWalletOption.getWalletBalance())),
-                faceRupee));
-        switch (mWalletOption.getWalletState().toLowerCase()) {
-            case Constants.DISABLED:
+        if (mWalletOption != null) {
+            walletOptionsCheckBox.setVisibility(View.VISIBLE);
+            String orderPrefix = mWalletOption.getWalletMessage().concat(getString(R.string.balance));
+            walletOptionsCheckBox.setText(UIUtil.asRupeeSpannable(orderPrefix,
+                    UIUtil.formatAsMoney(Double.parseDouble(mWalletOption.getWalletBalance())),
+                    faceRupee));
+            switch (mWalletOption.getWalletState().toLowerCase()) {
+                case Constants.DISABLED:
                 /*
                 user can't click
                 by default it is checked
                  */
-                walletOptionsCheckBox.setChecked(true);
-                walletOptionsCheckBox.setEnabled(false);
+                    walletOptionsCheckBox.setChecked(true);
+                    walletOptionsCheckBox.setEnabled(false);
 
-                break;
-            case Constants.OFF:
+                    break;
+                case Constants.OFF:
                 /*
                 user can change the option
                 by default the option is not checked
                  */
-                walletOptionsCheckBox.setChecked(false);
-                walletOptionsCheckBox.setEnabled(true);
-                break;
-            case Constants.ON:
+                    walletOptionsCheckBox.setChecked(false);
+                    walletOptionsCheckBox.setEnabled(true);
+                    break;
+                case Constants.ON:
                 /*
                 user can change the option
                 by default the option is checked
                  */
-                walletOptionsCheckBox.setChecked(true);
-                walletOptionsCheckBox.setEnabled(true);
-                break;
-            default:
-                walletOptionsCheckBox.setVisibility(View.GONE);
+                    walletOptionsCheckBox.setChecked(true);
+                    walletOptionsCheckBox.setEnabled(true);
+                    break;
+                default:
+                    walletOptionsCheckBox.setVisibility(View.GONE);
+            }
+        } else {
+            walletOptionsCheckBox.setVisibility(View.GONE);
         }
 
         updateOtherPaymentMethods();
@@ -673,6 +676,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
         showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
                 false);
         int val = walletOptionsCheckBox.isChecked() ? 1 : 0;
+        if (walletOptionsCheckBox.getVisibility() != View.VISIBLE) {
+            val = 1;
+            if(paymentMethodsView.getVisibility() != View.VISIBLE && paymentTypeList != null && !paymentTypeList.isEmpty()) {
+                mSelectedPaymentMethod = paymentTypeList.get(0).getValue();
+            }
+        }
         if (Constants.HDFC_POWER_PAY.equals(mSelectedPaymentMethod)) {
             placeOrderWithPayZappPaymentMethod(val);
         } else {

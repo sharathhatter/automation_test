@@ -218,37 +218,42 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
      * render the state of the checkbox based on the response of server
      */
     private void renderWalletOptionCheckbox() {
-        String orderPrefix = mWalletOption.getWalletMessage().concat(getString(R.string.balance));
-        walletOptionsCheckBox.setText(UIUtil.asRupeeSpannable(orderPrefix,
-                UIUtil.formatAsMoney(Double.parseDouble(mWalletOption.getWalletBalance())),
-                faceRupee));
-        switch (mWalletOption.getWalletState().toLowerCase()) {
-            case Constants.DISABLED:
+        if (mWalletOption != null) {
+            walletOptionsCheckBox.setVisibility(View.VISIBLE);
+            String orderPrefix = mWalletOption.getWalletMessage().concat(getString(R.string.balance));
+            walletOptionsCheckBox.setText(UIUtil.asRupeeSpannable(orderPrefix,
+                    UIUtil.formatAsMoney(Double.parseDouble(mWalletOption.getWalletBalance())),
+                    faceRupee));
+            switch (mWalletOption.getWalletState().toLowerCase()) {
+                case Constants.DISABLED:
                 /*
                 user can't click
                 by default it is checked
                  */
-                walletOptionsCheckBox.setChecked(true);
-                walletOptionsCheckBox.setEnabled(false);
-                break;
-            case Constants.OFF:
+                    walletOptionsCheckBox.setChecked(true);
+                    walletOptionsCheckBox.setEnabled(false);
+                    break;
+                case Constants.OFF:
                 /*
                 user can change the option
                 by default the option is not checked
                  */
-                walletOptionsCheckBox.setChecked(false);
-                walletOptionsCheckBox.setEnabled(true);
-                break;
-            case Constants.ON:
+                    walletOptionsCheckBox.setChecked(false);
+                    walletOptionsCheckBox.setEnabled(true);
+                    break;
+                case Constants.ON:
                 /*
                 user can change the option
                 by default the option is checked
                  */
-                walletOptionsCheckBox.setChecked(true);
-                walletOptionsCheckBox.setEnabled(true);
-                break;
-            default:
-                walletOptionsCheckBox.setVisibility(View.GONE);
+                    walletOptionsCheckBox.setChecked(true);
+                    walletOptionsCheckBox.setEnabled(true);
+                    break;
+                default:
+                    walletOptionsCheckBox.setVisibility(View.GONE);
+            }
+        } else {
+            walletOptionsCheckBox.setVisibility(View.GONE);
         }
 
         displayOrderSummary(mPayNowDetailList);
@@ -279,6 +284,12 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
             mSelectedPaymentMethod = null;
         }
         int val = walletOptionsCheckBox.isChecked() ? 1 : 0;
+        if (walletOptionsCheckBox.getVisibility() != View.VISIBLE) {
+            val = 1;
+            if(paymentMethodsView.getVisibility() != View.VISIBLE && mPaymentTypes != null && !mPaymentTypes.isEmpty()) {
+                mSelectedPaymentMethod = mPaymentTypes.get(0).getValue();
+            }
+        }
         mPayNowPrepaymentProcessingTask = new PayNowPrepaymentProcessingTask<PayNowActivity>(this,
                 null, mOrderId, mSelectedPaymentMethod, true, false, isPayUOptionVisible, val) {
             @Override
