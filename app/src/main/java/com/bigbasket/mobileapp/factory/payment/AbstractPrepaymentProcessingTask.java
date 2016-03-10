@@ -57,9 +57,11 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
     private long minDuation;
     private boolean isPaused;
     private boolean isPayUOptionVisible;
+    protected int wallet;
+    protected boolean paymentGatewayOpened = false;
 
     public AbstractPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
-                                            String paymentMethod, boolean isPayNow, boolean isFundWallet, boolean isPayUOptionVisible) {
+                                            String paymentMethod, boolean isPayNow, boolean isFundWallet, boolean isPayUOptionVisible, int wallet) {
 
         this.ctx = ctx;
         this.potentialOrderId = potentialOrderId;
@@ -69,6 +71,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         this.isFundWallet = isFundWallet;
         this.isPayUOptionVisible = isPayUOptionVisible;
         this.isPaymentParamsAlreadyAvailable = false;
+        this.wallet = wallet;
     }
 
     public AbstractPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
@@ -87,6 +90,20 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         this.mPayzappPostParams = mPayzappPostParams;
         this.isPaymentParamsAlreadyAvailable = true;
     }
+
+    public AbstractPrepaymentProcessingTask(T ctx, String potentialOrderId, String orderId,
+                                            String paymentMethod, boolean isPayNow, boolean isFundWallet, boolean isPayUOptionVisible) {
+
+        this.ctx = ctx;
+        this.potentialOrderId = potentialOrderId;
+        this.paymentMethod = paymentMethod;
+        this.orderId = orderId;
+        this.isPayNow = isPayNow;
+        this.isFundWallet = isFundWallet;
+        this.isPayUOptionVisible = isPayUOptionVisible;
+        this.isPaymentParamsAlreadyAvailable = false;
+    }
+
 
     public void setMinDuration(long minDuration) {
         this.minDuation = minDuration;
@@ -140,7 +157,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         return txnOrderId;
     }
 
-    public void setTxnOrderId(String txnOrderId){
+    public void setTxnOrderId(String txnOrderId) {
         this.txnOrderId = txnOrderId;
     }
 
@@ -359,6 +376,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
      * @param paymentMethod:String
      */
     private void startPaymentGateway(String paymentMethod) {
+        paymentGatewayOpened = true;
         Activity activity = ctx.getCurrentActivity();
         switch (paymentMethod) {
             case Constants.PAYU:
@@ -381,6 +399,8 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                 break;
             case Constants.BB_WALLET:
                 //TODO: invoke onActivityResult
+            default:
+                paymentGatewayOpened = false;
         }
     }
 

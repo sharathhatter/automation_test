@@ -440,7 +440,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
     }
 
     @Nullable
-    private String getAnalyticsFormattedScreeName() {
+    protected String getAnalyticsFormattedScreeName() {
         if (screenName == null) return null;
         switch (screenName) {
             case AbstractDynamicPageSyncService.HOME_PAGE:
