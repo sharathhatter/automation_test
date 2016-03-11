@@ -486,7 +486,18 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         }
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                FragmentManager fragmentMgr = getSupportFragmentManager();
+                int backStackCount = fragmentMgr.getBackStackEntryCount();
+                if(backStackCount > 0) {
+                    try {
+                        fragmentMgr.popBackStack();
+                    } catch (Exception ex) {
+                        Crashlytics.logException(ex);
+                    }
+                    return true;
+                } else {
+                    finish();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
