@@ -671,6 +671,7 @@ public class Constants {
     public static final int PREPAYMENT_ABORT_CONFIRMATION_DIALOG = 8006;
     public static final int OFFLINE_PAYMENT_SHOW_THANKYOU_ABORT_CONFIRMATION_DIALOG = 8007;
     public static final int PAYMENT_VALIDATION_FAILED = 8009;
+    public static final int CONTACT_PERMISSION_INFO_DIALOG = 8010;
 
 
     // App Indexing params

@@ -463,7 +463,8 @@
     <string name="promo_more_needed_format">"%1$s more needed for the promo"</string>
     <string name="sdcarderror">Please insert SD-card to display map.</string>
 
-    <string name="contacts_permission_rationale">Bigbasket needs permission to read email address from Contacts.Please enable Contacts permission from application settings.</string>
+    <string name="contacts_permission_reason">Bigbasket needs Contacts permission to read your email address from Google account</string>
+    <string name="contacts_permission_rationale">Bigbasket needs Contacts permission to read your email address from Google account. Please enable Contacts permission from application settings.</string>
     <string name="sms_permission_rationale">Bigbasket needs permission to auto populate OTP by reading SMS. Please enable SMS permission from application settings.</string>
     <string name="location_permission_rationale">Bigbasket needs GPS permission to automatically locate your location. Please enable Location permission from application settings.</string>
     <string name="attach_picture_permission_rationale">Bigbasket needs camera permission to take picture . Please enable Camera permission from application settings.</string>

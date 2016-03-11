@@ -9,16 +9,18 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.SignInUtils;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -32,42 +34,24 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import static com.bigbasket.mobileapp.util.SignInUtils.ConnectionMode;
+import static com.bigbasket.mobileapp.util.SignInUtils.NONE;
+import static com.bigbasket.mobileapp.util.SignInUtils.SIGN_IN;
+import static com.bigbasket.mobileapp.util.SignInUtils.SIGN_OUT;
+import static com.bigbasket.mobileapp.util.SignInUtils.REVOKE;
+import static com.bigbasket.mobileapp.util.SignInUtils.DIALOG_ERROR;
+import static com.bigbasket.mobileapp.util.SignInUtils.KEY_IS_RESOLVING;
+import static com.bigbasket.mobileapp.util.SignInUtils.KEY_CONNECTION_MODE;
+import static com.bigbasket.mobileapp.util.SignInUtils.KEY_SHOW_INITIAL_INFO;
 
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
  */
 public abstract class PlusBaseActivity extends BaseActivity {
+    
+    private boolean mShowInitialPermissionInfo = true;
 
-    private static final String TAG = "PlusBaseActivity";
-
-    // An integer error argument for play services error dialog
-    private static final String DIALOG_ERROR = "dialog_error";
-    private boolean mWaitingForPermission;
-
-
-    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({NONE, SIGN_IN, SIGN_OUT, REVOKE})
-    private @interface ConnectionMode {
-    }
-
-    private static final int NONE = 0;
-    private static final int SIGN_IN = 1;
-    private static final int REVOKE = 2;
-    private static final int SIGN_OUT = 3;
-
-    private
-    @ConnectionMode
-    int mConnectionMode = NONE;
-
-    /* Keys for persisting instance variables in savedInstanceState */
-    private static final String KEY_IS_RESOLVING = "is_resolving";
-    private static final String KEY_CONNECTION_MODE = "connection_mode";
-    private static final String KEY_WAIT_FOR_PERMISSION = "key_wait_for_permission";
+    private @ConnectionMode int mConnectionMode = NONE;
 
     /* Client for accessing Google APIs */
     private GoogleApiClient mGoogleApiClient;
@@ -83,8 +67,8 @@ public abstract class PlusBaseActivity extends BaseActivity {
         // Restore from saved instance state
         // [START restore_saved_instance_state]
         if (savedInstanceState != null) {
-            mIsResolving = savedInstanceState.getBoolean(KEY_IS_RESOLVING);
-            mWaitingForPermission = savedInstanceState.getBoolean(KEY_WAIT_FOR_PERMISSION);
+            mIsResolving = savedInstanceState.getBoolean(KEY_IS_RESOLVING, false);
+            mShowInitialPermissionInfo = savedInstanceState.getBoolean(KEY_SHOW_INITIAL_INFO, true);
             @ConnectionMode int mode = savedInstanceState.getInt(KEY_CONNECTION_MODE, NONE);
             mConnectionMode = mode;
             if (mConnectionMode != NONE) {
@@ -116,9 +100,15 @@ public abstract class PlusBaseActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(KEY_IS_RESOLVING, mIsResolving);
-        outState.putInt(KEY_CONNECTION_MODE, mConnectionMode);
-        outState.putBoolean(KEY_WAIT_FOR_PERMISSION, mWaitingForPermission);
+        if(mIsResolving) {
+            outState.putBoolean(KEY_IS_RESOLVING, mIsResolving);
+        }
+        if(mConnectionMode != NONE) {
+            outState.putInt(KEY_CONNECTION_MODE, mConnectionMode);
+        }
+        if(!mShowInitialPermissionInfo) {
+            outState.putBoolean(KEY_SHOW_INITIAL_INFO, mShowInitialPermissionInfo);
+        }
     }
     // [END on_save_instance_state]
 
@@ -166,7 +156,6 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
     protected void onPlusClientConnectFailed() {
         hideProgressView();
-
     }
 
     private void initializeGoogleApiClient() {
@@ -190,7 +179,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
                         // The GoogleApiClient will automatically attempt to re-connect.
                         // Any UI elements that depend on connection to Google APIs should
                         // be hidden or disabled until onConnected is called again.
-                        Log.w(TAG, "onConnectionSuspended:" + cause);
+                        Log.w(SignInUtils.PLUS_BASE_TAG, "onConnectionSuspended:" + cause);
                     }
                 })
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
@@ -200,10 +189,21 @@ public abstract class PlusBaseActivity extends BaseActivity {
                         // The user needs to select an account, grant permissions or resolve
                         // an error in order to sign in. Refer to the javadoc for
                         // ConnectionResult to see possible error codes.
-                        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+                        Log.d(SignInUtils.PLUS_BASE_TAG, "onConnectionFailed:" + connectionResult);
                         if (mIsResolving) {
                             // Already attempting to resolve an error.
+                            Log.w(SignInUtils.PLUS_BASE_TAG, "Already resolving");
                             return;
+                        } else if (mConnectionMode != SIGN_IN
+                                && connectionResult.getErrorCode() == ConnectionResult.SIGN_IN_REQUIRED){
+                            if (mConnectionMode == SIGN_OUT) {
+                                onPlusClientSignOut();
+                            } else {
+                                onPlusClientRevokeAccess();
+                            }
+                            mGoogleApiClient = null;
+                            resetConnectionMode();
+                            mIsResolving = false;
                         } else if (connectionResult.hasResolution()) {
                             try {
                                 mIsResolving = true;
@@ -229,8 +229,9 @@ public abstract class PlusBaseActivity extends BaseActivity {
     protected void signInViaGPlus() {
         // User clicked the sign-in button, so begin the sign-in process and automatically
         // attempt to resolve any errors that occur.
-        Log.d(TAG, "signInViaGPlus");
+        Log.d(SignInUtils.PLUS_BASE_TAG, "signInViaGPlus");
         mConnectionMode = SIGN_IN;
+        mShowInitialPermissionInfo = true;
         if (mGoogleApiClient != null) {
             mGoogleApiClient.reconnect();
         } else {
@@ -243,7 +244,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
      * Sign out the user (so they can switch to another account).
      */
     protected void signOutFromGplus() {
-        Log.d(TAG, "signOutFromGplus");
+        Log.d(SignInUtils.PLUS_BASE_TAG, "signOutFromGplus");
         mConnectionMode = SIGN_OUT;
         if (mGoogleApiClient == null) {
             initializeGoogleApiClient();
@@ -258,13 +259,16 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     private void signIn() {
-        if (handlePermission(Manifest.permission.GET_ACCOUNTS,
-                getString(R.string.contacts_permission_rationale),
-                Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS)) {
+        Log.d(SignInUtils.PLUS_BASE_TAG, "signIn :" + mShowInitialPermissionInfo);
+        if (mShowInitialPermissionInfo && !hasPermissionGranted(Manifest.permission.GET_ACCOUNTS)){
+            showAlertDialog("", getString(R.string.contacts_permission_reason),
+                    getString(R.string.ok), getString(R.string.cancel),
+                    Constants.CONTACT_PERMISSION_INFO_DIALOG, null, true);
+            mShowInitialPermissionInfo = false;
+        } else if(handlePermission(Manifest.permission.GET_ACCOUNTS,
+                null, Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS)) {
             signinUser();
-            mWaitingForPermission = false;
-        } else {
-            mWaitingForPermission = true;
+            resetConnectionMode();
         }
     }
 
@@ -293,13 +297,26 @@ public abstract class PlusBaseActivity extends BaseActivity {
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS:
-                mWaitingForPermission = false;
                 if (grantResults.length > 0 && permissions.length > 0
                         && permissions[0].equals(Manifest.permission.GET_ACCOUNTS)
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     signinUser();
                 } else {
+                    onStateNotSaved();
                     onAuthCancelled();
+                    View contentView = findViewById(android.R.id.content);
+                    if(contentView == null) {
+                        contentView = getWindow().getDecorView();
+                    }
+                    Snackbar snackbar = Snackbar.make(contentView,
+                            R.string.contacts_permission_rationale, Snackbar.LENGTH_LONG);
+                    snackbar.setAction(R.string.action_settings, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startPermissionsSettingsActivity(getCurrentActivity());
+                        }
+                    });
+                    snackbar.show();
                 }
                 break;
             default:
@@ -312,6 +329,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
         mGoogleApiClient.disconnect();
         mGoogleApiClient = null;
         onPlusClientSignOut();
+        resetConnectionMode();
     }
 
     private void fetchAuthToken(String accountName) {
@@ -320,7 +338,9 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
     @Override
     protected void onNegativeButtonClicked(int requestCode, Bundle data) {
-        if(requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS &&
+        if (requestCode == Constants.CONTACT_PERMISSION_INFO_DIALOG){
+            onAuthCancelled();
+        } else if (requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS &&
                 data != null &&
                 data.getInt(Constants.KEY_PERMISSION_RC) ==
                         Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS ) {
@@ -332,7 +352,9 @@ public abstract class PlusBaseActivity extends BaseActivity {
 
     @Override
     public void onDialogCancelled(int requestCode, Bundle data) {
-        if(requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS &&
+        if (requestCode == Constants.CONTACT_PERMISSION_INFO_DIALOG){
+            onAuthCancelled();
+        } else if(requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS &&
                 data != null &&
                 data.getInt(Constants.KEY_PERMISSION_RC) ==
                         Constants.PERMISSION_REQUEST_CODE_GET_ACCOUNTS ) {
@@ -343,24 +365,34 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     @Override
+    protected void onPositiveButtonClicked(int requestCode, Bundle valuePassed) {
+        if (requestCode == Constants.CONTACT_PERMISSION_INFO_DIALOG){
+            signIn();
+        } else {
+            super.onPositiveButtonClicked(requestCode, valuePassed);
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
         onStateNotSaved();
         if (requestCode == NavigationCodes.RC_RESOLVE_CONNECT_ERROR) {
-            if (mGoogleApiClient == null) {
+            mIsResolving = false;
+            if(mGoogleApiClient == null) {
                 initializeGoogleApiClient();
             }
-            mIsResolving = false;
             if (resultCode == RESULT_OK) {
                 // Make sure the app is not already connected or attempting to connect
                 if (!mGoogleApiClient.isConnecting() &&
                         !mGoogleApiClient.isConnected()) {
+                    Log.d(SignInUtils.PLUS_BASE_TAG, "Connecting again, mode:" + mConnectionMode);
                     mGoogleApiClient.connect();
                 }
             } else {
                 //User cancelled
                 try {
+                    mConnectionMode = REVOKE;
                     //Clear the selected account
                     revokeGPlusAccess();
                 } catch (IllegalStateException ex) {
@@ -391,9 +423,6 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 //User cancelled
                 onAuthCancelled();
             }
-        } else if (requestCode == NavigationCodes.RC_PERMISSIONS_SETTINGS && mWaitingForPermission){
-            mConnectionMode = SIGN_IN;
-            signIn();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -413,8 +442,6 @@ public abstract class PlusBaseActivity extends BaseActivity {
                 clearAndRevokeAccount();
                 break;
         }
-        resetConnectionMode();
-
     }
 
     private void onGoogleClientConnectFailed() {
@@ -468,6 +495,7 @@ public abstract class PlusBaseActivity extends BaseActivity {
             //Ignore for now
             Crashlytics.logException(ex);
         }
+        resetConnectionMode();
     }
 
     private void onAuthFailed(Exception authException) {
@@ -516,12 +544,14 @@ public abstract class PlusBaseActivity extends BaseActivity {
     }
 
     private void resetConnectionMode() {
+        Log.d(SignInUtils.PLUS_BASE_TAG, "Reset connection mode");
         mConnectionMode = NONE;
+        mIsResolving = false;
     }
 
 
     protected void revokeGPlusAccess() {
-        Log.d(TAG, "revokeGPlusAccess");
+        Log.d(SignInUtils.PLUS_BASE_TAG, "revokeGPlusAccess");
         mConnectionMode = REVOKE;
         if (mGoogleApiClient == null) {
             initializeGoogleApiClient();

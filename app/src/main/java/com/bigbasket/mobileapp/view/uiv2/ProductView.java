@@ -328,7 +328,7 @@ public final class ProductView {
                 layoutExpressMsg.setVisibility(View.GONE);
             }
         } else {
-            ArrayList<String> msgs = new ArrayList<>();
+            ArrayList<String> msgs = new ArrayList<>(storeAvailabilityArrayList.size());
             for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
                 String msg = getDeliveryTimeAnnotation(particularStoreMap, allStoreAvailabilityMsgMap);
                 if (!TextUtils.isEmpty(msg)) {
