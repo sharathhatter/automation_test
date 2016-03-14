@@ -159,13 +159,11 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 if (orderListAdapter.isInSelectionMode()) {
                     layoutCheckoutFooter.setVisibility(View.GONE);
                     onOrderSelectionChanged(0, 0);//resetting the action-bar
-                } else {
-                    super.onBackPressed();
+                    return;
                 }
             }
-        } else {
-            super.onBackPressed();
         }
+        super.onBackPressed();
     }
 
     @Override
