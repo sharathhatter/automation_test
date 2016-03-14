@@ -285,11 +285,11 @@ public class ChangeAddressFragment extends BaseFragment implements AddressSelect
             case MemberAddressPageMode.ADDRESS_SELECT:
                 return getString(R.string.chooseAddress);
             case MemberAddressPageMode.ACCOUNT:
-                return getString(R.string.delivery_address);
+                return getString(R.string.delivery_addresses);
             case MemberAddressPageMode.CHECKOUT:
                 return getString(R.string.chooseDelAddress);
             default:
-                return getString(R.string.delivery_address);
+                return getString(R.string.delivery_addresses);
         }
     }
 
