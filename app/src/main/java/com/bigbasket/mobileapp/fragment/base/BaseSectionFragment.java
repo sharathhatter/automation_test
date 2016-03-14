@@ -34,7 +34,7 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
     public View getSectionView(boolean isHelp) {
         if(sectionView == null) {
             sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData,
-                    mScreenName, isHelp, false);
+                    mScreenName, isHelp, true);
         }
         return sectionView.getView();
     }
