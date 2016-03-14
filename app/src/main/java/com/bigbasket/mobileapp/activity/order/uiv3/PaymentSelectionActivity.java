@@ -112,6 +112,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
         setCurrentScreenName(TrackEventkeys.CO_PAYMENT);
         setTitle(getString(R.string.placeorder));
 
+        mPotentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
+        mSelectedShipment = getIntent().getStringExtra(Constants.SHIPMENTS);
+
         //restoring from savedinstance bundle
         if (savedInstanceState != null) {
             mOrderDetails = savedInstanceState.getParcelable(Constants.ORDER_DETAILS);
@@ -121,16 +124,18 @@ public class PaymentSelectionActivity extends BackButtonActivity
             mAppliedVoucherCode = savedInstanceState.getString(Constants.EVOUCHER_CODE);
             knowMoreUrl = savedInstanceState.getString(Constants.SHOW_PAYMENT_OPTIONS_KNOW_MORE);
         } else {
-            mPotentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
-            mSelectedShipment = getIntent().getStringExtra(Constants.SHIPMENTS);
             knowMoreUrl = getIntent().getStringExtra(Constants.NEW_FLOW_URL);
             mOrderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
             mWalletOption = getIntent().getParcelableExtra(Constants.WALLET_OPTION);
+            paymentTypeList = getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES);
+            mAppliedVoucherCode = getIntent().getStringExtra(Constants.EVOUCHER_CODE);
+            mActiveVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
         }
 
         if (TextUtils.isEmpty(mPotentialOrderId) || TextUtils.isEmpty(mSelectedShipment)) {
             //should never occur
             showToast(getString(R.string.potentialOrderIdExpired));
+            setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
             finish();
             return;
         }
@@ -251,10 +256,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void renderPaymentDetails() {
-        mActiveVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
-        mAppliedVoucherCode = getIntent().getStringExtra(Constants.EVOUCHER_CODE);
-        paymentTypeList = getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES);
-
         paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
         ArrayList<CreditDetails> creditDetails = getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS);
         renderPaymentMethodsView();

@@ -309,7 +309,8 @@
 
     <!-- address -->
     <string name="expressAvailable"> \u0020 Express Delivery is available!</string>
-    <string name="delivery_address">Delivery Addresses</string>
+    <string name="delivery_address">Delivery Address</string>
+    <string name="delivery_addresses">Delivery Addresses</string>
     <string name="addNewAddress">Add New Address</string>
     <string name="save">SAVE</string>
     <string name="saveAndContinue">Save and Continue</string>
