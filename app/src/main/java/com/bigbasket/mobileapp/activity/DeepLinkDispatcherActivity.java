@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.handler.SilentDeepLinkHandler;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -27,7 +28,9 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handler = new SilentDeepLinkHandler<>(this);
-        launchCorrespondingActivity();
+        if(savedInstanceState == null) {
+            launchCorrespondingActivity();
+        }
     }
 
     @Override
@@ -38,7 +41,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     private void launchCorrespondingActivity() {
         Uri uri = getIntent().getData();
         if (uri == null) {
-            finish();
+            goToHome();
             return;
         }
 
@@ -54,6 +57,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             Bundle data = new Bundle(1);
             data.putString(Constants.DEEPLINK_URL, uri.toString());
             launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, data, true);
+            finish();
         } else if (resultCode == DeepLinkHandler.REGISTER_DEVICE_REQUIRED) {
             /**
              * launch splash activity for visitor registration
@@ -96,39 +100,6 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
 
     }
 
-//    private void setAppInBackGround(final Context context) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                boolean isInBackground = true;
-//                ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-//                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-//                    List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-//                    for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-//                        if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-//                            for (String activeProcess : processInfo.pkgList) {
-//                                if (activeProcess.equals(context.getPackageName())) {
-//                                    isInBackground = false;
-//                                }
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-//                    ComponentName componentInfo = taskInfo.get(0).topActivity;
-//                    if (componentInfo.getPackageName().equals(context.getPackageName())) {
-//                        isInBackground = false;
-//                    }
-//                }
-//            }
-//        });
-//    }
-
-    /**
-     * MoEHelperUtils.dumpIntentExtras for dumping all extras
-     * MoEHelperConstants.NAVIGATION_*
-     */
-
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -162,4 +133,18 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
+    @Override
+    public void goToHome() {
+        super.goToHome();
+        finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == NavigationCodes.GO_TO_HOME) {
+            handleBackStack();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }

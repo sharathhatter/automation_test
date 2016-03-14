@@ -41,8 +41,8 @@ import android.widget.Toast;
 
 import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.CommunicationHubActivity;
 import com.bigbasket.mobileapp.activity.HomeActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.BBUnifiedInboxActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ChooseLocationActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
@@ -83,6 +83,7 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
+import com.newrelic.agent.android.instrumentation.Trace;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,7 +106,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected MoEHelper moEHelper;
     private boolean isActivitySuspended;
     private ProgressDialog progressDialog = null;
-    private AppEventsLogger fbLogger;
     private String mNavigationContext;
     private String mNextScreenNavigationContext;
 
@@ -151,9 +151,19 @@ public abstract class BaseActivity extends AppCompatActivity implements
         faceRobotoBold = fontHolder.getFaceRobotoBold();
         faceRobotoLight = fontHolder.getFaceRobotoLight();
         moEHelper = MoEngageWrapper.getMoHelperObj(getApplicationContext());
-        fbLogger = AppEventsLogger.newLogger(getApplicationContext());
         mNavigationContext = getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX);
         NewRelic.setInteractionName(getClass().getSimpleName());
+    }
+
+    @Override
+    public void onBackPressed() {
+        //Workaround to avoid IllegalStateException: Can not perform this action after onSaveInstanceState
+        onStateNotSaved();
+        try {
+            super.onBackPressed();
+        } catch (Exception ex) {
+            Crashlytics.logException(ex);
+        }
     }
 
     public MoEHelper getMoEHelper() {
@@ -242,6 +252,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return this;
     }
 
+    @Trace
     @Override
     protected void onStart() {
         super.onStart();
@@ -282,10 +293,24 @@ public abstract class BaseActivity extends AppCompatActivity implements
         FacebookEventTrackWrapper.activateApp(getApplicationContext());
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        moEHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        moEHelper.onRestoreInstanceState(savedInstanceState);
+    }
+
     public void launchMoEngageCommunicationHub() {
         AuthParameters authParameters = AuthParameters.getInstance(getApplicationContext());
         if (!authParameters.isAuthTokenEmpty()) {
-            Intent communicationHunIntent = new Intent(this, BBUnifiedInboxActivity.class);
+            Intent communicationHunIntent = new Intent(this, CommunicationHubActivity.class);
+            communicationHunIntent.putExtra(Constants.COMMUNICATION_HUB_FAQ_SHOW, false);
+            communicationHunIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(communicationHunIntent);
         } else {
             showToast(getString(R.string.loginToContinue));
@@ -299,15 +324,34 @@ public abstract class BaseActivity extends AppCompatActivity implements
         trackEvent(TrackingAware.COMMUNICATION_HUB_SHOWN, eventAttribs);
     }
 
-    public void showAlertDialog(String title, String msg) {
+    public void launchMoEngageCommunicationHubWithFAQ() {
+        AuthParameters authParameters = AuthParameters.getInstance(getApplicationContext());
+        if (!authParameters.isAuthTokenEmpty()) {
+            Intent communicationHunIntent = new Intent(this, CommunicationHubActivity.class);
+            communicationHunIntent.putExtra(Constants.COMMUNICATION_HUB_FAQ_SHOW, true);
+
+            startActivity(communicationHunIntent);
+        } else {
+            showToast(getString(R.string.loginToContinue));
+            Bundle bundle = new Bundle(1);
+            bundle.putInt(Constants.FRAGMENT_CODE, FragmentCodes.START_COMMUNICATION_HUB);
+            launchLogin(getPreviousScreenName(), bundle, true);
+        }
+
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
+        trackEvent(TrackingAware.COMMUNICATION_HUB_SHOWN, eventAttribs);
+    }
+
+    public void showAlertDialog(CharSequence title, CharSequence msg) {
         showAlertDialog(title, msg, -1);
     }
 
-    public void showAlertDialog(String title, String msg, int requestCode) {
+    public void showAlertDialog(CharSequence title, CharSequence msg, int requestCode) {
         showAlertDialog(title, msg, requestCode, null);
     }
 
-    public void showAlertDialog(String title, String msg, final int requestCode, final Bundle valuePassed) {
+    public void showAlertDialog(CharSequence title, CharSequence msg, final int requestCode, final Bundle valuePassed) {
 
         if (isSuspended())
             return;
@@ -342,11 +386,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     }
 
-    public void showAlertDialogFinish(String title, String msg) {
+    public void showAlertDialogFinish(CharSequence title, CharSequence msg) {
         showAlertDialogFinish(title, msg, -1);
     }
 
-    public void showAlertDialogFinish(String title, String msg, final int resultCode) {
+    public void showAlertDialogFinish(CharSequence title, CharSequence msg, final int resultCode) {
         if (isSuspended())
             return;
         Bundle data = new Bundle(2);
@@ -362,25 +406,25 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void showAlertDialog(String msg) {
+    public void showAlertDialog(CharSequence msg) {
         showAlertDialog(null, msg);
     }
 
-    public void showAlertDialog(String title,
-                                String msg, @DialogButton.ButtonType int dialogButton,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton, final int requestCode) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, requestCode, null, null);
     }
 
-    public void showAlertDialog(String title,
-                                String msg, @DialogButton.ButtonType int dialogButton,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
                                 final Bundle passedValue) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, requestCode, passedValue, null);
     }
 
-    public void showAlertDialog(String title,
-                                String msg, @DialogButton.ButtonType int dialogButton,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
                                 final Bundle passedValue, String positiveBtnText) {
         String negativeButtonText = null;
@@ -413,15 +457,16 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void showAlertDialog(String title,
-                                String msg, String positiveBtnText,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, String positiveBtnText,
                                 String negativeBtnText, final int requestCode,
                                 final Bundle passedValue) {
         showAlertDialog(title, msg, positiveBtnText, negativeBtnText, requestCode, passedValue,
                 false);
     }
 
-    public void showAlertDialog(String title, String msg, String positiveBtnText,
+
+    public void showAlertDialog(CharSequence title, CharSequence msg, String positiveBtnText,
                                 String negativeBtnText, final int requestCode,
                                 final Bundle passedValue, boolean isCancellable) {
             if (isSuspended())
@@ -436,8 +481,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void showAlertDialog(String title,
-                                String msg, @DialogButton.ButtonType int dialogButton,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, 0);
     }
@@ -612,6 +657,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 for (Map.Entry<String, String> entry : mapAttr.entrySet()) {
                     bundleAttr.putString(entry.getKey(), entry.getValue());
                 }
+                AppEventsLogger fbLogger = AppEventsLogger.newLogger(getApplicationContext());
                 FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName, Double.parseDouble(valueToSum), bundleAttr);
             }
         } catch (Exception e) {
@@ -709,6 +755,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         if (sendToFacebook && authParameters.isFBLoggerEnabled()) {
+            AppEventsLogger fbLogger = AppEventsLogger.newLogger(getApplicationContext());
             if (eventAttribs != null) {
                 Bundle paramBundle = new Bundle();
                 for (Map.Entry<String, String> eventAttrib : eventAttribs.entrySet())
@@ -721,12 +768,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message) {
         showAlertDialog(title, message);
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, boolean finish) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, boolean finish) {
         if (finish) {
             showAlertDialogFinish(title, message);
         } else {
@@ -735,12 +782,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, int requestCode, Bundle valuePassed) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, int requestCode, Bundle valuePassed) {
         showAlertDialog(title, message, requestCode, valuePassed);
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, int resultCode) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, int resultCode) {
         showAlertDialogFinish(title, message, resultCode);
     }
 
@@ -821,8 +868,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void launchLogin(String navigationCtx, boolean shouldGoBackToHomePage) {
         launchLogin(navigationCtx, null, shouldGoBackToHomePage);
     }
-
     public void launchLogin(String navigationCtx, Bundle params, boolean shouldGoBackToHomePage) {
+        launchLogin(navigationCtx, params, shouldGoBackToHomePage, NavigationCodes.GO_TO_HOME);
+    }
+
+    public void launchLogin(String navigationCtx, Bundle params, boolean shouldGoBackToHomePage,
+                            int requestCode) {
         Intent loginIntent = new Intent(this, SignInActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         loginIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
@@ -834,7 +885,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 loginIntent.putExtra(Constants.FRAGMENT_CODE, params.getInt(Constants.FRAGMENT_CODE));
             }
         }
-        startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
+        startActivityForResult(loginIntent, requestCode);
     }
 
     protected void changeCity(City city) {

@@ -32,4 +32,5 @@ public class GetAppDataDynamicResponse {
 
     @SerializedName(Constants.USER_SELECTED_ADDRESS)
     public Address userSelectedAddress;
+
 }

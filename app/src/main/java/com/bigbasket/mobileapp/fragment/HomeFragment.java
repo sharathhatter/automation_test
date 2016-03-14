@@ -53,6 +53,7 @@ import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
 import com.crashlytics.android.Crashlytics;
 import com.moengage.widgets.NudgeView;
+import com.newrelic.agent.android.instrumentation.Trace;
 
 import java.util.ArrayList;
 
@@ -116,11 +117,6 @@ public class HomeFragment extends BaseSectionFragment {
         if (contentView != null) {
             contentView.removeAllViews();
         }
-        if (mRecyclerView != null) {
-            mRecyclerView.setAdapter(null);
-            mRecyclerView.removeAllViews();
-        }
-        mRecyclerView = null;
         if (getActivity() != null && !getActivity().isFinishing()) {
             showProgressView();
         }
@@ -147,6 +143,7 @@ public class HomeFragment extends BaseSectionFragment {
         setCurrentScreenName(TrackEventkeys.HOME);
     }
 
+    @Trace
     private boolean isVisitorUpdateNeeded() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String storedVersionNumber = preferences.getString(Constants.VERSION_NAME, null);
@@ -249,6 +246,7 @@ public class HomeFragment extends BaseSectionFragment {
                 });
     }
 
+    @Trace
     private void handleHomePageResponse(@Nullable GetDynamicPageApiResponse getDynamicPageApiResponse) {
         SectionData sectionData = getDynamicPageApiResponse != null ?
                 getDynamicPageApiResponse.sectionData : null;
@@ -259,6 +257,7 @@ public class HomeFragment extends BaseSectionFragment {
         }
     }
 
+    @Trace
     private void renderHomePage() {
         ViewGroup contentView = getContentView();
         SectionData sectionData = getSectionData();
@@ -281,13 +280,15 @@ public class HomeFragment extends BaseSectionFragment {
 
     public void syncDynamicTiles() {
         if (isSuspended() || isDetached()) return;
-        if (mDynamicTiles != null && mDynamicTiles.size() > 0 && mRecyclerView != null) {
+        if (mDynamicTiles != null && mDynamicTiles.size() > 0
+                && mRecyclerView != null && mRecyclerView.getAdapter() != null) {
             for (Integer i : mDynamicTiles) {
                 mRecyclerView.getAdapter().notifyItemChanged(i);
             }
         }
     }
 
+    @Trace
     private void processPendingDeepLink() {
         if (getCurrentActivity() == null) return;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -324,11 +325,13 @@ public class HomeFragment extends BaseSectionFragment {
         return getString(R.string.app_name);
     }
 
+    @Trace
     @Override
     public ViewGroup getContentView() {
         return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
+    @Trace
     private void displayHomePageError(String msg, int errorDrawableId) {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();
@@ -363,16 +366,19 @@ public class HomeFragment extends BaseSectionFragment {
         return HomeFragment.class.getName();
     }
 
+    @Trace
     private void setAppCapability(AppCapability appCapability) {
         if (appCapability == null) return;
         AuthParameters.getInstance(getCurrentActivity()).setAppCapability(appCapability.isNewRelicEnabled(), appCapability.isMoEngageEnabled(),
                 appCapability.isAnalyticsEnabled(),
                 appCapability.isFBLoggerEnabled(),
                 appCapability.isMultiCityEnabled(),
+                appCapability.isRatingsEnabled(),
                 getCurrentActivity());
         AuthParameters.reset();
     }
 
+    @Trace
     private void callGetAppData(String client, String versionName) {
         if (getCurrentActivity() == null) return;
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) return;
@@ -394,18 +400,20 @@ public class HomeFragment extends BaseSectionFragment {
                     AppCapability appCapability = callbackAppDataResponse.apiResponseContent.capabilities;
                     setAppCapability(appCapability);
                     LoginUserDetails userDetails = callbackAppDataResponse.apiResponseContent.userDetails;
+                    SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
                     if (userDetails != null) {
-                        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
                         UIUtil.updateStoredUserDetails(getCurrentActivity(), userDetails,
                                 prefer.getString(Constants.MEMBER_EMAIL_KEY, ""),
                                 prefer.getString(Constants.MID_KEY, ""));
                     }
+
                     HDFCPayzappHandler.setTimeOut(getCurrentActivity(),
                             callbackAppDataResponse.apiResponseContent.hdfcPayzappExpiry);
                     savePopulateSearcher(callbackAppDataResponse.apiResponseContent.topSearches);
                     AppDataSyncHandler.updateLastAppDataCall(getCurrentActivity());
                     CityManager.setCityCacheExpiry(getCurrentActivity(),
                             callbackAppDataResponse.apiResponseContent.cityCacheExpiry);
+
                 }
                 // Fail silently
             }
@@ -427,6 +435,7 @@ public class HomeFragment extends BaseSectionFragment {
         });
     }
 
+    @Trace
     private void savePopulateSearcher(ArrayList<String> topSearchList) {
         if (topSearchList == null) return;
         String topSearchCommaSeparatedString = UIUtil.sentenceJoin(topSearchList, ",");
@@ -436,7 +445,7 @@ public class HomeFragment extends BaseSectionFragment {
         editor.apply();
     }
 
-
+    @Trace
     private void showUpgradeAppDialog(String appExpiredBy, String upgradeMsg, String latestAppVersion) {
         if (TextUtils.isEmpty(appExpiredBy)) return;
         int updateValue = AppUpdateHandler.handleUpdateDialog(appExpiredBy.replace("-", "/"), getCurrentActivity());

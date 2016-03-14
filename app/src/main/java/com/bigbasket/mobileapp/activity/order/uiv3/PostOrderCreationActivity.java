@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
 import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.factory.payment.OrderPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
@@ -50,7 +51,11 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
     private String mOrderAmount;
     private String mAddMoreLink, mAddMoreMsg;
     private ValidatePaymentRequest validatePaymentRequest;
-    public static final String VALIDATE_PAYMENT_REQUEST_PARAMS = "validate_payment_request_params";
+
+    //variables for payment results
+    private String REQUEST_CODE = "request_code";
+    private String RESULT_CODE = "result_code";
+    private String INTENT_DATA = "intent_data";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,20 +64,12 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
         setCurrentScreenName(TrackEventkeys.CO_PAYMENT_POST_ORDER_CREATION);
 
         if (savedInstanceState != null) {
-
-            if (mTxnId == null) {
-                mTxnId = savedInstanceState.getString(Constants.TXN_ID);
-            }
-            if (mSelectedPaymentMethod == null) {
-                mSelectedPaymentMethod = savedInstanceState.getString(Constants.PAYMENT_METHOD);
-            }
+            mTxnId = savedInstanceState.getString(Constants.TXN_ID);
             mIsPrepaymentProcessingStarted =
                     savedInstanceState.getBoolean(PaymentSelectionActivity.IS_PREPAYMENT_TASK_STARTED, false);
             mIsPrepaymentAbortInitiated =
                     savedInstanceState.getBoolean(PaymentSelectionActivity.IS_PREPAYMENT_ABORT_INITIATED, false);
             mOrderAmount = savedInstanceState.getString(Constants.AMOUNT);
-
-            validatePaymentRequest = savedInstanceState.getParcelable(VALIDATE_PAYMENT_REQUEST_PARAMS);
 
         }
 
@@ -94,8 +91,11 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
             mPayzappPostParams = bundle.getParcelable(PaymentSelectionActivity.PAYZAPP_PAYMENT_PARAMS);
             mAddMoreLink = bundle.getString(Constants.ADD_MORE_LINK);
             mAddMoreMsg = bundle.getString(Constants.ADD_MORE_MSG);
-            if (isPaymentPending() && savedInstanceState != null) {
-                startPrepaymentProcessing(savedInstanceState);
+            if (savedInstanceState != null) {
+                //Start the payment processing only if it was kept pending before going to background
+                if (isPaymentPending()) {
+                    startPrepaymentProcessing(savedInstanceState);
+                }
             } else {
                 startPrepaymentProcessing(null);
             }
@@ -181,6 +181,7 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
         mOrderAmount = amount;
     }
 
+
     @Override
     protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
         switch (sourceName) {
@@ -201,22 +202,38 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
                     validatePaymentRequest =
                             new ValidatePaymentRequest(txnId, fullOrderId, mPotentialOrderId,
                                     null);  // Passing payment method as null to convert it to COD
-                    new ValidatePayment<>(this, validatePaymentRequest, new BigBasketRetryMessageHandler(this, this)).validate(null);
+                    HashMap<String, String> additionalParams = null;
+                    if(mSelectedPaymentMethod != null) {
+                        switch (mSelectedPaymentMethod) {
+                            case Constants.HDFC_POWER_PAY:
+                                additionalParams = new HashMap<>(3);
+                                additionalParams.put(Constants.ERR_RES_CODE, "-1");
+                                additionalParams.put(Constants.ERR_RES_DESC, "User cancelled");
+                                additionalParams.put(Constants.STATUS, "0");
+                                break;
+                        }
+                    }
+                    new ValidatePayment<>(this, validatePaymentRequest,
+                            new BigBasketRetryMessageHandler(this, this))
+                            .validate(additionalParams);
                 } else {
                     showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
                 }
                 break;
-
             case ApiErrorCodes.INVALID_FIELD://error that cannot be retried and unexpected..logging the order number in Crashlytics
                 if (mOrdersCreated != null) {
                     Crashlytics.log(ApiErrorCodes.INVALID_FIELD + mOrdersCreated.get(0).getOrderNumber());
                 }
             case Constants.OFFLINE_PAYMENT_SHOW_THANKYOU_ABORT_CONFIRMATION_DIALOG://retry option,validating payment again
-                fullOrderId = mOrdersCreated.get(0).getOrderNumber();
-                validatePaymentRequest =
-                        new ValidatePaymentRequest(mTxnId, fullOrderId, mPotentialOrderId,
-                                mSelectedPaymentMethod);
-                new ValidatePayment<>(this, validatePaymentRequest, new BigBasketRetryMessageHandler(this, this)).validate(null);
+                /**
+                 * if the payment method is Paytm pass the bundle to paytmresponse handler
+                 * if payment methods is others, call the onActivity result passing the request_code, result_code,and the intent data.
+                 */
+                if (mSelectedPaymentMethod.equalsIgnoreCase(Constants.PAYTM_WALLET)) {
+                    PaytmResponseHolder.processPaytmRetryResponse(this, new BigBasketRetryMessageHandler(this, this),valuePassed);
+                } else if (valuePassed != null) {
+                    onActivityResult(valuePassed.getInt(REQUEST_CODE), valuePassed.getInt(RESULT_CODE), (Intent) valuePassed.getParcelable(INTENT_DATA));
+                }
                 trackEvent(TrackingAware.ORDER_VALIDATION_RETRY_SELECTED, null);
                 break;
 
@@ -255,15 +272,21 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
         super.onActivityResult() would invoke the same and avoid this error
         Otherwise fragment operations have to be performed after onResumeFragments call
         */
+
         onStateNotSaved();
         setSuspended(false);
         boolean handled = false;
         if (mOrdersCreated != null) {
+            Bundle bundle = new Bundle(3);
+            bundle.putInt(REQUEST_CODE, requestCode);
+            bundle.putInt(RESULT_CODE, resultCode);
+            bundle.putParcelable(INTENT_DATA, data);
+
             validatePaymentRequest =
                     new ValidatePaymentRequest(mTxnId, mOrdersCreated.get(0).getOrderNumber(),
                             mPotentialOrderId, mSelectedPaymentMethod);
             validatePaymentRequest.setFinalTotal(mOrderAmount);
-            ValidatePayment validatePayment = new ValidatePayment<>(this, validatePaymentRequest, new BigBasketRetryMessageHandler(this, this));
+            ValidatePayment validatePayment = new ValidatePayment<>(this, validatePaymentRequest, new BigBasketRetryMessageHandler(this, this, bundle));
             handled = validatePayment.onActivityResult(requestCode, resultCode, data);
             if (!handled) {
                 super.onActivityResult(requestCode, resultCode, data);
@@ -284,9 +307,6 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
         }
         if (mOrderAmount != null) {
             outState.putString(Constants.AMOUNT, mOrderAmount);
-        }
-        if (mPayzappPostParams != null) {
-            outState.putParcelable(VALIDATE_PAYMENT_REQUEST_PARAMS, validatePaymentRequest);
         }
 
         super.onSaveInstanceState(outState);

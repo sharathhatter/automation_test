@@ -11,6 +11,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.OnLogoutListener;
@@ -76,6 +77,9 @@ public class LogoutTask extends AsyncTask<Void, Void, ErrorResponse> {
         editor.remove(Constants.MEMBER_EMAIL_KEY);
         editor.remove(Constants.UPDATE_PROFILE_IMG_URL);
         editor.remove(Constants.IS_KIRANA);
+        editor.remove(Constants.HAS_USER_GIVEN_RATING);
+        editor.remove(Constants.DATE_SINCE_RATING_HAS_SHOWN);
+        editor.remove(Constants.DAYS_PERIOD);
         editor.commit();
         AuthParameters.reset();
         AppDataDynamic.reset(appOperationAware.getCurrentActivity());
@@ -99,7 +103,8 @@ public class LogoutTask extends AsyncTask<Void, Void, ErrorResponse> {
         NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, null);
         NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, null);
         NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
-        NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.APP_VERSION, null);
+
+        BaseApplication.updateGAUserId(appOperationAware.getCurrentActivity(), null);
 
         if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
             Gson gson = new Gson();

@@ -337,7 +337,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/member/credit/"
                     android:scheme="http" />
             </intent-filter>
@@ -348,7 +348,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/member/credit/"
                     android:scheme="https" />
             </intent-filter>
@@ -385,7 +385,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/payment/wallet/"
                     android:scheme="http" />
             </intent-filter>
@@ -396,7 +396,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/payment/wallet/"
                     android:scheme="https" />
             </intent-filter>
@@ -433,7 +433,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/payment/pay_now/"
                     android:pathPattern="/payment/pay_now/.*"
                     android:scheme="http" />
@@ -445,7 +445,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/payment/pay_now/"
                     android:pathPattern="/payment/pay_now/.*"
                     android:scheme="https" />
@@ -481,7 +481,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/member/active-orders/"
                     android:scheme="http" />
             </intent-filter>
@@ -492,7 +492,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="*.bigbasket.com"
+                    android:host="www.bigbasket.com"
                     android:path="/member/active-orders/"
                     android:scheme="https" />
             </intent-filter>
@@ -670,6 +670,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <activity
             android:name="com.bigbasket.mobileapp.activity.payment.PayNowThankyouActivity"
             android:screenOrientation="portrait"
@@ -701,9 +702,9 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name="com.bigbasket.mobileapp.activity.specialityshops.BBSpecialityShopsActivity"
-            android:theme="@style/BackButtonTheme"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
+            android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <provider
@@ -733,12 +734,7 @@
         </receiver>
 
         <!-- MOENGAGE RECEIVER FOR RECEIVING INSTALLATION INTENT -->
-        <receiver android:name="com.moe.pushlibrary.InstallReceiver">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver">
+        <receiver android:name="com.bigbasket.mobileapp.receivers.AppUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
@@ -776,20 +772,29 @@
         <!-- MANDATORY FIELD: THE NOTIFICATION ICON WHICH WILL BE USED TO SET TO NOTIFICATIONS POSTED -->
         <meta-data
             android:name="NOTIFICATION_ICON"
-            android:value="notification_icon_large_bbw" />
+            android:value="notification_icon" />
         <meta-data
             android:name="NOTIFICATION_LARGE_ICON"
-            android:value="notification_icon" />
+            android:value="notification_icon_large" />
 
         <!-- moEngage UBox -->
         <activity
-            android:name="com.bigbasket.mobileapp.activity.account.uiv3.BBUnifiedInboxActivity"
-            android:label="Communication Hub"
+            android:name="com.bigbasket.mobileapp.activity.CommunicationHubActivity"
+            android:label="@string/title_activity_communication_hub"
+            android:parentActivityName="com.bigbasket.mobileapp.activity.SplashActivity"
             android:theme="@style/BackButtonTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.bigbasket.mobileapp.activity.SplashActivity" />
+        </activity>
 
         <service
             android:name="com.moengage.addon.ubox.UBoxMessenger"
+            android:exported="false" />
+
+        <service
+            android:name="com.bigbasket.mobileapp.service.BBMessenger"
             android:exported="false" />
 
         <meta-data
@@ -813,7 +818,7 @@
             android:exported="false" />
 
         <receiver
-            android:name="com.google.ads.conversiontracking.InstallReceiver"
+            android:name="com.bigbasket.mobileapp.receivers.InstallReferrerReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
@@ -834,13 +839,20 @@
             android:exported="false" />
 
         <receiver
-            android:name="com.localytics.android.ReferralReceiver"
-            android:exported="true">
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true">
             <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
 
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false" />
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService"
+            android:enabled="true"
+            android:exported="false" />
         <service
             android:name="com.bigbasket.mobileapp.service.AnalyticsIntentService"
             android:exported="false" />

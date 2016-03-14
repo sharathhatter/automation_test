@@ -29,6 +29,7 @@ public class DestinationInfo implements Parcelable, Serializable {
     public static final String DISCOUNT = "discount";
     public static final String BASKET = "basket";
     public static final String STORE_LIST = "sp_store_list";
+    public static final String COMMUNICATION_HUB_FAQ = "faq";
 
     public static final Parcelable.Creator<DestinationInfo> CREATOR = new Parcelable.Creator<DestinationInfo>() {
         @Override

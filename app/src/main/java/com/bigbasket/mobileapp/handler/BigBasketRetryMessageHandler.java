@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.handler;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -14,10 +15,17 @@ import com.bigbasket.mobileapp.util.Constants;
 public class BigBasketRetryMessageHandler extends BigBasketMessageHandler {
 
     Context context;
+    public Bundle bundleData;
 
     public BigBasketRetryMessageHandler(ApiErrorAware ctx, Context context) {
         super(ctx);
         this.context = context;
+    }
+
+    public BigBasketRetryMessageHandler(ApiErrorAware ctx, Context context, Bundle bundle) {
+        super(ctx);
+        this.context = context;
+        this.bundleData = bundle;
     }
 
 
@@ -28,7 +36,7 @@ public class BigBasketRetryMessageHandler extends BigBasketMessageHandler {
                     context.getString(R.string.validationretry),
                     context.getString(R.string.retry),
                     context.getString(R.string.cancel),
-                    Constants.OFFLINE_PAYMENT_SHOW_THANKYOU_ABORT_CONFIRMATION_DIALOG, null);
+                    Constants.OFFLINE_PAYMENT_SHOW_THANKYOU_ABORT_CONFIRMATION_DIALOG, bundleData);
         } else
             super.sendOfflineError();
     }

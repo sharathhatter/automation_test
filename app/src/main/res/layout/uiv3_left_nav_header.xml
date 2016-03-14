@@ -19,7 +19,7 @@
         android:contentDescription="@string/myAccount"
         android:paddingLeft="@dimen/padding_normal"
         android:paddingRight="@dimen/padding_normal"
-        android:paddingTop="@dimen/nav_img_margin_top"/>
+        android:paddingTop="@dimen/nav_img_margin_top" />
 
     <TextView
         android:id="@+id/lblWelcome"
@@ -74,6 +74,7 @@
         android:layout_toLeftOf="@id/btnChangeAddress"
         android:drawableLeft="@drawable/address_white"
         android:drawablePadding="@dimen/padding_normal"
+        android:maxLines="5"
         android:textColor="@color/white"
         android:textSize="@dimen/small_text_size" />
 

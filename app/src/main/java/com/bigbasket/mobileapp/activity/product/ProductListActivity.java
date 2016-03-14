@@ -101,6 +101,8 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
     private HeaderSpinnerView mHeaderSpinnerView;
     private Call<ApiResponse<SponsoredAds>> mSponsoredProductsCall;
     private Call<ApiResponse<ProductTabData>> mProductListCall;
+    private TabLayout mSlidingTabs;
+    private AppBarLayout appBarLayout;
 
     private static ArrayList<String> getFilterDisplayName(final FilteredOn filteredOn,
                                                           ArrayList<FilterOptionCategory> mFilterOptionCategories) {
@@ -121,7 +123,16 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if(savedInstanceState != null) {
+            //Fixme: DIRTY HACK to avoid View pager fragments restore on re-creation
+            savedInstanceState.remove("android:support:fragments");
+        }
         super.onCreate(savedInstanceState);
+        mSlidingTabs = (TabLayout) findViewById(R.id.slidingTabs);
+        appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
+        if (savedInstanceState != null) {
+            mFilteredOns = savedInstanceState.getParcelableArrayList(Constants.FILTERED_ON);
+        }
         getProducts();
     }
 
@@ -130,6 +141,14 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         setTitle(mTitlePassedViaIntent);
         mNameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
         loadProductTabs(false, 0);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mFilteredOns != null) {
+            outState.putParcelableArrayList(Constants.FILTERED_ON, mFilteredOns);
+        }
     }
 
     @Override
@@ -193,7 +212,6 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             return;
         }
 
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
         if (appBarLayout != null) {
             appBarLayout.setExpanded(true);
         }
@@ -252,7 +270,6 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             ((NavigationSelectionAware) getCurrentActivity()).onNavigationSelection(mTitlePassedViaIntent);
         }
 
-
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawers();
         }
@@ -284,7 +301,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             // Setup content
             final int numTabs = productTabData.getProductTabInfos().size();
             if (numTabs > 1) {
-                findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
+                mSlidingTabs.setVisibility(View.VISIBLE);
                 displayProductTabs(productTabData, contentFrame, true);
             } else if (isFilterOrSortApplied) {
                 //header
@@ -306,7 +323,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 renderFilterAndSortProductList(productTabInfo, tabType, currentTabIndx);
             } else {
                 // When only one product tab
-                findViewById(R.id.slidingTabs).setVisibility(View.GONE);
+                mSlidingTabs.setVisibility(View.GONE);
                 ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
                 tabType = productTabInfo.getTabType();
                 ProductInfo productInfo = productTabInfo.getProductInfo();
@@ -383,7 +400,10 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 }
             });
         } else if (contentSectionView == null) {
-            findViewById(R.id.slidingTabs).setVisibility(View.GONE);
+            mSlidingTabs.setVisibility(View.GONE);
+            if(mViewPager != null) {
+                mViewPager.setAdapter(null);
+            }
             UIUtil.showEmptyProductsView(this, contentFrame, getString(R.string.noProducts),
                     R.drawable.empty_smart_basket);
             toggleFilterSortView(false);
@@ -435,12 +455,15 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
 
     private void displayProductTabs(final ProductTabData productTabData, ViewGroup contentFrame,
                                     final boolean hasProducts) {
+        if(mViewPager != null) {
+            mViewPager.setAdapter(null);
+        }
         mViewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
         if (mViewPager == null) return;
 
-        ArrayList<BBTab> bbTabs = new ArrayList<>();
-        ArrayList<String> tabTypeWithNoProducts = new ArrayList<>();
         final ArrayList<ProductTabInfo> productTabInfos = productTabData.getProductTabInfos();
+        ArrayList<String> tabTypeWithNoProducts = new ArrayList<>(productTabInfos.size());
+        ArrayList<BBTab> bbTabs = new ArrayList<>(productTabInfos.size());
         for (int i = 0; i < productTabInfos.size(); i++) {
             ProductTabInfo productTabInfo = productTabInfos.get(i);
             ProductInfo productInfo = productTabInfo.getProductInfo();
@@ -477,7 +500,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             setCurrentTabSortAndFilter(null, null, null, null, hasProducts);
         }
 
-        TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
+        TabLayout pagerSlidingTabStrip = mSlidingTabs;
         pagerSlidingTabStrip.setupWithViewPager(mViewPager);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -827,7 +850,11 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
             // New product list is requested over current page, so change nc by copying next-nc
             setPreviousScreenName(getCurrentScreenName());
         }
-        loadProductTabs(false, 0);
+        if (mFilteredOns != null && mFilteredOns.size() > 0) {
+            applyFilter(mFilteredOns);
+        } else {
+            loadProductTabs(false, 0);
+        }
     }
 
     public void onFooterViewClicked(View v) {

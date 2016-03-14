@@ -19,7 +19,7 @@
             android:layout_centerVertical="true"
             android:contentDescription="@string/alt_placeholder"
             android:src="@drawable/done_green_24dp"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/txtSetName"

@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.adapter.product;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -186,9 +187,10 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             }
         } else if (viewType == VIEW_TYPE_PRODUCT_COUNT) {
             ProductCountViewHolder productCountViewHolder = (ProductCountViewHolder) viewHolder;
-            int stringResId = serverListSize > 1 ? R.string.productFoundPlural : R.string.productFound;
-            productCountViewHolder.getTxtProductCount().setText(serverListSize + " " +
-                    activityAware.getCurrentActivity().getString(stringResId));
+            Resources res = activityAware.getCurrentActivity().getResources();
+            String productCount = res.getQuantityString(R.plurals.numberOfProductsFound,
+                    serverListSize, serverListSize);
+            productCountViewHolder.getTxtProductCount().setText(productCount);
         } else if (viewType == VIEW_TYPE_PRODUCT_LOADING_FAILED) {
             ((FixedLayoutViewHolder) viewHolder).getItemView().setOnClickListener(new View.OnClickListener() {
                 @Override

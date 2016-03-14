@@ -155,6 +155,8 @@ public interface TrackingAware {
     String CHECKOUT_SLOT_SELECTED_CLICKED = "Checkout.Delivery Options Continue Clicked";
     String CHECKOUT_DELIVERY_OPTION_SHOWN = "Checkout.Delivery Options Shown";
 
+    String VALIDATE_PAYMENT_API_ERROR_ORDER_ID = "ValidatePayment.apiinvalitefield Retry";
+
     //thank you
     String THANK_YOU_PAGE_SHOWN = "Checkout.Thank You Page Shown";
     String BASKET_ADD_PROMO_BUNDLE = "Promo.Add Bundle";
@@ -178,7 +180,7 @@ public interface TrackingAware {
 
     String FLAT_PAGE_SHOWN = "Flat Page Shown";
     String PAY_NOW_CLICKED = "PayNow.Clicked";
-    String PAY_NOW_SHOWN = "PayNow.Shown";
+    String SINGLE_PAY_NOW_SHOWN = "SinglePayNow.Shown";
     String PAY_NOW_DONE = "PayNow.Done";
 
     String FUND_WALLET_SHOWN = "Fund Wallet.Shown";
@@ -195,6 +197,18 @@ public interface TrackingAware {
     // SpecialityShops
     String SPECIALITYSHOPS_LIST_SHOWN = "Speciality.StoreListing Shown";
     String SPECIALITYSHOPS = "SPS.";
+
+    //Communication Hub
+    String COMMUNICATION_HUB_TAB_CHANGED = "Notifications.TabChanged";
+
+    //Ratings
+    String HAPPY_CLICKED = "Happy.Clicked";
+    String SAD_CLICKED = "Sad.Clicked";
+    String SEND_CS_CLICKED = "SendReasontoCS.Clicked";
+    String RATE_LATER_CLICKED = "RateLater.Clicked";
+    String RATEUS_CLICKED = "RateUs.Clicked";
+
+    String SPONSORED_CLICKED = "SponsoredItem.Clicked";
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease,

@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.model.account.SocialAccountType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.LogoutTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
+import com.bigbasket.mobileapp.util.BBUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -217,7 +218,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     .remove(Constants.SOCIAL_ACCOUNT_TYPE)
                     .commit();
         }
-        if(!AuthParameters.getInstance(this).isAuthTokenEmpty()) {
+        if (!AuthParameters.getInstance(this).isAuthTokenEmpty()) {
             LogoutTask logoutTask = new LogoutTask(this);
             logoutTask.execute();
         } else {
@@ -270,7 +271,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         if (rememberMe && !TextUtils.isEmpty(password)) {
             editor.putString(Constants.EMAIL_PREF, email);
             editor.putBoolean(Constants.REMEMBER_ME_PREF, true);
-            editor.putString(Constants.PASSWD_PREF, password);
+            editor.putString(Constants.PASSWD_PREF, BBUtil.getEncryptedString(password));
         } else {
             editor.remove(Constants.EMAIL_PREF);
             editor.remove(Constants.REMEMBER_ME_PREF);

@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.apiservice.models.response;
 
 import com.bigbasket.mobileapp.model.order.PayNowDetail;
+import com.bigbasket.mobileapp.model.wallet.WalletOption;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -11,4 +12,7 @@ public class GetPayNowParamsResponse extends GetPaymentTypes {
 
     @SerializedName(Constants.DETAILS)
     public ArrayList<PayNowDetail> payNowDetailList;
+    @SerializedName(Constants.WALLET_OPTION)
+    public WalletOption walletOption;
+
 }

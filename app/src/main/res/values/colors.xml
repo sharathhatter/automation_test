@@ -49,6 +49,7 @@
     <color name="uiv3_highlighted_background">#44000000</color>
     <!--<color name="uiv3_rounded_btn_bkg">#e73937</color>-->
     <color name="uiv3_rounded_btn_bkg">@color/uiv3_dialog_header_text_bkg</color>
+    <color name="uiv3_thank_tou_red">#841206</color>
 
     <!-- LetterImageViewColor -->
     <string-array name="letterImageViewColors" translatable="false">
@@ -83,5 +84,17 @@
     <color name="uic_btn_disable">#c2c1c1</color>
 
     <color name="ripple_dark">#33ffffff</color>
+    <color name="chat_timestamp_color">#66000000</color>
+
+    <!-- moe inbox related -->
+    <color name="send_enabled">#0090d4</color>
+    <color name="bkgrnd_chat">#48beab</color>
+    <color name="bkgrnd_msg">#e8e9e8</color>
+    <color name="chat_window_background">#F0F0F0</color>
+    <color name="product_tag">#898989</color>
+
+    <color name="ratings_pink">#f4dbdc</color>
+    <color name="ratings_green">#4caf50</color>
+    <color name="thank_pink">#fcf3f3</color>
 
 </resources>

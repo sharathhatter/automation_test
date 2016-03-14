@@ -290,6 +290,7 @@ public interface BigBasketApiService {
     @POST("co-post-voucher/")
     Call<ApiResponse<PostVoucherApiResponseContent>> postVoucher(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                                  @Field(Constants.P_ORDER_ID) String potentialOrderId,
+                                                                 @Field(Constants.WALLET) int wallet,
                                                                  @Field(Constants.EVOUCHER_CODE) String evoucherCode);
 
     @GET("get-area-info/")
@@ -330,7 +331,8 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("remove-voucher/")
     Call<ApiResponse<PostVoucherApiResponseContent>> removeVoucher(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
-                                                                   @Field(Constants.P_ORDER_ID) String potentialOrderId);
+                                                                   @Field(Constants.P_ORDER_ID) String potentialOrderId,
+                                                                   @Field(Constants.WALLET) int wallet);
 
     @GET("get-app-data/")
     Call<ApiResponse<AppDataResponse>> getAppData(@Query(Constants.CLIENT) String client,
@@ -388,36 +390,55 @@ public interface BigBasketApiService {
                                                                 @Field(Constants.SUPPORT_PAYUMONEY) String supportsPayuMoney);
 
     @FormUrlEncoded
+    @POST("co-post-shipment/")
+    Call<ApiResponse<PostShipmentResponseContent>> postShipment(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
+                                                                @Field("shipments") String shipments,
+                                                                @Field(Constants.WALLET) int wallet,
+                                                                @Field(Constants.P_ORDER_ID) String potentialOrderId,
+                                                                @Field(Constants.SUPPORT_CC) String supportsCreditCard,
+                                                                @Field(Constants.SUPPORT_POWER_PAY) String supportsPowerPay,
+                                                                @Field(Constants.SUPPORT_MOBIKWIK) String supportsMobikWik,
+                                                                @Field(Constants.SUPPORT_PAYTM) String supportsPaytm,
+                                                                @Field(Constants.SUPPORT_PAYUMONEY) String supportsPayuMoney);
+
+    @FormUrlEncoded
     @POST("co-place-order/")
     Call<OldApiResponse<PlaceOrderApiPrePaymentResponseContent>> placeOrderWithPrePayment(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                                                           @Field(Constants.P_ORDER_ID) String potentialOrderId,
-                                                                                          @Field(Constants.PAYMENT_METHOD) String paymentMethod);
+                                                                                          @Field(Constants.PAYMENT_METHOD) String paymentMethod,
+                                                                                          @Field(Constants.WALLET) int wallet);
 
     @FormUrlEncoded
     @POST("co-place-order/")
     Call<OldApiResponse<PlaceOrderApiPayZappResponseContent>> placeOrderWithPayZapp(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
                                                                                     @Field(Constants.P_ORDER_ID) String potentialOrderId,
-                                                                                    @Field(Constants.PAYMENT_METHOD) String paymentMethod);
+                                                                                    @Field(Constants.PAYMENT_METHOD) String paymentMethod,
+                                                                                    @Field(Constants.WALLET) int wallet);
 
     @GET("pay-now/")
     Call<ApiResponse<GetPayNowParamsResponse>> getPayNowDetails(@Query(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
-                                                                @Query(Constants.ORDER_ID) String orderId,
+                                                                @Query(Constants.ORDER_IDS) String orderId,
+                                                                @Query(Constants.WALLET) int wallet,
                                                                 @Query(Constants.SUPPORT_POWER_PAY) String supportPp,
                                                                 @Query(Constants.SUPPORT_CC) String supportPayu,
                                                                 @Query(Constants.SUPPORT_MOBIKWIK) String mobikWik,
                                                                 @Query(Constants.SUPPORT_PAYTM) String supportsPaytm,
                                                                 @Query(Constants.SUPPORT_PAYUMONEY) String supportsPayuMoney);
 
+
+
     @FormUrlEncoded
     @POST("pay-now/")
     Call<ApiResponse<PrePaymentParamsResponse>> postPayNowDetails(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
-                                                                  @Field(Constants.ORDER_ID) String orderId,
+                                                                  @Field(Constants.ORDER_IDS) String orderId,
+                                                                  @Field(Constants.WALLET) int wallet,
                                                                   @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @FormUrlEncoded
     @POST("pay-now/")
     Call<ApiResponse<PayzappPrePaymentParamsResponse>> postPayzappPayNowDetails(@Field(TrackEventkeys.NAVIGATION_CTX) String navigationCtx,
-                                                                                @Field(Constants.ORDER_ID) String orderId,
+                                                                                @Field(Constants.ORDER_IDS) String orderId,
+                                                                                @Field(Constants.WALLET) int wallet,
                                                                                 @Field(Constants.PAYMENT_METHOD) String paymentMethod);
 
     @GET("fund-wallet/")

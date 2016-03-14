@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.moengage.addon.ubox.AskUsWelcomeView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:id="@+id/welcome_view">
+    <ImageView
+        android:id="@+id/close_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:padding="4dp"/>
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/close_icon"
+        android:layout_toStartOf="@+id/close_icon"
+        android:text="@string/welcome_text"/>
+
+</com.moengage.addon.ubox.AskUsWelcomeView>

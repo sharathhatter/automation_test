@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -36,6 +37,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.text.style.ClickableSpan;
+import android.text.style.TypefaceSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
@@ -56,6 +58,7 @@ import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
@@ -70,15 +73,22 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.bigbasket.mobileapp.util.analytics.NewRelicWrapper;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,6 +99,11 @@ import java.util.Map;
 import java.util.TreeSet;
 
 public class UIUtil {
+
+    public static final int NONE = 0;
+    public static final int CENTER_INSIDE = 1;
+    public static final int CENTER_CROP = 2;
+    public static final int ONLY_SCALE_DOWN = 3;
 
     /**
      * @param pixel : Value in Pixel, which should be scaled according to screen density
@@ -119,7 +134,6 @@ public class UIUtil {
         textView.setTextSize(scaleToScreenIndependentPixel(14, context));
         return textView;
     }
-
 
     public static List<Spannable> createBulletSpannableList(ArrayList<String> criteriaMsgs) {
         ArrayList<Spannable> criteriaSpannableList = null;
@@ -169,7 +183,6 @@ public class UIUtil {
         return str == null || TextUtils.isEmpty(str.trim());
     }
 
-
     public static String strJoin(String[] stringArray, String separator) {
         if (stringArray == null || stringArray.length == 0) return "";
         if (stringArray.length == 1) return stringArray[0];
@@ -188,25 +201,31 @@ public class UIUtil {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public static SpannableString asRupeeSpannable(String amtTxt, Typeface faceRupee) {
-        String rupeeSym = "`";
-        SpannableString spannableString = new SpannableString(rupeeSym + amtTxt);
-        spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0, rupeeSym.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        return spannableString;
+    public static SpannableStringBuilderCompat asRupeeSpannable(String amtTxt, Typeface faceRupee) {
+        return asRupeeSpannable(amtTxt, new CustomTypefaceSpan(faceRupee));
     }
 
-    public static SpannableString asRupeeSpannable(String prefix, String amtTxt, Typeface faceRupee) {
-        String rupeeSym = "`";
-        SpannableString spannableString = new SpannableString(prefix + rupeeSym + amtTxt);
-        spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), prefix.length(),
-                prefix.length() + rupeeSym.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        return spannableString;
+    public static SpannableStringBuilderCompat asRupeeSpannable(String prefix, String amtTxt, Typeface faceRupee) {
+        String rupeeSym = BaseApplication.getContext().getString(R.string.Rs_char);
+        SpannableStringBuilderCompat spannableBuilder = new SpannableStringBuilderCompat(prefix);
+        spannableBuilder.append(rupeeSym, new CustomTypefaceSpan(faceRupee),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE).append(amtTxt);
+        return spannableBuilder;
     }
 
-    public static SpannableString asRupeeSpannable(double amt, Typeface faceRupee) {
+    public static SpannableStringBuilderCompat asRupeeSpannable(double amt, Typeface faceRupee) {
         return asRupeeSpannable(formatAsMoney(amt), faceRupee);
+    }
+
+    public static SpannableStringBuilderCompat asRupeeSpannable(double amt, TypefaceSpan rupeeSpan) {
+        return asRupeeSpannable(formatAsMoney(amt), rupeeSpan);
+    }
+
+    public static SpannableStringBuilderCompat asRupeeSpannable(String amtTxt, TypefaceSpan rupeeSpan) {
+        String rupeeSym = BaseApplication.getContext().getString(R.string.Rs_char);
+        return new SpannableStringBuilderCompat()
+                .append(rupeeSym, rupeeSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                .append(amtTxt);
     }
 
     public static String formatAsMoney(Double amount) {
@@ -282,7 +301,6 @@ public class UIUtil {
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, userDetails.analytics.mobileNumber);
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
             LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
-            LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
             MoEHelper moEHelper = MoEngageWrapper.getMoHelperObj(ctx);
             MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
@@ -294,7 +312,6 @@ public class UIUtil {
             MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, userDetails.fullName);
             MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
             MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
-            MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
             NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, email);
             NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, mId);
@@ -302,7 +319,6 @@ public class UIUtil {
             NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, userDetails.analytics.mobileNumber);
             NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
             NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
-            NewRelicWrapper.setIdentifier(AnalyticsIdentifierKeys.APP_VERSION, DataUtil.getAppVersion(ctx));
 
             if (!TextUtils.isEmpty(userDetails.analytics.gender)) {
                 MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, userDetails.analytics.gender);
@@ -328,10 +344,57 @@ public class UIUtil {
                 }
                 editor.putString(Constants.ANALYTICS_ADDITIONAL_ATTRS, new Gson().toJson(userDetails.analytics.additionalAttrs));
             }
+            BaseApplication.updateGAUserId(ctx, mId);
         }
         editor.commit();
 
         AuthParameters.reset();
+    }
+
+    public static boolean showEmotionsDialog(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean hasUserGivenRating = preferences.getBoolean(Constants.HAS_USER_GIVEN_RATING, false);
+        String stringLastShownDate = preferences.getString(Constants.DATE_SINCE_RATING_HAS_SHOWN, "");
+        if (!hasUserGivenRating) {
+            if (preferences.contains(Constants.DATE_SINCE_RATING_HAS_SHOWN)) {
+                try {
+                    int daysPeriod = preferences.getInt(Constants.DAYS_PERIOD, 0);
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_RATINGS, Locale.getDefault());
+                    Date lastShownDate = simpleDateFormat.parse(stringLastShownDate);
+                    Date currentDate = new Date();
+                    long diff = currentDate.getTime() - lastShownDate.getTime();
+                    long days = diff / (24 * 60 * 60 * 1000);
+                    if ((int) days >= 5 * Math.pow(2, daysPeriod)) {
+                        return true;
+                    }
+                } catch (ParseException e) {
+                    updateRatingPref(context, true);
+                    Crashlytics.logException(e);
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void updateRatingPref(Context context, boolean reset) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        String date = new SimpleDateFormat(Constants.DATE_FORMAT_RATINGS, Locale.getDefault()).format(new Date());
+        editor.putBoolean(Constants.HAS_USER_GIVEN_RATING, false);
+        editor.putString(Constants.DATE_SINCE_RATING_HAS_SHOWN, date);
+        if (reset) {
+            editor.putInt(Constants.DAYS_PERIOD, 0);
+        } else {
+            if (preferences.contains(Constants.DAYS_PERIOD)) {
+                int n = preferences.getInt(Constants.DAYS_PERIOD, 0);
+                editor.putInt(Constants.DAYS_PERIOD, ++n);
+            } else {
+                editor.putInt(Constants.DAYS_PERIOD, 0);
+            }
+        }
+        editor.apply();
     }
 
     public static void reportFormInputFieldError(TextInputLayout textInputLayout, String errMsg) {
@@ -361,19 +424,19 @@ public class UIUtil {
         }
     }
 
-
     public static boolean isMoreThanXHour(long timeInMiliSeconds, int hour) {
         long timerDiff = System.currentTimeMillis() - timeInMiliSeconds;
         int hourDiff = (int) timerDiff / (60 * 60 * 1000);
         return hourDiff >= hour;
     }
 
-    public static void openPlayStoreLink(Activity activity) {
+    public static void openPlayStoreLink(Context context) {
+        if (context == null) return;
         final String appPackageName = Constants.BASE_PKG_NAME;
         try {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
         } catch (ActivityNotFoundException anfe) {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW,
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
         }
     }
@@ -438,27 +501,56 @@ public class UIUtil {
                                          @DrawableRes int placeHolderDrawableId,
                                          int targetImageWidth, int targetImageHeight,
                                          boolean skipMemoryCache) {
+        displayAsyncImage(imageView, url, animate, placeHolderDrawableId, targetImageWidth,
+                targetImageHeight, skipMemoryCache, NONE, null);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
+                                         @DrawableRes int placeHolderDrawableId,
+                                         int targetImageWidth, int targetImageHeight,
+                                         boolean skipMemoryCache, @ImageScaleType int scaleType,
+                                         Callback callback) {
+
         Picasso picasso = Picasso.with(imageView.getContext());
-        picasso.cancelRequest(imageView);
         RequestCreator requestCreator = picasso.load(url)
-                .error(R.drawable.noimage)
-                .placeholder(placeHolderDrawableId);
+                .error(R.drawable.noimage);
+        if (url == null) {
+            requestCreator.into(imageView, callback);
+            return;
+        } else {
+            picasso.cancelRequest(imageView);
+        }
+
+        if (placeHolderDrawableId > 0) {
+            requestCreator.placeholder(placeHolderDrawableId);
+        }
         if (skipMemoryCache) {
             requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE);
         }
         if (targetImageWidth > 0 && targetImageHeight > 0) {
             requestCreator.resize(targetImageWidth, targetImageHeight);
-            Log.i(imageView.getContext().getClass().getName(),
+            Log.i(imageView.getContext().getClass().getSimpleName(),
                     "Loading image " + (skipMemoryCache ? "[NO_MEM_CACHE] " : "")
                             + "(" + targetImageWidth + "," + targetImageHeight + ") = " + url);
         } else {
-            Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
+            Log.i(imageView.getContext().getClass().getSimpleName(), "Loading image = " + url);
         }
         if (!animate) {
             requestCreator.noFade();
         }
+        switch (scaleType) {
+            case CENTER_INSIDE:
+                requestCreator.centerInside();
+                break;
+            case CENTER_CROP:
+                requestCreator.centerCrop();
+                break;
+            case ONLY_SCALE_DOWN:
+                requestCreator.onlyScaleDown();
+                break;
+        }
         try {
-            requestCreator.into(imageView);
+            requestCreator.into(imageView, callback);
         } catch (OutOfMemoryError e) {
             System.gc();
         }
@@ -527,6 +619,12 @@ public class UIUtil {
             default:
                 return 1;
         }
+    }
+
+    public static int adjustHeightForScreenWidth(int originalWidth, int originalHeight,
+                                                 int totalWidthAvailable) {
+        double aspectRatio = (double) originalWidth / (double) originalHeight;
+        return (int) ((double) totalWidthAvailable / aspectRatio);
     }
 
     public static View getCheckoutProgressView(Context context, @Nullable ViewGroup parent, String[] array_txtValues,
@@ -720,7 +818,6 @@ public class UIUtil {
         return false;
     }
 
-
     public static boolean isPhoneWithGoogleAccount(Context context) {
         return AccountManager.get(context).getAccountsByType("com.google").length > 0;
     }
@@ -824,15 +921,21 @@ public class UIUtil {
         }
     }
 
-    public static void showPaymentFailureDlg(final BaseActivity activity) {
-        ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(activity).getAddressSummaries();
+    public static String getCustomerSupportPhoneNumber(Context context) {
+        ArrayList<AddressSummary> addressSummaries = AppDataDynamic.getInstance(context).getAddressSummaries();
         String phone = null;
         if (addressSummaries != null && addressSummaries.size() > 0) {
-            City city = CityManager.getCity(addressSummaries.get(0).getCityId(), activity);
+            City city = CityManager.getCity(addressSummaries.get(0).getCityId(), context);
             if (city != null) {
                 phone = city.getPhone();
             }
         }
+        return phone;
+    }
+
+
+    public static void showPaymentFailureDlg(final BaseActivity activity) {
+        String phone = getCustomerSupportPhoneNumber(activity);
         if (!TextUtils.isEmpty(phone)) {
             View dlg = activity.getLayoutInflater().inflate(R.layout.uiv3_msg_text, null);
             TextView txtMsg = (TextView) dlg.findViewById(R.id.txtMsg);
@@ -877,5 +980,64 @@ public class UIUtil {
             activity.showAlertDialog(activity.getString(R.string.transactionFailed),
                     activity.getString(R.string.txnFailureMsg));
         }
+    }
+
+    public static SpannableString getPaymentFailureDialogtext(final BaseActivity activity) {
+        String phone = getCustomerSupportPhoneNumber(activity);
+        if (!TextUtils.isEmpty(phone)) {
+            String prefix = activity.getString(R.string.txnFailureMsgPrefix) + " ";
+            String suffix = activity.getString(R.string.txnFailureMsgSuffix) + " ";
+            final String csEmail = "customerservice@bigbasket.com";
+            SpannableString spannableString = new SpannableString(prefix + phone + " " +
+                    suffix + csEmail);
+            final String passedPhoneNum = phone;
+            spannableString.setSpan(new ClickableSpan() {
+                                        @Override
+                                        public void onClick(View widget) {
+                                            UIUtil.dialNumber(passedPhoneNum, activity);
+                                        }
+                                    }, prefix.length(), prefix.length() + phone.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new ClickableSpan() {
+                                        @Override
+                                        public void onClick(View widget) {
+                                            UIUtil.invokeMailClient(csEmail, activity);
+                                        }
+                                    }, prefix.length() + phone.length() + 1 + suffix.length(),
+                    spannableString.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            return spannableString;
+        } else {
+            return new SpannableString(activity.getString(R.string.txnFailureMsg));
+        }
+
+
+    }
+
+    public static String makeFlatPageUrlAppFriendly(String url) {
+        if (url != null) {
+            if (!url.contains("source=app")) {
+                if (url.contains("?")) {
+                    url += "&source=app";
+                } else {
+                    url += "?source=app";
+                }
+            }
+        }
+        return url;
+    }
+
+    //to get the dateinmillisec to another format
+    // to use pass the format and dateinmillsec
+    public static String getTimeStamp(long dateInMillis, String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
+        return formatter.format(new Date(dateInMillis));
+    }
+
+
+    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({NONE, CENTER_INSIDE, CENTER_CROP, ONLY_SCALE_DOWN})
+    public @interface ImageScaleType {
     }
 }

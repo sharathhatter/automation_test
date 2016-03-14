@@ -1,11 +1,13 @@
 package com.bigbasket.mobileapp.fragment.product;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,18 +24,23 @@ import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.handler.click.OnBrandPageListener;
 import com.bigbasket.mobileapp.handler.click.OnPromoClickListener;
+import com.bigbasket.mobileapp.handler.click.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.handler.click.OnSpecialityShopIconClickListener;
 import com.bigbasket.mobileapp.handler.click.basket.OnProductBasketActionListener;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
+import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
+import com.bigbasket.mobileapp.model.product.ProductTag;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
@@ -42,12 +49,14 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
+import com.bigbasket.mobileapp.view.uiv3.FlowLayout;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 
@@ -190,6 +199,49 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             txtVariableWeightMsg.setVisibility(View.GONE);
         }
 
+        //adding the food type to the detail view of a product
+        if (mProduct.getProductTag() != null && mProduct.getProductTag().size() > 0) {
+//            on clicklistener for the food type
+            View.OnClickListener onFoodTypeClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new OnSectionItemClickListener<>((AppOperationAware) getActivity())
+                            .handleDestinationClick((DestinationInfo) v.getTag(R.id.destination_info));
+                }
+            };
+
+            for (ProductTag productTag : mProduct.getProductTag()) {
+                if (productTag.getType() == 1) {
+                    View productFoodType = inflater.inflate(R.layout.uiv3_heading_textview, layoutProductDetail, false);
+                    TextView txtFoodTypeHeading = (TextView) productFoodType.findViewById(R.id.txtFoodTypeHeading);
+                    txtFoodTypeHeading.setTypeface(faceRobotoMedium);
+                    txtFoodTypeHeading.setText(productTag.getHeader());
+                    layoutProductDetail.addView(productFoodType);
+                    FlowLayout tagsFlowLayout = (FlowLayout) productFoodType.findViewById(R.id.tagsFlowLayout);
+                    List<HashMap<String, DestinationInfo>> values = productTag.getValues();
+                    for (HashMap<String, DestinationInfo> v : values) {
+                        for (Map.Entry<String, DestinationInfo> e : v.entrySet()) {
+                            TextView txtFoodType = (TextView) inflater.inflate(R.layout.uiv3_foodtype_tag, layoutProductDetail, false);
+                            txtFoodType.setTypeface(faceRobotoRegular);
+                            txtFoodType.setText(e.getKey());
+                            /**
+                             * adding tags to the textview food-type
+                             * values of tags are used to launch the product list passing these values as parameters
+                             */
+                            DestinationInfo destinationInfo = e.getValue();
+                            if (destinationInfo != null) {
+                                txtFoodType.setTag(R.id.destination_info, destinationInfo);
+                                txtFoodType.setOnClickListener(onFoodTypeClickListener);
+                            }
+                            //adding view to the flowlayout
+                            tagsFlowLayout.addView(txtFoodType);
+                        }
+                    }
+
+                }
+            }
+        }
+
         ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();
         if (productAdditionalInfos != null && productAdditionalInfos.size() > 0) {
             for (ProductAdditionalInfo productAdditionalInfo : productAdditionalInfos) {
@@ -207,8 +259,10 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 layoutProductDetail.addView(additionalInfoView);
             }
         }
+        //logging the product detail events
         logProductDetailEvent();
     }
+
 
     @Override
     public String getTitle() {
@@ -312,7 +366,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 viewIncQtyRef, btnAddToBasketRef, product, qty, productViewRef, cartInfoMapRef, editTextQtyRef);
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
-            productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+            productQtyInBasket = basketOperationResponse.getBasketResponseProductInfo().getTotalQty();
         }
         if (product != null && getActivity() != null) {
             Intent data = new Intent();

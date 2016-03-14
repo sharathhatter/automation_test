@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
+import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.devconfig.DevConfigViewHandler;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
@@ -224,6 +225,7 @@ public class SplashActivity extends BaseActivity implements AppOperationAware {
                 editor.putString(Constants.MID_KEY, null);
                 editor.putString(Constants.MEMBER_EMAIL_KEY, null);
                 editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
+
                 editor.commit();
                 AuthParameters.reset();
 

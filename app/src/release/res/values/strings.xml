@@ -10,5 +10,6 @@
     <string name="google_geo_api_key" templateMergeStrategy="preserve">AIzaSyCb8JEc_JPPQ6kGbVwbVXf2C-fWpz8NskE</string>
     <string name="mobikwik_mode">1</string>
 
-    <string name="pref_default_server_address" translate="false">https://bigbasket.com</string>
+    <string name="pref_default_server_address" translate="false">https://www.bigbasket.com</string>
+    <string name="google_analytics_key">UA-27455376-1</string>
 </resources>

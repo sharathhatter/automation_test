@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/moe_card_background"
+    android:descendantFocusability="blocksDescendants"
+    android:padding="@dimen/dimen_5">
+
+    <LinearLayout
+        android:id="@+id/alert_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/title"
+            android:gravity="left"
+            android:layout_width="match_parent"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/primary_text_size"
+            android:textColor="@color/dark_black"
+            />
+
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:layout_marginBottom="@dimen/dimen_5"
+            android:id="@+id/message"
+            android:textSize="@dimen/secondary_text_size"/>
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:gravity="right"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/small_text_size"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/image_layout">
+
+        <ImageView
+            android:id="@+id/offer_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:layout_gravity="center_horizontal"/>
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+</LinearLayout>

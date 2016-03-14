@@ -85,6 +85,11 @@ public class GetAppDataDynamicIntentService extends IntentService {
                             gson.fromJson(sd.getAnalyticsAttrs(), type);
                     aad.setAnalyticsAttr(analyticsAttrMap);
                 }
+                long timestamp = sd.getDate();
+                if(timestamp == 0) {
+                    timestamp = SectionItemAnalyticsData.dateNow();
+                }
+                aad.setTimestamp(String.valueOf(timestamp));
                 analyticsData[i] = aad;
                 i++;
             }

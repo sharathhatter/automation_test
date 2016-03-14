@@ -10,13 +10,16 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -292,9 +295,15 @@ public abstract class BaseFragment extends AbstractFragment implements
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
-            productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+            productQtyInBasket = basketOperationResponse.getBasketResponseProductInfo().getTotalQty();
         }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
+        if (product != null) {
+            product.setNoOfItemsInCart(productQtyInBasket);
+            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
+                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
+            }
+        }
 
         if (productQtyInBasket == 0) {
             if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
@@ -304,7 +313,11 @@ public abstract class BaseFragment extends AbstractFragment implements
                 viewIncQtyRef.get().setVisibility(View.GONE);
             }
             if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
-                btnAddToBasketRef.get().setVisibility(View.VISIBLE);
+                View view = btnAddToBasketRef.get();
+                view.setVisibility(View.VISIBLE);
+                if(view instanceof ImageView) {
+                    UIUtil.displayAsyncImage((ImageView) view, R.drawable.btn_add_basket);
+                }
             }
             if (basketCountTextViewRef != null && basketCountTextViewRef.get() != null) {
                 basketCountTextViewRef.get().setVisibility(View.GONE);
@@ -334,12 +347,6 @@ public abstract class BaseFragment extends AbstractFragment implements
             if (editTextQtyRef != null && editTextQtyRef.get() != null
                     && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
                 editTextQtyRef.get().setVisibility(View.GONE);
-            }
-        }
-        if (product != null) {
-            product.setNoOfItemsInCart(productQtyInBasket);
-            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
-                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
             }
         }
 
@@ -387,8 +394,8 @@ public abstract class BaseFragment extends AbstractFragment implements
         }
     }
 
-    public void showAlertDialog(String title,
-                                String msg, @DialogButton.ButtonType int dialogButton,
+    public void showAlertDialog(CharSequence title,
+                                CharSequence msg, @DialogButton.ButtonType int dialogButton,
                                 @DialogButton.ButtonType int nxtDialogButton, final int requestCode,
                                 final Bundle passedValue, String positiveBtnText) {
         if (getActivity() == null) return;
@@ -503,13 +510,13 @@ public abstract class BaseFragment extends AbstractFragment implements
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message) {
         if (getCurrentActivity() == null) return;
         getCurrentActivity().showAlertDialog(title, message);
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, boolean finish) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, boolean finish) {
         // Fix this implementation as fragment shouldn't finish activity
         if (getCurrentActivity() == null) return;
         if (finish) {
@@ -519,7 +526,7 @@ public abstract class BaseFragment extends AbstractFragment implements
         }
     }
 
-    public void showAlertDialogFinish(String title, String msg) {
+    public void showAlertDialogFinish(CharSequence title, CharSequence msg) {
         if (getCurrentActivity() == null || isSuspended()) return;
 
         Bundle data = new Bundle(2);
@@ -536,13 +543,13 @@ public abstract class BaseFragment extends AbstractFragment implements
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, int requestCode, Bundle valuePassed) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, int requestCode, Bundle valuePassed) {
         if (getCurrentActivity() == null) return;
         showAlertDialog(title, message, DialogButton.OK, DialogButton.NONE, requestCode, valuePassed, null);
     }
 
     @Override
-    public void showApiErrorDialog(@Nullable String title, String message, int resultCode) {
+    public void showApiErrorDialog(@Nullable CharSequence title, CharSequence message, int resultCode) {
         if (getCurrentActivity() == null) return;
         getCurrentActivity().showAlertDialog(title, message, resultCode);
     }
@@ -630,4 +637,18 @@ public abstract class BaseFragment extends AbstractFragment implements
 
     @NonNull
     public abstract String getInteractionName();  // Don't use class.getName(), as with Proguard it returns obfuscated value
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            FragmentManager fragmentMgr = getFragmentManager();
+            int backStackCount = fragmentMgr.getBackStackEntryCount();
+            if(backStackCount > 0 && fragmentMgr.getBackStackEntryAt(backStackCount -1) == this) {
+                fragmentMgr.popBackStack();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

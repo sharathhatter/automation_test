@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.handler.network.BBNetworkCallback;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
+import com.bigbasket.mobileapp.util.BBUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -196,7 +197,7 @@ public class ChangePasswordFragment extends BaseFragment {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if (preferences.contains(Constants.PASSWD_PREF)) {
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(Constants.PASSWD_PREF, newPwdText.getText().toString());
+            editor.putString(Constants.PASSWD_PREF, BBUtil.getEncryptedString(newPwdText.getText().toString()));
             editor.commit();
         }
         ((BaseActivity) getActivity()).showToast(getString(R.string.passwordUpdated));

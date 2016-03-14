@@ -43,5 +43,6 @@
         android:drawableRight="@drawable/ic_keyboard_arrow_right_white_36dp"
         android:gravity="right|center_vertical"
         android:textColor="@color/white"
+        android:textAllCaps="true"
         android:textSize="@dimen/secondary_text_size" />
 </LinearLayout>

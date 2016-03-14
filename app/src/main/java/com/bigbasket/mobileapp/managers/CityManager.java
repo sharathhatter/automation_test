@@ -65,6 +65,18 @@ public final class CityManager {
         return null;
     }
 
+    public static boolean isCityDataExpired(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String storedCitiesJson = preferences.getString(preferenceKey, null);
+        if (!TextUtils.isEmpty(storedCitiesJson)) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
+                    Locale.getDefault());
+            String createdOn = preferences.getString(preferenceKey + "_time", null);
+            return isStale(createdOn, dateFormat);
+        }
+        return false;
+    }
+
     @Nullable
     public static City getCity(int cityId, Context context) {
         ArrayList<City> cities = getStoredCity(context);

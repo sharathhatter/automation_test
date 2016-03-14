@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -485,7 +486,18 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         }
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                FragmentManager fragmentMgr = getSupportFragmentManager();
+                int backStackCount = fragmentMgr.getBackStackEntryCount();
+                if(backStackCount > 0) {
+                    try {
+                        fragmentMgr.popBackStack();
+                    } catch (Exception ex) {
+                        Crashlytics.logException(ex);
+                    }
+                    return true;
+                } else {
+                    finish();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -526,6 +538,7 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
     @Override
     public void onNoBasketDelta(String addressId, String lat, String lng, @Nullable String area) {
         new ChangeAddressTask<>(this, addressId, lat, lng, area, false).startTask();
+
     }
 
     @Override
@@ -603,9 +616,16 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
-            productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+            productQtyInBasket = basketOperationResponse.getBasketResponseProductInfo().getTotalQty();
         }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
+
+        if (product != null) {
+            product.setNoOfItemsInCart(productQtyInBasket);
+            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
+                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
+            }
+        }
 
         if (productQtyInBasket == 0) {
             if (viewDecQtyRef != null && viewDecQtyRef.get() != null) {
@@ -615,7 +635,11 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
                 viewIncQtyRef.get().setVisibility(View.GONE);
             }
             if (btnAddToBasketRef != null && btnAddToBasketRef.get() != null) {
-                btnAddToBasketRef.get().setVisibility(View.VISIBLE);
+                View view = btnAddToBasketRef.get();
+                view.setVisibility(View.VISIBLE);
+                if(view instanceof ImageView) {
+                    UIUtil.displayAsyncImage((ImageView) view, R.drawable.btn_add_basket);
+                }
             }
             if (editTextQtyRef != null && editTextQtyRef.get() != null
                     && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
@@ -642,13 +666,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             if (editTextQtyRef != null && editTextQtyRef.get() != null
                     && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
                 editTextQtyRef.get().setVisibility(View.GONE);
-            }
-        }
-
-        if (product != null) {
-            product.setNoOfItemsInCart(productQtyInBasket);
-            if (cartInfoMapRef != null && cartInfoMapRef.get() != null) {
-                cartInfoMapRef.get().put(product.getSku(), productQtyInBasket);
             }
         }
 
@@ -735,10 +752,18 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
             actionBar.setTitle(formatToolbarTitle(mTitle));
         }
     }
+    public void setTitleandSubTitle(String title,String subTitle) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            mTitle = title == null ? "" : title;
+            actionBar.setTitle(formatToolbarTitle(mTitle));
+            actionBar.setSubtitle(subTitle);
+        }
+    }
 
     private SpannableString formatToolbarTitle(String title) {
         SpannableString spannableString = new SpannableString(title);
-        spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoRegular),
+        spannableString.setSpan(new CustomTypefaceSpan(faceRobotoRegular),
                 0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         return spannableString;
     }

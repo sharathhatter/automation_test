@@ -23,4 +23,10 @@
     <item name="fullfillment_info_page_url_tag_id" type="id" />
     <item name="address_id" type="id" />
     <item name="section_item_tag_id" type="id" />
+    <item name="offerimage_tag_id" type="id" />
+    <item name="chat_item_view_holder_tag" type="id" />
+    <item name="order_id" type="id" />
+    <item name="order_details" type="id" />
+    <item name="can_pay" type="id" />
+    <item name="destination_info" type="id" />
 </resources>

@@ -32,8 +32,7 @@ public class FilteredOn implements Parcelable {
 
     public FilteredOn(Parcel source) {
         filterSlug = source.readString();
-        filterValues = new ArrayList<>();
-        source.readStringList(filterValues);
+        filterValues = source.createStringArrayList();
     }
 
     public static FilteredOn getFilteredOn(ArrayList<FilteredOn> filteredOns, String filterSlug) {

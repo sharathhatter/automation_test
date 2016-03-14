@@ -9,15 +9,22 @@
     <!-- Min height has been intentionally set in PX don't change it -->
     <ImageView
         android:id="@+id/imgProduct"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/product_image"
         android:minHeight="400px"
         android:padding="2dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/noimage"
         tools:ignore="PxUsage" />
+
+    <ImageView
+        android:id="@+id/imgProductFoodType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_10"
+        android:scaleType="fitCenter"
+        android:visibility="gone" />
 
     <View
         android:id="@+id/viewSeparator"
@@ -51,12 +58,11 @@
         android:textSize="@dimen/primary_text_size" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
         android:id="@+id/layoutProductBrand"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtProductDesc"
-        android:layout_marginLeft="@dimen/margin_mini"
         android:layout_alignLeft="@id/txtProductDesc"
+        android:layout_below="@id/txtProductDesc"
         android:orientation="horizontal">
 
         <include
@@ -262,22 +268,21 @@
     </RelativeLayout>
 
     <TextView
-        android:layout_width="match_parent"
         android:id="@+id/txtVariableWeightMsg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/layoutPromoInfoBox"
-        android:drawablePadding="@dimen/padding_normal"
-        android:background="@drawable/pg_border"
+        android:layout_marginBottom="@dimen/padding_mini"
         android:layout_marginLeft="@dimen/padding_normal"
         android:layout_marginRight="@dimen/padding_normal"
         android:layout_marginTop="@dimen/margin_medium_large"
-        android:paddingBottom="@dimen/padding_small"
-        android:paddingTop="@dimen/margin_small"
+        android:background="@drawable/pg_border"
         android:drawableLeft="@drawable/v_weight_icon"
-        android:paddingRight="@dimen/margin_small"
+        android:drawablePadding="@dimen/padding_normal"
+        android:paddingBottom="@dimen/padding_small"
         android:paddingLeft="@dimen/margin_normal"
+        android:paddingRight="@dimen/margin_small"
+        android:paddingTop="@dimen/margin_small"
         android:textColor="@color/uiv3_secondary_text_color"
-        android:textSize="@dimen/small_text_size"
-        android:layout_marginBottom="@dimen/padding_mini"
-        android:layout_height="wrap_content" />
-
+        android:textSize="@dimen/small_text_size" />
 </RelativeLayout>

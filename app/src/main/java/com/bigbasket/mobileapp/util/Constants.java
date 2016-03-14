@@ -50,6 +50,8 @@ public class Constants {
     public static final String PROMO_NAME = "promo_name";
     public static final String BASE_IMG_URL = "base_img_url";
     public static final String PROMO_LABEL = "promo_label";
+    public static final String PRODUCT_FOOD_TYPE = "p_type";
+    public static final String PRODUCT_TAG = "p_tag";
 
     public static final String QC_HAS_VALIDATION_ERRORS = "has_qc_errors";
     public static final String QC_VALIDATION_ERROR_DATA = "qc_validation_errors_data";
@@ -187,6 +189,8 @@ public class Constants {
     public static final String ITEMS = "items";
     public static final String SUB_ITEMS = "sub_items";
     public static final String ORDER_ID = "order_id";
+    public static final String IS_FROM_PAYNOW = "is_from_paynow";
+    public static final String ORDER_IDS = "order_ids";
     public static final String GET_CART = "getcart";
     public static final String IS_BASKET_COUNT_DIRTY = "isBasketDirty";
     public static final String ERROR = "ERROR";
@@ -218,6 +222,7 @@ public class Constants {
 
     public static final String POST_PARAMS = "post_params";
     public static final String TXN_ID = "txn_id";
+    public static final String TXT_ORDER_ID = "txn_order_id";
     public static final String P_ORDER_ID = "p_order_id";
     public static final String SUPPORT_CC = "support_cc";
     public static final String PAYU = "payu";
@@ -369,6 +374,7 @@ public class Constants {
     public static final String REMEMBER_ME_PREF = "CHECKBOX"; // Sybrant gave this name, can't change it for compatibility with older versions
     public static final String EMAIL_PREF = "NAME";
     public static final String PASSWD_PREF = "PWD";
+    public static final String ENCRYPTED = "ENCRYPTED";
     public static final String USER_DETAILS = "user_details";
     public static final String MOBILE_NUMBER = "mobile_number";
     public static final String CITY_ID = "city_id";
@@ -427,6 +433,12 @@ public class Constants {
     public static final String WALLET_DATA = "wallet_data";
     public static final String DATE_FROM = "date_from";
     public static final String DATE_TO = "date_to";
+    public static final String WALLET_OPTION = "wallet_option";
+    public static final String WALLET_OPTION_BALANCE = "balance";
+    public static final String WALLET_OPTION_MSG = "msg";
+    public static final String WALLET_OPTION_STATE = "state";
+    public static final String OFF="off";
+
 
     //change password
     public static final String OLD_PASSWORD = "old_password";
@@ -515,6 +527,7 @@ public class Constants {
     public static final String AUTH = "auth";
     public static final String INBOX = "inbox";
     public static final String HAS_USER_CHOSEN_CITY = "has_user_chosen_city";
+    public static final String HAS_USER_SEEN_PAYMENT_MSG = "has_user_seen_payment_msg";
 
     public static final String MERCHANT_ID = "mer_id";
     public static final String COUNTRY_CODE = "country_code";
@@ -657,6 +670,8 @@ public class Constants {
     public static final int LOCATION_DIALOG_REQUEST = 8005;
     public static final int PREPAYMENT_ABORT_CONFIRMATION_DIALOG = 8006;
     public static final int OFFLINE_PAYMENT_SHOW_THANKYOU_ABORT_CONFIRMATION_DIALOG = 8007;
+    public static final int PAYMENT_VALIDATION_FAILED = 8009;
+    public static final int CONTACT_PERMISSION_INFO_DIALOG = 8010;
 
 
     // App Indexing params
@@ -677,4 +692,26 @@ public class Constants {
 
     public static final String KEY_PERMISSION = "key_permission";
     public static final String KEY_PERMISSION_RC = "key_permission_rc";
+
+    //Communication Hub codes
+    public static final String COMMUNICATION_HUB_OFFER = "offer";
+    public static final String COMMUNICATION_HUB_ALERT = "alert";
+    public static final String COMMUNICATION_HUB_GENERAL = "general";
+    public static final String COMMUNICATION_HUB_FILTER = "filter";
+    public static final String COMMUNICATION_HUB_BB_KEY = "bb";
+    public static final String NOTIFICATION_MSG_TAG = "gcm_msg_tag"; //Shoulbe same as MoEngageNotificationUtils.NOTIFICATION_MSG_TAG
+    public static final String COMMUNICATION_HUB_FAQ_URL = "http://www.bigbasket.com/app-faqs/?source=app";
+    public static final String COMMUNICATION_HUB_FAQ_SHOW = "is_show_FAQ";
+
+    //Product Type
+    public static final String PRODUCT_FOOD_TYPE_VEG = "veg";
+    public static final String PRODUCT_FOOD_TYPE_NONVEG = "non-veg";
+    public static final String PRODUCT_FOOD_TYPE_EGG = "egg";
+    public static final String HAS_USER_GIVEN_RATING = "has_user_given_rating";
+    public static final String DATE_SINCE_RATING_HAS_SHOWN = "date_since_rating_has_shown";
+    public static final String DAYS_PERIOD = "days_period";
+
+    public static final String DATE_FORMAT_RATINGS = "dd-MM-yyyy-hh-mm-ss";
+
+    public static final String ENABLE_RATINGS = "enable_rating";
 }

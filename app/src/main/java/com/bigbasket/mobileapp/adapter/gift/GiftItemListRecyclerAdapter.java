@@ -5,7 +5,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +13,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.click.OnCompoundDrawableClickListener;
 import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.gift.GiftOperationAware;
 import com.bigbasket.mobileapp.model.product.gift.Gift;
 import com.bigbasket.mobileapp.model.product.gift.GiftItem;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.SpannableStringBuilderCompat;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 
@@ -100,7 +102,7 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
                     txtProductGiftWrapQuantityStatus.setCompoundDrawablesWithIntrinsicBounds(
                             drawableMinusRed, null, drawablePlusRed, null);
                 }
-                Integer[] drawableTypes = new Integer[2];
+                @OnCompoundDrawableClickListener.DrawableType Integer[] drawableTypes = new Integer[2];
                 if (txtProductGiftWrapQuantityStatus.getCompoundDrawables()[OnCompoundDrawableClickListener.DRAWABLE_LEFT] != null) {
                     drawableTypes[0] = OnCompoundDrawableClickListener.DRAWABLE_LEFT;
                 }
@@ -126,25 +128,36 @@ public class GiftItemListRecyclerAdapter<T extends GiftOperationAware> extends R
             UIUtil.displayProductImage(baseImgUrl, giftItem.getImageUrl(), imgProduct);
             txtProductDesc.setText(giftItem.getDescription());
             txtProductBrand.setText(giftItem.getBrand());
-            txtProductQuantity.setText(context.getString(R.string.qtyInBasket) + " " + allowedQty);
+            txtProductQuantity.setText(context.getString(R.string.qtyInBasket, allowedQty));
 
             if (giftItem.getGiftWrapCharge() > 0) {
-                SpannableString giftWrapChargeSpannable = UIUtil.asRupeeSpannable(context.getString(R.string.giftWrapCharge) + " ",
-                        UIUtil.formatAsMoney(giftItem.getGiftWrapCharge()) +
-                                context.getString(R.string.rupeeTerminator) + " " + context.getString(R.string.perItem),
-                        faceRupee);
+                String rupeeChar = context.getString(R.string.Rs_char);
+                CustomTypefaceSpan rupeeTypefaceSpan = new CustomTypefaceSpan(faceRupee);
+                SpannableStringBuilderCompat giftWrapChargeSpannable =
+                        new SpannableStringBuilderCompat(context.getString(R.string.giftWrapCharge))
+                                .append(" ")
+                                .append(rupeeChar, rupeeTypefaceSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                                .append(UIUtil.formatAsMoney(giftItem.getGiftWrapCharge()))
+                                .append(context.getString(R.string.rupeeTerminator))
+                                .append(" ")
+                                .append(context.getString(R.string.perItem));
+
                 txtProductGiftWrapPrice.setText(giftWrapChargeSpannable);
                 txtProductGiftWrapPrice.setVisibility(View.VISIBLE);
 
-                SpannableString giftWrapTotalChargeSpannable = UIUtil.asRupeeSpannable(context.getString(R.string.giftWrapChargeTotal) + " ",
-                        UIUtil.formatAsMoney(giftItem.getGiftWrapCharge() * reservedQty) +
-                                context.getString(R.string.rupeeTerminator), faceRupee);
+                SpannableStringBuilderCompat giftWrapTotalChargeSpannable =
+                        new SpannableStringBuilderCompat(context.getString(R.string.giftWrapChargeTotal))
+                                .append(" ")
+                                .append(rupeeChar, rupeeTypefaceSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                                .append(UIUtil.formatAsMoney(giftItem.getGiftWrapCharge() * reservedQty))
+                                .append(context.getString(R.string.rupeeTerminator));
+
                 txtProductGiftWrapTotalPrice.setText(giftWrapTotalChargeSpannable);
             } else {
                 txtProductGiftWrapPrice.setVisibility(View.GONE);
                 txtProductGiftWrapTotalPrice.setText(context.getString(R.string.noAddGiftWrap));
             }
-            txtProductGiftWrapQuantityStatus.setText(giftItem.getReservedQty() + " " + context.getString(R.string.qtyToGiftWrapOrMsg));
+            txtProductGiftWrapQuantityStatus.setText(context.getString(R.string.qtyToGiftWrapOrMsg, giftItem.getReservedQty()));
         } else {
             UIUtil.setUpGiftItemListFooter(gift, (GiftItemFooterViewHolder) vholder,
                     ((AppOperationAware) context).getCurrentActivity());

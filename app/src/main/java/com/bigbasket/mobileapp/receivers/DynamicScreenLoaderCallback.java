@@ -59,9 +59,7 @@ public abstract class DynamicScreenLoaderCallback implements LoaderManager.Loade
         }
         if (mDynamicScreenType == null) return; // Defensive check
         Log.d(TAG, "onLoadFinished - Context: " + mContext + ",  id = " + mDynamicScreenType);
-        if (data != null && data.moveToFirst()
-                && data.getBlob(DynamicPageDbHelper.COLUMN_SCREEN_DATA_INDEX) != null) {
-
+        if (data != null && data.moveToFirst() && data.getBlob(2) != null) {
             if (DynamicPageDbHelper.isStale(mContext, mDynamicScreenType)) {
                 Log.d(TAG, "Dynamic screen = " + mDynamicScreenType + " is stale, triggering refresh");
                 downloadDynamicScreen(mDynamicScreenType);

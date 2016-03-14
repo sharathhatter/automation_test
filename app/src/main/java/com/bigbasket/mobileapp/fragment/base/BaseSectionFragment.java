@@ -13,6 +13,7 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.view.SectionView;
+import com.newrelic.agent.android.instrumentation.Trace;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
     private SectionData mSectionData;
     private String mScreenName;
     private boolean mSaveData = true;
+    private SectionView sectionView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,14 +32,18 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
 
     @Nullable
     public View getSectionView(boolean isHelp) {
-        SectionView sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData,
-                mScreenName, isHelp, false);
+        if(sectionView == null) {
+            sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData,
+                    mScreenName, isHelp, false);
+        }
         return sectionView.getView();
     }
 
     @NonNull
     public Pair<RecyclerView, ArrayList<Integer>> getSectionRecylerView(ViewGroup parent) {
-        SectionView sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData, mScreenName);
+        if(sectionView == null) {
+            sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData, mScreenName);
+        }
         RecyclerView recyclerView = sectionView.getRecyclerView(parent);
         ArrayList<Integer> dynamicTiles = sectionView.getDynamicTiles();
         return new Pair<>(recyclerView, dynamicTiles);
@@ -70,6 +76,7 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
         return mSectionData;
     }
 
+    @Trace
     @Override
     public void setSectionData(SectionData sectionData) {
         if (mSectionData != null && sectionData != null
@@ -85,6 +92,9 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
             }
         }
         mSectionData = sectionData;
+        if(sectionView != null) {
+            sectionView.setSectionData(mSectionData);
+        }
     }
 
     protected void saveSectionData(boolean saveData) {

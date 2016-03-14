@@ -22,6 +22,10 @@ public class Order implements Parcelable {
             return new Order(source);
         }
     };
+    @SerializedName(Constants.VARIABLE_WEIGHT_MSG)
+    public String variableWeightMsg;
+    @SerializedName(Constants.VARIABLE_WEIGHT_LINK)
+    public String variableWeightLink;
     @SerializedName(Constants.ORDER_ID)
     private String orderId;
     @SerializedName(Constants.ORDER_NUMBER)
@@ -49,11 +53,6 @@ public class Order implements Parcelable {
     private Address address;
     @SerializedName(Constants.CAN_PAY)
     private boolean canPay;
-    @SerializedName(Constants.VARIABLE_WEIGHT_MSG)
-    public String variableWeightMsg;
-    @SerializedName(Constants.VARIABLE_WEIGHT_LINK)
-    public String variableWeightLink;
-
 
     public Order(Parcel parcel) {
         this.orderId = parcel.readString();
@@ -180,6 +179,7 @@ public class Order implements Parcelable {
     public boolean canPay() {
         return canPay;
     }
+
 
     public String getVariableWeightMsg() {
         return variableWeightMsg;

@@ -5,7 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.SearchActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import retrofit2.Call;
 
 
-public class DiscountActivity extends SearchActivity {
+public class DiscountActivity extends BackButtonActivity {
 
     @Override
     public void onCreate(Bundle saveInstanceState) {
@@ -35,7 +35,6 @@ public class DiscountActivity extends SearchActivity {
         setTitle(getString(R.string.discounts));
         getDiscountData();
     }
-
 
     private void getDiscountData() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getApplicationContext());

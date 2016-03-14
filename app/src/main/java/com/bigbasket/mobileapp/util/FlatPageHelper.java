@@ -35,6 +35,7 @@ public final class FlatPageHelper {
     }
 
     public static void openFlatPage(Activity context, String url, @Nullable String title) {
+        url = UIUtil.makeFlatPageUrlAppFriendly(url);
         if (openInChromeCustomTabs(context, url)) return;
         Intent intent = new Intent(context, BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);

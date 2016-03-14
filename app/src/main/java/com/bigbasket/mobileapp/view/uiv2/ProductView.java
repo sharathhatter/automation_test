@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StrikethroughSpan;
@@ -42,6 +43,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.SpannableStringBuilderCompat;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
@@ -68,10 +70,32 @@ public final class ProductView {
                 productDataAware, tabName, navigationCtx, appDataStoreAvailabilityMap,
                 cartInfo);
         setPromo(productViewHolder, product, productViewDisplayDataHolder);
+        setProductFoodTypeImage(productViewHolder, product);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
                     productDataAware, navigationCtx, cartInfo, tabName, appDataStoreAvailabilityMap,
                     specialityStoreInfoHashMap);
+        }
+    }
+
+    private static void setProductFoodTypeImage(ProductViewHolder productViewHolder, Product product) {
+        ImageView imgProductFoodType = productViewHolder.getImgProductFoodType();
+        if (product.getProductFoodType() != null) {
+            imgProductFoodType.setVisibility(View.VISIBLE);
+            switch (product.getProductFoodType().toLowerCase()) {
+                case Constants.PRODUCT_FOOD_TYPE_VEG:
+                    imgProductFoodType.setImageDrawable(ContextCompat.getDrawable(imgProductFoodType.getContext(), R.drawable.ic_food_type_veg));
+                    break;
+                case Constants.PRODUCT_FOOD_TYPE_NONVEG:
+                    imgProductFoodType.setImageDrawable(ContextCompat.getDrawable(imgProductFoodType.getContext(), R.drawable.ic_food_type_non_veg));
+                    break;
+                case Constants.PRODUCT_FOOD_TYPE_EGG:
+                    imgProductFoodType.setImageDrawable(ContextCompat.getDrawable(imgProductFoodType.getContext(), R.drawable.ic_food_type_egg));
+                    break;
+                default:imgProductFoodType.setVisibility(View.GONE);
+            }
+        } else {
+            imgProductFoodType.setVisibility(View.GONE);
         }
     }
 
@@ -178,16 +202,12 @@ public final class ProductView {
 
         TextView txtMrp = productViewHolder.getTxtMrp();
         txtMrp.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-
         if (hasSavings && !TextUtils.isEmpty(product.getMrp())) {
-            String prefix = "`";
-            String mrpStr = UIUtil.formatAsMoney(Double.parseDouble(product.getMrp()));
-            int prefixLen = prefix.length();
-            SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
-            spannableMrp.setSpan(new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()), prefixLen - 1,
-                    prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            SpannableStringBuilder spannableMrp =
+                    UIUtil.asRupeeSpannable(Double.parseDouble(product.getMrp()),
+                            productViewDisplayDataHolder.getRupeeSpan());
             spannableMrp.setSpan(new StrikethroughSpan(), 0,
-                    spannableMrp.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                    spannableMrp.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             txtMrp.setText(spannableMrp);
             txtMrp.setVisibility(View.VISIBLE);
         } else {
@@ -195,7 +215,8 @@ public final class ProductView {
         }
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         txtSalePrice.setText(UIUtil.asRupeeSpannable(
-                UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())), productViewDisplayDataHolder.getRupeeTypeface()));
+                UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())),
+                productViewDisplayDataHolder.getRupeeSpan()));
     }
 
     private static boolean hasText(ArrayList<HashMap<String, String>> storeAvailabilityArrayList,
@@ -307,7 +328,7 @@ public final class ProductView {
                 layoutExpressMsg.setVisibility(View.GONE);
             }
         } else {
-            ArrayList<String> msgs = new ArrayList<>();
+            ArrayList<String> msgs = new ArrayList<>(storeAvailabilityArrayList.size());
             for (HashMap<String, String> particularStoreMap : storeAvailabilityArrayList) {
                 String msg = getDeliveryTimeAnnotation(particularStoreMap, allStoreAvailabilityMsgMap);
                 if (!TextUtils.isEmpty(msg)) {
@@ -384,17 +405,12 @@ public final class ProductView {
                 Promo.getAllTypes().contains(product.getProductPromoInfo().getPromoType())) {
             //Show Promo Saving
             if (product.getProductPromoInfo().getPromoSavings() > 0) {
-                String label = product.hasSavings() ? "Save Additional `" : "Save `";
-                String promoSavingStr = label +
-                        product.getProductPromoInfo().getFormattedPromoSavings();
-                SpannableString savingSpannable =
-                        new SpannableString(promoSavingStr);
-                int labelLength = label.length();
-                savingSpannable.setSpan(new
-                                CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()),
-                        labelLength - 1,
-                        labelLength, Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-                );
+                String label = product.hasSavings() ? "Save Additional " : "Save ";
+                SpannableStringBuilderCompat savingSpannable = new SpannableStringBuilderCompat(label)
+                        .append(txtPromoAddSavings.getResources().getString(R.string.Rs_char),
+                                productViewDisplayDataHolder.getRupeeSpan(),
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        .append(product.getProductPromoInfo().getFormattedPromoSavings());
                 txtPromoAddSavings.setVisibility(View.VISIBLE);
                 txtPromoAddSavings.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
                 txtPromoAddSavings.setText(savingSpannable);
@@ -680,7 +696,8 @@ public final class ProductView {
             final ProductListSpinnerAdapter productListSpinnerAdapter =
                     new ProductListSpinnerAdapter(productDataAware.getCurrentActivity(),
                             childProducts, productViewDisplayDataHolder.getSerifTypeface(),
-                            productViewDisplayDataHolder.getRupeeTypeface(), product);
+                            productViewDisplayDataHolder.getRupeeTypeface(),
+                            productViewDisplayDataHolder.getRupeeSpan(), product);
             productListSpinnerAdapter.setCurrentProduct(currentProduct);
             listView.setAdapter(productListSpinnerAdapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -7,10 +7,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -91,7 +95,6 @@ public class PromoDetailFragment extends BaseFragment {
         int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         getPromoDetail(promoId);
     }
-
 
     private void getPromoDetail(int promoId) {
         if (promoId > -1) {
@@ -365,7 +368,8 @@ public class PromoDetailFragment extends BaseFragment {
 
         switch (promoSet.getSetType()) {
             case Constants.QUANTITY:
-                String valInBasket = UIUtil.formatAsMoney((double) promoSet.getValueInBasket()) + " in basket";
+                String valInBasket = getString(R.string.val_in_basket_format,
+                        UIUtil.formatAsMoney((double) promoSet.getValueInBasket()));
                 txtValInBasket.setText(valInBasket);
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
                     String moreQtyNeeded = UIUtil.roundOrInt(Math.abs(promoSet.getPromoCriteriaVal() - promoSet.getValueInBasket()));
@@ -374,19 +378,15 @@ public class PromoDetailFragment extends BaseFragment {
                 }
                 break;
             case Constants.AMOUNT:
-                String prefix = "`";
-                valInBasket = prefix + UIUtil.formatAsMoney((double) promoSet.getValueInBasket()) + " in basket";
-                Spannable valInBasketSpan = new SpannableString(valInBasket);
-                valInBasketSpan.setSpan(new CustomTypefaceSpan("", faceRupee),
-                        0, 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                valInBasket = getString(R.string.val_in_basket_format,
+                        UIUtil.formatAsMoney((double) promoSet.getValueInBasket()));
+                SpannableStringBuilder valInBasketSpan = UIUtil.asRupeeSpannable(valInBasket, faceRupee);
                 txtValInBasket.setText(valInBasketSpan);
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
                     String moreAmountNeeded = UIUtil.roundOrInt(Math.abs(promoSet.getPromoCriteriaVal() -
                             promoSet.getValueInBasket()));
-                    String txt = "`" + getString(R.string.promo_more_needed_format,moreAmountNeeded);
-                    Spannable spannable = new SpannableString(txt);
-                    spannable.setSpan(new CustomTypefaceSpan("", faceRupee),
-                            0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    String txt = getString(R.string.promo_more_needed_format, moreAmountNeeded);
+                    Spannable spannable = UIUtil.asRupeeSpannable(txt, faceRupee);
                     txtValNeeded.setVisibility(View.VISIBLE);
                     txtValNeeded.setText(spannable);
                 }
@@ -464,6 +464,12 @@ public class PromoDetailFragment extends BaseFragment {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.PROMO_DETAIL_SCREEN;
+    }
+
+    @NonNull
+    @Override
+    public String getInteractionName() {
+        return "PromoDetailFragment";
     }
 
     private class PromoSetActivityHandler implements View.OnClickListener {
@@ -570,11 +576,5 @@ public class PromoDetailFragment extends BaseFragment {
             }
             return row;
         }
-    }
-
-    @NonNull
-    @Override
-    public String getInteractionName() {
-        return "PromoDetailFragment";
     }
 }

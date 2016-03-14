@@ -425,5 +425,13 @@
     <style name="SpinnerPopTheme" parent="Theme.AppCompat.Light">
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/primary_text_size</item>
+    </style>
+
+    <style name="CustomDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
 
 </resources>

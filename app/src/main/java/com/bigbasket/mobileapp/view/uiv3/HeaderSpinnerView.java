@@ -126,6 +126,7 @@ public class HeaderSpinnerView<T extends AppOperationAware> {
             layoutChildToolbarContainer.setVisibility(View.GONE);
             listHeaderDropdown.setAdapter(null);
             toolbar.setTitle(fallbackHeaderTitle);
+            toolbar.setTitleTextAppearance(toolbar.getContext(),R.style.Toolbar_TitleText);
             if (txtToolbarDropdown != null) {
                 txtToolbarDropdown.setOnClickListener(null);
                 toolbar.removeView(txtToolbarDropdown);

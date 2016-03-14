@@ -67,7 +67,6 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
     @Nullable
     protected String cachedAnalyticsAttrsJsonString;
 
-
     public OnSectionItemClickListener(T context) {
         this(context, null, null, null, null);
     }
@@ -201,7 +200,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
                         promoDetailFragment.setArguments(promoDetailBundle);
                         ((BBActivity) context).onChangeFragment(promoDetailFragment);
                     } else {
-                        intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
+                        intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
                         intent.putExtra(Constants.PROMO_ID, Integer.parseInt(destinationInfo.getDestinationSlug()));
                         context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -266,7 +265,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
                 if (hasMainMenu() && context instanceof BBActivity) {
                     ((BBActivity) context).onChangeFragment(new PromoCategoryFragment());
                 } else {
-                    intent = new Intent(context.getCurrentActivity(), SearchActivity.class);
+                    intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
                     context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
@@ -282,6 +281,9 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
                     UIUtil.dialNumber(destinationInfo.getDestinationSlug(),
                             context.getCurrentActivity());
                 }
+                break;
+            case DestinationInfo.COMMUNICATION_HUB_FAQ:
+                context.getCurrentActivity().launchMoEngageCommunicationHubWithFAQ();
                 break;
             case DestinationInfo.DYNAMIC_PAGE:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
@@ -301,8 +303,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
                 }
                 break;
             case DestinationInfo.DISCOUNT:
-                intent = new Intent(context.getCurrentActivity(),
-                        DiscountActivity.class);
+                intent = new Intent(context.getCurrentActivity(), DiscountActivity.class);
                 context.getCurrentActivity().startActivityForResult(intent,
                         NavigationCodes.GO_TO_HOME);
                 break;
@@ -439,7 +440,7 @@ public class OnSectionItemClickListener<T extends AppOperationAware> implements 
     }
 
     @Nullable
-    private String getAnalyticsFormattedScreeName() {
+    protected String getAnalyticsFormattedScreeName() {
         if (screenName == null) return null;
         switch (screenName) {
             case AbstractDynamicPageSyncService.HOME_PAGE:

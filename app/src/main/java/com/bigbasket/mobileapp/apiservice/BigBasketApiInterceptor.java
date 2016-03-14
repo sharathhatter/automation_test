@@ -4,6 +4,8 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.newrelic.agent.android.Agent;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -46,6 +48,11 @@ public class BigBasketApiInterceptor implements Interceptor {
         newRequestBuilder.addHeader("User-Agent", userAgentPrefix + Build.VERSION.RELEASE);
         if (!TextUtils.isEmpty(requestCookieVal)) {
             newRequestBuilder.addHeader("Cookie", requestCookieVal);
+        }
+        //Workaround until new relic releases the fix
+        String crossProcessId = Agent.getCrossProcessId(); // API call into the agent for the X-NewRelic-ID
+        if (!TextUtils.isEmpty(crossProcessId)) {
+            newRequestBuilder.addHeader("X-NewRelic-ID", crossProcessId);
         }
         return chain.proceed(newRequestBuilder.build());
     }

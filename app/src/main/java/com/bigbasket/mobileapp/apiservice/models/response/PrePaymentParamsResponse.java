@@ -25,6 +25,8 @@ public class PrePaymentParamsResponse implements Parcelable {
 
     @SerializedName(Constants.POST_PARAMS)
     public HashMap<String, String> postParams;
+    @SerializedName(Constants.TXT_ORDER_ID)
+    public String txnOrderId;
 
     public PrePaymentParamsResponse(Parcel parcel) {
         int postParamsSize = parcel.readInt();
@@ -38,6 +40,7 @@ public class PrePaymentParamsResponse implements Parcelable {
                 postParams.put(valKey, null);
             }
         }
+        txnOrderId = parcel.readString();
     }
 
     public PrePaymentParamsResponse(HashMap<String, String> postParams) {
@@ -47,6 +50,10 @@ public class PrePaymentParamsResponse implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    public String getTxnOrderId() {
+        return txnOrderId;
     }
 
     @Override
@@ -64,6 +71,6 @@ public class PrePaymentParamsResponse implements Parcelable {
         } else {
             dest.writeInt(0);
         }
-
+        dest.writeString(txnOrderId);
     }
 }

@@ -2,12 +2,12 @@ package com.bigbasket.mobileapp.adapter.order;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -40,6 +40,7 @@ import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.SpannableStringBuilderCompat;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -57,6 +58,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
     private static final int VIEW_TYPE_CART_HEADER = 1;
     private static final int VIEW_TYPE_CART_ANNOTATION = 2;
     private static final int VIEW_TYPE_FULFILLMENT_INFO = 3;
+    private CustomTypefaceSpan rupeeSpan;
     private List<Object> orderList;
     private LayoutInflater inflater;
     private
@@ -87,6 +89,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         this.context = context;
         this.orderList = orderList;
         this.faceRupee = faceRupee;
+        this.rupeeSpan = new CustomTypefaceSpan(faceRupee);
         this.faceRobotoRegular = faceRobotoRegular;
         this.orderItemDisplaySource = orderItemDisplaySource;
         this.fulfillmentInfoIdAndIconHashMap = fulfillmentInfoIdAndIconHashMap;
@@ -140,16 +143,16 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
             CartItem cartItem = (CartItem) obj;
             switch (cartItem.getPromoAppliedType()) {
                 case CartItem.REGULAR_PRICE_AND_NO_PROMO:
-                    getRegularPriceAndNoPromoView((RowHolder) holder);
+                    updateRegularPriceAndNoPromoView((RowHolder) holder);
                     break;
                 case CartItem.REGULAR_PRICE_AND_PROMO_NOT_APPLIED:
-                    getRegularPriceAndPromoNotAppliedView((RowHolder) holder, cartItem);
+                    updateRegularPriceAndPromoNotAppliedView((RowHolder) holder, cartItem);
                     break;
                 case CartItem.PROMO_APPLIED_AND_PROMO_PRICING:
-                    getPromoAppliedAndPromoPricingView((RowHolder) holder, cartItem);
+                    updatePromoAppliedAndPromoPricingView((RowHolder) holder, cartItem);
                     break;
                 case CartItem.PROMO_APPLIED_AND_MIXED_PRICING:
-                    getPromoAppliedAndMixedPromoPricingView((RowHolder) holder, cartItem);
+                    updatePromoAppliedAndMixedPromoPricingView((RowHolder) holder, cartItem);
                     break;
 
             }
@@ -191,32 +194,30 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         txtTopCategory.setText(cartItemList.getTopCatName());
 
         TextView topCatTotalItems = headerTitleHolder.getTopCatTotalItems();
+        Resources resources = topCatTotalItems.getContext().getResources();
         if (cartItemList.getTopCatItems() != 0) {
             topCatTotalItems.setVisibility(View.VISIBLE);
-            if (cartItemList.getTopCatItems() > 1) {
-                topCatTotalItems.setText(cartItemList.getTopCatItems() + " Items");
-            } else {
-                topCatTotalItems.setText(cartItemList.getTopCatItems() + " Item");
-            }
+            topCatTotalItems.setText(resources.getQuantityString(R.plurals.numberOfItems,
+                    cartItemList.getTopCatItems(), cartItemList.getTopCatItems()));
         } else {
             topCatTotalItems.setVisibility(View.INVISIBLE);
         }
 
-        String separator = "  |  ";
         String topCatTotalAmount = UIUtil.formatAsMoney(cartItemList.getTopCatTotal());
         TextView topCatTotal = headerTitleHolder.getTopCatTotal();
         if (!topCatTotalAmount.equals("0")) {
             topCatTotal.setVisibility(View.VISIBLE);
-            String regularSalePriceStr = "`" + topCatTotalAmount;
-            Spannable regularSpannable = new SpannableString(separator + regularSalePriceStr);
-            regularSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), separator.length(),
-                    separator.length() + 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            topCatTotal.setText(regularSpannable);
+            String separator = "  |  ";
+            String rupeeChar = resources.getString(R.string.Rs_char);
+            SpannableStringBuilderCompat topCatTotalSpannableBuilder =
+                    new SpannableStringBuilderCompat(separator)
+                    .append(rupeeChar, rupeeSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    .append(topCatTotalAmount);
+            topCatTotal.setText(topCatTotalSpannableBuilder);
         } else {
             topCatTotal.setText("");
             topCatTotal.setVisibility(View.INVISIBLE);
         }
-
 
     }
 
@@ -238,15 +239,14 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         final TextView txtFulfilledBy = holder.getTxtFulfilledBy();
         if (!TextUtils.isEmpty(fulfillmentInfo.getFulfilledBy()) && !fulfillmentInfo.getFulfilledBy().equalsIgnoreCase("null")) {
 
-            String prefix = " - Indicates " + fulfillmentInfo.getDisplayName() + " products fulfilled by ";
-            String postFix = fulfillmentInfo.getFulfilledBy();
+            SpannableStringBuilderCompat content = new SpannableStringBuilderCompat(" - Indicates ")
+                    .append(fulfillmentInfo.getDisplayName()).append(" products fulfilled by ");
+            String fulfilledBy = fulfillmentInfo.getFulfilledBy();
             if (!TextUtils.isEmpty(fulfillmentInfo.getFulfilledByInfoPage())) {
-                SpannableString content = new SpannableString(prefix + postFix);
-                int prefixLen = prefix.length();
-                content.setSpan(new ForegroundColorSpan(
-                                ContextCompat.getColor(context.getCurrentActivity(),
-                                        R.color.link_color)),
-                        prefixLen - 1, content.length(), 0);
+                content.append(fulfilledBy,
+                        new ForegroundColorSpan(ContextCompat.getColor(context.getCurrentActivity(),
+                                R.color.link_color)),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 txtFulfilledBy.setVisibility(View.VISIBLE);
                 txtFulfilledBy.setText(content);
                 txtFulfilledBy.setTextSize(13);
@@ -258,7 +258,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
                 txtFulfilledBy.setOnClickListener(fulfillmentInfoPageClickListener);
             } else {
                 txtFulfilledBy.setVisibility(View.VISIBLE);
-                txtFulfilledBy.setText(prefix + postFix);
+                txtFulfilledBy.setText(content.append(fulfilledBy));
                 txtFulfilledBy.setTextSize(13);
                 txtFulfilledBy.setOnClickListener(null);
             }
@@ -382,16 +382,10 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         final ImageView imgRemove = rowHolder.getImgRemove();
 
         if (cartItem.getTotalPrice() > 0) {
-            String prefix = "`";
-            String salePriceStr = UIUtil.formatAsMoney(cartItem.getTotalPrice());
-            int prefixLen = prefix.length();
-            SpannableString spannableSalePrice = new SpannableString(prefix + salePriceStr);
-            spannableSalePrice.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
-                    prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            txtSalePrice.setText(spannableSalePrice);
+            txtSalePrice.setText(UIUtil.asRupeeSpannable(cartItem.getTotalPrice(), rupeeSpan));
             txtSalePrice.setVisibility(View.VISIBLE);
         } else {
-            txtSalePrice.setText("Free!");
+            txtSalePrice.setText(R.string.free);
             txtInBasket.setVisibility(View.INVISIBLE);
             imgIncBasketQty.setVisibility(View.INVISIBLE);
             imgDecBasketQty.setVisibility(View.INVISIBLE);
@@ -418,28 +412,16 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
             txtGiftMsg.setVisibility(View.VISIBLE);
         }
 
-        /*
-        TextView txtSaving = rowHolder.getTxtSaving();
-        if (cartItem.getSaving() > 0 && (cartItem.getPromoAppliedType() >CartItem.REGULAR_PRICE_AND_PROMO_NOT_APPLIED &&
-                cartItem.getPromoAppliedType()<CartItem.REGULAR_PRICE_AND_NO_PROMO)) {
-            txtSaving.setVisibility(View.VISIBLE);
-            String prefix = "Save: `";
-            Spannable savingSpannable = new SpannableString(prefix + UIUtil.formatAsMoney(cartItem.getSaving()));
-            savingSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), prefix.length()-1, prefix.length(),
-                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            txtSaving.setText(savingSpannable);
-        }else {
-            txtSaving.setVisibility(View.GONE);
-        }
-        */
-
-
         TextView txtPackDesc = rowHolder.getTxtPackDesc();
-        String packType = "";
+        StringBuilder packType = new StringBuilder();
         if (!TextUtils.isEmpty(cartItem.getProductWeight()))
-            packType = cartItem.getProductWeight();
-        if (!TextUtils.isEmpty(cartItem.getPackDesc()))
-            packType += " - " + cartItem.getPackDesc();
+            packType.append(cartItem.getProductWeight());
+        if (!TextUtils.isEmpty(cartItem.getPackDesc())) {
+            if(!TextUtils.isEmpty(packType)) {
+                packType.append(" - ");
+            }
+            packType.append(cartItem.getPackDesc());
+        }
 
         if (!TextUtils.isEmpty(packType)) {
             txtPackDesc.setText(packType);
@@ -525,7 +507,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
 
     }
 
-    private void getRegularPriceAndNoPromoView(RowHolder rowHolder) {
+    private void updateRegularPriceAndNoPromoView(RowHolder rowHolder) {
         ImageView imgRegularImg = rowHolder.getImgRegularImg();
         imgRegularImg.setVisibility(View.GONE);
 
@@ -546,7 +528,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
     }
 
 
-    private void getRegularPriceAndPromoNotAppliedView(RowHolder rowHolder, CartItem cartItem) {
+    private void updateRegularPriceAndPromoNotAppliedView(RowHolder rowHolder, CartItem cartItem) {
         ImageView imgRegularImg = rowHolder.getImgRegularImg();
         imgRegularImg.setVisibility(View.GONE);
 
@@ -576,7 +558,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
 
     }
 
-    private void getPromoAppliedAndPromoPricingView(RowHolder rowHolder, CartItem cartItem) {
+    private void updatePromoAppliedAndPromoPricingView(RowHolder rowHolder, CartItem cartItem) {
         ImageView imgRegularImg = rowHolder.getImgRegularImg();
         imgRegularImg.setVisibility(View.GONE);
 
@@ -607,7 +589,7 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
 
     }
 
-    private void getPromoAppliedAndMixedPromoPricingView(RowHolder rowHolder, CartItem cartItem) {
+    private void updatePromoAppliedAndMixedPromoPricingView(RowHolder rowHolder, CartItem cartItem) {
         ImageView imgRegularImg = rowHolder.getImgRegularImg();
         imgRegularImg.setVisibility(View.VISIBLE);
 
@@ -616,16 +598,20 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         String regularQtyStr = UIUtil.roundOrInt(cartItem.getCartItemPromoInfo().
                 getRegularInfo().getNumItemInCart());
         String separator = " @ ";
-        String regularSalePriceStr = "`" + UIUtil.formatAsMoney(cartItem.getCartItemPromoInfo().getRegularInfo().getSalePrice());
-        Spannable regularSpannable = new SpannableString(regularQtyStr + separator + regularSalePriceStr);
-        regularSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), regularQtyStr.length()
-                        + separator.length(), regularQtyStr.length() + separator.length() + 1,
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE
-        );
-        regularSpannable.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context.getCurrentActivity(), R.color.tabDark)), regularSalePriceStr.length() - 1,
-                regularQtyStr.length() + separator.length() + regularSalePriceStr.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        regularSpannable.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context.getCurrentActivity(), R.color.medium_grey)), 0,
-                regularQtyStr.length() + separator.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        SpannableStringBuilderCompat regularSpannable = new SpannableStringBuilderCompat(regularQtyStr)
+                .append(separator);
+        int labelLength = regularSpannable.length();
+        regularSpannable.setSpan(
+                new ForegroundColorSpan(ContextCompat.getColor(context.getCurrentActivity(),
+                        R.color.medium_grey)),
+                0, labelLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        String rupeeChar = context.getCurrentActivity().getString(R.string.Rs_char);
+        regularSpannable.append(rupeeChar, rupeeSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                .append(UIUtil.formatAsMoney(cartItem.getCartItemPromoInfo().getRegularInfo().getSalePrice()));
+        regularSpannable.setSpan(
+                new ForegroundColorSpan(ContextCompat.getColor(context.getCurrentActivity(), R.color.tabDark)),
+                labelLength, regularSpannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         txtRegularPriceAndQty.setText(regularSpannable);
 
         TextView txtPromoPriceAndQty = rowHolder.getTxtPromoPriceAndQty();
@@ -633,15 +619,13 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         if (cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice() > 0) {
             String promoQtyStr = UIUtil.roundOrInt(cartItem.getCartItemPromoInfo().
                     getPromoInfo().getNumItemInCart());
-            String promoSalePriceStr = "`" + UIUtil.formatAsMoney(cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice());
-            Spannable promoSpannable = new SpannableString(promoQtyStr + separator + promoSalePriceStr);//
-            promoSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), promoQtyStr.length() +
-                            separator.length(), separator.length() + promoQtyStr.length() + 1, //
-                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE
-            );
+            Spannable promoSpannable = new SpannableStringBuilderCompat(promoQtyStr)
+                    .append(separator)
+                    .append(rupeeChar, rupeeSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    .append(UIUtil.formatAsMoney(cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice()));
             txtPromoPriceAndQty.setText(promoSpannable);
         } else {
-            txtPromoPriceAndQty.setText("Free!");
+            txtPromoPriceAndQty.setText(R.string.free);
         }
 
 
