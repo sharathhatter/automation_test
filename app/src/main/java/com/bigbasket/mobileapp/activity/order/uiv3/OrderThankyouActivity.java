@@ -101,9 +101,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
-                    startActivity(intent);
-                    setResult(NavigationCodes.GO_TO_HOME);
-                    finish();
+                    startActivityForResult(intent, NavigationCodes.RC_PAY_NOW);
                 }
             });
         } else {
@@ -266,6 +264,16 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == NavigationCodes.RC_PAY_NOW) {
+            goToHome();
+            finish();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     public void onContinueBtnClicked(View view) {
         goToHome();
     }
@@ -278,6 +286,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
     @Override
     public void onBackPressed() {
         goToHome();
+        super.onBackPressed();
     }
 
     @Override
