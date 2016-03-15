@@ -10,7 +10,6 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.models.ErrorResponse;
 import com.bigbasket.mobileapp.apiservice.models.request.ValidatePaymentRequest;
-import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.factory.payment.OrderPrepaymentProcessingTask;
 import com.bigbasket.mobileapp.factory.payment.ValidatePayment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
@@ -354,7 +353,9 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
         mAddMoreMsg = null;
         mOrderAmount = null;
 
-        startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
+        startActivity(invoiceIntent);
+        setResult(NavigationCodes.GO_TO_HOME);
+        finish();
     }
 
     @Override

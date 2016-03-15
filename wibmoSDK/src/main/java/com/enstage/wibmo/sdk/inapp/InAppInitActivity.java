@@ -153,7 +153,9 @@ public class InAppInitActivity extends Activity {
             }
         }
 
-        doIAPStuff();
+        if(savedInstanceState == null) {
+            doIAPStuff();
+        }
     }
 
     private void doIAPStuff() {

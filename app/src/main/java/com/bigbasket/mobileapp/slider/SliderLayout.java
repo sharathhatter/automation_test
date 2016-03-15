@@ -144,11 +144,11 @@ public class SliderLayout extends RelativeLayout {
                 @Override
                 public void onChanged() {
                     super.onChanged();
-                    if (mSliderAdapter.getCount() <= 10) {
-                        mViewPager.setOffscreenPageLimit(mSliderAdapter.getCount());
-                    } else {
-                        mViewPager.setOffscreenPageLimit(10);
-                    }
+//                    if (mSliderAdapter.getCount() <= 10) {
+//                        mViewPager.setOffscreenPageLimit(mSliderAdapter.getCount());
+//                    } else {
+//                        mViewPager.setOffscreenPageLimit(10);
+//                    }
                 }
             });
         }
