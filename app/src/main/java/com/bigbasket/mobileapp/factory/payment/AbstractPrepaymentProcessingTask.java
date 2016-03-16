@@ -252,7 +252,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                     Call<ApiResponse<PayzappPrePaymentParamsResponse>> call =
                             getPayzappPrepaymentParamsApiCall(bigBasketApiService);
                     Response<ApiResponse<PayzappPrePaymentParamsResponse>> response = call.execute();
-                    if (response.isSuccess()) {
+                    if (response.isSuccessful()) {
                         if (response.body().status == 0) {
                             synchronized (this) {
                                 mPayzappPostParams = response.body().apiResponseContent.payzappPostParams;
@@ -276,7 +276,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                     Call<ApiResponse<PrePaymentParamsResponse>> call =
                             getPrepaymentParamsApiCall(bigBasketApiService);
                     Response<ApiResponse<PrePaymentParamsResponse>> response = call.execute();
-                    if (response.isSuccess()) {
+                    if (response.isSuccessful()) {
                         if (response.body().status == 0) {
                             synchronized (this) {
                                 mPaymentPostParams = response.body().apiResponseContent.postParams;

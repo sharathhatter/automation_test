@@ -43,7 +43,7 @@ public class SearchUtil {
                 try {
                     Call<ApiResponse<AutoSearchApiResponseContent>> call = bigBasketApiService.autoSearch(query, cityId);
                     Response<ApiResponse<AutoSearchApiResponseContent>> response = call.execute();
-                    if (response.isSuccess()) {
+                    if (response.isSuccessful()) {
                         ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = response.body();
                         switch (autoSearchApiResponse.status) {
                             case 0:

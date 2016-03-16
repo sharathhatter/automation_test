@@ -47,7 +47,7 @@ public class LogoutTask extends AsyncTask<Void, Void, ErrorResponse> {
         Call<BaseApiResponse> logoutCall = bigBasketApiService.logout();
         try {
             Response<BaseApiResponse> response = logoutCall.execute();
-            if (response.isSuccess()) {
+            if (response.isSuccessful()) {
                 if (response.body().status == 0) {
                     syncAppData(ctx.getCurrentActivity());
                     return null;
