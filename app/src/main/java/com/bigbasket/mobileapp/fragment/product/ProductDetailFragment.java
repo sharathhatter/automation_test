@@ -1,13 +1,19 @@
 package com.bigbasket.mobileapp.fragment.product;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.TypedValue;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +26,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.handler.click.OnBrandPageListener;
@@ -32,7 +39,6 @@ import com.bigbasket.mobileapp.interfaces.AppOperationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.AppDataDynamic;
-import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
@@ -46,6 +52,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FlatPageHelper;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
@@ -140,7 +147,6 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         });
     }
 
-
     private void renderProductDetail() {
         if (getActivity() == null || getView() == null) return;
 
@@ -190,10 +196,53 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         layoutProductDetail.addView(productRow);
 
         TextView txtVariableWeightMsg = (TextView) productRow.findViewById(R.id.txtVariableWeightMsg);
-        String variableWeightMsg = mProduct.getVariableWeightMsg();
+        String variableWeightMsg = null, knowMoreLink = null;
+        SpannableStringBuilder spannableBuilder = null;
+        int start;
+        boolean hasMsg = false;
+        if (mProduct.getStoreAvailability() != null && appDataDynamic.getStoreAvailabilityMap() != null) {
+            for (int i = 0; i < mProduct.getStoreAvailability().size(); i++) {
+                if (appDataDynamic.getStoreAvailabilityMap().containsKey(mProduct.getStoreAvailability().get(i).get(Constants.AVAILABILITY_INFO_ID))) {
+                    if (mProduct.getStoreAvailability().get(i).containsKey(Constants.VARIABLE_WEIGHT_MSG)) {
+                        hasMsg = true;
+                        variableWeightMsg = mProduct.getStoreAvailability().get(i).get(Constants.VARIABLE_WEIGHT_MSG);
+                        if (mProduct.getStoreAvailability().get(i).containsKey(Constants.VARIABLE_WEIGHT_LINK)) {
+                            knowMoreLink = mProduct.getStoreAvailability().get(i).get(Constants.VARIABLE_WEIGHT_LINK);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        if (!hasMsg) {
+            if (!TextUtils.isEmpty(mProduct.getVariableWeightMsg())) {
+                variableWeightMsg = mProduct.getVariableWeightMsg();
+                knowMoreLink = mProduct.getKnowMoreLink();
+            }
+        }
         if (!TextUtils.isEmpty(variableWeightMsg)) {
-            txtVariableWeightMsg.setTypeface(faceRobotoRegular);
-            txtVariableWeightMsg.setText(variableWeightMsg);
+            spannableBuilder = new SpannableStringBuilder(variableWeightMsg).append(" ");
+            start = spannableBuilder.length();
+            spannableBuilder.setSpan(new CustomTypefaceSpan(faceRobotoRegular), 0, start,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (!TextUtils.isEmpty(knowMoreLink)) {
+                final UnderlineSpan underLineSpan = new UnderlineSpan();
+                CustomClickableSpan customClickableSpan = new CustomClickableSpan(getActivity(), knowMoreLink);
+                spannableBuilder.append(getString(R.string.know_more));
+                int end = spannableBuilder.length();
+                spannableBuilder.setSpan(customClickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableBuilder.setSpan(new CustomTypefaceSpan(faceRobotoMedium), start, end,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableBuilder.setSpan(underLineSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableBuilder.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getActivity(),
+                        R.color.uiv3_link_color)), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                txtVariableWeightMsg.setHighlightColor(Color.TRANSPARENT);
+                txtVariableWeightMsg.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+        }
+
+        if (!TextUtils.isEmpty(spannableBuilder)) {
+            txtVariableWeightMsg.setText(spannableBuilder);
             txtVariableWeightMsg.setVisibility(View.VISIBLE);
         } else {
             txtVariableWeightMsg.setVisibility(View.GONE);
@@ -237,7 +286,6 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                             tagsFlowLayout.addView(txtFoodType);
                         }
                     }
-
                 }
             }
         }
@@ -262,7 +310,6 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         //logging the product detail events
         logProductDetailEvent();
     }
-
 
     @Override
     public String getTitle() {
@@ -381,5 +428,20 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     @Override
     public String getInteractionName() {
         return "ProductDetailFragment";
+    }
+
+    public static class CustomClickableSpan extends android.text.style.ClickableSpan {
+        private Activity activity;
+        private String knowMoreLink;
+
+        public CustomClickableSpan(Activity activity, String knowMoreLink) {
+            this.activity = activity;
+            this.knowMoreLink = knowMoreLink;
+        }
+
+        @Override
+        public void onClick(View widget) {
+            FlatPageHelper.openFlatPage(activity, knowMoreLink, null);
+        }
     }
 }

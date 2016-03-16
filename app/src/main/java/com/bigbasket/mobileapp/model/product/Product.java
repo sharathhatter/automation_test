@@ -67,6 +67,8 @@ public class Product extends BaseProduct {
     private String giftMsg;
     @SerializedName(Constants.VARIABLE_WEIGHT_MSG)
     private String variableWeightMsg;
+    @SerializedName(Constants.VARIABLE_WEIGHT_LINK)
+    private String knowMoreLink;
     @SerializedName(Constants.STORE_IDS)
     private List<String> storeIds;
     @SerializedName(Constants.PRODUCT_FOOD_TYPE)
@@ -131,6 +133,10 @@ public class Product extends BaseProduct {
         boolean isWeightMsgNull = source.readByte() == (byte) 1;
         if (!isWeightMsgNull) {
             variableWeightMsg = source.readString();
+        }
+        boolean isKnowMoreLinkNUll = source.readByte() == (byte) 1;
+        if (!isKnowMoreLinkNUll) {
+            knowMoreLink = source.readString();
         }
         boolean isStoreIdsNull = source.readByte() == (byte) 1;
         if (!isStoreIdsNull) {
@@ -249,6 +255,11 @@ public class Product extends BaseProduct {
         if (!isWeightMsgNull) {
             dest.writeString(variableWeightMsg);
         }
+        boolean isKnowMoreLinkNull = knowMoreLink == null;
+        dest.writeByte(isKnowMoreLinkNull ? (byte) 1 : (byte) 0);
+        if (!isKnowMoreLinkNull) {
+            dest.writeString(knowMoreLink);
+        }
         boolean isStoredIdsNull = storeIds == null;
         dest.writeByte(isStoredIdsNull ? (byte) 1 : (byte) 0);
         if (!isStoredIdsNull) {
@@ -363,6 +374,11 @@ public class Product extends BaseProduct {
     @Nullable
     public String getVariableWeightMsg() {
         return variableWeightMsg;
+    }
+
+    @Nullable
+    public String getKnowMoreLink() {
+        return knowMoreLink;
     }
 
     @Nullable

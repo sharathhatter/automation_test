@@ -496,7 +496,6 @@ public class Constants {
     public static final String CLICKS = "clicks";
     public static final String IMPRESSIONS = "imps";
 
-
     //fb login and register
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
     public static final String AUTH_TOKEN = "auth_token";
@@ -511,7 +510,6 @@ public class Constants {
     public static final String BUNDLE_PACK = "bundle-pack";
     public static final String NOW_AT_BB = "nowatbb";
     public static final String NEW_AT_BB = "new_launches";
-
 
     public static final String LOCAL_RES_PREFIX = "app://";
     public static final String LOCATION = "location";
@@ -673,8 +671,7 @@ public class Constants {
     public static final int PAYMENT_VALIDATION_FAILED = 8009;
     public static final int CONTACT_PERMISSION_INFO_DIALOG = 8010;
 
-
-    // App Indexing params
+    // App Indexing paramsmore
     public static final String HTTP_HOST = "bigbasket.com";
     public static final String SHOW_PAYMENT_OPTIONS_KNOW_MORE = "show_payment_options_know_more";
     public static final int KNOW_MORE_DIALOG_ID = 8008;
