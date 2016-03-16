@@ -92,12 +92,16 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                         return;
                     }
                     HashSet<String> listSelectedOrderIds = new HashSet<>(orderArrayList.size());
+                    ArrayList<Order> listSelectedOrders = new ArrayList<Order>();
                     Intent intent = new Intent(getCurrentActivity(), PayNowActivity.class);
                     for (Order order : orderArrayList) {
-                        if (!listSelectedOrderIds.contains(order.getOrderId()) && order.canPay())
+                        if (!listSelectedOrderIds.contains(order.getOrderId()) && order.canPay()) {
                             listSelectedOrderIds.add(order.getOrderId());
+                            listSelectedOrders.add(order);
+                        }
                     }
                     intent.putExtra(Constants.ORDER_ID, android.text.TextUtils.join(",", listSelectedOrderIds));
+                    intent.putParcelableArrayListExtra(Constants.ORDER, listSelectedOrders);
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentScreenName());
                     trackEvent(TrackingAware.PAY_NOW_CLICKED, map);
