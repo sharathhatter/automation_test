@@ -23,7 +23,7 @@ allprojects {
         picassoLibVersion = '2.5.2'
         leakCanaryLibVersion = '1.4-beta1'
         okhttpLibVersion = '3.1.2' // Remember to change manually in build.gradle of WibmoSDKLib as it's not using android plugin
-        retrofitLibVersion = '2.0.0-beta4'
+        retrofitLibVersion = '2.0.0'
         multidexLibVersion = '1.0.1'
     }
 }

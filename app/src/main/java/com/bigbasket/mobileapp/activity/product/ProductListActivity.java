@@ -368,7 +368,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 @Override
                 public void onResponse(Call<ApiResponse<SponsoredAds>> call,
                                        Response<ApiResponse<SponsoredAds>> response) {
-                    if (response != null && response.isSuccess() && response.body().status == 0
+                    if (response != null && response.isSuccessful() && response.body().status == 0
                             && call != null && !call.isCanceled()) {
                         //Set section data for all tabs for now
                         SponsoredAds sponsoredSectionData =

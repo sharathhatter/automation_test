@@ -102,7 +102,7 @@ public class GetAppDataDynamicIntentService extends IntentService {
                 //Ignore, try again
             }
 
-            if (response == null || !response.isSuccess() || response.body().status != 0) {
+            if (response == null || !response.isSuccessful() || response.body().status != 0) {
                 // POST request failed, Restore the data back to the db, which will be retried later
                 // Dont just insert here, there may have ben some clicks or impressions recorded
                 // during the execution of above statements

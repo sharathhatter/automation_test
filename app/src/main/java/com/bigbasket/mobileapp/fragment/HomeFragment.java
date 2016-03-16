@@ -73,7 +73,7 @@ public class HomeFragment extends BaseSectionFragment {
         View rootView = inflater.inflate(R.layout.home_fragment_layout, container, false);
         NudgeView nudgeView = (NudgeView) rootView.findViewById(R.id.nudge);
         if (getCurrentActivity() != null) {
-            nudgeView.setMoEHelper(getCurrentActivity().getMoEHelper());
+            nudgeView.initialiseNudgeView(getCurrentActivity());
         }
         return rootView;
     }

@@ -36,7 +36,7 @@ public class GetCartCountTask<T> {
                         Call<CartSummaryApiResponse> call =
                                 bigBasketApiService.cartSummary(((AppOperationAware) ctx.get()).getCurrentActivity().getCurrentScreenName());
                         Response<CartSummaryApiResponse> response = call.execute();
-                        if (!response.isSuccess()) return;
+                        if (!response.isSuccessful()) return;
                         final CartSummaryApiResponse cartSummaryApiResponse = response.body();
                         if (ctx.get() != null && cartSummaryApiResponse != null) {
                             if (((AppOperationAware) ctx.get()).isSuspended()) {

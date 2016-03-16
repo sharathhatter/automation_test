@@ -186,8 +186,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             db.execSQL("ALTER TABLE " + SectionItemAnalyticsData.TABLE_NAME
                     + " ADD COLUMN " + SectionItemAnalyticsData.DATE + " INTEGER");
-            db.execSQL("UPDATE TABLE " + SectionItemAnalyticsData.TABLE_NAME
-                    + " SET " + SectionItemAnalyticsData.DATE + " = " + SectionItemAnalyticsData.dateNow());
         } catch (SQLiteException ex) {
             Crashlytics.logException(ex);
         }

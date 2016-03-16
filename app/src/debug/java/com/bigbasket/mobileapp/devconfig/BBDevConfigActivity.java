@@ -163,7 +163,7 @@ public class BBDevConfigActivity extends SocialLoginActivity
                                        Response<ArrayList<City>> response) {
                     if (call != null && call.isCanceled()) return;
                     hideProgressDialog();
-                    if(response.isSuccess()) {
+                    if(response.isSuccessful()) {
                         PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
                                 .remove(Constants.VISITOR_ID_KEY).commit();
                         CityManager.clearChosenCity(getApplicationContext());
