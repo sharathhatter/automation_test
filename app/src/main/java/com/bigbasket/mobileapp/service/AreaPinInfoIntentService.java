@@ -40,7 +40,7 @@ public class AreaPinInfoIntentService extends IntentService {
         try {
             Call<ArrayList<City>> call = bigBasketApiService.listCities();
             Response<ArrayList<City>> response = call.execute();
-            if (response.isSuccess()) {
+            if (response.isSuccessful()) {
                 ArrayList<City> cities = response.body();
                 CityManager.storeCities(AreaPinInfoIntentService.this, cities);
                 fetchPinCodes(cities);
@@ -61,7 +61,7 @@ public class AreaPinInfoIntentService extends IntentService {
             try {
                 Call<ApiResponse<GetAreaInfoResponse>> call = bigBasketApiService.getAreaInfo(String.valueOf(city.getId()));
                 Response<ApiResponse<GetAreaInfoResponse>> apiResponse = call.execute();
-                if (apiResponse.isSuccess()) {
+                if (apiResponse.isSuccessful()) {
                     ApiResponse<GetAreaInfoResponse> response = apiResponse.body();
                     if (response.status == 0) {
                         downloadedDataMap.put(city, response.apiResponseContent.pinCodeMaps);

@@ -250,16 +250,6 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
         }
     }
 
-    //Copied from com.moengage.addon.ubox.UBoxFragment.getPreburntMessage()
-    UnifiedInboxMessage getPreburntMessage() {
-        UnifiedInboxMessage chatItem = new UnifiedInboxMessage();
-        chatItem.author = "User";
-        chatItem.gtime = System.currentTimeMillis();
-        chatItem.msgTtl = chatItem.gtime + 7776000000L;
-        chatItem.setTimestamp(chatItem.gtime);
-        return chatItem;
-    }
-
     private void uploadImage(String imageUri) {
         if (TextUtils.isEmpty(imageUri)) {
             return;
