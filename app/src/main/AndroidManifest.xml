@@ -778,6 +778,7 @@
             android:label="@string/title_activity_communication_hub"
             android:parentActivityName="com.bigbasket.mobileapp.activity.SplashActivity"
             android:theme="@style/BackButtonTheme"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

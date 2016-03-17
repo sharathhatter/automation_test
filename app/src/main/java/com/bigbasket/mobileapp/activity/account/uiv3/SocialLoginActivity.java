@@ -272,6 +272,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             editor.putString(Constants.EMAIL_PREF, email);
             editor.putBoolean(Constants.REMEMBER_ME_PREF, true);
             editor.putString(Constants.PASSWD_PREF, BBUtil.getEncryptedString(password));
+            editor.putBoolean(Constants.ENCRYPTED, true);
         } else {
             editor.remove(Constants.EMAIL_PREF);
             editor.remove(Constants.REMEMBER_ME_PREF);

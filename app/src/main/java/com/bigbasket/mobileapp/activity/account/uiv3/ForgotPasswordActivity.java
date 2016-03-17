@@ -306,6 +306,7 @@ public class ForgotPasswordActivity extends BackButtonActivity implements OnOtpR
         if (preferences.contains(Constants.PASSWD_PREF)) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(Constants.PASSWD_PREF, BBUtil.getEncryptedString(newPassword));
+            editor.putBoolean(Constants.ENCRYPTED, true);
             editor.commit();
         }
         showToast(getString(R.string.passwordUpdated));

@@ -198,6 +198,7 @@ public class ChangePasswordFragment extends BaseFragment {
         if (preferences.contains(Constants.PASSWD_PREF)) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(Constants.PASSWD_PREF, BBUtil.getEncryptedString(newPwdText.getText().toString()));
+            editor.putBoolean(Constants.ENCRYPTED, true);
             editor.commit();
         }
         ((BaseActivity) getActivity()).showToast(getString(R.string.passwordUpdated));

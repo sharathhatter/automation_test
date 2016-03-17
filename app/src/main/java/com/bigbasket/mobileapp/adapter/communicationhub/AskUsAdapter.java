@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.adapter.communicationhub;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.TextUtils;
@@ -14,6 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.application.BaseApplication;
+import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.moe.pushlibrary.models.UnifiedInboxMessage;
 import com.moengage.addon.ubox.UBoxManager;
@@ -29,9 +32,13 @@ import org.json.JSONObject;
  */
 public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemViewHolder> {
     private Resources resources;
+    private Typeface faceRobotoRegular, faceRobotoLight;
 
     public AskUsAdapter(Resources resources) {
         this.resources = resources;
+        FontHolder fontHolder = FontHolder.getInstance(BaseApplication.getContext());
+        faceRobotoRegular = fontHolder.getFaceRobotoRegular();
+        faceRobotoLight = fontHolder.getFaceRobotoLight();
     }
 
     @Override
@@ -39,7 +46,9 @@ public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemV
         View view = layoutInflater.inflate(R.layout.chat_item, viewGroup, false);
         ChatItemViewHolder viewHolder = new ChatItemViewHolder();
         viewHolder.txtMessage = (TextView) view.findViewById(R.id.txt_msg);
+        viewHolder.txtMessage.setTypeface(faceRobotoRegular);
         viewHolder.txtStatus = (TextView) view.findViewById(R.id.txt_status);
+        viewHolder.txtStatus.setTypeface(faceRobotoLight);
         viewHolder.imgChatMessage = (ImageView) view.findViewById(R.id.img_chat);
         viewHolder.holderView = view.findViewById(R.id.chat_item_holder);
         viewHolder.itemHolder = new UBoxManager.ItemHolder();
@@ -77,12 +86,16 @@ public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemV
         TextView statusView = viewHolder.txtStatus;
         TextView msgView = viewHolder.txtMessage;
         ImageView chatImageView = viewHolder.imgChatMessage;
+        int horizonatalMargin = resources.getDimensionPixelSize(R.dimen.margin_xlarge);
+        int verticalMargin = resources.getDimensionPixelSize(R.dimen.dimen_2);
         if (msg.author != null && msg.author.equals(UnifiedInboxMessage.AUTHOR_USER)) {
             //Outgoing
             ViewGroup.LayoutParams layoutParams = viewHolder.holderView.getLayoutParams();
             if (layoutParams instanceof RelativeLayout.LayoutParams) {
                 ((RelativeLayout.LayoutParams) layoutParams).addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
                 ((RelativeLayout.LayoutParams) layoutParams).addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                ((RelativeLayout.LayoutParams) layoutParams).setMargins(horizonatalMargin,
+                        verticalMargin, 0, verticalMargin);
                 viewHolder.holderView.setLayoutParams(layoutParams);
             }
             viewHolder.holderView.setBackgroundResource(R.drawable.bubble_outgoing);
@@ -91,10 +104,11 @@ public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemV
                     if (msg.details.startsWith(context.getString(R.string.preamble_feedback))) {
                         viewHolder.txtMessage.setText(msg.details.substring(context.getString(R.string.preamble_feedback).length(), msg.details.length()));
                     } else {
-                        viewHolder.txtMessage.setText(msg.details);
+                        viewHolder.txtMessage.setText(msg.details.replaceAll("(\\\\r\\\\n|\\\\n)", "\n"));
                     }
                 } else {
-                    String m = UBoxUtils.getAlternateMessageDetails(obj);
+                    String m = UBoxUtils.getAlternateMessageDetails(obj).replaceAll("(\\\\r\\\\n|\\\\n)", "\n");
+
                     if (m != null) {
                         if (m.startsWith(context.getString(R.string.preamble_feedback))) {
                             viewHolder.txtMessage.setText(m.substring(context.getString(R.string.preamble_feedback).length(), m.length()));
@@ -157,6 +171,8 @@ public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemV
             if (layoutParams instanceof RelativeLayout.LayoutParams) {
                 ((RelativeLayout.LayoutParams) layoutParams).addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
                 ((RelativeLayout.LayoutParams) layoutParams).addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                ((RelativeLayout.LayoutParams) layoutParams).setMargins(0, verticalMargin,
+                        horizonatalMargin, verticalMargin);
                 viewHolder.holderView.setLayoutParams(layoutParams);
             }
 
@@ -168,7 +184,7 @@ public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemV
             statusView.setText(msg.timestamp);
             switch (msg.messageType) {
                 case UnifiedInboxMessage.MSG_TYPE_HTML:
-                    String html = UBoxUtils.getAlternateMessageDetails(obj);
+                    String html = UBoxUtils.getAlternateMessageDetails(obj).replaceAll("(\\\\r\\\\n|\\\\n)", "\n");
                     if (!TextUtils.isEmpty(html)) {
                         msgView.setText(Html.fromHtml(html));
                     }
@@ -193,7 +209,7 @@ public class AskUsAdapter extends UBoxManager.UboxAdapter<AskUsAdapter.ChatItemV
                             payloadMsg = UBoxUtils.getMessage(obj);
                         }
                     }
-                    msgView.setText(payloadMsg);
+                    msgView.setText(payloadMsg.replaceAll("(\\\\r\\\\n|\\\\n)", "\n"));
                     msgView.setVisibility(View.VISIBLE);
                     chatImageView.setVisibility(View.GONE);
                     break;

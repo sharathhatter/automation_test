@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.newrelic.agent.android:agent-gradle-plugin:5.4.1"
+        classpath "com.newrelic.agent.android:agent-gradle-plugin:5.5.0"
         classpath 'io.fabric.tools:gradle:1.21.2'
     }
 }
@@ -174,6 +174,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    compile "com.android.support:cardview-v7:${supportLibVersion}"
     compile "com.squareup.okhttp3:okhttp:${okhttpLibVersion}"
     compile "com.squareup.retrofit2:retrofit:${retrofitLibVersion}"
     compile "com.squareup.retrofit2:converter-gson:${retrofitLibVersion}"
@@ -189,9 +190,9 @@ dependencies {
     betaCompile "com.android.support:multidex:${multidexLibVersion}"
     betaCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryLibVersion}"
     betaCompile "com.squareup.okhttp3:logging-interceptor:${okhttpLibVersion}"
-    compile 'com.localytics.android:library:3.6.0'
+    compile 'com.localytics.android:library:3.7.0'
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
-    compile 'com.newrelic.agent.android:android-agent:5.4.1'
+    compile 'com.newrelic.agent.android:android-agent:5.5.0'
     compile 'com.facebook.android:facebook-android-sdk:4.10.0'
     compile 'com.journeyapps:zxing-android-embedded:3.1.0@aar'
     compile 'com.google.zxing:core:3.2.0'

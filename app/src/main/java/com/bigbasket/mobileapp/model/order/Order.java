@@ -61,7 +61,7 @@ public class Order implements Parcelable {
         this.itemsCount = parcel.readInt();
         this.orderStatus = parcel.readString();
         this.orderValue = parcel.readString();
-        this.fulfillmentInfo = parcel.readParcelable(Order.class.getClassLoader());
+        this.fulfillmentInfo = parcel.readParcelable(FulfillmentInfo.class.getClassLoader());
         this.orderType = parcel.readString();
         this.orderState = parcel.readInt();
         this.totalCount = parcel.readInt();
@@ -71,7 +71,7 @@ public class Order implements Parcelable {
         this.paymentMethod = parcel.readString();
         boolean _wasAddressNull = parcel.readByte() == (byte) 1;
         if (!_wasAddressNull) {
-            address = parcel.readParcelable(Order.class.getClassLoader());
+            address = parcel.readParcelable(Address.class.getClassLoader());
         }
         this.canPay = parcel.readByte() == (byte) 1;
         boolean _wasVariableWeightMsgNull = parcel.readByte() == (byte) 0;
