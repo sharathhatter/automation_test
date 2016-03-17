@@ -49,6 +49,8 @@ public class OrderInvoice implements Parcelable {
     private ArrayList<CreditDetails> creditDetails;
     @SerializedName(Constants.FULFILLMENT_INFO)
     private FulfillmentInfo fulfillmentInfo;
+    @SerializedName(Constants.INVOICE_DOWNLOAD_URL)
+    private String invoiceDownloadUrl;
 
     public OrderInvoice(Parcel source) {
         this.orderNumber = source.readString();
@@ -69,6 +71,7 @@ public class OrderInvoice implements Parcelable {
             this.creditDetails =  source.createTypedArrayList(CreditDetails.CREATOR);
         }
         this.fulfillmentInfo = source.readParcelable(OrderInvoice.class.getClassLoader());
+        this.invoiceDownloadUrl = source.readString();
     }
 
     @Override
@@ -98,6 +101,7 @@ public class OrderInvoice implements Parcelable {
             dest.writeTypedList(creditDetails);
         }
         dest.writeParcelable(fulfillmentInfo, flags);
+        dest.writeString(invoiceDownloadUrl);
     }
 
     public String getOrderNumber() {
@@ -146,5 +150,9 @@ public class OrderInvoice implements Parcelable {
 
     public FulfillmentInfo getFulfillmentInfo() {
         return fulfillmentInfo;
+    }
+
+    public String getInvoiceDownloadUrl() {
+        return invoiceDownloadUrl;
     }
 }
