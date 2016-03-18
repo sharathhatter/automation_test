@@ -7,6 +7,8 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class ProductPromoInfo extends Promo {
 
@@ -46,6 +48,6 @@ public class ProductPromoInfo extends Promo {
     }
 
     public String getFormattedPromoSavings() {
-        return new DecimalFormat("0.00").format(promoSavings);
+        return new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.US)).format(promoSavings);
     }
 }
