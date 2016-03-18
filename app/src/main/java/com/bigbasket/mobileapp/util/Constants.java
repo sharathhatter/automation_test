@@ -712,4 +712,5 @@ public class Constants {
     public static final String DATE_FORMAT_RATINGS = "dd-MM-yyyy-hh-mm-ss";
 
     public static final String ENABLE_RATINGS = "enable_rating";
+    public static final String INVOICE_DOWNLOAD_URL = "invoice_url";
 }
