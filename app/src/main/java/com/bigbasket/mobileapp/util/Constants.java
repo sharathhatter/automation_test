@@ -437,7 +437,7 @@ public class Constants {
     public static final String WALLET_OPTION_BALANCE = "balance";
     public static final String WALLET_OPTION_MSG = "msg";
     public static final String WALLET_OPTION_STATE = "state";
-    public static final String OFF="off";
+    public static final String OFF = "off";
 
 
     //change password
@@ -683,6 +683,7 @@ public class Constants {
     public static final int PERMISSION_REQUEST_CODE_CAPTURE_CAMERA = 103;
     public static final int PERMISSION_REQUEST_CODE_GET_ACCOUNTS = 104;
     public static final int PERMISSION_REQUEST_CODE_RECEIVE_SMS = 105;
+    public static final int PERMISSION_REQUEST_CODE_PLACE_PICKER = 106;
 
     public static final String TERMS_AND_COND_URL = "http://www.bigbasket.com/terms-and-conditions/?source=app";
     public static final String PRIVACY_POLICY_URL = "http://www.bigbasket.com/privacy-policy/?source=app";

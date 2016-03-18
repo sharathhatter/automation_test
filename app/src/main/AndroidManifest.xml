@@ -596,11 +596,6 @@
             android:theme="@style/BackButtonTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.account.uiv3.PlacePickerApiActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
             android:name="com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LoginScreenTheme"

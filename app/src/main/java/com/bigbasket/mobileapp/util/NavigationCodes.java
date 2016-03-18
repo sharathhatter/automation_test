@@ -22,10 +22,11 @@ public interface NavigationCodes {
 
     int REFRESH_ORDERS = 1599;
 
+    int RC_PLACE_PICKER = 1699;
+
     /* RequestCode for resolutions involving sign-in */
     int RC_RESOLVE_CONNECT_ERROR = 49404;
     int RC_RESOLVE_AUTH_ERROR = 49405;
-
 
     int ADD_TO_SHOPPINGLIST_OK = 1221;
     int DELETE_FROM_SHOPPING_LIST_OK = 200;

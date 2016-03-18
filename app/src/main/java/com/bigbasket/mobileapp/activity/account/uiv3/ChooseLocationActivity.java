@@ -1,12 +1,13 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -31,11 +32,16 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -48,7 +54,6 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     private GoogleApiClient mGoogleApiClient;
     private AddressSummary mChosenAddressSummary;
     private boolean mIsFirstTime;
-    private boolean mIsViaOnActivityResult;
     private boolean setAsCurrentAddressBoolean;
     private boolean autoModeBoolean;
 
@@ -59,7 +64,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
         if (savedInstanceState == null) {
             handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
-                    getString(R.string.location_permission_rationale),
+                    null,
                     Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION);
         }
     }
@@ -67,36 +72,39 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-        if (!mIsViaOnActivityResult
-                && hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
             triggerLocationFetching();
         }
     }
 
     private void triggerLocationFetching() {
-
-        int playServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getCurrentActivity());
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int playServicesAvailable = googleAPI.isGooglePlayServicesAvailable(this);
         switch (playServicesAvailable) {
             case ConnectionResult.SUCCESS:
                 renderLocation();
                 break;
             default:
-                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(playServicesAvailable,
-                        getCurrentActivity(), NavigationCodes.GO_TO_HOME);
-                dialog.setCancelable(false);
-                dialog.show();
+                if (googleAPI.isUserResolvableError(playServicesAvailable)) {
+                    googleAPI.showErrorDialogFragment(this, playServicesAvailable,
+                            0,
+                            new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    updateLastKnownLocation(false, false);
+                                }
+                            });
+                } else {
+                    showAlertDialogFinish("", googleAPI.getErrorString(playServicesAvailable));
+                }
                 break;
         }
     }
 
-
     private void renderLocation() {
         if (isSuspended()) return;
         if (!DataUtil.isLocationServiceEnabled(this)) {
-            showAlertDialog(getString(R.string.enableLocationHeading),
-                    getString(R.string.enableLocation),
-                    DialogButton.YES, DialogButton.CANCEL, Constants.LOCATION_DIALOG_REQUEST, null,
-                    getString(R.string.enable));
+            showEnableLocationDialog();
         } else {
             if (hasPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 showProgressDialog(getString(R.string.readingYourCurrentLocation));
@@ -121,8 +129,8 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh) {
-            if(handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
-                    getString(R.string.location_permission_rationale),
+            if (handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                    null,
                     Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION)) {
                 triggerLocationFetching();
             }
@@ -177,19 +185,13 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     private void updateLastKnownLocation(boolean setAsCurrentAddress, boolean autoMode) {
-        if (mGoogleApiClient == null) return;
         setAsCurrentAddressBoolean = setAsCurrentAddress;
         autoModeBoolean = autoMode;
 
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) return;
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (lastLocation != null) {
-            LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-            if (setAsCurrentAddress) {
-                updateLocation(latLng,
-                        mChosenAddressSummary != null ? mChosenAddressSummary.getArea() : null);
-            } else {
-                getCurrentLocationDetail(latLng);
-            }
+            updateLocation(lastLocation, setAsCurrentAddress);
         } else {
             if (autoMode) {
                 triggerLocationFetching();
@@ -198,7 +200,16 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                 onLocationReadFailure();
             }
         }
+    }
 
+    private void updateLocation(Location lastLocation, boolean setAsCurrentAddress) {
+        LatLng latLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        if (setAsCurrentAddress) {
+            updateLocation(latLng,
+                    mChosenAddressSummary != null ? mChosenAddressSummary.getArea() : null);
+        } else {
+            getCurrentLocationDetail(latLng);
+        }
     }
 
     @Override
@@ -206,19 +217,46 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         switch (requestCode) {
             case Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION:
                 if (grantResults.length > 0 && permissions.length > 0
-                        && permissions[0].equals(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                        && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         updateLastKnownLocation(setAsCurrentAddressBoolean, autoModeBoolean);
-                    } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                        hideProgressDialog();
-                        onLocationReadFailure();
+                        return ;
                     }
                 }
+                hideProgressDialog();
+                showLocationRationale();
+                break;
+            case Constants.PERMISSION_REQUEST_CODE_PLACE_PICKER:
+                if (grantResults.length > 0 && permissions.length > 0
+                        && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        launchPlacePicker();
+                        return;
+                    }
+                }
+                showLocationRationale();
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+
+    private void showLocationRationale() {
+        View contentView = findViewById(android.R.id.content);
+        if(contentView == null) {
+            contentView = getWindow().getDecorView();
+        }
+        Snackbar snackbar = Snackbar.make(contentView,
+                R.string.location_permission_rationale, Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.action_settings, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startPermissionsSettingsActivity(getCurrentActivity());
+            }
+        });
+        snackbar.show();
+    }
+
 
     private void getCurrentLocationDetail(LatLng latLng) {
         if (!checkInternetConnection()) {
@@ -306,17 +344,55 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     public void onLocationButtonClicked(View v) {
         switch (v.getId()) {
             case R.id.btnToCurrentLocation:
-                if(handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
-                        getString(R.string.location_permission_rationale),
+                if (handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                        null,
                         Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION)) {
                     updateLastKnownLocation(true, true);
                 }
                 break;
             case R.id.btnChooseLocation:
-                Intent intent = new Intent(this, PlacePickerApiActivity.class);
-                startActivityForResult(intent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
+                if (handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                        null,
+                        Constants.PERMISSION_REQUEST_CODE_PLACE_PICKER)) {
+                    launchPlacePicker();
+                }
                 break;
         }
+    }
+
+    private void launchPlacePicker() {
+        try {
+            if (DataUtil.isLocationServiceEnabled(this)) {
+                String mediaState = Environment.getExternalStorageState();
+                boolean hasStorage = (mediaState != null && mediaState.equalsIgnoreCase
+                        (Environment.MEDIA_MOUNTED));
+                if (hasStorage) {
+                    // Map fragment crashes if the device doesn't have sd-card or
+                    // a sd-card simulation storage area (e.g. Devices like Nexus don't have sd-card slot,
+                    // but they still simulate it so that apps continue to work).
+                    // Many Android One phones don't simulate this storage.
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    try {
+                        startActivityForResult(builder.build(this), NavigationCodes.RC_PLACE_PICKER);
+                    } catch (ActivityNotFoundException ex) {
+                        showToast("Google play services seem to be disabled");
+                    }
+                } else {
+                    showToast(getString(R.string.sdcarderror));
+                }
+            } else {
+                showEnableLocationDialog();
+            }
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            Crashlytics.logException(e);
+        }
+    }
+
+    private void showEnableLocationDialog() {
+        showAlertDialog(getString(R.string.enableLocationHeading),
+                getString(R.string.enableLocation),
+                DialogButton.YES, DialogButton.CANCEL, Constants.LOCATION_DIALOG_REQUEST, null,
+                getString(R.string.enable));
     }
 
     private void onLocationChanged() {
@@ -355,16 +431,29 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         onStateNotSaved();
-        if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED) {
-            mIsViaOnActivityResult = true;
-            if (data != null && data.hasExtra(Constants.LAT)) {
-                LatLng latLng = data.getParcelableExtra(Constants.LAT);
-                updateLocation(latLng, data.getStringExtra(Constants.AREA));
-            } else {
-                buildGoogleApiClient();
+        if (requestCode == NavigationCodes.RC_PLACE_PICKER && resultCode == RESULT_OK && data != null) {
+            Place place = PlacePicker.getPlace(data, this);
+            LatLng mSelectedLatLng = null;
+            String mArea = null;
+            if (place != null) {
+                mSelectedLatLng = place.getLatLng();
+                mArea = (String) place.getName();
+            }
+            if (mSelectedLatLng != null) {
+                updateLocation(mSelectedLatLng, mArea);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    protected void onNegativeButtonClicked(int requestCode, Bundle data) {
+        if (requestCode == Constants.LOCATION_DIALOG_REQUEST) {
+            Snackbar.make(findViewById(R.id.layoutChooseLocation),
+                    R.string.enableLocation, Snackbar.LENGTH_SHORT).show();
+        } else {
+            super.onNegativeButtonClicked(requestCode, data);
         }
     }
 
