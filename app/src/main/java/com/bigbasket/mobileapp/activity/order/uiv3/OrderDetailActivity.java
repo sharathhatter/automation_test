@@ -47,6 +47,9 @@ public class OrderDetailActivity extends TabActivity {
         super.setOptionsMenu(menu);
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.order_detail_invoice_download, menu);
+        MenuItem downloadPaymentDetailsMenu = menu.findItem(R.id.action_download_invoice);
+        OrderInvoice orderInvoice = getIntent().getParcelableExtra(Constants.ORDER_REVIEW_SUMMARY);
+        downloadPaymentDetailsMenu.setVisible(orderInvoice != null && !UIUtil.isEmpty(orderInvoice.getInvoiceDownloadUrl()));
     }
 
     @Override
