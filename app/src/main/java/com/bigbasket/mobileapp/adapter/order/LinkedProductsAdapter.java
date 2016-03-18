@@ -71,9 +71,15 @@ public class LinkedProductsAdapter extends BaseAdapter {
         }
         txtQty.setText(qty);
 
-        Double totalItemPrice = Double.parseDouble(product.getSellPrice()) * product.getNoOfItemsInCart();
-        txtSalePrice.setText(UIUtil.asRupeeSpannable(totalItemPrice,
-                FontHolder.getInstance(context).getFaceRupee()));
+        Double totalItemPrice;
+
+        try {
+            totalItemPrice = Double.parseDouble(product.getSellPrice()) * product.getNoOfItemsInCart();
+            txtSalePrice.setText(UIUtil.asRupeeSpannable(totalItemPrice,
+                    FontHolder.getInstance(context).getFaceRupee()));
+        } catch (NumberFormatException ex) {
+            txtSalePrice.setText(product.getSellPrice());
+        }
         return convertView;
     }
 }
