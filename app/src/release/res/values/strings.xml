@@ -3,7 +3,6 @@
     <string name="fb_app_id" templateMergeStrategy="preserve">1397993430473589</string>
     <string name="moe_app_id" templateMergeStrategy="preserve">LHKGW5AYMAYKSN010EA8VKC1</string>
     <string name="moe_gcm_sender_id" templateMergeStrategy="preserve">id:610100195438</string>
-    <string name="new_relic_app_token">AA054414b252856094214a4ec0db255ef16cd7c1a4</string>
     <string name="localytics_api_key" templateMergeStrategy="preserve">
         4a77ed943c8630492e4885d-d8efb860-3507-11e5-62e9-00736b041834
     </string>
@@ -11,5 +10,4 @@
     <string name="mobikwik_mode">1</string>
 
     <string name="pref_default_server_address" translate="false">https://www.bigbasket.com</string>
-    <string name="google_analytics_key">UA-27455376-1</string>
 </resources>
