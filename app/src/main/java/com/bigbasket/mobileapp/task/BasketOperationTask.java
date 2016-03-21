@@ -121,18 +121,20 @@ public class BasketOperationTask<T extends AppOperationAware> {
                 searchTerm = searchTermArray[2];
             }
         }
+        Map<String, String> map = basketQueryMap != null ? basketQueryMap.get():  null;
+        if (map == null) {
+            map = new HashMap<>(0);
+        }
         switch (basketOperation) {
             case BasketOperation.INC:
-                call = bigBasketApiService.incrementCartItem(navigationCtx, searchTerm, reqProdId, qty,
-                        basketQueryMap != null ? basketQueryMap.get() : null);
+                call = bigBasketApiService.incrementCartItem(navigationCtx, searchTerm, reqProdId,
+                        qty, map);
                 break;
             case BasketOperation.DEC:
-                call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty,
-                        basketQueryMap != null ? basketQueryMap.get() : null);
+                call = bigBasketApiService.decrementCartItem(navigationCtx, reqProdId, qty, map);
                 break;
             case BasketOperation.DELETE_ITEM:
-                call = bigBasketApiService.setCartItem(navigationCtx, null, reqProdId, "0",
-                        basketQueryMap != null ? basketQueryMap.get() : null);
+                call = bigBasketApiService.setCartItem(navigationCtx, null, reqProdId, "0", map);
                 break;
         }
         if (call != null) {
