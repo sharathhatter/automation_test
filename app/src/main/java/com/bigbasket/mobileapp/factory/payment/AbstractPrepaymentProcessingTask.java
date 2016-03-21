@@ -390,7 +390,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                 break;
             case Constants.PAYTM_WALLET:
                 PaytmPayment.startPaymentGateway(mPaymentPostParams, activity,
-                        potentialOrderId, orderId, isPayNow, isFundWallet);
+                        potentialOrderId, getTxnOrderId(), isPayNow, isFundWallet);
                 break;
             case Constants.HDFC_POWER_PAY:
                 HDFCPayzappPayment.startHDFCPayzapp(
