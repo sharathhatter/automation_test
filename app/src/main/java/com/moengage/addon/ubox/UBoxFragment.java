@@ -37,6 +37,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.application.BaseApplication;
+import com.bigbasket.mobileapp.util.FontHolder;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.models.UnifiedInboxMessage;
 import com.moe.pushlibrary.providers.MoEDataContract;
@@ -77,6 +79,8 @@ public class UBoxFragment extends Fragment implements LoaderManager.LoaderCallba
 
         mListView = (ListView) view.findViewById(R.id.listChat);
         mInputMessage = (EditText) view.findViewById(R.id.inputMsg);
+        FontHolder fontHolder = FontHolder.getInstance(BaseApplication.getContext());
+        mInputMessage.setTypeface(fontHolder.getFaceRobotoRegular());
         mSend = (ImageButton) view.findViewById(R.id.btnSend);
         mHelperText = (TextView) view.findViewById(R.id.helperText);
         mNote = (TextView) view.findViewById(R.id.messageNote);
@@ -328,6 +332,7 @@ public class UBoxFragment extends Fragment implements LoaderManager.LoaderCallba
         } else {
             mNote.setVisibility(View.VISIBLE);
             mNote.setText(R.string.state_no_connection);
+            mNote.bringToFront();
             mInputMessage.setEnabled(false);
         }
     }
