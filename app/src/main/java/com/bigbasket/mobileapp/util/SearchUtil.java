@@ -16,6 +16,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.IOException;
 
@@ -31,8 +32,7 @@ public class SearchUtil {
     public static Cursor searchQueryCall(String query, String cityId, Context context) {
         if (TextUtils.isEmpty(query.trim()) || (query.trim().length() < 3)) return null;
 
-        SearchSuggestionDbHelper searchSuggestionDbHelper = new SearchSuggestionDbHelper(context);
-        AutoSearchResponse autoSearchResponse = searchSuggestionDbHelper.getStoredResponse(query);
+        AutoSearchResponse autoSearchResponse = SearchSuggestionDbHelper.getStoredResponse(context, query);
 
         // If not present in local db or is older than a day
         if (autoSearchResponse == null || autoSearchResponse.isStale()) {
@@ -48,7 +48,7 @@ public class SearchUtil {
                         switch (autoSearchApiResponse.status) {
                             case 0:
                                 autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
-                                searchSuggestionDbHelper.insertAsync(autoSearchResponse);
+                                SearchSuggestionDbHelper.insertAsync(context.getApplicationContext(), autoSearchResponse);
                                 break;
                         }
                     }
@@ -142,10 +142,12 @@ public class SearchUtil {
                 try {
                     categoryName = categoriesArray[j];
                 } catch (IndexOutOfBoundsException e) {
+                    Crashlytics.logException(e);
                 }
                 try {
                     categoryUrl = categoryUrlArray[j];
                 } catch (IndexOutOfBoundsException e) {
+                    Crashlytics.logException(e);
                 }
                 if (TextUtils.isEmpty(categoryName))
                     continue;

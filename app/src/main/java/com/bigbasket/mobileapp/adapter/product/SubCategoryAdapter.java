@@ -5,11 +5,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.net.Uri;
 
-import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
+import com.bigbasket.mobileapp.adapter.db.DatabaseContentProvider;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.ResponseSerializer;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 
@@ -21,21 +23,20 @@ public class SubCategoryAdapter {
     public static final String COLUMN_SECTION_DATA = "sectionData";
     public static final String COLUMN_SLUG = "slug";
     public static final String TABLE_NAME = "subcategory";
-    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    public static final String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s BLOB NULL);", TABLE_NAME, COLUMN_ID, COLUMN_VERSION,
             COLUMN_SLUG, COLUMN_BLOB, COLUMN_SECTION_DATA);
-    private Context context;
 
-    public SubCategoryAdapter(Context context) {
-        this.context = context;
-        open();
-    }
 
-    public void open() {
-        DatabaseHelper.getInstance(context).open(context);
-    }
+    public static final Uri CONTENT_URI = Uri.withAppendedPath(
+            DatabaseContentProvider.CONTENT_URI_PREFIX, TABLE_NAME);
+    public static final String MIME_TYPE_DIR =
+            "vnd.android.cursor.dir/com.bigbasket.mobileapp.subcategory";
+    public static final String MIME_TYPE_ITEM =
+            "vnd.android.cursor.item/com.bigbasket.mobileapp.subcategory";
 
-    public void insert(SubCategoryModel subCategoryModel, String version, SectionData sectionData, String slug) {
+    public static void insert(Context context, SubCategoryModel subCategoryModel, String version,
+                              SectionData sectionData, String slug) {
         ContentValues cv = new ContentValues();
 
         cv.put(COLUMN_VERSION, version);
@@ -46,27 +47,26 @@ public class SubCategoryAdapter {
             byte[] bytesSection = ResponseSerializer.serializeObject(sectionData);
             cv.put(COLUMN_SECTION_DATA, bytesSection);
         }
-        DatabaseHelper.db.insert(TABLE_NAME, null, cv);
+        context.getContentResolver().insert(CONTENT_URI, cv);
 
     }
 
-    public ArrayList<Object> getSubCategory(String slug) {
+    public static ArrayList<Object> getSubCategory(Context context, String slug) {
         Cursor subCategoryCursor = null;
         ArrayList<Object> result = new ArrayList<>();
         try {
-            subCategoryCursor = DatabaseHelper.db.query(TABLE_NAME, new String[]{COLUMN_BLOB, COLUMN_SECTION_DATA}
-                    , COLUMN_SLUG + " = " + "\"" + slug + "\"", null, null, null, null);
-            if (subCategoryCursor.moveToFirst()) {
-                byte[] subCategoryCursorBlob = subCategoryCursor.getBlob(
-                        subCategoryCursor.getColumnIndex(SubCategoryAdapter.COLUMN_BLOB));
+            subCategoryCursor = context.getContentResolver().query(CONTENT_URI,
+                    new String[]{COLUMN_BLOB, COLUMN_SECTION_DATA},
+                    COLUMN_SLUG + " = ?", new String[]{slug}, null);
+            if (subCategoryCursor != null && subCategoryCursor.moveToFirst()) {
+                byte[] subCategoryCursorBlob = subCategoryCursor.getBlob(0);
                 result.add(ResponseSerializer.deserializeObject(subCategoryCursorBlob));
-                byte[] sectionDataCursorBlob = subCategoryCursor.getBlob(
-                        subCategoryCursor.getColumnIndex(SubCategoryAdapter.COLUMN_SECTION_DATA));
+                byte[] sectionDataCursorBlob = subCategoryCursor.getBlob(1);
                 result.add(sectionDataCursorBlob != null && sectionDataCursorBlob.length > 0 ?
                         ResponseSerializer.deserializeObject(sectionDataCursorBlob) : null);
             }
         } catch (SQLiteException ex) {
-            ex.printStackTrace();
+            Crashlytics.logException(ex);
         } finally {
             if (subCategoryCursor != null && !subCategoryCursor.isClosed()) {
                 subCategoryCursor.close();
@@ -75,20 +75,21 @@ public class SubCategoryAdapter {
         return result;
     }
 
-    public String getVersion(String slug) {
+    public static String getVersion(Context context, String slug) {
         Cursor cursor = null;
         String version = null;
         try {
-            cursor = DatabaseHelper.db.query(TABLE_NAME, new String[]{COLUMN_VERSION, COLUMN_BLOB}
-                    , COLUMN_SLUG + " = " + "\"" + slug + "\"", null, null, null, null);
+            cursor = context.getContentResolver().query(CONTENT_URI,
+                    new String[]{COLUMN_BLOB, COLUMN_VERSION},
+                    COLUMN_SLUG + " = ?", new String[]{slug }, null);
             if (cursor != null && cursor.moveToFirst()) {
-                byte[] blob = cursor.getBlob(cursor.getColumnIndex(COLUMN_BLOB));
+                byte[] blob = cursor.getBlob(0);
                 if (blob != null && blob.length >= 0) {
-                    version = cursor.getString(cursor.getColumnIndex(COLUMN_VERSION));
+                    version = cursor.getString(1);
                 }
             }
         } catch (SQLiteException ex) {
-            ex.getStackTrace();
+            Crashlytics.logException(ex);
 
         } finally {
             if (cursor != null && !cursor.isClosed()) {

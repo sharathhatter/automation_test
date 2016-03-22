@@ -8,9 +8,16 @@ public class MostSearchedItem {
     private String query;
     private String url; // Will be null, except for categories
 
+    public static final String[] PROJECTION = new String[]{
+            MostSearchesDbHelper.QUERY,
+            MostSearchesDbHelper.CATEGORY_URL};
+
+    private static final int COLUMN_QUERY_INDEX = 0;
+    private static final int COLUMN_CATEGORY_URL_INDEX = 1;
+
     public MostSearchedItem(Cursor cursor) {
-        this.query = cursor.getString(cursor.getColumnIndex(MostSearchesDbHelper.COLUMN_QUERY));
-        this.url = cursor.getString(cursor.getColumnIndex(MostSearchesDbHelper.COLUMN_URL));
+        this.query = cursor.getString(COLUMN_QUERY_INDEX);
+        this.url = cursor.getString(COLUMN_CATEGORY_URL_INDEX);
     }
 
     public String getQuery() {

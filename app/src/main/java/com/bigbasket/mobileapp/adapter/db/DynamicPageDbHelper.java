@@ -25,7 +25,7 @@ public class DynamicPageDbHelper {
     public static final String COLUMN_SCREEN_DATA = "screen_data";
     public static final String TABLE_NAME = "dynamicScreen";
 
-    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s " +
+    public static final String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s " +
                     "(%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "%3$s TEXT , %4$s BLOB);", TABLE_NAME, COLUMN_ID,
             COLUMN_DYNAMIC_SCREEN_TYPE, COLUMN_SCREEN_DATA);

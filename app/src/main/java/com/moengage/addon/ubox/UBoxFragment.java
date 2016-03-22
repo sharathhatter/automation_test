@@ -39,6 +39,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.crashlytics.android.Crashlytics;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.models.UnifiedInboxMessage;
 import com.moe.pushlibrary.providers.MoEDataContract;
@@ -185,8 +186,11 @@ public class UBoxFragment extends Fragment implements LoaderManager.LoaderCallba
         getActivity().unregisterReceiver(networkChangeReceiver);
         MoEHelper.getInstance(getActivity()).setUserPresentInChat(false);
         doUnbindService();
-
-        getActivity().getContentResolver().unregisterContentObserver(mDataObserver);
+        try {
+            getActivity().getContentResolver().unregisterContentObserver(mDataObserver);
+        } catch (Exception ex) {
+            Crashlytics.logException(ex);
+        }
         getActivity().getSupportLoaderManager().destroyLoader(LOADER_CHAT);
 
     }

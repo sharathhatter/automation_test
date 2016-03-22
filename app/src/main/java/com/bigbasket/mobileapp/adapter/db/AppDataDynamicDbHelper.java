@@ -11,7 +11,7 @@ public class AppDataDynamicDbHelper {
 
     public static final String TABLE_NAME = "app_data_dynamic";
 
-    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s " +
+    public static final String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s " +
             "(%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "%3$s TEXT);", TABLE_NAME, COLUMN_ID, COLUMN_APP_DATA_DYNAMIC_PARAMS);
 

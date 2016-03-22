@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.bigbasket.mobileapp.adapter.db.DatabaseContentProvider;
-import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 
 import java.util.ArrayList;
 
@@ -20,7 +19,7 @@ public class AreaPinInfoDbHelper {
     public static final String COLUMN_CITY = "city";
     public static final String COLUMN_CITY_ID = "city_id";
     public static final String TABLE_NAME = "areaPinInfo";
-    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    public static final String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "%3$s TEXT , %4$s TEXT , %5$s TEXT , " +
                     "%6$s INTEGER);", TABLE_NAME, COLUMN_ID, COLUMN_PIN, COLUMN_AREA,
             COLUMN_CITY, COLUMN_CITY_ID);
@@ -36,11 +35,6 @@ public class AreaPinInfoDbHelper {
 
     public AreaPinInfoDbHelper(Context context) {
         this.context = context;
-        open();
-    }
-
-    public void open() {
-        DatabaseHelper.getInstance(context).open(context);
     }
 
     public String getAreaPin(String areaName, String cityName) {
