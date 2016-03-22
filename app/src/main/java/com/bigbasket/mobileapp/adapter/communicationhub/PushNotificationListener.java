@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.BuildConfig;
+import com.bigbasket.mobileapp.activity.CommunicationHubActivity;
 import com.bigbasket.mobileapp.util.Constants;
+import com.moe.pushlibrary.providers.MoEDataContract;
+import com.moe.pushlibrary.utils.MoEHelperConstants;
 import com.moe.pushlibrary.utils.MoEHelperUtils;
 import com.moengage.push.MoEngageNotificationUtils;
 import com.moengage.push.PushMessageListener;
@@ -45,14 +48,24 @@ public class PushNotificationListener extends PushMessageListener {
     }
 
     @Override
+    protected void onPostNotificationReceived(Context context, Bundle extras) {
+        super.onPostNotificationReceived(context, extras);
+        if (!MoEngageNotificationUtils.isChatMessage(extras)) {
+            //Work around to notify Alert/Offers loaders
+            context.getContentResolver()
+                    .notifyChange(MoEDataContract.MessageEntity.getContentUri(context), null);
+        }
+    }
+
+    @Override
     public void onHandleRedirection(Activity activity, Bundle extras) {
         /**
          * adding the deep-link if the notification has isChat key.
          */
         if (MoEngageNotificationUtils.isChatMessage(extras)) {
             //Override gcm_web
-            extras.putString("gcm_webUrl", "bigbasket://" + Constants.INBOX + "/");
-            extras.putString("gcm_activityName","com.bigbasket.mobileapp.activity.CommunicationHubActivity");
+            extras.putString(MoEHelperConstants.GCM_EXTRA_WEB_URL, "bigbasket://" + Constants.INBOX + "/");
+            extras.putString(MoEHelperConstants.GCM_EXTRA_ACTIVITY_NAME, CommunicationHubActivity.class.getName());
         }
         super.onHandleRedirection(activity, extras);
     }

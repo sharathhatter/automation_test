@@ -437,7 +437,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
             String mArea = null;
             if (place != null) {
                 mSelectedLatLng = place.getLatLng();
-                mArea = (String) place.getName();
+                //mArea = (String) place.getName();
             }
             if (mSelectedLatLng != null) {
                 updateLocation(mSelectedLatLng, mArea);

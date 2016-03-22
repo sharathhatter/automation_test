@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -124,6 +125,12 @@ public class BasketOperationTask<T extends AppOperationAware> {
         Map<String, String> map = basketQueryMap != null ? basketQueryMap.get():  null;
         if (map == null) {
             map = new HashMap<>(0);
+        }
+        if(!map.containsKey(Constants.CITY_ID)){
+            AuthParameters authParams = AuthParameters.getInstance(context.getCurrentActivity());
+            if(authParams != null) {
+                map.put(Constants.CITY_ID,authParams.getCityId());
+            }
         }
         switch (basketOperation) {
             case BasketOperation.INC:

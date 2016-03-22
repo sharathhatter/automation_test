@@ -87,6 +87,7 @@ public class UBoxFragment extends Fragment implements LoaderManager.LoaderCallba
         mNote = (TextView) view.findViewById(R.id.messageNote);
 
         mProgress = view.findViewById(R.id.progressBar);
+        mProgress.setVisibility(View.VISIBLE);
         mHelperText.setVisibility(TextView.VISIBLE);
         mHelperText.setText(R.string.txt_loading);
 
@@ -212,9 +213,9 @@ public class UBoxFragment extends Fragment implements LoaderManager.LoaderCallba
         } else {
             mListView.setVisibility(ListView.VISIBLE);
             mHelperText.setVisibility(TextView.GONE);
-            mListView.setSelection(mAdapter.getCount() - 1);
+            //mListView.setSelection(mAdapter.getCount() - 1);
         }
-        mProgress.setVisibility(View.INVISIBLE);
+        mProgress.setVisibility(View.GONE);
     }
 
     @Override
