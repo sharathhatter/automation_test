@@ -86,8 +86,7 @@ public class SearchActivity extends BBActivity {
 
     protected void doSearchByCategory(String categoryName, String categoryUrl,
                                       String categorySlug, String navigationCtx) {
-        MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
-        mostSearchesDbHelper.update(categoryName, categoryUrl);
+        MostSearchesDbHelper.update(getApplicationContext(), categoryName, categoryUrl);
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
@@ -99,8 +98,7 @@ public class SearchActivity extends BBActivity {
     }
 
     private void triggerSearch(String searchQuery, String referrer) {
-        MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
-        mostSearchesDbHelper.update(searchQuery);
+        MostSearchesDbHelper.update(getApplicationContext(), searchQuery);
         doSearch(searchQuery, referrer);
     }
 

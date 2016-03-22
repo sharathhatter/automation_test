@@ -77,7 +77,6 @@ public class BaseApplication extends Application {
         Fabric.with(appContext, new Crashlytics());
         AuthParameters.reset();
         FacebookSdk.sdkInitialize(appContext);
-        MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
         initializeLeakCanary();
 
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
@@ -99,7 +98,11 @@ public class BaseApplication extends Application {
                 .memoryCache(new LruCache(getMemCacheSize()))
                 .downloader(new OkHttp3Downloader(BigBasketApiAdapter.getHttpClient(this)))
                 .build();
-        Picasso.setSingletonInstance(p);
+        try {
+            Picasso.setSingletonInstance(p);
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+        }
         PushManager.getInstance(this).setMessageListener(new PushNotificationListener());
         if (appContext.getFilesDir() != null) {
             registerActivityLifecycleCallbacks(

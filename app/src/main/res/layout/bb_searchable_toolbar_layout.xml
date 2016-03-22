@@ -41,7 +41,6 @@
                 android:layout_toLeftOf="@id/imgClear"
                 android:background="@null"
                 android:hint="@string/search"
-                android:imeActionLabel="@string/search"
                 android:imeOptions="actionSearch"
                 android:singleLine="true" />
 

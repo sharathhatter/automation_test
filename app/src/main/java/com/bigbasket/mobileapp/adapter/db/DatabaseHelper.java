@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 import com.bigbasket.mobileapp.contentProvider.SectionItemAnalyticsData;
+import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.util.CompressUtil;
 import com.crashlytics.android.Crashlytics;
 
@@ -26,11 +27,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Version 18: Added section_item_analytics_data table
      * Version 19: Converted section_data from TEXT to BLOB
      * Version 20: Added 'date' column sectionItemAnalyticsTable
+     * Version 21: Updated triggers for mostsearches table
      */
-    protected static final int DATABASE_VERSION = 20;
-    public static SQLiteDatabase db = null;
+    protected static final int DATABASE_VERSION = 21;
     private static volatile DatabaseHelper dbAdapter = null;
-    private static boolean isConnectionOpen = false;
     private static final Object lock = new Object();
 
     private DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -52,47 +52,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return dbAdapter;
     }
 
-    public void open(Context context) {
-        if (!isConnectionOpen) {
-            try {
-                db = getInstance(context).getWritableDatabase();
-            } catch (SQLiteException e) {
-                db = getInstance(context).getReadableDatabase();
-            }
-            isConnectionOpen = true;
-        }
-    }
-
-    public void close() {
-        if (isConnectionOpen) {
-            db.close();
-            isConnectionOpen = false;
-        }
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
-        createTable(db);
+        initializeDatabase(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion <= 15) {
             try {
-                db.execSQL("DELETE FROM " + CategoryAdapter.TABLE_NAME);
-                db.execSQL("DROP TABLE " + CategoryAdapter.TABLE_NAME);
+                db.execSQL("DROP TABLE IF EXISTS " + CategoryAdapter.TABLE_NAME);
             } catch (Exception e) {
                 Crashlytics.logException(e);
             }
             try {
-                db.execSQL("DELETE FROM " + SubCategoryAdapter.TABLE_NAME);
-                db.execSQL("DROP TABLE " + SubCategoryAdapter.TABLE_NAME);
+                db.execSQL("DROP TABLE IF EXISTS " + SubCategoryAdapter.TABLE_NAME);
             } catch (Exception e) {
                 Crashlytics.logException(e);
             }
             try {
-                db.execSQL("DELETE FROM " + AreaPinInfoDbHelper.TABLE_NAME);
-                db.execSQL("DROP TABLE " + AreaPinInfoDbHelper.TABLE_NAME);
+                db.execSQL("DROP TABLE IF EXISTS " + AreaPinInfoDbHelper.TABLE_NAME);
             } catch (Exception e) {
                 Crashlytics.logException(e);
             }
@@ -112,12 +91,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(oldVersion < 20) {
             upgradeTo20(db);
         }
+        if(oldVersion < 21) {
+            upgradeTo21(db);
+        }
     }
     
     private void upgradeTo16(SQLiteDatabase db) {
         db.execSQL(DynamicPageDbHelper.CREATE_TABLE);
         db.execSQL(AppDataDynamicDbHelper.CREATE_TABLE);
-        db.execSQL(CategoryAdapter.CREATE_TABLE);
         db.execSQL(SubCategoryAdapter.CREATE_TABLE);
         db.execSQL(AreaPinInfoDbHelper.CREATE_TABLE);
     }
@@ -150,18 +131,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor = db.query(DynamicPageDbHelper.TABLE_NAME,
                     DynamicPageDbHelper.getDefaultProjection(), null, null, null, null, null);
             if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    sectionsToCompressList = new ArrayList<>();
-                    do {
-                        DynamicPageDbHelper.DynamicPageDataHolder holder =
-                                new DynamicPageDbHelper.DynamicPageDataHolder(cursor);
-                        sectionsToCompressList.add(holder);
-                    } while (cursor.moveToNext());
+                try {
+                    if (cursor.moveToFirst()) {
+                        sectionsToCompressList = new ArrayList<>();
+                        do {
+                            DynamicPageDbHelper.DynamicPageDataHolder holder =
+                                    new DynamicPageDbHelper.DynamicPageDataHolder(cursor);
+                            sectionsToCompressList.add(holder);
+                        } while (cursor.moveToNext());
+                    }
+                } finally {
+                    cursor.close();
                 }
-                cursor.close();
             }
-            db.execSQL("DELETE FROM " + DynamicPageDbHelper.TABLE_NAME);
-            db.execSQL("DROP TABLE " + DynamicPageDbHelper.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + DynamicPageDbHelper.TABLE_NAME);
             db.execSQL(DynamicPageDbHelper.CREATE_TABLE);
             if (sectionsToCompressList != null && sectionsToCompressList.size() > 0) {
                 for (DynamicPageDbHelper.DynamicPageDataHolder holder : sectionsToCompressList) {
@@ -175,6 +158,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         } catch (Exception e) {
             Crashlytics.logException(e);
+            throw new RuntimeException(e);
         } finally {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
@@ -183,16 +167,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void upgradeTo20(SQLiteDatabase db) {
-        try {
-            db.execSQL("ALTER TABLE " + SectionItemAnalyticsData.TABLE_NAME
+        db.execSQL("ALTER TABLE " + SectionItemAnalyticsData.TABLE_NAME
                     + " ADD COLUMN " + SectionItemAnalyticsData.DATE + " INTEGER");
+    }
+
+    private void upgradeTo21(SQLiteDatabase db) {
+        try {
+            createMostSearchesTriggers(db);
+        } catch (SQLiteException ex) {
+            Crashlytics.logException(ex);
+        }
+        try {
+            db.execSQL("DROP TABLE IF EXISTS " + CategoryAdapter.TABLE_NAME);
+        } catch (SQLiteException ex) {
+            Crashlytics.logException(ex);
+        }
+        try {
+            db.execSQL("DROP TABLE IF EXISTS " + SubCategoryAdapter.TABLE_NAME);
         } catch (SQLiteException ex) {
             Crashlytics.logException(ex);
         }
     }
 
-    private void createTable(SQLiteDatabase db) {
-        db.execSQL(CategoryAdapter.CREATE_TABLE);
+    private void initializeDatabase(SQLiteDatabase db) {
         db.execSQL(SubCategoryAdapter.CREATE_TABLE);
         db.execSQL(AreaPinInfoDbHelper.CREATE_TABLE);
         db.execSQL(SearchSuggestionDbHelper.CREATE_TABLE);
@@ -200,6 +197,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(DynamicPageDbHelper.CREATE_TABLE);  // Added in version 16
         db.execSQL(AppDataDynamicDbHelper.CREATE_TABLE);  // Added in version 16
         createSectionItemAnalyticsTable(db);
+        createMostSearchesTriggers(db);
     }
 
     private void createSectionItemAnalyticsTable(SQLiteDatabase db) {
@@ -212,5 +210,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + SectionItemAnalyticsData.ANALYTICS_ATTRS + " TEXT, "
                 + SectionItemAnalyticsData.DATE + " INTEGER );";
         db.execSQL(createStmt);
+    }
+
+    private void createMostSearchesTriggers(SQLiteDatabase db) {
+        String tableName = MostSearchesDbHelper.TABLE_NAME;
+        String id = MostSearchesDbHelper.ID;
+        String searchCount = MostSearchesDbHelper.COUNT;
+        String mostSearchesUpdateTriggerStatement =
+                "CREATE TRIGGER IF NOT EXISTS most_searches_update_usage_trigger"
+                + " AFTER UPDATE ON " + tableName
+                + " BEGIN "
+                + " UPDATE OR IGNORE " + tableName + " SET "
+                + searchCount + " = " + searchCount + " + 1 WHERE "
+                + MostSearchesDbHelper.QUERY + " = OLD." + MostSearchesDbHelper.QUERY + " ; "
+                + " END ";
+        db.execSQL(mostSearchesUpdateTriggerStatement);
+
+
+        String mostSearchesDeleteLeastUsedTriggerStatement =
+            "CREATE TRIGGER IF NOT EXISTS most_searches_delete_least_searched_item_trigger"
+            + " AFTER INSERT ON " + tableName
+            + " BEGIN "
+            + " DELETE FROM " + tableName + " WHERE "
+                + id + " = ( SELECT MIN(" + id + ") FROM " + tableName
+                    + " WHERE 20 < (SELECT COUNT(" + id + ") FROM " + tableName + ") AND "
+                    + searchCount + " = (SELECT MIN(" + searchCount + ") FROM " + tableName + ") );"
+            + " END ";
+        db.execSQL(mostSearchesDeleteLeastUsedTriggerStatement);
     }
 }

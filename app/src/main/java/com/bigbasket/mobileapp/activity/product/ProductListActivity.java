@@ -734,8 +734,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         // Re-use the same activity for pc calls via search instead of creating a new one
         if (!TextUtils.isEmpty(categorySlug)) {
             mTitlePassedViaIntent = categoryName;
-            MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
-            mostSearchesDbHelper.update(categoryName, categoryUrl);
+            MostSearchesDbHelper.update(this, categoryName, categoryUrl);
             mNameValuePairs = new ArrayList<>();
             mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
             mNameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));

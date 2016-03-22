@@ -56,8 +56,7 @@ public class CategoryLandingFragment extends BaseSectionFragment {
 
     private void loadSubCategoryList(String topCatVersion) {
         if (checkInternetConnection()) {
-            SubCategoryAdapter subCategoryAdapter = new SubCategoryAdapter(getActivity());
-            String version = subCategoryAdapter.getVersion(topCatSlug);
+            String version = SubCategoryAdapter.getVersion(getActivity(), topCatSlug);
             if (topCatVersion != null && topCatVersion.equals(version)) {
                 renderSubCategory(null, true, null);
             } else {
@@ -115,13 +114,12 @@ public class CategoryLandingFragment extends BaseSectionFragment {
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
-        SubCategoryAdapter subCategoryAdapter = new SubCategoryAdapter(getActivity());
-
         ArrayList<Object> result;
         if (!response_ok) {
-            subCategoryAdapter.insert(subCategoryModel, responseVersion, getSectionData(), topCatSlug);
+            SubCategoryAdapter.insert(getActivity(), subCategoryModel, responseVersion,
+                    getSectionData(), topCatSlug);
         } else {
-            result = subCategoryAdapter.getSubCategory(topCatSlug);
+            result = SubCategoryAdapter.getSubCategory(getActivity(), topCatSlug);
 
             if (result != null && result.size() == 2) {
                 subCategoryModel = (SubCategoryModel) result.get(0);

@@ -852,7 +852,7 @@ public class UIUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && context instanceof Activity) {
             DrawerLayout drawerLayout = (DrawerLayout) ((Activity) context).findViewById(R.id.drawer_layout);
             if (drawerLayout != null) {
-                drawerLayout.setStatusBarBackground(color);
+                drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(context, color));
             }
         }
     }
