@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
+import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -45,6 +46,8 @@ public class AskUsWelcomeView extends CardView implements View.OnClickListener {
         super.onFinishInflate();
         mMessageView = (TextView)findViewById(R.id.message);
         mMessageView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bkgrnd_msg));
+        mMessageView.setLinksClickable(true);
+        mMessageView.setMovementMethod(LinkMovementMethod.getInstance());
         setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bkgrnd_msg));
         mButtonView = (ImageView)findViewById(R.id.close_icon);
         mButtonView.setOnClickListener(this);
@@ -136,6 +139,10 @@ public class AskUsWelcomeView extends CardView implements View.OnClickListener {
             mMessageView.setVisibility(View.GONE);
             setBackgroundColor(Color.TRANSPARENT);
         }
+    }
+
+    public void setMessage(CharSequence message) {
+        mMessageView.setText(message);
     }
 
 

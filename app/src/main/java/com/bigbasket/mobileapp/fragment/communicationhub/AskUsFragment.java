@@ -18,8 +18,13 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +39,8 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.communicationhub.AskUsAdapter;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.SpannableStringBuilderCompat;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.crashlytics.android.Crashlytics;
 import com.moe.pushlibrary.models.UnifiedInboxMessage;
 import com.moengage.addon.ubox.AskUsWelcomeView;
@@ -78,7 +85,28 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         welcomeInfoView = (AskUsWelcomeView) view.findViewById(R.id.welcome_view);
-        //Work around to remove the color filter added by MoE
+        String phone = UIUtil.getCustomerSupportPhoneNumber(getContext());
+        if(TextUtils.isEmpty(phone)){
+            phone = "18601231000";
+        }
+        final String phoneNumber = phone;
+        String msg = getString(R.string.welcome_text_format, phone);
+        int start = msg.indexOf(phone);
+        SpannableString spannableMsg = new SpannableString(msg);
+        if(start >= 0) {
+            int end = start + phone.length();
+            spannableMsg.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    UIUtil.dialNumber(phoneNumber, widget.getContext());
+                }
+            }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableMsg.setSpan(
+                    new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.uiv3_link_color)),
+                    start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        welcomeInfoView.setMessage(spannableMsg);
+
         textInputBox = (EditText) view.findViewById(R.id.inputMsg);
         final ImageButton btnSend = (ImageButton) view.findViewById(R.id.btnSend);
         textInputBox.addTextChangedListener(new TextWatcher() {

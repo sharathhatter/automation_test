@@ -20,8 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/close_icon"
-            android:layout_toStartOf="@+id/close_icon"
-            android:text="@string/welcome_text"/>
+            android:layout_toStartOf="@+id/close_icon"/>
     </RelativeLayout>
 
 </com.moengage.addon.ubox.AskUsWelcomeView>

@@ -899,12 +899,12 @@ public class UIUtil {
         return " ";
     }
 
-    public static void dialNumber(String number, Activity activity) {
+    public static void dialNumber(String number, Context context) {
         try {
             String uri = "tel:" + number;
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse(uri));
-            activity.startActivity(intent);
+            context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
             // Do nothing
         }
