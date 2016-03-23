@@ -103,24 +103,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void upgradeTo17(SQLiteDatabase db) {
-        try {
-            db.execSQL(SearchSuggestionDbHelper.CREATE_TABLE);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
-        try {
-            db.execSQL(MostSearchesDbHelper.CREATE_TABLE);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
+        db.execSQL(SearchSuggestionDbHelper.CREATE_TABLE);
+        db.execSQL(MostSearchesDbHelper.CREATE_TABLE);
     }
 
     private void upgradeTo18(SQLiteDatabase db) {
-        try {
-            createSectionItemAnalyticsTable(db);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
+        createSectionItemAnalyticsTable(db);
     }
 
     private void upgradeTo19(SQLiteDatabase db) {
@@ -166,8 +154,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void upgradeTo20(SQLiteDatabase db) {
-        db.execSQL("ALTER TABLE " + SectionItemAnalyticsData.TABLE_NAME
+        if(!isColumnExists(db, SectionItemAnalyticsData.TABLE_NAME, SectionItemAnalyticsData.DATE)) {
+            db.execSQL("ALTER TABLE " + SectionItemAnalyticsData.TABLE_NAME
                     + " ADD COLUMN " + SectionItemAnalyticsData.DATE + " INTEGER");
+        }
     }
 
     private void upgradeTo21(SQLiteDatabase db) {
@@ -236,4 +226,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " END ";
         db.execSQL(mostSearchesDeleteLeastUsedTriggerStatement);
     }
+
+    private static boolean isColumnExists(SQLiteDatabase db, String tableName, String columnName) {
+        Cursor cursor = db.rawQuery("PRAGMA table_info(" + tableName + ")", (String[])null);
+        try {
+            if(cursor != null && cursor.moveToFirst()) {
+                int nameIndex = cursor.getColumnIndex("name");
+                if(nameIndex < 0) {
+                    return false;
+                }
+                do {
+                    String name = cursor.getString(nameIndex);
+                    if(name.equals(columnName)) {
+                        return  true;
+                    }
+                } while(cursor.moveToNext());
+            }
+        } finally {
+            if(cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return false;
+    }
+
 }

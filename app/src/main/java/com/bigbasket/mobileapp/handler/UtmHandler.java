@@ -19,6 +19,8 @@ import java.util.Locale;
 import java.util.Set;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UtmHandler {
     public static void postUtm(Context context, Uri uri) {
@@ -51,17 +53,18 @@ public class UtmHandler {
         final BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
         if (!DataUtil.isInternetAvailable(context)) return;
         //TODO: Send these utm params later when network is available
-        new Thread() {
+        Call<BaseApiResponse> call = bigBasketApiService.postUtmParams(utmQueryMapHolder);
+        call.enqueue(new Callback<BaseApiResponse>() {
             @Override
-            public void run() {
-                try {
-                    Call<BaseApiResponse> call = bigBasketApiService.postUtmParams(utmQueryMapHolder);
-                    call.execute();
-                } catch (IOException e) {
-                    // Fail silently
-                }
+            public void onResponse(Call<BaseApiResponse> call, Response<BaseApiResponse> response) {
+                //Ignore
             }
-        }.start();
+
+            @Override
+            public void onFailure(Call<BaseApiResponse> call, Throwable t) {
+                //Ignore
+            }
+        });
     }
 
     private static Set<String> getQueryParameterNames(Uri uri) {
