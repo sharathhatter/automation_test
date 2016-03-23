@@ -45,6 +45,9 @@ public class Address extends AddressSummary {
     @SerializedName(Constants.IS_SELECTED)
     private boolean isSelected;
 
+    @SerializedName(Constants.LOCATION)
+    private String[] location;
+
     public Address(Parcel source) {
         super(source);
         byte isDefaultByteVal = source.readByte();
@@ -59,6 +62,11 @@ public class Address extends AddressSummary {
         this.isMapped = source.readByte() == (byte) 1;
         this.isExpress = source.readByte() == (byte) 1;
         this.isSelected = source.readByte() == (byte) 1;
+        int locLength = source.readInt();
+        if(locLength > 0) {
+            this.location = new String[locLength];
+            source.readStringArray(location);
+        }
     }
 
     public Address(boolean isDefault, String contactNum, String firstName, String lastName, String houseNumber, String street, String residentialComplex, String landmark, boolean isMapped, boolean isExpress, boolean isSelected) {
@@ -89,6 +97,14 @@ public class Address extends AddressSummary {
         dest.writeByte(isMapped ? (byte) 1 : (byte) 0);
         dest.writeByte(isExpress ? (byte) 1 : (byte) 0);
         dest.writeByte(isSelected ? (byte) 1 : (byte) 0);
+        if(location != null){
+            dest.writeInt(location.length);
+            if(location.length > 0) {
+                dest.writeStringArray(location);
+            }
+        } else {
+            dest.writeInt(0);
+        }
     }
 
     @Override
@@ -142,6 +158,14 @@ public class Address extends AddressSummary {
 
     public boolean isSelected() {
         return isSelected;
+    }
+
+    public String[] getLocation() {
+        return location;
+    }
+
+    public void setLocation(String[] location) {
+        this.location = location;
     }
 
     @Override

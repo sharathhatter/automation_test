@@ -1,10 +1,11 @@
 package com.bigbasket.mobileapp.adapter.db;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
+import android.net.Uri;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
@@ -15,28 +16,30 @@ import java.util.List;
 
 public class MostSearchesDbHelper {
 
-    public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_QUERY = "query";
-    public static final String COLUMN_URL = "category_url";
-    public static final String COLUMN_COUNT = "count";
-    public static final String tableName = "mostsearches";
-    public static String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s (" +
+    public static final String ID = "_id";
+    public static final String QUERY = "query";
+    public static final String CATEGORY_URL = "category_url";
+    public static final String COUNT = "count";
+    public static final String TABLE_NAME = "mostsearches";
+    public static final String CREATE_TABLE = String.format("CREATE TABLE IF NOT EXISTS %1$s (" +
                     "%2$s INTEGER PRIMARY KEY AUTOINCREMENT, %3$s TEXT NOT NULL, %4$s TEXT, %5$s INTEGER NOT NULL);",
-            tableName, COLUMN_ID, COLUMN_QUERY, COLUMN_URL, COLUMN_COUNT);
-    private Context context;
+            TABLE_NAME, ID, QUERY, CATEGORY_URL, COUNT);
 
-    public MostSearchesDbHelper(Context context) {
-        this.context = context;
-        open();
-    }
+    public static final Uri CONTENT_URI = Uri.withAppendedPath(
+            DatabaseContentProvider.CONTENT_URI_PREFIX, TABLE_NAME);
+    public static final String MIME_TYPE_DIR =
+            "vnd.android.cursor.dir/com.bigbasket.mobileapp.mostsearches";
+    public static final String MIME_TYPE_ITEM =
+            "vnd.android.cursor.item/com.bigbasket.mobileapp.mostsearches";
 
-    public List<MostSearchedItem> getRecentSearchedItems(int limit) {
+    public static List<MostSearchedItem> getRecentSearchedItems(Context context, int limit) {
         Cursor cursor = null;
         List<MostSearchedItem> mostSearchedItems = null;
         try {
-            cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_QUERY, COLUMN_URL},
-                    null, null, null, null, COLUMN_ID + " DESC", String.valueOf(limit));
-            if (cursor.moveToFirst()) {
+            cursor = context.getContentResolver().query(CONTENT_URI,
+                    MostSearchedItem.PROJECTION,
+                    null, null, ID + " DESC LIMIT " + String.valueOf(limit));
+            if (cursor != null && cursor.moveToFirst()) {
                 mostSearchedItems = new ArrayList<>(cursor.getCount());
                 do {
                     mostSearchedItems.add(new MostSearchedItem(cursor));
@@ -53,71 +56,27 @@ public class MostSearchesDbHelper {
         return mostSearchedItems;
     }
 
-    public int getCountForQuery(String query) {
-        int count = 0;
-        Cursor cursor = null;
-        try {
-            cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_COUNT},
-                    COLUMN_QUERY + "=" + DatabaseUtils.sqlEscapeString(query),
-                    null, null, null, null);
-            if (cursor.moveToFirst()) {
-                count = cursor.getInt(cursor.getColumnIndex(COLUMN_COUNT));
-            }
-        } catch (SQLiteException e) {
-            Crashlytics.logException(e);
-        } finally {
-            if (cursor != null && !cursor.isClosed()) {
-                cursor.close();
-            }
-        }
-        return count;
+    public static void update(Context context, String query) {
+        update(context, query, null);
     }
 
-    public int getRowCount() {
-        Cursor cursor = DatabaseHelper.db.rawQuery("SELECT COUNT(_id) FROM " + tableName, null);
-        int count = 0;
-        try {
-            if (cursor != null && cursor.moveToFirst()) {
-                count = cursor.getInt(0);
-            }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return count;
-    }
-
-    public void update(String query) {
-        update(query, null);
-    }
-
-    public void update(String query, String url) {
-        int currentCount = getCountForQuery(query);
+    public static void update(Context context, String query, String url) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COLUMN_QUERY, query);
+        contentValues.put(QUERY, query);
         if (!TextUtils.isEmpty(url)) {
-            contentValues.put(COLUMN_URL, url);
+            contentValues.put(CATEGORY_URL, url);
         }
-        contentValues.put(COLUMN_COUNT, currentCount + 1);
-        if (currentCount > 0) {
-            DatabaseHelper.db.update(tableName, contentValues,
-                    COLUMN_QUERY + " = " + DatabaseUtils.sqlEscapeString(query), null);
-        } else {
-            DatabaseHelper.db.insert(tableName, null, contentValues);
+        ContentResolver cr = context.getContentResolver();
+        int count = cr.update(CONTENT_URI, contentValues,
+                    QUERY + " = ?", new String[]{query});
+        if(count <= 0) {
+            contentValues.put(COUNT, 1);
+            cr.insert(CONTENT_URI, contentValues);
         }
     }
 
-    public void deleteTerm(String term) {
-        DatabaseHelper.db.delete(tableName, COLUMN_QUERY + " = " +
-                DatabaseUtils.sqlEscapeString(term), null);
+    public static void deleteTerm(Context context, String term) {
+        context.getContentResolver().delete(CONTENT_URI, QUERY + " = ?", new String[]{term});
     }
 
-    public void deleteFirstRow() {
-        DatabaseHelper.db.delete(tableName, COLUMN_ID + " = 1", null);
-    }
-
-    public void open() {
-        DatabaseHelper.getInstance(context).open(context);
-    }
 }

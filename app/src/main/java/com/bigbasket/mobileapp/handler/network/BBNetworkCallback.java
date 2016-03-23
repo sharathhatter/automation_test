@@ -29,7 +29,7 @@ public abstract class BBNetworkCallback<K> implements Callback<K> {
                 || (call != null && call.isCanceled())) return;
         if ((ctxWeakReference.get()).isSuspended()) return;
         if (!updateProgress()) return;
-        if (response.isSuccess()) {
+        if (response.isSuccessful()) {
             onSuccess(response.body());
         } else {
             onFailure(response.code(), response.message());

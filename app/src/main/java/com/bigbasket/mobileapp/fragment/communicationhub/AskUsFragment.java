@@ -18,8 +18,13 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,10 +38,12 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.communicationhub.AskUsAdapter;
-import com.moengage.addon.ubox.AskUsWelcomeView;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.SpannableStringBuilderCompat;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.crashlytics.android.Crashlytics;
 import com.moe.pushlibrary.models.UnifiedInboxMessage;
+import com.moengage.addon.ubox.AskUsWelcomeView;
 import com.moengage.addon.ubox.UBoxFragment;
 import com.moengage.addon.ubox.UBoxManager;
 import com.moengage.addon.ubox.UBoxMessenger;
@@ -69,7 +76,7 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
         setHasOptionsMenu(true);
         PackageManager pm = getActivity().getPackageManager();
         mHasCamera = pm.hasSystemFeature(PackageManager.FEATURE_CAMERA);
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             mCurrentPhotoPath = savedInstanceState.getString(PHOTO_PATH);
         }
     }
@@ -78,7 +85,28 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         welcomeInfoView = (AskUsWelcomeView) view.findViewById(R.id.welcome_view);
-        //Work around to remove the color filter added by MoE
+        String phone = UIUtil.getCustomerSupportPhoneNumber(getContext());
+        if(TextUtils.isEmpty(phone)){
+            phone = "18601231000";
+        }
+        final String phoneNumber = phone;
+        String msg = getString(R.string.welcome_text_format, phone);
+        int start = msg.indexOf(phone);
+        SpannableString spannableMsg = new SpannableString(msg);
+        if(start >= 0) {
+            int end = start + phone.length();
+            spannableMsg.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    UIUtil.dialNumber(phoneNumber, widget.getContext());
+                }
+            }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableMsg.setSpan(
+                    new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.uiv3_link_color)),
+                    start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        welcomeInfoView.setMessage(spannableMsg);
+
         textInputBox = (EditText) view.findViewById(R.id.inputMsg);
         final ImageButton btnSend = (ImageButton) view.findViewById(R.id.btnSend);
         textInputBox.addTextChangedListener(new TextWatcher() {
@@ -105,18 +133,12 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
         Context context = getContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         boolean showInfoMsg = prefs.getBoolean(SHOW_INFO_MESSAGE, true);
+        welcomeInfoView.bringToFront();
         if (showInfoMsg) {
             welcomeInfoView.setMsgSeenListener(this);
         }
 
-        Calendar cal = Calendar.getInstance();
-        long now = cal.getTimeInMillis();
-        cal.set(Calendar.HOUR_OF_DAY, 8); //TODO: 8AM is hard coded for now
-        long csStartTime = cal.getTimeInMillis();
-        cal.set(Calendar.HOUR_OF_DAY, 22); //TODO: 10PM is hard coded for nw
-        long csEndTime = cal.getTimeInMillis();
-
-        if (!showInfoMsg && now >= csStartTime && now < csEndTime) {
+        if (!showInfoMsg) {
             welcomeInfoView.setExpanded(false);
         } else {
             welcomeInfoView.setExpanded(true);
@@ -127,7 +149,7 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
     @Override
     public void onPause() {
         super.onPause();
-        if(getContext() != null && textInputBox != null) {
+        if (getContext() != null && textInputBox != null) {
             IBinder token = textInputBox.getWindowToken();
             if (token == null) return;
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(
@@ -219,7 +241,7 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
                 uploadImage(uri.toString());
             }
         } else if (requestCode == REQUEST_TAKE_PHOTO) {
-            if( getContext() == null || mCurrentPhotoPath == null) {
+            if (getContext() == null || mCurrentPhotoPath == null) {
                 return;
             }
             if (resultCode == Activity.RESULT_OK) {
@@ -248,16 +270,6 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
             Crashlytics.logException(ex);
             //Ignore
         }
-    }
-
-    //Copied from com.moengage.addon.ubox.UBoxFragment.getPreburntMessage()
-    UnifiedInboxMessage getPreburntMessage() {
-        UnifiedInboxMessage chatItem = new UnifiedInboxMessage();
-        chatItem.author = "User";
-        chatItem.gtime = System.currentTimeMillis();
-        chatItem.msgTtl = chatItem.gtime + 7776000000L;
-        chatItem.setTimestamp(chatItem.gtime);
-        return chatItem;
     }
 
     private void uploadImage(String imageUri) {
@@ -328,7 +340,7 @@ public class AskUsFragment extends UBoxFragment implements AskUsWelcomeView.onMs
             } catch (IOException e) {
                 Toast.makeText(getContext(), R.string.failed_to_create_image_file,
                         Toast.LENGTH_LONG).show();
-               Crashlytics.logException(e);
+                Crashlytics.logException(e);
             }
 
         } else {

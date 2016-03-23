@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -95,6 +96,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mSelectedPaymentMethod;
     private OrderDetails mOrderDetails;
     private WalletOption mWalletOption;
+    private ArrayList<CreditDetails> creditDetails;
     private String mAddMoreLink;
     private String mAddMoreMsg;
     private MutableLong mElapsedTime;
@@ -102,7 +104,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private PayzappPostParams mPayzappPostParams;
     private HashMap<String, String> mPaymentParams;
     private String knowMoreUrl;
-    private CheckBox walletOptionsCheckBox;
+    private CheckedTextView walletOptionsCheckBox;
     private PaymentMethodsView paymentMethodsView;
 
     @Override
@@ -115,6 +117,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mPotentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
         mSelectedShipment = getIntent().getStringExtra(Constants.SHIPMENTS);
 
+
         //restoring from savedinstance bundle
         if (savedInstanceState != null) {
             mOrderDetails = savedInstanceState.getParcelable(Constants.ORDER_DETAILS);
@@ -123,6 +126,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             mActiveVouchersList = savedInstanceState.getParcelableArrayList(Constants.VOUCHER);
             mAppliedVoucherCode = savedInstanceState.getString(Constants.EVOUCHER_CODE);
             knowMoreUrl = savedInstanceState.getString(Constants.SHOW_PAYMENT_OPTIONS_KNOW_MORE);
+            creditDetails=savedInstanceState.getParcelableArrayList(Constants.CREDIT_DETAILS);
         } else {
             knowMoreUrl = getIntent().getStringExtra(Constants.NEW_FLOW_URL);
             mOrderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
@@ -130,6 +134,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             paymentTypeList = getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES);
             mAppliedVoucherCode = getIntent().getStringExtra(Constants.EVOUCHER_CODE);
             mActiveVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
+            creditDetails = getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS);
         }
 
         if (TextUtils.isEmpty(mPotentialOrderId) || TextUtils.isEmpty(mSelectedShipment)) {
@@ -146,11 +151,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
             return;
         }
 
-        walletOptionsCheckBox = (CheckBox) findViewById(R.id.wallet_option_checkbox);
+        walletOptionsCheckBox = (CheckedTextView) findViewById(R.id.wallet_option_checkbox);
         walletOptionsCheckBox.setTypeface(faceRobotoRegular);
         walletOptionsCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //toggling the state of the CheckedTextView to behave as checkbox
+                ((CheckedTextView) v).toggle();
                 int val = walletOptionsCheckBox.isChecked() ? 1 : 0;
                 PostShipmentTask.startTaskWalletUpdate(PaymentSelectionActivity.this, mSelectedShipment, mPotentialOrderId,
                         TrackEventkeys.CO_DELIVERY_OPS, val);
@@ -195,6 +202,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
         if (!TextUtils.isEmpty(knowMoreUrl)) {
             outState.putString(Constants.SHOW_PAYMENT_OPTIONS_KNOW_MORE, knowMoreUrl);
+        }
+        if (creditDetails!=null){
+            outState.putParcelableArrayList(Constants.CREDIT_DETAILS,creditDetails);
         }
 
         super.onSaveInstanceState(outState);
@@ -257,9 +267,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     private void renderPaymentDetails() {
         paymentMethodsView = (PaymentMethodsView) findViewById(R.id.layoutPaymentOptions);
-        ArrayList<CreditDetails> creditDetails = getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS);
-        renderPaymentMethodsView();
+
+
         renderOrderSummary(creditDetails);
+        renderPaymentMethodsView();
     }
 
     private void renderOrderSummary(@Nullable ArrayList<CreditDetails> creditDetails) {
@@ -437,7 +448,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mAppliedVoucherCode = postShipmentResponseContent.evoucherCode;
         knowMoreUrl = postShipmentResponseContent.newFlowUrl;
 
-        ArrayList<CreditDetails> creditDetails = postShipmentResponseContent.creditDetails;
+        creditDetails = postShipmentResponseContent.creditDetails;
         renderPaymentMethodsView();
         renderOrderSummary(creditDetails);
         renderFooter(true);
@@ -679,7 +690,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         int val = walletOptionsCheckBox.isChecked() ? 1 : 0;
         if (walletOptionsCheckBox.getVisibility() != View.VISIBLE) {
             val = 1;
-            if(paymentMethodsView.getVisibility() != View.VISIBLE && paymentTypeList != null && !paymentTypeList.isEmpty()) {
+            if (paymentMethodsView.getVisibility() != View.VISIBLE && paymentTypeList != null && !paymentTypeList.isEmpty()) {
                 mSelectedPaymentMethod = paymentTypeList.get(0).getValue();
             }
         }

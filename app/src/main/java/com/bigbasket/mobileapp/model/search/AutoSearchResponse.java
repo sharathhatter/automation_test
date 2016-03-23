@@ -35,17 +35,31 @@ public class AutoSearchResponse {
 
     private String createdOn;
 
+    public static final String[] PROJECTION = new String[]{
+            SearchSuggestionDbHelper.QUERY,
+            SearchSuggestionDbHelper.CREATED_ON,
+            SearchSuggestionDbHelper.TERMS,
+            SearchSuggestionDbHelper.CATEGORIES,
+            SearchSuggestionDbHelper.CATEGORY_URLS,
+            SearchSuggestionDbHelper.SUGGESTED_TERMS};
+    public static final int COLUMN_INDEX_QUERY = 0;
+    public static final int COLUMN_INDEX_CREATED_ON = COLUMN_INDEX_QUERY + 1;
+    public static final int COLUMN_INDEX_TERMS = COLUMN_INDEX_CREATED_ON + 1;
+    public static final int COLUMN_INDEX_CATEGORIES = COLUMN_INDEX_TERMS + 1;
+    public static final int COLUMN_INDEX_CATEGORY_URLS = COLUMN_INDEX_CATEGORIES + 1;
+    public static final int COLUMN_INDEX_SUGGESTED_TERMS = COLUMN_INDEX_CATEGORY_URLS + 1;
+
     public AutoSearchResponse(Cursor cursor) {
-        this.query = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_QUERY));
-        String termsStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_TERMS));
-        String categoriesStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_CATEGORIES));
-        String categoriesUrlStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_CATEGORY_URLS));
-        String suggestedTermsStr = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_SUGGESTED_TERMS));
+        this.query = cursor.getString(COLUMN_INDEX_QUERY);
+        String termsStr = cursor.getString(COLUMN_INDEX_CREATED_ON);
+        String categoriesStr = cursor.getString(COLUMN_INDEX_TERMS);
+        String categoriesUrlStr = cursor.getString(COLUMN_INDEX_CATEGORIES);
+        String suggestedTermsStr = cursor.getString(COLUMN_INDEX_SUGGESTED_TERMS);
         this.terms = TextUtils.isEmpty(termsStr) ? null : termsStr.split(",");
         this.categories = TextUtils.isEmpty(categoriesStr) ? null : categoriesStr.split(",");
         this.categoriesUrl = TextUtils.isEmpty(categoriesUrlStr) ? null : categoriesUrlStr.split(",");
         this.suggestedTerm = TextUtils.isEmpty(suggestedTermsStr) ? null : suggestedTermsStr.split(",");
-        this.createdOn = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.COLUMN_CREATED_ON));
+        this.createdOn = cursor.getString(cursor.getColumnIndex(SearchSuggestionDbHelper.CREATED_ON));
     }
 
     public String getQuery() {

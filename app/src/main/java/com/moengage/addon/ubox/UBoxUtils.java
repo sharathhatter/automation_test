@@ -319,7 +319,6 @@ public final class UBoxUtils {
     return null;
   }
 
-  public static final String ATTR_LINKIFY = "linkify";
   public static final String ATTR_DEEPLINK = "DeepLinkUrl";
   public static final String ATTR_OS_ANDROID = "Android";
   public static final String ATTR_SCREENAME = "ScreenName";
@@ -333,7 +332,6 @@ public final class UBoxUtils {
   public static final String FILE_NAME_PREFIX = "JPEG_";
   public static final String FILE_NAME_EXTN = ".jpg";
   public static final String TIME_FORMAT = "yyyyMMdd_HHmmss";
-  public static final String ATTR_GCM_MSG = "gcm_alert";
   public static final String ATTR_MSG_DETAILS = "text";
   public static final String ATTR_ID = "_id";
 

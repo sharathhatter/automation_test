@@ -119,15 +119,16 @@
                         android:visibility="gone" />
                 </LinearLayout>
 
-                <CheckBox
+                <CheckedTextView
                     android:id="@+id/wallet_option_checkbox"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:button="@null"
                     android:padding="@dimen/padding_small"
+                    android:clickable="true"
+                    android:gravity="left|center"
+                    android:checkMark="?android:attr/listChoiceIndicatorMultiple"
                     android:background="@drawable/paymentoptions_background"
-                    android:textSize="@dimen/secondary_text_size"
-                    android:drawableRight="?android:attr/listChoiceIndicatorMultiple" />
+                    android:textSize="@dimen/secondary_text_size" />
 
 
 

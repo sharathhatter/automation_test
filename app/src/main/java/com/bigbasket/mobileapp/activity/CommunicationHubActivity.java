@@ -59,11 +59,11 @@ public class CommunicationHubActivity extends BaseActivity {
         }
 
         isFaqToBeShown = getIntent().getBooleanExtra(Constants.COMMUNICATION_HUB_FAQ_SHOW, false);
-        if(isFaqToBeShown) {
+        if (isFaqToBeShown) {
             setTitle(R.string.help_and_support);
         }
         setUpTabs();
-        if(MoEngageNotificationUtils.isChatMessage(getIntent().getExtras())){
+        if (MoEngageNotificationUtils.isChatMessage(getIntent().getExtras())) {
             mViewPager.setCurrentItem(isFaqToBeShown ? 1 : 2);
         }
     }
@@ -96,10 +96,10 @@ public class CommunicationHubActivity extends BaseActivity {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 super.onTabUnselected(tab);
-                if(tab.getText().equals(getString(R.string.communication_hub_tab_askus))) {
-                    Fragment f = (Fragment)mSectionsPagerAdapter.instantiateItem(mViewPager,
+                if (tab.getText().equals(getString(R.string.communication_hub_tab_askus))) {
+                    Fragment f = (Fragment) mSectionsPagerAdapter.instantiateItem(mViewPager,
                             tab.getPosition());
-                    if(f != null) {
+                    if (f != null) {
                         f.onPause();
                     }
                 }

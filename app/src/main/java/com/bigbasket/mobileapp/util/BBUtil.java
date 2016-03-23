@@ -32,7 +32,9 @@ public class BBUtil {
             cipher.init(Cipher.ENCRYPT_MODE, key);
 
             return Base64.encodeToString(cipher.doFinal(clearText), Base64.DEFAULT);
-        } catch (InvalidKeyException | UnsupportedEncodingException | InvalidKeySpecException | NoSuchAlgorithmException | BadPaddingException | NoSuchPaddingException | IllegalBlockSizeException e) {
+        } catch (InvalidKeyException | UnsupportedEncodingException | InvalidKeySpecException
+                | NoSuchAlgorithmException | BadPaddingException | NoSuchPaddingException
+                | IllegalBlockSizeException | IllegalArgumentException e) {
             Crashlytics.logException(e);
         }
         return value;
@@ -49,7 +51,9 @@ public class BBUtil {
             cipher.init(Cipher.DECRYPT_MODE, key);
             byte[] decrypedValueBytes = (cipher.doFinal(encrypedPwdBytes));
             return new String(decrypedValueBytes);
-        } catch (InvalidKeyException | UnsupportedEncodingException | InvalidKeySpecException | NoSuchAlgorithmException | BadPaddingException | NoSuchPaddingException | IllegalBlockSizeException e) {
+        } catch (InvalidKeyException | UnsupportedEncodingException | InvalidKeySpecException
+                | NoSuchAlgorithmException | BadPaddingException | NoSuchPaddingException
+                | IllegalBlockSizeException| IllegalArgumentException e) {
             Crashlytics.logException(e);
         }
         return value;

@@ -31,29 +31,16 @@ public class SearchHistoryLoader extends AsyncTaskLoader<Cursor> {
                 SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID,
                 SearchManager.SUGGEST_COLUMN_ICON_1, SearchManager.SUGGEST_COLUMN_ICON_2});
-        MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(getContext());
-        int mostSearchTermsCount = mostSearchesDbHelper.getRowCount();
-        if (mostSearchTermsCount > 0) {
+        List<MostSearchedItem> mostSearchedItemList =
+                MostSearchesDbHelper.getRecentSearchedItems(getContext(), 5);
+        if (mostSearchedItemList != null && !mostSearchedItemList.isEmpty()) {
             matrixCursor.addRow(new String[]{"0", getContext().getString(R.string.history), null,
                     null, null, getContext().getString(R.string.history), null});
-            if (mostSearchTermsCount >= 5) {
-                List<MostSearchedItem> mostSearchedItemList = mostSearchesDbHelper.getRecentSearchedItems(5);
-                int i = 1;
-                for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
-                    matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
-                            mostSearchedItem.getUrl(), null, mostSearchedItem.getQuery(),
-                            null, SearchUtil.HISTORY_TERM});
-                if (mostSearchTermsCount > 20)
-                    mostSearchesDbHelper.deleteFirstRow();
-            } else {
-                List<MostSearchedItem> mostSearchedItemList = mostSearchesDbHelper.getRecentSearchedItems(mostSearchTermsCount);
-                if (mostSearchedItemList != null) {
-                    int i = 0;
-                    for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
-                        matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
-                                null, mostSearchedItem.getUrl(), null,
-                                null, SearchUtil.HISTORY_TERM});
-                }
+            int i = 0;
+            for (MostSearchedItem mostSearchedItem : mostSearchedItemList) {
+                matrixCursor.addRow(new String[]{String.valueOf(++i), mostSearchedItem.getQuery(),
+                        mostSearchedItem.getUrl(), null, mostSearchedItem.getQuery(),
+                        null, SearchUtil.HISTORY_TERM});
             }
         }
         SearchUtil.populateTopSearch(matrixCursor, getContext());

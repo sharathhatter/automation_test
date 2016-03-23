@@ -64,7 +64,7 @@ public class BBArrayAdapter<T> extends ArrayAdapter<T> {
         View view = super.getView(position, convertView, parent);
         if (view instanceof TextView) {
             ((TextView) view).setTypeface(typeface);
-            ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+            ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
             ((TextView) view).setTextColor(itemColor);
         }
         return view;

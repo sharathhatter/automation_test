@@ -147,6 +147,10 @@ public final class ValidatePayment<T extends AppOperationAware> {
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context.getCurrentActivity());
         context.showProgressDialog(context.getCurrentActivity().getString(resId));
+        //Workaround to avoid null filed map error
+        if (additionalParams == null) {
+            additionalParams = new HashMap<>(0);
+        }
         Call<ApiResponse<ValidateOrderPaymentApiResponse>> call = bigBasketApiService.
                 validatePayment(validatePaymentRequest.getTxnId(), validatePaymentRequest.getPotentialOrderId(),
                         validatePaymentRequest.getOrderId(), validatePaymentRequest.getSelectedPaymentMethod(),

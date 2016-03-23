@@ -190,9 +190,11 @@
 -keep class com.moengage.receiver.MoEInstanceIDListener
 -keep class com.moengage.worker.MoEGCMListenerService
 -keep class com.moe.pushlibrary.models.** { *;}
+-keep class com.facebook.drawee.** {*; }
 
 -dontwarn com.moengage.receiver.*
 -dontwarn com.moengage.worker.*
+-dontwarn com.moengage.ViewEngine
 
 -keep class com.delight.**  { *; }
 

@@ -54,7 +54,6 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
 import com.bigbasket.mobileapp.adapter.db.DynamicPageDbHelper;
 import com.bigbasket.mobileapp.adapter.gift.GiftItemListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
@@ -286,7 +285,6 @@ public class UIUtil {
         if (!TextUtils.isEmpty(cityId) &&
                 !cityId.equals(String.valueOf(userDetails.analytics.cityId))) {
             editor.remove(Constants.AREA_INFO_CALL_LAST);
-            AreaPinInfoDbHelper.clearAll(ctx);
         }
 
         if (userDetails.analytics != null) {
@@ -852,7 +850,7 @@ public class UIUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && context instanceof Activity) {
             DrawerLayout drawerLayout = (DrawerLayout) ((Activity) context).findViewById(R.id.drawer_layout);
             if (drawerLayout != null) {
-                drawerLayout.setStatusBarBackground(color);
+                drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(context, color));
             }
         }
     }
@@ -901,12 +899,12 @@ public class UIUtil {
         return " ";
     }
 
-    public static void dialNumber(String number, Activity activity) {
+    public static void dialNumber(String number, Context context) {
         try {
             String uri = "tel:" + number;
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse(uri));
-            activity.startActivity(intent);
+            context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
             // Do nothing
         }

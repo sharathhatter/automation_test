@@ -50,6 +50,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.OtpResponse;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
+import com.bigbasket.mobileapp.model.address.AreaSearchResponse;
 import com.bigbasket.mobileapp.model.ads.AdAnalyticsData;
 import com.bigbasket.mobileapp.model.ads.SponsoredAds;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
@@ -293,9 +294,6 @@ public interface BigBasketApiService {
                                                                  @Field(Constants.WALLET) int wallet,
                                                                  @Field(Constants.EVOUCHER_CODE) String evoucherCode);
 
-    @GET("get-area-info/")
-    Call<ApiResponse<GetAreaInfoResponse>> getAreaInfo(@Query(Constants.CITY_ID) String cityId);
-
     @FormUrlEncoded
     @POST("post-case-feedback/")
     Call<ApiResponse<PostFeedbackApiResponseContent>> postCaseFeedback(@Field(Constants.CASE_ID) String caseId,
@@ -485,5 +483,12 @@ public interface BigBasketApiService {
 
     @POST("logout/")
     Call<BaseApiResponse> logout();
+
+    @GET("places/")
+    Call<AreaSearchResponse> searchAreaInfo(@Query(Constants.CITY_ID) Integer cityId,
+                                            @Query(Constants.TYPE) String type,
+                                            @Query(Constants.TERM) String constraint,
+                                            @Query(Constants.FIELDS) String fields,
+                                            @Query(Constants.LIMIT) Integer limit);
 
 }

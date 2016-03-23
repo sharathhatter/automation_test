@@ -14,31 +14,35 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.bigbasket.mobileapp.BuildConfig;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoDbHelper;
+import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.contentProvider.SectionItemAnalyticsData;
 import com.bigbasket.mobileapp.service.AbstractDynamicPageSyncService;
 import com.crashlytics.android.Crashlytics;
 
 public class DatabaseContentProvider extends ContentProvider {
-    DatabaseHelper databaseHelper;
+    private DatabaseHelper databaseHelper;
     private static final String TAG = DatabaseContentProvider.class.getName();
 
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".bbprovider";
 
     public static final Uri CONTENT_URI_PREFIX = Uri.parse("content://" + AUTHORITY);
 
-    public static final int AREA_PIN_INFO_URI_MATCHER_CODE = 100;
     public static final int HOME_SECTION_URI_MATCHER_CODE = 101;
     public static final int MAIN_MENU_SECTION_URI_MATCHER_CODE = 102;
     public static final int APP_DATA_DYNAMIC_URI_MATCHER_CODE = 103;
     public static final int SECTION_ITEM_ANALYTICS_DATA_DIR = 104;
     public static final int SECTION_ITEM_ANALYTICS_DATA_ITEM = 105;
+    public static final int MOST_SEARCHES_DIR = 106;
+    public static final int MOST_SEARCHES_ITEM = 107;
+    public static final int SEARCH_SUGGESTIONS_DIR = 108;
+    public static final int SEARCH_SUGGESTIONS_ITEM = 109;
+    public static final int SUB_CATEGORY_DIR = 110;
+    public static final int SUB_CATEGORY_ITEM = 111;
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        sURIMatcher.addURI(AUTHORITY, AreaPinInfoDbHelper.TABLE_NAME, AREA_PIN_INFO_URI_MATCHER_CODE);
         sURIMatcher.addURI(AUTHORITY, DynamicPageDbHelper.TABLE_NAME + "/" + AbstractDynamicPageSyncService.MAIN_MENU,
                 MAIN_MENU_SECTION_URI_MATCHER_CODE);
         sURIMatcher.addURI(AUTHORITY, DynamicPageDbHelper.TABLE_NAME + "/" + AbstractDynamicPageSyncService.HOME_PAGE,
@@ -48,15 +52,18 @@ public class DatabaseContentProvider extends ContentProvider {
                 SECTION_ITEM_ANALYTICS_DATA_DIR);
         sURIMatcher.addURI(AUTHORITY, SectionItemAnalyticsData.TABLE_NAME + "/#",
                 SECTION_ITEM_ANALYTICS_DATA_ITEM);
+        sURIMatcher.addURI(AUTHORITY, MostSearchesDbHelper.TABLE_NAME, MOST_SEARCHES_DIR);
+        sURIMatcher.addURI(AUTHORITY, MostSearchesDbHelper.TABLE_NAME + "/#", MOST_SEARCHES_ITEM);
+        sURIMatcher.addURI(AUTHORITY, SearchSuggestionDbHelper.TABLE_NAME, SEARCH_SUGGESTIONS_DIR);
+        sURIMatcher.addURI(AUTHORITY, SearchSuggestionDbHelper.TABLE_NAME + "/#", SEARCH_SUGGESTIONS_ITEM);
+        sURIMatcher.addURI(AUTHORITY, SubCategoryAdapter.TABLE_NAME, SUB_CATEGORY_DIR);
+        sURIMatcher.addURI(AUTHORITY, SubCategoryAdapter.TABLE_NAME + "/#", SUB_CATEGORY_ITEM);
     }
 
     public DatabaseContentProvider() {
     }
 
-    @Override
-    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
-        String tableName = getTableName(uri);
+    private String updateIdSelection(@NonNull Uri uri, String selection, String[] selectionArgs){
         switch (sURIMatcher.match(uri)) {
             case SECTION_ITEM_ANALYTICS_DATA_ITEM:
                 String id = uri.getLastPathSegment();
@@ -67,7 +74,43 @@ public class DatabaseContentProvider extends ContentProvider {
                     selection += " AND " + idSelection;
                 }
                 break;
+            case MOST_SEARCHES_ITEM:
+                id = uri.getLastPathSegment();
+                idSelection = MostSearchesDbHelper.ID + " = '" + id + "'";
+                if (selection == null) {
+                    selection = idSelection;
+                } else {
+                    selection += " AND " + idSelection;
+                }
+                break;
+            case SEARCH_SUGGESTIONS_ITEM:
+                id = uri.getLastPathSegment();
+                idSelection = SearchSuggestionDbHelper.ID + " = '" + id + "'";
+                if (selection == null) {
+                    selection = idSelection;
+                } else {
+                    selection += " AND " + idSelection;
+                }
+                break;
+            case SUB_CATEGORY_ITEM:
+                id = uri.getLastPathSegment();
+                idSelection = SubCategoryAdapter.COLUMN_ID + " = '" + id + "'";
+                if (selection == null) {
+                    selection = idSelection;
+                } else {
+                    selection += " AND " + idSelection;
+                }
+                break;
         }
+        return selection;
+    }
+
+
+    @Override
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+        SQLiteDatabase sqlDB = databaseHelper.getWritableDatabase();
+        String tableName = getTableName(uri);
+        selection = updateIdSelection(uri, selection, selectionArgs);
         int rowCount;
         sqlDB.beginTransaction();
         try {
@@ -87,6 +130,18 @@ public class DatabaseContentProvider extends ContentProvider {
                 return SectionItemAnalyticsData.MIME_TYPE_DIR;
             case SECTION_ITEM_ANALYTICS_DATA_ITEM:
                 return SectionItemAnalyticsData.MIME_TYPE_ITEM;
+            case MOST_SEARCHES_DIR:
+                return MostSearchesDbHelper.MIME_TYPE_DIR;
+            case MOST_SEARCHES_ITEM:
+                return MostSearchesDbHelper.MIME_TYPE_ITEM;
+            case SEARCH_SUGGESTIONS_DIR:
+                return SearchSuggestionDbHelper.MIME_TYPE_DIR;
+            case SEARCH_SUGGESTIONS_ITEM:
+                return SearchSuggestionDbHelper.MIME_TYPE_ITEM;
+            case SUB_CATEGORY_DIR:
+                return SubCategoryAdapter.MIME_TYPE_DIR;
+            case SUB_CATEGORY_ITEM:
+                return SubCategoryAdapter.MIME_TYPE_ITEM;
             default:
                 return null;
         }
@@ -148,17 +203,7 @@ public class DatabaseContentProvider extends ContentProvider {
         String tableName = getTableName(uri);
         queryBuilder.setTables(tableName);
         Log.d(TAG, "Running query for uri = " + uri);
-        switch (sURIMatcher.match(uri)) {
-            case SECTION_ITEM_ANALYTICS_DATA_ITEM:
-                String id = uri.getLastPathSegment();
-                String idSelection = SectionItemAnalyticsData.ID + " = '" + id + "'";
-                if (selection == null) {
-                    selection = idSelection;
-                } else {
-                    selection += " AND " + idSelection;
-                }
-                break;
-        }
+        selection = updateIdSelection(uri, selection, selectionArgs);
         Cursor cursor = queryBuilder.query(databaseHelper.getReadableDatabase(),
                 projection, selection, selectionArgs, null, null, sortOrder);
         if (getContext() != null) {
@@ -173,17 +218,7 @@ public class DatabaseContentProvider extends ContentProvider {
         String tableName = getTableName(uri);
         Log.d(TAG, "Running update for uri = " + uri);
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        switch (sURIMatcher.match(uri)) {
-            case SECTION_ITEM_ANALYTICS_DATA_ITEM:
-                String id = uri.getLastPathSegment();
-                String idSelection = SectionItemAnalyticsData.ID + " = '" + id + "'";
-                if (selection == null) {
-                    selection = idSelection;
-                } else {
-                    selection += " AND " + idSelection;
-                }
-                break;
-        }
+        selection = updateIdSelection(uri, selection, selectionArgs);
         db.beginTransaction();
         int rowCount;
         try {
@@ -200,8 +235,6 @@ public class DatabaseContentProvider extends ContentProvider {
 
     private String getTableName(Uri uri) throws IllegalArgumentException {
         switch (sURIMatcher.match(uri)) {
-            case AREA_PIN_INFO_URI_MATCHER_CODE:
-                return AreaPinInfoDbHelper.TABLE_NAME;
             case HOME_SECTION_URI_MATCHER_CODE:
             case MAIN_MENU_SECTION_URI_MATCHER_CODE:
                 return DynamicPageDbHelper.TABLE_NAME;
@@ -210,6 +243,15 @@ public class DatabaseContentProvider extends ContentProvider {
             case SECTION_ITEM_ANALYTICS_DATA_DIR:
             case SECTION_ITEM_ANALYTICS_DATA_ITEM:
                 return SectionItemAnalyticsData.TABLE_NAME;
+            case MOST_SEARCHES_DIR:
+            case MOST_SEARCHES_ITEM:
+                return MostSearchesDbHelper.TABLE_NAME;
+            case SEARCH_SUGGESTIONS_DIR:
+            case SEARCH_SUGGESTIONS_ITEM:
+                return SearchSuggestionDbHelper.TABLE_NAME;
+            case SUB_CATEGORY_DIR:
+            case SUB_CATEGORY_ITEM:
+                return SubCategoryAdapter.TABLE_NAME;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }

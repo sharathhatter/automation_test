@@ -30,8 +30,8 @@ import java.lang.ref.WeakReference;
 public class SearchViewAdapter<T> extends CursorAdapter {
 
 
-    private static final int VIEW_TYPE_HEADER = 0;
-    private static final int VIEW_TYPE_ITEM = 1;
+    private static final int VIEW_TYPE_HEADER = 1;
+    private static final int VIEW_TYPE_ITEM = 2;
     private LayoutInflater inflater;
     private FontHolder fontHolder;
     private SearchTermActionListener searchTermActionListener;
@@ -68,8 +68,7 @@ public class SearchViewAdapter<T> extends CursorAdapter {
 
         private void deleteTerm(String term) {
             if (!TextUtils.isEmpty(term)) {
-                MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(context);
-                mostSearchesDbHelper.deleteTerm(term);
+                MostSearchesDbHelper.deleteTerm(context, term);
                 onSearchTermActionCallback.onSearchTermDeleted();
             }
         }
@@ -130,17 +129,25 @@ public class SearchViewAdapter<T> extends CursorAdapter {
                 imgSearchTermAction.setVisibility(View.GONE);
             }
 
-        } else {
+        } else if (viewType == VIEW_TYPE_HEADER) {
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) view.getTag();
             TextView txtTermHeader = headerViewHolder.getTxtTermHeader();
             txtTermHeader.setText(termString);
+        } else {
+            HeaderViewHolder headerViewHolder = (HeaderViewHolder) view.getTag();
+            TextView txtTermHeader = headerViewHolder.getTxtTermHeader();
+            txtTermHeader.setText("");
         }
     }
 
     @Override
     public int getItemViewType(int position) {
         Cursor cursor = (Cursor) getItem(position);
-        return getItemViewType(cursor);
+        if(cursor != null && !cursor.isAfterLast() && !cursor.isBeforeFirst()) {
+            return getItemViewType(cursor);
+        } else {
+            return super.getItemViewType(position);
+        }
     }
 
     public int getItemViewType(Cursor cursor) {
@@ -169,7 +176,7 @@ public class SearchViewAdapter<T> extends CursorAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 3;
     }
 
     @Override

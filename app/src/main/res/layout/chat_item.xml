@@ -13,7 +13,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/dark_black"
-            android:textSize="@dimen/secondary_text_size"/>
+            android:paddingLeft="@dimen/padding_mini"
+            android:paddingRight="@dimen/padding_mini"
+            android:textSize="@dimen/primary_text_size"/>
         <ImageView
             android:id="@+id/img_chat"
             android:layout_width="match_parent"

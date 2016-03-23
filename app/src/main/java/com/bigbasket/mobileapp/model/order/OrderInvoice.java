@@ -49,26 +49,29 @@ public class OrderInvoice implements Parcelable {
     private ArrayList<CreditDetails> creditDetails;
     @SerializedName(Constants.FULFILLMENT_INFO)
     private FulfillmentInfo fulfillmentInfo;
+    @SerializedName(Constants.INVOICE_DOWNLOAD_URL)
+    private String invoiceDownloadUrl;
 
     public OrderInvoice(Parcel source) {
         this.orderNumber = source.readString();
         this.orderId = source.readString();
         this.canPay = source.readByte() == (byte) 1;
-        this.memberSummary = source.readParcelable(OrderInvoice.class.getClassLoader());
-        this.slotDisplay = source.readParcelable(OrderInvoice.class.getClassLoader());
+        this.memberSummary = source.readParcelable(MemberSummary.class.getClassLoader());
+        this.slotDisplay = source.readParcelable(SlotDisplay.class.getClassLoader());
         this.invoiceNumber = source.readString();
         boolean _wasBaseImgUrlNull = source.readByte() == (byte) 1;
         if (!_wasBaseImgUrlNull) {
             this.baseImgUrl = source.readString();
         }
         this.cartItems = source.createTypedArrayList(CartItemList.CREATOR);
-        this.orderInvoiceDetails = source.readParcelable(OrderInvoice.class.getClassLoader());
+        this.orderInvoiceDetails = source.readParcelable(OrderInvoiceDetails.class.getClassLoader());
         this.orderModifications =  source.createTypedArrayList(OrderModification.CREATOR);
         boolean _wasCreditDetailsNull = source.readByte() == (byte) 1;
         if (!_wasCreditDetailsNull) {
             this.creditDetails =  source.createTypedArrayList(CreditDetails.CREATOR);
         }
-        this.fulfillmentInfo = source.readParcelable(OrderInvoice.class.getClassLoader());
+        this.fulfillmentInfo = source.readParcelable(FulfillmentInfo.class.getClassLoader());
+        this.invoiceDownloadUrl = source.readString();
     }
 
     @Override
@@ -98,6 +101,7 @@ public class OrderInvoice implements Parcelable {
             dest.writeTypedList(creditDetails);
         }
         dest.writeParcelable(fulfillmentInfo, flags);
+        dest.writeString(invoiceDownloadUrl);
     }
 
     public String getOrderNumber() {
@@ -146,5 +150,9 @@ public class OrderInvoice implements Parcelable {
 
     public FulfillmentInfo getFulfillmentInfo() {
         return fulfillmentInfo;
+    }
+
+    public String getInvoiceDownloadUrl() {
+        return invoiceDownloadUrl;
     }
 }

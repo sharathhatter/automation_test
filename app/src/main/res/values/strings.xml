@@ -493,6 +493,7 @@
     <string name="otpString">One time Password</string>
 
     <string name="pay_for_multiple_orders">Select multiple orders to pay at once.</string>
+    <string name="search_apartment_line2_format">%1$s - %2$s</string>
 
     <string name="rate_msg">How about rating on the Play Store?</string>
     <string name="feedback_msg">We are sad to hear about your unhappiness. Kindly let us know how we can improve your shopping experience.</string>
@@ -530,4 +531,5 @@
     <string name="Rs_char">`</string>
     <string name="val_in_basket_format">%1$s in basket"</string>
     <string name="balance">\nBalance:&#160;</string>
+    <string name="export_payment_details">Export payment details</string>
 </resources>

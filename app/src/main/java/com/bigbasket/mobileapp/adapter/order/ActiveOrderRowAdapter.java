@@ -46,9 +46,11 @@ import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -656,10 +658,9 @@ public class ActiveOrderRowAdapter<T extends AppOperationAware> extends Recycler
         if (quantity % 1 == 0) {
             return quantityText + String.valueOf((int) quantity);
         } else {
-            DecimalFormat df = new DecimalFormat("#.##");
+            DecimalFormat df = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.US));
             df.setRoundingMode(RoundingMode.FLOOR);
-            double result = Double.valueOf(df.format(quantity));
-            return quantityText + String.valueOf(result);
+            return quantityText + df.format(quantity);
         }
     }
 

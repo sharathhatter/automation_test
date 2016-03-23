@@ -437,7 +437,7 @@ public class Constants {
     public static final String WALLET_OPTION_BALANCE = "balance";
     public static final String WALLET_OPTION_MSG = "msg";
     public static final String WALLET_OPTION_STATE = "state";
-    public static final String OFF="off";
+    public static final String OFF = "off";
 
 
     //change password
@@ -496,7 +496,6 @@ public class Constants {
     public static final String CLICKS = "clicks";
     public static final String IMPRESSIONS = "imps";
 
-
     //fb login and register
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
     public static final String AUTH_TOKEN = "auth_token";
@@ -511,7 +510,6 @@ public class Constants {
     public static final String BUNDLE_PACK = "bundle-pack";
     public static final String NOW_AT_BB = "nowatbb";
     public static final String NEW_AT_BB = "new_launches";
-
 
     public static final String LOCAL_RES_PREFIX = "app://";
     public static final String LOCATION = "location";
@@ -673,8 +671,7 @@ public class Constants {
     public static final int PAYMENT_VALIDATION_FAILED = 8009;
     public static final int CONTACT_PERMISSION_INFO_DIALOG = 8010;
 
-
-    // App Indexing params
+    // App Indexing paramsmore
     public static final String HTTP_HOST = "bigbasket.com";
     public static final String SHOW_PAYMENT_OPTIONS_KNOW_MORE = "show_payment_options_know_more";
     public static final int KNOW_MORE_DIALOG_ID = 8008;
@@ -686,6 +683,7 @@ public class Constants {
     public static final int PERMISSION_REQUEST_CODE_CAPTURE_CAMERA = 103;
     public static final int PERMISSION_REQUEST_CODE_GET_ACCOUNTS = 104;
     public static final int PERMISSION_REQUEST_CODE_RECEIVE_SMS = 105;
+    public static final int PERMISSION_REQUEST_CODE_PLACE_PICKER = 106;
 
     public static final String TERMS_AND_COND_URL = "http://www.bigbasket.com/terms-and-conditions/?source=app";
     public static final String PRIVACY_POLICY_URL = "http://www.bigbasket.com/privacy-policy/?source=app";
@@ -714,4 +712,18 @@ public class Constants {
     public static final String DATE_FORMAT_RATINGS = "dd-MM-yyyy-hh-mm-ss";
 
     public static final String ENABLE_RATINGS = "enable_rating";
+    public static final String INVOICE_DOWNLOAD_URL = "invoice_url";
+
+    public static final String FIELDS = "fields";
+    public static final String LIMIT = "limit";
+    public static final String AREA_SEARCH_TYPE_APARTMENT = "apartment";
+    public static final String AREA_SEARCH_TYPE_AREA = "area";
+    public static final String AREA_SEARCH_TYPE_PINCODE = "pincode";
+    public static final String AREA_SEARCH_FIELD_DISPLAY_NAME = "display_name";
+    public static final String AREA_SEARCH_FIELD_AREA = AREA_SEARCH_TYPE_AREA;
+    public static final String AREA_SEARCH_FIELD_PINCODE = AREA_SEARCH_TYPE_PINCODE;
+    public static final String AREA_SEARCH_FIELD_STREET = "street";
+    public static final String AREA_SEARCH_FIELD_LANDMARK = "landmark";
+    public static final String AREA_SEARCH_FIELD_LOCATION = "location";
+
 }

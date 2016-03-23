@@ -2,23 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/chat_window_background">
+    android:background="#efefef">
 
     <TextView
         android:id="@+id/messageNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:background="@android:color/white"
+        android:background="@color/uiv3_primary_text_color"
         android:gravity="center"
         android:padding="2dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/red"
+        android:textColor="@color/white"
         android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -44,6 +42,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:orientation="horizontal">
+
         <EditText
             android:id="@+id/inputMsg"
             android:layout_width="0dp"
@@ -53,13 +52,14 @@
             android:layout_marginLeft="4dp"
             android:maxHeight="128dp"
             android:minHeight="48dp"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:lines="3"
             android:scrollbars="vertical"
             android:gravity="top"
             android:layout_gravity="bottom|center_vertical"
             android:background="@drawable/bubble_outgoing"
-            android:hint="@string/hint_input_chat"/>
+            android:hint="@string/hint_input_chat" />
+
         <ImageButton
             android:id="@+id/btnSend"
             android:layout_width="wrap_content"
@@ -67,8 +67,8 @@
             android:contentDescription="@string/content_desc_send"
             android:layout_gravity="bottom"
             android:background="@drawable/send_button_background"
-            android:src="@drawable/ic_send_white_24dp"
-            android:scaleType="center"/>
+            android:src="@drawable/ic_send_white_18dp"
+            android:scaleType="center" />
     </LinearLayout>
 
     <ListView
@@ -82,14 +82,15 @@
         android:dividerHeight="5dp"
         android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
-    <include layout="@layout/welcome_info_layout"
+    <include
+        layout="@layout/welcome_info_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true" />
 
 
 </RelativeLayout>

@@ -75,7 +75,6 @@ import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.receivers.DynamicScreenLoaderCallback;
-import com.bigbasket.mobileapp.service.AreaPinInfoIntentService;
 import com.bigbasket.mobileapp.service.GetAppDataDynamicIntentService;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.ChangeAddressTask;
@@ -161,9 +160,6 @@ public abstract class BBActivity extends SocialLoginActivity implements BasketOp
         setNavDrawer();
         handleIntent(savedInstanceState);
         setViewBasketFloatingButton();
-        if (CityManager.isAreaPinInfoDataStale(getCurrentActivity())) {
-            startService(new Intent(getCurrentActivity(), AreaPinInfoIntentService.class));
-        }
     }
 
     public void readAppDataDynamic() {

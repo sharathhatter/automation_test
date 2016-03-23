@@ -368,7 +368,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
                 @Override
                 public void onResponse(Call<ApiResponse<SponsoredAds>> call,
                                        Response<ApiResponse<SponsoredAds>> response) {
-                    if (response != null && response.isSuccess() && response.body().status == 0
+                    if (response != null && response.isSuccessful() && response.body().status == 0
                             && call != null && !call.isCanceled()) {
                         //Set section data for all tabs for now
                         SponsoredAds sponsoredSectionData =
@@ -734,8 +734,7 @@ public class ProductListActivity extends SearchActivity implements ProductListDa
         // Re-use the same activity for pc calls via search instead of creating a new one
         if (!TextUtils.isEmpty(categorySlug)) {
             mTitlePassedViaIntent = categoryName;
-            MostSearchesDbHelper mostSearchesDbHelper = new MostSearchesDbHelper(this);
-            mostSearchesDbHelper.update(categoryName, categoryUrl);
+            MostSearchesDbHelper.update(this, categoryName, categoryUrl);
             mNameValuePairs = new ArrayList<>();
             mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
             mNameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));

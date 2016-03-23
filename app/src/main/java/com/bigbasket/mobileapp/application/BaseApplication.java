@@ -13,6 +13,7 @@ import com.bigbasket.mobileapp.adapter.communicationhub.PushNotificationListener
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.util.AnalyticsTokens;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.LeakCanaryObserver;
@@ -71,12 +72,11 @@ public class BaseApplication extends Application {
         super.onCreate();
         Context appContext = getApplicationContext();
         sContext = appContext;
-        NewRelic.withApplicationToken(appContext.getString(R.string.new_relic_app_token))
+        NewRelic.withApplicationToken(AnalyticsTokens.NEW_RELIC_APP_TOKEN)
                 .start(appContext);
         Fabric.with(appContext, new Crashlytics());
         AuthParameters.reset();
         FacebookSdk.sdkInitialize(appContext);
-        MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
         initializeLeakCanary();
 
         MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
@@ -98,7 +98,11 @@ public class BaseApplication extends Application {
                 .memoryCache(new LruCache(getMemCacheSize()))
                 .downloader(new OkHttp3Downloader(BigBasketApiAdapter.getHttpClient(this)))
                 .build();
-        Picasso.setSingletonInstance(p);
+        try {
+            Picasso.setSingletonInstance(p);
+        } catch (IllegalStateException ex) {
+            Crashlytics.logException(ex);
+        }
         PushManager.getInstance(this).setMessageListener(new PushNotificationListener());
         if (appContext.getFilesDir() != null) {
             registerActivityLifecycleCallbacks(
@@ -136,7 +140,7 @@ public class BaseApplication extends Application {
     public static Tracker getDefaultGATracker(Context context) {
         if(sTracker == null) {
             GoogleAnalytics googleAnalytics = GoogleAnalytics.getInstance(context);
-            Tracker tracker = googleAnalytics.newTracker(context.getString(R.string.google_analytics_key));
+            Tracker tracker = googleAnalytics.newTracker(AnalyticsTokens.GA_TRACKER_ID);
             tracker.enableAutoActivityTracking(true);
             sTracker = tracker;
         }
