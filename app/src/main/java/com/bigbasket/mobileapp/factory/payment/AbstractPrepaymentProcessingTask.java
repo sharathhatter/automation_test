@@ -153,11 +153,11 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
         return isPaused;
     }
 
-    public String getTxnOrderId() {
+    public synchronized String getTxnOrderId() {
         return txnOrderId;
     }
 
-    public void setTxnOrderId(String txnOrderId) {
+    public synchronized void setTxnOrderId(String txnOrderId) {
         this.txnOrderId = txnOrderId;
     }
 
@@ -256,8 +256,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                         if (response.body().status == 0) {
                             synchronized (this) {
                                 mPayzappPostParams = response.body().apiResponseContent.payzappPostParams;
-                                txnOrderId = response.body().apiResponseContent.txnOrderId;
-                                setTxnOrderId(txnOrderId);
+                                setTxnOrderId(response.body().apiResponseContent.txnOrderId);
                             }
                             WibmoSDK.setWibmoIntentActionPackage(mPayzappPostParams.getPkgName());
                             WibmoSDKConfig.setWibmoDomain(mPayzappPostParams.getServerUrl());
@@ -280,8 +279,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                         if (response.body().status == 0) {
                             synchronized (this) {
                                 mPaymentPostParams = response.body().apiResponseContent.postParams;
-                                txnOrderId = response.body().apiResponseContent.txnOrderId;
-                                setTxnOrderId(txnOrderId);
+                                setTxnOrderId(response.body().apiResponseContent.txnOrderId);
                             }
                             countDownLatch.countDown();
                             result = true;
@@ -399,6 +397,7 @@ public abstract class AbstractPrepaymentProcessingTask<T extends AppOperationAwa
                 break;
             case Constants.BB_WALLET:
                 //TODO: invoke onActivityResult
+                //Fall through...
             default:
                 paymentGatewayOpened = false;
         }
