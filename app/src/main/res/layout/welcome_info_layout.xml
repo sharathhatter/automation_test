@@ -2,12 +2,9 @@
 <com.moengage.addon.ubox.AskUsWelcomeView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/welcome_view">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_small">
-        <ImageView
+    android:id="@+id/welcome_view"
+    android:padding="@dimen/padding_small">
+    <ImageView
             android:id="@+id/close_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,6 +18,4 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/close_icon"
             android:layout_toStartOf="@+id/close_icon"/>
-    </RelativeLayout>
-
 </com.moengage.addon.ubox.AskUsWelcomeView>

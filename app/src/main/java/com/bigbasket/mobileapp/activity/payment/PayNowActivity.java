@@ -220,7 +220,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     private void renderWalletOptionCheckbox() {
         if (mWalletOption != null) {
             walletOptionsCheckBox.setVisibility(View.VISIBLE);
-            String orderPrefix = mWalletOption.getWalletMessage().concat(getString(R.string.balance));
+            String orderPrefix = mWalletOption.getWalletMessage().concat(getString(R.string.wallet_balance));
             walletOptionsCheckBox.setText(UIUtil.asRupeeSpannable(orderPrefix,
                     UIUtil.formatAsMoney(Double.parseDouble(mWalletOption.getWalletBalance())),
                     faceRupee));
