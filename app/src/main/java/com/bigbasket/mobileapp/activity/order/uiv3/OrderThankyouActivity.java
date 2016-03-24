@@ -92,7 +92,7 @@ public class OrderThankyouActivity extends BaseActivity implements InvoiceDataAw
                         return;
                     }
                     HashSet<String> listSelectedOrderIds = new HashSet<>(orderArrayList.size());
-                    ArrayList<Order> listSelectedOrders = new ArrayList<Order>();
+                    ArrayList<Order> listSelectedOrders = new ArrayList<Order>(orderArrayList.size());
                     Intent intent = new Intent(getCurrentActivity(), PayNowActivity.class);
                     for (Order order : orderArrayList) {
                         if (!listSelectedOrderIds.contains(order.getOrderId()) && order.canPay()) {

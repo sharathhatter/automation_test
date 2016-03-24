@@ -355,7 +355,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (isSuspended())
             return;
         ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.newInstance(
-                requestCode, title == null ? "BigBasket" : title, msg, getString(R.string.ok),
+                requestCode, title == null ? getString(R.string.app_name) : title, msg, getString(R.string.ok),
                 null, false);
         try {
             dialogFragment.show(getSupportFragmentManager(), getScreenTag() + "#AlertDialog");

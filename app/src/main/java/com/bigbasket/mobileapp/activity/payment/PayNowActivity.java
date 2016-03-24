@@ -138,8 +138,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
         if (mPaymentTypes != null) {
             outState.putParcelableArrayList(Constants.PAYMENT_TYPES, mPaymentTypes);
         }
-        if (mPayNowPrepaymentProcessingTask != null && mPayNowPrepaymentProcessingTask.getTxnOrderId() != null) {
-            outState.putString(TXN_ORDER_ID, mPayNowPrepaymentProcessingTask.getTxnOrderId());
+        if (mTxnOrderId != null) {
+            outState.putString(TXN_ORDER_ID, mTxnOrderId);
         }
         if (mWalletOption != null) {
             outState.putParcelable(Constants.WALLET_OPTION, mWalletOption);
@@ -439,15 +439,15 @@ public class PayNowActivity extends BackButtonActivity implements OnPaymentValid
     protected void onPositiveButtonClicked(int sourceName, Bundle valuePassed) {
         switch (sourceName) {
             case ApiErrorCodes.INVALID_FIELD://error that cannot be retried and unexpected..logging the order number
-                if (mPayNowPrepaymentProcessingTask != null && mPayNowPrepaymentProcessingTask.getTxnOrderId() != null) {
+                if (mTxnOrderId != null) {
                     Map<String, String> eventAttribs = new HashMap<>();
-                    eventAttribs.put(Constants.TXT_ORDER_ID, mPayNowPrepaymentProcessingTask.getTxnOrderId());
+                    eventAttribs.put(Constants.TXT_ORDER_ID, mTxnOrderId);
                     trackEvent(TrackingAware.VALIDATE_PAYMENT_API_ERROR_ORDER_ID, eventAttribs);
                 }
             case Constants.OFFLINE_PAYMENT_SHOW_THANKYOU_ABORT_CONFIRMATION_DIALOG://retry option,validating payment again
-                if (mPayNowPrepaymentProcessingTask != null && mPayNowPrepaymentProcessingTask.getTxnOrderId() != null) {
+                if (mTxnOrderId != null) {
                     ValidatePaymentRequest validatePaymentRequest =
-                            new ValidatePaymentRequest(mTxnId, mPayNowPrepaymentProcessingTask.getTxnOrderId(), null, mSelectedPaymentMethod);
+                            new ValidatePaymentRequest(mTxnId, mTxnOrderId, null, mSelectedPaymentMethod);
                     validatePaymentRequest.setFinalTotal(mFinalTotal);
                     validatePaymentRequest.setIsPayNow(true);
                     new ValidatePayment<>(this, validatePaymentRequest, new BigBasketRetryMessageHandler(this, this)).validate(null);

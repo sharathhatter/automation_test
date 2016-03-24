@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BigBasket</string>
+    <string name="app_name">bigbasket</string>
 
     <string name="pay_now">Pay</string>
     <string name="cancel">Cancel</string>
