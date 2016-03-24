@@ -892,10 +892,14 @@ public class UIUtil {
     }
 
     public static String getUniqueDeviceIdentifier(Context context) {
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wInfo = wifiManager.getConnectionInfo();
-        if (wInfo != null && !TextUtils.isEmpty(wInfo.getMacAddress()))
-            return wInfo.getMacAddress();
+        try{
+            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wInfo = wifiManager.getConnectionInfo();
+            if (wInfo != null && !TextUtils.isEmpty(wInfo.getMacAddress()))
+                return wInfo.getMacAddress();
+        }catch (SecurityException ex){
+            Crashlytics.logException(ex);
+        }
         return " ";
     }
 

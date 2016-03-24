@@ -133,6 +133,7 @@ public class PostOrderCreationActivity extends BaseActivity implements PaymentTx
 
                     @Override
                     protected void onPostExecute(Boolean success) {
+                        setTxnOrderId(mOrdersCreated.get(0).getOrderNumber());
                         super.onPostExecute(success);
                         if (isPaused() || isCancelled() || isSuspended()) {
                             return;
