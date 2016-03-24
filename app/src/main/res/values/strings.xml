@@ -530,6 +530,6 @@
     <string name="free">Free!</string>
     <string name="Rs_char">`</string>
     <string name="val_in_basket_format">%1$s in basket"</string>
-    <string name="balance">\nBalance:&#160;</string>
+    <string name="wallet_balance">\nWallet balance:&#160;</string>
     <string name="export_payment_details">Export payment details</string>
 </resources>

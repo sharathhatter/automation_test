@@ -1,12 +1,9 @@
 package com.moengage.addon.ubox;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.CardView;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.View;
@@ -21,7 +18,7 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by muniraju on 20/01/16.
  */
-public class AskUsWelcomeView extends CardView implements View.OnClickListener {
+public class AskUsWelcomeView extends RelativeLayout implements View.OnClickListener {
     private TextView mMessageView;
     private ImageView mButtonView;
     private boolean mExpanded = true;
