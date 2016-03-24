@@ -61,7 +61,7 @@
             android:layout_marginTop="@dimen/margin_mini"
             android:textColor="@color/uiv3_primary_text_color"
             android:id="@+id/txtFulfilledBy"
-            android:text="Sold &amp; Fulfilled by BigBasket"
+            android:text="Sold &amp; Fulfilled by bigbasket"
             android:textSize="@dimen/secondary_text_size" />
     </LinearLayout>
 

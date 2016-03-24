@@ -107,7 +107,7 @@ public class ChangeAddressFragment extends BaseFragment implements AddressSelect
 
     private void loadAddresses() {
         if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-            ((BaseActivity) getActivity()).showAlertDialog("BigBasket",
+            ((BaseActivity) getActivity()).showAlertDialog(getString(R.string.app_name),
                     getString(R.string.notSignedIn), NavigationCodes.GO_TO_LOGIN);
             return;
         }
