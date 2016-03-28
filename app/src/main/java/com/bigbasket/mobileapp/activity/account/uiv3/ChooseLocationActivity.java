@@ -56,17 +56,20 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     private boolean mIsFirstTime;
     private boolean setAsCurrentAddressBoolean;
     private boolean autoModeBoolean;
+    private GoogleApiAvailability googleAPI;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseDeliveryLocation));
         mIsFirstTime = getIntent().getBooleanExtra(Constants.IS_FIRST_TIME, false);
+        googleAPI = GoogleApiAvailability.getInstance();
         if (savedInstanceState == null) {
             handlePermission(Manifest.permission.ACCESS_FINE_LOCATION,
                     null,
                     Constants.PERMISSION_REQUEST_CODE_ACCESS_LOCATION);
         }
+
     }
 
     @Override
@@ -78,8 +81,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     private void triggerLocationFetching() {
-        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-        int playServicesAvailable = googleAPI.isGooglePlayServicesAvailable(this);
+        int playServicesAvailable = getGooglePlayServicesAvailability();
         switch (playServicesAvailable) {
             case ConnectionResult.SUCCESS:
                 renderLocation();
@@ -220,7 +222,7 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
                         && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         updateLastKnownLocation(setAsCurrentAddressBoolean, autoModeBoolean);
-                        return ;
+                        return;
                     }
                 }
                 hideProgressDialog();
@@ -243,11 +245,17 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
 
     private void showLocationRationale() {
         View contentView = findViewById(android.R.id.content);
-        if(contentView == null) {
+        if (contentView == null) {
             contentView = getWindow().getDecorView();
         }
         Snackbar snackbar = Snackbar.make(contentView,
                 R.string.location_permission_rationale, Snackbar.LENGTH_LONG);
+        //hack to show multiline snackbar text
+        View snackbarView = snackbar.getView();
+        TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        if (textView != null) {
+            textView.setMaxLines(5);
+        }
         snackbar.setAction(R.string.action_settings, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -361,30 +369,49 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
     }
 
     private void launchPlacePicker() {
-        try {
-            if (DataUtil.isLocationServiceEnabled(this)) {
-                String mediaState = Environment.getExternalStorageState();
-                boolean hasStorage = (mediaState != null && mediaState.equalsIgnoreCase
-                        (Environment.MEDIA_MOUNTED));
-                if (hasStorage) {
-                    // Map fragment crashes if the device doesn't have sd-card or
-                    // a sd-card simulation storage area (e.g. Devices like Nexus don't have sd-card slot,
-                    // but they still simulate it so that apps continue to work).
-                    // Many Android One phones don't simulate this storage.
-                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                    try {
-                        startActivityForResult(builder.build(this), NavigationCodes.RC_PLACE_PICKER);
-                    } catch (ActivityNotFoundException ex) {
-                        showToast("Google play services seem to be disabled");
+        int playServicesAvailable = getGooglePlayServicesAvailability();
+        switch (playServicesAvailable) {
+            case ConnectionResult.SUCCESS:
+                try {
+                    if (DataUtil.isLocationServiceEnabled(this)) {
+                        String mediaState = Environment.getExternalStorageState();
+                        boolean hasStorage = (mediaState != null && mediaState.equalsIgnoreCase
+                                (Environment.MEDIA_MOUNTED));
+                        if (hasStorage) {
+                            // Map fragment crashes if the device doesn't have sd-card or
+                            // a sd-card simulation storage area (e.g. Devices like Nexus don't have sd-card slot,
+                            // but they still simulate it so that apps continue to work).
+                            // Many Android One phones don't simulate this storage.
+                            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                            try {
+                                startActivityForResult(builder.build(this), NavigationCodes.RC_PLACE_PICKER);
+                            } catch (ActivityNotFoundException ex) {
+                                showToast("Google play services seem to be disabled");
+                            }
+                        } else {
+                            showToast(getString(R.string.sdcarderror));
+                        }
+                    } else {
+                        showEnableLocationDialog();
                     }
-                } else {
-                    showToast(getString(R.string.sdcarderror));
+                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                    Crashlytics.logException(e);
                 }
-            } else {
-                showEnableLocationDialog();
-            }
-        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-            Crashlytics.logException(e);
+                break;
+            default:
+                if (googleAPI.isUserResolvableError(playServicesAvailable)) {
+                    googleAPI.showErrorDialogFragment(this, playServicesAvailable,
+                            0,
+                            new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    updateLastKnownLocation(false, false);
+                                }
+                            });
+                } else {
+                    showAlertDialogFinish("", googleAPI.getErrorString(playServicesAvailable));
+                }
+                break;
         }
     }
 
@@ -470,5 +497,9 @@ public class ChooseLocationActivity extends BackButtonActivity implements OnAddr
         } else {
             super.onPositiveButtonClicked(sourceName, valuePassed);
         }
+    }
+
+    private int getGooglePlayServicesAvailability() {
+        return googleAPI.isGooglePlayServicesAvailable(this);
     }
 }
