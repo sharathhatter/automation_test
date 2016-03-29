@@ -136,7 +136,8 @@ public class SearchUtil {
         if (categoriesArray != null && categoriesArray.length > 0) {
             matrixCursor.addRow(new String[]{String.valueOf(i), context.getString(R.string.popularCategories), null, null,
                     null, context.getString(R.string.popularCategories), null});
-            for (int j = 0; j < categoriesArray.length; j++) {
+            int len = Math.min(categoriesArray.length, categoryUrlArray.length);
+            for (int j = 0; j < len; j++) {
                 String categoryName = null;
                 String categoryUrl = null;
                 try {
