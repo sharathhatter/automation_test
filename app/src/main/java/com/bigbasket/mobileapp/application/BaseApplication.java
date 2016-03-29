@@ -94,19 +94,23 @@ public class BaseApplication extends Application {
             //TODO: read localytics log enable state from dev config settings
             Localytics.setLoggingEnabled(false);
         }
-        Picasso p = new Picasso.Builder(appContext)
+        try {
+            Picasso p = new Picasso.Builder(appContext)
                 .memoryCache(new LruCache(getMemCacheSize()))
                 .downloader(new OkHttp3Downloader(BigBasketApiAdapter.getHttpClient(this)))
                 .build();
-        try {
             Picasso.setSingletonInstance(p);
         } catch (IllegalStateException ex) {
             Crashlytics.logException(ex);
         }
         PushManager.getInstance(this).setMessageListener(new PushNotificationListener());
         if (appContext.getFilesDir() != null) {
-            registerActivityLifecycleCallbacks(
-                    new LocalyticsActivityLifecycleCallbacks(appContext));
+            try {
+                registerActivityLifecycleCallbacks(
+                        new LocalyticsActivityLifecycleCallbacks(appContext));
+            } catch (Exception ex) {
+                Crashlytics.logException(ex);
+            }
         } else {
             LocalyticsWrapper.HAS_NO_DIR = true;
         }

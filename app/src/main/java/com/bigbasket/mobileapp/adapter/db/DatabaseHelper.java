@@ -18,7 +18,7 @@ import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "bigbasket.db";
     /**

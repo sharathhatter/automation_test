@@ -58,7 +58,7 @@
         android:icon="${launcher_icon}"
         android:label="@string/app_name"
         android:theme="@style/BBNavDrawerTheme"
-        tools:replace="android:theme,android:allowBackup">
+        tools:replace="android:allowBackup,android:theme">
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".activity.product.ProductListActivity" />
@@ -718,15 +718,29 @@
 
         <!-- MOEngage -->
         <receiver
-            android:name="com.moe.pushlibrary.PushGcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-
                 <category android:name="${applicationId}" />
             </intent-filter>
         </receiver>
+        <service
+            android:name="com.moengage.worker.MoEGCMListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.moengage.receiver.MoEInstanceIDListener"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
 
         <!-- MOENGAGE RECEIVER FOR RECEIVING INSTALLATION INTENT -->
         <receiver android:name="com.bigbasket.mobileapp.receivers.AppUpdateReceiver">
