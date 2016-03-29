@@ -14,6 +14,7 @@ import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.adapter.AddressAutoCompleteAdapter;
+import com.crashlytics.android.Crashlytics;
 
 /**
  * Created by muniraju on 24/02/16.
@@ -100,7 +101,11 @@ public class DelayAutoCompleteTextView extends AppCompatAutoCompleteTextView {
             }
         }
         if(text != null) {
-            setSelection(text.length());
+            try {
+                setSelection(text.length());
+            } catch (Exception ex) {
+                Crashlytics.logException(ex);
+            }
         }
     }
 
